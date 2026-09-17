@@ -112,6 +112,19 @@ assert result["ok"] and result["payload"]["tests_found"] == 2
 HUD左下显示实际重量；空载／半载／满载行走分别350／332.5／315cm/s。
 新PIE容器为空；存档、装备、共享仓储及正式交互均未接入。
 
+## TASK-009 背包查看与暂停验证
+
+沿用UEClient构建入口和 `Hearthward.Inventory` 两项原生回归。
+通过 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-009/verify_panel_pie.py`
+启动两轮PIE，结果和截图在 `Saved/Task009/`；结束后由同一UEClient关闭本次编辑器。
+此脚本注入Enhanced Input动作并核对Tab映射，未声称发送物理键盘事件。
+截图输出1280×720、1920×1080，覆盖空/混合/满载以及关闭状态；不代表物理窗口或DPI兼容测试。
+
+手动进入PIE后，Tab打开/关闭背包。界面只显示持有的普通物品名称、数量、单重及实际负重。
+默认打开暂停世界，Tab仍可关闭并恢复；若打开前已暂停，关闭后保留原有暂停。
+可用008开发命令授予物品，再用006命令启动动作；打开背包观察“已暂停”及冻结的剩余秒数。
+Tab为灰盒临时键位；R23正式输入方案和R09暂停选项例外尚未确定。
+
 ## 仓库检查命令
 
 ```bash

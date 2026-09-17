@@ -17,14 +17,18 @@ struct FHearthwardItemDefinition
 {
     FName Id;
     int32 WeightHundredths;
+    FText DisplayName;
 };
 
 inline const TArray<FHearthwardItemDefinition>& HearthwardBasicItems()
 {
     // GDD v0.3 section 7.8: accepted initial weights in abstract units.
     static const TArray<FHearthwardItemDefinition> Items = {
-        {TEXT("wood"), 100}, {TEXT("stone"), 100}, {TEXT("ore"), 200},
-        {TEXT("meat"), 50}, {TEXT("arrow"), 5}
+        {TEXT("wood"), 100, NSLOCTEXT("Hearthward", "ItemWood", "木材")},
+        {TEXT("stone"), 100, NSLOCTEXT("Hearthward", "ItemStone", "石材")},
+        {TEXT("ore"), 200, NSLOCTEXT("Hearthward", "ItemOre", "矿石")},
+        {TEXT("meat"), 50, NSLOCTEXT("Hearthward", "ItemMeat", "肉")},
+        {TEXT("arrow"), 5, NSLOCTEXT("Hearthward", "ItemArrow", "箭")}
     };
     return Items;
 }

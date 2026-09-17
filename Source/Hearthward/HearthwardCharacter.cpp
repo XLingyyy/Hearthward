@@ -1,6 +1,7 @@
 #include "HearthwardCharacter.h"
 #include "Actions/HearthwardTimedActionComponent.h"
 #include "Inventory/HearthwardInventoryComponent.h"
+#include "UI/HearthwardHUD.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -89,6 +90,11 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     LookAction = NewObject<UInputAction>(this);
     LookAction->ValueType = EInputActionValueType::Axis2D;
     InputMapping = NewObject<UInputMappingContext>(this);
+    InventoryAction = NewObject<UInputAction>(this, TEXT("InventoryToggleAction"));
+    InventoryAction->ValueType = EInputActionValueType::Boolean;
+    InventoryAction->bTriggerWhenPaused = true;
+    // Temporary greybox binding; GDD R23 does not define the final inventory key.
+    InputMapping->MapKey(InventoryAction, EKeys::Tab);
 
     auto* Negate = NewObject<UInputModifierNegate>(InputMapping);
     auto* Swizzle = NewObject<UInputModifierSwizzleAxis>(InputMapping);
@@ -107,6 +113,7 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
     Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AHearthwardCharacter::Move);
     Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHearthwardCharacter::Look);
+    Input->BindAction(InventoryAction, ETriggerEvent::Started, this, &AHearthwardCharacter::ToggleInventory);
     Subsystem->AddMappingContext(InputMapping, 0);
     Player->SetInputMode(FInputModeGameOnly());
     Player->bShowMouseCursor = false;
@@ -139,4 +146,12 @@ void AHearthwardCharacter::Look(const FInputActionValue& Value)
     const FVector2D Axis = Value.Get<FVector2D>();
     AddControllerYawInput(Axis.X);
     AddControllerPitchInput(Axis.Y);
+}
+
+void AHearthwardCharacter::ToggleInventory()
+{
+    if (auto* Player = Cast<APlayerController>(GetController()))
+    {
+        if (auto* HUD = Cast<AHearthwardHUD>(Player->GetHUD())) HUD->ToggleInventory();
+    }
 }

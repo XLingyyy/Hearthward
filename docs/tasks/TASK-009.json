@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "id": "TASK-009",
+  "title": "个人背包查看界面与默认暂停",
+  "status": "Blocked",
+  "updated_at": "2026-09-17",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-009-inventory-panel",
+  "source_refs": [
+    "GDD v0.3 第4章默认查看界面暂停及Q026/Q153；第7章普通物品背包；第14章背包界面",
+    "用户授权推进009，完成后直接提交推送"
+  ],
+  "dependencies": [
+    "TASK-005",
+    "TASK-007",
+    "TASK-008"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Inventory/HearthwardInventoryState.h",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "docs/tasks/TASK-009.md",
+    "docs/tasks/TASK-009.json",
+    "docs/handoffs/TASK-009.md",
+    "docs/qa/evidence/TASK-009/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "AGENTS.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "docs/design/",
+    "docs/contracts/",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-004.json",
+    "Plugins/",
+    ".github/",
+    "Config/"
+  ],
+  "acceptance": [
+    "Editor构建通过；原生库存测试回归通过。",
+    "查看界面显示现有普通物品实际数量、单重及总负重，空背包有提示。",
+    "打开暂停，关闭恢复；原先已经暂停时关闭不恢复外部暂停。",
+    "暂停时世界时钟与动作冻结，关闭按键在暂停中有效；重复持键不反复切换，两轮PIE重置。"
+  ],
+  "non_goals": [
+    "不执行004，不修改设计、资产或CT-001。",
+    "不实现装备、转交、物品使用、共享仓储、存档或暂停选项；R09/R23保持OPEN。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: official implementation references",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested automatic commit after completion",
+    "push": "granted: user requested automatic push after completion",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Tab沿用灰盒阶段临时输入绑定惯例，未确定正式键位或R23。",
+    "仅读取008容器，不规定故事开局物品；暂停沿用引擎世界暂停。",
+    "用户授权单写实施、验证和提交推送；Issue和独立评审缺项保持Blocked。",
+    "实现完成；Editor构建、2项原生库存回归、两轮PIE36项检查通过；4张截图已检查。"
+  ]
+}

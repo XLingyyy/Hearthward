@@ -33,6 +33,10 @@ private:
 
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
+    void ToggleInventory();
+
+    UPROPERTY()
+    TObjectPtr<UInputAction> InventoryAction;
 
     UPROPERTY()
     TObjectPtr<UInputAction> MoveAction;

@@ -12,7 +12,16 @@ class HEARTHWARD_API AHearthwardHUD : public AHUD
 public:
     virtual void DrawHUD() override;
 
+    UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
+    void ToggleInventory();
+
+    UFUNCTION(BlueprintPure, Category="Hearthward|Inventory")
+    bool IsInventoryOpen() const { return bInventoryOpen; }
+
 private:
+    void DrawInventory(const class UHearthwardInventoryComponent& Inventory);
+    bool bInventoryOpen = false;
+    bool bPausedByInventory = false;
     TWeakObjectPtr<APawn> ObservedPawn;
     EHearthwardTimedActionStatus PreviousStatus = EHearthwardTimedActionStatus::Idle;
     double InterruptionVisibleUntil = 0.0;
