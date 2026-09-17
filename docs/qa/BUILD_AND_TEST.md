@@ -77,6 +77,18 @@ assert result["ok"] and result["payload"]["tests_found"] == 2
 通过原生 `Pause` 命令暂停／恢复，再查询快照。显示值为累计经过时间，不代表故事开局时刻。
 默认无计时 HUD，也未实现睡眠、跳时、持久化或最终暂停菜单。
 
+## TASK-006 五秒动作验证
+
+沿用 UEClient 构建入口，原生测试筛选 `Hearthward.Actions`，必须实际执行2项且均通过。
+两轮 PIE 脚本为 `docs/qa/evidence/TASK-006/verify_action_pie.py`，通过
+`ue.runtime.launch_editor(map_path="/Game/Hearthward/Bootstrap/L_Bootstrap", extra_args=["-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-006/verify_action_pie.py"])`
+运行。报告和截图生成于 `Saved/Task006/`；完成后同一 UEClient 关闭自己启动的编辑器。
+
+手动 PIE 控制台执行 `Hearthward.Action.Start`，等待5秒后执行 `Hearthward.Action` 查询。
+运行中用 WASD 可中断；转动视角不会中断。`Pause` 暂停／恢复计时。
+快照显示一次观测，保留10秒，不自动更新。伤害中断由测试脚本使用原生 `ApplyDamage` 验证。
+开发入口不在 Shipping 注册；它只演示计时，不产生建筑、物资或救助结果。
+
 ## 仓库检查命令
 
 ```bash

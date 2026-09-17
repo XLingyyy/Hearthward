@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "TASK-006",
+  "title": "五秒持续动作与中断基础",
+  "status": "Blocked",
+  "updated_at": "2026-09-17",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-006-timed-action",
+  "source_refs": [
+    "GDD v0.3 Q043、Q135及第13章：五实玩秒，主动移动或受伤中断，从头重试",
+    "用户授权推进006，完成后直接提交推送"
+  ],
+  "dependencies": [
+    "TASK-003",
+    "TASK-005"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Source/Hearthward/Actions/",
+    "Source/Hearthward/Tests/TimedActionTests.cpp",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "docs/tasks/TASK-006.md",
+    "docs/tasks/TASK-006.json",
+    "docs/handoffs/TASK-006.md",
+    "docs/qa/evidence/TASK-006/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "AGENTS.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "docs/design/",
+    "docs/contracts/",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-004.json",
+    "Plugins/",
+    ".github/",
+    "Config/"
+  ],
+  "acceptance": [
+    "Editor构建及Hearthward.Actions原生测试通过。",
+    "五实玩秒后仅发出计时完成事件；重复开始不重置正在运行的动作。",
+    "主动移动、正伤害中断；重新开始从零，完成或中断后不重复发事件。",
+    "真实PIE验证暂停冻结、恢复不补算、移动/伤害中断及两次PIE隔离。"
+  ],
+  "non_goals": [
+    "不执行004；不修改资产或原设计。",
+    "不实现建筑生成、材料扣除、救助回血、最终键位和UI。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: official implementation references",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested automatic commit after completion",
+    "push": "granted: user requested automatic push after completion",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户授权本任务单写实施、验证和提交推送；Issue及独立评审缺项，流程保持Blocked。",
+    "基于TASK-005已推送分支堆叠开发；不合并main，不批准CT-001库存草案。",
+    "完成状态只代表计时完成；后续消费者需另行评审合法性检查与真实结算。",
+    "实现及本地验证完成：构建通过，2项原生测试及两轮PIE共32项检查通过。"
+  ]
+}
