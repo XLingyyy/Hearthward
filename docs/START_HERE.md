@@ -13,7 +13,8 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。
 [TASK-008](tasks/TASK-008.md) 个人背包基础已提交推送。
 [TASK-009](tasks/TASK-009.md) 背包查看界面与默认暂停已提交推送。
-当前用户授权执行并提交推送 [TASK-010](tasks/TASK-010.md) 共享仓储与真实转移，不依赖 TASK-004。
+[TASK-010](tasks/TASK-010.md) 共享仓储与真实转移已提交推送。
+当前用户授权执行并提交推送 [TASK-011](tasks/TASK-011.md) 距离交互与五秒动作，不依赖 TASK-004。
 
 ## 新成员第一次
 

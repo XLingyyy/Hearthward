@@ -1,6 +1,7 @@
 #include "HearthwardHUD.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
+#include "../Interaction/HearthwardInteractionComponent.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -86,6 +87,48 @@ void AHearthwardHUD::DrawHUD()
         ObservedPawn = Pawn;
         PreviousStatus = EHearthwardTimedActionStatus::Idle;
         InterruptionVisibleUntil = 0.0;
+        InteractionFeedbackRevision = 0;
+        InteractionFeedbackUntil = 0.0;
+    }
+    if (Canvas && Pawn)
+    {
+        if (const auto* Interaction = Pawn->FindComponentByClass<UHearthwardInteractionComponent>())
+        {
+            if (InteractionFeedbackRevision != Interaction->GetFeedbackRevision())
+            {
+                InteractionFeedbackRevision = Interaction->GetFeedbackRevision();
+                InteractionFeedbackUntil = GetWorld()->GetTimeSeconds() + 1.5;
+            }
+            FText Feedback;
+            using S = EHearthwardInteractionStatus;
+            switch (Interaction->GetStatus())
+            {
+            case S::Ready: Feedback = NSLOCTEXT("Hearthward", "InteractionReady", "交互计时完成"); break;
+            case S::InvalidTarget: Feedback = NSLOCTEXT("Hearthward", "InteractionNoTarget", "无有效交互目标"); break;
+            case S::Unconfigured: Feedback = NSLOCTEXT("Hearthward", "InteractionUnconfigured", "交互距离未配置"); break;
+            case S::OutOfRange: Feedback = NSLOCTEXT("Hearthward", "InteractionTooFar", "距离过远"); break;
+            case S::Busy: Feedback = NSLOCTEXT("Hearthward", "InteractionBusy", "当前动作未结束"); break;
+            case S::Paused: Feedback = NSLOCTEXT("Hearthward", "InteractionPaused", "已暂停"); break;
+            case S::Interrupted:
+            {
+                const auto* Timer = Pawn->FindComponentByClass<UHearthwardTimedActionComponent>();
+                const bool TimerNoticeVisible = Timer && Timer->GetStatus() == EHearthwardTimedActionStatus::Interrupted
+                    && (PreviousStatus != EHearthwardTimedActionStatus::Interrupted || GetWorld()->GetTimeSeconds() < InterruptionVisibleUntil);
+                if (!TimerNoticeVisible) Feedback = NSLOCTEXT("Hearthward", "InteractionStopped", "交互已中断");
+                break;
+            }
+            default: break;
+            }
+            if (!bInventoryOpen && !Feedback.IsEmpty() && GetWorld()->GetTimeSeconds() < InteractionFeedbackUntil)
+            {
+                const float Scale = FMath::Clamp(Canvas->SizeY / 900.0f, 0.65f, 1.25f);
+                const float Left = (Canvas->SizeX - 360.0f * Scale) * 0.5f;
+                const float Top = Canvas->SizeY * 0.72f;
+                DrawRect(FLinearColor(0.035f, 0.042f, 0.042f, 0.94f), Left, Top, 360.0f * Scale, 40.0f * Scale);
+                DrawText(Feedback.ToString(), FLinearColor(0.95f, 0.94f, 0.88f), Left + 18.0f * Scale,
+                    Top + 6.0f * Scale, GEngine->GetMediumFont(), 1.6f * Scale);
+            }
+        }
     }
     const auto* Action = Pawn ? Pawn->FindComponentByClass<UHearthwardTimedActionComponent>() : nullptr;
     if (!Canvas || !Action) return;

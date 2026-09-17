@@ -22,6 +22,8 @@ private:
     void DrawInventory(const class UHearthwardInventoryComponent& Inventory);
     bool bInventoryOpen = false;
     bool bPausedByInventory = false;
+    uint32 InteractionFeedbackRevision = 0;
+    double InteractionFeedbackUntil = 0.0;
     TWeakObjectPtr<APawn> ObservedPawn;
     EHearthwardTimedActionStatus PreviousStatus = EHearthwardTimedActionStatus::Idle;
     double InterruptionVisibleUntil = 0.0;

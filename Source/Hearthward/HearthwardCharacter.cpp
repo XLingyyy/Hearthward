@@ -2,6 +2,7 @@
 #include "Actions/HearthwardTimedActionComponent.h"
 #include "Inventory/HearthwardInventoryComponent.h"
 #include "UI/HearthwardHUD.h"
+#include "Interaction/HearthwardInteractionComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -22,6 +23,7 @@ AHearthwardCharacter::AHearthwardCharacter()
 {
     TimedAction = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("TimedAction"));
     Inventory = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("Inventory"));
+    Interaction = CreateDefaultSubobject<UHearthwardInteractionComponent>(TEXT("Interaction"));
     GetCapsuleComponent()->InitCapsuleSize(34.0f, 90.0f);
     bUseControllerRotationPitch = false;
     bUseControllerRotationYaw = false;
@@ -95,6 +97,10 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     InventoryAction->bTriggerWhenPaused = true;
     // Temporary greybox binding; GDD R23 does not define the final inventory key.
     InputMapping->MapKey(InventoryAction, EKeys::Tab);
+    // Temporary greybox binding; final interaction keys remain GDD R23.
+    InteractAction = NewObject<UInputAction>(this, TEXT("InteractAction"));
+    InteractAction->ValueType = EInputActionValueType::Boolean;
+    InputMapping->MapKey(InteractAction, EKeys::E);
 
     auto* Negate = NewObject<UInputModifierNegate>(InputMapping);
     auto* Swizzle = NewObject<UInputModifierSwizzleAxis>(InputMapping);
@@ -114,6 +120,7 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AHearthwardCharacter::Move);
     Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHearthwardCharacter::Look);
     Input->BindAction(InventoryAction, ETriggerEvent::Started, this, &AHearthwardCharacter::ToggleInventory);
+    Input->BindAction(InteractAction, ETriggerEvent::Started, this, &AHearthwardCharacter::Interact);
     Subsystem->AddMappingContext(InputMapping, 0);
     Player->SetInputMode(FInputModeGameOnly());
     Player->bShowMouseCursor = false;
@@ -154,4 +161,9 @@ void AHearthwardCharacter::ToggleInventory()
     {
         if (auto* HUD = Cast<AHearthwardHUD>(Player->GetHUD())) HUD->ToggleInventory();
     }
+}
+
+void AHearthwardCharacter::Interact()
+{
+    Interaction->InteractNearest();
 }
