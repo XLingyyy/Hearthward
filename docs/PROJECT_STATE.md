@@ -1,27 +1,28 @@
 # Hearthward 项目状态
 
-更新：2026-09-17。当前为 TASK-000 初始仓库基线交付；已阅读设计并拆出 TASK-003，尚无玩法实现。
+更新：2026-09-17。TASK-003 已完成本地实现及运行验证；TASK-004 资产准备仅建立任务单，未执行。
 
 | 项目 | 实际状态 |
 |---|---|
 | 开发根目录 | 独立 Hearthward 仓库，与上层 GameFactory 工具仓库隔离 |
-| 工作流 | v1.0 启动包已导入；根 WORKFLOW.md 为维护入口；团队采用仍为 DRAFT |
-| GitHub | origin 已连接；公开仓库，本次按授权建立初始 main 基线 |
-| 当前分支 | 启动内容在 codex/TASK-000-workflow-bootstrap 准备，首次提交后建立 main 并推送 |
-| Git LFS | 本仓库启用；锁列表查询成功且为空；推送锁验证已启用 |
-| 本机工具 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 已核验安装 |
-| GitHub CLI | gh 登录返回 HTTP 401；GitHub 连接器可读取仓库并确认管理权限 |
-| 设计 | 已读取 v0.3 正文、表格和附录；R01—R25仍为 OPEN，未新增设计决定 |
-| 正式游戏工程 | 尚未创建 .uproject、Source、Content |
-| UE 编译／打包／试玩 | NOT_RUN |
-| 团队保护／双账号 LFS／两机验证 | NOT_RUN |
-| 模型与资产生成服务 | NOT_RUN |
+| 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
+| GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
+| 当前分支 | codex/TASK-003-third-person-bootstrap；未合并 main |
+| 游戏实现提交 | 0732b7fc142e3089764a7101645259d12c97e9df |
+| Git LFS | 已启用；4 个灰盒资产持锁，ID 见 TASK-003 交接 |
+| 工具链 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
+| 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
+| 构建／操作 | Development Editor 编译通过；两轮 PIE 18/18 测量通过；实键与鼠标操作留证 |
+| 仓库检查 | TASK-003 范围检查通过，工具自测 29/29 通过；不代表游戏全量验收 |
+| 设计 | v0.3 原件未改；R01—R25 保持 OPEN，未新增设计决定 |
+| TASK-004 | 人物基模、树草、岩石、房屋等基础资产任务单；Backlog，未下载或制作资产 |
+| Issue／评审 | GitHub 连接器创建 Issue 返回 403；独立评审人未分配；TASK-003 仍为 Blocked |
+| 打包／两机验证／完整 M0 | NOT_RUN |
+| 模型与付费资产生成 | NOT_RUN |
 
-本机已具备继续工程初始化的工具前提，完整 M0 尚未验收。
-首个工程任务为 [TASK-003](tasks/TASK-003.md)：建立 UE 工程和第三人称灰盒行走场景。
-已获首次提交／推送授权；后续仍需确认真人 Owner 与独立评审人，
-建立 main 后运行 repo-policy，再配置经确认的远端保护。
-游戏工程初始化、实际构建、资产锁和两机验证分阶段执行，保留真实证据。
+当前用户授权 TASK-003 成果、TASK-004 任务单及相关状态文档提交推送；不授权合并或执行资产任务。
+[工程交接](handoffs/TASK-003.md)记录证据及初始化日志中的未解决提示；
+[资产任务单](tasks/TASK-004.md)定义首批范围、设计边界、许可和导入验收。
+运行测试发生于实现提交前工作树，提交绑定说明见交接；后续仅更新文档，没有重复执行 UE 测试。
 
-本次记录见 [TASK-000 交接](handoffs/TASK-000.md)。启动包原始自检记录保留在
-[STARTER_VALIDATION](qa/STARTER_VALIDATION.md)，不作为本游戏验证证据。
+启动来源见 [TASK-000 交接](handoffs/TASK-000.md)及 [STARTER_VALIDATION](qa/STARTER_VALIDATION.md)，不替代游戏证据。

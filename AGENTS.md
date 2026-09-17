@@ -3,13 +3,13 @@
 ## Hearthward 本地启动约定
 
 - 游戏开发根目录为本仓库；上层 GameFactory 是独立工具仓库，禁止将游戏提交到上层仓库。
-- 2026-09-17 用户已授权读取设计文档、拆分首个小任务，并提交推送本仓库。本轮不实现玩法；下一项工程任务见 docs/tasks/TASK-003.md。
+- 2026-09-17 TASK-003 已完成本地实现与验证；用户授权将其与 TASK-004 资产任务单提交推送。TASK-004 仅编写任务单，尚未授权执行。
 - 原始输入保留于 docs；WORKFLOW.md 是后续维护入口，docs/工作流_v1.0.md 作为原始快照保留。
 - 文本通过 Python 显式 UTF-8 读取；未知编码先检查 BOM。禁止用 LibreOffice 读取文档。
 - UE 目标为 5.8.1；首次生成新工程时 Game/Editor Target 使用 BuildSettingsVersion.V7，EngineAssociation 使用 5.8。
 - 本机绝对路径见被忽略的 .agent-local/environment.json。不要直接激活上层脚本：它默认指向 GameFactoryUE 准备工程。
 - 引擎操作使用 GameFactory 的 UEClient 公开 API，并显式指定本游戏工程；创建工程前按上层 setting_overview 路由读取所需引擎文档。
-- 本次提交／推送授权涵盖工作流启动基线和首个任务单；不包含发布、合并其他贡献或变更远端保护。后续任务权限独立记录。
+- 当前提交／推送授权涵盖 TASK-003 成果、TASK-004 任务单及相应状态／交接文档；不包含合并、变更远端保护或执行 TASK-004。后续任务权限独立记录。
 
 ## 项目与权限
 
