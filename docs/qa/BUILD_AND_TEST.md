@@ -89,6 +89,17 @@ assert result["ok"] and result["payload"]["tests_found"] == 2
 快照显示一次观测，保留10秒，不自动更新。伤害中断由测试脚本使用原生 `ApplyDamage` 验证。
 开发入口不在 Shipping 注册；它只演示计时，不产生建筑、物资或救助结果。
 
+## TASK-007 动作HUD验证
+
+构建入口沿用 UEClient。HUD通过GameMode自动创建；使用006的开发命令开始计时，
+底部实时显示“进行中”、剩余秒数和进度；暂停显示“已暂停”，中断短暂显示“已中断”。
+空闲／计时完成后收起；不代表对应玩法完成。显示不改变鼠标、WASD或输入模式。
+
+`docs/qa/evidence/TASK-007/verify_hud_pie.py` 通过同样的 `-ExecutePythonScript` 入口运行，
+在两轮PIE捕获1280×720、1920×1080的HUD渲染证据，结果生成于 `Saved/Task007/`。
+使用原生HighResShot指定输出分辨率；这些是渲染尺寸检查，不宣称测试了两种物理显示器或DPI。
+动作回归继续运行006脚本与 `Hearthward.Actions` 两项原生测试。
+
 ## 仓库检查命令
 
 ```bash
