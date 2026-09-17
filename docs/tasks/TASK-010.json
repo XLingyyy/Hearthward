@@ -2,12 +2,12 @@
   "schema_version": 1,
   "id": "TASK-010",
   "title": "库存、重量、共享容器及真实转移",
-  "status": "Backlog",
+  "status": "Blocked",
   "updated_at": "2026-09-17",
-  "owner": null,
+  "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": null,
+  "branch": "codex/TASK-010-shared-storage",
   "source_refs": [
     "Q215",
     "Q226",
@@ -16,22 +16,34 @@
     "Q253"
   ],
   "dependencies": [
-    "TASK-002"
+    "TASK-008",
+    "TASK-009"
   ],
   "blocked_by": [],
   "contracts": [
     "docs/contracts/CT-001-world-state.md"
   ],
   "allowed_paths": [
-    "Source/TribeGame/Inventory/",
-    "Content/Tribe/Inventory/",
-    "Content/Tribe/Tests/Inventory/",
+    "Source/Hearthward/Inventory/",
+    "Source/Hearthward/Tests/InventoryTests.cpp",
+    "Source/Hearthward/Tests/StorageTests.cpp",
     "docs/tasks/TASK-010.json",
+    "docs/tasks/TASK-010.md",
     "docs/handoffs/TASK-010.md",
-    "docs/qa/evidence/TASK-010/"
+    "docs/qa/evidence/TASK-010/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "AGENTS.md"
   ],
   "forbidden_paths": [
-    "docs/design/archive/"
+    "Content/",
+    "Config/",
+    "Plugins/",
+    "docs/design/",
+    "docs/contracts/",
+    "docs/tasks/TASK-004.json",
+    "docs/tasks/TASK-004.md"
   ],
   "acceptance": [
     "查询、增加、扣除和转移只作用于权威容器；不足和超重不虚假完成。",
@@ -40,21 +52,24 @@
   "non_goals": [
     "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
   ],
-  "prototype_only": true,
+  "prototype_only": false,
   "prototype_approval": null,
   "required_tests": [
     "T-004",
     "T-005"
   ],
   "permissions": {
-    "network": "not_granted",
+    "network": "granted: official engineering references",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted: user requested automatic commit",
+    "push": "granted: user requested automatic push",
     "merge": "not_granted"
   },
   "notes": [
-    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
-    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+    "用户授权推进010并提交推送；按已存在Hearthward工程修正旧TribeGame占位路径。",
+    "CT-001保留DRAFT，实施其本地同步转移候选语义；未声称完成跨系统契约审批。",
+    "只使用008已接受物品与重量；不添加未定玩法初配。测试访问点为隔离PIE夹具，不代表营地解锁。",
+    "Issue、独立评审未落实，流程保持Blocked；未授权合并。",
+    "本地实现完成；Editor构建、4项原生测试、两轮PIE42项检查通过，2张截图已检查。"
   ]
 }

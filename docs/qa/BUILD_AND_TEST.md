@@ -125,6 +125,20 @@ HUD左下显示实际重量；空载／半载／满载行走分别350／332.5／
 可用008开发命令授予物品，再用006命令启动动作；打开背包观察“已暂停”及冻结的剩余秒数。
 Tab为灰盒临时键位；R23正式输入方案和R09暂停选项例外尚未确定。
 
+## TASK-010 共享仓储与转移验证
+
+沿用UEClient构建入口，筛选 `Hearthward.Inventory` 共4项原生测试（含008两项回归和010两项）。
+以 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-010/verify_storage_pie.py` 启动编辑器，
+运行两轮PIE，报告与背包截图生成于 `Saved/Task010/`；结束后用同一UEClient关闭本次编辑器。
+脚本调用开发命令 `Hearthward.Storage.CreateTestAccess` 创建两个运行期Actor，随后通过两个访问组件存取同一库存。
+该命令重复执行不会继续添加访问点，不生成物品、营地美术或修改地图；Shipping不注册。
+正式营地解锁和仓储操作UI尚未接入，个人Tab界面仍只访问随身背包。
+
+接口：`HearthwardStorageAccessComponent.Transfer(Personal, ToCamp, ItemId, Count, OperationId, TimelineEpoch)`。
+每次新操作生成GUID；重试复用原GUID和载荷，epoch取世界StorageSubsystem。
+结果含Result、本次MovedCount与Replayed；重试成功返回MovedCount=0，不能再次结算外部奖励。
+`AdvanceTimeline`只失效旧请求并清空当前去重记录，不读档、不清空库存，也不宣称已实现保存。
+
 ## 仓库检查命令
 
 ```bash
