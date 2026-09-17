@@ -1,4 +1,5 @@
 #include "HearthwardCharacter.h"
+#include "Actions/HearthwardTimedActionComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -17,6 +18,7 @@
 
 AHearthwardCharacter::AHearthwardCharacter()
 {
+    TimedAction = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("TimedAction"));
     GetCapsuleComponent()->InitCapsuleSize(34.0f, 90.0f);
     bUseControllerRotationPitch = false;
     bUseControllerRotationYaw = false;
@@ -111,6 +113,7 @@ void AHearthwardCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AHearthwardCharacter::Move(const FInputActionValue& Value)
 {
     const FVector2D Axis = Value.Get<FVector2D>();
+    if (!Axis.IsNearlyZero()) TimedAction->InterruptAction();
     const FRotator Yaw(0.0f, GetControlRotation().Yaw, 0.0f);
     AddMovementInput(FRotationMatrix(Yaw).GetUnitAxis(EAxis::X), Axis.Y);
     AddMovementInput(FRotationMatrix(Yaw).GetUnitAxis(EAxis::Y), Axis.X);
