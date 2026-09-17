@@ -52,7 +52,32 @@ print(result)
 录屏会向游戏窗口发送真实键盘输入。该入口在未打包工程中使用 Editor `-game` 模式，
 PIE 的两次启停由上述独立测量脚本验证。A3GamePlayable 源码已随工程保存，正常构建会编译插件。
 
-## 已提供的仓库检查
+## TASK-005 世界时钟验证
+
+沿用上面的 `ue` 实例，实际原生测试入口：
+
+```python
+from pipeline.common.paths import task_output_dir
+out = task_output_dir("hearthward", "pipeline", "TASK-005", run_id="YOUR_UNIQUE_RUN_ID")
+result = ue.testing.run_automation_tests(
+    "Hearthward.Time", report_dir=str(out / "automation"),
+    extra_args=["-NullRHI"], timeout=240,
+)
+print(result)
+assert result["ok"] and result["payload"]["tests_found"] == 2
+```
+
+先结束已有 PIE，再通过 `ue.runtime.launch_editor` 加入参数：
+`extra_args=["-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-005/verify_clock_pie.py"]`。
+地图仍为 `/Game/Hearthward/Bootstrap/L_Bootstrap`。
+脚本自动执行两轮真实 PIE 的运行、暂停、恢复及行走回归，结果与截图生成到 `Saved/Task005/`。
+完成后由同一 UEClient 会话关闭自己启动的编辑器；不重复运行地图创建脚本。
+
+手动体验可打开工程进入 PIE，在控制台输入 `Hearthward.Clock` 获取一次时间快照；
+通过原生 `Pause` 命令暂停／恢复，再查询快照。显示值为累计经过时间，不代表故事开局时刻。
+默认无计时 HUD，也未实现睡眠、跳时、持久化或最终暂停菜单。
+
+## 仓库检查命令
 
 ```bash
 python scripts/validate_repo.py
