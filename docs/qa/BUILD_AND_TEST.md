@@ -139,6 +139,20 @@ Tab为灰盒临时键位；R23正式输入方案和R09暂停选项例外尚未�
 结果含Result、本次MovedCount与Replayed；重试成功返回MovedCount=0，不能再次结算外部奖励。
 `AdvanceTimeline`只失效旧请求并清空当前去重记录，不读档、不清空库存，也不宣称已实现保存。
 
+## TASK-011 距离交互验证
+
+沿用UEClient构建入口，原生测试筛选 `Hearthward.Actions`（2项）。
+使用 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-011/verify_interaction_pie.py` 启动两轮PIE，
+报告和截图位于 `Saved/Task011/`，结束后由同一UEClient关闭自己启动的编辑器。
+脚本带PROTOTYPE_ONLY标签：距离200cm、2木材消费仅是独立测试值，不写入正式配方或地图。
+
+手动PIE控制台执行 `Hearthward.Interaction.CreateTestTarget`，在角色前方创建一个测试方块，未授予物资；
+站定后按临时E键交互，观察五秒进度。WASD/受伤可中断，Tab打开背包暂停，目标移远或销毁会取消。
+显示“交互计时完成”只表示条件满足，不代表建筑或奖励已生成。材料结算消费者只在自动验证脚本中挂接。
+测试命令Shipping不注册；正式目标MaxDistance默认0，必须由后续任务明确配置。
+E是灰盒临时键位，当前选取方式为范围内最近目标，完整遮挡/选取及正式键位仍未定。
+脚本用Enhanced Input动作注入并核对E映射；不声称进行了物理键盘操作。
+
 ## 仓库检查命令
 
 ```bash

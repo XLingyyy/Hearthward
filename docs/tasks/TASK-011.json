@@ -2,33 +2,49 @@
   "schema_version": 1,
   "id": "TASK-011",
   "title": "距离交互、五秒读条和中断反馈",
-  "status": "Backlog",
+  "status": "Blocked",
   "updated_at": "2026-09-17",
-  "owner": null,
+  "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": null,
+  "branch": "codex/TASK-011-distance-interaction",
   "source_refs": [
     "Q043",
     "Q170"
   ],
   "dependencies": [
-    "TASK-002"
+    "TASK-006",
+    "TASK-007",
+    "TASK-008",
+    "TASK-009"
   ],
   "blocked_by": [],
   "contracts": [
     "docs/contracts/CT-001-world-state.md"
   ],
   "allowed_paths": [
-    "Source/TribeGame/Interaction/",
-    "Content/Tribe/Interaction/",
-    "Content/Tribe/Tests/Interaction/",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/UI/",
     "docs/tasks/TASK-011.json",
+    "docs/tasks/TASK-011.md",
     "docs/handoffs/TASK-011.md",
-    "docs/qa/evidence/TASK-011/"
+    "docs/qa/evidence/TASK-011/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "AGENTS.md",
+    "Source/Hearthward/Inventory/HearthwardInventoryDebug.cpp"
   ],
   "forbidden_paths": [
-    "docs/design/archive/"
+    "Content/",
+    "Config/",
+    "Plugins/",
+    "docs/design/",
+    "docs/contracts/",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-004.json"
   ],
   "acceptance": [
     "独立测试场景验证建造五实玩秒、移动/受击中断和未完成不扣料。",
@@ -43,14 +59,18 @@
     "T-006"
   ],
   "permissions": {
-    "network": "not_granted",
+    "network": "granted: official engineering references",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted: user requested automatic commit",
+    "push": "granted: user requested automatic push",
     "merge": "not_granted"
   },
   "notes": [
-    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
-    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+    "用户授权执行011并直接提交推送，包含任务规定的独立测试场景；旧TribeGame路径调整为现有Hearthward实现。",
+    "生产接口不规定默认交互距离或配方；PROTOTYPE_ONLY开发点使用200cm与脚本2木材测试结算，均不成为正式玩法。",
+    "E为灰盒临时键位，R23保持OPEN；测试点只由开发命令生成。",
+    "CT-001仍DRAFT；不新增正式世界结算接口。Issue/独立评审未落实，保持Blocked。",
+    "本次构建实际暴露旧Actions/Inventory匿名命名空间QueryCommand在Unity编译中重名；为完成构建，允许对Inventory调试变量做单行重命名。",
+    "实现完成；Editor构建、2项原生测试、两轮PIE46项检查通过；HUD定向2项检查通过，3张最终截图已检查。"
   ]
 }

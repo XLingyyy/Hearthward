@@ -8,6 +8,7 @@ class UInputAction;
 class UInputMappingContext;
 class UHearthwardTimedActionComponent;
 class UHearthwardInventoryComponent;
+class UHearthwardInteractionComponent;
 struct FInputActionValue;
 
 UCLASS()
@@ -34,6 +35,13 @@ private:
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
     void ToggleInventory();
+    void Interact();
+
+    UPROPERTY(VisibleAnywhere, Category="Hearthward|Interaction")
+    TObjectPtr<UHearthwardInteractionComponent> Interaction;
+
+    UPROPERTY()
+    TObjectPtr<UInputAction> InteractAction;
 
     UPROPERTY()
     TObjectPtr<UInputAction> InventoryAction;

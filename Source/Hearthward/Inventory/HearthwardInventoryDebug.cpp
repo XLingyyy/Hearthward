@@ -52,7 +52,7 @@ void ChangeInventory(const TArray<FString>& Args, UWorld* World, bool Add)
     ShowInventory(World);
 }
 
-FAutoConsoleCommandWithWorld QueryCommand(TEXT("Hearthward.Inventory"), TEXT("Show local inventory."),
+FAutoConsoleCommandWithWorld InventoryQueryCommand(TEXT("Hearthward.Inventory"), TEXT("Show local inventory."),
     FConsoleCommandWithWorldDelegate::CreateStatic(&ShowInventory));
 FAutoConsoleCommandWithWorldAndArgs AddCommand(TEXT("Hearthward.Inventory.Add"), TEXT("Development grant: <item> <count>."),
     FConsoleCommandWithWorldAndArgsDelegate::CreateLambda([](const TArray<FString>& Args, UWorld* World) { ChangeInventory(Args, World, true); }));
