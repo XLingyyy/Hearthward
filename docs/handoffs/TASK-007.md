@@ -3,7 +3,8 @@
 日期：2026-09-17；Owner：XLingyyy；当前会话单写。
 任务：[TASK-007](../tasks/TASK-007.md)；分支 `codex/TASK-007-action-hud`。
 父基线 `cbfdf78a0a0fbc03d332d89da96e6becd7c7b8d4`；依赖未合并TASK-006，按堆叠任务评审，禁止先合并。
-测试时为UNCOMMITTED_WORKTREE，实现提交绑定在提交后补记；基线不包含本次HUD。
+测试时为UNCOMMITTED_WORKTREE；最终HUD构建及画面验证对应实现提交 `35cc74faae047654d0dff08d1d91dd2bd4879a59`。
+最终画面验证后仅补任务与交接文档，未再修改功能代码；原生动作／006回归的字号调整前验证边界见下文。
 
 ## 实现
 
