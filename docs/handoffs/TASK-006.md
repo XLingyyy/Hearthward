@@ -3,7 +3,8 @@
 日期：2026-09-17；Owner：XLingyyy；当前会话单写。
 任务：[TASK-006](../tasks/TASK-006.md)；分支 `codex/TASK-006-timed-action`。
 基线 `604e4f694934c5669e93ad81061bae2d503e76d6`；依赖未合并的 TASK-005，禁止先合并本任务。
-测试时为 UNCOMMITTED_WORKTREE，提交绑定在后续文档提交补记；不将基线冒充受测实现。
+测试时为 UNCOMMITTED_WORKTREE，受测实现现已提交为 `2b03fdde377e9a058f032ee9bd3f0b111d725a59`。
+测试后仅更新任务状态、授权和证据文档，受测功能代码未再修改；本次绑定不宣称重新运行过测试。
 
 ## 完成内容
 
