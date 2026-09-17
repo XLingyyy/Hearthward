@@ -7,7 +7,7 @@
 | 开发根目录 | 独立 Hearthward 仓库，与上层 GameFactory 工具仓库隔离 |
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
-| 当前分支 | codex/TASK-005-world-clock；基于5ec0648；用户已授权提交推送，提交绑定见交接 |
+| 当前分支 | codex/TASK-005-world-clock；基于5ec0648；TASK-005 实现提交 f86d25e，提交绑定见交接 |
 | 游戏实现提交 | 0732b7fc142e3089764a7101645259d12c97e9df |
 | Git LFS | 已启用；4 个灰盒资产持锁，ID 见 TASK-003 交接 |
 | 工具链 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 |

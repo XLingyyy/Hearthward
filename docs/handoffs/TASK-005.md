@@ -3,6 +3,7 @@
 日期：2026-09-17。Owner：XLingyyy；唯一写者：当前 Codex 会话。
 任务单：[TASK-005](../tasks/TASK-005.md)。分支：`codex/TASK-005-world-clock`。
 基线：`5ec06486bdf4bb4f3d1aeff1a2e6b3b975690529`；tested_commit 为 **UNCOMMITTED_WORKTREE**，基线 SHA 不包含本次实现。
+实现现已提交为 `f86d25e3a1b3ffa01ec1702022a58077f5900a61`；测试完成后仅更新授权和交接文档，受测代码未再修改。上述工作树证据对应此实现提交，未重新运行构建与游戏测试。
 
 ## 实现与设计边界
 
