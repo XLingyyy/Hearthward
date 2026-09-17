@@ -7,7 +7,8 @@
 根 WORKFLOW.md 是工作流维护入口，docs 下中文工作流保留为交付快照。
 本次按 WORKFLOW 第20.1节为原空仓库建立初始 main；后续改动使用任务分支与PR。
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
-下一单 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog，仅任务单、未执行。
+[TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog，仅任务单、未执行。
+当前用户授权独立执行 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟，不依赖 TASK-004。
 
 ## 新成员第一次
 

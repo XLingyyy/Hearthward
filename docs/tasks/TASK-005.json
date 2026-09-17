@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "TASK-005",
+  "title": "正常运行世界时钟与暂停冻结",
+  "status": "Blocked",
+  "updated_at": "2026-09-17",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-005-world-clock",
+  "source_refs": [
+    "GDD v0.3 第4章 Q025—028、Q152—156：24实玩分钟一日，暂停冻结，短动作按实玩秒",
+    "2026-09-17用户授权拆分并执行TASK-005，明确不执行TASK-004",
+    "2026-09-17用户追加授权：提交推送吧"
+  ],
+  "dependencies": [
+    "TASK-003"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Source/Hearthward/Time/",
+    "Source/Hearthward/Tests/WorldClockTests.cpp",
+    "docs/tasks/TASK-005.md",
+    "docs/tasks/TASK-005.json",
+    "docs/handoffs/TASK-005.md",
+    "docs/qa/evidence/TASK-005/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "AGENTS.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "docs/design/",
+    "docs/contracts/",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-004.json",
+    "Plugins/",
+    ".github/",
+    "Config/"
+  ],
+  "acceptance": [
+    "Development Editor构建通过，Hearthward.Time原生测试非零且全部通过。",
+    "60实玩秒为60日历分钟，1440秒为1日，跨日余数和分帧累积正确。",
+    "PIE运行累计与世界时间一致，暂停至少2秒冻结，恢复不补算暂停。",
+    "第二轮PIE新时钟从零开始；编辑世界无游戏时钟。",
+    "原角色移动回归通过，开发控制台快照有画面与日志。"
+  ],
+  "non_goals": [
+    "不执行TASK-004，不修改资产。",
+    "不决定开局日期时刻、昼夜分界、天气、睡眠跳时或经济结算。",
+    "不接入存档跨图持久化、生产、饥饿、短动作或完整暂停菜单。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: official implementation references",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user explicitly requested commit and push on 2026-09-17",
+    "push": "granted: user explicitly requested commit and push on 2026-09-17",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户已授权本地实施与验证；流程Blocked仅表示独立评审与Issue未落实。",
+    "本任务基于5ec0648，当前会话单写；新单范围由用户拆单并执行授权确定。",
+    "R02/R03/R09保持OPEN；正常运行子范围不依赖它们定案。",
+    "本地实现完成：Editor构建、2项原生测试、两轮PIE共16项检查通过；证据见TASK-005交接。"
+  ]
+}
