@@ -1,5 +1,11 @@
 #include "HearthwardInventoryComponent.h"
 
+FGuid UHearthwardInventoryComponent::GetContainerId()
+{
+    if (!ContainerId.IsValid()) ContainerId = FGuid::NewGuid();
+    return ContainerId;
+}
+
 EHearthwardInventoryResult UHearthwardInventoryComponent::TryAdd(FName ItemId, int32 Count)
 {
     const auto Result = State.Add(ItemId, Count);

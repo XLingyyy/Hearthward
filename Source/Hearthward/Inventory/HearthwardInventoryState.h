@@ -10,7 +10,11 @@ enum class EHearthwardInventoryResult : uint8
     InvalidCount,
     UnknownItem,
     CapacityExceeded,
-    InsufficientItems
+    InsufficientItems,
+    InvalidArgument,
+    StaleTimeline,
+    OperationConflict,
+    QuantityOverflow
 };
 
 struct FHearthwardItemDefinition
@@ -37,12 +41,13 @@ class FHearthwardInventoryState
 {
 public:
     static constexpr int32 CapacityHundredths = 10000;
+    explicit FHearthwardInventoryState(bool bInUnlimited = false) : bUnlimited(bInUnlimited) {}
 
     int32 GetCount(FName ItemId) const { return Counts.FindRef(ItemId); }
-    int32 GetWeightHundredths() const
+    int64 GetWeightHundredths() const
     {
-        int32 Weight = 0;
-        for (const auto& Item : HearthwardBasicItems()) Weight += GetCount(Item.Id) * Item.WeightHundredths;
+        int64 Weight = 0;
+        for (const auto& Item : HearthwardBasicItems()) Weight += int64(GetCount(Item.Id)) * Item.WeightHundredths;
         return Weight;
     }
 
@@ -51,9 +56,10 @@ public:
         if (Count <= 0) return EHearthwardInventoryResult::InvalidCount;
         const auto* Item = FindItem(ItemId);
         if (!Item) return EHearthwardInventoryResult::UnknownItem;
-        const int32 Free = CapacityHundredths - GetWeightHundredths();
+        const int64 Free = CapacityHundredths - GetWeightHundredths();
         // Divide before multiplying so even an INT_MAX request cannot overflow.
-        if (Count > Free / Item->WeightHundredths) return EHearthwardInventoryResult::CapacityExceeded;
+        if (!bUnlimited && Count > Free / Item->WeightHundredths) return EHearthwardInventoryResult::CapacityExceeded;
+        if (Count > MAX_int32 - GetCount(ItemId)) return EHearthwardInventoryResult::QuantityOverflow;
         Counts.FindOrAdd(ItemId) += Count;
         return EHearthwardInventoryResult::Success;
     }
@@ -73,10 +79,26 @@ public:
     float GetMoveSpeedMultiplier() const { return 1.0f - 0.1f * GetLoadRatio(); }
     float GetStaminaCostMultiplier() const { return 1.0f + 0.1f * GetLoadRatio(); }
 
+    EHearthwardInventoryResult TransferTo(FHearthwardInventoryState& Target, FName ItemId, int32 Count)
+    {
+        if (this == &Target) return EHearthwardInventoryResult::InvalidArgument;
+        // Validate against copies before committing either end. No event can observe a half-transfer.
+        auto SourceAfter = *this;
+        auto TargetAfter = Target;
+        auto Result = SourceAfter.Remove(ItemId, Count);
+        if (Result != EHearthwardInventoryResult::Success) return Result;
+        Result = TargetAfter.Add(ItemId, Count);
+        if (Result != EHearthwardInventoryResult::Success) return Result;
+        *this = MoveTemp(SourceAfter);
+        Target = MoveTemp(TargetAfter);
+        return Result;
+    }
+
 private:
     static const FHearthwardItemDefinition* FindItem(FName ItemId)
     {
         return HearthwardBasicItems().FindByPredicate([ItemId](const auto& Item) { return Item.Id == ItemId; });
     }
     TMap<FName, int32> Counts;
+    bool bUnlimited = false;
 };

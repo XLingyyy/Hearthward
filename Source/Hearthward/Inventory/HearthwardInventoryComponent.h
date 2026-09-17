@@ -12,6 +12,7 @@ class HEARTHWARD_API UHearthwardInventoryComponent : public UActorComponent
 {
     GENERATED_BODY()
 public:
+    FGuid GetContainerId();
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
     EHearthwardInventoryResult TryAdd(FName ItemId, int32 Count);
 
@@ -37,5 +38,7 @@ public:
     FHearthwardInventoryChanged OnInventoryChanged;
 
 private:
+    friend class UHearthwardStorageSubsystem;
+    FGuid ContainerId;
     FHearthwardInventoryState State;
 };
