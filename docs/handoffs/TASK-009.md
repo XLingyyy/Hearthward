@@ -14,7 +14,7 @@ Tab按下切换界面，Started避免持续持键反复切换；bTriggerWhenPaus
 ## 提交与流程
 
 工作分支 `codex/TASK-009-inventory-panel`，基于已推送 `47207be2c199f0b2247c0f24cdbe090b873f45e9` 堆叠开发。
-测试对应当前实现工作树，提交后补绑定完整实现SHA；未合并main。
+tested_commit：`c609882e0f47a23b9a3060bbe398e01ff5e366b2`。构建与测试在该实现提交前的相同代码工作树执行；后续绑定提交只更新交接与项目状态文档，无游戏代码或证据变更。未合并main。
 用户授权实施、验证、提交和推送。Issue和独立评审未落实，流程状态继续Blocked，不自批Ready/Done。
 内容资产未编辑，沿用TASK-003锁，无新增锁需求。
 
