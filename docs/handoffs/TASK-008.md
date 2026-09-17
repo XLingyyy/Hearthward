@@ -3,7 +3,8 @@
 日期：2026-09-17；Owner：XLingyyy；当前会话单写。
 任务：[TASK-008](../tasks/TASK-008.md)；分支 `codex/TASK-008-personal-inventory`。
 父基线 `bc5b48c6081621f826d5edc03bf3c45bf983c849`；堆叠依赖TASK-007，禁止先合并。
-测试时UNCOMMITTED_WORKTREE，实现提交绑定在提交后补记。
+测试时UNCOMMITTED_WORKTREE，受测实现现已提交为 `3dae1f275e2b6a955c22d6ee0d79e0839c9fe76e`。
+测试完成后仅整理证据、任务和交接文档，功能代码未再修改；此绑定不宣称重新执行测试。
 
 ## 实现与边界
 
