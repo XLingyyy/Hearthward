@@ -1,5 +1,6 @@
 #include "HearthwardCharacter.h"
 #include "Actions/HearthwardTimedActionComponent.h"
+#include "Inventory/HearthwardInventoryComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -19,6 +20,7 @@
 AHearthwardCharacter::AHearthwardCharacter()
 {
     TimedAction = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("TimedAction"));
+    Inventory = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("Inventory"));
     GetCapsuleComponent()->InitCapsuleSize(34.0f, 90.0f);
     bUseControllerRotationPitch = false;
     bUseControllerRotationYaw = false;
@@ -62,6 +64,18 @@ AHearthwardCharacter::AHearthwardCharacter()
     Facing->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AHearthwardCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+    Inventory->OnInventoryChanged.AddDynamic(this, &AHearthwardCharacter::UpdateCarrySpeed);
+    UpdateCarrySpeed();
+}
+
+void AHearthwardCharacter::UpdateCarrySpeed()
+{
+    GetCharacterMovement()->MaxWalkSpeed = 350.0f * Inventory->GetMoveSpeedMultiplier();
+}
+
 void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -100,6 +114,7 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void AHearthwardCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+    Inventory->OnInventoryChanged.RemoveDynamic(this, &AHearthwardCharacter::UpdateCarrySpeed);
     if (auto* Player = Cast<APlayerController>(GetController()))
     {
         if (auto* LocalPlayer = Player->GetLocalPlayer())

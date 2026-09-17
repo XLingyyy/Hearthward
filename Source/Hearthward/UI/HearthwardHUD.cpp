@@ -1,5 +1,6 @@
 #include "HearthwardHUD.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
+#include "../Inventory/HearthwardInventoryComponent.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -9,6 +10,21 @@ void AHearthwardHUD::DrawHUD()
 {
     Super::DrawHUD();
     APawn* Pawn = GetOwningPawn();
+    if (Canvas && Pawn)
+    {
+        if (const auto* Inventory = Pawn->FindComponentByClass<UHearthwardInventoryComponent>())
+        {
+            FNumberFormattingOptions Format;
+            Format.SetMinimumFractionalDigits(2).SetMaximumFractionalDigits(2);
+            const FString Weight = FText::Format(NSLOCTEXT("Hearthward", "CarriedWeight", "负重 {0} / {1}"),
+                FText::AsNumber(Inventory->GetWeight(), &Format), FText::AsNumber(Inventory->GetCapacity())).ToString();
+            const float UIScale = FMath::Clamp(Canvas->SizeY / 900.0f, 0.65f, 1.25f);
+            DrawRect(FLinearColor(0.035f, 0.042f, 0.042f, 0.94f), 20.0f * UIScale,
+                Canvas->SizeY - 58.0f * UIScale, 260.0f * UIScale, 38.0f * UIScale);
+            DrawText(Weight, FLinearColor(0.95f, 0.94f, 0.88f), 32.0f * UIScale,
+                Canvas->SizeY - 53.0f * UIScale, GEngine->GetMediumFont(), 1.6f * UIScale);
+        }
+    }
     if (ObservedPawn.Get() != Pawn)
     {
         ObservedPawn = Pawn;

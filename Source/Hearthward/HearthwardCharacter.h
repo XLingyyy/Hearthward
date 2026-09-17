@@ -7,6 +7,7 @@
 class UInputAction;
 class UInputMappingContext;
 class UHearthwardTimedActionComponent;
+class UHearthwardInventoryComponent;
 struct FInputActionValue;
 
 UCLASS()
@@ -16,10 +17,17 @@ class HEARTHWARD_API AHearthwardCharacter : public ACharacter
 
 public:
     AHearthwardCharacter();
+    virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+    UFUNCTION()
+    void UpdateCarrySpeed();
+
+    UPROPERTY(VisibleAnywhere, Category="Hearthward|Inventory")
+    TObjectPtr<UHearthwardInventoryComponent> Inventory;
+
     UPROPERTY(VisibleAnywhere, Category="Hearthward|Actions")
     TObjectPtr<UHearthwardTimedActionComponent> TimedAction;
 
