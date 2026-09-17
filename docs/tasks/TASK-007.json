@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "TASK-007",
+  "title": "持续动作实时进度反馈",
+  "status": "Blocked",
+  "updated_at": "2026-09-17",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-007-action-hud",
+  "source_refs": [
+    "GDD v0.3 Q043、Q135五秒读条及第14章真实状态反馈",
+    "用户授权推进007，完成后直接提交推送"
+  ],
+  "dependencies": [
+    "TASK-006"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/HearthwardGameMode.cpp",
+    "docs/tasks/TASK-007.md",
+    "docs/tasks/TASK-007.json",
+    "docs/handoffs/TASK-007.md",
+    "docs/qa/evidence/TASK-007/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "AGENTS.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "docs/design/",
+    "docs/contracts/",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-004.json",
+    "Plugins/",
+    ".github/",
+    "Config/"
+  ],
+  "acceptance": [
+    "Development Editor构建通过。",
+    "HUD直接读取006组件；运行进度及剩余秒数随真实状态刷新。",
+    "暂停冻结并显示已暂停；主动移动和伤害中断提示可见；完成与空闲不显示进度。",
+    "至少两种渲染尺寸验证中文、布局和状态，006两轮PIE回归通过。"
+  ],
+  "non_goals": [
+    "不执行004，不修改资产、原设计或持续动作规则。",
+    "不新增建造／救助结果、材料结算、交互键位和完整HUD。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: official implementation references",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested automatic commit after completion",
+    "push": "granted: user requested automatic push after completion",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户授权单写实施、验证和提交推送，未授权合并。",
+    "基于TASK-006已推送分支堆叠开发；独立评审和Issue缺项保持Blocked。",
+    "UI使用同一模块006现有公开只读方法，不改变状态或另存玩法进度。",
+    "构建通过；2项原生动作测试、32项PIE回归、10项HUD状态检查通过；12张最终截图已逐张查看。"
+  ]
+}

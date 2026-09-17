@@ -3,13 +3,13 @@
 ## Hearthward 本地启动约定
 
 - 游戏开发根目录为本仓库；上层 GameFactory 是独立工具仓库，禁止将游戏提交到上层仓库。
-- 2026-09-17 TASK-003 与 TASK-004 任务单已提交推送。TASK-005 世界时钟已提交推送。用户授权推进 TASK-006 五秒动作基础，完成后直接提交推送；明确不执行 TASK-004。
+- 2026-09-17 TASK-003 与 TASK-004 任务单已提交推送。TASK-005 世界时钟已提交推送。TASK-006 五秒动作基础已提交推送。用户授权推进 TASK-007 实时动作HUD，完成后直接提交推送；明确不执行 TASK-004。
 - 原始输入保留于 docs；WORKFLOW.md 是后续维护入口，docs/工作流_v1.0.md 作为原始快照保留。
 - 文本通过 Python 显式 UTF-8 读取；未知编码先检查 BOM。禁止用 LibreOffice 读取文档。
 - UE 目标为 5.8.1；首次生成新工程时 Game/Editor Target 使用 BuildSettingsVersion.V7，EngineAssociation 使用 5.8。
 - 本机绝对路径见被忽略的 .agent-local/environment.json。不要直接激活上层脚本：它默认指向 GameFactoryUE 准备工程。
 - 引擎操作使用 GameFactory 的 UEClient 公开 API，并显式指定本游戏工程；创建工程前按上层 setting_overview 路由读取所需引擎文档。
-- 当前提交／推送授权涵盖 TASK-003 成果、TASK-004 任务单及相应状态／交接文档；不包含合并、变更远端保护或执行 TASK-004。用户随后授权 TASK-005、TASK-006 实现、任务单与证据提交推送；合并权限仍未授予。
+- 当前提交／推送授权涵盖 TASK-003 成果、TASK-004 任务单及相应状态／交接文档；不包含合并、变更远端保护或执行 TASK-004。用户随后授权 TASK-005、TASK-006、TASK-007 实现、任务单与证据提交推送；合并权限仍未授予。
 
 ## 项目与权限
 
