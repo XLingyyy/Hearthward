@@ -10,7 +10,8 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog，仅任务单、未执行。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
-当前用户授权执行并提交推送 [TASK-007](tasks/TASK-007.md) 实时动作HUD，不依赖 TASK-004。
+[TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。
+当前用户授权执行并提交推送 [TASK-008](tasks/TASK-008.md) 个人背包基础，不依赖 TASK-004。
 
 ## 新成员第一次
 

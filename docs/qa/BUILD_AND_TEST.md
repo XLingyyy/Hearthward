@@ -100,6 +100,18 @@ assert result["ok"] and result["payload"]["tests_found"] == 2
 使用原生HighResShot指定输出分辨率；这些是渲染尺寸检查，不宣称测试了两种物理显示器或DPI。
 动作回归继续运行006脚本与 `Hearthward.Actions` 两项原生测试。
 
+## TASK-008 个人背包验证
+
+沿用UEClient构建入口；原生测试筛选 `Hearthward.Inventory`，必须实际执行2项且全部通过。
+通过 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-008/verify_inventory_pie.py`
+启动两轮PIE；报告和截图生成到 `Saved/Task008/`。入口仍为灰盒地图，结束后关闭本次启动的编辑器。
+
+开发控制台：`Hearthward.Inventory.Add wood 50` 增加50木材，`Hearthward.Inventory.Remove wood 50` 扣除；
+`Hearthward.Inventory` 查询五种物品数量及重量。支持ID为wood、stone、ore、meat、arrow，数量必须为正整数。
+这些是明确的开发授予／扣除命令，不是拾取、丢弃、烹饪或任务奖励；Shipping不注册。
+HUD左下显示实际重量；空载／半载／满载行走分别350／332.5／315cm/s。
+新PIE容器为空；存档、装备、共享仓储及正式交互均未接入。
+
 ## 仓库检查命令
 
 ```bash

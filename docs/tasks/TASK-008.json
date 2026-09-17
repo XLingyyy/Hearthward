@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "id": "TASK-008",
+  "title": "个人背包基础数量、负重与行走减速",
+  "status": "Blocked",
+  "updated_at": "2026-09-17",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-008-personal-inventory",
+  "source_refs": [
+    "GDD v0.3 Q067—070、Q183—187、Q226—230，第7章7.8已接受重量初配",
+    "用户授权推进008，完成后直接提交推送"
+  ],
+  "dependencies": [
+    "TASK-003",
+    "TASK-007"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Source/Hearthward/Inventory/",
+    "Source/Hearthward/Tests/InventoryTests.cpp",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.cpp",
+    "docs/tasks/TASK-008.md",
+    "docs/tasks/TASK-008.json",
+    "docs/handoffs/TASK-008.md",
+    "docs/qa/evidence/TASK-008/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "AGENTS.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "docs/design/",
+    "docs/contracts/",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-004.json",
+    "Plugins/",
+    ".github/",
+    "Config/"
+  ],
+  "acceptance": [
+    "Editor构建与Hearthward.Inventory原生测试通过。",
+    "五种已知物品按整数数量存放，重量计算精确；负数、零数、未知ID、超重、数量不足均拒绝且不改变库存。",
+    "容量100，半负重行走332.5cm/s，满负重315cm/s，减重后恢复；真实PIE验证。",
+    "HUD读取实际负重；动作HUD不受影响，第二轮PIE新容器为空。"
+  ],
+  "non_goals": [
+    "不执行004，不修改原设计或CT-001草案状态。",
+    "不做共享仓储、兄弟转交、拾取交互、装备、升级、关键物品、存档或请求去重。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: official implementation references",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested automatic commit after completion",
+    "push": "granted: user requested automatic push after completion",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "本单只实现当前角色本地普通物品容器；不是TASK-010或CT-001完整实现。",
+    "每次同步函数调用是一次新操作，不接受远端重试或存档回放；操作ID／epoch由后续契约任务处理。",
+    "空容器为本机灰盒会话的初始状态，不规定故事开局物品。",
+    "用户授权单写实施、验证和提交推送；独立评审和Issue缺项保持Blocked。",
+    "构建、2项原生库存测试、两轮PIE共44项检查通过；4张截图已逐张检查。"
+  ]
+}
