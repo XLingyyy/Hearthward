@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "TASK-004",
+  "title": "获取／创建UE基础资产库与独立展示场景",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-004-foundation-assets",
+  "source_refs": [
+    "GDD v0.3 第1—2章：单人第三人称、兄弟角色、文化服饰建筑样式未定",
+    "GDD v0.3 第3章：隐蔽营地、自然区域、被占领故乡",
+    "GDD v0.3 第5章／R11：建筑和营地等级、第二营地清单",
+    "GDD v0.3 第6章／R16：动物分类数量已定、物种与内容清单未定",
+    "GDD v0.3 第8章：开场刀具参考不扩展为历史文化定案",
+    "2026-09-17用户要求仅编写资产任务单，不执行"
+  ],
+  "dependencies": [
+    "TASK-003"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Content/Hearthward/Assets/",
+    "Content/Hearthward/AssetReview/",
+    "art_source/TASK-004/",
+    "docs/assets/",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-004.json",
+    "docs/handoffs/TASK-004.md",
+    "docs/qa/evidence/TASK-004/"
+  ],
+  "forbidden_paths": [
+    "docs/design/",
+    "docs/contracts/",
+    "Source/",
+    "Config/",
+    "config/",
+    "Hearthward.uproject",
+    "Plugins/",
+    "Content/Hearthward/Bootstrap/",
+    "Content/Hearthward/World/",
+    ".github/"
+  ],
+  "acceptance": [
+    "首版资产需求与缺口目录关联GDD，未定风格文化物种不被自行定案。",
+    "任务单首批人物、树草、岩石材质、房屋模块全部入库，UE5.8.1加载和重开无缺失依赖。",
+    "人物骨架及待机行走动画兼容；两兄弟展示实例可区分，不接入玩法。",
+    "独立L_AssetReview展示场景完成碰撞、门洞通行、植被和近远景验证，保存实际证据。",
+    "台账记录来源许可、公开源文件分发资格、导入参数、依赖及制作修改记录；受限资产不公开提交。",
+    "记录展示规模、分辨率、画质、帧耗时和显存；不冒充全游戏性能达标。",
+    "LFS及锁按工作流管理，交接绑定实际提交和检查结果。"
+  ],
+  "non_goals": [
+    "本轮仅编写任务单，不下载、购买、制作或导入资产。",
+    "执行阶段也不确定未批准的文化、物种、正式服饰及建筑风格。",
+    "不替换TASK-003玩家和启动地图，不实现建造、采集、AI、战斗或完整开放世界。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "not_granted: future asset execution",
+    "install_dependencies": "not_granted",
+    "commit": "granted: task sheet only in current delivery",
+    "push": "granted: task sheet only in current delivery",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "仅任务单，未执行；未来实施启动时确认Issue、独立评审、资产锁和下载／制作权限。",
+    "用户授权本单与TASK-003成果一起提交推送；未来资产实施权限不由本单推定。",
+    "本单定义首批资产验收，不宣称完成全游戏资产。R11／R16限制正式清单，不阻塞中性基础资产准备。",
+    "当前公开仓库要求核验源文件公开分发权限；付费采购和付费生成未授权。"
+  ]
+}

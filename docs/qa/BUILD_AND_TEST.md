@@ -74,8 +74,8 @@ python scripts/validate_repo.py --task TASK-010 --base origin/main
 
 | 项目 | 真实命令 / 值 | 最近有效SHA / 结果 |
 |---|---|---|
-| 工程.uproject路径 | Hearthward.uproject | TASK-003 工作树 |
-| Editor Target编译 | 上述 UEClient build.project | PASS，尚未提交；见交接 |
+| 工程.uproject路径 | Hearthward.uproject | TASK-003 已提交 |
+| Editor Target编译 | 上述 UEClient build.project | PASS，实现提交见交接 |
 | 蓝图编译与资产加载 | 待选择测试地图后填 | NOT_RUN |
 | 自动化测试组与非零用例数 | 待实现注册后填 | NOT_RUN |
 | 目标平台打包 | 待定 | NOT_RUN |

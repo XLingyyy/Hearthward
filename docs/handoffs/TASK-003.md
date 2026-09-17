@@ -5,9 +5,9 @@
 - 日期：2026-09-17；Owner：XLingyyy；唯一写者：当前 Codex 会话。
 - 分支：`codex/TASK-003-third-person-bootstrap`。
 - 基线 HEAD：`ff5ff7138991e316a4af1dd53f4b583d615d9acd`。
-- tested_commit：**UNCOMMITTED_WORKTREE**。该 HEAD 仅为基线，不包含本次游戏实现；不能把证据标成该 SHA 的 PASS。
+- 实现提交：`0732b7fc142e3089764a7101645259d12c97e9df`。运行测试发生于提交前工作树；其游戏代码、配置和资产已原样提交（仅规范文本行尾），该提交绑定此次证据；未重复运行 UE。
 - 用户授权本地执行 TASK-003。独立评审人未指定；GitHub Issue 创建返回 403 `Resource not accessible by integration`。
-- 工作流维持 Blocked；无 PR、自审通过或合并。2026-09-17 用户已授权本次实现连同资产任务单提交推送；提交记录在后续交接更新中绑定。
+- 工作流维持 Blocked；无 PR、自审通过或合并。2026-09-17 用户已授权本次实现连同资产任务单提交推送；实现提交见上；本次连同 TASK-004 任务单推送当前任务分支。
 
 ## 实现与设计对应
 
@@ -49,6 +49,6 @@ WASD、鼠标仅为测试输入。镜头臂长 400 cm、目标偏移 Z=60 cm、�
 | M_Marker.uasset | 51800299 |
 | M_Wall.uasset | 51800321 |
 
-锁保留至正式集成交接。已获提交推送授权，将 Source、Config、Content、插件源代码及证据作为同一任务提交，
-记录该提交 SHA 并确认 LFS 对象上传；随后由独立评审人评审。当前 A5 的同一 SHA／远端复现尚未完成。
+锁保留至正式集成交接。Source、Config、Content、插件源代码及证据已纳入上列实现提交；本次推送由 Git LFS pre-push 上传所需对象。
+独立评审及干净克隆复现尚未完成，不将已提交解释成已集成。
 本机 Windows 的既有 `config/` 与引擎 `Config/` 共享目录；新增 ini 的 Git 路径保留 `Config/`，工具链仍保留 `config/toolchain.lock.json`。
