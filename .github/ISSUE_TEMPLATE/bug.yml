@@ -1,0 +1,33 @@
+name: Bug report
+description: 基于具体构建和实际步骤的缺陷
+title: "[BUG] "
+body:
+  - type: input
+    id: sha
+    attributes:
+      label: 完整提交SHA／构建标签
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: UE、平台、模型／提示版本和测试场景
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 最小复现、前置存档或夹具
+    validations:
+      required: true
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: 预期（注明设计来源）与实际
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 日志、截图／录像、影响范围与回归起点
+      description: 不上传秘密或未经脱敏的真实游戏存档和个人数据。

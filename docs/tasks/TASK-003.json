@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "TASK-003",
+  "title": "建立 Hearthward UE 5.8.1 工程与第三人称灰盒行走基线",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-003-third-person-bootstrap",
+  "source_refs": [
+    "GDD v0.3 第1.1章 / Q002：单人第三人称 UE5",
+    "GDD v0.3 第3.1章 / Q004：可操作开场需要移动基础",
+    "GDD v0.3 第4.1章及第16章 / Q177：常态3.5米每秒，已接受初配",
+    "GDD v0.3 第17章 / R09、R23、R24：耐力、完整输入及高级通行仍待定",
+    "WORKFLOW 第1、6、12、20.1节；TASK-000工程子项"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Hearthward.uproject",
+    "Source/Hearthward.Target.cs",
+    "Source/HearthwardEditor.Target.cs",
+    "Source/Hearthward/",
+    "Config/",
+    "Content/Hearthward/Bootstrap/",
+    "Plugins/A3GamePlayable/",
+    "config/toolchain.lock.json",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/tasks/TASK-003.json",
+    "docs/tasks/TASK-003.md",
+    "docs/handoffs/TASK-003.md",
+    "docs/qa/evidence/TASK-003/"
+  ],
+  "forbidden_paths": [
+    "docs/design/",
+    "docs/contracts/",
+    ".github/",
+    "Content/Hearthward/World/"
+  ],
+  "acceptance": [
+    "根目录Hearthward.uproject、Hearthward运行模块、Game和Editor Target存在；引擎关联5.8、两个Target均使用BuildSettingsVersion.V7。",
+    "Development Editor / Win64实际编译成功，记录完整命令、退出码、工具版本与tested_commit。",
+    "L_Bootstrap灰盒地图可加载并进入PIE；玩家实际持有第三人称角色，可前后左右移动与转动镜头，碰撞有效。",
+    "角色无负重平地稳态速度为350 cm/s；斜向输入不超过同一速度上限，记录实测值。",
+    "连续两次进入并退出PIE都能生成可控角色，无项目导致的崩溃或阻断性错误；附操作视频或连续截图与日志。",
+    "同一SHA的Source/Config/Content和LFS对象足以复现，文档说明前置环境与命令；两机验证及打包不计入本任务。"
+  ],
+  "non_goals": [
+    "不实现冲刺、跳跃、攀越、游泳、耐力、饥饿、战斗、伙伴、背包、建造、存档或主线。",
+    "不制作正式角色美术、营地或故乡地图，不安装第三方付费内容，不接模型。",
+    "不替R01—R25定案，不把验证用WASD/鼠标绑定宣布为完整正式输入方案。",
+    "不承担TASK-000远端治理、两机验证、打包与完整M0验收。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-026"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "本轮仅编写任务单，尚未授权开始实现；状态Backlog。",
+    "从TASK-000拆出的首个实施项；不依赖TASK-000整体完成，避免工程前置与两机构建形成循环。",
+    "开工前指定真实负责人/独立评审人、创建关联Issue、确认共享根文件单写窗口和资产路径；不得虚构Ready状态。",
+    "Hearthward与Content/Hearthward/Bootstrap为本任务工程路径；其他启动包TribeGame/Tribe候选路径在相关任务启动前统一审定。",
+    "验收细节和操作步骤见docs/tasks/TASK-003.md。"
+  ]
+}

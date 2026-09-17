@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "id": "TASK-001",
+  "title": "裁定R01—R05并发布设计决定",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": null,
+  "source_refs": [
+    "GDD v0.3 第17章",
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05"
+  ],
+  "dependencies": [],
+  "blocked_by": [
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05"
+  ],
+  "contracts": [],
+  "allowed_paths": [
+    "docs/decisions/",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/tasks/TASK-001.json",
+    "docs/handoffs/TASK-001.md",
+    "docs/qa/evidence/TASK-001/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "五个P0分别列出原要求、最终选择、影响与验收，并得到设计负责人真实批准。",
+    "只关闭已获得批准的R项，未获批准继续OPEN；不写工程代码。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-023"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
+    "blocked_by表示本任务要解决的设计项，不阻止设计分析本身；只有批准后的结论才关闭它们。"
+  ]
+}

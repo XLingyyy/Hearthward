@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "id": "TASK-011",
+  "title": "距离交互、五秒读条和中断反馈",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": null,
+  "source_refs": [
+    "Q043",
+    "Q170"
+  ],
+  "dependencies": [
+    "TASK-002"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-001-world-state.md"
+  ],
+  "allowed_paths": [
+    "Source/TribeGame/Interaction/",
+    "Content/Tribe/Interaction/",
+    "Content/Tribe/Tests/Interaction/",
+    "docs/tasks/TASK-011.json",
+    "docs/handoffs/TASK-011.md",
+    "docs/qa/evidence/TASK-011/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "独立测试场景验证建造五实玩秒、移动/受击中断和未完成不扣料。",
+    "接口只报告交互结果，不自建最终配方或修改正式主地图。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-006"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
+    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+  ]
+}

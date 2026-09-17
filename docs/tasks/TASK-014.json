@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "id": "TASK-014",
+  "title": "灰盒资产与独立验证场景",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": null,
+  "source_refs": [
+    "GDD v0.3 第4/15章"
+  ],
+  "dependencies": [
+    "TASK-000"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Content/Tribe/Tests/Graybox/",
+    "Content/Tribe/Art/Graybox/",
+    "docs/tasks/TASK-014.json",
+    "docs/handoffs/TASK-014.md",
+    "docs/qa/evidence/TASK-014/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "所有资产在独立范围内，来源和锁登记清楚；无主地图或全局配置意外修改。",
+    "另一成员在干净克隆能打开该测试地图，无遗漏LFS外部引用。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-003"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
+    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+  ]
+}

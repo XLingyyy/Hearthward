@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "TASK-000",
+  "title": "仓库治理、环境锁定与两机启动验证",
+  "status": "Blocked",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-000-workflow-bootstrap",
+  "source_refs": [
+    "WORKFLOW M0",
+    "User instruction 2026-09-17: local workflow and workspace bootstrap; defer design reading"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "WORKFLOW.md",
+    "AGENTS.md",
+    "CONTRIBUTING.md",
+    "CLAUDE.md",
+    ".editorconfig",
+    ".gitattributes",
+    ".gitignore",
+    ".github/",
+    "config/",
+    "docs/",
+    "scripts/",
+    "TribeGame.uproject",
+    "Source/TribeGame/",
+    "Content/Tribe/Bootstrap/",
+    "Config/",
+    "docs/tasks/TASK-000.json",
+    "docs/handoffs/TASK-000.md",
+    "docs/qa/evidence/TASK-000/"
+  ],
+  "forbidden_paths": [],
+  "acceptance": [
+    "两机同一SHA从干净克隆取回LFS资产、编译、打开、打包和启动；记录真实命令。",
+    "真人职责、main保护、失败PR阻断、LFS双账号锁和Agent接手完成实际演练。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001",
+    "T-002",
+    "T-003"
+  ],
+  "permissions": {
+    "network": "granted: repository connection and official documentation",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user instruction 2026-09-17, initial repository baseline and first task card",
+    "push": "granted: user instruction 2026-09-17, XLingyyy/Hearthward initial baseline",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户已授权读取设计文档、编写第一个小任务、提交推送本仓库。",
+    "TASK-003从本任务拆出工程创建与最小第三人称行走验证；独立验收，不等待两机演练完成。",
+    "完整TASK-000仍待真人职责、远端保护与CI实测、LFS双账号及两机验证，维持Blocked。"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "TASK-015",
+  "title": "背包和伙伴UI状态壳",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": null,
+  "source_refs": [
+    "GDD v0.3 第14章",
+    "Q257",
+    "Q258"
+  ],
+  "dependencies": [
+    "TASK-002"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-001-world-state.md",
+    "docs/contracts/CT-002-companion-command.md"
+  ],
+  "allowed_paths": [
+    "Source/TribeGame/UI/",
+    "Content/Tribe/UI/",
+    "Content/Tribe/Tests/UI/",
+    "docs/tasks/TASK-015.json",
+    "docs/handoffs/TASK-015.md",
+    "docs/qa/evidence/TASK-015/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "只消费契约状态，不创建重复库存；显示重量、委托进度与思考状态。",
+    "fixture和真实数据来源可区分；旧建议最终体验等待R20，不默默代替产品决定。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-025"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
+    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+  ]
+}

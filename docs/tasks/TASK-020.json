@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "id": "TASK-020",
+  "title": "M2小闭环集成与合并后验证",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": null,
+  "source_refs": [
+    "WORKFLOW M2",
+    "GDD v0.3 第12/13/18章"
+  ],
+  "dependencies": [
+    "TASK-010",
+    "TASK-011",
+    "TASK-012",
+    "TASK-013",
+    "TASK-014",
+    "TASK-015"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-001-world-state.md",
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Content/Tribe/Tests/Integration/",
+    "Source/TribeGame/Integration/",
+    "docs/PROJECT_STATE.md",
+    "docs/releases/",
+    "docs/tasks/TASK-020.json",
+    "docs/handoffs/TASK-020.md",
+    "docs/qa/evidence/TASK-020/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "同一SHA中完成采集→实际入库→建造→保存→修改世界→回档，世界与知识一致。",
+    "在打包版本验证，明确本场景没有覆盖的睡眠、刷敌和完整四区；不标记十小时Demo已完成。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-021"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
+    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+  ]
+}

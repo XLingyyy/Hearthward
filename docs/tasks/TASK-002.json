@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "TASK-002",
+  "title": "批准共享契约并建立唯一公共声明",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": null,
+  "source_refs": [
+    "GDD v0.3 第5/10/11/13章"
+  ],
+  "dependencies": [
+    "TASK-000"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-001-world-state.md",
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "docs/contracts/",
+    "docs/architecture/",
+    "docs/decisions/",
+    "Source/TribeGame/Contracts/",
+    "Source/TribeGame/TribeGame.Build.cs",
+    "docs/tasks/TASK-002.json",
+    "docs/handoffs/TASK-002.md",
+    "docs/qa/evidence/TASK-002/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "CT-001/002/003由提供者与消费者审阅，明确Approved版本与真实PR。",
+    "公共声明只存在一处；保存和命令的运行代次规则有可编译夹具。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-024"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。"
+  ]
+}

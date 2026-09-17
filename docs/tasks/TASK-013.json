@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "TASK-013",
+  "title": "世界知识快照与回档隔离",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": null,
+  "source_refs": [
+    "GDD v0.3 第13章",
+    "Q139",
+    "Q140",
+    "Q262",
+    "Q263"
+  ],
+  "dependencies": [
+    "TASK-002"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Source/TribeGame/Save/",
+    "Content/Tribe/Save/",
+    "Content/Tribe/Tests/Save/",
+    "docs/tasks/TASK-013.json",
+    "docs/handoffs/TASK-013.md",
+    "docs/qa/evidence/TASK-013/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "构造快照同时恢复库存、世界与知识，拒绝旧时间线异步动作。",
+    "验证50点保护、损坏快照和新进度容量；未定环境伤害不自行补定。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
+    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+  ]
+}

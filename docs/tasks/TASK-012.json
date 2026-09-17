@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "id": "TASK-012",
+  "title": "伙伴安全委托与多趟采集交付",
+  "status": "Backlog",
+  "updated_at": "2026-09-17",
+  "owner": null,
+  "reviewer": null,
+  "issue_url": null,
+  "branch": null,
+  "source_refs": [
+    "Q111",
+    "Q247",
+    "Q249",
+    "Q252",
+    "Q253"
+  ],
+  "dependencies": [
+    "TASK-002"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-001-world-state.md",
+    "docs/contracts/CT-002-companion-command.md"
+  ],
+  "allowed_paths": [
+    "Source/TribeGame/Companion/",
+    "Content/Tribe/Companion/",
+    "Content/Tribe/Tests/Companion/",
+    "docs/tasks/TASK-012.json",
+    "docs/handoffs/TASK-012.md",
+    "docs/qa/evidence/TASK-012/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "同一目标最多三步，分多趟按实际累计入库，受阻返回营地。",
+    "先fixture后real-model分别记录；虚报库存不得生成物品；未定覆盖行为先获R18/R20决定或限于批准夹具。"
+  ],
+  "non_goals": [
+    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-007",
+    "T-008",
+    "T-009",
+    "T-010",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "not_granted",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
+    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+  ]
+}

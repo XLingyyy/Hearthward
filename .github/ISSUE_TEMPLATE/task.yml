@@ -1,0 +1,41 @@
+name: Development task
+description: 带范围、来源和验收的开发任务
+title: "[TASK] "
+body:
+  - type: input
+    id: task-id
+    attributes:
+      label: 内部TASK编号
+      description: 调度者分配；不是GitHub Issue编号。
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: 目标、来源与非目标
+      description: 引用GDD章节、Q/R和已批准决定，未定规则不能擅自补定。
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 允许修改、禁止修改、共享资产和锁
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 前置任务、契约版本与设计阻塞
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 可观察验收、实际测试和交接要求
+    validations:
+      required: true
+  - type: textarea
+    id: assignment
+    attributes:
+      label: 负责人、审查人、分支、工作目录与调度确认
+      description: 没有确认前保持Backlog；声明本身不是资产锁。
