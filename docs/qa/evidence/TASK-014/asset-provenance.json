@@ -1,0 +1,22 @@
+{
+  "task": "TASK-014",
+  "prototype_only": true,
+  "engine": "UE 5.8.1",
+  "map": "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation",
+  "asset_directory": "/Game/Hearthward/Art/Graybox",
+  "assets": [
+    {"name": "SM_Block100", "source": "/Engine/BasicShapes/Cube", "method": "UE EditorAssetLibrary duplicate; default material replaced with M_Wall", "license": "Epic Unreal Engine bundled content; Unreal Engine license applies, no new standalone license granted"},
+    {"name": "M_Ground", "source": "Project-authored UE constant color and roughness material", "purpose": "Ground"},
+    {"name": "M_Wall", "source": "Project-authored UE constant color and roughness material", "purpose": "Collision walls, ramp and platform"},
+    {"name": "M_Accent", "source": "Project-authored UE constant color and roughness material", "purpose": "Landmark and collision boundaries"},
+    {"name": "M_Route", "source": "Project-authored UE constant color and roughness material", "purpose": "Non-colliding distance stripes"},
+    {"name": "L_GrayboxValidation", "source": "Project-authored native UE actor layout", "purpose": "Independent movement, scale, collision and dependency verification"}
+  ],
+  "additional_engine_references": "Engine basic shapes, text renderer/font and sky resources remain engine references; exact serialized dependency edges are in verification.json",
+  "generation_script": "create_graybox.py; one-shot, refuses overwriting reserved assets",
+  "future_edit_source": "Saved UE assets; script records initial creation and must not silently regenerate over edits",
+  "third_party_downloads": [],
+  "formal_art_task_004_executed": false,
+  "design_source": "GDD v0.3 sections 4 and 15; R24 remains OPEN; all scene dimensions are PROTOTYPE_ONLY",
+  "engineering_reference": "https://dev.epicgames.com/documentation/unreal-engine/designer-01-project-setup-and-level-blockout-in-unreal-engine"
+}

@@ -1,0 +1,146 @@
+{
+  "ok": true,
+  "operation": "playtest.record",
+  "artifacts": [
+    {
+      "type": "playtest_report",
+      "path": "G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough\\report.json"
+    },
+    {
+      "type": "playtest_actions",
+      "path": "G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough\\actions.jsonl"
+    },
+    {
+      "type": "playtest_frames",
+      "path": "G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough\\frames"
+    },
+    {
+      "type": "playtest_video",
+      "path": "G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough\\video.mp4"
+    }
+  ],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [],
+  "payload": {
+    "engine": "ue5",
+    "mode": "game",
+    "game_binary": "G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+    "launch_as_editor_game": true,
+    "project_file": "G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+    "map_path": "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation",
+    "output_dir": "G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough",
+    "report_path": "G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough\\report.json",
+    "duration": 23,
+    "fps": 8,
+    "warmup": 2,
+    "actions": [
+      {
+        "action": "wait",
+        "duration_ms": 1000
+      },
+      {
+        "action": "move",
+        "x": 0,
+        "y": 1,
+        "duration_ms": 2000
+      },
+      {
+        "action": "move",
+        "x": -1,
+        "y": 0,
+        "duration_ms": 3150
+      },
+      {
+        "action": "move",
+        "x": 0,
+        "y": 1,
+        "duration_ms": 3000
+      },
+      {
+        "action": "wait",
+        "duration_ms": 1000
+      },
+      {
+        "action": "move",
+        "x": 0,
+        "y": 1,
+        "duration_ms": 4300
+      },
+      {
+        "action": "wait",
+        "duration_ms": 1000
+      },
+      {
+        "action": "move",
+        "x": -1,
+        "y": 0,
+        "duration_ms": 600
+      },
+      {
+        "action": "move",
+        "x": 0,
+        "y": 1,
+        "duration_ms": 3000
+      },
+      {
+        "action": "wait",
+        "duration_ms": 2000
+      }
+    ],
+    "input_transport": "windows_sendinput",
+    "native_capture": true,
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+      "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation",
+      "-A3PlaytestOutput=G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough",
+      "-A3PlaytestFps=8",
+      "-A3PlaytestDuration=23.0",
+      "-windowed",
+      "-NoSplash",
+      "-log",
+      "-game"
+    ],
+    "process_id": 30056,
+    "report": {
+      "schema_version": "gamefactory3a.ue5.playtest_report.v1",
+      "engine": "ue5",
+      "mode": "game",
+      "status": "passed",
+      "url": "G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+      "output_dir": "G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough",
+      "map": "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation",
+      "fps": 8,
+      "requested_seconds": 23,
+      "recorded_seconds": 10.75,
+      "warmup": 2,
+      "action_count": 10,
+      "executed_actions": [
+        "wait",
+        "move",
+        "move",
+        "move",
+        "wait",
+        "move",
+        "wait",
+        "move",
+        "move",
+        "wait"
+      ],
+      "frames": 86,
+      "video": "G:\\GameFactory\\test_data\\outputs\\hearthward\\20260918_graybox\\pipeline\\TASK-014\\walkthrough\\video.mp4",
+      "game_state": null,
+      "native_report": {
+        "schema_version": "gamefactory3a.ue5.playtest_native_report.v1",
+        "source": "native_recorder",
+        "ok": true,
+        "frames": 86,
+        "errors": []
+      },
+      "warnings": [],
+      "errors": [],
+      "input_failures": []
+    }
+  }
+}

@@ -190,6 +190,17 @@ GPU实测启动参数为 `-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32`
 全部开发控制台入口不在Shipping注册；正式输入面板归TASK-015，持久化/认知快照归迁移后的TASK-016。
 非Editor构建要求本地模型包完整；Build.cs将权重、server及DLL、知识和许可证登记为NonUFS运行依赖。登记成功不能替代完整打包运行验收，实际结果见 [TASK-013交接](../handoffs/TASK-013.md)。
 
+## TASK-014 独立灰盒场景
+
+地图为 `/Game/Hearthward/Tests/Graybox/L_GrayboxValidation`，不修改默认启动地图。
+通过UEClient的 `launch_editor(map_path=..., extra_args=["-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-014/verify_graybox.py"])` 运行两轮PIE。
+结果与截图写入 `Saved/Task014/`；脚本同时检查6个项目资产的引用闭包，以及实际角色移动、墙体/门洞碰撞、坡道、暂停与新PIE出生。
+`create_graybox.py`仅记录初始生成过程；已有资产时拒绝覆盖，后续编辑以已保存UE资产为准，并先核对本单LFS锁。
+
+物理键盘短片沿用公开 `ue.playtest.record`，map_path取014地图，scenario指向本单 `walkthrough-scenario.json`，duration=23、fps=8、warmup=2。
+这段录像使用已有角色与操作，不启动LLM；模型权重缺失的干净源码克隆也可验证本单地图。干净克隆先取回Git LFS资产，再用UEClient构建HearthwardEditor并运行同一验证脚本。
+本机独立克隆不等于另一真人/第二台机器验证；T-003双账号锁竞争继续独立登记。
+
 ## 仓库检查命令
 
 ```bash
