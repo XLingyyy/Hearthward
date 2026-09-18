@@ -1,0 +1,36 @@
+{
+  "screens": {
+    "thinking.png": "PASS: actual model status visible",
+    "completed.png": "PASS: live 2/2 delivery separate from NPC reply",
+    "blocked.png": "PASS: real resource shortage reason and 0/2 visible",
+    "stale.png": "PASS: invalidated timeline message and no NPC line",
+    "inventory.png": "PASS: inventory only, paused, zero weight",
+    "final-input.png": "PASS: final standalone game, focused dark Chinese text on light input, entire panel fits",
+    "final-reply.png": "PASS: final standalone real model reply visible with no overlap or clipping"
+  },
+  "first_capture_size": [
+    2229,
+    1389
+  ],
+  "capture_method": "UE Shot showui; includes editor chrome in PIE",
+  "fixed_issues": [
+    "UIOnly non-focusable root fixed; mounted editable child focus verified",
+    "Both ForegroundColor and FocusedForegroundColor explicitly set; final Chinese entry readable"
+  ],
+  "excluded": [
+    "Full global suggestions generator",
+    "IME candidate composition across different input methods",
+    "Controller and key rebinding",
+    "Shipping and packaged build"
+  ],
+  "final_capture_size": [
+    1922,
+    1128
+  ],
+  "final_launch_resolution": [
+    1280,
+    720
+  ],
+  "dpi_note": "Windows window capture includes border/DPI scaling; do not equate physical capture dimensions with requested game resolution",
+  "coverage_binding": "31 PIE checks and five screenshots precede font/color-only change; final build and standalone keyboard/mouse visual check cover final style, gameplay/binding code unchanged"
+}

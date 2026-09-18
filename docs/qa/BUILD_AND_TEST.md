@@ -247,3 +247,9 @@ Epic官方有编辑器与命令行自动化入口；锁定版本核对后，测�
 可选任务范围检查从指定base读取已审批范围，覆盖已提交、暂存、未暂存及未跟踪路径；基线必须由团队指定，
 不能自己挑一个更宽松的base。CI默认只执行结构检查和工具自测，**未自动接入每个PR的任务范围核验**；
 该核验先由评审者按真实任务、可信基线执行。后续接入CI属于单独工程任务。
+
+## TASK-015 伙伴UI
+
+开发模式执行 `Hearthward.Companion.CreateTest` 后，30米内T打开、Enter发送、Esc关闭。Widget接真实本地模型和伙伴执行器；夹具准备与正式地图隔离。背包Tab打开仍默认暂停，对话本身不暂停。
+通过UEClient构建HearthwardEditor并用launch_editor的extra_args传入 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-015/verify_ui_pie.py`，运行两轮PIE；真实模型验证可追加 `-HearthwardAIBackend=vulkan`、`-HearthwardAIGpuLayers=32`。原始结果与截图写入Saved/Task015，正式证据见[015交接](../handoffs/TASK-015.md)。
+自动测试调用实际Widget事件处理入口；物理键盘/鼠标另行实测，不能混为同一种输入证据。TASK015_INTERACTIVE=1只用于测试结束后保留PIE供手动检查，默认测试自动结束PIE。

@@ -41,4 +41,6 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 [当前设计](design/CURRENT.md)给出摘要和来源；[R项](design/OPEN_QUESTIONS.md)列出所有未定点。
 当前Word位于docs根目录；归档和机械提取文保留历史内容，按章／Q号查阅时同时核对DSGN-001，不能用归档覆盖已批准修订。
 
-当前[TASK-014](tasks/TASK-014.md)建立独立灰盒验证场，地图 /Game/Hearthward/Tests/Graybox/L_GrayboxValidation；现有玩法复用，测试尺寸不转为正式设计。用户授权实现、提交、推送，验证和克隆结果见[014交接](handoffs/TASK-014.md)。
+[TASK-014](tasks/TASK-014.md)建立独立灰盒验证场，地图 /Game/Hearthward/Tests/Graybox/L_GrayboxValidation；现有玩法复用，测试尺寸不转为正式设计。用户授权实现、提交、推送，验证和克隆结果见[014交接](handoffs/TASK-014.md)。
+
+当前[TASK-015](tasks/TASK-015.md)提供原生伙伴自由输入、模型思考/台词和真实委托进度；临时T键打开，Enter发送，Esc关闭。仍需开发命令生成独立伙伴夹具；不自动添加到地图。用户授权实现和提交推送，证据见[015交接](handoffs/TASK-015.md)。

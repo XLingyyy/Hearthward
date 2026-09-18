@@ -10,7 +10,24 @@ class HEARTHWARD_API AHearthwardHUD : public AHUD
 {
     GENERATED_BODY()
 public:
+    virtual void BeginPlay() override;
+    virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     virtual void DrawHUD() override;
+
+    UFUNCTION(BlueprintCallable) void ToggleDialogue();
+    UFUNCTION(BlueprintCallable) void CloseDialogue();
+    UFUNCTION(BlueprintCallable) bool SubmitDialogue(const FString& Text);
+    UFUNCTION(BlueprintCallable) void CancelDialogueReply();
+    UFUNCTION(BlueprintCallable) void CancelDialogueTask();
+    UFUNCTION(BlueprintPure) bool IsDialogueOpen() const { return DialogueWidget != nullptr; }
+    UFUNCTION(BlueprintPure) class UHearthwardDialogueWidget* GetDialogueWidget() const { return DialogueWidget; }
+    UFUNCTION(BlueprintPure) FString GetDialogueStatus() const;
+    UFUNCTION(BlueprintPure) FString GetDialogueProgress() const;
+    UFUNCTION(BlueprintPure) FString GetDialogueReply() const;
+    UFUNCTION(BlueprintPure) FString GetDialogueWeight() const;
+    bool CanSendDialogue() const;
+    bool CanCancelDialogueReply() const;
+    bool CanCancelDialogueTask() const;
 
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
     void ToggleInventory();
@@ -19,6 +36,10 @@ public:
     bool IsInventoryOpen() const { return bInventoryOpen; }
 
 private:
+    UPROPERTY() TObjectPtr<class UHearthwardDialogueWidget> DialogueWidget;
+    TWeakObjectPtr<class AHearthwardCompanionFixture> DialogueCompanion;
+    FString DialogueFeedback;
+    bool bPreviousCursor = false;
     void DrawInventory(const class UHearthwardInventoryComponent& Inventory);
     bool bInventoryOpen = false;
     bool bPausedByInventory = false;
