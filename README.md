@@ -35,7 +35,7 @@ TASK-004基础资产准备仍只有任务单、未执行；正式美术、完整
 `Hearthward.AI.CancelReply` 取消本次推理回复，已接受的采集继续。直接结构化开发入口 `Hearthward.Companion.Collect 10` 仍可用于执行器排查。
 `Hearthward.Companion.Cancel` 在30米内取消，保留已采物资；Tab可暂停全过程。开发命令不在Shipping注册，也不修改地图。
 
-TASK-013的Development Editor与Game构建通过，68项本地AI运行依赖已核对齐全；原生LocalAI/伙伴共4项、仓库工具31项通过。真实模型在UE中接受10木材委托并实际完成采集入库。最终Vulkan测试覆盖10类输入、两轮PIE共43项检查，CPU缺文件/进程退出恢复共9项通过。RTX4060 Laptop 8GB、32层GPU卸载，本轮首次请求含加载8.93秒，后续约2.0–3.0秒；CPU两次含加载响应约28–32秒。完整结果见 [TASK-013交接](docs/handoffs/TASK-013.md)。
+TASK-013的Development Editor与Game构建通过，68项本地AI运行依赖已核对齐全；原生LocalAI/伙伴共4项、仓库工具31项通过。真实模型在UE中接受10木材委托并实际完成采集入库。最终Vulkan测试覆盖10类输入、两轮PIE共43项检查，CPU缺文件/进程退出恢复共9项通过。RTX4060 Laptop 8GB、32层GPU卸载，本轮首次请求含加载8.93秒，后续约2.0–3.0秒；CPU两次含加载响应约28–32秒。实现提交 4a75c7514474b7d901028a929482aa859c404d9b；测试覆盖与绑定见 [TASK-013交接](docs/handoffs/TASK-013.md)。
 模型台词仍会出现多余追问和“已经在营地却说等回营”的措辞问题；结构化动作通过不等同于对话质量或认知系统全面验收。真实库存由UE保持，玩家虚报数量不会生成物品。
 已知引擎启动期13条Condition failed诊断仍有记录；打包、两机验证和完整M0验收未运行。
 CPU为兼容默认，可在 `Config/DefaultGame.ini` 切换Vulkan与GPU层数；本机性能不代表所有玩家硬件。其他模块证据见 [PROJECT_STATE](docs/PROJECT_STATE.md)。

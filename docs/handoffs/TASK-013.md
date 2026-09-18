@@ -48,3 +48,7 @@
 复现入口见 [BUILD_AND_TEST](../qa/BUILD_AND_TEST.md)。根README、设计入口、项目状态与Agent约定同步本单口径。
 用户已明确授权本单代码、设计修订和证据提交推送。模型和下载运行库按约定留在被忽略的项目目录，不加入源码提交；提交绑定见下文。
 参考：[llama.cpp server](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)、[JSON Schema约束](https://github.com/ggml-org/llama.cpp/blob/master/grammars/README.md)、[Qwen原模型](https://huggingface.co/Qwen/Qwen3.5-4B)、[Unsloth GGUF](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF)。
+
+## 提交绑定
+
+实现提交：4a75c7514474b7d901028a929482aa859c404d9b。本单构建与运行测试发生在该提交前的工作树，覆盖范围及最终失败恢复定向复测按上文说明；提交前只更新权限/交接说明、规范化证据空白与Git路径大小写，未修改已验证运行代码。后续绑定提交仅更新文档与证据元数据。

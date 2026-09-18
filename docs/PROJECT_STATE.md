@@ -8,7 +8,7 @@
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
 | 当前分支 | codex/TASK-013-local-qwen；基于c24a325eafad7ff9783f26815605a3f1c9a97fc5堆叠开发，尚未合并main |
-| 游戏实现提交 | TASK-012：6abcc11880dd8b28a251fbbdc893b37fcdfa28e8；测试覆盖绑定见交接 |
+| 游戏实现提交 | TASK-013：4a75c7514474b7d901028a929482aa859c404d9b；测试覆盖绑定见TASK-013交接 |
 | Git LFS | 已启用；4个灰盒资产原锁保留，本单当前设计DOCX另已取得锁，集成交接前保留 |
 | 工具链 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
