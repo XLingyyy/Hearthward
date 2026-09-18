@@ -41,5 +41,6 @@ protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 
 private:
+    friend class UHearthwardSaveSubsystem;
     FHearthwardClockState Clock;
 };

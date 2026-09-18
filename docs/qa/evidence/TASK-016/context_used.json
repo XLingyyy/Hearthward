@@ -1,0 +1,12 @@
+{
+  "task": "TASK-016",
+  "base_commit": "f2a8e3df41febcc4f4f0c4235fb477bdcb7e564e",
+  "engine": "UE 5.8.1",
+  "design": ["GDD v0.3 section 13 and Q139-145/Q262-265", "docs/contracts/CT-003-save-load.md", "docs/design/DSGN-001-local-inference.md"],
+  "engineering_reference": "https://dev.epicgames.com/documentation/unreal-engine/saving-and-loading-your-game-in-unreal-engine",
+  "framework_context": ["agent_skills/setting_overview.md", "agent_skills/engine_context/engine_overview.md", "agent_skills/code_gen/mechanic/game_generation.md", "agent_skills/engine_context/ue5_api.md"],
+  "application": "Existing native Hearthward module integration and task execution under user authorization; no new asset-generation pipeline, standalone plugin or browser publication.",
+  "local_reference": ["Source/Hearthward/Tests/StorageTests.cpp", "Source/Hearthward/Companion/HearthwardCompanionCommand.h", "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp"],
+  "execution": "UEClient public build, testing and runtime APIs; no adapter internals changed.",
+  "prototype_boundary": "Explicit development companion fixture only; no production safety or unresolved R22 defaults inferred."
+}

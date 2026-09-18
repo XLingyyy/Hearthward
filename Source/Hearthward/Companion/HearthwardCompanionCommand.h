@@ -70,6 +70,7 @@ public:
     int32 GetRequested() const { return Requested; }
     int32 GetDelivered() const { return Delivered; }
 private:
+    friend class UHearthwardSaveSubsystem;
     FHearthwardCommandTicket Pending, Active;
     int64 Revision = 0;
     FName ItemId;

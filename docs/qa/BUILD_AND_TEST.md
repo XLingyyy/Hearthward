@@ -253,3 +253,11 @@ Epic官方有编辑器与命令行自动化入口；锁定版本核对后，测�
 开发模式执行 `Hearthward.Companion.CreateTest` 后，30米内T打开、Enter发送、Esc关闭。Widget接真实本地模型和伙伴执行器；夹具准备与正式地图隔离。背包Tab打开仍默认暂停，对话本身不暂停。
 通过UEClient构建HearthwardEditor并用launch_editor的extra_args传入 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-015/verify_ui_pie.py`，运行两轮PIE；真实模型验证可追加 `-HearthwardAIBackend=vulkan`、`-HearthwardAIGpuLayers=32`。原始结果与截图写入Saved/Task015，正式证据见[015交接](../handoffs/TASK-015.md)。
 自动测试调用实际Widget事件处理入口；物理键盘/鼠标另行实测，不能混为同一种输入证据。TASK015_INTERACTIVE=1只用于测试结束后保留PIE供手动检查，默认测试自动结束PIE。
+
+## TASK-016 世界知识快照
+
+先创建012伙伴夹具，执行 `Hearthward.Save enable`，再执行 `Hearthward.Save new` 建立初始节点。`manual` / `auto` 新增节点，`list` 查看全池，`load <GUID>` 加载，`lock <GUID>` / `unlock <GUID>` / `delete <GUID>` 管理节点。入口均属于非Shipping原型。
+
+原生筛选 `Hearthward.Save`，预期2项；PIE脚本为 `docs/qa/evidence/TASK-016/verify_save_pie.py`。通过UEClient launch_editor加入 `-ExecutePythonScript=<脚本绝对路径>`、`-HearthwardSaveTestPool=<新生成GUID>`、`-HearthwardAIBackend=vulkan`、`-HearthwardAIGpuLayers=32`。唯一测试池必须显式指定，防止污染人工存档。脚本运行两轮PIE，包含真实一分钟自动保存、真实模型HTTP中回档和磁盘损坏拒绝，结果输出Saved/Task016。
+
+保存协调器公开状态通过Blueprint读取；`SetAutoMinutes`限定1—60，`SetPrototypeSafety`仅作为当前缺少生产危险系统时的显式夹具输入，不代表已经识别真实战斗/溺水/倒地。未接入模块、地图不同或参与者缺失时不能声称完整恢复。

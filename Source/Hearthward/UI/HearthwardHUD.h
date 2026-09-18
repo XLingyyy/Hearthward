@@ -36,6 +36,7 @@ public:
     bool IsInventoryOpen() const { return bInventoryOpen; }
 
 private:
+    UFUNCTION() void SnapshotRestored();
     UPROPERTY() TObjectPtr<class UHearthwardDialogueWidget> DialogueWidget;
     TWeakObjectPtr<class AHearthwardCompanionFixture> DialogueCompanion;
     FString DialogueFeedback;

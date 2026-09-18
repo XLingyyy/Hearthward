@@ -40,6 +40,7 @@ public:
     FHearthwardInventoryChanged OnInventoryChanged;
 
 private:
+    friend class UHearthwardSaveSubsystem;
     friend class UHearthwardStorageSubsystem;
     FGuid ContainerId;
     FHearthwardInventoryState State;
