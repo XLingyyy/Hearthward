@@ -54,6 +54,7 @@ public:
     UPROPERTY(BlueprintReadOnly) FString BlockReason;
 
 private:
+    friend class UHearthwardSaveSubsystem;
     bool At(const AActor* Target) const;
     bool MoveTowards(const AActor* Target, float DeltaSeconds);
     void ReturnBlocked(const FString& Reason);

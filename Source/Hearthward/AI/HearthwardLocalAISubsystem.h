@@ -22,6 +22,7 @@ public:
     bool SubmitPlayerText(AActor* Speaker, AHearthwardCompanionFixture* Companion, const FString& Text);
     UFUNCTION(BlueprintCallable, Category="Hearthward|AI")
     void CancelPending();
+    void ResetForSnapshot();
     UFUNCTION(BlueprintPure, Category="Hearthward|AI")
     FString GetStatus() const { return Status; }
     UFUNCTION(BlueprintPure, Category="Hearthward|AI")

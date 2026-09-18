@@ -22,7 +22,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Hearthward|Inventory")
     FGuid GetContainerId() const { return State.GetContainerId(); }
 
-    // Integration hook only: future save coordination must restore containers before advancing.
+    // Invalidates outstanding operations; save coordination supplies restored container contents separately.
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
     void AdvanceTimeline() { State.AdvanceTimeline(); }
 
@@ -34,5 +34,6 @@ public:
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 private:
+    friend class UHearthwardSaveSubsystem;
     FHearthwardStorageState State;
 };

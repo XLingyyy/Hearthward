@@ -2,12 +2,12 @@
   "schema_version": 1,
   "id": "TASK-016",
   "title": "世界知识快照与回档隔离",
-  "status": "Backlog",
+  "status": "Blocked",
   "updated_at": "2026-09-18",
-  "owner": null,
+  "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": null,
+  "branch": "codex/TASK-016-save-snapshots",
   "source_refs": [
     "GDD v0.3 第13章",
     "Q139",
@@ -16,7 +16,12 @@
     "Q263"
   ],
   "dependencies": [
-    "TASK-002"
+    "TASK-002",
+    "TASK-005",
+    "TASK-010",
+    "TASK-012",
+    "TASK-013",
+    "TASK-015"
   ],
   "blocked_by": [],
   "contracts": [
@@ -24,11 +29,30 @@
   ],
   "allowed_paths": [
     "Source/Hearthward/Save/",
-    "Content/Tribe/Save/",
-    "Content/Tribe/Tests/Save/",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "Source/Hearthward/Inventory/HearthwardInventoryComponent.h",
+    "Source/Hearthward/Inventory/HearthwardStorageSubsystem.h",
+    "Source/Hearthward/Inventory/HearthwardStorageState.h",
+    "Source/Hearthward/Time/HearthwardWorldClockSubsystem.h",
+    "Source/Hearthward/Time/HearthwardClockState.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Companion/HearthwardCompanionCommand.h",
+    "Source/Hearthward/Actions/HearthwardTimedActionComponent.h",
+    "Source/Hearthward/Interaction/HearthwardInteractionComponent.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.h",
+    "Source/Hearthward/UI/HearthwardHUDDialogue.cpp",
     "docs/tasks/TASK-016.json",
+    "docs/tasks/TASK-016.md",
     "docs/handoffs/TASK-016.md",
-    "docs/qa/evidence/TASK-016/"
+    "docs/qa/evidence/TASK-016/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md"
   ],
   "forbidden_paths": [
     "docs/design/archive/"
@@ -47,15 +71,18 @@
     "T-012"
   ],
   "permissions": {
-    "network": "not_granted",
+    "network": "granted: official references and GitHub task push",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted: user requested TASK-016",
+    "push": "granted: user requested direct push",
     "merge": "not_granted"
   },
   "notes": [
-    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
-    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。",
-    "用户将013改为本地模型接入；原013存档范围完整转存至016，未执行。"
+    "用户明确授权继续016并自行提交推送；将旧Tribe预留范围对齐现有Hearthward及必要恢复集成和README。",
+    "CT-003开发快照格式仅在显式启用的非Shipping伙伴夹具中运行；本轮不声明完整GDD世界已实现。",
+    "使用USaveGame内存序列化和Windows原子替换；同一原型池最多50点，临时文件不列为节点。",
+    "危险标志由显式测试夹具设置，正式检测与R22边界未定；新进度的初始位置由启用时夹具确定。",
+    "Issue、独立评审和正式prototype审批仍缺失，流程Blocked；用户授权的本地实现与验证继续。",
+    "Editor最终构建、原生2项、两轮PIE54项、仓库工具31项通过；最后上下文预算修改由原生定向验证覆盖，详见交接。"
   ]
 }

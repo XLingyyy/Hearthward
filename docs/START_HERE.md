@@ -17,7 +17,7 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 [TASK-011](tasks/TASK-011.md) 距离交互与五秒动作已提交推送。
 [TASK-012](tasks/TASK-012.md) 伙伴安全委托与多趟交付已提交推送。
 [TASK-013](tasks/TASK-013.md) 接入本地Qwen3.5 4B，运行库与GGUF放入项目，由UE启动；轻量规则/RAG/可知状态过滤后做一次生成，仍通过世界执行器校验。模型版本见 `config/local-ai.lock.json`，验证状态见 [TASK-013交接](handoffs/TASK-013.md)。
-用户批准当前设计原件同步修订，见 [DSGN-001](design/DSGN-001-local-inference.md)。原013存档任务保留为TASK-016；TASK-004继续由用户安排。
+用户批准当前设计原件同步修订，见 [DSGN-001](design/DSGN-001-local-inference.md)。原013存档范围由TASK-016继续实现；TASK-004继续由用户安排。
 
 ## 新成员第一次
 
@@ -43,4 +43,6 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 
 [TASK-014](tasks/TASK-014.md)建立独立灰盒验证场，地图 /Game/Hearthward/Tests/Graybox/L_GrayboxValidation；现有玩法复用，测试尺寸不转为正式设计。用户授权实现、提交、推送，验证和克隆结果见[014交接](handoffs/TASK-014.md)。
 
-当前[TASK-015](tasks/TASK-015.md)提供原生伙伴自由输入、模型思考/台词和真实委托进度；临时T键打开，Enter发送，Esc关闭。仍需开发命令生成独立伙伴夹具；不自动添加到地图。用户授权实现和提交推送，证据见[015交接](handoffs/TASK-015.md)。
+[TASK-015](tasks/TASK-015.md)提供原生伙伴自由输入、模型思考/台词和真实委托进度；临时T键打开，Enter发送，Esc关闭。仍需开发命令生成独立伙伴夹具；不自动添加到地图。用户授权实现和提交推送，证据见[015交接](handoffs/TASK-015.md)。
+
+当前[TASK-016](tasks/TASK-016.md)接入现有伙伴夹具的世界/库存/知识快照与全局50点原型档池；开发入口和验证边界见[016交接](handoffs/TASK-016.md)。危险检测、正式初始节点及完整世界模块仍待后续接入。

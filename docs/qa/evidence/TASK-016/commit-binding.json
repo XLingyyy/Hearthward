@@ -1,0 +1,34 @@
+{
+  "implementation_commit": "17f6008b55f102936aa6c6056b0bab5326088401",
+  "branch": "codex/TASK-016-save-snapshots",
+  "base_commit": "f2a8e3df41febcc4f4f0c4235fb477bdcb7e564e",
+  "final_editor_build": {
+    "result": "PASS",
+    "evidence": "build.json",
+    "coverage": "Full implementation working tree immediately before commit"
+  },
+  "final_native_tests": {
+    "result": "PASS",
+    "passed": 2,
+    "evidence": "automation-index.json",
+    "coverage": "Full implementation including last context budget adjustment and its long-history test"
+  },
+  "pie": {
+    "result": "PASS",
+    "checks": 54,
+    "world_sessions": 2,
+    "evidence": "verification.json",
+    "coverage": "Save/restore, pool rotation and initialized snapshot fields as committed; actual Qwen HTTP and filtered history exercised. After PIE, RecentKnowledge was bounded to 8 records / 512 characters and a native long-history test was added. That narrow change was built and tested natively; full PIE was not rerun after it."
+  },
+  "visual": {
+    "reviewed": true,
+    "evidence": "restored.png",
+    "coverage": "Restored HUD and world before history-budget-only edit"
+  },
+  "repository": {
+    "passed": true,
+    "tool_tests": 31,
+    "evidence": "workflow-validation.json"
+  },
+  "binding_commit": "This follow-up changes documentation/evidence only; no runtime or test source changes."
+}

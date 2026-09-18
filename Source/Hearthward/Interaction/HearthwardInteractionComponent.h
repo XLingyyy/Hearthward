@@ -31,6 +31,7 @@ public:
     EHearthwardInteractionStatus GetStatus() const { return Status; }
     uint32 GetFeedbackRevision() const { return FeedbackRevision; }
 private:
+    friend class UHearthwardSaveSubsystem;
     EHearthwardInteractionStatus ValidateTarget(UHearthwardInteractionTargetComponent* Target) const;
     void SetStatus(EHearthwardInteractionStatus Value) { Status = Value; ++FeedbackRevision; }
     void Cancel(EHearthwardInteractionStatus Reason);

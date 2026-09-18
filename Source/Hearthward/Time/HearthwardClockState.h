@@ -14,5 +14,6 @@ public:
     double GetMinuteOfDay() const { return FMath::Fmod(GetElapsedCalendarMinutes(), 1440.0); }
 
 private:
+    friend class UHearthwardSaveSubsystem;
     double ActivePlaySeconds = 0.0;
 };

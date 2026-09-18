@@ -1,4 +1,5 @@
 #include "HearthwardHUD.h"
+#include "../Save/HearthwardSaveSubsystem.h"
 #include "HearthwardDialogueWidget.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "../Companion/HearthwardCompanionFixture.h"
@@ -10,6 +11,7 @@
 void AHearthwardHUD::BeginPlay()
 {
     Super::BeginPlay();
+    GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this, &AHearthwardHUD::SnapshotRestored);
 #if !UE_BUILD_SHIPPING
     // R23: temporary prototype key, kept in the UI input component.
     EnableInput(GetOwningPlayerController());
@@ -18,8 +20,17 @@ void AHearthwardHUD::BeginPlay()
 }
 void AHearthwardHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
+    GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.RemoveDynamic(this, &AHearthwardHUD::SnapshotRestored);
     CloseDialogue();
     Super::EndPlay(Reason);
+}
+void AHearthwardHUD::SnapshotRestored()
+{
+    CloseDialogue();
+    DialogueFeedback.Reset(); DialogueCompanion.Reset();
+    InteractionFeedbackUntil = 0; InterruptionVisibleUntil = 0;
+    PreviousStatus = EHearthwardTimedActionStatus::Idle;
+    ObservedPawn.Reset();
 }
 void AHearthwardHUD::ToggleDialogue()
 {

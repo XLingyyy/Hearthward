@@ -44,6 +44,7 @@ public:
     }
 
 private:
+    friend class UHearthwardSaveSubsystem;
     struct FCompleted
     {
         FGuid PersonalId;

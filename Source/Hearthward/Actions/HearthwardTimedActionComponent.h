@@ -38,6 +38,7 @@ public:
     FHearthwardTimedActionEvent OnInterrupted;
 
 private:
+    friend class UHearthwardSaveSubsystem;
     UFUNCTION()
     void OnOwnerDamaged(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
         AController* InstigatedBy, AActor* DamageCauser);
