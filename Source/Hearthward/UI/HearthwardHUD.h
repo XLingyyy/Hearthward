@@ -10,6 +10,22 @@ class HEARTHWARD_API AHearthwardHUD : public AHUD
 {
     GENERATED_BODY()
 public:
+    UPROPERTY(BlueprintReadOnly) TObjectPtr<class UHearthwardScreenWidget> Screen;
+    UFUNCTION(BlueprintCallable) void OpenPause();
+    UFUNCTION(BlueprintCallable) void OpenMap();
+    UFUNCTION(BlueprintCallable) void OpenSkills();
+    UFUNCTION(BlueprintCallable) void OpenJournal();
+    void SprintStart();
+    void SprintStop();
+    void Attack();
+    void HeavyAttack();
+    void Shoot();
+    void Eat();
+    void Heal();
+    void Throw();
+    void CompanionWait();
+    void CompanionFollow();
+    void CompanionAttack();
     UFUNCTION(BlueprintCallable) void ToggleStorageMenu();
     UFUNCTION(BlueprintCallable) void CloseStorageMenu();
     UFUNCTION(BlueprintPure) bool IsStorageMenuOpen() const { return StorageWidget != nullptr; }

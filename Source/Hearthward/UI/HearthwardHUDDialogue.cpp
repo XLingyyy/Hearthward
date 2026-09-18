@@ -1,4 +1,8 @@
 #include "HearthwardHUD.h"
+#include "HearthwardScreenWidget.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 #include "../Save/HearthwardSaveSubsystem.h"
 #include "HearthwardDialogueWidget.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
@@ -11,6 +15,11 @@
 void AHearthwardHUD::BeginPlay()
 {
     Super::BeginPlay();
+    if(!FParse::Param(FCommandLine::Get(),TEXT("HearthwardLegacyUI")))
+    {
+        Screen=CreateWidget<UHearthwardScreenWidget>(GetOwningPlayerController());
+        Screen->AddToViewport(10); Screen->InitializeScreen(this);
+    }
     GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this, &AHearthwardHUD::SnapshotRestored);
 #if !UE_BUILD_SHIPPING
     // R23: temporary prototype key, kept in the UI input component.
@@ -18,6 +27,22 @@ void AHearthwardHUD::BeginPlay()
     InputComponent->BindKey(EKeys::T,IE_Pressed,this,&AHearthwardHUD::ToggleDialogue);
     InputComponent->BindKey(EKeys::R,IE_Pressed,this,&AHearthwardHUD::ToggleStorageMenu).bExecuteWhenPaused = true;
     InputComponent->BindKey(EKeys::F6,IE_Pressed,this,&AHearthwardHUD::ToggleSaveMenu).bExecuteWhenPaused = true;
+    InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::P,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::M,IE_Pressed,this,&AHearthwardHUD::OpenMap).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::K,IE_Pressed,this,&AHearthwardHUD::OpenSkills).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::J,IE_Pressed,this,&AHearthwardHUD::OpenJournal).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::LeftShift,IE_Pressed,this,&AHearthwardHUD::SprintStart);
+    InputComponent->BindKey(EKeys::LeftShift,IE_Released,this,&AHearthwardHUD::SprintStop);
+    InputComponent->BindKey(EKeys::LeftMouseButton,IE_Pressed,this,&AHearthwardHUD::Attack);
+    InputComponent->BindKey(EKeys::RightMouseButton,IE_Pressed,this,&AHearthwardHUD::Shoot);
+    InputComponent->BindKey(EKeys::Q,IE_Pressed,this,&AHearthwardHUD::HeavyAttack);
+    InputComponent->BindKey(EKeys::Two,IE_Pressed,this,&AHearthwardHUD::Eat);
+    InputComponent->BindKey(EKeys::One,IE_Pressed,this,&AHearthwardHUD::Heal);
+    InputComponent->BindKey(EKeys::Four,IE_Pressed,this,&AHearthwardHUD::Throw);
+    InputComponent->BindKey(EKeys::Z,IE_Pressed,this,&AHearthwardHUD::CompanionWait);
+    InputComponent->BindKey(EKeys::X,IE_Pressed,this,&AHearthwardHUD::CompanionFollow);
+    InputComponent->BindKey(EKeys::C,IE_Pressed,this,&AHearthwardHUD::CompanionAttack);
 #endif
 }
 void AHearthwardHUD::EndPlay(const EEndPlayReason::Type Reason)
@@ -30,6 +55,7 @@ void AHearthwardHUD::EndPlay(const EEndPlayReason::Type Reason)
 }
 void AHearthwardHUD::SnapshotRestored()
 {
+    if(Screen) Screen->OpenPage(TEXT("hud"));
     CloseStorageMenu();
     CloseDialogue();
     DialogueFeedback.Reset(); DialogueCompanion.Reset();
@@ -39,6 +65,7 @@ void AHearthwardHUD::SnapshotRestored()
 }
 void AHearthwardHUD::ToggleDialogue()
 {
+    if(Screen) { Screen->ExecuteAction(TEXT("page:dialogue")); return; }
     if (IsSaveMenuOpen() || IsStorageMenuOpen()) return;
     if(DialogueWidget) { CloseDialogue(); return; }
     if(!GetOwningPawn() || bInventoryOpen || GetWorld()->IsPaused()) return;
@@ -63,6 +90,22 @@ void AHearthwardHUD::ToggleDialogue()
     Player->bShowMouseCursor=true;
     DialogueWidget->FocusDraft();
 }
+
+void AHearthwardHUD::OpenPause() { if(Screen) Screen->OpenPage(TEXT("pause")); }
+void AHearthwardHUD::OpenMap() { if(Screen) Screen->OpenPage(TEXT("map")); }
+void AHearthwardHUD::OpenSkills() { if(Screen) Screen->OpenPage(TEXT("skills")); }
+void AHearthwardHUD::OpenJournal() { if(Screen) Screen->OpenPage(TEXT("journal")); }
+void AHearthwardHUD::SprintStart() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->SetSprinting(true); }
+void AHearthwardHUD::SprintStop() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->SetSprinting(false); }
+void AHearthwardHUD::Attack() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->Attack(); }
+void AHearthwardHUD::HeavyAttack() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->HeavyAttack(); }
+void AHearthwardHUD::Shoot() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->Shoot(); }
+void AHearthwardHUD::Eat() { if(Screen) Screen->ExecuteAction(TEXT("quick:1")); }
+void AHearthwardHUD::Heal() { if(Screen) Screen->ExecuteAction(TEXT("quick:0")); }
+void AHearthwardHUD::Throw() { if(Screen) Screen->ExecuteAction(TEXT("quick:3")); }
+void AHearthwardHUD::CompanionWait() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->OrderCompanion(TEXT("wait")); }
+void AHearthwardHUD::CompanionFollow() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->OrderCompanion(TEXT("follow")); }
+void AHearthwardHUD::CompanionAttack() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->OrderCompanion(TEXT("attack")); }
 void AHearthwardHUD::CloseDialogue()
 {
     if(!DialogueWidget) return;

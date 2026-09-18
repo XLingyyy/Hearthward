@@ -1,4 +1,5 @@
 #include "HearthwardCharacter.h"
+#include "Gameplay/HearthwardGameplayComponent.h"
 #include "Actions/HearthwardTimedActionComponent.h"
 #include "Inventory/HearthwardInventoryComponent.h"
 #include "UI/HearthwardHUD.h"
@@ -21,6 +22,7 @@
 
 AHearthwardCharacter::AHearthwardCharacter()
 {
+    Gameplay = CreateDefaultSubobject<UHearthwardGameplayComponent>(TEXT("Gameplay"));
     TimedAction = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("TimedAction"));
     Inventory = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("Inventory"));
     Interaction = CreateDefaultSubobject<UHearthwardInteractionComponent>(TEXT("Interaction"));
@@ -141,6 +143,7 @@ void AHearthwardCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHearthwardCharacter::Move(const FInputActionValue& Value)
 {
+    if(Gameplay->Enabled && Gameplay->Health<=0) return;
     const FVector2D Axis = Value.Get<FVector2D>();
     if (!Axis.IsNearlyZero()) TimedAction->InterruptAction();
     const FRotator Yaw(0.0f, GetControlRotation().Yaw, 0.0f);
@@ -165,5 +168,6 @@ void AHearthwardCharacter::ToggleInventory()
 
 void AHearthwardCharacter::Interact()
 {
+    if (Gameplay->Enabled && Gameplay->ActivateNearby()) return;
     Interaction->InteractNearest();
 }

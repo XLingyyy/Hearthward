@@ -7,8 +7,8 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FInventoryCapacityTest, "Hearthward.Inventory.E
 bool FInventoryCapacityTest::RunTest(const FString& Parameters)
 {
     FHearthwardInventoryState Inventory;
-    for (const auto& Item : HearthwardBasicItems())
-        TestTrue(TEXT("Known item accepted"), Inventory.Add(Item.Id, 1) == EHearthwardInventoryResult::Success);
+    for (const FName Id : {TEXT("wood"),TEXT("stone"),TEXT("ore"),TEXT("meat"),TEXT("arrow")})
+        TestTrue(TEXT("Original basic item accepted"), Inventory.Add(Id, 1) == EHearthwardInventoryResult::Success);
     TestEqual(TEXT("Five-item weight is exactly 4.55"), Inventory.GetWeightHundredths(), int64(455));
     FHearthwardInventoryState Arrows;
     for (int32 N = 0; N < 2000; ++N) Arrows.Add(TEXT("arrow"), 1);

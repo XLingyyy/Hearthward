@@ -283,3 +283,30 @@ Epic官方有编辑器与命令行自动化入口；锁定版本核对后，测�
 UEClient构建HearthwardEditor后，以Bootstrap地图和 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-019/verify_storage_pie.py`、每次全新的 `-HearthwardSaveTestPool=<GUID>` 启动。默认两轮PIE共49项（含五类选项强制GC回归），结果和截图位于Saved/Task019。TASK019_PHYSICAL_ONLY=1只运行最终UI的3项定向检查，TASK019_INTERACTIVE=1结束后保留视口。测试物品来自显式脚本授予，未写入地图或正式经济。
 
 实键：150cm内R打开营地仓储，选物品、输入整数、点击存入/取出；Esc/R关闭，Tab/F6切换。世界暂停，仅释放自己取得的暂停；每次转移复核当前访问与epoch，回档关闭菜单。`.agent-local/task019-record`存在时按018方式连续保存原生截图及状态轨迹。正式键位、营地解锁和兄弟转交未实现。
+
+## TASK-020 九页UI及配套玩法
+
+UE 5.8.1，Bootstrap地图。通过GameFactory公开UEClient构建HearthwardEditor Development；原生测试筛选Hearthward.，17项。图形测试使用真实渲染，不能以NullRHI代替截图。
+
+```python
+from engine_adapters.ue5 import UEClient
+from pathlib import Path
+import uuid
+root = Path("G:/GameFactory/Hearthward")
+client = UEClient(project_path=str(root / "Hearthward.uproject"), ue_root="G:/UnrealEngine/UE_5.8")
+client.build.project(target="HearthwardEditor", configuration="Development", timeout=1200)
+# 选择一个脚本；每个新测试必须使用独立的存档池。
+script = root / "docs/qa/evidence/TASK-020/verify_ui_pie.py"
+launch = client.runtime.launch_editor(map_path="/Game/Hearthward/Bootstrap/L_Bootstrap", extra_args=[
+    "-ExecutePythonScript=" + str(script), "-HearthwardSaveTestPool=" + str(uuid.uuid4())])
+# 等待Saved/Task020/verification.json更新，检查passed与每项checks，再停止本次进程。
+# client.runtime.stop_editor(launch["payload"]["process_id"])
+```
+
+verify_ui_pie.py覆盖80项真实玩法与UI事务，生成resume.json记录池ID和具体节点；verify_ui_reload.py需在新编辑器进程使用该池ID，验证8项跨进程恢复。verify_ui_visual.py仅用于视觉改动后的33项入口/截图/存取检查，不能替代80项玩法测试。
+
+verify_ui_extension.py验证旧档迁移与图鉴，共32项。先将本目录evidence/TASK-020/legacy-task019.hws复制到Saved/SaveGames/HearthwardPrototype/test-<新GUID去连字符并大写>.hws，再以该GUID启动。测试只修改副本。旧档来自019的真实隔离测试池，不依赖人工玩家档。
+
+原生CaptureUI以线性浮点目标渲染，再转sRGB写PNG；HUD截图只含UI层，实际三维画面见physical-final-hud.png。1672×941为设计尺寸，另验证1280×720与Windows 150% DPI独立窗口。实键截图来自computer-use的sky窗口捕获，自动化脚本调用Widget命令的结果单独记录。
+
+17项Automation报告均Success；进程启动阶段另有LogAutomationTest的Condition failed诊断，发生于Engine初始化及Hearthward测试开始之前。保留automation-result.json及automation-startup-excerpt.txt，不将进程日志表述为零错误。Shipping打包、完整三维美术、两台机器及独立评审未运行。

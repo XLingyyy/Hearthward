@@ -41,12 +41,12 @@ TSharedRef<SWidget> UHearthwardStorageWidget::RebuildWidget()
             auto Font = T->GetFont(); Font.Size = FontSize; T->SetFont(Font);
             T->SetColorAndOpacity(Color); T->SetAutoWrapText(true); return T;
         };
-        const FLinearColor Gold(.92f,.73f,.38f), Ivory(.95f,.94f,.88f), Muted(.70f,.74f,.71f);
-        Layout->AddChildToVerticalBox(Text(TEXT("营地仓储"),26,Gold));
-        Layout->AddChildToVerticalBox(Text(TEXT("共享库存 · 仓储不限负重 · 世界已暂停"),14,Muted))->SetPadding(FMargin(0,6,0,18));
-        InventoryText = Text(TEXT(""),18,Ivory);
+        const FLinearColor StorageGold(.92f,.73f,.38f), StorageIvory(.95f,.94f,.88f), StorageMuted(.70f,.74f,.71f);
+        Layout->AddChildToVerticalBox(Text(TEXT("营地仓储"),26,StorageGold));
+        Layout->AddChildToVerticalBox(Text(TEXT("共享库存 · 仓储不限负重 · 世界已暂停"),14,StorageMuted))->SetPadding(FMargin(0,6,0,18));
+        InventoryText = Text(TEXT(""),18,StorageIvory);
         Layout->AddChildToVerticalBox(InventoryText)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
-        WeightText = Text(TEXT(""),16,Gold);
+        WeightText = Text(TEXT(""),16,StorageGold);
         Layout->AddChildToVerticalBox(WeightText)->SetPadding(FMargin(0,8,0,16));
         auto* Selection = WidgetTree->ConstructWidget<UHorizontalBox>(); Layout->AddChildToVerticalBox(Selection);
         ItemChoice = WidgetTree->ConstructWidget<UComboBoxString>();
@@ -55,7 +55,7 @@ TSharedRef<SWidget> UHearthwardStorageWidget::RebuildWidget()
         ItemChoice->SetSelectedIndex(0);
         auto* ItemSize = WidgetTree->ConstructWidget<USizeBox>(); ItemSize->SetWidthOverride(180); ItemSize->AddChild(ItemChoice);
         Selection->AddChildToHorizontalBox(ItemSize)->SetPadding(FMargin(0,0,20,0));
-        Selection->AddChildToHorizontalBox(Text(TEXT("数量  "),16,Ivory))->SetVerticalAlignment(VAlign_Center);
+        Selection->AddChildToHorizontalBox(Text(TEXT("数量  "),16,StorageIvory))->SetVerticalAlignment(VAlign_Center);
         Quantity = WidgetTree->ConstructWidget<UEditableTextBox>(); Quantity->SetText(FText::FromString(TEXT("1")));
         auto QuantityStyle = Quantity->GetWidgetStyle();
         QuantityStyle.ForegroundColor = FLinearColor(.03f,.04f,.04f);
@@ -70,15 +70,15 @@ TSharedRef<SWidget> UHearthwardStorageWidget::RebuildWidget()
         {
             auto* B = WidgetTree->ConstructWidget<UButton>(); B->SetBackgroundColor(FLinearColor(.15f,.18f,.17f));
             auto* Padding = WidgetTree->ConstructWidget<UBorder>(); Padding->SetBrushColor(FLinearColor::Transparent);
-            Padding->SetPadding(FMargin(18,10)); B->AddChild(Padding); Padding->AddChild(Text(Label,16,Ivory));
+            Padding->SetPadding(FMargin(18,10)); B->AddChild(Padding); Padding->AddChild(Text(Label,16,StorageIvory));
             Actions->AddChildToHorizontalBox(B)->SetPadding(FMargin(0,0,12,0)); return B;
         };
         Button(TEXT("存入仓储"))->OnClicked.AddDynamic(this,&UHearthwardStorageWidget::Deposit);
         Button(TEXT("取到背包"))->OnClicked.AddDynamic(this,&UHearthwardStorageWidget::Withdraw);
         Button(TEXT("返回 Esc"))->OnClicked.AddDynamic(this,&UHearthwardStorageWidget::Close);
-        Status = Text(TEXT("选择物品和数量，再确认存入或取出。"),15,Gold);
+        Status = Text(TEXT("选择物品和数量，再确认存入或取出。"),15,StorageGold);
         Layout->AddChildToVerticalBox(Status)->SetPadding(FMargin(0,16,0,8));
-        Layout->AddChildToVerticalBox(Text(TEXT("R / Esc 返回 · Tab 背包 · F6 存档"),12,Muted));
+        Layout->AddChildToVerticalBox(Text(TEXT("R / Esc 返回 · Tab 背包 · F6 存档"),12,StorageMuted));
         ItemChoice->OnSelectionChanged.AddDynamic(this,&UHearthwardStorageWidget::SelectionChanged);
     }
     return Super::RebuildWidget();

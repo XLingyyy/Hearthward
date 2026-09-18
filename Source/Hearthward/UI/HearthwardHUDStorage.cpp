@@ -1,4 +1,5 @@
 #include "HearthwardHUD.h"
+#include "HearthwardScreenWidget.h"
 #include "HearthwardStorageWidget.h"
 #include "../Interaction/HearthwardResourceInteractionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -9,6 +10,7 @@
 
 void AHearthwardHUD::ToggleStorageMenu()
 {
+    if(Screen) { Screen->ExecuteAction(TEXT("page:storage")); return; }
 #if !UE_BUILD_SHIPPING
     if (StorageWidget) { CloseStorageMenu(); return; }
     auto* Player = GetOwningPlayerController();

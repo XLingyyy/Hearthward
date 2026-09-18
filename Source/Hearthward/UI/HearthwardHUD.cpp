@@ -1,4 +1,5 @@
 #include "HearthwardHUD.h"
+#include "HearthwardScreenWidget.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
@@ -14,6 +15,7 @@
 
 void AHearthwardHUD::ToggleInventory()
 {
+    if(Screen) { Screen->OpenPage(Screen->GetPage()==TEXT("inventory")?TEXT("hud"):TEXT("inventory")); return; }
     CloseStorageMenu();
     CloseSaveMenu();
     CloseDialogue();
@@ -72,6 +74,7 @@ void AHearthwardHUD::DrawInventory(const UHearthwardInventoryComponent& Inventor
 void AHearthwardHUD::DrawHUD()
 {
     Super::DrawHUD();
+    if(Screen) return;
     if (IsSaveMenuOpen() || IsStorageMenuOpen()) return;
     APawn* Pawn = GetOwningPawn();
 #if !UE_BUILD_SHIPPING

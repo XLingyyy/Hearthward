@@ -24,18 +24,7 @@ struct FHearthwardItemDefinition
     FText DisplayName;
 };
 
-inline const TArray<FHearthwardItemDefinition>& HearthwardBasicItems()
-{
-    // GDD v0.3 section 7.8: accepted initial weights in abstract units.
-    static const TArray<FHearthwardItemDefinition> Items = {
-        {TEXT("wood"), 100, NSLOCTEXT("Hearthward", "ItemWood", "木材")},
-        {TEXT("stone"), 100, NSLOCTEXT("Hearthward", "ItemStone", "石材")},
-        {TEXT("ore"), 200, NSLOCTEXT("Hearthward", "ItemOre", "矿石")},
-        {TEXT("meat"), 50, NSLOCTEXT("Hearthward", "ItemMeat", "肉")},
-        {TEXT("arrow"), 5, NSLOCTEXT("Hearthward", "ItemArrow", "箭")}
-    };
-    return Items;
-}
+HEARTHWARD_API const TArray<FHearthwardItemDefinition>& HearthwardBasicItems();
 
 class FHearthwardInventoryState
 {
@@ -58,7 +47,7 @@ public:
         if (!Item) return EHearthwardInventoryResult::UnknownItem;
         const int64 Free = CapacityHundredths - GetWeightHundredths();
         // Divide before multiplying so even an INT_MAX request cannot overflow.
-        if (!bUnlimited && Count > Free / Item->WeightHundredths) return EHearthwardInventoryResult::CapacityExceeded;
+        if (!bUnlimited && Item->WeightHundredths > 0 && Count > Free / Item->WeightHundredths) return EHearthwardInventoryResult::CapacityExceeded;
         if (Count > MAX_int32 - GetCount(ItemId)) return EHearthwardInventoryResult::QuantityOverflow;
         Counts.FindOrAdd(ItemId) += Count;
         return EHearthwardInventoryResult::Success;

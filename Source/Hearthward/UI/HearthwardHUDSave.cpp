@@ -1,4 +1,5 @@
 #include "HearthwardHUD.h"
+#include "HearthwardScreenWidget.h"
 #include "HearthwardSaveWidget.h"
 #include "../Save/HearthwardSaveSubsystem.h"
 #include "GameFramework/PlayerController.h"
@@ -6,6 +7,7 @@
 
 void AHearthwardHUD::ToggleSaveMenu()
 {
+    if(Screen) { Screen->OpenPage(TEXT("save")); return; }
 #if !UE_BUILD_SHIPPING
     if (SaveWidget) { CloseSaveMenu(); return; }
     auto* Player = GetOwningPlayerController();

@@ -51,4 +51,6 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 
 [TASK-018](tasks/TASK-018.md)：伙伴夹具按E采集木材/营地入库，复用背包、交互和存档；用户授权自行拆解、实现及提交推送，见[018交接](handoffs/TASK-018.md)。
 
-当前[TASK-019](tasks/TASK-019.md)：营地仓储数量选择及双向存取；用户授权自行实现并提交推送，见[019交接](handoffs/TASK-019.md)。
+[TASK-019](tasks/TASK-019.md)：营地仓储数量选择及双向存取；用户授权自行实现并提交推送，见[019交接](handoffs/TASK-019.md)。
+
+当前[TASK-020](tasks/TASK-020.md)：九页参考UI与缺失玩法；新入口为标题页“新游戏”，详细操作和当前限制以根README与[020交接](handoffs/TASK-020.md)为准。

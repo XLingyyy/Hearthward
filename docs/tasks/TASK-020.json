@@ -1,66 +1,82 @@
 {
   "schema_version": 1,
   "id": "TASK-020",
-  "title": "M2小闭环集成与合并后验证",
-  "status": "Backlog",
-  "updated_at": "2026-09-17",
-  "owner": null,
+  "title": "九页参考UI与配套玩法",
+  "status": "Blocked",
+  "updated_at": "2026-09-19",
+  "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": null,
+  "branch": "codex/TASK-020-reference-ui",
   "source_refs": [
-    "WORKFLOW M2",
-    "GDD v0.3 第12/13/18章"
+    "用户2026-09-19九页参考图与缺失玩法一并实现授权",
+    "GDD v0.3 第4、7、12、13、14章",
+    "ui pic/九张原图"
   ],
   "dependencies": [
-    "TASK-010",
-    "TASK-011",
-    "TASK-012",
-    "TASK-013",
-    "TASK-014",
-    "TASK-015",
-    "TASK-016"
+    "TASK-019"
   ],
   "blocked_by": [],
   "contracts": [
     "docs/contracts/CT-001-world-state.md",
     "docs/contracts/CT-002-companion-command.md",
-    "docs/contracts/CT-003-save-load.md"
+    "docs/contracts/CT-003-save-load.md",
+    "docs/contracts/CT-004-presentation-gameplay.md"
   ],
   "allowed_paths": [
-    "Content/Tribe/Tests/Integration/",
-    "Source/TribeGame/Integration/",
-    "docs/PROJECT_STATE.md",
-    "docs/releases/",
+    "Source/Hearthward/",
+    "Content/Hearthward/UI/",
+    "Content/Hearthward/Data/",
+    "Config/",
+    "Resources/UI/",
+    "ui pic/",
     "docs/tasks/TASK-020.json",
+    "docs/tasks/TASK-020.md",
     "docs/handoffs/TASK-020.md",
-    "docs/qa/evidence/TASK-020/"
+    "docs/qa/evidence/TASK-020/",
+    "docs/design/DSGN-002-ui-gameplay.md",
+    "docs/contracts/CT-004-presentation-gameplay.md",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md",
+    "Resources/Data/",
+    ".gitattributes"
   ],
   "forbidden_paths": [
-    "docs/design/archive/"
+    "docs/design/archive/",
+    "Plugins/"
   ],
   "acceptance": [
-    "同一SHA中完成采集→实际入库→建造→保存→修改世界→回档，世界与知识一致。",
-    "在打包版本验证，明确本场景没有覆盖的睡眠、刷敌和完整四区；不标记十小时Demo已完成。"
+    "九页可交互原生UI与参考逐页对照，目标95%还原；真实结果记录差异",
+    "角色状态、装备、技能、地图、任务接真实玩法与存档",
+    "美术、布局、主题、内容与玩法数据独立配置；旧功能回归与实机验证",
+    "按已给授权提交推送任务分支，禁止合并"
   ],
   "non_goals": [
-    "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
+    "不把UI背景冒充三维世界；不宣称十小时全内容完成；不执行TASK-004"
   ],
   "prototype_only": true,
   "prototype_approval": null,
   "required_tests": [
-    "T-021"
+    "T-002",
+    "T-004",
+    "T-007",
+    "T-011",
+    "T-012",
+    "T-025"
   ],
   "permissions": {
-    "network": "not_granted",
+    "network": "granted: official research and task branch push",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted: continuing autonomous task branch delivery authorization",
+    "push": "granted: continuing autonomous task branch delivery authorization",
     "merge": "not_granted"
   },
   "notes": [
-    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
-    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。",
-    "013转为本地模型接入，原存档依赖保留为016。"
+    "用户替换原集成Backlog，并确认全部9页连同缺失玩法一起实现。",
+    "Issue与独立评审缺失，正式流程Blocked；已授权实现持续推进。"
   ]
 }

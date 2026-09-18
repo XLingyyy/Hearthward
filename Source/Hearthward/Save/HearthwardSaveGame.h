@@ -58,6 +58,7 @@ struct FHearthwardWorldSave
     UPROPERTY() int64 KnowledgeRevision = 0;
     UPROPERTY() int32 AutoMinutes = 10;
     UPROPERTY() FHearthwardSaveSafety Safety;
+    UPROPERTY() FString Gameplay;
 };
 
 USTRUCT(BlueprintType)
