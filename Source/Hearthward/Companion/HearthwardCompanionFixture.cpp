@@ -80,6 +80,12 @@ bool AHearthwardCompanionFixture::Cancel(AActor* Speaker)
     return true;
 }
 
+bool AHearthwardCompanionFixture::IsProposalCurrent(AActor* Speaker, const FHearthwardCommandTicket& Ticket) const
+{
+    return CanCommunicate(Speaker) && RequestSpeaker.Get() == Speaker
+        && Command.IsPending(Ticket, GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
+}
+
 bool AHearthwardCompanionFixture::IsSourceValid() const
 {
     return IsValid(Source) && IsValid(Source->GetOwner()) && !Source->GetOwner()->IsActorBeingDestroyed()

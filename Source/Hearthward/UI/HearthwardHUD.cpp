@@ -3,6 +3,7 @@
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
 #include "../Companion/HearthwardCompanionFixture.h"
+#include "../AI/HearthwardLocalAISubsystem.h"
 #include "EngineUtils.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
@@ -68,6 +69,21 @@ void AHearthwardHUD::DrawHUD()
 {
     Super::DrawHUD();
     APawn* Pawn = GetOwningPawn();
+    if (Canvas && Pawn && !bInventoryOpen)
+    {
+        const auto* AI = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+        if (AI && AI->CanDisplay() && !AI->GetStatus().IsEmpty())
+        {
+            const float Scale = FMath::Clamp(Canvas->SizeY / 900.0f, 0.65f, 1.25f);
+            const float Left = 20 * Scale, Top = 28 * Scale;
+            DrawRect(FLinearColor(0.035f, 0.042f, 0.042f, 0.94f), Left, Top, 620 * Scale, 156 * Scale);
+            DrawText(AI->GetStatus(), FLinearColor(0.92f, 0.73f, 0.38f), Left + 16 * Scale, Top + 12 * Scale, GEngine->GetMediumFont(), 1.5f * Scale);
+            FString Line = AI->GetNPCLine();
+            if (Line.Len() > 96) Line = Line.Left(93) + TEXT("…");
+            for (int32 Index = 0; Index * 32 < Line.Len(); ++Index)
+                DrawText(Line.Mid(Index * 32, 32), FLinearColor::White, Left + 16 * Scale, Top + (48 + Index * 30) * Scale, GEngine->GetMediumFont(), 1.5f * Scale);
+        }
+    }
 #if !UE_BUILD_SHIPPING
     if (Canvas && Pawn && !bInventoryOpen)
     {

@@ -175,6 +175,21 @@ Tab暂停/恢复世界与伙伴动作。`Hearthward.Companion.Cancel` 仅30米�
 当前直线测试通路没有全地图寻路、坡面导航或战斗避险；`bSourceSafe` 是开发场景的显式世界判断，未实现生产环境危险识别。
 弟弟正式容量、长期安排与迟到文字展示仍待R14/R18/R20；100容量的复用容器仅为测试宿主。
 
+## TASK-013 本地模型验证
+
+开发准备：`python scripts/local_ai/prepare_bundle.py`，固定下载llama.cpp b10964与Unsloth转换的Qwen3.5-4B Q4_K_M；脚本验证发行散列并支持中断续传。玩家运行不调用此脚本。
+沿用UEClient构建；原生筛选 `Hearthward.LocalAI`（2项）和 `Hearthward.Companion`（2项相关回归）。提取包与许可证回归：`python -m unittest scripts.tests.test_local_ai_setup -v`。
+
+使用 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py` 启动两轮PIE。
+该脚本运行真实模型，覆盖明确/模糊/危险/虚报/冲突/多目标输入、暂停、取消、覆盖、旧epoch与离开30米范围；结果在 `Saved/Task013/`。
+GPU实测启动参数为 `-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32`；默认配置是CPU，不能将GPU报告冒充默认CPU表现。
+推理使用一个隐藏的本机子进程、动态loopback端口和临时认证，加载4096上下文、单并发、关闭thinking，最长等待120秒。PIE/世界结束时释放模型。
+
+手动控制台先执行 `Hearthward.Companion.CreateTest`，再执行 `Hearthward.AI.Say 帮我收集十份木材，分几趟运回营地仓库。`。
+自然语言通过模型生成候选后，伙伴实际采集、返营、入库。`Hearthward.AI.CancelReply`仅取消推理；取消已接受动作可说“取消刚才的采集委托”。
+全部开发控制台入口不在Shipping注册；正式输入面板归TASK-015，持久化/认知快照归迁移后的TASK-016。
+非Editor构建要求本地模型包完整；Build.cs将权重、server及DLL、知识和许可证登记为NonUFS运行依赖。登记成功不能替代完整打包运行验收，实际结果见 [TASK-013交接](../handoffs/TASK-013.md)。
+
 ## 仓库检查命令
 
 ```bash

@@ -1,0 +1,35 @@
+{
+  "ok": false,
+  "mode": "real-model",
+  "model": "unsloth/Qwen3.5-4B-GGUF",
+  "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+  "quantization": "Q4_K_M",
+  "runtime": "llama.cpp b10964",
+  "prompt_version": "task013-2",
+  "backend": "vulkan",
+  "gpu_layers": 32,
+  "knowledge_version": "hearthward-initial-knowledge-2",
+  "cases": [
+    {
+      "name": "explicit_collect",
+      "input": "帮我收集十份木材，分几趟运回营地仓库。",
+      "allowed_intents": [
+        "collect"
+      ],
+      "status": "本地推理失败或超时，未执行动作",
+      "npc_line": "",
+      "latency_seconds": 0.0,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0}}",
+      "raw_result": ""
+    }
+  ],
+  "checks": {
+    "cold_session_no_model_process": true,
+    "input_accepted_0": true,
+    "explicit_collect_structured_result": false
+  },
+  "server_pids": [
+    18236
+  ],
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 142, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 56, in run\n    result=record(\"explicit_collect\",[\"collect\"])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 30, in record\n    check(name+\"_structured_result\",bool(raw))\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 14, in check\n    if not value: raise AssertionError(name)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: explicit_collect_structured_result\n"
+}
