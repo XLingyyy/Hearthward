@@ -8,7 +8,7 @@
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
 | 当前分支 | codex/TASK-016-save-snapshots；基于f2a8e3df41febcc4f4f0c4235fb477bdcb7e564e堆叠开发，尚未合并main |
-| 游戏实现提交 | TASK-016实现提交与最终验证绑定见本单交接；此前TASK-015实现为e0a83c54ed0d1ccea946c626da063de1c89c391d |
+| 游戏实现提交 | TASK-016：17f6008b55f102936aa6c6056b0bab5326088401；最终验证与PIE覆盖范围绑定见本单交接 |
 | Git LFS | 已启用；原4个Bootstrap资产和013设计DOCX锁保留；014新增6个资产锁由XLingyyy持有，集成交接前保留 |
 | 工具链 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |

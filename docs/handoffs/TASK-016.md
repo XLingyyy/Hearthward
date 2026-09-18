@@ -1,6 +1,6 @@
 # TASK-016 交接｜世界知识快照与回档隔离
 
-用户授权实现、验证、提交并推送。任务分支 `codex/TASK-016-save-snapshots`，真实基线 `f2a8e3df41febcc4f4f0c4235fb477bdcb7e564e`，不合并main；004未执行。实现提交在验证完成后的绑定记录中登记。
+用户授权实现、验证、提交并推送。任务分支 `codex/TASK-016-save-snapshots`，真实基线 `f2a8e3df41febcc4f4f0c4235fb477bdcb7e564e`，不合并main；004未执行。实现提交 `17f6008b55f102936aa6c6056b0bab5326088401`；[完整绑定](../qa/evidence/TASK-016/commit-binding.json)区分最终构建/原生验证与PIE覆盖范围。
 
 ## 当前实现
 
