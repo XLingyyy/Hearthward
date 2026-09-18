@@ -15,7 +15,7 @@ public class Hearthward : ModuleRules
                 "InputCore",
                 "EnhancedInput"
             });
-        PrivateDependencyModuleNames.AddRange(new[] { "HTTP", "Json", "Sockets" });
+        PrivateDependencyModuleNames.AddRange(new[] { "HTTP", "Json", "Sockets", "UMG", "Slate", "SlateCore" });
         string Bundle = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../Runtime/LocalAI"));
         if (Target.Type != TargetType.Editor && !File.Exists(Path.Combine(Bundle, "models/Qwen3.5-4B-Q4_K_M.gguf")))
             throw new BuildException("Hearthward requires its local AI bundle. Run scripts/local_ai/prepare_bundle.py before packaging.");

@@ -13,6 +13,7 @@
 
 void AHearthwardHUD::ToggleInventory()
 {
+    CloseDialogue();
     if (bInventoryOpen)
     {
         if (bPausedByInventory) UGameplayStatics::SetGamePaused(this, false);
@@ -69,7 +70,19 @@ void AHearthwardHUD::DrawHUD()
 {
     Super::DrawHUD();
     APawn* Pawn = GetOwningPawn();
-    if (Canvas && Pawn && !bInventoryOpen)
+#if !UE_BUILD_SHIPPING
+    if (Canvas && Pawn && !bInventoryOpen && !IsDialogueOpen())
+    {
+        bool Nearby = false;
+        for (TActorIterator<AHearthwardCompanionFixture> It(GetWorld()); It; ++It)
+            if (It->CanCommunicate(Pawn)) { Nearby = true; break; }
+        const float Scale = FMath::Clamp(Canvas->SizeY / 900.0f, 0.65f, 1.25f);
+        DrawText(Nearby ? TEXT("T 与弟弟交流 · 开发测试") : TEXT("需有30米内的伙伴才能交流"),
+            FLinearColor(.95f,.94f,.88f), Canvas->SizeX - 390 * Scale, Canvas->SizeY - 53 * Scale,
+            GEngine->GetMediumFont(), 1.5f * Scale);
+    }
+#endif
+    if (Canvas && Pawn && !bInventoryOpen && !IsDialogueOpen())
     {
         const auto* AI = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
         if (AI && AI->CanDisplay() && !AI->GetStatus().IsEmpty())
@@ -85,7 +98,7 @@ void AHearthwardHUD::DrawHUD()
         }
     }
 #if !UE_BUILD_SHIPPING
-    if (Canvas && Pawn && !bInventoryOpen)
+    if (Canvas && Pawn && !bInventoryOpen && !IsDialogueOpen())
     {
         for (TActorIterator<AHearthwardCompanionFixture> It(GetWorld()); It; ++It)
         {
