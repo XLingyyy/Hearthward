@@ -14,6 +14,11 @@ public:
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     virtual void DrawHUD() override;
 
+    UFUNCTION(BlueprintCallable) void ToggleSaveMenu();
+    UFUNCTION(BlueprintCallable) void CloseSaveMenu();
+    UFUNCTION(BlueprintPure) bool IsSaveMenuOpen() const { return SaveWidget != nullptr; }
+    UFUNCTION(BlueprintPure) class UHearthwardSaveWidget* GetSaveWidget() const { return SaveWidget; }
+
     UFUNCTION(BlueprintCallable) void ToggleDialogue();
     UFUNCTION(BlueprintCallable) void CloseDialogue();
     UFUNCTION(BlueprintCallable) bool SubmitDialogue(const FString& Text);
@@ -36,6 +41,9 @@ public:
     bool IsInventoryOpen() const { return bInventoryOpen; }
 
 private:
+    UPROPERTY() TObjectPtr<class UHearthwardSaveWidget> SaveWidget;
+    bool bPausedBySaveMenu = false;
+    bool bCursorBeforeSaveMenu = false;
     UFUNCTION() void SnapshotRestored();
     UPROPERTY() TObjectPtr<class UHearthwardDialogueWidget> DialogueWidget;
     TWeakObjectPtr<class AHearthwardCompanionFixture> DialogueCompanion;

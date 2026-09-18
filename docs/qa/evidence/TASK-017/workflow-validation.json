@@ -1,0 +1,95 @@
+{
+  "base_commit": "7ef4abe6c89ce3043eb5a57c794eaec49939626c",
+  "repository": {
+    "command": [
+      "G:\\GameFactory\\.venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py"
+    ],
+    "returncode": 0,
+    "stdout": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 19\nPASS: repository checks only; 0 error(s)\n",
+    "stderr": ""
+  },
+  "tools": {
+    "command": [
+      "G:\\GameFactory\\.venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts/tests",
+      "-v"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "test_preserves_runtime_and_extensionless_license (test_local_ai_setup.BundleExtractionTests.test_preserves_runtime_and_extensionless_license) ... ok\ntest_rejects_parent_path (test_local_ai_setup.BundleExtractionTests.test_rejects_parent_path) ... ok\ntest_active_task_needs_real_fields_and_prototype_approval (test_repo_tools.DocumentTests.test_active_task_needs_real_fields_and_prototype_approval) ... ok\ntest_archive_pointer_not_claimed_as_downloaded (test_repo_tools.DocumentTests.test_archive_pointer_not_claimed_as_downloaded) ... ok\ntest_archive_raw_hash (test_repo_tools.DocumentTests.test_archive_raw_hash) ... ok\ntest_archive_wrong_pointer_rejected (test_repo_tools.DocumentTests.test_archive_wrong_pointer_rejected) ... ok\ntest_backlog_task_can_be_unassigned (test_repo_tools.DocumentTests.test_backlog_task_can_be_unassigned) ... ok\ntest_bad_roles_config_is_reported (test_repo_tools.DocumentTests.test_bad_roles_config_is_reported) ... ok\ntest_context_rejects_traversal (test_repo_tools.DocumentTests.test_context_rejects_traversal) ... ok\ntest_context_without_git_reports_missing_git (test_repo_tools.DocumentTests.test_context_without_git_reports_missing_git) ... ok\ntest_dependency_cycles_are_reported (test_repo_tools.DocumentTests.test_dependency_cycles_are_reported) ... ok\ntest_link_checker_ignores_code_and_external_urls (test_repo_tools.DocumentTests.test_link_checker_ignores_code_and_external_urls) ... ok\ntest_link_checker_reports_missing_and_outside_paths (test_repo_tools.DocumentTests.test_link_checker_reports_missing_and_outside_paths) ... ok\ntest_malformed_fields_are_errors_not_crashes (test_repo_tools.DocumentTests.test_malformed_fields_are_errors_not_crashes) ... ok\ntest_missing_contract_and_dependency_are_reported (test_repo_tools.DocumentTests.test_missing_contract_and_dependency_are_reported) ... ok\ntest_unconfigured_m0_is_not_passed (test_repo_tools.DocumentTests.test_unconfigured_m0_is_not_passed) ... ok\ntest_valid_assigned_task_has_independent_review (test_repo_tools.DocumentTests.test_valid_assigned_task_has_independent_review) ... ok\ntest_allowed_untracked_file_passes_scope (test_repo_tools.LocalGitTests.test_allowed_untracked_file_passes_scope) ... ok\ntest_committed_changes_are_checked (test_repo_tools.LocalGitTests.test_committed_changes_are_checked) ... ok\ntest_context_keeps_dirty_work_unchanged (test_repo_tools.LocalGitTests.test_context_keeps_dirty_work_unchanged) ... ok\ntest_current_task_cannot_expand_approved_scope (test_repo_tools.LocalGitTests.test_current_task_cannot_expand_approved_scope) ... ok\ntest_main_branch_is_not_allowed (test_repo_tools.LocalGitTests.test_main_branch_is_not_allowed) ... ok\ntest_missing_base_task_fails (test_repo_tools.LocalGitTests.test_missing_base_task_fails) ... ok\ntest_nested_root_rejected (test_repo_tools.LocalGitTests.test_nested_root_rejected) ... ok\ntest_rename_checks_both_old_and_new_paths (test_repo_tools.LocalGitTests.test_rename_checks_both_old_and_new_paths) ... ok\ntest_staged_deletion_is_checked (test_repo_tools.LocalGitTests.test_staged_deletion_is_checked) ... ok\ntest_untracked_outside_scope_is_caught (test_repo_tools.LocalGitTests.test_untracked_outside_scope_is_caught) ... ok\ntest_accepts_exact_and_directory_paths (test_repo_tools.ScopeSyntaxTests.test_accepts_exact_and_directory_paths) ... ok\ntest_forbidden_has_priority (test_repo_tools.ScopeSyntaxTests.test_forbidden_has_priority) ... ok\ntest_prefix_is_not_sibling (test_repo_tools.ScopeSyntaxTests.test_prefix_is_not_sibling) ... ok\ntest_rejects_unsafe_paths (test_repo_tools.ScopeSyntaxTests.test_rejects_unsafe_paths) ... ok\n\n----------------------------------------------------------------------\nRan 31 tests in 9.688s\n\nOK\n"
+  },
+  "base_scope": {
+    "command": [
+      "G:\\GameFactory\\.venv\\Scripts\\python.exe",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py",
+      "--task",
+      "TASK-017",
+      "--base",
+      "7ef4abe6c89ce3043eb5a57c794eaec49939626c"
+    ],
+    "returncode": 1,
+    "stdout": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 19\nERROR: No usable approved task snapshot at base: TASK-017; approve task on baseline first\nFAIL: repository checks only; 1 error(s)\n",
+    "stderr": ""
+  },
+  "current_authorized_scope": {
+    "out_of_scope": [],
+    "changed_paths": [
+      "AGENTS.md",
+      "README.md",
+      "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+      "Source/Hearthward/Save/HearthwardSaveSubsystem.h",
+      "Source/Hearthward/UI/HearthwardDialogueWidget.cpp",
+      "Source/Hearthward/UI/HearthwardHUD.cpp",
+      "Source/Hearthward/UI/HearthwardHUD.h",
+      "Source/Hearthward/UI/HearthwardHUDDialogue.cpp",
+      "Source/Hearthward/UI/HearthwardHUDSave.cpp",
+      "Source/Hearthward/UI/HearthwardSaveWidget.cpp",
+      "Source/Hearthward/UI/HearthwardSaveWidget.h",
+      "docs/PROJECT_STATE.md",
+      "docs/START_HERE.md",
+      "docs/handoffs/TASK-017.md",
+      "docs/planning/BACKLOG.md",
+      "docs/qa/BUILD_AND_TEST.md",
+      "docs/qa/evidence/TASK-017/automation-index.json",
+      "docs/qa/evidence/TASK-017/automation-result.json",
+      "docs/qa/evidence/TASK-017/build-before-visual-fix.json",
+      "docs/qa/evidence/TASK-017/build-first.json",
+      "docs/qa/evidence/TASK-017/build.json",
+      "docs/qa/evidence/TASK-017/context_used.json",
+      "docs/qa/evidence/TASK-017/danger.png",
+      "docs/qa/evidence/TASK-017/empty.png",
+      "docs/qa/evidence/TASK-017/full-list.png",
+      "docs/qa/evidence/TASK-017/launch-final.json",
+      "docs/qa/evidence/TASK-017/launch.json",
+      "docs/qa/evidence/TASK-017/physical-input.mp4",
+      "docs/qa/evidence/TASK-017/physical-trace.jsonl",
+      "docs/qa/evidence/TASK-017/quit-check.json",
+      "docs/qa/evidence/TASK-017/quit-confirmation.png",
+      "docs/qa/evidence/TASK-017/restored.png",
+      "docs/qa/evidence/TASK-017/standalone-1080-launch.json",
+      "docs/qa/evidence/TASK-017/standalone-1080-resolution.txt",
+      "docs/qa/evidence/TASK-017/standalone-1080.png",
+      "docs/qa/evidence/TASK-017/standalone-720.png",
+      "docs/qa/evidence/TASK-017/standalone-launch.json",
+      "docs/qa/evidence/TASK-017/standalone-quit-log.txt",
+      "docs/qa/evidence/TASK-017/standalone-quit.png",
+      "docs/qa/evidence/TASK-017/verification-before-visual-fix.json",
+      "docs/qa/evidence/TASK-017/verification.json",
+      "docs/qa/evidence/TASK-017/verify_save_ui_pie.py",
+      "docs/tasks/TASK-017.json",
+      "docs/tasks/TASK-017.md"
+    ],
+    "note": "Current task paths follow user authorization to decompose TASK-017; no assertion of a pre-existing approved task at base."
+  }
+}

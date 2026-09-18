@@ -13,6 +13,7 @@
 
 void AHearthwardHUD::ToggleInventory()
 {
+    CloseSaveMenu();
     CloseDialogue();
     if (bInventoryOpen)
     {
@@ -69,6 +70,7 @@ void AHearthwardHUD::DrawInventory(const UHearthwardInventoryComponent& Inventor
 void AHearthwardHUD::DrawHUD()
 {
     Super::DrawHUD();
+    if (IsSaveMenuOpen()) return;
     APawn* Pawn = GetOwningPawn();
 #if !UE_BUILD_SHIPPING
     if (Canvas && Pawn && !bInventoryOpen && !IsDialogueOpen())

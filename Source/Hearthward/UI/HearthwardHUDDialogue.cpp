@@ -16,12 +16,14 @@ void AHearthwardHUD::BeginPlay()
     // R23: temporary prototype key, kept in the UI input component.
     EnableInput(GetOwningPlayerController());
     InputComponent->BindKey(EKeys::T,IE_Pressed,this,&AHearthwardHUD::ToggleDialogue);
+    InputComponent->BindKey(EKeys::F6,IE_Pressed,this,&AHearthwardHUD::ToggleSaveMenu).bExecuteWhenPaused = true;
 #endif
 }
 void AHearthwardHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
     GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.RemoveDynamic(this, &AHearthwardHUD::SnapshotRestored);
     CloseDialogue();
+    CloseSaveMenu();
     Super::EndPlay(Reason);
 }
 void AHearthwardHUD::SnapshotRestored()
@@ -34,6 +36,7 @@ void AHearthwardHUD::SnapshotRestored()
 }
 void AHearthwardHUD::ToggleDialogue()
 {
+    if (IsSaveMenuOpen()) return;
     if(DialogueWidget) { CloseDialogue(); return; }
     if(!GetOwningPawn() || bInventoryOpen || GetWorld()->IsPaused()) return;
     DialogueCompanion.Reset();

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "id": "TASK-017",
+  "title": "存档管理与退出确认界面",
+  "status": "Blocked",
+  "updated_at": "2026-09-18",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-017-save-menu",
+  "source_refs": [
+    "GDD v0.3 第13章、第14章",
+    "Q139—145",
+    "Q262—265"
+  ],
+  "dependencies": [
+    "TASK-009",
+    "TASK-015",
+    "TASK-016"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.h",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "docs/tasks/TASK-017.json",
+    "docs/tasks/TASK-017.md",
+    "docs/handoffs/TASK-017.md",
+    "docs/qa/evidence/TASK-017/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Content/",
+    "Plugins/"
+  ],
+  "acceptance": [
+    "原生界面展示全局50点容量和节点所属进度、时间、地点、阶段、类型、锁定状态，实际磁盘节点可选择。",
+    "手动保存、读取、新进度、锁定、解锁、删除和1—60分钟自动保存间隔调用016的唯一接口；危险与容量失败有实际原因。",
+    "回档、新进度、删除、退出需要明确确认；取消不改变世界或节点，退出不新增存档。",
+    "打开菜单暂停，关闭仅解除本菜单取得的暂停；与背包和交流面板互斥，键鼠焦点及回档后的输入正常。",
+    "UE构建、定向原生测试、两轮PIE、物理输入和录像检查通过，保留绑定证据。"
+  ],
+  "non_goals": [
+    "不修改schema、档池轮换规则或R22未定玩法；不接正式主菜单、切图、任意实体重建、完整世界存档或打包发布。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: official references, repository checks and authorized task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user explicitly requested commit and push on 2026-09-18",
+    "push": "granted: task branch only; user explicitly requested commit and push on 2026-09-18",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户2026-09-18授权接手推进017，并明确由Agent根据设计文档拆解；本单实现与验证范围由该授权确定。",
+    "堆叠于016，基线7ef4abe6c89ce3043eb5a57c794eaec49939626c；用户随后明确授权提交并推送017任务分支，不合并main。",
+    "Issue查询gh返回401，匿名API返回403限流；独立评审和正式prototype审批未落实，流程保留Blocked，不阻止当前用户授权的本地实现。",
+    "F6为开发临时入口；仍由显式伙伴夹具承载，非Shipping开放；不自动生成或修改地图资产。",
+    "本地实现完成：最终Editor构建、两轮PIE48项通过；Save原生2项通过，后续仅UI显示修正；仓库自检0错误、工具31项通过。",
+    "实键录像128秒/316帧；验证1280×720及1920×1080独立窗口，真实确认退出正常关闭且档池文件未写入。",
+    "基线无017任务单，原基线范围命令如实失败；当前用户授权路径无越界。受测源码与验证绑定见交接和tested-source.zip。"
+  ]
+}
