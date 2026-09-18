@@ -261,3 +261,13 @@ Epic官方有编辑器与命令行自动化入口；锁定版本核对后，测�
 原生筛选 `Hearthward.Save`，预期2项；PIE脚本为 `docs/qa/evidence/TASK-016/verify_save_pie.py`。通过UEClient launch_editor加入 `-ExecutePythonScript=<脚本绝对路径>`、`-HearthwardSaveTestPool=<新生成GUID>`、`-HearthwardAIBackend=vulkan`、`-HearthwardAIGpuLayers=32`。唯一测试池必须显式指定，防止污染人工存档。脚本运行两轮PIE，包含真实一分钟自动保存、真实模型HTTP中回档和磁盘损坏拒绝，结果输出Saved/Task016。
 
 保存协调器公开状态通过Blueprint读取；`SetAutoMinutes`限定1—60，`SetPrototypeSafety`仅作为当前缺少生产危险系统时的显式夹具输入，不代表已经识别真实战斗/溺水/倒地。未接入模块、地图不同或参与者缺失时不能声称完整恢复。
+
+## TASK-017 存档管理UI验证
+
+沿用UEClient Editor构建和 `Hearthward.Save` 两项原生测试。两轮PIE脚本为 `docs/qa/evidence/TASK-017/verify_save_ui_pie.py`；通过UEClient `launch_editor` 加入 `-ExecutePythonScript=<绝对路径>` 和每次全新的 `-HearthwardSaveTestPool=<GUID>`，地图Bootstrap。报告/截图写入Saved/Task017；设置进程环境TASK017_INTERACTIVE=1可在第二轮后保留窗口做实键检查。测试只操作独立池。
+
+手动先创建伙伴夹具，F6打开，点击启用存档，再新进度或读取；确认/取消使用鼠标和Esc，Tab切到背包。菜单打开暂停，关闭仅释放自己取得的暂停。原型安全标志决定实际禁存原因；禁止将其说成已接入生产危险识别。
+
+实键录像通过PIE脚本的Slate回调调用原生 `Shot showui`，与JSON状态轨迹绑定，再用现有FFmpeg编码。原生playtest recorder未声明暂停tick，本单菜单暂停期间使用此截图路径保留UI证据；不修改框架录制器。
+
+独立窗口使用相同UEClient `launch_editor(..., extra_args=["-game", "-windowed", "-ResX=1280", "-ResY=720", "-ForceRes", "-HearthwardSaveTestPool=<新GUID>"])`，另测1920×1080。临时测试夹具通过控制台创建，不保存地图。退出确认应关闭游戏且存档文件大小/修改时间不变。

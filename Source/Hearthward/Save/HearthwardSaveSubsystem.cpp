@@ -143,7 +143,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 bool UHearthwardSaveSubsystem::WritePoint(bool Manual, bool NewCampaign)
 {
     if (!bEnabled || bRestoring || (!NewCampaign && !CampaignId.IsValid())) { Status = TEXT("尚未创建或加载进度"); return false; }
-    if (!Safety.CanSave()) { Status = TEXT("危险中，保存已延后"); return false; }
+    if (!Safety.CanSave()) { Status = TEXT("无法保存：") + GetSafetyDescription(); return false; }
     if (!ReloadPool()) return false;
     const int32 Slot = HearthwardSave::SelectSlot(Pool->Points);
     if (Slot == INDEX_NONE) { Status = TEXT("档池无可用位置，请先主动删除一个节点"); return false; }
@@ -257,9 +257,21 @@ void UHearthwardSaveSubsystem::Tick(float DeltaTime)
     const double Now = GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
     if (Now >= NextAutoSeconds)
     {
-        if (!Safety.CanSave()) { Status = TEXT("危险中，自动保存已延后"); return; }
+        if (!Safety.CanSave()) { Status = TEXT("自动保存已延后：") + GetSafetyDescription(); return; }
         if (!SavePoint(false)) NextAutoSeconds = Now + 1.0; // Bound disk retries; safety resumes on the next tick.
     }
+}
+FString UHearthwardSaveSubsystem::GetSafetyDescription() const
+{
+    TArray<FString> Reasons;
+    if (Safety.Combat) Reasons.Add(TEXT("正在战斗"));
+    if (Safety.EitherDowned) Reasons.Add(TEXT("兄弟有人倒地"));
+    if (Safety.Pursued) Reasons.Add(TEXT("正在被追击"));
+    if (Safety.Drowning) Reasons.Add(TEXT("正在溺水"));
+    if (Safety.Falling) Reasons.Add(TEXT("正在坠落"));
+    if (Safety.CompanionDanger) Reasons.Add(TEXT("弟弟处于危险"));
+    if (!Reasons.IsEmpty()) return FString::Join(Reasons, TEXT("、"));
+    return Safety.SevereHunger ? TEXT("允许保存；严重饥饿，回档后仍可能难以脱困") : TEXT("当前安全条件允许保存");
 }
 void UHearthwardSaveSubsystem::RememberExchange(const FString& Speaker, const FString& Text)
 {

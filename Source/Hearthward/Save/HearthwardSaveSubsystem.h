@@ -29,6 +29,8 @@ public:
     UFUNCTION(BlueprintPure) FString GetStatus() const { return Status; }
     UFUNCTION(BlueprintPure) FString GetKnowledge() const { return FString::Join(Knowledge, TEXT("\n")); }
     UFUNCTION(BlueprintPure) int32 GetAutoMinutes() const { return AutoMinutes; }
+    UFUNCTION(BlueprintPure) bool IsPrototypeEnabled() const { return bEnabled; }
+    UFUNCTION(BlueprintPure) FString GetSafetyDescription() const;
     UPROPERTY(BlueprintAssignable) FHearthwardSnapshotRestored OnSnapshotRestored;
     void RememberExchange(const FString& Speaker, const FString& Text);
     TArray<FString> RecentKnowledge() const;

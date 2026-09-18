@@ -121,6 +121,7 @@ FString UHearthwardDialogueWidget::GetDisplayedProgress() const { return Progres
 FString UHearthwardDialogueWidget::GetDisplayedReply() const { return Reply ? Reply->GetText().ToString() : FString(); }
 FReply UHearthwardDialogueWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
 {
+    if(Event.GetKey()==EKeys::F6 && HUD.IsValid()) { HUD->ToggleSaveMenu(); return FReply::Handled(); }
     if(Event.GetKey()==EKeys::Escape) { Close(); return FReply::Handled(); }
     return Super::NativeOnPreviewKeyDown(Geometry,Event);
 }
