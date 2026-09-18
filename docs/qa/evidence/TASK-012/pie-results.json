@@ -1,0 +1,107 @@
+{
+  "ok": true,
+  "mode": "fixture",
+  "fixture": "PROTOTYPE_ONLY: finite stock, 4-weight trips, five-second gathering, flat swept lane",
+  "checks": {
+    "initial_no_fixture": true,
+    "initial_camp_empty": true,
+    "fixture_creation_idempotent": true,
+    "30m_boundary_communicates": true,
+    "outside_30m_rejects_request": true,
+    "paused_request_rejected": true,
+    "player_statement_kept_separate": true,
+    "missing_quantity_clarifies": true,
+    "missing_goal_clarifies": true,
+    "four_steps_rejected": true,
+    "dangerous_plan_rejected": true,
+    "world_safety_overrides_candidate": true,
+    "explicit_goal_accepted": true,
+    "duplicate_reply_rejected": true,
+    "moved_to_resource": true,
+    "no_upfront_resource_reservation": true,
+    "unapproved_suggestion_keeps_active_goal": true,
+    "bag_panel_freezes_companion": true,
+    "carried_not_delivered": true,
+    "every_deposit_is_physical": true,
+    "no_half_transfer_observed": true,
+    "settlement_reentry_rejected": true,
+    "three_trips_actual_4_4_2": true,
+    "goal_complete_only_after_delivery": true,
+    "completion_not_repeated": true,
+    "claim_does_not_spawn_stock": true,
+    "partial_shortage_returns_with_actual_six": true,
+    "cancel_with_carried_resources": true,
+    "cancel_stops_unfinished_actions": true,
+    "cancelled_late_reply_stale": true,
+    "replacement_accepted": true,
+    "superseded_reply_stale": true,
+    "retained_cargo_real_delivery": true,
+    "outbound_collision_returns_to_camp": true,
+    "danger_mid_action_returns_without_consumption": true,
+    "blocked_return_does_not_teleport_or_deposit": true,
+    "blocked_return_preserves_cargo": true,
+    "cleared_return_route_deposits_and_waits": true,
+    "old_epoch_reply_rejected": true,
+    "epoch_invalidates_running_action": true,
+    "destroyed_resource_returns_safely": true,
+    "second_pie_cleans_fixture_and_stock": true,
+    "second_pie_has_new_epoch": true,
+    "manual_console_entry_starts_goal": true,
+    "second_pie_manual_goal_delivered": true
+  },
+  "deposits": [
+    {
+      "count": 4,
+      "camp": 4,
+      "at_camp": true,
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "count": 4,
+      "camp": 8,
+      "at_camp": true,
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "count": 2,
+      "camp": 10,
+      "at_camp": true,
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "count": 4,
+      "camp": 14,
+      "at_camp": true,
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "count": 2,
+      "camp": 16,
+      "at_camp": true,
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "count": 1,
+      "camp": 17,
+      "at_camp": true,
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "count": 3,
+      "camp": 20,
+      "at_camp": true,
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "count": 4,
+      "camp": 24,
+      "at_camp": true,
+      "phase": "<HearthwardCompanionPhase.RETURNING_BLOCKED: 4>"
+    }
+  ],
+  "seed_events": [
+    16,
+    8,
+    4
+  ]
+}

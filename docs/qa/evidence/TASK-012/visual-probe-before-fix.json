@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "mode": "fixture",
+  "checks": {
+    "outbound_real_position": true,
+    "return_carries_four_before_delivery": true,
+    "visible_goal_completed": true,
+    "visible_shortage_waiting": true
+  },
+  "input_probe": {
+    "1.5": false,
+    "2147483648": false,
+    "999999999999999999999999": false,
+    "-1": false,
+    "0": false
+  },
+  "scope_note": "Original ok applies only to the four visual checks. The first input probe reproduces 1.5 accepted as 1; subsequent probes used get_requested()==0 after cancellation retained prior goal, so those flags cannot independently establish parsing failures. Final runner compares before/after and includes input checks in ok."
+}

@@ -13,6 +13,8 @@ class HEARTHWARD_API UHearthwardInventoryComponent : public UActorComponent
     GENERATED_BODY()
 public:
     FGuid GetContainerId();
+    // Trusted local executor entry; validates both containers before publishing either event.
+    EHearthwardInventoryResult TransferTo(UHearthwardInventoryComponent* Target, FName ItemId, int32 Count);
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
     EHearthwardInventoryResult TryAdd(FName ItemId, int32 Count);
 

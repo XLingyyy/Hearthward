@@ -2,6 +2,8 @@
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
+#include "../Companion/HearthwardCompanionFixture.h"
+#include "EngineUtils.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
@@ -66,6 +68,45 @@ void AHearthwardHUD::DrawHUD()
 {
     Super::DrawHUD();
     APawn* Pawn = GetOwningPawn();
+#if !UE_BUILD_SHIPPING
+    if (Canvas && Pawn && !bInventoryOpen)
+    {
+        for (TActorIterator<AHearthwardCompanionFixture> It(GetWorld()); It; ++It)
+        {
+            const auto* Companion = *It;
+            if (!Companion->CanCommunicate(Pawn)) continue;
+            const float Scale = FMath::Clamp(Canvas->SizeY / 900.0f, 0.65f, 1.25f);
+            const float Left = Canvas->SizeX - 460 * Scale;
+            const float Top = 28 * Scale;
+            DrawRect(FLinearColor(0.035f, 0.042f, 0.042f, 0.94f), Left, Top, 440 * Scale, 184 * Scale);
+            auto Line = [&](const FString& Text, float Y, FLinearColor Color)
+            {
+                DrawText(Text, Color, Left + 16 * Scale, Top + Y * Scale, GEngine->GetMediumFont(), 1.5f * Scale);
+            };
+            Line(TEXT("伙伴委托 · 开发测试"), 12, FLinearColor(0.92f, 0.73f, 0.38f));
+            FString Status;
+            using P = EHearthwardCompanionPhase;
+            switch (Companion->GetPhase())
+            {
+            case P::Idle: Status = TEXT("等待委托"); break;
+            case P::GoingToSource: Status = TEXT("前往资源点"); break;
+            case P::Gathering: Status = TEXT("正在采集"); break;
+            case P::Returning: Status = TEXT("携带物资返营"); break;
+            case P::ReturningBlocked: Status = TEXT("受阻，尝试安全返营"); break;
+            case P::WaitingAtCamp: Status = TEXT("已返营，等待玩家"); break;
+            case P::Completed: Status = TEXT("目标已交付"); break;
+            case P::Cancelled: Status = TEXT("已取消，保留携带物资"); break;
+            }
+            Line(Status, 44, FLinearColor::White);
+            const auto* Item = HearthwardBasicItems().FindByPredicate([Companion](const auto& Def) { return Def.Id == Companion->GetItem(); });
+            Line(FString::Printf(TEXT("%s入库 %d / %d   携带 %d"), Item ? *Item->DisplayName.ToString() : TEXT("物资"),
+                Companion->GetDelivered(), Companion->GetRequested(), Companion->Bag->GetItemCount(Companion->GetItem())), 76, FLinearColor::White);
+            Line(TEXT("采集 → 返营 → 入库"), 108, FLinearColor(0.70f, 0.74f, 0.71f));
+            Line(Companion->BlockReason, 140, FLinearColor(0.88f, 0.65f, 0.50f));
+            break;
+        }
+    }
+#endif
     if (Canvas && Pawn)
     {
         if (const auto* Inventory = Pawn->FindComponentByClass<UHearthwardInventoryComponent>())

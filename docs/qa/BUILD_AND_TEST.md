@@ -153,6 +153,28 @@ Tab为灰盒临时键位；R23正式输入方案和R09暂停选项例外尚未�
 E是灰盒临时键位，当前选取方式为范围内最近目标，完整遮挡/选取及正式键位仍未定。
 脚本用Enhanced Input动作注入并核对E映射；不声称进行了物理键盘操作。
 
+## TASK-012 伙伴委托验证
+
+沿用UEClient构建入口，原生筛选 `Hearthward.Companion`（2项）与 `Hearthward.Inventory`（4项局部回归）。
+以 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-012/verify_companion_pie.py` 启动编辑器；
+两轮PIE报告和截图写入 `Saved/Task012/`，结束后同一UEClient关闭自己启动的进程。
+此脚本直接提供结构化候选，真实模型评测另见本任务 `model-evaluation.json`，不能等价为自然语言通过。
+
+手动进入灰盒PIE，站在开阔平地，在控制台依次执行：
+
+```text
+Hearthward.Companion.CreateTest
+Hearthward.Companion.Collect 10
+```
+
+开发命令只在非Shipping注册；运行期创建伙伴圆柱、营地薄板、有限资源方块，不保存地图。
+场景参数明确为PROTOTYPE_ONLY：16份木材、每趟重量4、五秒采集、180cm/s直线碰撞移动、50cm到达范围。
+观察伙伴行走、采集、返营，以及右上角实际交付从0/10变成4/10、8/10、10/10；全程30米内显示测试状态。
+Tab暂停/恢复世界与伙伴动作。`Hearthward.Companion.Cancel` 仅30米内生效，未入库物资仍留在携带容器。
+再次下单用真实剩余资源继续；没有自动刷新或补给。路线受阻时尝试返营；回程也被挡时保持真实位置及物资，通路恢复后继续。
+当前直线测试通路没有全地图寻路、坡面导航或战斗避险；`bSourceSafe` 是开发场景的显式世界判断，未实现生产环境危险识别。
+弟弟正式容量、长期安排与迟到文字展示仍待R14/R18/R20；100容量的复用容器仅为测试宿主。
+
 ## 仓库检查命令
 
 ```bash
