@@ -28,6 +28,10 @@ public:
     UFUNCTION(BlueprintCallable, Category="Hearthward|Interaction")
     bool InteractNearest();
     UFUNCTION(BlueprintPure, Category="Hearthward|Interaction")
+    UHearthwardInteractionTargetComponent* GetNearestTarget() const;
+    UFUNCTION(BlueprintPure, Category="Hearthward|Interaction")
+    FString GetCompletionFeedback() const { return Status == EHearthwardInteractionStatus::Ready ? CompletionFeedback : FString(); }
+    UFUNCTION(BlueprintPure, Category="Hearthward|Interaction")
     EHearthwardInteractionStatus GetStatus() const { return Status; }
     uint32 GetFeedbackRevision() const { return FeedbackRevision; }
 private:
@@ -46,4 +50,5 @@ private:
     bool bActive = false;
     EHearthwardInteractionStatus Status = EHearthwardInteractionStatus::Idle;
     uint32 FeedbackRevision = 0;
+    FString CompletionFeedback;
 };

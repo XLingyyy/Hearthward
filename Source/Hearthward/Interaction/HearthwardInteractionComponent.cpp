@@ -61,6 +61,11 @@ bool UHearthwardInteractionComponent::BeginInteraction(UHearthwardInteractionTar
 
 bool UHearthwardInteractionComponent::InteractNearest()
 {
+    return BeginInteraction(GetNearestTarget());
+}
+
+UHearthwardInteractionTargetComponent* UHearthwardInteractionComponent::GetNearestTarget() const
+{
     UHearthwardInteractionTargetComponent* Nearest = nullptr;
     double Distance = TNumericLimits<double>::Max();
     for (TActorIterator<AActor> It(GetWorld()); It; ++It)
@@ -74,7 +79,7 @@ bool UHearthwardInteractionComponent::InteractNearest()
             if (CandidateDistance < Distance) { Nearest = Target; Distance = CandidateDistance; }
         }
     }
-    return BeginInteraction(Nearest);
+    return Nearest;
 }
 
 void UHearthwardInteractionComponent::Cancel(EHearthwardInteractionStatus Reason)
@@ -104,7 +109,7 @@ void UHearthwardInteractionComponent::TimerCompleted()
     PendingTarget.Reset();
     SetComponentTickEnabled(false);
     SetStatus(Check);
-    if (Check == EHearthwardInteractionStatus::Ready) Target->OnInteractionReady.Broadcast(GetOwner());
+    if (Check == EHearthwardInteractionStatus::Ready) CompletionFeedback = Target->CompleteInteraction(GetOwner());
 }
 
 void UHearthwardInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

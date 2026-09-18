@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "TASK-018",
+  "title": "玩家木材采集、营地入库与回档闭环",
+  "status": "Blocked",
+  "updated_at": "2026-09-18",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-018-player-gather",
+  "source_refs": [
+    "GDD v0.3 第5.3、6.1、7.8—7.9、13.4节",
+    "Q215",
+    "Q226—230"
+  ],
+  "dependencies": [
+    "TASK-008",
+    "TASK-010",
+    "TASK-011",
+    "TASK-016",
+    "TASK-017"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-001-world-state.md",
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/Companion/HearthwardCompanionDebug.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.cpp",
+    "Source/Hearthward/Tests/ResourceInteractionTests.cpp",
+    "docs/tasks/TASK-018.json",
+    "docs/tasks/TASK-018.md",
+    "docs/handoffs/TASK-018.md",
+    "docs/qa/evidence/TASK-018/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md",
+    "Source/Hearthward/Save/HearthwardSaveDebug.cpp",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Content/",
+    "Plugins/"
+  ],
+  "acceptance": [
+    "现有显式伙伴夹具资源点与营地可由E键完成玩家木材采集/入库；未完成不得结算，重复按键不得重复奖励。",
+    "使用同一资源、玩家背包和共享仓库；满载、资源耗尽、空背包失败保持数量，伙伴竞争后按实际余量结算。",
+    "拾取前显示单位重量、剩余容量、资源/仓储数量；显示结算成功或具体失败；暂停、移动、受伤、目标销毁按现有交互生命周期处理。",
+    "保存后再次采集/入库并回档恢复所有数量；交互中保存明确拒绝，交互中读档撤销旧结算；第二轮PIE从磁盘恢复。",
+    "Editor构建、定向原生测试、两轮PIE、实键操作及录像检查，提交推送任务分支。"
+  ],
+  "non_goals": [
+    "不补定R03/R13/R14/R19/R23；不做正式采集效率、配方、建造、资源刷新、全物品仓储菜单、地图资产或存档schema改动。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: official references, repository checks and authorized task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user explicitly requested commit and push on 2026-09-18",
+    "push": "granted: task branch only; user explicitly requested commit and push on 2026-09-18",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户2026-09-18明确授权自行拆解018、实现验证、提交推送。基线78965c9543b233dc90fa794c2d601426ac0a567b，017补充文档已成功补推。",
+    "复用现有PROTOTYPE_ONLY夹具：16木材资源；本单1木材/次、5秒、150cm及营地批量木材入库均为隔离测试策略，不宣称设计正式批准。",
+    "Issue查询gh返回GraphQL EOF；独立评审和正式prototype批准未落实，正式流程保留Blocked，继续用户明确授权的开发。",
+    "首轮构建实际发现既有SaveDebug.cpp匿名命名空间Command与测试局部Command在Unity合并编译中冲突；按018实现授权扩展该单文件，仅将命令注册变量改名SaveDebugCommand，不改存档行为。",
+    "实键返营时伙伴胶囊阻挡Camera通道使弹簧臂缩入玩家头部；扩展该夹具源文件，仅将其Camera响应设为Ignore，保持Pawn移动阻挡。",
+    "实现验证完成：最终构建PASS，原生2/2、两轮PIE39/39，最后镜头修正4/4定向复测，实键两段录像；验证覆盖见交接与working-tree-binding.json。"
+  ]
+}

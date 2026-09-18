@@ -1,5 +1,6 @@
 #include "HearthwardCompanionFixture.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
+#include "../Interaction/HearthwardResourceInteractionComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
@@ -44,6 +45,14 @@ void CreateCompanionFixture(UWorld* World)
     Resource->AddInstanceComponent(Stock);
     Stock->RegisterComponent();
     Stock->TryAdd(TEXT("wood"), 16);
+    for (AActor* Target : {Camp, Resource})
+    {
+        auto* Interaction = NewObject<UHearthwardResourceInteractionComponent>(Target);
+        Target->AddInstanceComponent(Interaction);
+        Interaction->SetupAttachment(Target->GetRootComponent());
+        Interaction->InitializePrototype(Target == Camp);
+        Interaction->RegisterComponent();
+    }
     FActorSpawnParameters Params;
     Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
     auto* Companion = World->SpawnActor<AHearthwardCompanionFixture>(Start, FRotator::ZeroRotator, Params);

@@ -2,6 +2,7 @@
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
+#include "../Interaction/HearthwardInteractionTargetComponent.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "EngineUtils.h"
@@ -166,6 +167,23 @@ void AHearthwardHUD::DrawHUD()
     {
         if (const auto* Interaction = Pawn->FindComponentByClass<UHearthwardInteractionComponent>())
         {
+            if (!bInventoryOpen && !IsDialogueOpen())
+            {
+                if (const auto* Target = Interaction->GetNearestTarget())
+                {
+                    TArray<FString> Lines;
+                    Target->GetInteractionPrompt(Pawn).ParseIntoArrayLines(Lines);
+                    if (!Lines.IsEmpty())
+                    {
+                        const float Scale = FMath::Clamp(Canvas->SizeY / 900.0f, 0.65f, 1.25f);
+                        const float Left = (Canvas->SizeX - 540 * Scale) * .5f, Top = Canvas->SizeY * .57f;
+                        DrawRect(FLinearColor(.035f,.042f,.042f,.94f), Left, Top, 540 * Scale, 82 * Scale);
+                        for (int32 I = 0; I < Lines.Num(); ++I)
+                            DrawText(Lines[I], I == 0 ? FLinearColor(.92f,.73f,.38f) : FLinearColor::White,
+                                Left + 18 * Scale, Top + (10 + I * 32) * Scale, GEngine->GetMediumFont(), 1.5f * Scale);
+                    }
+                }
+            }
             if (InteractionFeedbackRevision != Interaction->GetFeedbackRevision())
             {
                 InteractionFeedbackRevision = Interaction->GetFeedbackRevision();
@@ -175,7 +193,7 @@ void AHearthwardHUD::DrawHUD()
             using S = EHearthwardInteractionStatus;
             switch (Interaction->GetStatus())
             {
-            case S::Ready: Feedback = NSLOCTEXT("Hearthward", "InteractionReady", "交互计时完成"); break;
+            case S::Ready: Feedback = FText::FromString(Interaction->GetCompletionFeedback()); break;
             case S::InvalidTarget: Feedback = NSLOCTEXT("Hearthward", "InteractionNoTarget", "无有效交互目标"); break;
             case S::Unconfigured: Feedback = NSLOCTEXT("Hearthward", "InteractionUnconfigured", "交互距离未配置"); break;
             case S::OutOfRange: Feedback = NSLOCTEXT("Hearthward", "InteractionTooFar", "距离过远"); break;
