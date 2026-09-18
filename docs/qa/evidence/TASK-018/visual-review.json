@@ -1,0 +1,56 @@
+{
+  "reviewed": true,
+  "capture": "Native Shot showui continuous frames, encoded at measured average capture interval; includes editor chrome.",
+  "first_recording": {
+    "file": "physical-before-camera-fix.mp4",
+    "frames": 441,
+    "seconds": 158.594,
+    "flows": [
+      "E gather",
+      "Tab inventory/pause",
+      "physical walk from source to camp",
+      "E deposit"
+    ],
+    "counts_start": [
+      14,
+      0,
+      2
+    ],
+    "counts_end": [
+      13,
+      0,
+      3
+    ],
+    "order": "resource, player, storage",
+    "finding": "Companion capsule blocks camera, spring arm collapses into player head."
+  },
+  "final_recording": {
+    "file": "physical-final.mp4",
+    "frames": 223,
+    "seconds": 80.094,
+    "flows": [
+      "near-camp camera",
+      "E deposit"
+    ],
+    "counts_start": [
+      15,
+      1,
+      0
+    ],
+    "counts_end": [
+      15,
+      0,
+      1
+    ],
+    "fix": "Companion capsule ignores Camera channel, retaining Pawn collision; actual camera distance 404.47cm."
+  },
+  "review_method": "Observed actual UI operations; additionally decoded first video every 15 seconds and final video every 5 seconds and visually inspected contact sheets. Not a frame-by-frame review.",
+  "readability": "Prompt, weight, capacity, timer, failure and success text readable in tested PIE viewport. Existing greybox primitives and floating fixture markers remain prototype art.",
+  "not_run": [
+    "packaged game",
+    "second machine",
+    "new true model inference",
+    "formal resource tools/recipes/refresh",
+    "multiple window resolutions in this task"
+  ]
+}

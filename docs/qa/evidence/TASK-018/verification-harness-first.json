@@ -1,0 +1,6 @@
+{
+  "passed": false,
+  "checks": {},
+  "scope": "PROTOTYPE_ONLY",
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-018/verify_resource_pie.py\", line 137, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-018/verify_resource_pie.py\", line 35, in run\n    components(); s=state; c=s['companion']; interaction=s['interaction']; action=s['action']; save=s['save']; bag=s['bag']; source=s['source']; w=s['world']; hud=s['pc'].get_hud()\n    ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-018/verify_resource_pie.py\", line 22, in components\n    pc=unreal.GameplayStatics.get_player_controller(w,0); p=pc.get_pawn()\n                                                            ^^^^^^^^^^^\nAttributeError: 'PlayerController' object has no attribute 'get_pawn'\n"
+}

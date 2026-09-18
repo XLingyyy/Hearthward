@@ -1,0 +1,26 @@
+{
+  "schema": "gamefactory3a.context_used.v1",
+  "engine": "ue5",
+  "engine_api": "agent_skills/engine_context/ue5_api.md",
+  "examples_used": [
+    {
+      "path": "engine_adapters/ue5/examples/ArenaFighterExample/Source/ArenaFighterExample/ArenaFighterExample.Build.cs",
+      "role": "mechanic_example",
+      "purpose": [
+        "module_structure"
+      ]
+    }
+  ],
+  "existing_game_sources": [
+    "Interaction",
+    "Inventory",
+    "Companion",
+    "Save",
+    "UI"
+  ],
+  "external_reference": {
+    "url": "https://dev.epicgames.com/documentation/unreal-engine/lyra-sample-game-interaction-system-in-unreal-engine",
+    "use": "Compared target discovery and interaction execution separation; retained existing nearest-target model, did not add Lyra/GAS dependency."
+  },
+  "design": "Current DOCX paragraphs 297-299, 303, 347, 624, 627-629, 1037; prototype durations/yields are not GDD approvals."
+}

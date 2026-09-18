@@ -1,0 +1,27 @@
+{
+  "schema": "gamefactory3a.mechanic_contract.v1",
+  "contract_version": 1,
+  "gameplay_module": "Hearthward",
+  "state": [
+    "Interaction.GetNearestTarget",
+    "Interaction.GetStatus",
+    "Interaction.GetCompletionFeedback",
+    "Inventory.GetItemCount",
+    "Storage.GetItemCount"
+  ],
+  "events": [
+    "Inventory.OnInventoryChanged",
+    "Storage.OnTransferred",
+    "InteractionTarget.OnInteractionReady (default target only)"
+  ],
+  "commands": [
+    "Interaction.InteractNearest",
+    "Interaction.BeginInteraction",
+    "ResourceInteraction.InitializePrototype"
+  ],
+  "public_api_paths": [
+    "Source/Hearthward/Interaction/HearthwardInteractionComponent.h",
+    "Source/Hearthward/Interaction/HearthwardResourceInteractionComponent.h"
+  ],
+  "scope": "TASK-018 explicit non-Shipping fixture; documentation record, not a second inventory contract."
+}

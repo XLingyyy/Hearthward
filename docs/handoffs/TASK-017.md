@@ -1,6 +1,6 @@
 # TASK-017 交接｜存档管理与退出确认界面
 
-用户于2026-09-18授权接手推进017，并明确由Agent根据现有游戏设计自行拆解。已根据当前DOCX第13/14章完成存档管理UI，实现与验证位于任务分支 `codex/TASK-017-save-menu`。开发基线为 `7ef4abe6c89ce3043eb5a57c794eaec49939626c`；用户随后明确要求“提交并推送”，按该授权提交推送任务分支，不合并main。TASK-004未执行。
+用户于2026-09-18授权接手推进017，并明确由Agent根据现有游戏设计自行拆解。已根据当前DOCX第13/14章完成存档管理UI，实现与验证位于任务分支 `codex/TASK-017-save-menu`。开发基线为 `7ef4abe6c89ce3043eb5a57c794eaec49939626c`；用户随后明确要求“提交并推送”，已按该授权提交推送任务分支，实现提交 `b083a0c7c4bfa34c9fad2c81012cce0f9b3b3358`，不合并main。TASK-004未执行。
 
 ## 实现与使用
 
@@ -24,7 +24,7 @@ UI沿用015原生UMG样式，无新增资产、插件或依赖。实现主要位
 - 独立游戏确认退出后正常关闭，文件大小/修改时间均未变化。[退出检查](../qa/evidence/TASK-017/quit-check.json)、[退出日志](../qa/evidence/TASK-017/standalone-quit-log.txt)。
 - 仓库自检0错误、工具自测31/31通过，当前授权路径无越界。基线范围命令如实失败：017由本轮首次拆解，基线不存在017任务单；未修改检查器或替换base冒充已审批。详见 [workflow-validation.json](../qa/evidence/TASK-017/workflow-validation.json)。
 
-本次为未提交工作树验证，不能把基线SHA当作017实现SHA。[working-tree-binding.json](../qa/evidence/TASK-017/working-tree-binding.json)与源码快照保存本轮受测实现；提交后应追加真实提交绑定。
+验证执行于提交前工作树，[working-tree-binding.json](../qa/evidence/TASK-017/working-tree-binding.json)与源码快照保留当时记录。实现提交及验证范围见[commit-binding.json](../qa/evidence/TASK-017/commit-binding.json)；最终验证后至实现提交未修改源码。后续提交仅更新文档和绑定，不宣称重新运行测试。
 
 ## 已修正与限制
 

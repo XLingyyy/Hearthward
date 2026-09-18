@@ -271,3 +271,9 @@ Epic官方有编辑器与命令行自动化入口；锁定版本核对后，测�
 实键录像通过PIE脚本的Slate回调调用原生 `Shot showui`，与JSON状态轨迹绑定，再用现有FFmpeg编码。原生playtest recorder未声明暂停tick，本单菜单暂停期间使用此截图路径保留UI证据；不修改框架录制器。
 
 独立窗口使用相同UEClient `launch_editor(..., extra_args=["-game", "-windowed", "-ResX=1280", "-ResY=720", "-ForceRes", "-HearthwardSaveTestPool=<新GUID>"])`，另测1920×1080。临时测试夹具通过控制台创建，不保存地图。退出确认应关闭游戏且存档文件大小/修改时间不变。
+
+## TASK-018 玩家采集入库验证
+
+沿用UEClient Editor构建；原生筛选 `Hearthward.Resource`，共2项。`docs/qa/evidence/TASK-018/verify_resource_pie.py`通过launch_editor的ExecutePythonScript参数运行，Bootstrap地图，每轮独立HearthwardSaveTestPool GUID。报告写入Saved/Task018。完整模式两轮39项；TASK018_CAMERA_ONLY=1只执行镜头修正后的4项，不替代完整模式。TASK018_INTERACTIVE=1完成后保留视口；.agent-local/task018-record存在时每约0.35秒请求原生Shot showui并记录状态。
+
+显式执行Hearthward.Companion.CreateTest，150cm内E进行五秒动作，资源点每次1木材进背包，营地整批木材入库。数量、时间、距离均原型参数，未定规则不转为正式设计；覆盖与录像见018交接。

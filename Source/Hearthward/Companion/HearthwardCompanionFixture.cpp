@@ -15,6 +15,8 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture()
     auto* Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
     Capsule->InitCapsuleSize(30.0f, 80.0f);
     Capsule->SetCollisionProfileName(TEXT("Pawn"));
+    // The companion must not push the follow camera into the player's head at camp.
+    Capsule->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
     SetRootComponent(Capsule);
     auto* Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Marker"));
     Mesh->SetupAttachment(Capsule);

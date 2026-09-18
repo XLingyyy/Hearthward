@@ -1,0 +1,65 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "message": "“FString FString::Printf<int32>(UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>,int32)”: 无法将参数 1 从“const wchar_t *”转换为“UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>”",
+      "code": "C2664",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,25)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“;”: 找到空的受控语句；这是否是有意的?",
+      "code": "C4390",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(53,5)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“Command”的声明隐藏了全局声明",
+      "code": "C4459",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CompanionTests.cpp(11,33)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“Command”的声明隐藏了全局声明",
+      "code": "C4459",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CompanionTests.cpp(45,33)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“Command”的声明隐藏了全局声明",
+      "code": "C4459",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAITests.cpp(30,33)",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "G:\\GameFactory\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\n  Requested 1.5 GB memory per action, 15.63 GB available: limiting max parallel actions to 10\nUsing 'git status' to determine working set for adaptive non-unity build (G:\\GameFactory\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nInvalidating makefile for HearthwardEditor (source file added)\nUHT compiled-in object format Default\nUHT processed HearthwardEditor in 5.4757644 seconds (5 generated files written)\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (G:\\UnrealEngine\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35228 toolchain (E:\\VSC++\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.22621.0 SDK (C:\\Program Files (x86)\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCompanionDebug.cpp, HearthwardInteractionComponent.cpp, HearthwardInteractionDebug.cpp, HearthwardResourceInteractionComponent.cpp, ResourceInteractionTests.cpp, HearthwardHUD.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 10 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 15.63 GB physical, 25.17 GB/30.63 GB committed\n  UBA Storage capacity 40 GB\n[1/10] Compile [x64] HearthwardCompanionDebug.cpp\n[2/10] Compile [x64] HearthwardHUD.cpp\n[3/10] Compile [x64] HearthwardInteractionComponent.cpp\n[4/10] Compile [x64] HearthwardInteractionDebug.cpp\n[5/10] Compile [x64] HearthwardResourceInteractionComponent.cpp\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,25): error C2664: “FString FString::Printf<int32>(UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>,int32)”: 无法将参数 1 从“const wchar_t *”转换为“UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>”\n        return FString::Printf(bDeposit ? TEXT(\"木材 ×%d 已入库\") : TEXT(\"木材 ×%d 已放入背包\"), Count);\n                        ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,41): note: “UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>::TCheckedFormatStringPrivate”: 没有重载函数可以转换所有参数类型\n        return FString::Printf(bDeposit ? TEXT(\"木材 ×%d 已入库\") : TEXT(\"木材 ×%d 已放入背包\"), Count);\n                                        ^\nG:\\UnrealEngine\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\String\\FormatStringSan.h(521,1): note: 可能是“UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>::TCheckedFormatStringPrivate(UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int> &&)”\n\t\t};\n^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,41): note: “UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>::TCheckedFormatStringPrivate(UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int> &&)”: 无法将参数 1 从“const wchar_t *”转换为“UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int> &&”\n        return FString::Printf(bDeposit ? TEXT(\"木材 ×%d 已入库\") : TEXT(\"木材 ×%d 已放入背包\"), Count);\n                                        ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,41): note: 原因如下: 无法从“const wchar_t *”转换为“UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>”\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,41): note: 转换要求第二个用户定义的转换运算符或构造函数\nG:\\UnrealEngine\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\String\\FormatStringSan.h(521,1): note: 或    “UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>::TCheckedFormatStringPrivate(const UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int> &)”\n\t\t};\n^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,41): note: “UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>::TCheckedFormatStringPrivate(const UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int> &)”: 无法将参数 1 从“const wchar_t *”转换为“const UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int> &”\n        return FString::Printf(bDeposit ? TEXT(\"木材 ×%d 已入库\") : TEXT(\"木材 ×%d 已放入背包\"), Count);\n                                        ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,41): note: 原因如下: 无法从“const wchar_t *”转换为“const UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>”\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,41): note: 转换要求第二个用户定义的转换运算符或构造函数\nG:\\UnrealEngine\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\String\\FormatStringSan.h(488,4): note: 或    “UE::Core::Private::FormatStringSan::TCheckedFormatStringPrivate<FString::FmtCharType,int>::TCheckedFormatStringPrivate(const CharType (&)[N])”\n        with\n        [\n            CharType=FString::FmtCharType\n        ]\n\t\t\tconsteval TCheckedFormatStringPrivate(const CharType (&Fmt)[N])\n\t\t\t^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,41): note: 尝试匹配参数列表“(const wchar_t *)”时\n        return FString::Printf(bDeposit ? TEXT(\"木材 ×%d 已入库\") : TEXT(\"木材 ×%d 已放入背包\"), Count);\n                                        ^\nG:\\UnrealEngine\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Containers\\UnrealString.h.inl(1376,39): note: 参见“FString::Printf”的声明\n\t[[nodiscard]] static UE_STRING_CLASS Printf(UE::Core::TCheckedFormatString<FmtCharType, Types...> Fmt, Types... Args)\n\t                                     ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(54,25): note: 尝试匹配参数列表“(const wchar_t *, int32)”时\n        return FString::Printf(bDeposit ? TEXT(\"木材 ×%d 已入库\") : TEXT(\"木材 ×%d 已放入背包\"), Count);\n                        ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Interaction\\HearthwardResourceInteractionComponent.cpp(53,5): error C4390: “;”: 找到空的受控语句；这是否是有意的?\n    if (Result == EHearthwardInventoryResult::Success)\n    ^\n[6/10] Compile [x64] Module.Hearthward.cpp\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CompanionTests.cpp(11,33): error C4459: “Command”的声明隐藏了全局声明\n    FHearthwardCompanionCommand Command;\n                                ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Save\\HearthwardSaveDebug.cpp(36,37): note: 参见“`anonymous-namespace'::Command”的声明\nFAutoConsoleCommandWithWorldAndArgs Command(TEXT(\"Hearthward.Save\"),\n                                    ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CompanionTests.cpp(45,33): error C4459: “Command”的声明隐藏了全局声明\n    FHearthwardCompanionCommand Command;\n                                ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Save\\HearthwardSaveDebug.cpp(36,37): note: 参见“`anonymous-namespace'::Command”的声明\nFAutoConsoleCommandWithWorldAndArgs Command(TEXT(\"Hearthward.Save\"),\n                                    ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAITests.cpp(30,33): error C4459: “Command”的声明隐藏了全局声明\n    FHearthwardCompanionCommand Command;\n                                ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Save\\HearthwardSaveDebug.cpp(36,37): note: 参见“`anonymous-namespace'::Command”的声明\nFAutoConsoleCommandWithWorldAndArgs Command(TEXT(\"Hearthward.Save\"),\n                                    ^\n[7/10] Compile [x64] ResourceInteractionTests.cpp\nTotal time in Unreal Build Accelerator local executor: 48.04 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 56.58 seconds\nTrace written to file C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 19.4kb\n",
+    "stderr": ""
+  }
+}

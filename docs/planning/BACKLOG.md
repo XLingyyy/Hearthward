@@ -22,4 +22,5 @@
 | [TASK-015](../tasks/TASK-015.json) | 背包和伙伴UI状态壳 | TASK-009, TASK-012, TASK-013 | Blocked |
 | [TASK-016](../tasks/TASK-016.json) | 世界知识快照与回档隔离 | TASK-002, TASK-005, TASK-010, TASK-012, TASK-013, TASK-015 | Blocked |
 | [TASK-017](../tasks/TASK-017.json) | 存档管理、暂停交互与退出确认界面 | TASK-009, TASK-015, TASK-016 | Blocked |
+| [TASK-018](../tasks/TASK-018.json) | 玩家木材采集、营地入库与回档闭环 | TASK-008, TASK-010, TASK-011, TASK-016, TASK-017 | Blocked |
 | [TASK-020](../tasks/TASK-020.json) | M2小闭环集成与合并后验证 | TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016 | Backlog |

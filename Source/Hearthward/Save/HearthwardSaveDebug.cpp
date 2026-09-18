@@ -33,7 +33,7 @@ void SaveCommand(const TArray<FString>& Args, UWorld* World)
     UE_LOG(LogTemp, Display, TEXT("PROTOTYPE_ONLY Save: %s (%d/50)"), *Save->GetStatus(), Save->GetPoints().Num());
     if (GEngine) GEngine->AddOnScreenDebugMessage(16016, 6, FColor::Yellow, TEXT("PROTOTYPE_ONLY: ") + Save->GetStatus());
 }
-FAutoConsoleCommandWithWorldAndArgs Command(TEXT("Hearthward.Save"),
+FAutoConsoleCommandWithWorldAndArgs SaveDebugCommand(TEXT("Hearthward.Save"),
     TEXT("PROTOTYPE_ONLY: enable | new | manual | auto | list | load/delete/lock/unlock <GUID>. Explicit fixture required."),
     FConsoleCommandWithWorldAndArgsDelegate::CreateStatic(&SaveCommand));
 }
