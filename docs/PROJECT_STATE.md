@@ -8,7 +8,7 @@
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
 | 当前分支 | codex/TASK-015-companion-ui；基于e447acb3cc7d01f9b2bcaead2432cf1506003c90堆叠开发，尚未合并main |
-| 游戏实现提交 | TASK-014：ebbcc922685755bf7a73d03c091e7d04a1f2b153；资产实现和干净克隆测试绑定见TASK-014交接 |
+| 游戏实现提交 | TASK-015：e0a83c54ed0d1ccea946c626da063de1c89c391d；状态检查与最终样式验证绑定见TASK-015交接 |
 | Git LFS | 已启用；原4个Bootstrap资产和013设计DOCX锁保留；014新增6个资产锁由XLingyyy持有，集成交接前保留 |
 | 工具链 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |

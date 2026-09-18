@@ -45,7 +45,7 @@ TASK-013的Development Editor与Game构建通过，68项本地AI运行依赖已�
 模型台词仍会出现多余追问和“已经在营地却说等回营”的措辞问题；结构化动作通过不等同于对话质量或认知系统全面验收。真实库存由UE保持，玩家虚报数量不会生成物品。
 已知引擎启动期13条Condition failed诊断仍有记录；打包、两机验证和完整M0验收未运行。
 TASK-014两轮PIE共28项检查通过：出生、直道移动、墙体阻挡、坡道上台、门洞通行、外边界、背包暂停/恢复及引用闭包。GitHub独立干净克隆取回6个LFS资产后，Editor源码构建与相同28项检查再次通过；该测试无需准备模型权重。物理键盘录像与克隆证据见 [TASK-014交接](docs/handoffs/TASK-014.md)；另一真人和双账号锁演练未运行。
-TASK-015的Editor构建、两轮PIE31项状态/绑定检查通过；真实模型由UI提交两份木材委托并实际入库。中文输入、Enter/鼠标发送、Esc关闭和行走恢复已实测，最终输入框颜色修正已在独立窗口检查；覆盖绑定见 [TASK-015交接](docs/handoffs/TASK-015.md)。
+TASK-015的Editor构建、两轮PIE31项状态/绑定检查通过；真实模型由UI提交两份木材委托并实际入库。中文输入、Enter/鼠标发送、Esc关闭和行走恢复已实测，最终输入框颜色修正已在独立窗口检查；实现提交 e0a83c54ed0d1ccea946c626da063de1c89c391d，覆盖绑定见 [TASK-015交接](docs/handoffs/TASK-015.md)。
 CPU为兼容默认，可在 `Config/DefaultGame.ini` 切换Vulkan与GPU层数；本机性能不代表所有玩家硬件。其他模块证据见 [PROJECT_STATE](docs/PROJECT_STATE.md)。
 Issue、独立评审和部分正式审批尚未落实，任务流程状态不等同于本地实现完成。
 

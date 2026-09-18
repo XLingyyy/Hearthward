@@ -26,3 +26,7 @@ Issue、独立评审与正式prototype审批未补齐，流程保持Blocked。�
 沿用独立项目现有代码与证据路径；GameFactory UI技能中的浏览器交付、generated_ui产物和专用pipeline角色要求不适用此次现有原生UE项目维护，未新增浏览器层或框架改动。开发和运行验证均由用户本轮授权执行。
 
 参考：[Epic UEditableTextBox](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/UMG/UEditableTextBox)，以本机UE5.8头文件和实际编译/操作为准。
+
+## 提交绑定
+
+实现提交：e0a83c54ed0d1ccea946c626da063de1c89c391d。最终Editor构建与独立游戏窗口输入/鼠标发送及回复截图对应该提交。31项PIE状态检查对应同一状态/输入绑定实现；后续仅修改输入框18字号与普通/聚焦态文字颜色，已由最终构建和独立窗口验证覆盖。最后的文档绑定提交不改变代码或资产。
