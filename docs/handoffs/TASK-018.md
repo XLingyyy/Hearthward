@@ -1,6 +1,6 @@
 # TASK-018｜玩家木材采集、营地入库与回档闭环
 
-用户明确授权自行拆解018、实现、验证、提交推送。基线 `78965c9543b233dc90fa794c2d601426ac0a567b`，017末笔交接已补推。本单分支 `codex/TASK-018-player-gather`，实现验证完成，按授权提交推送；不合并main。
+用户明确授权自行拆解018、实现、验证、提交推送。基线 `78965c9543b233dc90fa794c2d601426ac0a567b`，017末笔交接已补推。本单分支 `codex/TASK-018-player-gather`，实现验证完成，已按授权提交推送，实现提交 `7b871e90a16340336d20545eda4b969e6da49a1d`；不合并main。
 
 ## 行为与边界
 
@@ -22,7 +22,7 @@ PIE执行 `Hearthward.Companion.CreateTest`，现有16木材资源方块和营�
 - [修正后实键录像](../qa/evidence/TASK-018/physical-final.mp4)：约80秒223帧；近营地镜头正常，E入库从15/1/0变为15/0/1。录像由原生连续帧按实测时间编码，已观察操作并检查编码后首段每15秒/末段每5秒关键帧，未逐帧审阅。见visual-review.json。
 - 仓库自检0错误，工具31/31通过。基线范围检查如实失败：基线没有本次自行拆解的018任务单；当前授权路径无越界，未伪造基线审批。详见workflow-validation.json。
 
-测试执行于提交前工作树；[源码与验证绑定](../qa/evidence/TASK-018/working-tree-binding.json)记录覆盖范围，提交后追加真实实现SHA。
+测试执行于提交前工作树；[源码与验证绑定](../qa/evidence/TASK-018/working-tree-binding.json)记录覆盖范围，真实实现SHA见[commit-binding.json](../qa/evidence/TASK-018/commit-binding.json)。
 
 ## 已修正问题
 
