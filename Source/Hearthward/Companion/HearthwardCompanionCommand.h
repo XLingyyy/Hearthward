@@ -53,6 +53,10 @@ public:
     }
 
     void Cancel() { Pending = {}; bActive = false; }
+    bool IsPending(const FHearthwardCommandTicket& Ticket, FGuid Epoch) const
+    { return Pending.Matches(Ticket) && Ticket.Epoch == Epoch; }
+    void DiscardPending(const FHearthwardCommandTicket& Ticket)
+    { if (Pending.Matches(Ticket)) Pending = {}; }
     bool IsCurrent(FGuid Epoch) const { return bActive && Active.Epoch == Epoch; }
     bool RecordDelivery(const FHearthwardCommandTicket& Ticket, int32 ActuallyMoved)
     {

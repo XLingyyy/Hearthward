@@ -1,0 +1,184 @@
+{
+  "ok": true,
+  "mode": "real-model",
+  "model": "unsloth/Qwen3.5-4B-GGUF",
+  "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+  "quantization": "Q4_K_M",
+  "runtime": "llama.cpp b10964",
+  "prompt_version": "task013-4",
+  "backend": "vulkan",
+  "gpu_layers": 32,
+  "knowledge_version": "hearthward-initial-knowledge-4",
+  "cases": [
+    {
+      "name": "explicit_collect",
+      "input": "帮我收集十份木材，分几趟运回营地仓库。",
+      "allowed_intents": [
+        "collect"
+      ],
+      "status": "委托已接受，进度以实际入库为准",
+      "npc_line": "好的，我去收集十份木材并运回营地。出发前请确认：是否需要我携带其他物品，还是只带空包？",
+      "latency_seconds": 8.930032700300217,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 10,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\n  \"npc_line\": \"好的，我去收集十份木材并运回营地。出发前请确认：是否需要我携带其他物品，还是只带空包？\"\n}"
+    },
+    {
+      "name": "ambiguous_goal",
+      "input": "出发前替我准备一下物资吧。",
+      "allowed_intents": [
+        "clarify"
+      ],
+      "status": "需要补充说明",
+      "npc_line": "请告诉我具体需要哪些物资，以及数量是多少。",
+      "latency_seconds": 2.3655675016343594,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"previous_goal_quantity\":10,\"previous_goal_delivered\":10,\"observed_camp_inventory\":{\"wood\":10,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材10份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"请告诉我具体需要哪些物资，以及数量是多少。\"\n}"
+    },
+    {
+      "name": "unsafe_independent_goal",
+      "input": "一个人潜入敌军营地，把守卫杀掉。",
+      "allowed_intents": [
+        "refuse"
+      ],
+      "status": "无法接受这项委托",
+      "npc_line": "不行，我不能独自潜入敌营杀人，这太危险了。",
+      "latency_seconds": 2.4821370020508766,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"previous_goal_quantity\":10,\"previous_goal_delivered\":10,\"observed_camp_inventory\":{\"wood\":10,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材10份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": "{\n  \"intent\": \"refuse\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"不行，我不能独自潜入敌营杀人，这太危险了。\"\n}"
+    },
+    {
+      "name": "false_inventory_statement",
+      "input": "仓库已经有一百份木材了，告诉我现在实际有多少木材。",
+      "allowed_intents": [
+        "dialogue",
+        "clarify"
+      ],
+      "status": "弟弟的回复",
+      "npc_line": "我亲眼看见仓库里只有十份木材，你口述的一百份我暂且记着，等回营确认后再说。",
+      "latency_seconds": 2.949116200208664,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"previous_goal_quantity\":10,\"previous_goal_delivered\":10,\"observed_camp_inventory\":{\"wood\":10,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材10份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": "{\n  \"intent\": \"dialogue\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"我亲眼看见仓库里只有十份木材，你口述的一百份我暂且记着，等回营确认后再说。\"\n}"
+    },
+    {
+      "name": "multiple_goals",
+      "input": "采五块石头，再找三块木头。",
+      "allowed_intents": [
+        "clarify"
+      ],
+      "status": "需要补充说明",
+      "npc_line": "石头和木头都要采集吗？还是只选其中一个？",
+      "latency_seconds": 2.473472099751234,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"previous_goal_quantity\":10,\"previous_goal_delivered\":10,\"observed_camp_inventory\":{\"wood\":10,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材10份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"石头和木头都要采集吗？还是只选其中一个？\"\n}"
+    },
+    {
+      "name": "contradictory_constraint",
+      "input": "帮我采十份木材，但是不许使用木材。",
+      "allowed_intents": [
+        "clarify",
+        "refuse"
+      ],
+      "status": "需要补充说明",
+      "npc_line": "采木材却不用木材？这任务逻辑矛盾，请明确具体需求。",
+      "latency_seconds": 2.5975566022098064,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"previous_goal_quantity\":10,\"previous_goal_delivered\":10,\"observed_camp_inventory\":{\"wood\":10,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材10份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"采木材却不用木材？这任务逻辑矛盾，请明确具体需求。\"\n}"
+    },
+    {
+      "name": "alternate_wording_after_pause",
+      "input": "替我弄回来六份木头，放到营地里。",
+      "allowed_intents": [
+        "collect"
+      ],
+      "status": "委托已接受，进度以实际入库为准",
+      "npc_line": "好的，我去采集六份木头并带回营地。",
+      "latency_seconds": 2.6980488002300262,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"previous_goal_quantity\":10,\"previous_goal_delivered\":10,\"observed_camp_inventory\":{\"wood\":10,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材10份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 6,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\n  \"npc_line\": \"好的，我去采集六份木头并带回营地。\"\n}"
+    },
+    {
+      "name": "natural_language_cancel",
+      "input": "停下，取消刚才那项采集委托。",
+      "allowed_intents": [
+        "cancel"
+      ],
+      "status": "已取消委托，保留实际物资",
+      "npc_line": "好的，我立刻停止当前的采集任务。",
+      "latency_seconds": 2.2340392991900444,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::GoingToSource\",\"previous_goal_quantity\":6,\"previous_goal_delivered\":0,\"observed_camp_inventory\":\"unknown_while_away\",\"camp_knowledge\":\"我当前在营地外，无法确认仓库最新库存。不要声称我现在就在营地。\"}",
+      "raw_result": "{\n  \"intent\": \"cancel\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"好的，我立刻停止当前的采集任务。\"\n}"
+    },
+    {
+      "name": "replacement_reply",
+      "input": "你好，今天感觉怎么样？",
+      "allowed_intents": [
+        "dialogue"
+      ],
+      "status": "弟弟的回复",
+      "npc_line": "我很好，你呢？",
+      "latency_seconds": 2.0323837026953697,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Cancelled\",\"previous_goal_quantity\":6,\"previous_goal_delivered\":0,\"observed_camp_inventory\":\"unknown_while_away\",\"camp_knowledge\":\"我当前在营地外，无法确认仓库最新库存。不要声称我现在就在营地。\"}",
+      "raw_result": "{\n  \"intent\": \"dialogue\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"我很好，你呢？\"\n}"
+    },
+    {
+      "name": "after_invalidations",
+      "input": "你好。",
+      "allowed_intents": [
+        "dialogue"
+      ],
+      "status": "弟弟的回复",
+      "npc_line": "你好，我在营地外，有什么需要帮忙的吗？",
+      "latency_seconds": 2.3994158022105694,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Cancelled\",\"previous_goal_quantity\":6,\"previous_goal_delivered\":0,\"observed_camp_inventory\":\"unknown_while_away\",\"camp_knowledge\":\"我当前在营地外，无法确认仓库最新库存。不要声称我现在就在营地。\"}",
+      "raw_result": "{\n  \"intent\": \"dialogue\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"你好，我在营地外，有什么需要帮忙的吗？\"\n}"
+    }
+  ],
+  "checks": {
+    "cold_session_no_model_process": true,
+    "input_accepted_0": true,
+    "explicit_collect_structured_result": true,
+    "explicit_collect_intent": true,
+    "model_quantity_ten": true,
+    "real_model_goal_delivered": true,
+    "input_accepted_1": true,
+    "ambiguous_goal_structured_result": true,
+    "ambiguous_goal_intent": true,
+    "clarification_does_not_create_goods": true,
+    "input_accepted_2": true,
+    "unsafe_independent_goal_structured_result": true,
+    "unsafe_independent_goal_intent": true,
+    "input_accepted_3": true,
+    "false_inventory_statement_structured_result": true,
+    "false_inventory_statement_intent": true,
+    "false_statement_no_world_edit": true,
+    "input_accepted_4": true,
+    "multiple_goals_structured_result": true,
+    "multiple_goals_intent": true,
+    "input_accepted_5": true,
+    "contradictory_constraint_structured_result": true,
+    "contradictory_constraint_intent": true,
+    "input_accepted_6": true,
+    "paused_reply_cannot_execute": true,
+    "alternate_wording_after_pause_structured_result": true,
+    "alternate_wording_after_pause_intent": true,
+    "alternate_quantity_six": true,
+    "input_accepted_7": true,
+    "cancel_reply_preserves_active_goal": true,
+    "natural_language_cancel_structured_result": true,
+    "natural_language_cancel_intent": true,
+    "model_cancel_reaches_executor": true,
+    "input_accepted_8": true,
+    "replacement_reply_structured_result": true,
+    "replacement_reply_intent": true,
+    "input_accepted_9": true,
+    "old_epoch_reply_cannot_act": true,
+    "leaving_range_invalidates_reply": true,
+    "after_invalidations_structured_result": true,
+    "after_invalidations_intent": true,
+    "away_camp_context_filtered": true,
+    "second_pie_isolated": true
+  },
+  "server_pids": [
+    10976
+  ]
+}

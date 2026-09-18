@@ -1,47 +1,41 @@
 {
   "schema_version": 1,
-  "id": "TASK-020",
-  "title": "M2小闭环集成与合并后验证",
+  "id": "TASK-016",
+  "title": "世界知识快照与回档隔离",
   "status": "Backlog",
-  "updated_at": "2026-09-17",
+  "updated_at": "2026-09-18",
   "owner": null,
   "reviewer": null,
   "issue_url": null,
   "branch": null,
   "source_refs": [
-    "WORKFLOW M2",
-    "GDD v0.3 第12/13/18章"
+    "GDD v0.3 第13章",
+    "Q139",
+    "Q140",
+    "Q262",
+    "Q263"
   ],
   "dependencies": [
-    "TASK-010",
-    "TASK-011",
-    "TASK-012",
-    "TASK-013",
-    "TASK-014",
-    "TASK-015",
-    "TASK-016"
+    "TASK-002"
   ],
   "blocked_by": [],
   "contracts": [
-    "docs/contracts/CT-001-world-state.md",
-    "docs/contracts/CT-002-companion-command.md",
     "docs/contracts/CT-003-save-load.md"
   ],
   "allowed_paths": [
-    "Content/Tribe/Tests/Integration/",
-    "Source/TribeGame/Integration/",
-    "docs/PROJECT_STATE.md",
-    "docs/releases/",
-    "docs/tasks/TASK-020.json",
-    "docs/handoffs/TASK-020.md",
-    "docs/qa/evidence/TASK-020/"
+    "Source/Hearthward/Save/",
+    "Content/Tribe/Save/",
+    "Content/Tribe/Tests/Save/",
+    "docs/tasks/TASK-016.json",
+    "docs/handoffs/TASK-016.md",
+    "docs/qa/evidence/TASK-016/"
   ],
   "forbidden_paths": [
     "docs/design/archive/"
   ],
   "acceptance": [
-    "同一SHA中完成采集→实际入库→建造→保存→修改世界→回档，世界与知识一致。",
-    "在打包版本验证，明确本场景没有覆盖的睡眠、刷敌和完整四区；不标记十小时Demo已完成。"
+    "构造快照同时恢复库存、世界与知识，拒绝旧时间线异步动作。",
+    "验证50点保护、损坏快照和新进度容量；未定环境伤害不自行补定。"
   ],
   "non_goals": [
     "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
@@ -49,7 +43,8 @@
   "prototype_only": true,
   "prototype_approval": null,
   "required_tests": [
-    "T-021"
+    "T-011",
+    "T-012"
   ],
   "permissions": {
     "network": "not_granted",
@@ -61,6 +56,6 @@
   "notes": [
     "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
     "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。",
-    "013转为本地模型接入，原存档依赖保留为016。"
+    "用户将013改为本地模型接入；原013存档范围完整转存至016，未执行。"
   ]
 }

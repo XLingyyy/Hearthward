@@ -1,0 +1,53 @@
+{
+  "ok": false,
+  "mode": "real-model",
+  "model": "unsloth/Qwen3.5-4B-GGUF",
+  "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+  "quantization": "Q4_K_M",
+  "runtime": "llama.cpp b10964",
+  "prompt_version": "task013-4",
+  "backend": "cpu",
+  "gpu_layers": 0,
+  "knowledge_version": "hearthward-initial-knowledge-4",
+  "cases": [
+    {
+      "name": "cpu_cold_clarification",
+      "input": "请帮我准备一些东西。",
+      "allowed_intents": [
+        "clarify"
+      ],
+      "status": "需要补充说明",
+      "npc_line": "你要准备什么？请告诉我具体的物品和数量。",
+      "latency_seconds": 31.27718700096011,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"你要准备什么？请告诉我具体的物品和数量。\"\n}"
+    },
+    {
+      "name": "cpu_restart_after_child_exit",
+      "input": "你好，今天感觉怎么样？",
+      "allowed_intents": [
+        "dialogue"
+      ],
+      "status": "本地模型进程已退出，请检查运行配置",
+      "npc_line": "",
+      "latency_seconds": 0.0,
+      "filtered_context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；肉0份；箭0份；\"}",
+      "raw_result": ""
+    }
+  ],
+  "checks": {
+    "missing_model_probe_path_free": true,
+    "missing_model_fails_without_action": true,
+    "input_accepted_0": true,
+    "cpu_cold_clarification_structured_result": true,
+    "cpu_cold_clarification_intent": true,
+    "input_accepted_1": true,
+    "child_exit_cannot_act": true,
+    "cpu_restart_after_child_exit_structured_result": false
+  },
+  "server_pids": [
+    29344,
+    29344
+  ],
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 176, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 82, in run\n    record(\"cpu_restart_after_child_exit\",[\"dialogue\"])\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 30, in record\n    check(name+\"_structured_result\",bool(raw))\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 14, in check\n    if not value: raise AssertionError(name)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: cpu_restart_after_child_exit_structured_result\n"
+}

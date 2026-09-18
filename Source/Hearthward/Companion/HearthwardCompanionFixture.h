@@ -42,6 +42,8 @@ public:
     FString GetPlayerStatement() const { return Statement; }
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
     bool CanCommunicate(AActor* Speaker) const;
+    bool IsProposalCurrent(AActor* Speaker, const FHearthwardCommandTicket& Ticket) const;
+    void DiscardProposal(const FHearthwardCommandTicket& Ticket) { Command.DiscardPending(Ticket); }
 
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardInventoryComponent> Bag;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardTimedActionComponent> Action;

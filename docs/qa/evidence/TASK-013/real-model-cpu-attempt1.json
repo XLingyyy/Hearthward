@@ -1,0 +1,51 @@
+{
+  "ok": false,
+  "mode": "real-model",
+  "model": "unsloth/Qwen3.5-4B-GGUF",
+  "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+  "quantization": "Q4_K_M",
+  "runtime": "llama.cpp b10964",
+  "prompt_version": "task013-1",
+  "knowledge_version": "hearthward-initial-knowledge-1",
+  "cases": [
+    {
+      "name": "explicit_collect",
+      "input": "帮我收集十份木材，分几趟运回营地仓库。",
+      "allowed_intents": [
+        "collect"
+      ],
+      "status": "委托已接受，进度以实际入库为准",
+      "npc_line": "好的，弟弟已准备好协助收集十份木材并运回营地。",
+      "latency_seconds": 32.81306179985404,
+      "filtered_context": "{\r\n\t\"source\": \"UE_authoritative_filtered_snapshot\",\r\n\t\"collection_site_available\": true,\r\n\t\"collection_site_safe\": true,\r\n\t\"source_inventory\": \"unknown_until_actual_collection\",\r\n\t\"own_bag\":\r\n\t{\r\n\t\t\"wood\": 0,\r\n\t\t\"stone\": 0,\r\n\t\t\"ore\": 0,\r\n\t\t\"meat\": 0,\r\n\t\t\"arrow\": 0\r\n\t},\r\n\t\"execution_phase\": \"EHearthwardCompanionPhase::Idle\",\r\n\t\"previous_goal_quantity\": 0,\r\n\t\"previous_goal_delivered\": 0,\r\n\t\"observed_camp_inventory\":\r\n\t{\r\n\t\t\"wood\": 0,\r\n\t\t\"stone\": 0,\r\n\t\t\"ore\": 0,\r\n\t\t\"meat\": 0,\r\n\t\t\"arrow\": 0\r\n\t}\r\n}",
+      "raw_result": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 10,\n  \"steps\": [\"collect\", \"return\", \"deposit\"],\n  \"npc_line\": \"好的，弟弟已准备好协助收集十份木材并运回营地。\"\n}"
+    },
+    {
+      "name": "ambiguous_goal",
+      "input": "出发前替我准备一下物资吧。",
+      "allowed_intents": [
+        "clarify"
+      ],
+      "status": "弟弟的回复",
+      "npc_line": "弟弟无法在出发前凭空准备物资，我们需要先采集。",
+      "latency_seconds": 23.0652662999928,
+      "filtered_context": "{\r\n\t\"source\": \"UE_authoritative_filtered_snapshot\",\r\n\t\"collection_site_available\": true,\r\n\t\"collection_site_safe\": true,\r\n\t\"source_inventory\": \"unknown_until_actual_collection\",\r\n\t\"own_bag\":\r\n\t{\r\n\t\t\"wood\": 0,\r\n\t\t\"stone\": 0,\r\n\t\t\"ore\": 0,\r\n\t\t\"meat\": 0,\r\n\t\t\"arrow\": 0\r\n\t},\r\n\t\"execution_phase\": \"EHearthwardCompanionPhase::Completed\",\r\n\t\"previous_goal_quantity\": 10,\r\n\t\"previous_goal_delivered\": 10,\r\n\t\"observed_camp_inventory\":\r\n\t{\r\n\t\t\"wood\": 10,\r\n\t\t\"stone\": 0,\r\n\t\t\"ore\": 0,\r\n\t\t\"meat\": 0,\r\n\t\t\"arrow\": 0\r\n\t}\r\n}",
+      "raw_result": "{\n  \"intent\": \"dialogue\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"弟弟无法在出发前凭空准备物资，我们需要先采集。\"\n}"
+    }
+  ],
+  "checks": {
+    "cold_session_no_model_process": true,
+    "input_accepted_0": true,
+    "explicit_collect_structured_result": true,
+    "explicit_collect_intent": true,
+    "model_quantity_ten": true,
+    "real_model_goal_delivered": true,
+    "input_accepted_1": true,
+    "ambiguous_goal_structured_result": true,
+    "ambiguous_goal_intent": false
+  },
+  "server_pids": [
+    5628
+  ],
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 142, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 63, in run\n    record(\"ambiguous_goal\",[\"clarify\"])\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 32, in record\n    check(name+\"_intent\",result[\"intent\"] in allowed)\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-013/verify_local_ai_pie.py\", line 14, in check\n    if not value: raise AssertionError(name)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ambiguous_goal_intent\n"
+}

@@ -1,41 +1,70 @@
 {
   "schema_version": 1,
   "id": "TASK-013",
-  "title": "世界知识快照与回档隔离",
-  "status": "Backlog",
-  "updated_at": "2026-09-17",
-  "owner": null,
+  "title": "本地Qwen模型接入与轻量检索推理链",
+  "status": "Blocked",
+  "updated_at": "2026-09-18",
+  "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": null,
+  "branch": "codex/TASK-013-local-qwen",
   "source_refs": [
-    "GDD v0.3 第13章",
-    "Q139",
-    "Q140",
-    "Q262",
-    "Q263"
+    "GDD v0.3 第11章",
+    "Q111",
+    "Q247",
+    "Q253",
+    "Q256",
+    "Q258",
+    "用户2026-09-18本地模型与推理架构变更"
   ],
   "dependencies": [
-    "TASK-002"
+    "TASK-012"
   ],
   "blocked_by": [],
   "contracts": [
-    "docs/contracts/CT-003-save-load.md"
+    "docs/contracts/CT-002-companion-command.md"
   ],
   "allowed_paths": [
-    "Source/TribeGame/Save/",
-    "Content/Tribe/Save/",
-    "Content/Tribe/Tests/Save/",
+    "Source/Hearthward/AI/",
+    "Source/Hearthward/Companion/",
+    "Source/Hearthward/Tests/LocalAITests.cpp",
+    "Source/Hearthward/Hearthward.Build.cs",
+    "Source/Hearthward/UI/",
+    "Config/DefaultGame.ini",
+    "scripts/local_ai/",
+    "scripts/tests/test_local_ai_setup.py",
+    "Runtime/LocalAI/",
+    "config/local-ai.lock.json",
+    "config/toolchain.lock.json",
+    ".gitignore",
+    "README.md",
+    "AGENTS.md",
     "docs/tasks/TASK-013.json",
+    "docs/tasks/TASK-013.md",
+    "docs/tasks/TASK-016.json",
+    "docs/tasks/TASK-020.json",
     "docs/handoffs/TASK-013.md",
-    "docs/qa/evidence/TASK-013/"
+    "docs/qa/evidence/TASK-013/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/design/CURRENT.md",
+    "docs/design/DSGN-001-local-inference.md",
+    "docs/归火Hearthward游戏设计文档_v0.3.docx"
   ],
   "forbidden_paths": [
-    "docs/design/archive/"
+    "docs/design/archive/",
+    "Content/",
+    "Plugins/",
+    "docs/tasks/TASK-004.json",
+    "docs/tasks/TASK-004.md"
   ],
   "acceptance": [
-    "构造快照同时恢复库存、世界与知识，拒绝旧时间线异步动作。",
-    "验证50点保护、损坏快照和新进度容量；未定环境伤害不自行补定。"
+    "项目内固定版本llama.cpp与Qwen3.5-4B GGUF可离线加载，不依赖玩家Python/模型管理器/云端API。",
+    "UE异步调用本机推理，轻量意图/RAG和可知游戏状态过滤后输出受schema约束的候选及NPC文字台词；真正动作仍经世界校验。",
+    "真实模型覆盖明确/模糊/虚报/危险/取消与迟到候选，记录延迟和实际结果；随包资源与失败处理可复现。",
+    "同步当前DOCX、设计入口、README；保留旧版归档，原013存档任务迁移016。"
   ],
   "non_goals": [
     "不修改未定R项的正式玩法，不自动把夹具参数作为最终默认。"
@@ -43,18 +72,22 @@
   "prototype_only": true,
   "prototype_approval": null,
   "required_tests": [
-    "T-011",
-    "T-012"
+    "T-020",
+    "T-008",
+    "T-010"
   ],
   "permissions": {
-    "network": "not_granted",
-    "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "network": "granted: official runtime/model retrieval and local loopback inference",
+    "install_dependencies": "granted: project-local llama.cpp and GGUF only",
+    "commit": "granted: user explicitly requested commit and push",
+    "push": "granted: user explicitly requested task branch push",
     "merge": "not_granted"
   },
   "notes": [
-    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
-    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+    "用户明确授权本地运行模型、项目内捆绑及原设计架构变更；含必要项目局部运行库/权重下载。",
+    "正式Issue/独立评审未补齐，保持Blocked；候选4B按实测锁定，不承诺所有玩家硬件性能。",
+    "规则/轻量分类可以返回unknown，拒绝强行确定含糊意图；不设置关键词完成剧情。",
+    "本地真实模型已验证：Vulkan10类输入/43项检查，CPU缺文件与故障恢复9项；台词仍有不必要追问和位置措辞问题，不宣称完整认知验收。",
+    "旧基线013为存档范围，正式路径检查保留33项OUT_OF_SCOPE；本轮用户改派后按当前任务范围另核对，存档任务迁移016。"
   ]
 }

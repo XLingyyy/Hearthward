@@ -15,7 +15,9 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 [TASK-009](tasks/TASK-009.md) 背包查看界面与默认暂停已提交推送。
 [TASK-010](tasks/TASK-010.md) 共享仓储与真实转移已提交推送。
 [TASK-011](tasks/TASK-011.md) 距离交互与五秒动作已提交推送。
-当前用户授权执行并提交推送 [TASK-012](tasks/TASK-012.md) 伙伴安全委托与多趟交付；采用独立开发夹具，模型未锁定，不依赖 TASK-004。
+[TASK-012](tasks/TASK-012.md) 伙伴安全委托与多趟交付已提交推送。
+当前 [TASK-013](tasks/TASK-013.md) 接入本地Qwen3.5 4B，运行库与GGUF放入项目，由UE启动；轻量规则/RAG/可知状态过滤后做一次生成，仍通过世界执行器校验。模型版本见 `config/local-ai.lock.json`，验证状态见 [TASK-013交接](handoffs/TASK-013.md)。
+用户批准当前设计原件同步修订，见 [DSGN-001](design/DSGN-001-local-inference.md)。原013存档任务保留为TASK-016；TASK-004继续由用户安排。
 
 ## 新成员第一次
 
@@ -37,4 +39,4 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 ## 原件与检索
 
 [当前设计](design/CURRENT.md)给出摘要和来源；[R项](design/OPEN_QUESTIONS.md)列出所有未定点。
-完整Word在归档区，机械提取文供按章／Q号查阅，不代表新的设计版本。
+当前Word位于docs根目录；归档和机械提取文保留历史内容，按章／Q号查阅时同时核对DSGN-001，不能用归档覆盖已批准修订。

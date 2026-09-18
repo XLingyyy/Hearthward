@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "operation": "build.project",
+  "artifacts": [
+    {
+      "type": "unreal_build",
+      "path": "G:\\GameFactory\\Hearthward",
+      "state": "ready"
+    }
+  ],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [],
+  "payload": {
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "Hearthward",
+      "Win64",
+      "Development",
+      "-Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "G:\\GameFactory\\Hearthward",
+    "target": "Hearthward",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 0,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" Hearthward Win64 Development -Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\n  Requested 1.5 GB memory per action, 15.63 GB available: limiting max parallel actions to 10\nUsing 'git status' to determine working set for adaptive non-unity build (G:\\GameFactory\\Hearthward).\nCreating makefile for Hearthward (no existing makefile)\nUbaServer - Listening on 0.0.0.0:1345\nUHT compiled-in object format Default\nBuilding Hearthward...\n===== Toolchain Information =====\nUsing ISPC compiler (G:\\UnrealEngine\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35228 toolchain (E:\\VSC++\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.22621.0 SDK (C:\\Program Files (x86)\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardLocalAIContext.cpp, HearthwardLocalAIDebug.cpp, HearthwardLocalAISubsystem.cpp, HearthwardCompanionDebug.cpp, HearthwardCompanionFixture.cpp, CompanionTests.cpp, LocalAITests.cpp, HearthwardHUD.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 20 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 15.63 GB physical, 17.05 GB/30.63 GB committed\n  UBA Storage capacity 40 GB\n[1/20] Copy Hearthward-Default.rc2\n[2/20] Copy tbbmalloc.dll\n[3/20] Copy tbb12.dll\n[4/20] Copy D3D12Core.dll\n[5/20] Copy d3d12SDKLayers.dll\n[6/20] Copy DirectML.dll\n[7/20] Compile Resource [x64] Hearthward-Default.rc2\n[8/20] Compile [x64] SharedPCH.Engine.Project.ValApi.ValExpApi.Cpp20.cpp\n[9/20] Compile [x64] HearthwardCompanionFixture.cpp\n[10/20] Compile [x64] CompanionTests.cpp\n[11/20] Compile [x64] HearthwardCompanionDebug.cpp\n[12/20] Compile [x64] HearthwardHUD.cpp\n[13/20] Compile [x64] HearthwardLocalAIContext.cpp\n[14/20] Compile [x64] HearthwardLocalAIDebug.cpp\n[15/20] Compile [x64] HearthwardLocalAISubsystem.cpp\n[16/20] Compile [x64] LocalAITests.cpp\n[17/20] Compile [x64] Module.Hearthward.cpp\n[18/20] Compile [x64] Module.A3GamePlayable.cpp\n[19/20] Link [x64] Hearthward.exe\n  正在创建库 G:\\GameFactory\\Hearthward\\Binaries\\Win64\\Hearthward.lib 和对象 G:\\GameFactory\\Hearthward\\Binaries\\Win64\\Hearthward.exp\n[20/20] WriteMetadata Hearthward.target [NoUba]\n\nTotal time in Unreal Build Accelerator local executor: 82.08 seconds\nOutput binary: G:\\GameFactory\\Hearthward\\Binaries\\Win64\\Hearthward.exe\n\nResult: Succeeded\nTotal execution time: 87.03 seconds\nTrace written to file C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 18.3kb\n",
+    "stderr": ""
+  }
+}
