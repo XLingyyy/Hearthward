@@ -1,6 +1,6 @@
 # TASK-019｜营地仓储数量选择与双向存取
 
-用户2026-09-19授权自行推进、提交和推送。任务分支 `codex/TASK-019-storage-menu`，基线 `fe13f0bf2bc10a732a7098aa08dfb87a46e96ed7`。本单实现验证已完成，提交绑定随后记录；未合并main。正式流程仍Blocked：Issue查询401、独立评审和prototype正式批准缺项。
+用户2026-09-19授权自行推进、提交和推送。任务分支 `codex/TASK-019-storage-menu`，基线 `fe13f0bf2bc10a732a7098aa08dfb87a46e96ed7`。实现提交 `ac856384dc24ce4be42ab1f3ce472864321b7999`，提交及验证绑定见[commit-binding.json](../qa/evidence/TASK-019/commit-binding.json)；实现及4个LFS证据已推送origin任务分支，未合并main。正式流程仍Blocked：Issue查询401、独立评审和prototype正式批准缺项。
 
 ## 当前行为
 
