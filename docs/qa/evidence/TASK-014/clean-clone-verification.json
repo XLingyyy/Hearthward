@@ -1,0 +1,92 @@
+{
+  "ok": true,
+  "map": "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation",
+  "prototype_only": true,
+  "checks": {
+    "asset_exists_/Game/Hearthward/Art/Graybox/M_Route": true,
+    "asset_exists_/Game/Hearthward/Art/Graybox/M_Accent": true,
+    "asset_exists_/Game/Hearthward/Art/Graybox/M_Wall": true,
+    "asset_exists_/Game/Hearthward/Art/Graybox/M_Ground": true,
+    "asset_exists_/Game/Hearthward/Art/Graybox/SM_Block100": true,
+    "isolated_reference_/Game/Hearthward/Art/Graybox/M_Wall": true,
+    "asset_exists_/Game/Hearthward/Tests/Graybox/L_GrayboxValidation": true,
+    "isolated_reference_/Game/Hearthward/Art/Graybox/M_Accent": true,
+    "isolated_reference_/Game/Hearthward/Art/Graybox/M_Ground": true,
+    "isolated_reference_/Game/Hearthward/Art/Graybox/M_Route": true,
+    "isolated_reference_/Game/Hearthward/Art/Graybox/SM_Block100": true,
+    "six_project_packages": true,
+    "existing_move_and_look_actions": true,
+    "one_player_input": true,
+    "safe_player_start": true,
+    "no_model_autostart_or_stock_grant": true,
+    "no_companion_fixture_saved": true,
+    "walk_along_distance_lane": true,
+    "wall_stops_capsule": true,
+    "ramp_reaches_platform": true,
+    "clear_gate_is_walkable": true,
+    "gate_side_blocks": true,
+    "boundary_retains_player": true,
+    "inventory_pauses_world": true,
+    "paused_player_stays": true,
+    "inventory_resumes_world": true,
+    "movement_resumes": true,
+    "second_pie_fresh_spawn": true
+  },
+  "positions": {
+    "spawn": [
+      0.0,
+      0.0,
+      92.15000200271606
+    ],
+    "flat_walk": [
+      680.107864086536,
+      0.0,
+      92.15000295639038
+    ],
+    "collision_stop": [
+      3515.899113531502,
+      0.0,
+      92.14999694206949
+    ],
+    "raised_platform": [
+      1730.6769282622179,
+      -1100.0,
+      292.1500020216661
+    ],
+    "gate_pass": [
+      3468.7862764024326,
+      -1300.0,
+      92.15000295639038
+    ],
+    "gate_wall": [
+      3015.8992286436874,
+      -1050.0,
+      92.15000295639038
+    ],
+    "outer_boundary": [
+      -440.8994294749242,
+      0.0,
+      92.14999694206949
+    ]
+  },
+  "dependencies": {
+    "/Game/Hearthward/Art/Graybox/M_Route": [],
+    "/Game/Hearthward/Art/Graybox/M_Accent": [],
+    "/Game/Hearthward/Art/Graybox/M_Wall": [],
+    "/Game/Hearthward/Art/Graybox/M_Ground": [],
+    "/Game/Hearthward/Art/Graybox/SM_Block100": [
+      "/Script/NavigationSystem",
+      "/Game/Hearthward/Art/Graybox/M_Wall"
+    ],
+    "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation": [
+      "/Script/NavigationSystem",
+      "/Engine/EditorResources/LightIcons/S_LightError",
+      "/Game/Hearthward/Art/Graybox/M_Accent",
+      "/Game/Hearthward/Art/Graybox/M_Ground",
+      "/Game/Hearthward/Art/Graybox/M_Route",
+      "/Game/Hearthward/Art/Graybox/M_Wall",
+      "/Game/Hearthward/Art/Graybox/SM_Block100"
+    ]
+  },
+  "input_method": "Enhanced Input action injection; physical keys separately recorded"
+}
