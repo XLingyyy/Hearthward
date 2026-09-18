@@ -2,29 +2,43 @@
   "schema_version": 1,
   "id": "TASK-014",
   "title": "灰盒资产与独立验证场景",
-  "status": "Backlog",
-  "updated_at": "2026-09-17",
-  "owner": null,
+  "status": "Blocked",
+  "updated_at": "2026-09-18",
+  "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": null,
+  "branch": "codex/TASK-014-graybox-validation",
   "source_refs": [
     "GDD v0.3 第4/15章"
   ],
   "dependencies": [
-    "TASK-000"
+    "TASK-003"
   ],
   "blocked_by": [],
   "contracts": [],
   "allowed_paths": [
-    "Content/Tribe/Tests/Graybox/",
-    "Content/Tribe/Art/Graybox/",
+    "Content/Hearthward/Tests/Graybox/",
+    "Content/Hearthward/Art/Graybox/",
     "docs/tasks/TASK-014.json",
+    "docs/tasks/TASK-014.md",
     "docs/handoffs/TASK-014.md",
-    "docs/qa/evidence/TASK-014/"
+    "docs/qa/evidence/TASK-014/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md"
   ],
   "forbidden_paths": [
-    "docs/design/archive/"
+    "docs/design/archive/",
+    "Content/Hearthward/Bootstrap/",
+    "Config/",
+    "config/",
+    "Source/",
+    "Plugins/",
+    "docs/tasks/TASK-004.json",
+    "docs/tasks/TASK-004.md"
   ],
   "acceptance": [
     "所有资产在独立范围内，来源和锁登记清楚；无主地图或全局配置意外修改。",
@@ -39,14 +53,17 @@
     "T-003"
   ],
   "permissions": {
-    "network": "not_granted",
+    "network": "granted: official references, GitHub LFS locks and task push",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted: user requested implementation and direct commit",
+    "push": "granted: user requested task branch push",
     "merge": "not_granted"
   },
   "notes": [
-    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
-    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+    "用户授权继续014并自行提交推送，沿用当前Hearthward内容命名，将旧Tribe预留路径修正为Hearthward独立目录。",
+    "仅制作原任务PROTOTYPE_ONLY灰盒；60m×40m测试地面、35m直道、200cm抬高平台与测试门洞都是验证尺寸，不定义R24正式地图或通行阈值。",
+    "复用UE5.8内置基础形体，新增独立方块网格和四种灰盒材质；不执行004正式资产任务。",
+    "本机可执行独立干净克隆复现；另一真人验收和双账号锁阻断仍需实际参与，保留NOT_RUN，不伪造第二成员。",
+    "正式Issue和独立评审未补齐，流程维持Blocked，不妨碍用户授权的局部实现。"
   ]
 }

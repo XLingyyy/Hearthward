@@ -18,7 +18,7 @@
 | [TASK-011](../tasks/TASK-011.json) | 距离交互、五秒读条和中断反馈 | TASK-006, TASK-007, TASK-008, TASK-009 | Blocked |
 | [TASK-012](../tasks/TASK-012.json) | 伙伴安全委托与多趟采集交付 | TASK-006, TASK-010 | Blocked |
 | [TASK-013](../tasks/TASK-013.json) | 本地Qwen模型接入与轻量检索推理链 | TASK-012 | Blocked |
-| [TASK-014](../tasks/TASK-014.json) | 灰盒资产与独立验证场景 | TASK-000 | Backlog |
+| [TASK-014](../tasks/TASK-014.json) | 灰盒资产与独立验证场景 | TASK-003 | Blocked |
 | [TASK-015](../tasks/TASK-015.json) | 背包和伙伴UI状态壳 | TASK-002 | Backlog |
 | [TASK-016](../tasks/TASK-016.json) | 世界知识快照与回档隔离 | TASK-002 | Backlog |
 | [TASK-020](../tasks/TASK-020.json) | M2小闭环集成与合并后验证 | TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016 | Backlog |

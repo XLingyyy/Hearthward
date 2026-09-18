@@ -1,0 +1,26 @@
+{
+  "screenshots_checked": [
+    "lane.png",
+    "ramp.png",
+    "landmark.png"
+  ],
+  "recorded_frames": 86,
+  "sampled_video_frames": [
+    1,
+    13,
+    25,
+    37,
+    49,
+    61,
+    73,
+    85
+  ],
+  "findings": [
+    "First cold-start capture frame used temporary material/text shaders; following sampled frames resolved to authored materials and readable labels.",
+    "Physical keyboard movement visibly reached ramp/platform, encountered gate side, shifted into opening and walked through.",
+    "No falling through floor, blocked ramp seam or intrusive camera clipping observed in sampled frames; matching collision and pause assertions passed in PIE."
+  ],
+  "scope": "Visual sampling and native operation assertions; not a frame-time or complete visual-performance certification",
+  "recording_note": "Requested 23-second take at 8 fps produced 86 captures and a 10.75-second encoded MP4; encoded duration is not an elapsed gameplay-time measurement.",
+  "result": "PASS for tested greybox geometry and controls; cold shader warmup noted"
+}

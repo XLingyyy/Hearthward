@@ -3,7 +3,7 @@
 ## Hearthward 本地启动约定
 
 - 游戏开发根目录为本仓库；上层 GameFactory 是独立工具仓库，禁止将游戏提交到上层仓库。
-- TASK-003、TASK-005至TASK-012已提交推送；TASK-004仅任务单，明确不执行。当前TASK-013由用户指定为UE→llama.cpp→GGUF→Qwen3.5 4B本地推理，允许项目局部下载运行库和权重，并同步修改当前设计原件。原013存档任务保留为TASK-016。
+- TASK-003、TASK-005至TASK-012已提交推送；TASK-004仅任务单，明确不执行。TASK-013本地模型和设计修订已提交推送。当前用户授权执行TASK-014独立灰盒场景并自行提交推送；只使用测试目录，不改主地图/玩法配置。原013存档任务保留为TASK-016。
 - 原始输入保留于 docs；WORKFLOW.md 是后续维护入口，docs/工作流_v1.0.md 作为原始快照保留。
 - 文本通过 Python 显式 UTF-8 读取；未知编码先检查 BOM。禁止用 LibreOffice 读取文档。
 - UE 目标为 5.8.1；首次生成新工程时 Game/Editor Target 使用 BuildSettingsVersion.V7，EngineAssociation 使用 5.8。
