@@ -1,0 +1,53 @@
+{
+  "fixture": {
+    "status": "PASS",
+    "provider": "deterministic typed proposals; no text interpretation",
+    "model_version": null,
+    "prompt_version": null,
+    "retrieval_version": null,
+    "runner": "verify_companion_pie.py",
+    "checks_passed": 45,
+    "checks_total": 45,
+    "world_input": {
+      "initial_resource_wood": 16,
+      "initial_camp_wood": 0,
+      "initial_carried_wood": 0,
+      "later_separate_case_seed_events": [
+        8,
+        4
+      ]
+    },
+    "allowed_results": [
+      "needs clarification for missing goal/quantity",
+      "reject unsupported/unsafe/stale requests",
+      "accepted safe typed collect-return-deposit plan",
+      "actual cumulative deposit or blocked return with partial progress"
+    ],
+    "evidence": [
+      "pie-results.json",
+      "Hearthward.Companion.json"
+    ],
+    "actual_result": "First goal deposits 4+4+2=10; shortage goal delivers actual 6/8. All deposit callbacks occur within camp arrival range."
+  },
+  "real_model": {
+    "status": "NOT_RUN",
+    "provider": null,
+    "model_version": null,
+    "prompt_version": null,
+    "retrieval_version": null,
+    "reason": "config/toolchain.lock.json model identifier/revision and roles are null; no pinned in-game model or inference endpoint configured for TASK-012. No model downloaded or paid service called.",
+    "required_cases": [
+      "clear goal",
+      "ambiguous goal/quantity",
+      "false inventory statement",
+      "unsafe independent goal",
+      "multi-trip same goal",
+      "cancel",
+      "matching-goal replacement",
+      "stale suggestion/reply",
+      "old timeline reply",
+      "blocked return"
+    ],
+    "evaluation_boundary": "Native/PIE tests validate the executor only. They do not establish free-language interpretation, two-stage retrieval, companion personality or real-model correctness."
+  }
+}

@@ -2,12 +2,12 @@
   "schema_version": 1,
   "id": "TASK-012",
   "title": "伙伴安全委托与多趟采集交付",
-  "status": "Backlog",
-  "updated_at": "2026-09-17",
-  "owner": null,
+  "status": "Blocked",
+  "updated_at": "2026-09-18",
+  "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": null,
+  "branch": "codex/TASK-012-companion-delivery",
   "source_refs": [
     "Q111",
     "Q247",
@@ -16,7 +16,8 @@
     "Q253"
   ],
   "dependencies": [
-    "TASK-002"
+    "TASK-006",
+    "TASK-010"
   ],
   "blocked_by": [],
   "contracts": [
@@ -24,15 +25,29 @@
     "docs/contracts/CT-002-companion-command.md"
   ],
   "allowed_paths": [
-    "Source/TribeGame/Companion/",
-    "Content/Tribe/Companion/",
-    "Content/Tribe/Tests/Companion/",
+    "Source/Hearthward/Companion/",
+    "Source/Hearthward/Tests/CompanionTests.cpp",
+    "Source/Hearthward/Inventory/HearthwardInventoryComponent.h",
+    "Source/Hearthward/Inventory/HearthwardInventoryComponent.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.cpp",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/qa/BUILD_AND_TEST.md",
     "docs/tasks/TASK-012.json",
+    "docs/tasks/TASK-012.md",
     "docs/handoffs/TASK-012.md",
     "docs/qa/evidence/TASK-012/"
   ],
   "forbidden_paths": [
-    "docs/design/archive/"
+    "Content/",
+    "Config/",
+    "Plugins/",
+    "docs/design/",
+    "docs/contracts/",
+    "docs/tasks/TASK-004.json",
+    "docs/tasks/TASK-004.md"
   ],
   "acceptance": [
     "同一目标最多三步，分多趟按实际累计入库，受阻返回营地。",
@@ -51,14 +66,17 @@
     "T-020"
   ],
   "permissions": {
-    "network": "not_granted",
+    "network": "granted: official engineering references",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted: user requested automatic commit",
+    "push": "granted: user requested automatic push",
     "merge": "not_granted"
   },
   "notes": [
-    "尚未创建真实GitHub Issue、分配成员或授权执行；当前是初始Backlog。",
-    "Ready前必须填prototype_approval并明确夹具/场景隔离；不等于已批准删除产品功能。"
+    "用户授权推进012并自行提交推送，允许完成本单独立开发夹具；不执行004，不合并main。",
+    "CT-001/002仍DRAFT，Issue/独立评审和正式prototype_approval未落实，流程保持Blocked。",
+    "R14容量、R18长期规则覆盖、R20迟到文字展示均不作正式决定。有限资源、每趟4单位木材、五秒采集、直线碰撞移动仅PROTOTYPE_ONLY；不写入地图。",
+    "只实现结构化采集目标的执行边界，不硬编码自然语言测试文本；模型标识/版本/端点未配置，T-020真实模型另列NOT_RUN。",
+    "执行器原型完成：Editor构建、2项伙伴原生+4项库存回归、两轮PIE45项检查通过；最终4项画面行为/6项输入检查通过，README已同步。T-020真实模型NOT_RUN，不能报告完整任务验收通过。"
   ]
 }
