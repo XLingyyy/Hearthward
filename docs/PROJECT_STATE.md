@@ -8,7 +8,7 @@
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
 | 当前分支 | codex/TASK-012-companion-delivery；基于941323ef0d47df2a08cd711b814d5c9aa21a6f5a堆叠开发，完整绑定见TASK-012交接 |
-| 游戏实现提交 | 当前实现绑定见TASK-012交接；基础宿主为0732b7fc142e3089764a7101645259d12c97e9df |
+| 游戏实现提交 | TASK-012：6abcc11880dd8b28a251fbbdc893b37fcdfa28e8；测试覆盖绑定见交接 |
 | Git LFS | 已启用；4 个灰盒资产持锁，ID 见 TASK-003 交接 |
 | 工具链 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |

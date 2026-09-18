@@ -31,7 +31,7 @@ TASK-004基础资产准备仍只有任务单、未执行；正式美术、完整
 伙伴测试依次执行 `Hearthward.Companion.CreateTest`、`Hearthward.Companion.Collect 10`；观察伙伴往返及右上角入库进度。
 `Hearthward.Companion.Cancel` 在30米内取消，保留已采物资；Tab可暂停全过程。开发命令不在Shipping注册，也不修改地图。
 
-最近功能验证：TASK-012 Editor构建、2项伙伴原生测试及4项库存回归、两轮PIE共45项检查、4项画面行为及6项数量输入检查通过，4张最终截图已核对。源码与测试结果随本任务提交绑定；T-020真实模型测试为NOT_RUN。
+最近功能验证：TASK-012 Editor构建、2项伙伴原生测试及4项库存回归、两轮PIE共45项检查、4项画面行为及6项数量输入检查通过，4张最终截图已核对。实现提交 `6abcc11880dd8b28a251fbbdc893b37fcdfa28e8`，测试覆盖与绑定边界见交接；T-020真实模型测试为NOT_RUN。
 已知引擎启动期13条Condition failed诊断仍有记录；打包、两机验证和完整M0验收未运行。
 详细结果、测试边界和截图见 [TASK-012交接](docs/handoffs/TASK-012.md)，其他模块证据见 [PROJECT_STATE](docs/PROJECT_STATE.md)。
 Issue、独立评审和部分正式审批尚未落实，任务流程状态不等同于本地实现完成。
