@@ -277,3 +277,9 @@ Epic官方有编辑器与命令行自动化入口；锁定版本核对后，测�
 沿用UEClient Editor构建；原生筛选 `Hearthward.Resource`，共2项。`docs/qa/evidence/TASK-018/verify_resource_pie.py`通过launch_editor的ExecutePythonScript参数运行，Bootstrap地图，每轮独立HearthwardSaveTestPool GUID。报告写入Saved/Task018。完整模式两轮39项；TASK018_CAMERA_ONLY=1只执行镜头修正后的4项，不替代完整模式。TASK018_INTERACTIVE=1完成后保留视口；.agent-local/task018-record存在时每约0.35秒请求原生Shot showui并记录状态。
 
 显式执行Hearthward.Companion.CreateTest，150cm内E进行五秒动作，资源点每次1木材进背包，营地整批木材入库。数量、时间、距离均原型参数，未定规则不转为正式设计；覆盖与录像见018交接。
+
+## TASK-019 营地仓储管理验证
+
+UEClient构建HearthwardEditor后，以Bootstrap地图和 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-019/verify_storage_pie.py`、每次全新的 `-HearthwardSaveTestPool=<GUID>` 启动。默认两轮PIE共49项（含五类选项强制GC回归），结果和截图位于Saved/Task019。TASK019_PHYSICAL_ONLY=1只运行最终UI的3项定向检查，TASK019_INTERACTIVE=1结束后保留视口。测试物品来自显式脚本授予，未写入地图或正式经济。
+
+实键：150cm内R打开营地仓储，选物品、输入整数、点击存入/取出；Esc/R关闭，Tab/F6切换。世界暂停，仅释放自己取得的暂停；每次转移复核当前访问与epoch，回档关闭菜单。`.agent-local/task019-record`存在时按018方式连续保存原生截图及状态轨迹。正式键位、营地解锁和兄弟转交未实现。

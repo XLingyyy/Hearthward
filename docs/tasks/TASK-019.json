@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "TASK-019",
+  "title": "营地仓储数量选择与双向存取界面",
+  "status": "Blocked",
+  "updated_at": "2026-09-19",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-019-storage-menu",
+  "source_refs": [
+    "GDD v0.3 第4、5、7.8—7.9、13.4节"
+  ],
+  "dependencies": [
+    "TASK-010",
+    "TASK-016",
+    "TASK-017",
+    "TASK-018"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-001-world-state.md",
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Interaction/HearthwardResourceInteractionComponent.h",
+    "Source/Hearthward/Interaction/HearthwardResourceInteractionComponent.cpp",
+    "docs/tasks/TASK-019.json",
+    "docs/tasks/TASK-019.md",
+    "docs/handoffs/TASK-019.md",
+    "docs/qa/evidence/TASK-019/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Content/",
+    "Plugins/"
+  ],
+  "acceptance": [
+    "营地150cm测试访问范围内R打开仓储界面；只展示现有五种物品，真实共享库存、单位重量、随身余量。",
+    "可选物品、输入正整数数量存入/取出；库存不足、超重、无效数量、失效营地及过期时间线均不改变库存。",
+    "查看默认暂停，关闭恢复自身暂停与输入；与背包、对话、存档互斥；读档关闭旧仓储会话。",
+    "实际PIE验证双向守恒、距离/数量/容量拒绝、暂停和存读档；实键鼠验证并保留可观察证据。",
+    "Editor构建、相关验证、文档交接完成后提交推送任务分支。"
+  ],
+  "non_goals": [
+    "不补定配方、建造、兄弟转交、资源产量及正式键位；不修改资产、依赖或存档schema。"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: official references, repository checks and authorized task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user explicitly requested commit on 2026-09-19",
+    "push": "granted: user explicitly requested task branch push on 2026-09-19",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户2026-09-19授权自行继续019并提交推送。基线fe13f0bf2bc10a732a7098aa08dfb87a46e96ed7。",
+    "复用显式PROTOTYPE_ONLY营地及150cm访问范围；R临时入口，018 E木材五秒入库保留；菜单直接确认存取为本单原型交互策略。",
+    "gh issue list实际返回401；独立评审、正式prototype审批未落实，正式状态保持Blocked，继续明确授权的实现。",
+    "最终Editor构建PASS，两轮真实PIE49/49（含五类选项强制GC），工具31/31；实键鼠完成物品选择、数量输入、双向存取、背包/存档切换与行走恢复。",
+    "实键发现数量输入与下拉选项对比度不足，修正样式；自定义选项缺少UObject持有导致Slate崩溃，补UPROPERTY引用并做强制GC和完整PIE回归。",
+    "范围检查真实基线不含019任务单而拒绝认证；当前用户授权路径无越界，未伪造基线审批。"
+  ]
+}

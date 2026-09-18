@@ -1,0 +1,24 @@
+{
+  "task": "TASK-019",
+  "engine": "UE 5.8.1",
+  "base": "fe13f0bf2bc10a732a7098aa08dfb87a46e96ed7",
+  "design": [
+    "GDD v0.3 4 默认查看暂停",
+    "5 共享仓储/营地访问",
+    "7.8 初配重量",
+    "7.9 数量取用",
+    "13.4 库存存档"
+  ],
+  "framework_context": [
+    "agent_skills/setting_overview.md",
+    "agent_skills/code_gen/mechanic/game_generation.md",
+    "agent_skills/engine_context/engine_overview.md",
+    "agent_skills/engine_context/ue5_api.md"
+  ],
+  "references": [
+    "https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/UMG/USpinBox",
+    "https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/UMG/UWidget"
+  ],
+  "decision": "Reuse existing native UMG lifecycle and atomic storage API. Quantity uses integer text input to retain full int32 precision; no new dependency or generic framework.",
+  "formal_gate": "Issue query HTTP401; no independent reviewer/prototype approval; Blocked remains."
+}

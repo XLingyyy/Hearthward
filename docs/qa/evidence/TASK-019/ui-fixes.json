@@ -1,0 +1,11 @@
+{
+  "observed": [
+    "Quantity text unreadable in default style; normal and focused colors corrected.",
+    "Default dropdown rows dark text on dark background; explicit item colors added.",
+    "After selecting generated item, Slate access violation during physical check; excerpt retained."
+  ],
+  "investigation": "UComboBoxString::HandleGenerateWidget returns Widget->TakeWidget and does not retain generated UWidget owner. Generated borders were not rooted under WidgetTree RootWidget.",
+  "fix": "UPROPERTY array retains generated widget UObject owners for menu lifetime. Borders retain their label children.",
+  "regression": "Force SystemLibrary.CollectGarbage after selecting each of five items, allow rendering, then deposit/withdraw. Full PIE rerun and physical dropdown verification.",
+  "earlier_results": "44 checks passed before visual changes; pre-gc-fix-physical-verification.json is historical and not final acceptance."
+}

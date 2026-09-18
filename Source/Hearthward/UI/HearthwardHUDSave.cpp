@@ -10,6 +10,7 @@ void AHearthwardHUD::ToggleSaveMenu()
     if (SaveWidget) { CloseSaveMenu(); return; }
     auto* Player = GetOwningPlayerController();
     if (!Player || !GetOwningPawn()) return;
+    CloseStorageMenu();
     CloseDialogue();
     if (bInventoryOpen) ToggleInventory();
     bPausedBySaveMenu = !GetWorld()->IsPaused() && UGameplayStatics::SetGamePaused(this, true);

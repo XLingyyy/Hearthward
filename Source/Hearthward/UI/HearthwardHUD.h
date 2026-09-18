@@ -10,6 +10,12 @@ class HEARTHWARD_API AHearthwardHUD : public AHUD
 {
     GENERATED_BODY()
 public:
+    UFUNCTION(BlueprintCallable) void ToggleStorageMenu();
+    UFUNCTION(BlueprintCallable) void CloseStorageMenu();
+    UFUNCTION(BlueprintPure) bool IsStorageMenuOpen() const { return StorageWidget != nullptr; }
+    UFUNCTION(BlueprintPure) class UHearthwardStorageWidget* GetStorageWidget() const { return StorageWidget; }
+    bool CanUseStorageMenu() const;
+    bool TransferStorage(bool ToCamp, FName Item, int32 Count, FString& Feedback);
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     virtual void DrawHUD() override;
@@ -41,6 +47,11 @@ public:
     bool IsInventoryOpen() const { return bInventoryOpen; }
 
 private:
+    UPROPERTY() TObjectPtr<class UHearthwardStorageWidget> StorageWidget;
+    TWeakObjectPtr<class UHearthwardResourceInteractionComponent> StorageTarget;
+    FGuid StorageEpoch;
+    bool bPausedByStorageMenu = false;
+    bool bCursorBeforeStorageMenu = false;
     UPROPERTY() TObjectPtr<class UHearthwardSaveWidget> SaveWidget;
     bool bPausedBySaveMenu = false;
     bool bCursorBeforeSaveMenu = false;
