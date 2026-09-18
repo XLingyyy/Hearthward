@@ -152,8 +152,18 @@
     "exit_code": 0,
     "output": "",
     "first_staged_exit_code": 1,
-    "correction": "Trimmed one upstream OFL line trailing space; license content unchanged."
+    "correction": "Trimmed one upstream OFL line trailing space; license content unchanged.",
+    "final_staged_exit_code": 0
   },
   "independent_review": "NOT_RUN",
-  "formal_workflow": "Blocked: Issue and independent reviewer absent; user-authorized implementation proceeds."
+  "formal_workflow": "Blocked: Issue and independent reviewer absent; user-authorized implementation proceeds.",
+  "push": {
+    "initial_result": "TLS handshake failure through configured localhost proxy",
+    "openssl_retry": "TLS unexpected EOF through same proxy",
+    "diagnosis": "HTTPS HEAD through proxy failed; direct HTTPS HEAD returned 200.",
+    "final_command": "NO_PROXY=* git -c http.proxy= push -u origin codex/TASK-020-reference-ui",
+    "exit_code": 0,
+    "lfs": "50 objects / 133 MB uploaded",
+    "configuration": "Process-only overrides; global settings unchanged"
+  }
 }
