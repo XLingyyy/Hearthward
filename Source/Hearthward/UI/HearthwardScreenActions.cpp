@@ -55,6 +55,25 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
     bool Success=true;
+    if(Action==TEXT("craft"))
+    {
+        auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
+        Success=Page==TEXT("crafting") && B->Craft(Workbench,SelectedRecipe,CraftingBatches,CraftingEpoch);
+        Message=Success || Page==TEXT("crafting")?B->Feedback:TEXT("请重新打开工作台");
+        Refresh(); return Success;
+    }
+    if(Action.StartsWith(TEXT("recipe:")))
+    {
+        const FName Id(*Action.Mid(7));
+        if(Page!=TEXT("crafting") || !Find(TEXT("craftingRecipes"),Id.ToString())) return false;
+        SelectedRecipe=Id; CraftingBatches=1; Message.Reset(); Refresh(); return true;
+    }
+    if(Action==TEXT("craftMore") || Action==TEXT("craftLess"))
+    {
+        if(Page!=TEXT("crafting")) return false;
+        CraftingBatches=FMath::Clamp(CraftingBatches+(Action==TEXT("craftMore")?1:-1),1,int32(Number(Catalog()->GetObjectField(TEXT("crafting")),TEXT("maxBatches"))));
+        Message.Reset(); Refresh(); return true;
+    }
     if(Action.StartsWith(TEXT("build:")))
     {
         auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
@@ -80,7 +99,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Next==TEXT("dialogue"))
         { auto* C=Companion(GetWorld()); if(!C || !C->CanCommunicate(GetOwningPlayerPawn())) { Message=TEXT("请靠近弟弟，交流范围30米"); Refresh(); return false; } }
         if(Next==TEXT("hud") && !Save->GetCampaignId().IsValid()) { OpenPage(TEXT("title")); return false; }
-        Category.Reset(); OpenPage(Next); return true;
+        Category.Reset(); OpenPage(Next); return Page==Next;
     }
     if(Action==TEXT("new"))
     {

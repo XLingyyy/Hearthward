@@ -327,3 +327,10 @@ verify_ui_extension.py验证旧档迁移与图鉴，共32项。先将本目录ev
 覆盖放置、旋转、碰撞、地面边缘、材料整批结算、中断、暂停、存读档、跨PIE磁盘恢复及实际采集到建造。
 手动：新游戏→E采集木材或R从仓储取木材→B选设施→Q旋转→左键施工，右键取消；五秒后出现独立建筑。
 工作台/篝火目前为灰盒建筑，不含加工、生产、睡眠和升级；配方/半径为独立原型参数。
+
+## TASK-023 工作台即时制作
+
+构建沿用UEClient HearthwardEditor Development。原生测试筛选 `Hearthward.Gameplay.Crafting`，2项：库存整批交换（包含最终容量、失败无部分扣费/产出、整数溢出）及实际配方目录约束。
+通过UEClient `launch_editor` 在Bootstrap执行 `docs/qa/evidence/TASK-023/verify_crafting.py`，每次加入独立 `-HearthwardSaveTestPool=<UUID>`。脚本完成真实工作台建造、五秒采集得到制作材料、即时批量制作、访问失效与两轮PIE磁盘恢复，报告/截图在Saved/Task023。建造材料由夹具显式提供，制作材料来自真实采集，不冒充零物资全程建造测试。
+`observe_crafting_input.py`只搭建隔离工作台并监听状态；手工/电脑操作工具按E、鼠标点击+、F、返回，结果写physical-input.json。两张皮革面板和操作组均可通过F10独立编辑，背景没有烘焙页面控件。
+使用同一UEClient停止自己启动的编辑器；不保存测试墙体到地图，不触碰用户正常档池。引擎初始化前的既有Condition failed诊断单独保留；目标测试报告和进程退出码另行核对。

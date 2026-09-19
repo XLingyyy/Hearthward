@@ -4,6 +4,7 @@
 #include "Actions/HearthwardTimedActionComponent.h"
 #include "Inventory/HearthwardInventoryComponent.h"
 #include "UI/HearthwardHUD.h"
+#include "UI/HearthwardScreenWidget.h"
 #include "Interaction/HearthwardInteractionComponent.h"
 
 #include "Camera/CameraComponent.h"
@@ -184,6 +185,12 @@ void AHearthwardCharacter::ToggleInventory()
 void AHearthwardCharacter::Interact()
 {
     if(FindComponentByClass<UHearthwardBuildingComponent>()->IsPlacing()) return;
+    if(FindComponentByClass<UHearthwardBuildingComponent>()->NearbyWorkbench().IsValid())
+    {
+        if(auto* PC=Cast<APlayerController>(GetController()))
+            if(auto* HUD=Cast<AHearthwardHUD>(PC->GetHUD());HUD && HUD->Screen) HUD->Screen->ExecuteAction(TEXT("page:crafting"));
+        return;
+    }
     if (Gameplay->Enabled && Gameplay->ActivateNearby()) return;
     Interaction->InteractNearest();
 }

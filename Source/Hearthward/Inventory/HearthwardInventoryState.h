@@ -64,6 +64,32 @@ public:
         return EHearthwardInventoryResult::Success;
     }
 
+    EHearthwardInventoryResult Exchange(const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,int32 Batches)
+    {
+        if(Batches<=0) return EHearthwardInventoryResult::InvalidCount;
+        if(Materials.IsEmpty() || Outputs.IsEmpty()) return EHearthwardInventoryResult::InvalidArgument;
+        auto After=*this;
+        for(const auto* Entries:{&Materials,&Outputs})
+            for(const auto& Entry:*Entries)
+            {
+                if(Entry.Value<=0) return EHearthwardInventoryResult::InvalidCount;
+                if(int64(Entry.Value)*Batches>MAX_int32) return EHearthwardInventoryResult::QuantityOverflow;
+            }
+        for(const auto& M:Materials)
+        {
+            const auto R=After.Remove(M.Key,M.Value*Batches);
+            if(R!=EHearthwardInventoryResult::Success) return R;
+        }
+        // Check capacity after all ingredients are removed; publish no partial result on failure.
+        for(const auto& O:Outputs)
+        {
+            const auto R=After.Add(O.Key,O.Value*Batches);
+            if(R!=EHearthwardInventoryResult::Success) return R;
+        }
+        *this=MoveTemp(After);
+        return EHearthwardInventoryResult::Success;
+    }
+
     float GetLoadRatio() const { return static_cast<float>(GetWeightHundredths()) / CapacityHundredths; }
     float GetMoveSpeedMultiplier() const { return 1.0f - 0.1f * GetLoadRatio(); }
     float GetStaminaCostMultiplier() const { return 1.0f + 0.1f * GetLoadRatio(); }

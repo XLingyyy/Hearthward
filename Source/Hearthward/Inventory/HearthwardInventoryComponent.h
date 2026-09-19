@@ -25,6 +25,9 @@ public:
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
     EHearthwardInventoryResult TryConsume(const TMap<FName,int32>& Materials);
 
+    EHearthwardInventoryResult CheckExchange(const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,int32 Batches) const;
+    EHearthwardInventoryResult TryExchange(const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,int32 Batches);
+
     UFUNCTION(BlueprintPure, Category="Hearthward|Inventory")
     int32 GetItemCount(FName ItemId) const { return State.GetCount(ItemId); }
 
