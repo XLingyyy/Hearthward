@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "../Building/HearthwardBuildingComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -374,6 +375,11 @@ void UHearthwardScreenWidget::ComposeDialogue()
 }
 void UHearthwardScreenWidget::ComposeHUD()
 {
+    if(const auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && !B->Feedback.IsEmpty())
+    {
+        Element(TEXT("notice"),B->Feedback,FVector2D(500,625),FVector2D(680,55),18);
+        Elements.Last().Component=TEXT("hud.construction"); Elements.Last().LayoutId=TEXT("hud.construction.feedback");
+    }
     auto* G=Gameplay();
     const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
     Element(TEXT("text"),TEXT("◇  ")+Text(Q,TEXT("name")),FVector2D(46,59),FVector2D(540,48),24); Elements.Last().Color=Color(TEXT("gold"));
@@ -450,6 +456,23 @@ void UHearthwardScreenWidget::ComposeHUD()
     {
         Element(TEXT("notice"),FString::Printf(TEXT("进行中  %.1f / 5.0 秒"),Timer->GetElapsedSeconds()),FVector2D(636,750),FVector2D(400,58),20);
         Element(TEXT("bar"),TEXT(""),FVector2D(654,792),FVector2D(364,6)); Elements.Last().Value=Timer->GetElapsedSeconds()/5; Elements.Last().Color=Color(TEXT("gold"));
+    }
+}
+
+void UHearthwardScreenWidget::ComposeBuilding()
+{
+    int32 Index=0;
+    for(const auto& V:Rows(TEXT("buildings")))
+    {
+        const auto R=V->AsObject(); const float Y=245+Index++*175;
+        const FString Id=Text(R,TEXT("id"));
+        FString Cost;
+        for(const auto& M:R->GetObjectField(TEXT("materials"))->Values)
+            Cost+=Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name"))+FString::Printf(TEXT(" %d / %.0f  "),Inventory()->GetItemCount(FName(*M.Key)),M.Value->AsNumber());
+        Element(TEXT("button"),Text(R,TEXT("name")),FVector2D(510,Y),FVector2D(650,55),26,TEXT("build:")+Id);
+        Elements.Last().Component=TEXT("building.sheet"); Elements.Last().LayoutId=TEXT("building.")+Id+TEXT(".select");
+        Element(TEXT("text"),Cost+TEXT("\n")+Text(R,TEXT("description")),FVector2D(528,Y+64),FVector2D(660,86),18);
+        Elements.Last().Component=TEXT("building.sheet"); Elements.Last().LayoutId=TEXT("building.")+Id+TEXT(".description");
     }
 }
 void UHearthwardScreenWidget::ComposeSave()

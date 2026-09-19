@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
@@ -54,6 +55,13 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
     bool Success=true;
+    if(Action.StartsWith(TEXT("build:")))
+    {
+        auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
+        Success=B && B->SelectBuilding(FName(*Action.Mid(6)));
+        if(Success) OpenPage(TEXT("hud"));
+        return Success;
+    }
     if(Action==TEXT("newPrompt") || Action==TEXT("continuePrompt"))
     {
         const FString Target=Action==TEXT("newPrompt")?TEXT("new"):TEXT("continue");

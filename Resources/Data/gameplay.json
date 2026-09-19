@@ -1044,5 +1044,152 @@
       "description": "盘踞在营地外的敌人。\n击败他们会获得成长经验。\n装备、耐力与补给决定战斗余力。",
       "icon": "axeLarge"
     }
+  ],
+  "construction": {
+    "status": "PROTOTYPE_ONLY: R11/R13未定参数，非正式经济",
+    "campRadius": 1200,
+    "previewDistance": 240,
+    "reach": 400,
+    "rotationStep": 15,
+    "minNormalZ": 0.92,
+    "supportTolerance": 8
+  },
+  "buildings": [
+    {
+      "id": "workbench",
+      "name": "工作台",
+      "description": "营地内建造 · 五秒完成 · 从背包消耗材料",
+      "wilderness": false,
+      "extent": [
+        80,
+        45,
+        45
+      ],
+      "materials": {
+        "wood": 8
+      },
+      "parts": [
+        {
+          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "position": [
+            0,
+            0,
+            35
+          ],
+          "scale": [
+            1.6,
+            0.9,
+            0.2
+          ]
+        },
+        {
+          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "position": [
+            -65,
+            -30,
+            -5
+          ],
+          "scale": [
+            0.16,
+            0.16,
+            0.8
+          ]
+        },
+        {
+          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "position": [
+            -65,
+            30,
+            -5
+          ],
+          "scale": [
+            0.16,
+            0.16,
+            0.8
+          ]
+        },
+        {
+          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "position": [
+            65,
+            -30,
+            -5
+          ],
+          "scale": [
+            0.16,
+            0.16,
+            0.8
+          ]
+        },
+        {
+          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "position": [
+            65,
+            30,
+            -5
+          ],
+          "scale": [
+            0.16,
+            0.16,
+            0.8
+          ]
+        }
+      ]
+    },
+    {
+      "id": "campfire",
+      "name": "篝火",
+      "description": "可在野外建造 · 五秒完成 · 从背包消耗材料",
+      "wilderness": true,
+      "extent": [
+        45,
+        45,
+        16
+      ],
+      "materials": {
+        "wood": 4
+      },
+      "parts": [
+        {
+          "mesh": "/Engine/BasicShapes/Cylinder.Cylinder",
+          "position": [
+            0,
+            0,
+            -8
+          ],
+          "scale": [
+            0.9,
+            0.9,
+            0.16
+          ]
+        },
+        {
+          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "position": [
+            0,
+            0,
+            4
+          ],
+          "scale": [
+            0.65,
+            0.18,
+            0.18
+          ]
+        },
+        {
+          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "position": [
+            0,
+            0,
+            5
+          ],
+          "scale": [
+            0.18,
+            0.65,
+            0.18
+          ]
+        }
+      ]
+    }
   ]
 }

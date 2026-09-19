@@ -31,3 +31,15 @@ EHearthwardInventoryResult UHearthwardInventoryComponent::TryRemove(FName ItemId
     if (Result == EHearthwardInventoryResult::Success) OnInventoryChanged.Broadcast();
     return Result;
 }
+
+EHearthwardInventoryResult UHearthwardInventoryComponent::TryConsume(const TMap<FName,int32>& Materials)
+{
+    auto After=State;
+    for(const auto& M:Materials)
+    {
+        const auto Result=After.Remove(M.Key,M.Value);
+        if(Result!=EHearthwardInventoryResult::Success) return Result;
+    }
+    State=MoveTemp(After); OnInventoryChanged.Broadcast();
+    return EHearthwardInventoryResult::Success;
+}

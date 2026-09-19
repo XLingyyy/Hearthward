@@ -1,4 +1,5 @@
 #include "HearthwardGameplayComponent.h"
+#include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
@@ -464,6 +465,7 @@ FString UHearthwardGameplayComponent::SaveSnapshot() const
 {
     auto J=MakeShared<FJsonObject>();
     J->SetNumberField(TEXT("version"),1);
+    if(const auto* B=GetOwner()?GetOwner()->FindComponentByClass<UHearthwardBuildingComponent>():nullptr) J->SetArrayField(TEXT("buildings"),B->Snapshot());
     J->SetNumberField(TEXT("health"),Health); J->SetNumberField(TEXT("hunger"),Hunger); J->SetNumberField(TEXT("stamina"),Stamina);
     J->SetNumberField(TEXT("experience"),Experience); J->SetNumberField(TEXT("campTier"),CampTier); J->SetBoolField(TEXT("enabled"),Enabled);
     J->SetStringField(TEXT("tracked"),TrackedQuest.ToString());
@@ -485,6 +487,11 @@ bool UHearthwardGameplayComponent::ValidateSnapshot(const FString& Json)
     if (Json.IsEmpty()) return true;
     const auto J=Parse(Json); if (!J) return false;
     if(Number(J,TEXT("version"))!=1) return false;
+    if(J->HasField(TEXT("buildings")))
+    {
+        const TArray<TSharedPtr<FJsonValue>>* Buildings;
+        if(!J->TryGetArrayField(TEXT("buildings"),Buildings) || !UHearthwardBuildingComponent::Validate(*Buildings)) return false;
+    }
     if(J->HasField(TEXT("companionOrder")))
     {
         FString Order;
@@ -534,6 +541,11 @@ bool UHearthwardGameplayComponent::ValidateSnapshot(const FString& Json)
 }
 void UHearthwardGameplayComponent::Restore(const FString& Json)
 {
+    if(auto* B=GetOwner()->FindComponentByClass<UHearthwardBuildingComponent>())
+    {
+        const auto Saved=Parse(Json); const TArray<TSharedPtr<FJsonValue>>* Buildings;
+        B->Restore(Saved && Saved->TryGetArrayField(TEXT("buildings"),Buildings)?*Buildings:TArray<TSharedPtr<FJsonValue>>());
+    }
     for(auto& A:LandmarkActors) if(A.IsValid()) A->Destroy();
     for(auto& A:OpponentActors) if(A.Value.IsValid()) A.Value->Destroy();
     LandmarkActors.Reset(); OpponentActors.Reset(); Stunned.Reset();

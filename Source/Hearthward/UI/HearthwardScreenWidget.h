@@ -62,6 +62,7 @@ private:
     void ComposeCodex();
     void ComposeDialogue();
     void ComposeHUD();
+    void ComposeBuilding();
     void ComposeSave();
     void Element(FString Type,FString Text,FVector2D Position,FVector2D Size,float Font=18,FString Action=TEXT(""),FString Asset=TEXT(""),bool Selected=false);
     FString Resolve(const FString& Bind) const;

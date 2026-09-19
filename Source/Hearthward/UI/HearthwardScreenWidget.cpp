@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
@@ -96,6 +97,8 @@ FLinearColor UHearthwardScreenWidget::Color(const FString& Name) const
 }
 void UHearthwardScreenWidget::OpenPage(FName Name)
 {
+    if(Name!=TEXT("hud") && GetOwningPlayerPawn())
+        if(auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) B->CancelPlacement();
     if (Gameplay()) Gameplay()->SetSprinting(false);
     if((Name==TEXT("settings") || Name==TEXT("save")) && Page!=Name) ReturnPage=Page;
     if(Page!=Name) Category.Reset();
@@ -160,6 +163,7 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("journal")) ComposeJournal();
     if(Page==TEXT("dialogue")) ComposeDialogue();
     if(Page==TEXT("hud")) ComposeHUD();
+    if(Page==TEXT("building")) ComposeBuilding();
     if(Page==TEXT("save")) ComposeSave();
     if(!Message.IsEmpty()) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
     if(!ConfirmAction.IsEmpty())

@@ -316,3 +316,14 @@ verify_ui_extension.py验证旧档迁移与图鉴，共32项。先将本目录ev
 构建目标HearthwardEditor / Development，使用上层UEClient公开API。以独立 `-HearthwardSaveTestPool=<UUID>` 启动Bootstrap，分别通过 `-ExecutePythonScript=<绝对路径>` 执行证据目录中的 `verify_navigation.py`、`verify_navigation_edges.py`。脚本只在未保存的编辑器世界放置临时障碍，复制到PIE进行真实库存与导航验证，不保存Content资产。结果在Saved/Task021，包含JSON及真实3D截图；不要把UI截图当作导航轨迹。
 
 开发导航为Recast Dynamic，半径34cm、高180cm覆盖伙伴胶囊；临时边界从已有碰撞网格范围生成。正式地图可直接放置NavMeshBoundsVolume。导航路径不进入存档；读档清理控制器路径与速度，沿保存的任务阶段重新求路。
+
+## TASK-022 自由建造
+
+通过上述 UEClient `build.project` 构建 HearthwardEditor Development。
+定向原生测试筛选 `Hearthward.Gameplay`，包含现有玩法快照回归与新增建筑字段兼容测试。
+通过 `runtime.launch_editor` 加 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-022/verify_building.py`
+及唯一 `-HearthwardSaveTestPool=<UUID>` 运行真实PIE；结果在 `Saved/Task022/verification.json`。
+测试会创建未保存的临时支撑平台，使用隔离档池；完成后关闭此测试进程，禁止保存临时地图。
+覆盖放置、旋转、碰撞、地面边缘、材料整批结算、中断、暂停、存读档、跨PIE磁盘恢复及实际采集到建造。
+手动：新游戏→E采集木材或R从仓储取木材→B选设施→Q旋转→左键施工，右键取消；五秒后出现独立建筑。
+工作台/篝火目前为灰盒建筑，不含加工、生产、睡眠和升级；配方/半径为独立原型参数。

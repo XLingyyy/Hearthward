@@ -1,4 +1,5 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Building/HearthwardBuildingComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -118,6 +119,8 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
     APawn* Player; AHearthwardCompanionFixture* Companion;
     if (!Participants(Player, Companion)) { Status = TEXT("快照参与者缺失或正在结算"); return false; }
+    if(const auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>(); B && B->IsBuilding())
+    { Status=TEXT("建造中，保存将在完成后可用"); return false; }
     if(const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>(); G && G->Enabled && (G->InCombat() || G->Health<=0))
     { Status=TEXT("战斗或倒地期间无法保存"); return false; }
     if (auto* Interaction = Player->FindComponentByClass<UHearthwardInteractionComponent>(); Interaction && Interaction->bActive)
@@ -184,6 +187,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     Storage->AdvanceTimeline();
+    if(auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>()) B->CancelPlacement();
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->ResetForSnapshot();
     if (auto* Interaction = Player->FindComponentByClass<UHearthwardInteractionComponent>())
     {

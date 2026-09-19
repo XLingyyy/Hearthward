@@ -1,4 +1,5 @@
 #include "HearthwardCharacter.h"
+#include "Building/HearthwardBuildingComponent.h"
 #include "Gameplay/HearthwardGameplayComponent.h"
 #include "Actions/HearthwardTimedActionComponent.h"
 #include "Inventory/HearthwardInventoryComponent.h"
@@ -23,6 +24,7 @@
 AHearthwardCharacter::AHearthwardCharacter()
 {
     Gameplay = CreateDefaultSubobject<UHearthwardGameplayComponent>(TEXT("Gameplay"));
+    CreateDefaultSubobject<UHearthwardBuildingComponent>(TEXT("Building"));
     TimedAction = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("TimedAction"));
     Inventory = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("Inventory"));
     Interaction = CreateDefaultSubobject<UHearthwardInteractionComponent>(TEXT("Interaction"));
@@ -181,6 +183,7 @@ void AHearthwardCharacter::ToggleInventory()
 
 void AHearthwardCharacter::Interact()
 {
+    if(FindComponentByClass<UHearthwardBuildingComponent>()->IsPlacing()) return;
     if (Gameplay->Enabled && Gameplay->ActivateNearby()) return;
     Interaction->InteractNearest();
 }
