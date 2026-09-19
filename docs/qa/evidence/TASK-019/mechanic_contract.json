@@ -1,0 +1,28 @@
+{
+  "task": "TASK-019",
+  "prototype_only": true,
+  "inputs": [
+    "R / Esc close",
+    "Tab inventory",
+    "F6 save",
+    "item ID among five existing types",
+    "positive int32 count",
+    "deposit / withdraw"
+  ],
+  "state": [
+    "widget session",
+    "weak camp target",
+    "storage epoch",
+    "owned pause and cursor state"
+  ],
+  "transfer": "Same UHearthwardStorageSubsystem.Transfer; all-or-nothing; GUID per confirmation; validate camp150cm and currentepoch before mutation.",
+  "load": "OnSnapshotRestored closes menu. Detached widget cannot submit into a fresh session.",
+  "persistence": "Existing schema1 inventory snapshot, no new save fields.",
+  "non_goals": [
+    "building recipes",
+    "full item catalog",
+    "brother transfer",
+    "formal keys",
+    "assets"
+  ]
+}

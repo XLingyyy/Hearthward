@@ -17,6 +17,7 @@ class HEARTHWARD_API AHearthwardCharacter : public ACharacter
     GENERATED_BODY()
 
 public:
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<class UHearthwardGameplayComponent> Gameplay;
     AHearthwardCharacter();
     virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -36,6 +37,7 @@ private:
     void Look(const FInputActionValue& Value);
     void ToggleInventory();
     void Interact();
+    void StartJump();
 
     UPROPERTY(VisibleAnywhere, Category="Hearthward|Interaction")
     TObjectPtr<UHearthwardInteractionComponent> Interaction;
@@ -51,6 +53,9 @@ private:
 
     UPROPERTY()
     TObjectPtr<UInputAction> LookAction;
+
+    UPROPERTY()
+    TObjectPtr<UInputAction> JumpAction;
 
     UPROPERTY()
     TObjectPtr<UInputMappingContext> InputMapping;

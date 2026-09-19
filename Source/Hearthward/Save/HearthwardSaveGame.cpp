@@ -1,4 +1,5 @@
 #include "HearthwardSaveGame.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/Crc.h"
 #include "Misc/FileHelper.h"
@@ -56,6 +57,7 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
     for (const auto& P : Pool.Points)
     {
         const auto& S = P.World;
+        if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) return false;
         if (!P.SaveId.IsValid() || !P.CampaignId.IsValid() || Ids.Contains(P.SaveId) || S.Map.IsEmpty()
             || !FMath::IsFinite(S.ActiveSeconds) || S.ActiveSeconds < 0 || S.KnowledgeRevision != S.Knowledge.Num()
             || S.AutoMinutes < 1 || S.AutoMinutes > 60 || !S.Safety.CanSave()

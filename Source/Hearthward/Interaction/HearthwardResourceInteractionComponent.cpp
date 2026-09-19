@@ -12,6 +12,13 @@ void UHearthwardResourceInteractionComponent::InitializePrototype(bool bAtCamp)
 #endif
 }
 
+bool UHearthwardResourceInteractionComponent::CanAccessStorage(AActor* Interactor) const
+{
+    return bEnabled && bDeposit && IsValid(GetOwner()) && !GetOwner()->IsActorBeingDestroyed()
+        && IsValid(Interactor) && !Interactor->IsActorBeingDestroyed() && Interactor->GetWorld() == GetWorld()
+        && MaxDistance > 0 && FVector::DistSquared(Interactor->GetActorLocation(), GetComponentLocation()) <= FMath::Square(double(MaxDistance));
+}
+
 FString UHearthwardResourceInteractionComponent::GetInteractionPrompt(AActor* Interactor) const
 {
     const auto* Bag = IsValid(Interactor) ? Interactor->FindComponentByClass<UHearthwardInventoryComponent>() : nullptr;
@@ -19,7 +26,7 @@ FString UHearthwardResourceInteractionComponent::GetInteractionPrompt(AActor* In
     if (bDeposit)
     {
         const auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
-        return FString::Printf(TEXT("E 存入随身木材 · 营地测试点\n随身 %d   仓储 %d · 五秒完成后转移"),
+        return FString::Printf(TEXT("R 管理仓储 · E 五秒存入木材\n随身木材 %d   仓储木材 %d"),
             Bag->GetItemCount(TEXT("wood")), Storage->GetItemCount(TEXT("wood")));
     }
     const auto* Source = GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>();

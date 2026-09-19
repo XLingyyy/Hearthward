@@ -1,4 +1,5 @@
 #include "HearthwardCharacter.h"
+#include "Gameplay/HearthwardGameplayComponent.h"
 #include "Actions/HearthwardTimedActionComponent.h"
 #include "Inventory/HearthwardInventoryComponent.h"
 #include "UI/HearthwardHUD.h"
@@ -21,6 +22,7 @@
 
 AHearthwardCharacter::AHearthwardCharacter()
 {
+    Gameplay = CreateDefaultSubobject<UHearthwardGameplayComponent>(TEXT("Gameplay"));
     TimedAction = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("TimedAction"));
     Inventory = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("Inventory"));
     Interaction = CreateDefaultSubobject<UHearthwardInteractionComponent>(TEXT("Interaction"));
@@ -101,6 +103,9 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     InteractAction = NewObject<UInputAction>(this, TEXT("InteractAction"));
     InteractAction->ValueType = EInputActionValueType::Boolean;
     InputMapping->MapKey(InteractAction, EKeys::E);
+    JumpAction = NewObject<UInputAction>(this, TEXT("JumpAction"));
+    JumpAction->ValueType = EInputActionValueType::Boolean;
+    InputMapping->MapKey(JumpAction, EKeys::SpaceBar);
 
     auto* Negate = NewObject<UInputModifierNegate>(InputMapping);
     auto* Swizzle = NewObject<UInputModifierSwizzleAxis>(InputMapping);
@@ -121,6 +126,9 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHearthwardCharacter::Look);
     Input->BindAction(InventoryAction, ETriggerEvent::Started, this, &AHearthwardCharacter::ToggleInventory);
     Input->BindAction(InteractAction, ETriggerEvent::Started, this, &AHearthwardCharacter::Interact);
+    Input->BindAction(JumpAction, ETriggerEvent::Started, this, &AHearthwardCharacter::StartJump);
+    Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+    Input->BindAction(JumpAction, ETriggerEvent::Canceled, this, &ACharacter::StopJumping);
     Subsystem->AddMappingContext(InputMapping, 0);
     Player->SetInputMode(FInputModeGameOnly());
     Player->bShowMouseCursor = false;
@@ -141,6 +149,7 @@ void AHearthwardCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHearthwardCharacter::Move(const FInputActionValue& Value)
 {
+    if(Gameplay->Enabled && Gameplay->Health<=0) return;
     const FVector2D Axis = Value.Get<FVector2D>();
     if (!Axis.IsNearlyZero()) TimedAction->InterruptAction();
     const FRotator Yaw(0.0f, GetControlRotation().Yaw, 0.0f);
@@ -155,6 +164,13 @@ void AHearthwardCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(Axis.Y);
 }
 
+void AHearthwardCharacter::StartJump()
+{
+    if ((Gameplay->Enabled && Gameplay->Health <= 0) || !CanJump()) return;
+    TimedAction->InterruptAction();
+    Jump();
+}
+
 void AHearthwardCharacter::ToggleInventory()
 {
     if (auto* Player = Cast<APlayerController>(GetController()))
@@ -165,5 +181,6 @@ void AHearthwardCharacter::ToggleInventory()
 
 void AHearthwardCharacter::Interact()
 {
+    if (Gameplay->Enabled && Gameplay->ActivateNearby()) return;
     Interaction->InteractNearest();
 }

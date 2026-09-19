@@ -1,4 +1,6 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
@@ -116,6 +118,8 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
     APawn* Player; AHearthwardCompanionFixture* Companion;
     if (!Participants(Player, Companion)) { Status = TEXT("快照参与者缺失或正在结算"); return false; }
+    if(const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>(); G && G->Enabled && (G->InCombat() || G->Health<=0))
+    { Status=TEXT("战斗或倒地期间无法保存"); return false; }
     if (auto* Interaction = Player->FindComponentByClass<UHearthwardInteractionComponent>(); Interaction && Interaction->bActive)
     { Status = TEXT("当前交互目标尚未接入存档，请结束交互后保存"); return false; }
     // Reject additional inventory-bearing actors instead of silently losing their state.
@@ -127,6 +131,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     S.Player = Player->GetActorTransform();
     S.View = Player->GetControlRotation();
     S.Inventory = Counts(Player->FindComponentByClass<UHearthwardInventoryComponent>()->State);
+    if (const auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>()) S.Gameplay=Gameplay->SaveSnapshot();
     S.Storage = Counts(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->State.Shared);
     S.PlayerTimer = TimerSnapshot(Player->FindComponentByClass<UHearthwardTimedActionComponent>()->State, S.ActiveSeconds);
     S.Companion = Companion->GetActorTransform(); S.Camp = Companion->Camp->GetActorTransform();
@@ -176,6 +181,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     APawn* Player; AHearthwardCompanionFixture* Companion;
     if (!Participants(Player, Companion)) { Status = TEXT("恢复参与者缺失，请重新创建测试夹具"); return false; }
     TGuardValue<bool> Guard(bRestoring, true);
+    if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     Storage->AdvanceTimeline();
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->ResetForSnapshot();
@@ -207,6 +213,18 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     Companion->Action->SetComponentTickEnabled(S.CompanionTimer.Status == EHearthwardTimedActionStatus::Running);
     NextAutoSeconds = S.ActiveSeconds + AutoMinutes * 60.0;
     // All state is committed before consumers may observe it. No gameplay settlement events replay.
+    if (auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>())
+    {
+        const bool UpgradeLegacy=S.Gameplay.IsEmpty() && Gameplay->Enabled;
+        Gameplay->Restore(S.Gameplay);
+        if(UpgradeLegacy)
+        {
+            Gameplay->EnableAdventure();
+            // Old saves predate equipment. Put the initial kit in unlimited storage so a full bag stays intact.
+            for(const auto& Item:HearthwardData::Catalog()->GetObjectField(TEXT("loadout"))->Values)
+                Storage->State.Shared.Add(FName(*Item.Key),Item.Value->AsNumber());
+        }
+    }
     Personal->OnInventoryChanged.Broadcast(); Companion->Bag->OnInventoryChanged.Broadcast(); Companion->Source->OnInventoryChanged.Broadcast();
     OnSnapshotRestored.Broadcast();
     return true;
@@ -264,6 +282,9 @@ void UHearthwardSaveSubsystem::Tick(float DeltaTime)
 FString UHearthwardSaveSubsystem::GetSafetyDescription() const
 {
     TArray<FString> Reasons;
+    if(const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0))
+        if(const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();G && G->Enabled)
+        { if(G->InCombat()) Reasons.Add(TEXT("正在战斗")); if(G->Health<=0) Reasons.Add(TEXT("玩家倒地")); }
     if (Safety.Combat) Reasons.Add(TEXT("正在战斗"));
     if (Safety.EitherDowned) Reasons.Add(TEXT("兄弟有人倒地"));
     if (Safety.Pursued) Reasons.Add(TEXT("正在被追击"));

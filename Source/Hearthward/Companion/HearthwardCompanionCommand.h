@@ -42,7 +42,7 @@ public:
         if (Item.IsNone() || Quantity == 0) return R::NeedsClarification;
         const TArray<FName> SupportedSteps = {TEXT("collect"), TEXT("return"), TEXT("deposit")};
         if (Quantity < 0 || Steps != SupportedSteps ||
-            !HearthwardBasicItems().ContainsByPredicate([Item](const auto& Def) { return Def.Id == Item; })) return R::Unsupported;
+            !HearthwardBasicItems().ContainsByPredicate([Item](const auto& Def) { return Def.Id == Item && Def.WeightHundredths > 0; })) return R::Unsupported;
         Active = Ticket;
         Pending = {};
         ItemId = Item;

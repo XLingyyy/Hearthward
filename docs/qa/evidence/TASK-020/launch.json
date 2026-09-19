@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "operation": "runtime.launch_editor",
+  "artifacts": [
+    {
+      "type": "unreal_editor_process",
+      "path": "G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "state": "running",
+      "process_id": 35516
+    }
+  ],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [],
+  "payload": {
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+      "/Game/Hearthward/Bootstrap/L_Bootstrap",
+      "-ExecCmds=WebControl.StartServer 30010",
+      "-NoSplash",
+      "-Log",
+      "-A3GameRuntimeInputPort=30020",
+      "-ExecutePythonScript=G:\\GameFactory\\Hearthward\\docs\\qa\\evidence\\TASK-020\\verify_ui_visual.py",
+      "-HearthwardSaveTestPool=b7d2fd1b-8c04-4e6f-8018-1952c3c09a3d"
+    ],
+    "cwd": "G:\\GameFactory\\Hearthward",
+    "map_path": "/Game/Hearthward/Bootstrap/L_Bootstrap",
+    "remote_control_url": "http://127.0.0.1:30010",
+    "runtime_input_host": "127.0.0.1",
+    "runtime_input_port": 30020,
+    "dry_run": false,
+    "process_id": 35516
+  }
+}

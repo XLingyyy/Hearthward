@@ -1,0 +1,56 @@
+{
+  "tool": "built-in image_gen",
+  "sources": {
+    "title": "exec-d1887a96-9294-4633-bc5b-51df5aec4912.png",
+    "inventory": "exec-4e768987-f69b-495f-93c2-b1c260718cfa.png",
+    "storage": "exec-803786d6-ce3c-4f6c-942f-9d4edc08163f.png",
+    "pause": "exec-dd5e3b39-9d8d-4f97-819e-9da671bb5a1b.png",
+    "map": "exec-c7ba4a8e-197b-4bd5-af45-c13055465f2d.png",
+    "skills": "exec-f04293c1-1e3a-4fce-806b-e00f8607b162.png",
+    "dialogue": "exec-64dc1a7e-e554-4194-8f56-5379257275fb.png",
+    "journal": "exec-f5b2f321-0cb3-4d82-aa5a-f13315d7ca68.png",
+    "items-clean": "exec-79631d63-8f07-4646-8a55-db804a0511c7.png",
+    "logo": "exec-c053b18e-35cc-4c28-9ec9-8af1826e0461.png",
+    "journal-neutral": "exec-1227d113-c054-4a02-acaa-ef24c950e11a.png",
+    "quick-items-alpha": "exec-210adcdf-36fc-4d55-9ead-15fe08837e4a.png",
+    "inventory-neutral": "exec-68dd9c32-c52f-4adb-a2d5-b24bba52c729.png"
+  },
+  "reference": "User supplied ui pic; untouched originals used as UV art atlases only",
+  "method": "Clean background plates; interactive text, inventory, bars, markers and buttons are independently rendered",
+  "font": "Noto Serif CJK SC Regular; https://github.com/notofonts/noto-cjk; SIL OFL",
+  "item_cleanup_prompt": "items-clean.prompt.txt",
+  "research": [
+    "https://dev.epicgames.com/documentation/unreal-engine/data-driven-gameplay-elements-in-unreal-engine",
+    "https://dev.epicgames.com/documentation/unreal-engine/saving-and-loading-your-game-in-unreal-engine",
+    "https://dev.epicgames.com/documentation/en-us/unreal-engine/styling-in-unreal-engine"
+  ],
+  "logo": "Shared generated alpha logo used on all pages; original atlas logos retained only as source assets.",
+  "journal_neutral": "Removed baked sidebar selection; dynamic category selection uses the original clean selection atlas.",
+  "quick_items": "Four transparent quickslot illustrations generated from HUD reference; 1254 square atlas, four 627 square UV cells.",
+  "body_font": {
+    "family": "LXGW WenKai Regular",
+    "source": "https://github.com/lxgw/LxgwWenKai",
+    "download": "https://raw.githubusercontent.com/lxgw/LxgwWenKai/main/fonts/TTF/LXGWWenKai-Regular.ttf",
+    "license": "Fonts/LXGW-OFL.txt",
+    "modified": false
+  },
+  "inventory_neutral": "Generated removal of baked right-column rules; only the 1330,270,300,510 stat plate UV is used, preserving all other art.",
+  "component_split": {
+    "sources": {
+      "pause-scene": "exec-d7c3c211-96d9-48ec-8259-908118563794.png",
+      "inventory-scene": "exec-8f2a0810-e7d2-4c7b-82ed-025b90426c55.png",
+      "storage-scene": "exec-64e72a13-011d-4a91-b8a6-041315bd653e.png",
+      "journal-scene": "exec-32f5f8d1-b76b-4ad3-b747-d04565d50f0e.png",
+      "leather-panel": "exec-0d8f4c3a-a16a-4a38-9672-f3035ba5ed6d.png",
+      "title-scene": "exec-1622a277-4d8e-4ad8-babd-2351997b6691.png",
+      "inventory-empty-scene": "exec-d7366c74-bc3c-47e2-9c64-927aa8ff20e1.png",
+      "inventory-hero-alpha": "exec-401a5318-72af-47a4-8224-45a136112c56.png",
+      "menu-icons-alpha": "exec-ec7bad17-0220-41cc-b404-32bb9820f610.png",
+      "neutral-texture": "exec-7a6473c6-37c9-4030-8ae5-1636f2a0e5a6.png"
+    },
+    "method": "ImageGen removes all UI structures from environment plates. Independent leather panel has genuine alpha and nine-slice margins. Rules, slots, image previews and ornaments are separate layout elements. Original reference atlases remain untouched.",
+    "rejected": "exec-3c955a2a-1491-4977-a5f6-152da122216f.png retained leather strip seams; not used. Skills, journal and map use neutral-texture.png without panels or rules.",
+    "character": "Inventory character/wolf cutout uses measured alpha bounds as UV, independently editable over an empty scene. Journal story illustration is an independent component over neutral texture.",
+    "menu_icons": "Five independent alpha icons; removes baked selected rectangle behind the continue campfire. UVs measured from alpha bounds within five cells."
+  }
+}

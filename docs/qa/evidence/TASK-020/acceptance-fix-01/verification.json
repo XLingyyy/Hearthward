@@ -1,0 +1,40 @@
+{
+  "base": "de17dc511834cdd81fdbba004bfc0d14dd065627",
+  "implementation_commit": "4536f3d52ad8e68f8b1c7feb6079aa9514896a93",
+  "acceptance": "User rejected TASK-020; this patch addresses only the two reported defects. Overall visual acceptance remains open.",
+  "reproduced": {
+    "title": "Actual standalone game: pointer outside menu still highlighted Continue. title-before.png",
+    "compass": "Actual standalone HUD: fixed left position left the heading visibly off-center. hud-before.png"
+  },
+  "changes": [
+    "Remove title Continue active id and title fallback selection.",
+    "Clear keyboard selection on mouse movement; clear hover on pointer leave and keyboard navigation.",
+    "Move heading into JSON with center anchor and centered text.",
+    "Measure aligned text using actual Slate layout/DPI scale and align its shadow at the same position."
+  ],
+  "build": "PASS: final Editor Development build via UEClient; build.json",
+  "capture_checks": 26,
+  "pixel_measurements": 12,
+  "max_center_error_pixels": 1,
+  "physical_checks": [
+    "New Game hover selected only New Game.",
+    "Pointer moved from menu to blank area: all five menu frames unselected.",
+    "Down key from blank: Continue keyboard-selected.",
+    "Pointer over Load after keyboard selection: only Load highlighted.",
+    "Pointer leaves game client area: hover cleared.",
+    "Final standalone startup: no default selection.",
+    "Final standalone New Game: compass centered over player/screen center."
+  ],
+  "physical_evidence_note": "Input-transition captures precede only the final scaled-font-measure correction. title-final.png and hud-final.png are from the final compiled source.",
+  "first_measurement_failure": "At 1280 width the first centered-box implementation still had 5px drift due to scale-1 font measurement; preserved in first-alignment-failure.json. The first script also used positional Rotator construction and did not vary yaw. Final script uses explicit yaw and asserts all 12 requested headings before capture.",
+  "test_scope": "UI-only regression. Gameplay/native suites from original implementation were not rerun.",
+  "research": [
+    "https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/UMG/UUserWidget/OnMouseLeave",
+    "UE 5.8 local SlateCore Fonts/FontMeasure.h"
+  ],
+  "push": "Implementation pushed to origin/codex/TASK-020-reference-ui; subsequent commit binds this evidence only.",
+  "repo_scope_check": {
+    "exit_code": 0,
+    "output": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 21\nNOTE: Scope from base commit de17dc511834cdd81fdbba004bfc0d14dd065627; inspected 39 changed paths\nNOTE: Local path check only: current GitHub assignment, approvals and LFS locks are NOT verified\nPASS: repository checks only; 0 error(s)\n"
+  }
+}

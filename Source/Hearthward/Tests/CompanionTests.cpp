@@ -15,6 +15,7 @@ bool FCompanionCandidateTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Missing goal clarified"), Command.Accept(Ticket, Epoch, NAME_None, 10, Steps) == R::NeedsClarification);
     TestTrue(TEXT("Missing count clarified"), Command.Accept(Ticket, Epoch, TEXT("wood"), 0, Steps) == R::NeedsClarification);
     TestTrue(TEXT("Unknown item rejected"), Command.Accept(Ticket, Epoch, TEXT("magic"), 10, Steps) == R::Unsupported);
+    TestTrue(TEXT("Zero-weight quest item cannot enter gathering division"), Command.Accept(Ticket, Epoch, TEXT("amulet"), 1, Steps) == R::Unsupported);
     auto Four = Steps; Four.Add(TEXT("attack"));
     TestTrue(TEXT("Four steps rejected"), Command.Accept(Ticket, Epoch, TEXT("wood"), 10, Four) == R::Unsupported);
     TestTrue(TEXT("Dangerous plan rejected"), Command.Accept(Ticket, Epoch, TEXT("wood"), 10, {TEXT("attack")}) == R::Unsupported);
