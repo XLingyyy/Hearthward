@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "id": "TASK-025",
+  "title": "AI NPC认知、可控长期记忆与多轮委托研发",
+  "status": "Blocked",
+  "updated_at": "2026-09-19",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-025-npc-cognition",
+  "source_refs": [
+    "用户：专注AI NPC研发，自主研究再交付，作为025任务",
+    "GDD v0.3 第10/11章及DSGN-001"
+  ],
+  "dependencies": [
+    "TASK-024"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/contracts/CT-003-save-load.md",
+    "docs/decisions/ADR-TASK-025-npc-cognition.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/",
+    "Source/Hearthward/Save/",
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Tests/LocalAITests.cpp",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "config/local-ai.lock.json",
+    "docs/tasks/TASK-025.json",
+    "docs/tasks/TASK-025.md",
+    "docs/handoffs/TASK-025.md",
+    "docs/decisions/ADR-TASK-025-npc-cognition.md",
+    "docs/qa/evidence/TASK-025/",
+    "docs/qa/BUILD_AND_TEST.md",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "记录营地亲见库存及游戏时间，离营保留旧观察且不读取营地新变化",
+    "玩家显式记录陈述/偏好/约定，可查看编辑撤销；不改写世界事实或固定身份",
+    "保存未完成澄清的原话与问题，补充数量能驱动真实采集，闲聊不擅自执行旧任务",
+    "认知、记录、澄清同边界存读档，旧HTTP与旧UI操作不污染新时间线，兼容旧档",
+    "限制上下文预算并公开当前执行能力，不为未接入动作承诺成功",
+    "Editor构建、定向原生测试、真实模型PIE场景及UI操作证据；研究结论、限制和README随成果交付"
+  ],
+  "non_goals": [
+    "不执行004，不修改美术或地图资产",
+    "不引入多LLM/云端服务/Embedding依赖或无限自主循环",
+    "不闭合R18/R20/R21全部玩法，不实现营地完整生产或新增战斗委托",
+    "记录由玩家显式管理，不把模型自动总结当成已核实事实，不声称通用自然语言约定有确定性执行保证"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-007",
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: research and continuing task delivery",
+    "install_dependencies": "not_granted",
+    "commit": "granted: continuing autonomous task delivery",
+    "push": "granted: continuing autonomous task delivery",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户授权自主研究、拆解和研发交付；延续任务分支提交推送授权，不合并main。",
+    "基于已合并024的origin/main 307b967；无编辑器运行，无未知改动，不编辑二进制资产。",
+    "正式Issue/独立评审仍缺项，正式流程状态Blocked；不阻止用户授权的本地研发。"
+  ]
+}
