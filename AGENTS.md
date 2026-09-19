@@ -3,7 +3,7 @@
 ## Hearthward 本地启动约定
 
 - 游戏开发根目录为本仓库；上层 GameFactory 是独立工具仓库，禁止将游戏提交到上层仓库。
-- TASK-003、TASK-005至TASK-012已提交推送；TASK-004仅任务单，明确不执行。TASK-013本地模型和设计修订已提交推送。TASK-014独立灰盒已提交推送。TASK-015伙伴UI已提交推送。TASK-016世界知识快照已提交推送。TASK-017存档UI及交接已提交推送。TASK-018玩家采集/入库已提交推送。TASK-019已提交推送。TASK-020九页UI及配套玩法已于2026-09-19通过用户验收。TASK-021导航已提交推送；TASK-022建造已提交推送；TASK-023即时制作已提交推送；TASK-024已由用户PR #21合并到main；当前用户授权TASK-025专注AI NPC自主研发并交付，范围/验收见025任务单，延续任务分支提交推送授权，未授权Agent合并。仅显式非Shipping夹具，不把R22未定边界补成正式玩法。
+- TASK-003、TASK-005至TASK-012已提交推送；TASK-004仅任务单，明确不执行。TASK-013本地模型和设计修订已提交推送。TASK-014独立灰盒已提交推送。TASK-015伙伴UI已提交推送。TASK-016世界知识快照已提交推送。TASK-017存档UI及交接已提交推送。TASK-018玩家采集/入库已提交推送。TASK-019已提交推送。TASK-020九页UI及配套玩法已于2026-09-19通过用户验收。TASK-021导航已提交推送；TASK-022建造已提交推送；TASK-023即时制作已提交推送；TASK-024已由用户PR #21合并到main；原025经PR #22合并main d02b5fe后用户未通过验收；当前TASK-025按用户增强版v2执行A+B，分支codex/TASK-025-agent-rev2，范围/验收见025任务单，延续任务分支提交推送授权，未授权Agent合并。仅显式非Shipping夹具，不把R22未定边界补成正式玩法。
 - 原始输入保留于 docs；WORKFLOW.md 是后续维护入口，docs/工作流_v1.0.md 作为原始快照保留。
 - 文本通过 Python 显式 UTF-8 读取；未知编码先检查 BOM。禁止用 LibreOffice 读取文档。
 - UE 目标为 5.8.1；首次生成新工程时 Game/Editor Target 使用 BuildSettingsVersion.V7，EngineAssociation 使用 5.8。

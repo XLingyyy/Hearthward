@@ -36,6 +36,7 @@ public:
     bool IsBusy() const { return bPending; }
     UFUNCTION(BlueprintPure, Category="Hearthward|AI")
     bool IsModelReady() const { return bReady; }
+    double GetElapsedSeconds() const {return bPending?FPlatformTime::Seconds()-RequestStartedAt:LastLatencySeconds;}
     UFUNCTION(BlueprintPure, Category="Hearthward|AI")
     double GetLastLatencySeconds() const { return LastLatencySeconds; }
     UFUNCTION(BlueprintPure, Category="Hearthward|AI")
@@ -47,8 +48,24 @@ public:
     UFUNCTION(BlueprintCallable) void ClearClarification();
     UFUNCTION(BlueprintPure) int32 GetClarificationTurns() const { return Memory.Clarification.Num(); }
     UFUNCTION(BlueprintPure) FString GetLastAppliedIntent() const { return LastAppliedIntent; }
+    UFUNCTION(BlueprintPure) bool HasCandidate() const {return CandidateId.IsValid();}
+    UFUNCTION(BlueprintPure) FGuid GetCandidateId() const {return CandidateId;}
+    UFUNCTION(BlueprintPure) FString GetCandidateText() const;
+    UFUNCTION(BlueprintPure) FHearthwardAgentGoal GetCandidate() const {return Candidate;}
+    UFUNCTION(BlueprintPure) int64 GetMemoryRevision() const {return Memory.Revision;}
+    UFUNCTION(BlueprintPure) int32 GetInputTokens() const {return InputTokens;}
+    UFUNCTION(BlueprintPure) int32 GetOutputTokens() const {return OutputTokens;}
+    UFUNCTION(BlueprintPure) FString GetReasonCode() const {return ReasonCode;}
+    UFUNCTION(BlueprintPure) FString GetLastInput() const {return Input;}
+    UFUNCTION(BlueprintPure) TArray<FHearthwardNPCEvent> GetEvents() const {return Memory.Events;}
+    UFUNCTION(BlueprintCallable) bool ConfirmCandidate(FGuid Id);
+    UFUNCTION(BlueprintCallable) bool AdjustCandidate(FGuid Id,int32 Delta);
+    UFUNCTION(BlueprintCallable) bool QueryInventory(AActor* Speaker,AHearthwardCompanionFixture* Companion,FName Item);
+    UFUNCTION(BlueprintCallable) bool CancelExecution(AActor* Speaker,AHearthwardCompanionFixture* Companion);
+    UFUNCTION(BlueprintCallable) bool SetStructuredGoal(AActor* Speaker,AHearthwardCompanionFixture* Companion,const FHearthwardAgentGoal& Goal);
+    void RecordEvent(const FHearthwardNPCEvent& E) {Memory.RecordEvent(E);}
     const FHearthwardNPCMemory& GetMemorySnapshot() const { return Memory; }
-    void RestoreMemory(const FHearthwardNPCMemory& Snapshot) { Memory = Snapshot; }
+    void RestoreMemory(const FHearthwardNPCMemory& Snapshot);
 
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
@@ -57,9 +74,12 @@ private:
     void StopServer();
     void PollHealth();
     void SendInference();
+    void CountRequest(const TSharedPtr<FJsonObject>& Body);
+    void Generate(const TSharedPtr<FJsonObject>& Body);
+    void StageCandidate(FHearthwardAgentGoal Goal);
     bool StillCurrent() const;
     void ApplyProposal();
-    void Fail(const FString& Message);
+    void Fail(const FString& Message,const FString& Code=TEXT("MODEL_UNAVAILABLE"));
     FString BuildFilteredContext() const;
     void ObserveCamp();
     FHearthwardNPCMemory Memory;
@@ -71,10 +91,15 @@ private:
     FString BaseUrl, ApiKey, BundlePath;
     FString Status, NPCLine, LastStructuredResult, LastFilteredContext, Input;
     FHttpRequestPtr Request;
+    FHttpRequestPtr HealthRequest;
     TWeakObjectPtr<AActor> PendingSpeaker;
     TWeakObjectPtr<AHearthwardCompanionFixture> PendingCompanion;
     FHearthwardCommandTicket Ticket;
-    FHearthwardAIProposal Proposal;
+    FHearthwardAgentGoal Proposal, Candidate;
+    FGuid CandidateId;
+    int64 CandidateMemoryRevision = 0;
+    FString ReasonCode;
+    int32 InputTokens = 0, OutputTokens = 0, FailureCount = 0;
     uint64 Serial = 0;
     bool bPending = false, bReady = false, bResponseReady = false;
     double StartedAt = 0, RequestStartedAt = 0, NextHealthAt = 0, LastLatencySeconds = 0;

@@ -1,4 +1,5 @@
 #include "HearthwardBuildingComponent.h"
+#include "HearthwardWorkshopService.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -7,6 +8,16 @@
 #include "Engine/World.h"
 
 using namespace HearthwardData;
+AActor* UHearthwardBuildingComponent::ResolveWorkbench(FGuid Id) const
+{
+    const auto* B=Built.FindByPredicate([&](const auto& X){return X.Id==Id && X.Recipe==TEXT("workbench") && X.Actor.IsValid();});return B?B->Actor.Get():nullptr;
+}
+FGuid UHearthwardBuildingComponent::KnownWorkbench(AActor* Observer) const
+{
+    if(!IsValid(Observer))return {};
+    for(const auto& B:Built)if(B.Recipe==TEXT("workbench") && B.Actor.IsValid() && FVector::Dist(Observer->GetActorLocation(),B.Actor->GetActorLocation())<=3000)return B.Id;
+    return {};
+}
 namespace
 {
 TMap<FName,int32> RecipeItems(const TSharedPtr<FJsonObject>& Recipe,const TCHAR* Field)
@@ -60,8 +71,7 @@ bool UHearthwardBuildingComponent::Craft(FGuid Station,FName Recipe,int32 Batche
     // Prevent reentrant crafting or saving from observing inventory before its craft event.
     TGuardValue<bool> Guard(Settling,true);
     const auto R=Find(TEXT("craftingRecipes"),Recipe.ToString());
-    const auto Result=GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>()->TryExchange(RecipeItems(R,TEXT("materials")),RecipeItems(R,TEXT("outputs")),Batches);
-    if(Result!=EHearthwardInventoryResult::Success) { Feedback=TEXT("物品状态已变化，制作未执行"); return false; }
+    if(!HearthwardWorkshop::Commit(GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>(),nullptr,TEXT("craft"),Recipe,Batches)) { Feedback=TEXT("物品状态已变化，制作未执行"); return false; }
     GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>()->Record(TEXT("craft"),Recipe,Batches);
     Feedback=FString::Printf(TEXT("制作完成：%s × %d 批"),*Text(R,TEXT("name")),Batches);
     return true;

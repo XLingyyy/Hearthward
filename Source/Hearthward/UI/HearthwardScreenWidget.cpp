@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "../AI/HearthwardLocalAISubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
 #include "../Gameplay/HearthwardGameData.h"
@@ -97,6 +98,7 @@ FLinearColor UHearthwardScreenWidget::Color(const FString& Name) const
 }
 void UHearthwardScreenWidget::OpenPage(FName Name)
 {
+    if(Page==TEXT("dialogue") && Name!=Page) GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
     if(Name==TEXT("crafting") || Name==TEXT("repairing"))
     {
         auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
@@ -134,7 +136,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         Draft->SetHintText(FText::FromString(Name==TEXT("memory")?TEXT("填写你要告诉弟弟的记录，最多120字…"):TEXT("输入想说的话…")));
         if(Name==TEXT("memory")) Draft->SetText(FText::GetEmpty());
     }
-    if(Name==TEXT("memory")) { MemoryEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(); SelectedMemory.Invalidate(); MemoryKind=TEXT("claim"); }
+    if(Name==TEXT("memory")) { MemoryEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(); MemoryRevision=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemoryRevision(); SelectedMemory.Invalidate(); MemoryKind=TEXT("claim"); }
     if (Name==TEXT("storage")) StorageEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     Refresh();
 }

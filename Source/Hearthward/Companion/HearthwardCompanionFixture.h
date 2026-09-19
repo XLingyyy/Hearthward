@@ -11,7 +11,8 @@ class UHearthwardTimedActionComponent;
 UENUM(BlueprintType)
 enum class EHearthwardCompanionPhase : uint8
 {
-    Idle, GoingToSource, Gathering, Returning, ReturningBlocked, WaitingAtCamp, Completed, Cancelled
+    Idle, GoingToSource, Gathering, Returning, ReturningBlocked, WaitingAtCamp, Completed, Cancelled,
+    GoingToWorkshop, TakingMaterials, HoldingSafely
 };
 
 // Runtime-only development fixture: no final resource, bag or safety defaults.
@@ -37,6 +38,15 @@ public:
     int32 GetDelivered() const { return Command.GetDelivered(); }
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
     int32 GetRequested() const { return Command.GetRequested(); }
+    UFUNCTION(BlueprintPure) int32 GetAcquired() const { return Command.GetAcquired(); }
+    UFUNCTION(BlueprintPure) int32 GetCarried() const { return Command.GetCarried(); }
+    UFUNCTION(BlueprintPure) FHearthwardAgentGoal GetGoal() const {return Command.Goal;}
+    UFUNCTION(BlueprintPure) FGuid GetCommandId() const {return Command.GetActive().Id;}
+    UFUNCTION(BlueprintCallable) bool ResumeBlocked(AActor* Speaker);
+    EHearthwardProposalResult SubmitGoal(AActor* Speaker,FHearthwardCommandTicket Ticket,const FHearthwardAgentGoal& Goal);
+    FString PreviewGoal(const FHearthwardAgentGoal& Goal) const;
+    UPROPERTY(BlueprintReadWrite) TMap<FName,float> OwnedDurability;
+    UPROPERTY(BlueprintReadOnly) TMap<FName,int32> Spent;
     FName GetItem() const { return Command.GetItem(); }
     bool IsAtCamp() const { return At(Camp); }
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
@@ -60,10 +70,12 @@ public:
 private:
     friend class UHearthwardSaveSubsystem;
     bool At(const AActor* Target) const;
-    bool MoveTowards(const AActor* Target, float DeltaSeconds);
+    bool MoveTowards(const AActor* Target, float DeltaSeconds,float AcceptanceRadius=40);
     void ReturnBlocked(const FString& Reason);
     void Deposit();
     bool IsSourceValid() const;
+    void WorkshopTick();
+    void Event(FName Kind,FName Item,int32 Count,const FString& Reason=FString(),FGuid Operation=FGuid());
 
     FHearthwardCompanionCommand Command;
     TWeakObjectPtr<AActor> RequestSpeaker;
@@ -74,4 +86,9 @@ private:
     TWeakObjectPtr<AActor> NavigationTarget;
     float NavigationAcceptance = 0;
     double NavigationRetryAt = 0;
+    int32 NavigationFailures = 0;
+    FVector LastProgressPosition = FVector::ZeroVector;
+    double LastProgressAt = 0;
+    TSet<FGuid> AppliedOperations;
+    TArray<FHearthwardAgentReceipt> Receipts;
 };

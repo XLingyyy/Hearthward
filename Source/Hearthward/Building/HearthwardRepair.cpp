@@ -1,4 +1,5 @@
 #include "HearthwardBuildingComponent.h"
+#include "HearthwardWorkshopService.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -28,16 +29,11 @@ bool UHearthwardBuildingComponent::RepairEquipment(FGuid Station,FName Item,FGui
     if(!Feedback.IsEmpty()) return false;
     TGuardValue<bool> Guard(Settling,true);
     auto* G=GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>();
-    const float Before=G->Durability[Item];
     const auto Definition=Find(TEXT("items"),Item.ToString());
-    TMap<FName,int32> Materials;
-    for(const auto& M:Find(TEXT("repairRecipes"),Item.ToString())->GetObjectField(TEXT("materials"))->Values)
-        Materials.Add(FName(*M.Key),M.Value->AsNumber());
     // Inventory observers see the restored durability and the complete material debit together.
     // Settling blocks reentrant repairs and snapshots until the repair event has also been recorded.
-    G->Durability[Item]=Number(Definition,TEXT("durability"));
-    if(GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>()->TryConsume(Materials)!=EHearthwardInventoryResult::Success)
-    { G->Durability[Item]=Before; Feedback=TEXT("材料状态已变化，维修未执行"); return false; }
+    if(!HearthwardWorkshop::Commit(GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>(),&G->Durability,TEXT("repair"),Item,1))
+    { Feedback=TEXT("材料状态已变化，维修未执行"); return false; }
     G->Record(TEXT("repair"),Item);
     Feedback=TEXT("维修完成：")+Text(Definition,TEXT("name"));
     return true;

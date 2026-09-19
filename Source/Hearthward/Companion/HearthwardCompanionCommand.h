@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "../Inventory/HearthwardInventoryState.h"
+#include "../AI/HearthwardAgentContract.h"
 #include "HearthwardCompanionCommand.generated.h"
 
 USTRUCT(BlueprintType)
@@ -48,6 +49,8 @@ public:
         ItemId = Item;
         Requested = Quantity;
         Delivered = 0;
+        Acquired = Carried = 0;
+        Goal={};Goal.Intent=TEXT("collect");Goal.Item=Item;Goal.Quantity=Quantity;Goal.QuantityMode=TEXT("additional_acquired");Goal.SourceRef=TEXT("S1");
         bActive = true;
         return R::Accepted;
     }
@@ -69,6 +72,12 @@ public:
     FName GetItem() const { return ItemId; }
     int32 GetRequested() const { return Requested; }
     int32 GetDelivered() const { return Delivered; }
+    int32 GetAcquired() const { return Acquired; }
+    int32 GetCarried() const { return Carried; }
+    bool RecordAcquisition(int32 Count)
+    { if(!bActive || Count<=0 || Count>Requested-Acquired) return false; Acquired+=Count;Carried+=Count;return true; }
+    int32 Acquired = 0, Carried = 0;
+    FHearthwardAgentGoal Goal;
 private:
     friend class UHearthwardSaveSubsystem;
     FHearthwardCommandTicket Pending, Active;

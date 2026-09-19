@@ -345,6 +345,7 @@ void UHearthwardScreenWidget::ComposeCodex()
 void UHearthwardScreenWidget::ComposeDialogue()
 {
     const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    const FString CardText=AI->GetCandidateText();const bool ShowCard=!CardText.IsEmpty();
     Element(TEXT("choice"),TEXT("记忆与约定"),FVector2D(1260,290),FVector2D(290,44),19,TEXT("page:memory"));
     Elements.Last().Component=TEXT("dialogue.panel");
     if(AI->GetClarificationTurns()>0)
@@ -354,10 +355,11 @@ void UHearthwardScreenWidget::ComposeDialogue()
     }
     FString Reply=AI->CanDisplay()?AI->GetNPCLine():FString();
     if(Reply.IsEmpty()) Reply=TEXT("我在这里。有什么需要一起做的？");
-    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,FMath::DivideAndRoundUp(Reply.Len(),23)-4));
-    TArray<FString> Lines; for(int32 I=Scroll*23;I<FMath::Min(Reply.Len(),(Scroll+4)*23);I+=23) Lines.Add(Reply.Mid(I,23));
+    if(!ShowCard)Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,FMath::DivideAndRoundUp(Reply.Len(),23)-4));
+    const int32 ReplyScroll=ShowCard?0:Scroll;
+    TArray<FString> Lines; for(int32 I=ReplyScroll*23;I<FMath::Min(Reply.Len(),(ReplyScroll+4)*23);I+=23) Lines.Add(Reply.Mid(I,23));
     Element(TEXT("text"),FString::Join(Lines,TEXT("\n")),FVector2D(993,362),FVector2D(510,128),20);
-    for(const auto& Entry:Theme->GetArrayField(TEXT("dialogueChoices")))
+    if(!ShowCard) for(const auto& Entry:Theme->GetArrayField(TEXT("dialogueChoices")))
     {
         const auto Choice=Entry->AsObject(); const auto& Rect=Choice->GetArrayField(TEXT("rect"));
         const FVector2D P(Rect[0]->AsNumber(),Rect[1]->AsNumber());
@@ -365,7 +367,31 @@ void UHearthwardScreenWidget::ComposeDialogue()
         Elements.Last().TextInset=76;
         Element(TEXT("image"),TEXT(""),P+FVector2D(23,11),FVector2D(32,33),18,TEXT(""),Text(Choice,TEXT("icon")));
     }
-    FString Status=AI->IsBusy()?TEXT("正在思考…"):AI->GetStatus();
+    if(ShowCard)
+    {
+        TArray<FString> Paragraphs,CardLines;CardText.ParseIntoArrayLines(Paragraphs,false);
+        for(const auto& P:Paragraphs)for(int32 I=0;I<P.Len();I+=30)CardLines.Add(P.Mid(I,30));
+        Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,CardLines.Num()-7));TArray<FString> Visible;
+        for(int32 I=Scroll;I<FMath::Min(Scroll+7,CardLines.Num());++I)Visible.Add(CardLines[I]);
+        Element(TEXT("text"),FString::Join(Visible,TEXT("\n")),FVector2D(975,495),FVector2D(590,174),16);Elements.Last().Component=TEXT("dialogue.panel");
+        if(CardLines.Num()>7){Element(TEXT("text"),TEXT("滚轮查看完整任务卡"),FVector2D(1150,675),FVector2D(400,36),14);Elements.Last().Component=TEXT("dialogue.panel");}
+    }
+    if(AI->HasCandidate())
+    {
+        const FString Id=AI->GetCandidateId().ToString();
+        Element(TEXT("choice"),TEXT("−"),FVector2D(975,675),FVector2D(65,36),19,TEXT("agentLess:")+Id);Elements.Last().Component=TEXT("dialogue.panel");
+        Element(TEXT("choice"),TEXT("+"),FVector2D(1050,675),FVector2D(65,36),19,TEXT("agentMore:")+Id);Elements.Last().Component=TEXT("dialogue.panel");
+        Element(TEXT("choice"),TEXT("确认这项任务"),FVector2D(975,716),FVector2D(285,42),19,TEXT("agentConfirm:")+Id);Elements.Last().Component=TEXT("dialogue.panel");
+        Element(TEXT("choice"),TEXT("放弃提案"),FVector2D(1280,716),FVector2D(275,42),19,TEXT("cancelReply"));Elements.Last().Component=TEXT("dialogue.panel");
+    }
+    TArray<const FHearthwardAgentCapability*> Caps;for(const auto& C:HearthwardAgent::Capabilities())if(C.Writes)Caps.Add(&C);
+    const auto& Cap=*Caps[AgentCapabilityIndex];
+    Element(TEXT("choice"),Cap.Id==TEXT("craft")?TEXT("制作"):Cap.Id==TEXT("repair")?TEXT("维修"):TEXT("采集"),FVector2D(955,240),FVector2D(140,36),16,TEXT("agentTypeNext"));Elements.Last().Component=TEXT("dialogue.panel");
+    Element(TEXT("choice"),HearthwardAgent::ItemText(Cap.Items[AgentItemIndex]),FVector2D(1100,240),FVector2D(150,36),16,TEXT("agentItemNext"));Elements.Last().Component=TEXT("dialogue.panel");
+    Element(TEXT("choice"),TEXT("新建手动任务卡"),FVector2D(955,200),FVector2D(190,36),16,TEXT("agentCollectCard"));Elements.Last().Component=TEXT("dialogue.panel");
+    Element(TEXT("choice"),TEXT("查看木材库存"),FVector2D(1150,200),FVector2D(210,36),16,TEXT("agentInventory"));Elements.Last().Component=TEXT("dialogue.panel");
+    Element(TEXT("choice"),TEXT("重试返营"),FVector2D(1370,200),FVector2D(185,36),16,TEXT("agentRetryPath"));Elements.Last().Component=TEXT("dialogue.panel");
+    FString Status=AI->GetStatus();if(AI->IsBusy())Status+=FString::Printf(TEXT(" · %.1f秒"),AI->GetElapsedSeconds());
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
         if(!It->BlockReason.IsEmpty()) { Status=TEXT("委托受阻：")+It->BlockReason; break; }
     Element(TEXT("text"),Status,FVector2D(965,824),FVector2D(620,30),15);
@@ -374,7 +400,8 @@ void UHearthwardScreenWidget::ComposeDialogue()
     {
         if(It->GetRequested()>0)
         {
-            Element(TEXT("text"),FString::Printf(TEXT("当前委托：已入库 %d / %d"),It->GetDelivered(),It->GetRequested()),FVector2D(960,858),FVector2D(440,32),17);
+            const FString Progress=It->GetGoal().Intent==TEXT("repair")?FString::Printf(TEXT("维修%s：完成%d/%d"),*HearthwardAgent::ItemText(It->GetGoal().Item),It->GetDelivered(),It->GetRequested()):FString::Printf(TEXT("%s：取得%d · 携带%d · 完成%d/%d"),*HearthwardAgent::ItemText(It->GetGoal().Item),It->GetAcquired(),It->GetCarried(),It->GetDelivered(),It->GetRequested());
+            Element(TEXT("text"),Progress,FVector2D(960,858),FVector2D(440,32),15);
             Element(TEXT("choice"),TEXT("取消委托"),FVector2D(1420,854),FVector2D(168,39),17,TEXT("cancelTask"));
         }
         break;
@@ -386,7 +413,7 @@ void UHearthwardScreenWidget::ComposeMemory()
     TArray<FHearthwardPlayerMemory> Active;
     for(const auto& R:AI->GetPlayerMemories()) if(!R.Revoked) Active.Add(R);
     Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Active.Num()-6));
-    auto Label=[](FName Kind){return Kind==TEXT("collection_ban")?TEXT("采集限制"):Kind==TEXT("agreement")?TEXT("文字约定"):Kind==TEXT("preference")?TEXT("偏好"):TEXT("陈述");};
+    auto Label=[](FName Kind){return Kind==TEXT("typed_constraint")?TEXT("已确认规则"):Kind==TEXT("collection_ban")?TEXT("采集限制"):Kind==TEXT("agreement")?TEXT("文字约定"):Kind==TEXT("preference")?TEXT("偏好"):TEXT("陈述");};
     for(int32 I=Scroll;I<FMath::Min(Active.Num(),Scroll+6);++I)
     {
         const auto& R=Active[I];

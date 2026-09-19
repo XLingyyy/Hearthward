@@ -21,6 +21,8 @@ public:
     UFUNCTION(BlueprintPure) bool IsBuilding() const { return Pending || Settling; }
     UFUNCTION(BlueprintPure) int32 BuildingCount() const { return Built.Num(); }
     UFUNCTION(BlueprintPure) TArray<AActor*> GetBuildings() const;
+    AActor* ResolveWorkbench(FGuid Id) const;
+    FGuid KnownWorkbench(AActor* Observer) const;
     UFUNCTION(BlueprintPure) FGuid NearbyWorkbench() const;
     UFUNCTION(BlueprintPure) bool CanUseWorkbench(FGuid Station) const;
     UFUNCTION(BlueprintPure) FString CraftingStatus(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch) const;
