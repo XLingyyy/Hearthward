@@ -1,0 +1,26 @@
+{
+  "task": "TASK-021",
+  "passed": true,
+  "base_commit": "38e613fe8ace26c576f2d4777a60e9d6fc436dae",
+  "build": "build.json",
+  "pie_checks": 33,
+  "reports": [
+    "navigation-verification.json",
+    "edges-verification.json"
+  ],
+  "screenshots": [
+    "around-wall-delivery.png",
+    "unreachable-waits-at-camp.png",
+    "attack-around-wall.png"
+  ],
+  "isolation": "Independent UUID save pools; temporary editor obstacles not saved; no Content assets modified",
+  "official_references": [
+    "https://dev.epicgames.com/documentation/unreal-engine/basic-navigation-in-unreal-engine",
+    "https://dev.epicgames.com/documentation/unreal-engine/overview-of-how-to-modify-the-navigation-mesh-in-unreal-engine"
+  ],
+  "limitations": [
+    "Current development maps only, no authored large-world navigation or jump/climb links",
+    "No new real-model inference run, Shipping build or old-version migration run",
+    "TASK-021 pending user acceptance; not merged to main"
+  ]
+}

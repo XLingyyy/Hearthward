@@ -25,3 +25,4 @@
 | [TASK-018](../tasks/TASK-018.json) | 玩家木材采集、营地入库与回档闭环 | TASK-008, TASK-010, TASK-011, TASK-016, TASK-017 | Blocked |
 | [TASK-019](../tasks/TASK-019.json) | 营地仓储数量选择与双向存取界面 | TASK-010, TASK-016, TASK-017, TASK-018 | Blocked |
 | [TASK-020](../tasks/TASK-020.json) | 九页参考UI、真实配套玩法与视觉验收 | TASK-019 | Blocked |
+| [TASK-021](../tasks/TASK-021.json) | 伙伴原生导航、绕障与回档恢复 | TASK-020（用户已验收） | Blocked |

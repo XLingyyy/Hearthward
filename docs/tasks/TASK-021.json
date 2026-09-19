@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "TASK-021",
+  "title": "伙伴原生导航、绕障与回档恢复",
+  "status": "Blocked",
+  "updated_at": "2026-09-19",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-021-companion-navigation",
+  "source_refs": [
+    "用户2026-09-19：020验收通过，继续021并自主提交推送",
+    "GDD v0.3：受阻返营、继续可执行原计划、跟随不无令采集",
+    "TASK-020交接中的直线移动限制"
+  ],
+  "dependencies": [
+    "TASK-020"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/Companion/",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Hearthward.Build.cs",
+    "Config/DefaultEngine.ini",
+    "docs/tasks/TASK-021.json",
+    "docs/tasks/TASK-021.md",
+    "docs/handoffs/TASK-021.md",
+    "docs/qa/evidence/TASK-021/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "使用UE NavigationSystem与AIController，采集/返营/跟随/进攻共同使用可绕障的真实移动",
+    "障碍可绕行时继续原计划；确实不可达时明确受阻并尝试返营，携带物资守恒",
+    "取消/新命令/读档停止旧路径，恢复后按当前世界重新求路，保持旧存档兼容",
+    "完成绕墙、多趟交付、不可达、跟随、进攻与存读档的定向PIE验证",
+    "更新文档并提交推送任务分支，不合并main"
+  ],
+  "non_goals": [
+    "不执行004资产任务，不更改战斗规则/任务授权范围/配方或睡眠经济",
+    "不新增二进制场景资产；导航覆盖现有开发场景，不宣称完成全地图关卡导航"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-007",
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: official research and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: continuing autonomous task branch delivery authorization",
+    "push": "granted: continuing autonomous task branch delivery authorization",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "由用户授权从020验收版本堆叠继续021；唯一当前工作目录G:/GameFactory/Hearthward。",
+    "独立Issue/评审未落实，正式流程保持Blocked；不阻断用户明确授权实现。",
+    "开发场景在现有有限地图内生成运行时导航边界；正式地图后续可放置原生NavMeshBoundsVolume。",
+    "最终Editor Development构建PASS，真实PIE20+13项PASS；动态绕障、物资守恒与存读档恢复已验证。",
+    "实现已完成，021待用户验收；正式Issue/评审与main集成仍未完成。"
+  ]
+}

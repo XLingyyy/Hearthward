@@ -396,17 +396,20 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
         FVector Direction=Destination->GetActorLocation()-It->GetActorLocation(); Direction.Z=0;
         if(Direction.Size()>StopDistance)
         {
-            FHitResult Hit;
-            It->SetActorLocation(It->GetActorLocation()+Direction.GetClampedToMaxSize(Tune(TEXT("companionMoveSpeed"))*Delta),true,&Hit);
-            It->BlockReason=Hit.bBlockingHit?TEXT("路线受阻，请调整位置"):TEXT("");
+            It->BlockReason=It->NavigateTo(Destination,Tune(TEXT("companionMoveSpeed")),StopDistance-10)?TEXT(""):TEXT("目标不可达，请调整位置");
         }
-        else if(!Target.IsNone() && CompanionAttackDelay<=0)
+        else
         {
+            if(Target.IsNone()) { It->StopNavigation(); It->BlockReason.Reset(); return; }
             FHitResult Hit; FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardCompanionAttack),false,*It);
             Query.AddIgnoredActor(GetOwner());
             if(!GetWorld()->LineTraceSingleByChannel(Hit,It->GetActorLocation(),Destination->GetActorLocation(),ECC_Visibility,Query))
-            { It->BlockReason.Reset(); DamageOpponent(Target,Tune(TEXT("companionAttack"))); CompanionAttackDelay=Tune(TEXT("companionAttackCooldown")); CombatRemaining=3; }
-            else It->BlockReason=TEXT("目标被障碍物遮挡");
+            {
+                It->StopNavigation(); It->BlockReason.Reset();
+                if(CompanionAttackDelay<=0)
+                { DamageOpponent(Target,Tune(TEXT("companionAttack"))); CompanionAttackDelay=Tune(TEXT("companionAttackCooldown")); CombatRemaining=3; }
+            }
+            else It->BlockReason=It->NavigateTo(Destination,Tune(TEXT("companionMoveSpeed")),30)?TEXT("正在绕行接近目标"):TEXT("目标不可达，请调整位置");
         }
         return;
     }
