@@ -4,6 +4,7 @@
 #include "GameFramework/SaveGame.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Actions/HearthwardTimedActionState.h"
+#include "../AI/HearthwardNPCMemory.h"
 #include "HearthwardSaveGame.generated.h"
 
 USTRUCT(BlueprintType)
@@ -56,6 +57,7 @@ struct FHearthwardWorldSave
     // Raw recoverable exchanges, never a path to a future external index.
     UPROPERTY() TArray<FString> Knowledge;
     UPROPERTY() int64 KnowledgeRevision = 0;
+    UPROPERTY() FHearthwardNPCMemory NPCMemory;
     UPROPERTY() int32 AutoMinutes = 10;
     UPROPERTY() FHearthwardSaveSafety Safety;
     UPROPERTY() FString Gameplay;

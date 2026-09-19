@@ -57,6 +57,7 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
     for (const auto& P : Pool.Points)
     {
         const auto& S = P.World;
+        if (!S.NPCMemory.IsValid(S.ActiveSeconds)) return false;
         if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) return false;
         if (!P.SaveId.IsValid() || !P.CampaignId.IsValid() || Ids.Contains(P.SaveId) || S.Map.IsEmpty()
             || !FMath::IsFinite(S.ActiveSeconds) || S.ActiveSeconds < 0 || S.KnowledgeRevision != S.Knowledge.Num()

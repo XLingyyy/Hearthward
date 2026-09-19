@@ -56,3 +56,5 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 已验收[TASK-020](tasks/TASK-020.md)：九页参考UI与缺失玩法；新入口为标题页“新游戏”，详细操作和当前限制以根README与[020交接](handoffs/TASK-020.md)为准。
 
 TASK-021伙伴原生导航已提交推送，见[021交接](handoffs/TASK-021.md)。[TASK-022](tasks/TASK-022.md)自由建造已提交推送，见[022交接](handoffs/TASK-022.md)。[TASK-023](tasks/TASK-023.md)即时制作已提交推送，见[023交接](handoffs/TASK-023.md)。当前[TASK-024](tasks/TASK-024.md)接入工作台装备维修与耐久回档，用户授权自主提交推送，见[024交接](handoffs/TASK-024.md)。
+
+当前[TASK-025](tasks/TASK-025.md)专注AI NPC认知、可控记忆与多轮委托；用户授权自主研究和交付。024已由用户PR #21合并，025基于main 307b967，见[025交接](handoffs/TASK-025.md)。

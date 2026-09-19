@@ -128,7 +128,13 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         SetVisibility(ESlateVisibility::Visible); FInputModeUIOnly Mode; Mode.SetWidgetToFocus(TakeWidget()); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
         Player->SetInputMode(Mode); Player->bShowMouseCursor=true; SetKeyboardFocus();
     }
-    if (Draft) Draft->SetVisibility(Name==TEXT("dialogue")?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
+    if (Draft)
+    {
+        Draft->SetVisibility(Name==TEXT("dialogue") || Name==TEXT("memory")?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
+        Draft->SetHintText(FText::FromString(Name==TEXT("memory")?TEXT("填写你要告诉弟弟的记录，最多120字…"):TEXT("输入想说的话…")));
+        if(Name==TEXT("memory")) Draft->SetText(FText::GetEmpty());
+    }
+    if(Name==TEXT("memory")) { MemoryEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(); SelectedMemory.Invalidate(); MemoryKind=TEXT("claim"); }
     if (Name==TEXT("storage")) StorageEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     Refresh();
 }
@@ -173,6 +179,7 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("map")) ComposeMap();
     if(Page==TEXT("journal")) ComposeJournal();
     if(Page==TEXT("dialogue")) ComposeDialogue();
+    if(Page==TEXT("memory")) ComposeMemory();
     if(Page==TEXT("hud")) ComposeHUD();
     if(Page==TEXT("building")) ComposeBuilding();
     if(Page==TEXT("crafting")) ComposeCrafting();
@@ -308,4 +315,4 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     return FReply::Handled();
 }
 void UHearthwardScreenWidget::DraftCommitted(const FText& TextValue,ETextCommit::Type Method)
-{ if(Method==ETextCommit::OnEnter) ExecuteAction(TEXT("send")); }
+{ if(Method==ETextCommit::OnEnter) ExecuteAction(Page==TEXT("memory")?TEXT("memorySave"):TEXT("send")); }

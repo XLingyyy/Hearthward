@@ -38,6 +38,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
     int32 GetRequested() const { return Command.GetRequested(); }
     FName GetItem() const { return Command.GetItem(); }
+    bool IsAtCamp() const { return At(Camp); }
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
     FString GetPlayerStatement() const { return Statement; }
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")

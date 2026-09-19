@@ -1,4 +1,5 @@
 #include "HearthwardLocalAIContext.h"
+#include "../Inventory/HearthwardInventoryState.h"
 #include "Dom/JsonObject.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -40,7 +41,17 @@ FString RetrieveKnowledge(const FString& Text, const FString& Hint, const FStrin
 
 FString ResponseSchema()
 {
-    return TEXT(R"({"oneOf":[{"type":"object","additionalProperties":false,"properties":{"intent":{"const":"collect"},"item":{"type":"string","enum":["wood","stone","ore","meat","arrow"]},"quantity":{"type":"integer","minimum":1,"maximum":2147483647},"steps":{"const":["collect","return","deposit"]},"npc_line":{"type":"string","minLength":1,"maxLength":180}},"required":["intent","item","quantity","steps","npc_line"]},{"type":"object","additionalProperties":false,"properties":{"intent":{"type":"string","enum":["cancel","clarify","dialogue","refuse"]},"item":{"const":"none"},"quantity":{"const":0},"steps":{"const":[]},"npc_line":{"type":"string","minLength":1,"maxLength":180}},"required":["intent","item","quantity","steps","npc_line"]}]})");
+    const FString Base=TEXT(R"({"oneOf":[{"type":"object","additionalProperties":false,"properties":{"intent":{"const":"collect"},"item":{"type":"string","enum":["wood","stone","ore","meat","arrow"]},"quantity":{"type":"integer","minimum":1,"maximum":2147483647},"steps":{"const":["collect","return","deposit"]},"npc_line":{"type":"string","minLength":1,"maxLength":180}},"required":["intent","item","quantity","steps","npc_line"]},{"type":"object","additionalProperties":false,"properties":{"intent":{"type":"string","enum":["cancel","clarify","dialogue","refuse","recall"]},"item":{"const":"none"},"quantity":{"const":0},"steps":{"const":[]},"npc_line":{"type":"string","minLength":1,"maxLength":180}},"required":["intent","item","quantity","steps","npc_line"]}]})");
+    TSharedPtr<FJsonObject> Root;
+    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Base),Root);
+    TSharedPtr<FJsonObject> Query;
+    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(FString(TEXT(R"({"type":"object","additionalProperties":false,"properties":{"intent":{"const":"inventory"},"item":{"type":"string"},"quantity":{"const":0},"steps":{"const":[]},"npc_line":{"type":"string","minLength":1,"maxLength":180}},"required":["intent","item","quantity","steps","npc_line"]})"))),Query);
+    TArray<TSharedPtr<FJsonValue>> Items;
+    for(const auto& Item:HearthwardBasicItems()) Items.Add(MakeShared<FJsonValueString>(Item.Id.ToString()));
+    Query->GetObjectField(TEXT("properties"))->GetObjectField(TEXT("item"))->SetArrayField(TEXT("enum"),Items);
+    auto Branches=Root->GetArrayField(TEXT("oneOf")); Branches.Add(MakeShared<FJsonValueObject>(Query));
+    Root->SetArrayField(TEXT("oneOf"),Branches);
+    FString Result; FJsonSerializer::Serialize(Root.ToSharedRef(),TJsonWriterFactory<>::Create(&Result)); return Result;
 }
 
 bool ParseProposal(const FString& Json, FHearthwardAIProposal& Out)
@@ -55,9 +66,10 @@ bool ParseProposal(const FString& Json, FHearthwardAIProposal& Out)
         || !Object->TryGetArrayField(TEXT("steps"), Steps)) return false;
     if (!FMath::IsFinite(Quantity) || Quantity < 0 || Quantity > MAX_int32 || FMath::FloorToDouble(Quantity) != Quantity
         || Line.IsEmpty() || Line.Len() > 180 || Steps->Num() > 3) return false;
-    const TArray<FString> Intents = {TEXT("collect"), TEXT("cancel"), TEXT("clarify"), TEXT("dialogue"), TEXT("refuse")};
+    const TArray<FString> Intents = {TEXT("collect"), TEXT("cancel"), TEXT("clarify"), TEXT("dialogue"), TEXT("refuse"), TEXT("inventory"), TEXT("recall")};
     const TArray<FString> Items = {TEXT("wood"), TEXT("stone"), TEXT("ore"), TEXT("meat"), TEXT("arrow"), TEXT("none")};
-    if (!Intents.Contains(Intent) || !Items.Contains(Item)) return false;
+    const bool QueryItem=Intent==TEXT("inventory") && HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==FName(*Item);});
+    if (!Intents.Contains(Intent) || (!Items.Contains(Item) && !QueryItem)) return false;
     TArray<FName> Plan;
     for (const auto& Value : *Steps)
     {
@@ -70,6 +82,8 @@ bool ParseProposal(const FString& Json, FHearthwardAIProposal& Out)
     {
         if (Item == TEXT("none") || Quantity == 0 || Plan != Required) return false;
     }
+    else if(Intent==TEXT("inventory"))
+    { if(!QueryItem || Quantity!=0 || !Plan.IsEmpty()) return false; }
     else if (Item != TEXT("none") || Quantity != 0 || !Plan.IsEmpty()) return false;
     Out = {Intent, FName(*Item), static_cast<int32>(Quantity), Plan, Line};
     return true;

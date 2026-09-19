@@ -104,4 +104,33 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     IFileManager::Get().Delete(*Path); IFileManager::Get().Delete(*(Path + TEXT(".pending")));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveNPCMemoryTest, "Hearthward.Save.NPCMemoryCompatibility",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
+{
+    UHearthwardSaveGame* Legacy=nullptr; FString Error;
+    TestTrue(TEXT("Actual pre-025 file remains readable"),HearthwardSave::Read(FPaths::ProjectDir()/TEXT("docs/qa/evidence/TASK-020/legacy-task019.hws"),Legacy,Error));
+    if(Legacy) for(const auto& P:Legacy->Points)
+        TestTrue(TEXT("Old file has empty cognition, preserves raw knowledge"),P.World.NPCMemory.Records.IsEmpty() && P.World.NPCMemory.Clarification.IsEmpty() && !P.World.NPCMemory.HasCampObservation);
+    auto* Pool=NewObject<UHearthwardSaveGame>(); Pool->Points.Add(Point());
+    auto& S=Pool->Points[0].World; S.ActiveSeconds=20;
+    S.NPCMemory.Put({},TEXT("claim"),TEXT("原话不能变成库存"),3);
+    S.NPCMemory.Put({},TEXT("collection_ban"),TEXT("不采木材"),3,TEXT("wood"));
+    S.NPCMemory.AddClarification(TEXT("采木材，限制未解除"),TEXT("需要多少？"));
+    S.NPCMemory.HasCampObservation=true; S.NPCMemory.CampInventory.Add(TEXT("wood"),3); S.NPCMemory.CampObservedAt=10;
+    TArray<uint8> Bytes; TestTrue(TEXT("Cognition serialized with world"),UGameplayStatics::SaveGameToMemory(Pool,Bytes));
+    auto* Loaded=Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Bytes));
+    TestTrue(TEXT("Cognition round trip valid"),Loaded && HearthwardSave::Validate(*Loaded));
+    if(Loaded)
+    {
+        const auto& M=Loaded->Points[0].World.NPCMemory;
+        TestEqual(TEXT("Record round trip"),M.Records.Num(),2);
+        TestTrue(TEXT("Structured restriction round trip"),M.BlocksCollection(TEXT("wood")));
+        TestEqual(TEXT("Clarification round trip"),M.Clarification.Num(),1);
+        TestEqual(TEXT("Old observation round trip"),M.CampInventory.FindRef(TEXT("wood")),3);
+    }
+    S.NPCMemory.CampObservedAt=21;
+    TestFalse(TEXT("Future cognition rejects entire snapshot before world mutation"),HearthwardSave::Validate(*Pool));
+    return true;
+}
 #endif

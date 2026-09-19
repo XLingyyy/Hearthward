@@ -122,9 +122,9 @@ void UHearthwardScreenWidget::ApplyLayout()
         FLayoutBounds B; B.Position=E.Position; B.Size=E.Size; B.Parent=E.Component; B.Hidden=E.Hidden;
         LayoutBounds.Add(E.LayoutId,B); LayoutOrder.Add(E.LayoutId);
     }
-    if(Draft && Page==TEXT("dialogue"))
+    if(Draft && (Page==TEXT("dialogue") || Page==TEXT("memory")))
     {
-        const auto* B=LayoutBounds.Find(TEXT("dialogue.input"));
+        const auto* B=LayoutBounds.Find(Page==TEXT("memory")?TEXT("memory.input"):TEXT("dialogue.input"));
         if(B)
         {
             auto* CanvasSlot=CastChecked<UCanvasPanelSlot>(Draft->Slot); CanvasSlot->SetPosition(B->Position); CanvasSlot->SetSize(B->Size);

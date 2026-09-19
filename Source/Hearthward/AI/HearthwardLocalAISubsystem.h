@@ -5,6 +5,7 @@
 #include "HAL/PlatformProcess.h"
 #include "../Companion/HearthwardCompanionCommand.h"
 #include "HearthwardLocalAIContext.h"
+#include "HearthwardNPCMemory.h"
 #include "HearthwardLocalAISubsystem.generated.h"
 
 class AHearthwardCompanionFixture;
@@ -40,6 +41,14 @@ public:
     UFUNCTION(BlueprintPure, Category="Hearthward|AI")
     int32 GetServerProcessId() const { return static_cast<int32>(ProcessId); }
     bool CanDisplay() const;
+    UFUNCTION(BlueprintPure) TArray<FHearthwardPlayerMemory> GetPlayerMemories() const { return Memory.Records; }
+    UFUNCTION(BlueprintCallable) bool PutPlayerMemory(AActor* Speaker, AHearthwardCompanionFixture* Companion, FGuid Id, FName Kind, const FString& Text, FName BlockedItem = NAME_None);
+    UFUNCTION(BlueprintCallable) bool RevokePlayerMemory(AActor* Speaker, AHearthwardCompanionFixture* Companion, FGuid Id);
+    UFUNCTION(BlueprintCallable) void ClearClarification();
+    UFUNCTION(BlueprintPure) int32 GetClarificationTurns() const { return Memory.Clarification.Num(); }
+    UFUNCTION(BlueprintPure) FString GetLastAppliedIntent() const { return LastAppliedIntent; }
+    const FHearthwardNPCMemory& GetMemorySnapshot() const { return Memory; }
+    void RestoreMemory(const FHearthwardNPCMemory& Snapshot) { Memory = Snapshot; }
 
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
@@ -52,6 +61,9 @@ private:
     void ApplyProposal();
     void Fail(const FString& Message);
     FString BuildFilteredContext() const;
+    void ObserveCamp();
+    FHearthwardNPCMemory Memory;
+    FString LastAppliedIntent;
 
     FProcHandle Process;
     void* JobHandle = nullptr;

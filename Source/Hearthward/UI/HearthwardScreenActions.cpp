@@ -55,6 +55,49 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
     bool Success=true;
+    if(Action.StartsWith(TEXT("memory")))
+    {
+        auto* C=Companion(GetWorld());
+        if(Page!=TEXT("memory") || MemoryEpoch!=Store->GetTimelineEpoch() || !C || !C->CanCommunicate(GetOwningPlayerPawn()))
+        { Message=TEXT("记录访问已失效，请重新靠近弟弟打开"); Refresh(); return false; }
+        if(Action==TEXT("memoryNew")) { SelectedMemory.Invalidate(); MemoryKind=TEXT("claim"); MemoryBlockedItem=TEXT("wood"); Draft->SetText(FText::GetEmpty()); }
+        else if(Action==TEXT("memoryNextItem"))
+        {
+            const auto& Items=HearthwardBasicItems();
+            const int32 Index=Items.IndexOfByPredicate([&](const auto& I){return I.Id==MemoryBlockedItem;});
+            MemoryBlockedItem=Items[(Index+1)%Items.Num()].Id;
+        }
+        else if(Action.StartsWith(TEXT("memoryKind:")))
+        {
+            const FName Kind(*Action.Mid(11));
+            if(Kind!=TEXT("claim") && Kind!=TEXT("preference") && Kind!=TEXT("agreement") && Kind!=TEXT("collection_ban")) return false;
+            MemoryKind=Kind;
+        }
+        else if(Action.StartsWith(TEXT("memorySelect:")))
+        {
+            FGuid Id; if(!FGuid::Parse(Action.Mid(13),Id)) return false;
+            Success=false;
+            for(const auto& R:AI->GetPlayerMemories()) if(R.Id==Id && !R.Revoked)
+            { SelectedMemory=Id; MemoryKind=R.Kind; MemoryBlockedItem=R.BlockedItem.IsNone()?FName(TEXT("wood")):R.BlockedItem; Draft->SetText(FText::FromString(R.Text)); Success=true; break; }
+        }
+        else if(Action==TEXT("memorySave"))
+        {
+            FString Content=Draft->GetText().ToString();
+            if(MemoryKind==TEXT("collection_ban") && Content.TrimStartAndEnd().IsEmpty()) Content=TEXT("禁止采集所选物品");
+            Success=AI->PutPlayerMemory(GetOwningPlayerPawn(),C,SelectedMemory,MemoryKind,Content,MemoryBlockedItem);
+            Message=AI->GetStatus();
+            if(Success) { SelectedMemory.Invalidate(); Draft->SetText(FText::GetEmpty()); }
+        }
+        else if(Action==TEXT("memoryRevoke"))
+        {
+            Success=AI->RevokePlayerMemory(GetOwningPlayerPawn(),C,SelectedMemory); Message=AI->GetStatus();
+            if(Success) { SelectedMemory.Invalidate(); Draft->SetText(FText::GetEmpty()); }
+        }
+        else return false;
+        Refresh(); return Success;
+    }
+    if(Action==TEXT("clearClarification"))
+    { if(Page!=TEXT("dialogue")) return false; AI->ClearClarification(); Refresh(); return true; }
     if(Action==TEXT("repairEquipment"))
     {
         auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
@@ -109,7 +152,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         const FName Next(*Action.Mid(5));
         if(Next==TEXT("save") && !PrepareSession()) { Message=Save->GetStatus(); Refresh(); return false; }
         if(Next==TEXT("storage") && !NearStorage(GetWorld(),GetOwningPlayerPawn())) { Message=TEXT("请靠近营地仓储"); Refresh(); return false; }
-        if(Next==TEXT("dialogue"))
+        if(Next==TEXT("dialogue") || Next==TEXT("memory"))
         { auto* C=Companion(GetWorld()); if(!C || !C->CanCommunicate(GetOwningPlayerPawn())) { Message=TEXT("请靠近弟弟，交流范围30米"); Refresh(); return false; } }
         if(Next==TEXT("hud") && !Save->GetCampaignId().IsValid()) { OpenPage(TEXT("title")); return false; }
         Category.Reset(); OpenPage(Next); return Page==Next;
