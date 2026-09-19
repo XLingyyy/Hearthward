@@ -20,7 +20,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     if(Page!=TEXT("hud")) Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
     for(int32 I=0;I<Elements.Num();++I)
     {
-        const auto& E=Elements[I]; const bool Focus=I==Hover || I==KeyboardFocus || (E.Selected && (Page!=TEXT("title") || Hover==INDEX_NONE));
+        const auto& E=Elements[I]; const bool Focus=I==Hover || I==KeyboardFocus || E.Selected;
         if(E.MapClipped)
         {
             const FVector2D A=G.LocalToAbsolute(Offset+FVector2D(407,95)*Scale);
@@ -124,11 +124,14 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             for(const auto& Line:Lines)
             {
                 FVector2D TextPosition=P;
-                if(E.Align==TEXT("right")) TextPosition.X+=E.Size.X-Measure->Measure(Line,Font).X;
-                if(E.Align==TEXT("center") || E.Type==TEXT("keycap")) TextPosition.X+=(E.Size.X-Measure->Measure(Line,Font).X)*.5;
+                // Slate rounds glyph advances at the final layout scale, including viewport DPI.
+                const float FontScale=Scale*G.GetAccumulatedLayoutTransform().GetScale();
+                const float TextWidth=Measure->Measure(Line,Font,FontScale).X/FontScale;
+                if(E.Align==TEXT("right")) TextPosition.X+=E.Size.X-TextWidth;
+                if(E.Align==TEXT("center") || E.Type==TEXT("keycap")) TextPosition.X+=(E.Size.X-TextWidth)*.5;
                 if(E.Type==TEXT("keycap")) TextPosition.Y+=(E.Size.Y-E.Font*1.3f)*.5;
                 const auto PG=Geometry(TextPosition,E.Size);
-                if(Page==TEXT("hud")) FSlateDrawElement::MakeText(Out,L+2,Geometry(P+FVector2D(1,1),E.Size),Line,Font,ESlateDrawEffect::None,FLinearColor(0,0,0,.85f));
+                if(Page==TEXT("hud")) FSlateDrawElement::MakeText(Out,L+2,Geometry(TextPosition+FVector2D(1,1),E.Size),Line,Font,ESlateDrawEffect::None,FLinearColor(0,0,0,.85f));
                 FSlateDrawElement::MakeText(Out,L+3,PG,Line,Font,ESlateDrawEffect::None,Ink);
                 P.Y+=E.Font*1.6f;
             }

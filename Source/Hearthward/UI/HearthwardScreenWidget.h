@@ -32,6 +32,7 @@ public:
     virtual int32 NativePaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool Enabled) const override;
     virtual FReply NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event) override;
+    virtual void NativeOnMouseLeave(const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseWheel(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;

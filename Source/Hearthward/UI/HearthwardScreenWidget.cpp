@@ -128,6 +128,7 @@ void UHearthwardScreenWidget::LoadElements(const TArray<TSharedPtr<FJsonValue>>&
         auto& E=Elements.Last(); E.Bind=Text(R,TEXT("bind")); E.Id=Text(R,TEXT("id"));
         E.TextInset=Number(R,TEXT("textInset"),18); E.Tracking=Number(R,TEXT("tracking"),E.Tracking); E.FontRole=Text(R,TEXT("fontRole"));
         E.Align=Text(R,TEXT("align"));
+        if(Text(R,TEXT("anchorX"))==TEXT("center")) E.Position.X+=(DesignSize.X-E.Size.X)*.5;
         const FString C=Text(R,TEXT("color")); if(!C.IsEmpty()) E.Color=Color(C);
         if(!E.Bind.IsEmpty()) E.Text=Resolve(E.Bind);
         E.Selected=E.Id==TEXT("active") || E.Action==TEXT("page:")+Page.ToString() || E.Action==TEXT("category:")+Category || E.Action==TEXT("filter:")+Category;
@@ -199,7 +200,12 @@ FReply UHearthwardScreenWidget::NativeOnMouseButtonDown(const FGeometry& G,const
     return Super::NativeOnMouseButtonDown(G,E);
 }
 FReply UHearthwardScreenWidget::NativeOnMouseMove(const FGeometry& G,const FPointerEvent& E)
-{ Hover=Hit(CanvasPoint(G,E.GetScreenSpacePosition())); return FReply::Handled(); }
+{
+    if(!E.GetCursorDelta().IsNearlyZero()) KeyboardFocus=INDEX_NONE;
+    Hover=Hit(CanvasPoint(G,E.GetScreenSpacePosition())); return FReply::Handled();
+}
+void UHearthwardScreenWidget::NativeOnMouseLeave(const FPointerEvent& E)
+{ Hover=INDEX_NONE; Super::NativeOnMouseLeave(E); }
 FReply UHearthwardScreenWidget::NativeOnMouseWheel(const FGeometry& G,const FPointerEvent& E)
 {
     if(Page==TEXT("map")) MapZoom=FMath::Clamp(MapZoom+E.GetWheelDelta()*.1f,1.f,2.f);
@@ -236,6 +242,7 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     if(Key==EKeys::Enter && Elements.IsValidIndex(KeyboardFocus)) { ExecuteAction(Elements[KeyboardFocus].Action); return FReply::Handled(); }
     if(Key==EKeys::Up || Key==EKeys::Down)
     {
+        Hover=INDEX_NONE;
         const int32 Direction=Key==EKeys::Down?1:-1;
         for(int32 N=0;N<Elements.Num();++N)
         { KeyboardFocus=(KeyboardFocus+Direction+Elements.Num())%Elements.Num(); if(!Elements[KeyboardFocus].Action.IsEmpty()) break; }

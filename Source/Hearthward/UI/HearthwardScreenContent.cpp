@@ -18,6 +18,7 @@ FString UHearthwardScreenWidget::Resolve(const FString& Bind) const
 {
     const auto* G=Gameplay();
     if(Bind==TEXT("points")) return FString::FromInt(G->SkillPoints());
+    if(Bind==TEXT("heading")) return FString::Printf(TEXT("西     ◇     %.0f°     ◇     北"),FMath::Fmod(GetOwningPlayer()->GetControlRotation().Yaw+450,360));
     if(Bind==TEXT("exploration")) return FString::Printf(TEXT("探索进度  %.0f%%"),100.f*G->Discovered.Num()/Rows(TEXT("locations")).Num());
     if(Bind==TEXT("category")) return Category.IsEmpty()?TEXT("全部"):Category;
     if(Bind==TEXT("quest")) return Text(Find(TEXT("quests"),G->TrackedQuest.ToString()),TEXT("name"));
@@ -405,8 +406,6 @@ void UHearthwardScreenWidget::ComposeHUD()
     if((PlayerPoint-MiniCenter).Size()<MiniSize.X*.47)
     { Element(TEXT("arrow"),TEXT(""),PlayerPoint-FVector2D(10,10),FVector2D(20,20)); Elements.Last().Value=GetOwningPlayer()->GetControlRotation().Yaw+90; Elements.Last().Color=Color(TEXT("gold")); }
     Element(TEXT("text"),TEXT("北"),MiniPosition+FVector2D(MiniSize.X*.5-9,4),FVector2D(25,25),15);
-    const float Yaw=FMath::Fmod(GetOwningPlayer()->GetControlRotation().Yaw+450,360);
-    Element(TEXT("text"),FString::Printf(TEXT("西     ◇     %.0f°     ◇     北"),Yaw),FVector2D(699,52),FVector2D(445,32),17);
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
     {
         const FString Order=G->CompanionOrder==TEXT("follow")?TEXT("跟随中"):G->CompanionOrder==TEXT("attack")?TEXT("协助进攻"):It->GetRequested()>0?FString::Printf(TEXT("委托 %d / %d"),It->GetDelivered(),It->GetRequested()):TEXT("原地等待");
