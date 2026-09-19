@@ -25,6 +25,8 @@ public:
     UFUNCTION(BlueprintPure) bool CanUseWorkbench(FGuid Station) const;
     UFUNCTION(BlueprintPure) FString CraftingStatus(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch) const;
     UFUNCTION(BlueprintCallable) bool Craft(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch);
+    UFUNCTION(BlueprintPure) FString RepairStatus(FGuid Station,FName Item,FGuid Epoch) const;
+    UFUNCTION(BlueprintCallable) bool RepairEquipment(FGuid Station,FName Item,FGuid Epoch);
     UPROPERTY(BlueprintReadOnly) FString Feedback;
     UPROPERTY(BlueprintReadOnly) bool ValidPlacement = false;
     UPROPERTY(BlueprintReadOnly) FVector Placement = FVector::ZeroVector;

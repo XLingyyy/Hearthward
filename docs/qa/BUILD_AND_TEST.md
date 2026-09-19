@@ -334,3 +334,10 @@ verify_ui_extension.py验证旧档迁移与图鉴，共32项。先将本目录ev
 通过UEClient `launch_editor` 在Bootstrap执行 `docs/qa/evidence/TASK-023/verify_crafting.py`，每次加入独立 `-HearthwardSaveTestPool=<UUID>`。脚本完成真实工作台建造、五秒采集得到制作材料、即时批量制作、访问失效与两轮PIE磁盘恢复，报告/截图在Saved/Task023。建造材料由夹具显式提供，制作材料来自真实采集，不冒充零物资全程建造测试。
 `observe_crafting_input.py`只搭建隔离工作台并监听状态；手工/电脑操作工具按E、鼠标点击+、F、返回，结果写physical-input.json。两张皮革面板和操作组均可通过F10独立编辑，背景没有烘焙页面控件。
 使用同一UEClient停止自己启动的编辑器；不保存测试墙体到地图，不触碰用户正常档池。引擎初始化前的既有Condition failed诊断单独保留；目标测试报告和进程退出码另行核对。
+
+## TASK-024 装备维修
+
+沿用UEClient构建HearthwardEditor Development，定向原生筛选 `Hearthward.Gameplay.Repair`，1项配方有效性与整批扣料测试。
+Bootstrap通过 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-024/verify_repair.py` 和独立 `-HearthwardSaveTestPool=<UUID>` 运行59项PIE验证，报告/截图输出Saved/Task024。显式夹具提供8建造木材、设置装备破损；维修材料通过真实采集木材和023制作绳索获取。脚本绑定库存通知观察完整扣料/耐久状态，并尝试重入维修和保存；随后实际攻击敌人验证武器恢复使用，再验证读档和新PIE磁盘恢复。
+`observe_repair_input.py`只布置工作台/破损石斧与材料，监听E打开、鼠标切维修、F修复、返回。用电脑操作工具发送真实输入，physical-input.json与窗口截图单独归档。所有测试都使用独立档池，不保存地图，不触碰人工档。
+维修页面新增3个独立可编辑组件组；14页59组。背包H打开维修页，再F确认费用；不再沿用营地任意位置直接扣通用木材/矿石的入口。

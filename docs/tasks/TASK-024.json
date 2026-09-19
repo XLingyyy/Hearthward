@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "id": "TASK-024",
+  "title": "工作台装备维修与耐久回档",
+  "status": "Blocked",
+  "updated_at": "2026-09-19",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-024-workbench-repair",
+  "source_refs": [
+    "用户：继续024，自己提交推送",
+    "GDD v0.3 6.2/6.3：普通装备破损停用可修理，维修经济仍待定"
+  ],
+  "dependencies": [
+    "TASK-023"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/Building/",
+    "Source/Hearthward/UI/",
+    "Resources/Data/gameplay.json",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "docs/tasks/TASK-024.json",
+    "docs/tasks/TASK-024.md",
+    "docs/handoffs/TASK-024.md",
+    "docs/qa/evidence/TASK-024/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "工作台制作/维修切换、背包H跳转，独立可编辑维修组件展示真实耐久和逐件材料",
+    "维修整批扣料并恢复耐久，缺料/满耐久/访问失效/旧epoch不结算",
+    "破损武器停用、修复后可用；库存耐久与事件同时存档回档",
+    "Editor构建、相关定向原生及PIE/实键验证，更新README并提交推送"
+  ],
+  "non_goals": [
+    "不执行004，不改变地图资产",
+    "不擅定20%费用取整/局部修理/高级战利品规则；使用独立原型全修配方",
+    "不引入装备实例存档、制作高级装备或改变现有耐久损耗模型"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-007",
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: official research and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: continuing autonomous task branch delivery authorization",
+    "push": "granted: continuing autonomous task branch delivery authorization",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "堆叠于023 d33e6a7，用户授权自主拆解实现与任务分支提交推送，不合并main。",
+    "逐件维修配方与工作台条件为PROTOTYPE_ONLY，R13/R14保持OPEN。",
+    "复用现有库存、耐久与事件存档，不改变格式。",
+    "Issue/独立评审缺项，正式状态保持Blocked。",
+    "Editor构建、59项真实PIE与1项原生测试结果见证据目录；实键单独归档，用户验收待定。"
+  ]
+}

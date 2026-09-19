@@ -8,8 +8,8 @@ using namespace HearthwardData;
 void UHearthwardScreenWidget::ComposeCrafting()
 {
     const auto& Recipes=Rows(TEXT("craftingRecipes"));
-    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Recipes.Num()-5));
-    for(int32 I=Scroll;I<FMath::Min(Recipes.Num(),Scroll+5);++I)
+    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Recipes.Num()-4));
+    for(int32 I=Scroll;I<FMath::Min(Recipes.Num(),Scroll+4);++I)
     {
         const auto R=Recipes[I]->AsObject(); const FString Id=Text(R,TEXT("id"));
         Element(TEXT("button"),Text(R,TEXT("name")),FVector2D(318,267+(I-Scroll)*80),FVector2D(370,62),25,TEXT("recipe:")+Id,TEXT(""),SelectedRecipe==FName(*Id));
