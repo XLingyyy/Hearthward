@@ -5738,6 +5738,110 @@
           "action": "back"
         }
       ]
+    },
+    "memory": {
+      "background": "pauseBackground",
+      "header": false,
+      "elements": [
+        {
+          "type": "text",
+          "text": "记忆与约定",
+          "rect": [
+            328,
+            150,
+            370,
+            60
+          ],
+          "font": 32,
+          "layoutId": "memory.title",
+          "component": "memory.list",
+          "action": ""
+        },
+        {
+          "type": "text",
+          "text": "你的记录 · 滚轮浏览",
+          "rect": [
+            328,
+            219,
+            370,
+            35
+          ],
+          "font": 18,
+          "layoutId": "memory.hint",
+          "component": "memory.list",
+          "action": ""
+        },
+        {
+          "type": "button",
+          "text": "新增记录",
+          "rect": [
+            315,
+            685,
+            390,
+            50
+          ],
+          "font": 22,
+          "layoutId": "memory.new",
+          "component": "memory.list",
+          "action": "memoryNew"
+        },
+        {
+          "type": "button",
+          "text": "返回对话",
+          "rect": [
+            315,
+            755,
+            390,
+            50
+          ],
+          "font": 22,
+          "layoutId": "memory.back",
+          "component": "memory.list",
+          "action": "page:dialogue"
+        },
+        {
+          "type": "text",
+          "text": "我记下的话",
+          "rect": [
+            795,
+            150,
+            540,
+            60
+          ],
+          "font": 30,
+          "layoutId": "memory.heading",
+          "component": "memory.details",
+          "action": ""
+        },
+        {
+          "type": "text",
+          "text": "修改或撤销会清除待澄清内容和正在生成的回复。",
+          "rect": [
+            795,
+            715,
+            570,
+            34
+          ],
+          "font": 16,
+          "layoutId": "memory.warning",
+          "component": "memory.details",
+          "action": ""
+        },
+        {
+          "type": "text",
+          "text": "已经接受的委托需在对话页单独取消。",
+          "rect": [
+            795,
+            760,
+            570,
+            34
+          ],
+          "font": 16,
+          "layoutId": "memory.warning2",
+          "component": "memory.details",
+          "action": ""
+        }
+      ]
     }
   },
   "regions": {

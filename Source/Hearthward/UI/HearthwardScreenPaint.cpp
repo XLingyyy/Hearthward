@@ -180,7 +180,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
         return ContentLayer+5;
     }
     // SObjectWidget paints children before NativePaint. Keep the editable field above the illustration.
-    if(Page==TEXT("dialogue") && WidgetTree && WidgetTree->RootWidget)
+    if((Page==TEXT("dialogue") || Page==TEXT("memory")) && WidgetTree && WidgetTree->RootWidget)
         return WidgetTree->RootWidget->TakeWidget()->Paint(Args,G,Clip,Out,ContentLayer,Style,ParentEnabled);
     return Super::NativePaint(Args,G,Clip,Out,ContentLayer,Style,ParentEnabled);
 }

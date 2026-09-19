@@ -345,6 +345,13 @@ void UHearthwardScreenWidget::ComposeCodex()
 void UHearthwardScreenWidget::ComposeDialogue()
 {
     const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    Element(TEXT("choice"),TEXT("记忆与约定"),FVector2D(1260,290),FVector2D(290,44),19,TEXT("page:memory"));
+    Elements.Last().Component=TEXT("dialogue.panel");
+    if(AI->GetClarificationTurns()>0)
+    {
+        Element(TEXT("choice"),TEXT("结束本次澄清"),FVector2D(1260,240),FVector2D(290,40),18,TEXT("clearClarification"));
+        Elements.Last().Component=TEXT("dialogue.panel");
+    }
     FString Reply=AI->CanDisplay()?AI->GetNPCLine():FString();
     if(Reply.IsEmpty()) Reply=TEXT("我在这里。有什么需要一起做的？");
     Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,FMath::DivideAndRoundUp(Reply.Len(),23)-4));
@@ -372,6 +379,40 @@ void UHearthwardScreenWidget::ComposeDialogue()
         }
         break;
     }
+}
+void UHearthwardScreenWidget::ComposeMemory()
+{
+    const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    TArray<FHearthwardPlayerMemory> Active;
+    for(const auto& R:AI->GetPlayerMemories()) if(!R.Revoked) Active.Add(R);
+    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Active.Num()-6));
+    auto Label=[](FName Kind){return Kind==TEXT("collection_ban")?TEXT("采集限制"):Kind==TEXT("agreement")?TEXT("文字约定"):Kind==TEXT("preference")?TEXT("偏好"):TEXT("陈述");};
+    for(int32 I=Scroll;I<FMath::Min(Active.Num(),Scroll+6);++I)
+    {
+        const auto& R=Active[I];
+        Element(TEXT("button"),FString::Printf(TEXT("[%s] %s"),Label(R.Kind),*R.Text.Left(15)),FVector2D(315,285+(I-Scroll)*62),FVector2D(390,54),18,TEXT("memorySelect:")+R.Id.ToString(),TEXT(""),R.Id==SelectedMemory);
+        Elements.Last().Component=TEXT("memory.list");
+    }
+    const auto* Selected=Active.FindByPredicate([&](const auto& R){return R.Id==SelectedMemory;});
+    FString Detail=Selected?Selected->Text:TEXT("选择左侧记录可修改或撤销。采集限制会阻止对应的新委托；文字约定供交流参考。陈述仅代表你说过，无法改写事实或允许危险行动。");
+    TArray<FString> Lines; for(int32 I=0;I<Detail.Len();I+=25) Lines.Add(Detail.Mid(I,25));
+    Element(TEXT("text"),FString::Join(Lines,TEXT("\n")),FVector2D(795,255),FVector2D(570,200),20); Elements.Last().Component=TEXT("memory.details");
+    if(Selected)
+    {
+        Element(TEXT("text"),FString::Printf(TEXT("来源：你的记录 · 记录于 %.0f 秒"),Selected->RecordedAt),FVector2D(795,448),FVector2D(560,30),17); Elements.Last().Component=TEXT("memory.details");
+    }
+    const FName Kinds[]={TEXT("claim"),TEXT("preference"),TEXT("agreement"),TEXT("collection_ban")};
+    for(int32 I=0;I<4;++I)
+    {
+        Element(TEXT("button"),Label(Kinds[I]),FVector2D(785+I*146,490),FVector2D(142,45),18,TEXT("memoryKind:")+Kinds[I].ToString(),TEXT(""),MemoryKind==Kinds[I]); Elements.Last().Component=TEXT("memory.details");
+    }
+    if(MemoryKind==TEXT("collection_ban"))
+    {
+        const auto* Item=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==MemoryBlockedItem;});
+        Element(TEXT("button"),TEXT("禁止采集：")+(Item?Item->DisplayName.ToString():MemoryBlockedItem.ToString())+TEXT("  · 点击切换物品"),FVector2D(785,535),FVector2D(585,40),18,TEXT("memoryNextItem")); Elements.Last().Component=TEXT("memory.details");
+    }
+    Element(TEXT("button"),Selected?TEXT("保存修改"):TEXT("记下这条"),FVector2D(785,650),FVector2D(270,50),21,TEXT("memorySave")); Elements.Last().Component=TEXT("memory.details");
+    Element(TEXT("button"),TEXT("撤销所选记录"),FVector2D(1090,650),FVector2D(280,50),21,TEXT("memoryRevoke")); Elements.Last().Enabled=Selected!=nullptr; Elements.Last().Component=TEXT("memory.details");
 }
 void UHearthwardScreenWidget::ComposeHUD()
 {

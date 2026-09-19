@@ -1,0 +1,66 @@
+{
+  "task": "TASK-025",
+  "date": "2026-09-19",
+  "operator": "Codex",
+  "platform": "Windows x64",
+  "engine": "UE 5.8.1",
+  "gpu": "RTX 4060 Laptop 8 GB",
+  "scope_base": "5f77d8bc789a94f0be905d0bec9586543328a9d0",
+  "tested_before_commit": true,
+  "provider": "real-model",
+  "model": "Qwen3.5-4B Q4_K_M",
+  "runtime": "llama.cpp b10964",
+  "backend": "vulkan / 32 layers",
+  "prompt_version": "task025-cognition-7",
+  "temperature": 0,
+  "editor_build": "PASS",
+  "native_tests": {
+    "status": "PASS",
+    "local_ai": 5,
+    "save_compatibility": 1
+  },
+  "pie": {
+    "status": "PASS",
+    "checks": 100,
+    "model_scenarios": 15,
+    "report": "verification.json"
+  },
+  "latency_seconds": {
+    "first_including_load": 11.953318297863007,
+    "median": 3.377864398062229,
+    "warm_min": 2.81550819799304,
+    "warm_max": 4.640397101640701
+  },
+  "physical_input": {
+    "status": "PASS",
+    "method": "computer-use @oai/sky mouse + Unicode text + Enter; observer performs setup only",
+    "trace": "physical-input.json",
+    "screenshots": [
+      "physical-memory.png",
+      "physical-recall.png"
+    ],
+    "steps": [
+      "open memory",
+      "select preference",
+      "type and save morning departure preference",
+      "return to dialogue",
+      "type question",
+      "Enter sends real inference",
+      "actual reply quotes saved preference"
+    ]
+  },
+  "not_run": [
+    "Shipping packaging",
+    "second machine",
+    "independent review",
+    "broad language robustness benchmark"
+  ],
+  "limitations": [
+    "Text agreements are advisory; typed collection bans are enforced before accepting new goals.",
+    "Explicit player-owned records; no automatic episodic summarization or embedding.",
+    "Keyword recall can miss paraphrases.",
+    "Model may repeat clarification questions or mention technical wording; finite outcome checks do not establish production dialogue quality.",
+    "Offscreen CaptureUI at a different viewport size showed stale editable-widget geometry; actual window screenshots are the visual acceptance evidence."
+  ],
+  "engine_startup_condition_diagnostics": 13
+}

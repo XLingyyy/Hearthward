@@ -109,6 +109,7 @@ bool UHearthwardSaveSubsystem::EnablePrototype()
     if (!ReloadPool() || !Capture(InitialWorld)) return false;
     // New progress starts from this explicitly prepared fixture, never from another progress's knowledge.
     InitialWorld.Knowledge.Reset(); InitialWorld.KnowledgeRevision = 0;
+    InitialWorld.NPCMemory = {};
     bEnabled = true;
     Status = TEXT("PROTOTYPE_ONLY 存档已启用；请创建新进度或加载节点");
     return true;
@@ -145,6 +146,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     S.CommandActive = Companion->Command.bActive; S.Statement = Companion->Statement; S.BlockReason = Companion->BlockReason;
     S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
     S.Knowledge = Knowledge; S.KnowledgeRevision = KnowledgeRevision; S.AutoMinutes = AutoMinutes; S.Safety = Safety;
+    S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
     return true;
 }
 
@@ -199,6 +201,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     Companion->Bag->State = Inventory(S.Bag); Companion->Source->State = Inventory(S.Resource);
     GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.ActivePlaySeconds = S.ActiveSeconds;
     Knowledge = S.Knowledge; KnowledgeRevision = S.KnowledgeRevision; AutoMinutes = S.AutoMinutes; Safety = S.Safety;
+    GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RestoreMemory(S.NPCMemory);
     Player->SetActorTransform(S.Player, false, nullptr, ETeleportType::TeleportPhysics);
     if (auto* Character = Cast<ACharacter>(Player)) Character->GetCharacterMovement()->StopMovementImmediately();
     if (Player->GetController()) Player->GetController()->SetControlRotation(S.View);

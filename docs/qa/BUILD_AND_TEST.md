@@ -341,3 +341,13 @@ verify_ui_extension.py验证旧档迁移与图鉴，共32项。先将本目录ev
 Bootstrap通过 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-024/verify_repair.py` 和独立 `-HearthwardSaveTestPool=<UUID>` 运行59项PIE验证，报告/截图输出Saved/Task024。显式夹具提供8建造木材、设置装备破损；维修材料通过真实采集木材和023制作绳索获取。脚本绑定库存通知观察完整扣料/耐久状态，并尝试重入维修和保存；随后实际攻击敌人验证武器恢复使用，再验证读档和新PIE磁盘恢复。
 `observe_repair_input.py`只布置工作台/破损石斧与材料，监听E打开、鼠标切维修、F修复、返回。用电脑操作工具发送真实输入，physical-input.json与窗口截图单独归档。所有测试都使用独立档池，不保存地图，不触碰人工档。
 维修页面新增3个独立可编辑组件组；14页59组。背包H打开维修页，再F确认费用；不再沿用营地任意位置直接扣通用木材/矿石的入口。
+
+## TASK-025 AI NPC认知与记忆
+
+沿用UEClient构建HearthwardEditor Development。定向原生测试分别筛选 `Hearthward.LocalAI`（5项）与 `Hearthward.Save.NPCMemoryCompatibility`（1项）；后者直接读取归档的019真实存档，并验证新增认知字段序列化。
+
+Bootstrap通过 `-ExecutePythonScript=G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/verify_npc.py`、每轮全新的 `-HearthwardSaveTestPool=<UUID>`、`-HearthwardAIBackend=vulkan`、`-HearthwardAIGpuLayers=32` 启动。使用项目锁定的Qwen3.5-4B Q4_K_M与llama.cpp b10964，实际HTTP推理、导航采集和仓储入库；结果为Saved/Task025/verification.json。检查passed、每项checks、原始raw和最终applied_intent，不能只检查模型台词。脚本会重启PIE验证磁盘恢复，测试夹具不保存进Content。
+
+`observe_npc_input.py`仅准备隔离对话并观察状态；通过电脑操作工具输入文字、点击按钮，状态记录在Saved/Task025/physical。`.agent-local/record025`存在时每约0.5秒捕获原生UI帧至Saved/Task020/task025-physical-*.png（复用当前CaptureUI输出目录）；可用现有FFmpeg编码录像。窗口截图与状态轨迹共同验证实键，自动调用Widget的PIE测试单独记录。
+
+交付证据包含研发期间失败的模型轨迹（文件名含findings），用于说明设计修订，不能计入最终通过数。最终版本与验证绑定见025交接及证据目录。

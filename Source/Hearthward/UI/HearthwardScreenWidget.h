@@ -61,6 +61,7 @@ private:
     void ComposeJournal();
     void ComposeCodex();
     void ComposeDialogue();
+    void ComposeMemory();
     void ComposeHUD();
     void ComposeBuilding();
     void ComposeCrafting();
@@ -103,6 +104,9 @@ private:
     FVector2D MapPan=FVector2D::ZeroVector;
     bool OwnPause=false,StorageToCamp=true;
     FGuid StorageEpoch;
+    FGuid MemoryEpoch, SelectedMemory;
+    FName MemoryKind=TEXT("claim");
+    FName MemoryBlockedItem=TEXT("wood");
     FGuid CraftingEpoch,Workbench;
     FName SelectedRecipe;
     FName SelectedRepair;
