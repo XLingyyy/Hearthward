@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "TASK-023",
+  "title": "工作台即时制作与原子结算",
+  "status": "Blocked",
+  "updated_at": "2026-09-19",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-023-workbench-crafting",
+  "source_refs": [
+    "用户：继续023，自己提交推送",
+    "GDD v0.3 第5章：工作台即时制作，不预留材料，普通配方默认掌握"
+  ],
+  "dependencies": [
+    "TASK-022"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/Building/",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/Inventory/HearthwardInventoryComponent.h",
+    "Source/Hearthward/Inventory/HearthwardInventoryComponent.cpp",
+    "Source/Hearthward/UI/",
+    "Resources/Data/gameplay.json",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "docs/tasks/TASK-023.json",
+    "docs/tasks/TASK-023.md",
+    "docs/handoffs/TASK-023.md",
+    "docs/qa/evidence/TASK-023/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md",
+    "Source/Hearthward/Inventory/HearthwardInventoryState.h"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "靠近已建工作台按E打开独立可编辑制作页面，选择配方及批量",
+    "制作即时整批扣料并发放成品，材料/容量/访问失效时不改变物品",
+    "存档恢复物品和制作事件，旧时间线制作请求失效",
+    "Editor构建、原生事务测试和真实PIE验证通过，提交推送"
+  ],
+  "non_goals": [
+    "不执行004，不制作正式美术",
+    "不补定R13/R14：高级蓝图、装备制作、熔炼烹饪和最终配方经济留待后续"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-007",
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: official research and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: continuing autonomous task branch delivery authorization",
+    "push": "granted: continuing autonomous task branch delivery authorization",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "堆叠于022；用户授权自主拆解实现并提交推送，不合并main。",
+    "箭矢与绳索配方采用现有木材，独立PROTOTYPE_ONLY数据。",
+    "复用现有物品/事件存档，不改变存档格式。",
+    "Issue/独立评审未落实，流程保持Blocked。"
+  ]
+}
