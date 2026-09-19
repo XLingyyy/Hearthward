@@ -103,6 +103,9 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     InteractAction = NewObject<UInputAction>(this, TEXT("InteractAction"));
     InteractAction->ValueType = EInputActionValueType::Boolean;
     InputMapping->MapKey(InteractAction, EKeys::E);
+    JumpAction = NewObject<UInputAction>(this, TEXT("JumpAction"));
+    JumpAction->ValueType = EInputActionValueType::Boolean;
+    InputMapping->MapKey(JumpAction, EKeys::SpaceBar);
 
     auto* Negate = NewObject<UInputModifierNegate>(InputMapping);
     auto* Swizzle = NewObject<UInputModifierSwizzleAxis>(InputMapping);
@@ -123,6 +126,9 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHearthwardCharacter::Look);
     Input->BindAction(InventoryAction, ETriggerEvent::Started, this, &AHearthwardCharacter::ToggleInventory);
     Input->BindAction(InteractAction, ETriggerEvent::Started, this, &AHearthwardCharacter::Interact);
+    Input->BindAction(JumpAction, ETriggerEvent::Started, this, &AHearthwardCharacter::StartJump);
+    Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+    Input->BindAction(JumpAction, ETriggerEvent::Canceled, this, &ACharacter::StopJumping);
     Subsystem->AddMappingContext(InputMapping, 0);
     Player->SetInputMode(FInputModeGameOnly());
     Player->bShowMouseCursor = false;
@@ -156,6 +162,13 @@ void AHearthwardCharacter::Look(const FInputActionValue& Value)
     const FVector2D Axis = Value.Get<FVector2D>();
     AddControllerYawInput(Axis.X);
     AddControllerPitchInput(Axis.Y);
+}
+
+void AHearthwardCharacter::StartJump()
+{
+    if ((Gameplay->Enabled && Gameplay->Health <= 0) || !CanJump()) return;
+    TimedAction->InterruptAction();
+    Jump();
 }
 
 void AHearthwardCharacter::ToggleInventory()

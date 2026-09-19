@@ -31,3 +31,11 @@
 Development 按 F10 编辑：拖动组件、右下角缩放、Alt 单选图层、Delete 显隐、Ctrl+Z 撤销、Ctrl+S 保存至 Resources/UI/layout.json。子控件、实际点击区域、地图坐标和原生输入框共同变换。此入口为原生布局编辑器，未创建 UMG Widget Blueprint Designer 资产。Shipping 禁用编辑写入，读取已保存布局。
 
 Editor 构建通过；59项定向PIE检查通过。实鼠标完成存档面板拖动、缩放、落盘保存及移动后返回按钮点击；移动对话面板后中文输入成功。最终素材另做7项定向捕获与徽记归属检查，详见 acceptance-fix-02/verification.json。未重跑无关玩法套件，测试使用隔离存档池，测试移动已恢复默认布局。整体020仍待用户验收，不宣称95%达标。
+
+## 用户调整 03：移除方位栏与空格跳跃
+
+按用户要求删除HUD顶部西／北／度数元素、绑定和组件组，当前11页共51个组。小地图及地图页保持原有功能。角色原本继承了UE跳跃能力但未配置跳跃输入，修改前PIE确认缺失输入动作、直接调用引擎Jump可起跳。
+
+新增Enhanced Input空格JumpAction：Started起跳，Completed/Canceled调用StopJumping；复用UE单次跳跃和落地重置。死亡状态禁止起跳，有效起跳中断正在进行的计时动作。未增加二段跳、体力扣除或自定义跳跃高度，采用现有CharacterMovement参数。
+
+Editor Development构建通过，12项定向PIE检查通过，验证空格映射、真实上升/落地、松键清理、空中重复输入、长按不连跳、再次起跳、动作中断、暂停不移动及HUD移除。测试通过真实Enhanced Input动作注入，未把API调用冒充物理按键操作。证据见acceptance-fix-03。首轮测试脚本使用了未暴露的UE Python方法，修正脚本后通过；无关玩法套件未重跑。020整体仍待用户验收。

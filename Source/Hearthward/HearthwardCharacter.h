@@ -37,6 +37,7 @@ private:
     void Look(const FInputActionValue& Value);
     void ToggleInventory();
     void Interact();
+    void StartJump();
 
     UPROPERTY(VisibleAnywhere, Category="Hearthward|Interaction")
     TObjectPtr<UHearthwardInteractionComponent> Interaction;
@@ -52,6 +53,9 @@ private:
 
     UPROPERTY()
     TObjectPtr<UInputAction> LookAction;
+
+    UPROPERTY()
+    TObjectPtr<UInputAction> JumpAction;
 
     UPROPERTY()
     TObjectPtr<UInputMappingContext> InputMapping;

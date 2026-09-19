@@ -18,7 +18,6 @@ FString UHearthwardScreenWidget::Resolve(const FString& Bind) const
 {
     const auto* G=Gameplay();
     if(Bind==TEXT("points")) return FString::FromInt(G->SkillPoints());
-    if(Bind==TEXT("heading")) return FString::Printf(TEXT("西     ◇     %.0f°     ◇     北"),FMath::Fmod(GetOwningPlayer()->GetControlRotation().Yaw+450,360));
     if(Bind==TEXT("exploration")) return FString::Printf(TEXT("探索进度  %.0f%%"),100.f*G->Discovered.Num()/Rows(TEXT("locations")).Num());
     if(Bind==TEXT("category")) return Category.IsEmpty()?TEXT("全部"):Category;
     if(Bind==TEXT("quest")) return Text(Find(TEXT("quests"),G->TrackedQuest.ToString()),TEXT("name"));
