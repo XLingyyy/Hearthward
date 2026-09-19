@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "TASK-022",
+  "title": "自由建造、五秒结算与建筑回档",
+  "status": "Blocked",
+  "updated_at": "2026-09-19",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-022-camp-building",
+  "source_refs": [
+    "用户：继续022，自己提交推送",
+    "GDD v0.3 第5章：营地自由摆放、野外仅篝火、五秒建造中断不耗料"
+  ],
+  "dependencies": [
+    "TASK-021"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/Building/",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/Inventory/HearthwardInventoryComponent.h",
+    "Source/Hearthward/Inventory/HearthwardInventoryComponent.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/UI/",
+    "Resources/Data/gameplay.json",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "docs/tasks/TASK-022.json",
+    "docs/tasks/TASK-022.md",
+    "docs/handoffs/TASK-022.md",
+    "docs/qa/evidence/TASK-022/",
+    "README.md",
+    "AGENTS.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "B打开建造目录，选择工作台或篝火，真实地面预览/旋转/确认/取消",
+    "营地限制、坡度/悬空/重叠检查，实际五秒完成后整批扣材料，中断不耗料",
+    "建筑有独立位置/旋转/碰撞；随存档恢复，无重复扣费，旧档兼容",
+    "构建与定向PIE验证通过，更新README并提交推送"
+  ],
+  "non_goals": [
+    "不执行004，不制作正式美术；复用引擎基础形状",
+    "不补定R11/R13：等级、生产、加工、燃料、睡眠经济留待后续"
+  ],
+  "prototype_only": true,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-007",
+    "T-011",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: official research and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: continuing autonomous task branch delivery authorization",
+    "push": "granted: continuing autonomous task branch delivery authorization",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "堆叠于021的9edf1e4；用户授权自主拆解实现并提交推送，不合并main。",
+    "工作台/篝火配方、建造尺寸/半径为PROTOTYPE_ONLY独立数据，非最终经济。",
+    "建筑完成状态接现有玩法JSON；建造中保存延后，加载终止旧建造。",
+    "Issue/独立评审未落实，流程保持Blocked。"
+  ]
+}
