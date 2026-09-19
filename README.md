@@ -1,6 +1,6 @@
 # Hearthward（归火）
 
-UE 5.8.1 单人第三人称生存冒险项目。当前任务分支为 `codex/TASK-020-reference-ui`，九页参考界面及其配套玩法已形成可运行版本，功能检查通过，用户验收未通过，视觉精修仍未完成，尚未合并 main。设计依据是 GDD v0.3、DSGN-001 与本次独立配置说明 [DSGN-002](docs/design/DSGN-002-ui-gameplay.md)。
+UE 5.8.1 单人第三人称生存冒险项目。当前任务分支为 `codex/TASK-020-reference-ui`，九页参考界面及其配套玩法已形成可运行版本，功能检查通过，用户已验收通过，尚未合并 main。设计依据是 GDD v0.3、DSGN-001 与本次独立配置说明 [DSGN-002](docs/design/DSGN-002-ui-gameplay.md)。
 
 ## 运行
 
@@ -40,7 +40,7 @@ UE 5.8.1 单人第三人称生存冒险项目。当前任务分支为 `codex/TAS
 
 ## 验证与限制
 
-当前最终验证结果以 [TASK-020交接](docs/handoffs/TASK-020.md) 和 [证据目录](docs/qa/evidence/TASK-020/) 为准；构建/测试命令见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。95%是用户要求的视觉验收目标，逐页截图已完成比对，目前未认定达到95%，不把自动化通过率当作还原度。
+当前最终验证结果以 [TASK-020交接](docs/handoffs/TASK-020.md) 和 [证据目录](docs/qa/evidence/TASK-020/) 为准；构建/测试命令见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。020分支成果已于2026-09-19通过用户验收；自动化通过率不用于计算视觉还原度。
 
 当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；菜单插画不代表三维城寨、森林或角色资产已制作。完整十小时剧情、正式动作动画、营地生产建造、全地图寻路、重伤救援和Shipping打包尚未完成，TASK-004仍未执行。020经验曲线、节点、任务与战斗参数为独立内容配置，未替代GDD未决R项。
 
