@@ -41,3 +41,7 @@
 研究来源与取舍见[ADR](../decisions/ADR-TASK-025-npc-cognition.md)。下一步的工程重点是把真实制作等能力按同样的前置条件/执行结果接口接入，并扩大约束与表达变化评测；不需要先换多Agent框架。
 
 正式Issue/独立评审仍缺项，流程保持Blocked；用户验收待定，Shipping打包和两机验证未执行。
+
+## 提交绑定
+
+实现与验证提交：`8659b7b065dff4057b5bb4b7b056bd6a2897e04a`。测试在该提交前同一工作树执行；后续提交仅补充证据绑定及交接。范围基线、模型版本与实际报告见[绑定记录](../qa/evidence/TASK-025/working-tree-binding.json)和[工作流检查](../qa/evidence/TASK-025/workflow-validation.json)。交付分支 `codex/TASK-025-npc-cognition`；未合并main。
