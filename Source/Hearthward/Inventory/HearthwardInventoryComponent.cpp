@@ -1,5 +1,17 @@
 #include "HearthwardInventoryComponent.h"
 
+EHearthwardInventoryResult UHearthwardInventoryComponent::CheckExchange(const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,int32 Batches) const
+{
+    auto After=State;
+    return After.Exchange(Materials,Outputs,Batches);
+}
+EHearthwardInventoryResult UHearthwardInventoryComponent::TryExchange(const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,int32 Batches)
+{
+    const auto R=State.Exchange(Materials,Outputs,Batches);
+    if(R==EHearthwardInventoryResult::Success) OnInventoryChanged.Broadcast();
+    return R;
+}
+
 EHearthwardInventoryResult UHearthwardInventoryComponent::TransferTo(UHearthwardInventoryComponent* Target, FName ItemId, int32 Count)
 {
     if (!IsValid(Target) || Target->GetWorld() != GetWorld()) return EHearthwardInventoryResult::InvalidArgument;

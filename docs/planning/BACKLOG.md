@@ -27,3 +27,4 @@
 | [TASK-020](../tasks/TASK-020.json) | 九页参考UI、真实配套玩法与视觉验收 | TASK-019 | Blocked |
 | [TASK-021](../tasks/TASK-021.json) | 伙伴原生导航、绕障与回档恢复 | TASK-020（用户已验收） | Blocked |
 | [TASK-022](../tasks/TASK-022.json) | 自由建造、五秒结算与建筑回档 | TASK-021 | Blocked |
+| [TASK-023](../tasks/TASK-023.json) | 工作台即时制作与原子库存结算 | TASK-022 | Blocked |

@@ -445,9 +445,16 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("panel"),TEXT(""),FVector2D(530,320),FVector2D(610,230));
         Element(TEXT("text"),TEXT("你已倒下\n按 Esc 打开菜单，载入保存节点"),FVector2D(590,362),FVector2D(540,130),26);
     }
+    const auto* Workshop=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
+    const bool NearWorkbench=Workshop && Workshop->NearbyWorkbench().IsValid();
+    if(NearWorkbench)
+    {
+        Element(TEXT("notice"),TEXT("E 使用工作台 · 即时制作"),FVector2D(573,536),FVector2D(540,70),20);
+        Elements.Last().Component=TEXT("hud.construction"); Elements.Last().LayoutId=TEXT("hud.workbench.prompt");
+    }
     if(const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>())
     {
-        if(const auto* Target=Interaction->GetNearestTarget())
+        if(const auto* Target=Interaction->GetNearestTarget();Target && !NearWorkbench)
             Element(TEXT("notice"),Target->GetInteractionPrompt(GetOwningPlayerPawn()),FVector2D(573,536),FVector2D(540,70),18);
         if(Interaction->GetStatus()==EHearthwardInteractionStatus::Ready)
             Element(TEXT("text"),Interaction->GetCompletionFeedback(),FVector2D(1220,765),FVector2D(410,40),18);

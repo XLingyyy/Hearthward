@@ -5600,6 +5600,68 @@
           "layoutId": "building.back"
         }
       ]
+    },
+    "crafting": {
+      "background": "pauseBackground",
+      "header": false,
+      "elements": [
+        {
+          "type": "text",
+          "text": "工作台制作",
+          "rect": [
+            335,
+            158,
+            370,
+            58
+          ],
+          "font": 34,
+          "layoutId": "crafting.title",
+          "component": "crafting.recipes",
+          "action": ""
+        },
+        {
+          "type": "text",
+          "text": "普通配方 · 已掌握",
+          "rect": [
+            335,
+            224,
+            370,
+            35
+          ],
+          "font": 18,
+          "layoutId": "crafting.known",
+          "component": "crafting.recipes",
+          "action": ""
+        },
+        {
+          "type": "text",
+          "text": "选择配方，再调整制作批数",
+          "rect": [
+            335,
+            688,
+            365,
+            40
+          ],
+          "font": 17,
+          "layoutId": "crafting.hint",
+          "component": "crafting.recipes",
+          "action": ""
+        },
+        {
+          "type": "button",
+          "text": "Esc 返回",
+          "rect": [
+            320,
+            750,
+            350,
+            52
+          ],
+          "font": 23,
+          "layoutId": "crafting.back",
+          "component": "crafting.recipes",
+          "action": "back"
+        }
+      ]
     }
   },
   "regions": {

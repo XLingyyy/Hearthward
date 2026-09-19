@@ -21,6 +21,10 @@ public:
     UFUNCTION(BlueprintPure) bool IsBuilding() const { return Pending || Settling; }
     UFUNCTION(BlueprintPure) int32 BuildingCount() const { return Built.Num(); }
     UFUNCTION(BlueprintPure) TArray<AActor*> GetBuildings() const;
+    UFUNCTION(BlueprintPure) FGuid NearbyWorkbench() const;
+    UFUNCTION(BlueprintPure) bool CanUseWorkbench(FGuid Station) const;
+    UFUNCTION(BlueprintPure) FString CraftingStatus(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch) const;
+    UFUNCTION(BlueprintCallable) bool Craft(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch);
     UPROPERTY(BlueprintReadOnly) FString Feedback;
     UPROPERTY(BlueprintReadOnly) bool ValidPlacement = false;
     UPROPERTY(BlueprintReadOnly) FVector Placement = FVector::ZeroVector;

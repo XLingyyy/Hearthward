@@ -97,6 +97,17 @@ FLinearColor UHearthwardScreenWidget::Color(const FString& Name) const
 }
 void UHearthwardScreenWidget::OpenPage(FName Name)
 {
+    if(Name==TEXT("crafting"))
+    {
+        auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
+        Workbench=B->NearbyWorkbench();
+        if(!Workbench.IsValid()) { Message=TEXT("请在安全处靠近已建成的工作台"); MessageUntil=FPlatformTime::Seconds()+4; Refresh(); return; }
+        CraftingEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+        CraftingBatches=1;
+        if(!Find(TEXT("craftingRecipes"),SelectedRecipe.ToString()) && !Rows(TEXT("craftingRecipes")).IsEmpty())
+            SelectedRecipe=FName(*Text(Rows(TEXT("craftingRecipes"))[0]->AsObject(),TEXT("id")));
+    }
+    else { Workbench.Invalidate(); CraftingEpoch.Invalidate(); }
     if(Name!=TEXT("hud") && GetOwningPlayerPawn())
         if(auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) B->CancelPlacement();
     if (Gameplay()) Gameplay()->SetSprinting(false);
@@ -164,6 +175,7 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("dialogue")) ComposeDialogue();
     if(Page==TEXT("hud")) ComposeHUD();
     if(Page==TEXT("building")) ComposeBuilding();
+    if(Page==TEXT("crafting")) ComposeCrafting();
     if(Page==TEXT("save")) ComposeSave();
     if(!Message.IsEmpty()) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
     if(!ConfirmAction.IsEmpty())
@@ -280,6 +292,7 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
         return FReply::Handled();
     }
     if(Key==EKeys::F && Page==TEXT("inventory")) ExecuteAction(TEXT("use"));
+    if(Key==EKeys::F && Page==TEXT("crafting")) ExecuteAction(TEXT("craft"));
     if(Key==EKeys::F && Page==TEXT("skills")) ExecuteAction(TEXT("learn"));
     if(Key==EKeys::F && Page==TEXT("journal") && (Category==TEXT("main") || Category==TEXT("side"))) ExecuteAction(TEXT("questMap"));
     if(Key==EKeys::V && Page==TEXT("journal") && (Category==TEXT("main") || Category==TEXT("side"))) ExecuteAction(TEXT("track"));
