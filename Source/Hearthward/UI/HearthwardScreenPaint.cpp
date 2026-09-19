@@ -21,16 +21,36 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     for(int32 I=0;I<Elements.Num();++I)
     {
         const auto& E=Elements[I]; const bool Focus=I==Hover || I==KeyboardFocus || E.Selected;
+        if(E.Hidden) continue;
         if(E.MapClipped)
         {
-            const FVector2D A=G.LocalToAbsolute(Offset+FVector2D(407,95)*Scale);
-            const FVector2D B=G.LocalToAbsolute(Offset+FVector2D(1517,855)*Scale);
+            const FVector2D A=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),FVector2D(407,95))*Scale);
+            const FVector2D B=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),FVector2D(1517,855))*Scale);
             Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
         }
         const int32 L=Layer+I*4+1;
         const FLinearColor Ink=E.Enabled ? (Focus?Color(TEXT("gold")):E.Color) : Color(TEXT("muted"));
         if(E.Type==TEXT("image") || (!E.Asset.IsEmpty() && E.Type!=TEXT("minimap") && E.Type!=TEXT("portrait")))
-            if(auto* B=Brush(E.Asset)) FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position,E.Size),B,ESlateDrawEffect::None,FLinearColor::White);
+            if(auto* B=Brush(E.Asset))
+            {
+                if(B->DrawAs==ESlateBrushDrawType::Box)
+                {
+                    // Runtime textures retain their full resolution. Slice explicitly so border
+                    // thickness follows the authored brush size, not the texture's pixel dimensions.
+                    const FBox2f UV=B->GetUVRegion(); const auto M=B->Margin;
+                    const float X[]={0,FMath::Min(float(E.Size.X*.5),M.Left*B->ImageSize.X),float(E.Size.X)-FMath::Min(float(E.Size.X*.5),M.Right*B->ImageSize.X),float(E.Size.X)};
+                    const float Y[]={0,FMath::Min(float(E.Size.Y*.5),M.Top*B->ImageSize.Y),float(E.Size.Y)-FMath::Min(float(E.Size.Y*.5),M.Bottom*B->ImageSize.Y),float(E.Size.Y)};
+                    const float U[]={UV.Min.X,UV.Min.X+UV.GetSize().X*M.Left,UV.Max.X-UV.GetSize().X*M.Right,UV.Max.X};
+                    const float V[]={UV.Min.Y,UV.Min.Y+UV.GetSize().Y*M.Top,UV.Max.Y-UV.GetSize().Y*M.Bottom,UV.Max.Y};
+                    for(int32 Row=0;Row<3;++Row) for(int32 Column=0;Column<3;++Column)
+                    {
+                        FSlateBrush Slice=*B; Slice.DrawAs=ESlateBrushDrawType::Image;
+                        Slice.SetUVRegion(FBox2f(FVector2f(U[Column],V[Row]),FVector2f(U[Column+1],V[Row+1])));
+                        FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position+FVector2D(X[Column],Y[Row]),FVector2D(X[Column+1]-X[Column],Y[Row+1]-Y[Row])),&Slice,ESlateDrawEffect::None,FLinearColor::White);
+                    }
+                }
+                else FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position,E.Size),B,ESlateDrawEffect::None,FLinearColor::White);
+            }
         if(E.Type==TEXT("panel") || E.Type==TEXT("notice"))
         {
             Box(E.Position,E.Size,Color(TEXT("panel")),L); Frame(E.Position,E.Size,Color(TEXT("bronze")),L+1);
@@ -46,7 +66,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                 if(Focus || E.Value>0)
                 {
                     TArray<FVector2D> Circle;
-                    for(int32 N=0;N<=48;++N) { const float A=2*PI*N/48; Circle.Add(FVector2D(30+33*FMath::Cos(A),30+33*FMath::Sin(A))); }
+                    for(int32 N=0;N<=48;++N) { const float A=2*PI*N/48; Circle.Add(E.Size*.5+E.Size*.55*FVector2D(FMath::Cos(A),FMath::Sin(A))); }
                     FSlateDrawElement::MakeLines(Out,L+2,Geometry(E.Position,E.Size),Circle,ESlateDrawEffect::None,Color(Focus?TEXT("gold"):TEXT("teal")),true,Focus?2.4f:1.f);
                 }
             }
@@ -89,7 +109,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             const float Angle=FMath::DegreesToRadians(E.Value);
             TArray<FVector2D> Points;
             for(const FVector2D P:{FVector2D(0,-10),FVector2D(7,9),FVector2D(0,4),FVector2D(-7,9),FVector2D(0,-10)})
-                Points.Add(FVector2D(P.X*FMath::Cos(Angle)-P.Y*FMath::Sin(Angle),P.X*FMath::Sin(Angle)+P.Y*FMath::Cos(Angle))+E.Size*.5);
+                Points.Add(FVector2D(P.X*FMath::Cos(Angle)-P.Y*FMath::Sin(Angle),P.X*FMath::Sin(Angle)+P.Y*FMath::Cos(Angle))*E.Size/20+E.Size*.5);
             FSlateDrawElement::MakeLines(Out,L,Geometry(E.Position,E.Size),Points,ESlateDrawEffect::None,E.Color,true,2);
         }
         if(E.Type==TEXT("fog")) Box(E.Position,E.Size,FLinearColor(.012f,.015f,.015f,.9f),L);
@@ -139,6 +159,26 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
         if(E.MapClipped) Out.PopClip();
     }
     const int32 ContentLayer=Layer+Elements.Num()*4+5;
+    if(LayoutEditing)
+    {
+        const FLinearColor Cyan(.15f,.85f,.95f);
+        if(const auto* B=LayoutBounds.Find(LayoutSelection))
+        {
+            Frame(B->Position,B->Size,Cyan,ContentLayer+1);
+            Box(B->Position+B->Size-FVector2D(7,7),FVector2D(14,14),Cyan,ContentLayer+2);
+        }
+        Box(FVector2D(0,0),FVector2D(1672,76),FLinearColor(.008f,.014f,.02f,.96f),ContentLayer+3);
+        FString Caption=TEXT("布局编辑 · ")+Page.ToString()+TEXT("  |  拖动组件 · Alt 单独选图层 · 右下角缩放 · Tab 切换组件\nF10/Esc 退出 · Ctrl+S 保存 · Ctrl+Z 撤销 · Delete 隐藏/显示 · Home 重置此页 · PgUp/PgDn 切页");
+        if(!LayoutSelection.IsEmpty())
+        {
+            const auto* B=LayoutBounds.Find(LayoutSelection);
+            if(B) Caption+=FString::Printf(TEXT("\n%s  [%.0f, %.0f, %.0f, %.0f]  %s"),*LayoutSelection,B->Position.X,B->Position.Y,B->Size.X,B->Size.Y,B->Hidden?TEXT("已隐藏"):TEXT(""));
+        }
+        if(!LayoutStatus.IsEmpty()) Caption+=TEXT("  ")+LayoutStatus;
+        FSlateFontInfo Font(Typeface,11);
+        FSlateDrawElement::MakeText(Out,ContentLayer+4,Geometry(FVector2D(16,7),FVector2D(1640,65)),Caption,Font,ESlateDrawEffect::None,Cyan);
+        return ContentLayer+5;
+    }
     // SObjectWidget paints children before NativePaint. Keep the editable field above the illustration.
     if(Page==TEXT("dialogue") && WidgetTree && WidgetTree->RootWidget)
         return WidgetTree->RootWidget->TakeWidget()->Paint(Args,G,Clip,Out,ContentLayer,Style,ParentEnabled);

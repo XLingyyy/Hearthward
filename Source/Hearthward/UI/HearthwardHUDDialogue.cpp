@@ -27,6 +27,7 @@ void AHearthwardHUD::BeginPlay()
     InputComponent->BindKey(EKeys::T,IE_Pressed,this,&AHearthwardHUD::ToggleDialogue);
     InputComponent->BindKey(EKeys::R,IE_Pressed,this,&AHearthwardHUD::ToggleStorageMenu).bExecuteWhenPaused = true;
     InputComponent->BindKey(EKeys::F6,IE_Pressed,this,&AHearthwardHUD::ToggleSaveMenu).bExecuteWhenPaused = true;
+    InputComponent->BindKey(EKeys::F10,IE_Pressed,this,&AHearthwardHUD::EditUILayout).bExecuteWhenPaused = true;
     InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::P,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::M,IE_Pressed,this,&AHearthwardHUD::OpenMap).bExecuteWhenPaused=true;
@@ -95,6 +96,7 @@ void AHearthwardHUD::OpenPause() { if(Screen) Screen->OpenPage(TEXT("pause")); }
 void AHearthwardHUD::OpenMap() { if(Screen) Screen->OpenPage(TEXT("map")); }
 void AHearthwardHUD::OpenSkills() { if(Screen) Screen->OpenPage(TEXT("skills")); }
 void AHearthwardHUD::OpenJournal() { if(Screen) Screen->OpenPage(TEXT("journal")); }
+void AHearthwardHUD::EditUILayout() { if(Screen) Screen->SetLayoutEditing(true); }
 void AHearthwardHUD::SprintStart() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->SetSprinting(true); }
 void AHearthwardHUD::SprintStop() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->SetSprinting(false); }
 void AHearthwardHUD::Attack() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->Attack(); }

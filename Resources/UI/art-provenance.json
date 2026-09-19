@@ -24,7 +24,7 @@
     "https://dev.epicgames.com/documentation/unreal-engine/saving-and-loading-your-game-in-unreal-engine",
     "https://dev.epicgames.com/documentation/en-us/unreal-engine/styling-in-unreal-engine"
   ],
-  "logo": "Page-specific original logo UVs for exact branding; generated transparent logo retained for shared auxiliary menus.",
+  "logo": "Shared generated alpha logo used on all pages; original atlas logos retained only as source assets.",
   "journal_neutral": "Removed baked sidebar selection; dynamic category selection uses the original clean selection atlas.",
   "quick_items": "Four transparent quickslot illustrations generated from HUD reference; 1254 square atlas, four 627 square UV cells.",
   "body_font": {
@@ -34,5 +34,23 @@
     "license": "Fonts/LXGW-OFL.txt",
     "modified": false
   },
-  "inventory_neutral": "Generated removal of baked right-column rules; only the 1330,270,300,510 stat plate UV is used, preserving all other art."
+  "inventory_neutral": "Generated removal of baked right-column rules; only the 1330,270,300,510 stat plate UV is used, preserving all other art.",
+  "component_split": {
+    "sources": {
+      "pause-scene": "exec-d7c3c211-96d9-48ec-8259-908118563794.png",
+      "inventory-scene": "exec-8f2a0810-e7d2-4c7b-82ed-025b90426c55.png",
+      "storage-scene": "exec-64e72a13-011d-4a91-b8a6-041315bd653e.png",
+      "journal-scene": "exec-32f5f8d1-b76b-4ad3-b747-d04565d50f0e.png",
+      "leather-panel": "exec-0d8f4c3a-a16a-4a38-9672-f3035ba5ed6d.png",
+      "title-scene": "exec-1622a277-4d8e-4ad8-babd-2351997b6691.png",
+      "inventory-empty-scene": "exec-d7366c74-bc3c-47e2-9c64-927aa8ff20e1.png",
+      "inventory-hero-alpha": "exec-401a5318-72af-47a4-8224-45a136112c56.png",
+      "menu-icons-alpha": "exec-ec7bad17-0220-41cc-b404-32bb9820f610.png",
+      "neutral-texture": "exec-7a6473c6-37c9-4030-8ae5-1636f2a0e5a6.png"
+    },
+    "method": "ImageGen removes all UI structures from environment plates. Independent leather panel has genuine alpha and nine-slice margins. Rules, slots, image previews and ornaments are separate layout elements. Original reference atlases remain untouched.",
+    "rejected": "exec-3c955a2a-1491-4977-a5f6-152da122216f.png retained leather strip seams; not used. Skills, journal and map use neutral-texture.png without panels or rules.",
+    "character": "Inventory character/wolf cutout uses measured alpha bounds as UV, independently editable over an empty scene. Journal story illustration is an independent component over neutral texture.",
+    "menu_icons": "Five independent alpha icons; removes baked selected rectangle behind the continue campfire. UVs measured from alpha bounds within five cells."
+  }
 }

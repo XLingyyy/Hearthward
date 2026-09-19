@@ -43,10 +43,12 @@ void UHearthwardScreenWidget::ComposeInventory(bool Storage)
         const float X=Storage?70:57, Y=Storage?232:151, Width=Storage?83:70;
         for(int32 Side=0;Side<(Storage?2:1);++Side)
         {
+            const int32 FirstCategoryElement=Elements.Num();
             const FVector2D P(X+Side*1029+I*Width,Y);
             Element(TEXT("image"),TEXT(""),P+FVector2D(Storage?24:14,Storage?-9:6),FVector2D(31,31),18,TEXT(""),Layout->GetArrayField(TEXT("categoryIcons"))[I]->AsString());
             Element(TEXT("tab"),TEXT(""),P-FVector2D(0,Storage?10:0),FVector2D(Width-3,Storage?62:44),16,TEXT("filter:")+Categories[I],TEXT(""),Category==Categories[I] || (Category.IsEmpty() && I==0));
             if(Storage) Element(TEXT("text"),Categories[I],P+FVector2D(23,25),FVector2D(72,26),15);
+            for(int32 N=FirstCategoryElement;N<Elements.Num();++N) Elements[N].Component=Storage?(Side?TEXT("storage.stock"):TEXT("storage.bag")):TEXT("inventory.bag");
         }
     }
     TArray<TSharedPtr<FJsonObject>> Owned,Stock;
@@ -85,6 +87,11 @@ void UHearthwardScreenWidget::ComposeInventory(bool Storage)
         const int32 Columns=Number(Layout,TEXT("columns")),RowCount=Number(Layout,TEXT("rows"));
         const auto& Cell=Layout->GetArrayField(TEXT("cell")); const auto& SlotSize=Layout->GetArrayField(TEXT("slotSize"));
         Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,FMath::DivideAndRoundUp(Owned.Num(),Columns)-RowCount));
+        for(int32 N=0;N<Columns*RowCount;++N)
+        {
+            const FVector2D P=Start+FVector2D((N%Columns)*Cell[0]->AsNumber(),(N/Columns)*Cell[1]->AsNumber());
+            Element(TEXT("slot"),TEXT(""),P,FVector2D(SlotSize[0]->AsNumber(),SlotSize[1]->AsNumber()));
+        }
         for(int32 I=Scroll*Columns;I<FMath::Min(Owned.Num(),Scroll*Columns+Columns*RowCount);++I)
         {
             const auto R=Owned[I]; const FString Id=Text(R,TEXT("id")); const int32 N=I-Scroll*Columns;
@@ -449,7 +456,6 @@ void UHearthwardScreenWidget::ComposeHUD()
 void UHearthwardScreenWidget::ComposeSave()
 {
     auto* S=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>(); const auto Points=S->GetPoints();
-    Element(TEXT("panel"),TEXT(""),FVector2D(450,280),FVector2D(800,550));
     for(int32 I=Scroll;I<FMath::Min(Points.Num(),Scroll+7);++I)
     {
         const auto& P=Points[Points.Num()-1-I]; const FString Id=P.SaveId.ToString(); const float Y=302+(I-Scroll)*71;

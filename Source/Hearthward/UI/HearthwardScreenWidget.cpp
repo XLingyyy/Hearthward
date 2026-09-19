@@ -69,6 +69,14 @@ void UHearthwardScreenWidget::LoadTheme()
             Textures.Add(Texture); Loaded.Add(File,Texture);
         }
         FSlateBrush B; B.SetResourceObject(Texture); B.DrawAs=ESlateBrushDrawType::Image; B.ImageSize=FVector2D(Texture->GetSizeX(),Texture->GetSizeY());
+        B.SetUVRegion(FBox2f(FVector2f(0,0),FVector2f(1,1)));
+        const TArray<TSharedPtr<FJsonValue>>* Margin;
+        if(R->TryGetArrayField(TEXT("margin"),Margin))
+        {
+            B.DrawAs=ESlateBrushDrawType::Box;
+            B.Margin=FMargin((*Margin)[0]->AsNumber(),(*Margin)[1]->AsNumber(),(*Margin)[2]->AsNumber(),(*Margin)[3]->AsNumber());
+            B.ImageSize=FVector2D(Number(R,TEXT("brushSize"),128));
+        }
         const TArray<TSharedPtr<FJsonValue>>* UV;
         if(R->TryGetArrayField(TEXT("uv"),UV))
         {
@@ -78,6 +86,7 @@ void UHearthwardScreenWidget::LoadTheme()
         }
         Brushes.Add(FString(*Entry.Key),B);
     }
+    checkf(ReloadLayout(),TEXT("Cannot load Hearthward UI layout"));
 }
 FSlateBrush* UHearthwardScreenWidget::Brush(const FString& Name) const
 { return const_cast<FSlateBrush*>(Brushes.Find(Name)); }
@@ -90,13 +99,13 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if (Gameplay()) Gameplay()->SetSprinting(false);
     if((Name==TEXT("settings") || Name==TEXT("save")) && Page!=Name) ReturnPage=Page;
     if(Page!=Name) Category.Reset();
-    Page=Name; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset();
+    Page=Name; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
-    const bool Pause=Name!=TEXT("hud") && Name!=TEXT("dialogue");
+    const bool Pause=LayoutEditing || (Name!=TEXT("hud") && Name!=TEXT("dialogue"));
     if (Pause && !GetWorld()->IsPaused()) OwnPause=UGameplayStatics::SetGamePaused(this,true);
     else if (!Pause && OwnPause) { UGameplayStatics::SetGamePaused(this,false); OwnPause=false; }
     auto* Player=GetOwningPlayer(); Player->FlushPressedKeys();
-    if (Name==TEXT("hud"))
+    if (Name==TEXT("hud") && !LayoutEditing)
     {
         SetVisibility(ESlateVisibility::HitTestInvisible); Player->SetInputMode(FInputModeGameOnly()); Player->bShowMouseCursor=false;
     }
@@ -126,6 +135,7 @@ void UHearthwardScreenWidget::LoadElements(const TArray<TSharedPtr<FJsonValue>>&
         const auto& Rect=R->GetArrayField(TEXT("rect"));
         Element(Text(R,TEXT("type")),Text(R,TEXT("text")),FVector2D(Rect[0]->AsNumber(),Rect[1]->AsNumber()),FVector2D(Rect[2]->AsNumber(),Rect[3]->AsNumber()),Number(R,TEXT("font"),18),Text(R,TEXT("action")),Text(R,TEXT("asset")));
         auto& E=Elements.Last(); E.Bind=Text(R,TEXT("bind")); E.Id=Text(R,TEXT("id"));
+        E.LayoutId=Text(R,TEXT("layoutId")); E.Component=Text(R,TEXT("component"));
         E.TextInset=Number(R,TEXT("textInset"),18); E.Tracking=Number(R,TEXT("tracking"),E.Tracking); E.FontRole=Text(R,TEXT("fontRole"));
         E.Align=Text(R,TEXT("align"));
         if(Text(R,TEXT("anchorX"))==TEXT("center")) E.Position.X+=(DesignSize.X-E.Size.X)*.5;
@@ -136,10 +146,11 @@ void UHearthwardScreenWidget::LoadElements(const TArray<TSharedPtr<FJsonValue>>&
 }
 void UHearthwardScreenWidget::Refresh()
 {
-    if(!Theme || !Gameplay()) return;
+    if(!Theme || !LayoutConfig || !Gameplay()) return;
     Elements.Reset(); const auto P=Theme->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString());
     const FString Background=Text(P,TEXT("background"));
-    if(!Background.IsEmpty()) Element(TEXT("image"),TEXT(""),FVector2D::ZeroVector,DesignSize,18,TEXT(""),Background);
+    if(!Background.IsEmpty()) { Element(TEXT("image"),TEXT(""),FVector2D::ZeroVector,DesignSize,18,TEXT(""),Background); Elements.Last().LayoutId=TEXT("background"); }
+    LoadComponents();
     if(P->GetBoolField(TEXT("header"))) LoadElements(Theme->GetArrayField(TEXT("header")));
     LoadElements(P->GetArrayField(TEXT("elements")));
     if(Page==TEXT("inventory")) ComposeInventory(false);
@@ -159,6 +170,7 @@ void UHearthwardScreenWidget::Refresh()
         Element(TEXT("button"),TEXT("确认"),FVector2D(550,510),FVector2D(240,55),22,TEXT("confirm"));
         Element(TEXT("button"),TEXT("返回"),FVector2D(850,510),FVector2D(240,55),22,TEXT("cancel"));
     }
+    ApplyLayout();
 }
 void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
 {
@@ -175,18 +187,21 @@ int32 UHearthwardScreenWidget::Hit(const FVector2D& P) const
 {
     for(int32 I=Elements.Num()-1;I>=0;--I)
     {
-        const auto& E=Elements[I]; if(E.Action.IsEmpty() || !E.Enabled) continue;
+        const auto& E=Elements[I]; if(E.Action.IsEmpty() || !E.Enabled || E.Hidden) continue;
         if(!ConfirmAction.IsEmpty() && E.Action!=TEXT("confirm") && E.Action!=TEXT("cancel")) continue;
-        if(E.MapClipped && (P.X<407 || P.X>1517 || P.Y<95 || P.Y>855)) continue;
+        const auto MapPoint=ComponentPoint(TEXT("map.canvas"),P,true);
+        if(E.MapClipped && (MapPoint.X<407 || MapPoint.X>1517 || MapPoint.Y<95 || MapPoint.Y>855)) continue;
         if(P.X>=E.Position.X && P.Y>=E.Position.Y && P.X<E.Position.X+E.Size.X && P.Y<E.Position.Y+E.Size.Y) return I;
     }
     return INDEX_NONE;
 }
 FReply UHearthwardScreenWidget::NativeOnMouseButtonDown(const FGeometry& G,const FPointerEvent& E)
 {
+    if(LayoutEditing) return LayoutMouseDown(G,E);
     if(Page==TEXT("map") && ConfirmAction.IsEmpty() && E.GetEffectingButton()==EKeys::RightMouseButton)
     {
-        const FVector2D P=CanvasPoint(G,E.GetScreenSpacePosition());
+        if(const auto* Bounds=LayoutBounds.Find(TEXT("map.canvas"));Bounds && Bounds->Hidden) return FReply::Handled();
+        const FVector2D P=ComponentPoint(TEXT("map.canvas"),CanvasPoint(G,E.GetScreenSpacePosition()),true);
         if(P.X>=407 && P.X<=1517 && P.Y>=95 && P.Y<=855)
         {
             const FVector2D Local=(P-FVector2D(962,475)-MapPan)/MapZoom;
@@ -201,6 +216,16 @@ FReply UHearthwardScreenWidget::NativeOnMouseButtonDown(const FGeometry& G,const
 }
 FReply UHearthwardScreenWidget::NativeOnMouseMove(const FGeometry& G,const FPointerEvent& E)
 {
+    if(LayoutEditing)
+    {
+        if(LayoutDragging)
+        {
+            FVector2D Delta=CanvasPoint(G,E.GetScreenSpacePosition())-DragStart;
+            if(E.IsShiftDown()) { Delta.X=FMath::GridSnap(Delta.X,10.); Delta.Y=FMath::GridSnap(Delta.Y,10.); }
+            SetComponentRect(LayoutSelection,LayoutResizing?DragPosition:DragPosition+Delta,LayoutResizing?FVector2D(FMath::Max(16.,DragSize.X+Delta.X),FMath::Max(16.,DragSize.Y+Delta.Y)):DragSize);
+        }
+        return FReply::Handled();
+    }
     if(!E.GetCursorDelta().IsNearlyZero()) KeyboardFocus=INDEX_NONE;
     Hover=Hit(CanvasPoint(G,E.GetScreenSpacePosition())); return FReply::Handled();
 }
@@ -208,12 +233,14 @@ void UHearthwardScreenWidget::NativeOnMouseLeave(const FPointerEvent& E)
 { Hover=INDEX_NONE; Super::NativeOnMouseLeave(E); }
 FReply UHearthwardScreenWidget::NativeOnMouseWheel(const FGeometry& G,const FPointerEvent& E)
 {
+    if(LayoutEditing) return FReply::Handled();
     if(Page==TEXT("map")) MapZoom=FMath::Clamp(MapZoom+E.GetWheelDelta()*.1f,1.f,2.f);
     else Scroll=FMath::Max(0,Scroll-(E.GetWheelDelta()>0?1:-1));
     Refresh(); return FReply::Handled();
 }
 FReply UHearthwardScreenWidget::NativeOnPreviewKeyDown(const FGeometry& G,const FKeyEvent& E)
 {
+    if(LayoutKey(E)) return FReply::Handled();
     if(E.GetKey()==EKeys::Escape)
     {
         ExecuteAction(ConfirmAction.IsEmpty()?TEXT("back"):TEXT("cancel"));
@@ -239,13 +266,13 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     if(Key==EKeys::Escape) { ExecuteAction(ConfirmAction.IsEmpty()?TEXT("page:hud"):TEXT("cancel")); return FReply::Handled(); }
     const bool HasCampaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId().IsValid();
     if(Key==EKeys::Tab && HasCampaign) { OpenPage(Page==TEXT("inventory")?TEXT("hud"):TEXT("inventory")); return FReply::Handled(); }
-    if(Key==EKeys::Enter && Elements.IsValidIndex(KeyboardFocus)) { ExecuteAction(Elements[KeyboardFocus].Action); return FReply::Handled(); }
+    if(Key==EKeys::Enter && Elements.IsValidIndex(KeyboardFocus) && !Elements[KeyboardFocus].Hidden) { ExecuteAction(Elements[KeyboardFocus].Action); return FReply::Handled(); }
     if(Key==EKeys::Up || Key==EKeys::Down)
     {
         Hover=INDEX_NONE;
         const int32 Direction=Key==EKeys::Down?1:-1;
         for(int32 N=0;N<Elements.Num();++N)
-        { KeyboardFocus=(KeyboardFocus+Direction+Elements.Num())%Elements.Num(); if(!Elements[KeyboardFocus].Action.IsEmpty()) break; }
+        { KeyboardFocus=(KeyboardFocus+Direction+Elements.Num())%Elements.Num(); if(!Elements[KeyboardFocus].Action.IsEmpty() && !Elements[KeyboardFocus].Hidden && Elements[KeyboardFocus].Enabled) break; }
         return FReply::Handled();
     }
     if(Key==EKeys::F && Page==TEXT("inventory")) ExecuteAction(TEXT("use"));

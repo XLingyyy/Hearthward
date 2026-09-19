@@ -1,0 +1,64 @@
+{
+  "task": "TASK-020",
+  "date": "2026-09-19",
+  "base_commit": "19ca4cc793249e33498f7a05b47d6c7d0d45b75a",
+  "scope": "Separate baked UI structures and add persistent component layout editing across 11 pages / 52 groups",
+  "build": {
+    "passed": true,
+    "target": "HearthwardEditor Development",
+    "evidence": "build.json"
+  },
+  "component_regression": {
+    "passed": true,
+    "checks": 59,
+    "evidence": "capture-verification.json"
+  },
+  "final_visual": {
+    "passed": true,
+    "checks": 7,
+    "evidence": "final-visual.json",
+    "inspected": [
+      "save",
+      "pause",
+      "skills",
+      "journal",
+      "map",
+      "dialogue moved"
+    ]
+  },
+  "physical_input": {
+    "passed": true,
+    "driver": "computer-use @oai/sky",
+    "checks": [
+      "title blank area has no highlight",
+      "F10 enters editor",
+      "save sheet drag moves children",
+      "resize handle changes panel geometry",
+      "Ctrl+S persists JSON",
+      "moved Back button returns to title",
+      "new campaign opens HUD",
+      "moved dialogue input accepts Chinese text"
+    ],
+    "evidence": [
+      "physical-title-neutral.png",
+      "physical-save-drag.png",
+      "physical-save-resize.png",
+      "physical-saved-rect.json",
+      "physical-moved-back-button.png",
+      "physical-dialogue-moved-input.png"
+    ],
+    "note": "Physical dialogue test exposed an unparented emblem; fixed its component binding and verified final moved capture. Chinese input was not sent to the model."
+  },
+  "workflow": {
+    "passed": true,
+    "base": "19ca4cc793249e33498f7a05b47d6c7d0d45b75a",
+    "evidence": "workflow-validation.txt"
+  },
+  "isolation": "UUID save pool; user saves untouched; temporary edited layout restored before delivery",
+  "limitations": [
+    "Overall TASK-020 remains unaccepted by user; 95% visual fidelity is not certified",
+    "Native F10 layout editor; no UMG Widget Blueprint Designer assets",
+    "Shipping build and full gameplay suite not run for this UI-only correction"
+  ],
+  "implementation_commit": "See working-tree-binding.json after implementation commit"
+}

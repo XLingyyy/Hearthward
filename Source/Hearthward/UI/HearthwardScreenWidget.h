@@ -7,12 +7,12 @@
 
 struct FHearthwardUIElement
 {
-    FString Type, Text, Asset, Action, Bind, Id, FontRole, Align;
+    FString Type, Text, Asset, Action, Bind, Id, FontRole, Align, LayoutId, Component;
     FVector2D Position=FVector2D::ZeroVector, Size=FVector2D::ZeroVector;
     FLinearColor Color=FLinearColor::White;
     float Font=18, Value=1, TextInset=18;
     int32 Tracking=0;
-    bool Enabled=true, Selected=false;
+    bool Enabled=true, Selected=false, Hidden=false;
     bool MapClipped=false;
 };
 
@@ -26,12 +26,20 @@ public:
     UFUNCTION(BlueprintPure) FName GetPage() const { return Page; }
     UFUNCTION(BlueprintPure) FString GetMessage() const { return Message; }
     UFUNCTION(BlueprintCallable) void Refresh();
+    UFUNCTION(BlueprintCallable) void SetLayoutEditing(bool Editing);
+    UFUNCTION(BlueprintCallable) bool SetComponentRect(const FString& Id,FVector2D Position,FVector2D Size);
+    UFUNCTION(BlueprintCallable) bool SetComponentVisible(const FString& Id,bool Visible);
+    UFUNCTION(BlueprintCallable) bool SaveLayout();
+    UFUNCTION(BlueprintCallable) bool ReloadLayout();
+    UFUNCTION(BlueprintPure) FString DescribeLayout() const;
+    UFUNCTION(BlueprintPure) FString ActionAt(FVector2D Point) const;
     UFUNCTION(BlueprintCallable) bool CaptureUI(const FString& Name,int32 Width=1672,int32 Height=941);
     void InitializeScreen(class AHearthwardHUD* HUD);
     virtual void NativeTick(const FGeometry& Geometry,float Delta) override;
     virtual int32 NativePaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool Enabled) const override;
     virtual FReply NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event) override;
+    virtual FReply NativeOnMouseButtonUp(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual void NativeOnMouseLeave(const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseWheel(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
@@ -61,6 +69,21 @@ private:
     FSlateBrush* Brush(const FString& Name) const;
     FVector2D CanvasPoint(const FGeometry& Geometry,const FVector2D& Screen) const;
     int32 Hit(const FVector2D& Point) const;
+    void ApplyLayout();
+    void LoadComponents();
+    bool LayoutKey(const FKeyEvent& Event);
+    FReply LayoutMouseDown(const FGeometry& Geometry,const FPointerEvent& Event);
+    FString LayoutHit(FVector2D Point,bool Leaf) const;
+    TSharedPtr<FJsonObject> PageLayout() const;
+    FVector2D ComponentPoint(const FString& Id,FVector2D Point,bool Inverse=false) const;
+    void RememberLayout();
+    TSharedPtr<FJsonObject> LayoutConfig;
+    struct FLayoutBounds { FVector2D Position,Size; FString Parent; bool Hidden=false; };
+    TMap<FString,FLayoutBounds> LayoutBounds;
+    TArray<FString> LayoutOrder,LayoutUndo;
+    FString LayoutSelection,LayoutStatus;
+    FVector2D DragStart,DragPosition,DragSize;
+    bool LayoutEditing=false,LayoutDragging=false,LayoutResizing=false;
     TSharedPtr<FJsonObject> Theme;
     TSharedPtr<const FCompositeFont> Typeface;
     TSharedPtr<const FCompositeFont> DisplayTypeface;
