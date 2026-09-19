@@ -8,10 +8,39 @@
 #include "GameFramework/Pawn.h"
 #include "HAL/IConsoleManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/BoxComponent.h"
+#include "NavMesh/NavMeshBoundsVolume.h"
+#include "NavigationSystem.h"
 
 #if !UE_BUILD_SHIPPING
 namespace
 {
+void BuildFixtureNavigation(UWorld* World)
+{
+    // Existing authored bounds take precedence. Development maps have no navigation asset yet.
+    for (TActorIterator<ANavMeshBoundsVolume> It(World); It; ++It) return;
+    auto* Nav = FNavigationSystem::GetCurrent<UNavigationSystemV1>(World);
+    if (!Nav) return;
+    FBox Bounds(ForceInit);
+    for (TActorIterator<AActor> It(World); It; ++It)
+    {
+        TInlineComponentArray<UStaticMeshComponent*> Meshes(*It);
+        for (auto* Mesh : Meshes)
+            if (Mesh->GetCollisionEnabled() != ECollisionEnabled::NoCollision) Bounds += Mesh->Bounds.GetBox();
+    }
+    if (!Bounds.IsValid) return;
+    Bounds = Bounds.ExpandBy(FVector(100,100,300));
+    auto* Volume = World->SpawnActor<ANavMeshBoundsVolume>();
+    Volume->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+    auto* Box = NewObject<UBoxComponent>(Volume);
+    Volume->AddInstanceComponent(Box); Box->SetupAttachment(Volume->GetRootComponent());
+    Box->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    Box->SetCanEverAffectNavigation(false); Box->SetBoxExtent(Bounds.GetExtent());
+    Box->RegisterComponent(); Volume->SetActorLocation(Bounds.GetCenter());
+    Volume->Tags.Add(TEXT("Hearthward.Navigation.PROTOTYPE_ONLY"));
+    Nav->OnNavigationBoundsUpdated(Volume);
+}
+
 AActor* CompanionFixtureMarker(UWorld* World, FVector Location, FVector Scale)
 {
     auto* Actor = World->SpawnActor<AActor>();
@@ -36,6 +65,7 @@ void CreateCompanionFixture(UWorld* World)
 {
     APawn* Player = World ? UGameplayStatics::GetPlayerPawn(World, 0) : nullptr;
     if (!Player || FindCompanionFixture(World)) return;
+    BuildFixtureNavigation(World);
     const FVector Start = Player->GetActorLocation() + Player->GetActorForwardVector() * 200 + Player->GetActorRightVector() * 200;
     auto* Camp = CompanionFixtureMarker(World, Start, FVector(1.2, 1.2, 0.2));
     Camp->Tags.Add(TEXT("Hearthward.Companion.Camp.PROTOTYPE_ONLY"));
@@ -83,7 +113,7 @@ void CancelCompanionFixture(UWorld* World)
 }
 
 FAutoConsoleCommandWithWorld CompanionCreateCommand(TEXT("Hearthward.Companion.CreateTest"),
-    TEXT("PROTOTYPE_ONLY: finite 16 wood, 4-weight trips, flat swept lane; no map edits."),
+    TEXT("PROTOTYPE_ONLY: finite 16 wood, 4-weight trips, native navigation; no saved map edits."),
     FConsoleCommandWithWorldDelegate::CreateStatic(&CreateCompanionFixture));
 FAutoConsoleCommandWithWorldAndArgs CompanionCollectCommand(TEXT("Hearthward.Companion.Collect"),
     TEXT("PROTOTYPE_ONLY structured goal: Collect <positive count>. No language model."),

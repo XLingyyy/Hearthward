@@ -7,23 +7,32 @@
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
 #include "UObject/ConstructorHelpers.h"
+#include "AIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "NavigationSystem.h"
+#include "Navigation/PathFollowingComponent.h"
 
 AHearthwardCompanionFixture::AHearthwardCompanionFixture()
 {
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = false;
-    auto* Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
+    auto* Capsule = GetCapsuleComponent();
     Capsule->InitCapsuleSize(30.0f, 80.0f);
     Capsule->SetCollisionProfileName(TEXT("Pawn"));
     // The companion must not push the follow camera into the player's head at camp.
     Capsule->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
-    SetRootComponent(Capsule);
-    auto* Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Marker"));
-    Mesh->SetupAttachment(Capsule);
+    Capsule->SetCanEverAffectNavigation(false);
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+    AIControllerClass = AAIController::StaticClass();
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->RotationRate = FRotator(0, 500, 0);
+    GetCharacterMovement()->MaxWalkSpeed = 180;
+    auto* MarkerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Marker"));
+    MarkerMesh->SetupAttachment(Capsule);
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Shape(TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
-    Mesh->SetStaticMesh(Shape.Object);
-    Mesh->SetRelativeScale3D(FVector(0.6, 0.6, 1.6));
-    Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    MarkerMesh->SetStaticMesh(Shape.Object);
+    MarkerMesh->SetRelativeScale3D(FVector(0.6, 0.6, 1.6));
+    MarkerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Bag = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("FixtureBag"));
     Action = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("FixtureGatherTimer"));
     Tags.Add(TEXT("Hearthward.Companion.PROTOTYPE_ONLY"));
@@ -66,6 +75,7 @@ EHearthwardProposalResult AHearthwardCompanionFixture::Submit(AActor* Speaker, F
     const auto Result = Command.Accept(Ticket, GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(), ItemId, Quantity, Steps);
     if (Result == R::Accepted)
     {
+        StopNavigation();
         Action->InterruptAction();
         BlockReason.Reset();
         Phase = Bag->GetWeight() > 0 ? EHearthwardCompanionPhase::Returning : EHearthwardCompanionPhase::GoingToSource;
@@ -77,6 +87,7 @@ bool AHearthwardCompanionFixture::Cancel(AActor* Speaker)
 {
     if (bSettling || !CanCommunicate(Speaker) || GetWorld()->IsPaused()) return false;
     Command.Cancel();
+    StopNavigation();
     Action->InterruptAction();
     Phase = EHearthwardCompanionPhase::Cancelled;
     return true;
@@ -97,21 +108,49 @@ bool AHearthwardCompanionFixture::IsSourceValid() const
 bool AHearthwardCompanionFixture::At(const AActor* Target) const
 {
     return IsValid(Target) && !Target->IsActorBeingDestroyed() && Target->GetWorld() == GetWorld()
-        && FVector::DistSquared(GetActorLocation(), Target->GetActorLocation()) <= FMath::Square(50.0);
+        && FVector::DistSquared2D(GetActorLocation(), Target->GetActorLocation()) <= FMath::Square(50.0)
+        && FMath::Abs(GetActorLocation().Z-Target->GetActorLocation().Z) < 100;
 }
 
 bool AHearthwardCompanionFixture::MoveTowards(const AActor* Target, float DeltaSeconds)
 {
     if (!IsValid(Target) || Target->IsActorBeingDestroyed()) return false;
-    const FVector Delta = Target->GetActorLocation() - GetActorLocation();
-    FHitResult Hit;
-    // PROTOTYPE_ONLY flat test lane. Sweep the capsule; never teleport through a blocked route.
-    SetActorLocation(GetActorLocation() + Delta.GetClampedToMaxSize(180.0 * DeltaSeconds), true, &Hit);
-    return !Hit.bBlockingHit;
+    return NavigateTo(const_cast<AActor*>(Target), 180, 40);
+}
+
+void AHearthwardCompanionFixture::StopNavigation()
+{
+    if (auto* AI = Cast<AAIController>(GetController())) AI->StopMovement();
+    GetCharacterMovement()->StopMovementImmediately();
+    NavigationTarget.Reset(); NavigationRetryAt = 0;
+}
+
+bool AHearthwardCompanionFixture::NavigateTo(AActor* Target, float Speed, float AcceptanceRadius)
+{
+    auto* AI = Cast<AAIController>(GetController());
+    if (!AI || !IsValid(Target) || Target->IsActorBeingDestroyed()) { StopNavigation(); return false; }
+    GetCharacterMovement()->MaxWalkSpeed = Speed;
+    if (NavigationTarget != Target || !FMath::IsNearlyEqual(NavigationAcceptance, AcceptanceRadius))
+    {
+        StopNavigation(); NavigationTarget = Target; NavigationAcceptance = AcceptanceRadius;
+    }
+    auto* Nav = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+    // Runtime tiles may still be rebuilding after a world obstacle changes.
+    if (Nav && Nav->IsNavigationBuildInProgress()) return true;
+    if (AI->GetMoveStatus() != EPathFollowingStatus::Idle) return true;
+    if (GetWorld()->GetTimeSeconds() < NavigationRetryAt) return false;
+    const auto Result = AI->MoveToActor(Target, AcceptanceRadius, false, true, false, nullptr, false);
+    if (Result == EPathFollowingRequestResult::Failed)
+    {
+        NavigationRetryAt = GetWorld()->GetTimeSeconds() + .5;
+        return false;
+    }
+    return true;
 }
 
 void AHearthwardCompanionFixture::ReturnBlocked(const FString& Reason)
 {
+    if (Phase != EHearthwardCompanionPhase::ReturningBlocked) StopNavigation();
     Action->InterruptAction();
     Phase = EHearthwardCompanionPhase::ReturningBlocked;
     BlockReason = Reason;
@@ -120,6 +159,7 @@ void AHearthwardCompanionFixture::ReturnBlocked(const FString& Reason)
 void AHearthwardCompanionFixture::Deposit()
 {
     if (!At(Camp)) return;
+    StopNavigation();
     const bool bWasBlocked = Phase == EHearthwardCompanionPhase::ReturningBlocked;
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     const auto Ticket = Command.GetActive();
@@ -150,6 +190,7 @@ void AHearthwardCompanionFixture::Deposit()
         if (Item.Id == Command.GetItem()) Command.RecordDelivery(Ticket, Result.MovedCount);
         if (Command.GetDelivered() == Command.GetRequested())
         {
+            BlockReason.Reset();
             Phase = EHearthwardCompanionPhase::Completed;
             return;
         }
@@ -166,6 +207,7 @@ void AHearthwardCompanionFixture::Tick(float DeltaSeconds)
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     if (!Command.IsCurrent(Storage->GetTimelineEpoch()))
     {
+        StopNavigation();
         Command.Cancel();
         Action->InterruptAction();
         Phase = P::Cancelled;
@@ -183,6 +225,7 @@ void AHearthwardCompanionFixture::Tick(float DeltaSeconds)
             if (!MoveTowards(Source->GetOwner(), DeltaSeconds)) ReturnBlocked(TEXT("去程受阻"));
             return;
         }
+        StopNavigation();
         if (Action->StartAction()) Phase = P::Gathering;
         else ReturnBlocked(TEXT("无法开始采集"));
     }

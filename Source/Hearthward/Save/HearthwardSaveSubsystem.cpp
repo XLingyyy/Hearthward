@@ -198,6 +198,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     Player->SetActorTransform(S.Player, false, nullptr, ETeleportType::TeleportPhysics);
     if (auto* Character = Cast<ACharacter>(Player)) Character->GetCharacterMovement()->StopMovementImmediately();
     if (Player->GetController()) Player->GetController()->SetControlRotation(S.View);
+    Companion->StopNavigation();
     Companion->SetActorTransform(S.Companion, false, nullptr, ETeleportType::TeleportPhysics);
     Companion->Camp->SetActorTransform(S.Camp); Companion->Source->GetOwner()->SetActorTransform(S.Source);
     Companion->bSourceSafe = S.SourceSafe; Companion->Phase = S.Phase;

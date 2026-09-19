@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "HearthwardCompanionCommand.h"
 #include "HearthwardCompanionFixture.generated.h"
 
@@ -14,9 +14,9 @@ enum class EHearthwardCompanionPhase : uint8
     Idle, GoingToSource, Gathering, Returning, ReturningBlocked, WaitingAtCamp, Completed, Cancelled
 };
 
-// Runtime-only development fixture: no final resource, bag, navigation or safety defaults.
+// Runtime-only development fixture: no final resource, bag or safety defaults.
 UCLASS(NotPlaceable)
-class HEARTHWARD_API AHearthwardCompanionFixture : public AActor
+class HEARTHWARD_API AHearthwardCompanionFixture : public ACharacter
 {
     GENERATED_BODY()
 public:
@@ -53,6 +53,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bSourceSafe = false;
     UPROPERTY(BlueprintReadOnly) FString BlockReason;
 
+    bool NavigateTo(AActor* Target, float Speed, float AcceptanceRadius);
+    void StopNavigation();
+
 private:
     friend class UHearthwardSaveSubsystem;
     bool At(const AActor* Target) const;
@@ -67,4 +70,7 @@ private:
     EHearthwardCompanionPhase Phase = EHearthwardCompanionPhase::Idle;
     bool bSettling = false;
     bool bFixtureEnabled = false;
+    TWeakObjectPtr<AActor> NavigationTarget;
+    float NavigationAcceptance = 0;
+    double NavigationRetryAt = 0;
 };

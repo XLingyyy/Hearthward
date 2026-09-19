@@ -310,3 +310,9 @@ verify_ui_extension.py验证旧档迁移与图鉴，共32项。先将本目录ev
 原生CaptureUI以线性浮点目标渲染，再转sRGB写PNG；HUD截图只含UI层，实际三维画面见physical-final-hud.png。1672×941为设计尺寸，另验证1280×720与Windows 150% DPI独立窗口。实键截图来自computer-use的sky窗口捕获，自动化脚本调用Widget命令的结果单独记录。
 
 17项Automation报告均Success；进程启动阶段另有LogAutomationTest的Condition failed诊断，发生于Engine初始化及Hearthward测试开始之前。保留automation-result.json及automation-startup-excerpt.txt，不将进程日志表述为零错误。Shipping打包、完整三维美术、两台机器及独立评审未运行。
+
+## TASK-021 伙伴导航
+
+构建目标HearthwardEditor / Development，使用上层UEClient公开API。以独立 `-HearthwardSaveTestPool=<UUID>` 启动Bootstrap，分别通过 `-ExecutePythonScript=<绝对路径>` 执行证据目录中的 `verify_navigation.py`、`verify_navigation_edges.py`。脚本只在未保存的编辑器世界放置临时障碍，复制到PIE进行真实库存与导航验证，不保存Content资产。结果在Saved/Task021，包含JSON及真实3D截图；不要把UI截图当作导航轨迹。
+
+开发导航为Recast Dynamic，半径34cm、高180cm覆盖伙伴胶囊；临时边界从已有碰撞网格范围生成。正式地图可直接放置NavMeshBoundsVolume。导航路径不进入存档；读档清理控制器路径与速度，沿保存的任务阶段重新求路。

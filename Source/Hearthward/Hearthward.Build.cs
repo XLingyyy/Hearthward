@@ -13,7 +13,9 @@ public class Hearthward : ModuleRules
                 "CoreUObject",
                 "Engine",
                 "InputCore",
-                "EnhancedInput"
+                "EnhancedInput",
+                "AIModule",
+                "NavigationSystem"
             });
         PrivateDependencyModuleNames.AddRange(new[] { "HTTP", "Json", "Sockets", "UMG", "Slate", "SlateCore" });
         string Resources = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../Resources"));
