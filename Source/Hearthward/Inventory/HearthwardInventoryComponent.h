@@ -21,6 +21,10 @@ public:
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
     EHearthwardInventoryResult TryRemove(FName ItemId, int32 Count);
 
+    // Atomically consumes an entire recipe; observers never see partial material removal.
+    UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
+    EHearthwardInventoryResult TryConsume(const TMap<FName,int32>& Materials);
+
     UFUNCTION(BlueprintPure, Category="Hearthward|Inventory")
     int32 GetItemCount(FName ItemId) const { return State.GetCount(ItemId); }
 

@@ -15,6 +15,7 @@ public:
     UFUNCTION(BlueprintCallable) void OpenMap();
     UFUNCTION(BlueprintCallable) void OpenSkills();
     UFUNCTION(BlueprintCallable) void OpenJournal();
+    UFUNCTION(BlueprintCallable) void OpenBuilding();
     void EditUILayout();
     void SprintStart();
     void SprintStop();

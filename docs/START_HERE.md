@@ -55,4 +55,4 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 
 已验收[TASK-020](tasks/TASK-020.md)：九页参考UI与缺失玩法；新入口为标题页“新游戏”，详细操作和当前限制以根README与[020交接](handoffs/TASK-020.md)为准。
 
-TASK-020已通过用户验收；当前[TASK-021](tasks/TASK-021.md)补齐伙伴原生导航、绕障、受阻及读档恢复，用户授权自主提交推送。见[021交接](handoffs/TASK-021.md)。
+TASK-021伙伴原生导航已提交推送，见[021交接](handoffs/TASK-021.md)。当前[TASK-022](tasks/TASK-022.md)接入自由建造、五秒结算与建筑回档，用户授权自主提交推送，见[022交接](handoffs/TASK-022.md)。

@@ -1,4 +1,5 @@
 #include "HearthwardHUD.h"
+#include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardScreenWidget.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "Misc/CommandLine.h"
@@ -33,6 +34,7 @@ void AHearthwardHUD::BeginPlay()
     InputComponent->BindKey(EKeys::M,IE_Pressed,this,&AHearthwardHUD::OpenMap).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::K,IE_Pressed,this,&AHearthwardHUD::OpenSkills).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::J,IE_Pressed,this,&AHearthwardHUD::OpenJournal).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::B,IE_Pressed,this,&AHearthwardHUD::OpenBuilding);
     InputComponent->BindKey(EKeys::LeftShift,IE_Pressed,this,&AHearthwardHUD::SprintStart);
     InputComponent->BindKey(EKeys::LeftShift,IE_Released,this,&AHearthwardHUD::SprintStop);
     InputComponent->BindKey(EKeys::LeftMouseButton,IE_Pressed,this,&AHearthwardHUD::Attack);
@@ -92,16 +94,33 @@ void AHearthwardHUD::ToggleDialogue()
     DialogueWidget->FocusDraft();
 }
 
-void AHearthwardHUD::OpenPause() { if(Screen) Screen->OpenPage(TEXT("pause")); }
+void AHearthwardHUD::OpenPause()
+{
+    if(auto* B=GetOwningPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->CancelPlacement(); return; }
+    if(Screen) Screen->OpenPage(TEXT("pause"));
+}
+void AHearthwardHUD::OpenBuilding() { if(Screen) Screen->ExecuteAction(TEXT("page:building")); }
 void AHearthwardHUD::OpenMap() { if(Screen) Screen->OpenPage(TEXT("map")); }
 void AHearthwardHUD::OpenSkills() { if(Screen) Screen->OpenPage(TEXT("skills")); }
 void AHearthwardHUD::OpenJournal() { if(Screen) Screen->OpenPage(TEXT("journal")); }
 void AHearthwardHUD::EditUILayout() { if(Screen) Screen->SetLayoutEditing(true); }
 void AHearthwardHUD::SprintStart() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->SetSprinting(true); }
 void AHearthwardHUD::SprintStop() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->SetSprinting(false); }
-void AHearthwardHUD::Attack() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->Attack(); }
-void AHearthwardHUD::HeavyAttack() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->HeavyAttack(); }
-void AHearthwardHUD::Shoot() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->Shoot(); }
+void AHearthwardHUD::Attack()
+{
+    if(auto* B=GetOwningPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->ConfirmPlacement(); return; }
+    if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->Attack();
+}
+void AHearthwardHUD::HeavyAttack()
+{
+    if(auto* B=GetOwningPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->RotatePreview(); return; }
+    if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->HeavyAttack();
+}
+void AHearthwardHUD::Shoot()
+{
+    if(auto* B=GetOwningPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->CancelPlacement(); return; }
+    if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->Shoot();
+}
 void AHearthwardHUD::Eat() { if(Screen) Screen->ExecuteAction(TEXT("quick:1")); }
 void AHearthwardHUD::Heal() { if(Screen) Screen->ExecuteAction(TEXT("quick:0")); }
 void AHearthwardHUD::Throw() { if(Screen) Screen->ExecuteAction(TEXT("quick:3")); }
