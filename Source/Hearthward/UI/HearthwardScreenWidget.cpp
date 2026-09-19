@@ -97,7 +97,7 @@ FLinearColor UHearthwardScreenWidget::Color(const FString& Name) const
 }
 void UHearthwardScreenWidget::OpenPage(FName Name)
 {
-    if(Name==TEXT("crafting"))
+    if(Name==TEXT("crafting") || Name==TEXT("repairing"))
     {
         auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
         Workbench=B->NearbyWorkbench();
@@ -176,6 +176,7 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("hud")) ComposeHUD();
     if(Page==TEXT("building")) ComposeBuilding();
     if(Page==TEXT("crafting")) ComposeCrafting();
+    if(Page==TEXT("repairing")) ComposeRepair();
     if(Page==TEXT("save")) ComposeSave();
     if(!Message.IsEmpty()) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
     if(!ConfirmAction.IsEmpty())
@@ -293,6 +294,7 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     }
     if(Key==EKeys::F && Page==TEXT("inventory")) ExecuteAction(TEXT("use"));
     if(Key==EKeys::F && Page==TEXT("crafting")) ExecuteAction(TEXT("craft"));
+    if(Key==EKeys::F && Page==TEXT("repairing")) ExecuteAction(TEXT("repairEquipment"));
     if(Key==EKeys::F && Page==TEXT("skills")) ExecuteAction(TEXT("learn"));
     if(Key==EKeys::F && Page==TEXT("journal") && (Category==TEXT("main") || Category==TEXT("side"))) ExecuteAction(TEXT("questMap"));
     if(Key==EKeys::V && Page==TEXT("journal") && (Category==TEXT("main") || Category==TEXT("side"))) ExecuteAction(TEXT("track"));

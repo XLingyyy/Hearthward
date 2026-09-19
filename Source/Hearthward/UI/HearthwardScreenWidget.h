@@ -64,6 +64,7 @@ private:
     void ComposeHUD();
     void ComposeBuilding();
     void ComposeCrafting();
+    void ComposeRepair();
     void ComposeSave();
     void Element(FString Type,FString Text,FVector2D Position,FVector2D Size,float Font=18,FString Action=TEXT(""),FString Asset=TEXT(""),bool Selected=false);
     FString Resolve(const FString& Bind) const;
@@ -104,6 +105,7 @@ private:
     FGuid StorageEpoch;
     FGuid CraftingEpoch,Workbench;
     FName SelectedRecipe;
+    FName SelectedRepair;
     int32 CraftingBatches=1;
     FVector2D DesignSize=FVector2D(1672,941);
 };

@@ -28,3 +28,4 @@
 | [TASK-021](../tasks/TASK-021.json) | 伙伴原生导航、绕障与回档恢复 | TASK-020（用户已验收） | Blocked |
 | [TASK-022](../tasks/TASK-022.json) | 自由建造、五秒结算与建筑回档 | TASK-021 | Blocked |
 | [TASK-023](../tasks/TASK-023.json) | 工作台即时制作与原子库存结算 | TASK-022 | Blocked |
+| [TASK-024](../tasks/TASK-024.json) | 工作台装备维修与耐久回档 | TASK-023 | Blocked |

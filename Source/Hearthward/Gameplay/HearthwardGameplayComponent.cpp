@@ -286,15 +286,9 @@ bool UHearthwardGameplayComponent::Shoot()
 { return AttackWith(false,true); }
 bool UHearthwardGameplayComponent::Repair(FName Id)
 {
-    if(!Enabled || Health<=0 || InCombat() || NearbyLocation()!=TEXT("camp")) return Result(false,TEXT("请在安全的营地修理装备"));
-    const auto Item=Find(TEXT("items"),Id.ToString());
-    if(!Item || Text(Item,TEXT("slot")).IsEmpty() || Inventory()->GetItemCount(Id)==0 || !Durability.Contains(Id) || Durability[Id]>=Number(Item,TEXT("durability"),100)) return Result(false,TEXT("这件装备无需修理"));
-    const auto Materials=Catalog()->GetObjectField(TEXT("repairMaterials"));
-    for(const auto& M:Materials->Values)
-        if(Inventory()->GetItemCount(FName(*M.Key))<M.Value->AsNumber()) return Result(false,TEXT("修理材料不足，请从仓库取出所需材料"));
-    for(const auto& M:Materials->Values) Inventory()->TryRemove(FName(*M.Key),M.Value->AsNumber());
-    Durability[Id]=Number(Item,TEXT("durability"),100); Record(TEXT("repair"),Id);
-    return Result(true,TEXT("装备已修复"));
+    auto* B=GetOwner()->FindComponentByClass<UHearthwardBuildingComponent>();
+    const bool Success=B->RepairEquipment(B->NearbyWorkbench(),Id,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
+    return Result(Success,B->Feedback);
 }
 bool UHearthwardGameplayComponent::ThrowItem(FName Id)
 {

@@ -449,7 +449,7 @@ void UHearthwardScreenWidget::ComposeHUD()
     const bool NearWorkbench=Workshop && Workshop->NearbyWorkbench().IsValid();
     if(NearWorkbench)
     {
-        Element(TEXT("notice"),TEXT("E 使用工作台 · 即时制作"),FVector2D(573,536),FVector2D(540,70),20);
+        Element(TEXT("notice"),TEXT("E 使用工作台 · 制作 / 维修"),FVector2D(573,536),FVector2D(540,70),20);
         Elements.Last().Component=TEXT("hud.construction"); Elements.Last().LayoutId=TEXT("hud.workbench.prompt");
     }
     if(const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>())

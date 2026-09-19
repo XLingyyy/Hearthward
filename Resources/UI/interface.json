@@ -2735,7 +2735,7 @@
         },
         {
           "type": "text",
-          "text": "营地修理",
+          "text": "工作台维修",
           "rect": [
             420,
             888,
@@ -5659,6 +5659,82 @@
           "font": 23,
           "layoutId": "crafting.back",
           "component": "crafting.recipes",
+          "action": "back"
+        },
+        {
+          "type": "button",
+          "text": "装备维修 →",
+          "rect": [
+            335,
+            625,
+            355,
+            50
+          ],
+          "font": 21,
+          "layoutId": "crafting.repair",
+          "component": "crafting.recipes",
+          "action": "page:repairing"
+        }
+      ]
+    },
+    "repairing": {
+      "background": "pauseBackground",
+      "header": false,
+      "elements": [
+        {
+          "type": "text",
+          "text": "装备维修",
+          "rect": [
+            328,
+            150,
+            380,
+            58
+          ],
+          "font": 34,
+          "layoutId": "repairing.title",
+          "component": "repairing.items",
+          "action": ""
+        },
+        {
+          "type": "text",
+          "text": "损坏优先 · 滚轮浏览装备",
+          "rect": [
+            328,
+            219,
+            380,
+            35
+          ],
+          "font": 18,
+          "layoutId": "repairing.hint",
+          "component": "repairing.items",
+          "action": ""
+        },
+        {
+          "type": "button",
+          "text": "← 制作物品",
+          "rect": [
+            318,
+            685,
+            380,
+            50
+          ],
+          "font": 21,
+          "layoutId": "repairing.crafting",
+          "component": "repairing.items",
+          "action": "page:crafting"
+        },
+        {
+          "type": "button",
+          "text": "Esc 返回",
+          "rect": [
+            318,
+            755,
+            380,
+            50
+          ],
+          "font": 23,
+          "layoutId": "repairing.back",
+          "component": "repairing.items",
           "action": "back"
         }
       ]

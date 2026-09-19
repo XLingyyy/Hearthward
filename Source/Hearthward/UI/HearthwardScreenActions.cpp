@@ -55,6 +55,19 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
     bool Success=true;
+    if(Action==TEXT("repairEquipment"))
+    {
+        auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
+        Success=Page==TEXT("repairing") && B->RepairEquipment(Workbench,SelectedRepair,CraftingEpoch);
+        Message=Page==TEXT("repairing")?B->Feedback:TEXT("请重新打开工作台维修");
+        Refresh(); return Success;
+    }
+    if(Action.StartsWith(TEXT("repairItem:")))
+    {
+        const FName Id(*Action.Mid(11));
+        if(Page!=TEXT("repairing") || !Find(TEXT("repairRecipes"),Id.ToString()) || Inventory()->GetItemCount(Id)<1) return false;
+        SelectedRepair=Id; Message.Reset(); Refresh(); return true;
+    }
     if(Action==TEXT("craft"))
     {
         auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
@@ -143,7 +156,11 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         }
     }
     else if(Action==TEXT("use")) { Success=G->UseItem(SelectedItem); Message=G->Feedback; }
-    else if(Action==TEXT("repair")) { Success=G->Repair(SelectedItem); Message=G->Feedback; }
+    else if(Action==TEXT("repair"))
+    {
+        SelectedRepair=SelectedItem;
+        OpenPage(TEXT("repairing")); Success=Page==TEXT("repairing");
+    }
     else if(Action.StartsWith(TEXT("quick:")))
     {
         const auto& Slots=Theme->GetObjectField(TEXT("inventory"))->GetArrayField(TEXT("quickSlots"));
