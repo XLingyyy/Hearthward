@@ -1,0 +1,11 @@
+{
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13650HX",
+  "physical_cores": 14,
+  "logical_processors": 20,
+  "ram_bytes": 16780480512,
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "vram_mib": 8192,
+  "cpu_query": "Get-CimInstance Win32_Processor; Get-CimInstance Win32_ComputerSystem",
+  "gpu_query": "nvidia-smi --query-gpu=name,memory.used,memory.total,driver_version --format=csv,noheader,nounits",
+  "gpu_samples": "per-run manifest; combined UE/model/device usage, not per-process"
+}

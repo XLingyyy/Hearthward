@@ -147,6 +147,9 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
     S.Knowledge = Knowledge; S.KnowledgeRevision = KnowledgeRevision; S.AutoMinutes = AutoMinutes; S.Safety = Safety;
     S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
+    S.NPCStateVersion=2;S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;
+    S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability=Companion->OwnedDurability;S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
+    S.NPCReceipts=Companion->Receipts;
     return true;
 }
 
@@ -163,6 +166,8 @@ bool UHearthwardSaveSubsystem::WritePoint(bool Manual, bool NewCampaign)
     FHearthwardSavePoint Point;
     Point.SaveId = FGuid::NewGuid(); Point.CampaignId = NewCampaign ? FGuid::NewGuid() : CampaignId;
     Point.Created = FDateTime::UtcNow(); Point.Manual = Manual; Point.World = S;
+    Point.World.NPCMemory.Campaign=Point.CampaignId;
+    if(NewCampaign){Point.World.NPCMemory.Migrate(Point.CampaignId);S=Point.World;}
     Point.Location = S.Map; Point.Stage = TEXT("PROTOTYPE_ONLY / companion fixture");
     Point.Build = FEngineVersion::Current().ToString() + TEXT(" / ") + FApp::GetBuildVersion();
     auto* Candidate = DuplicateObject<UHearthwardSaveGame>(Pool, this);
@@ -213,7 +218,11 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     Companion->Command = FHearthwardCompanionCommand();
     Companion->Command.ItemId = S.Item; Companion->Command.Requested = S.Requested; Companion->Command.Delivered = S.Delivered;
     Companion->Command.bActive = S.CommandActive;
-    Companion->Command.Active = {FGuid::NewGuid(), Storage->GetTimelineEpoch(), 1};
+    Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), 1};
+    Companion->Command.Acquired=S.Acquired;Companion->Command.Carried=S.Carried;Companion->Command.Goal=S.AgentGoal;
+    Companion->OwnedDurability=S.NPCDurability;Companion->Spent=S.NPCSpent;Companion->AppliedOperations=TSet<FGuid>(S.NPCOperations);
+    Companion->Receipts=S.NPCReceipts;
+    Companion->NavigationFailures=0;Companion->LastProgressAt=GetWorld()->GetTimeSeconds();Companion->LastProgressPosition=Companion->GetActorLocation();
     auto* PlayerTimer = Player->FindComponentByClass<UHearthwardTimedActionComponent>();
     PlayerTimer->State = TimerState(S.PlayerTimer, S.ActiveSeconds);
     PlayerTimer->SetComponentTickEnabled(S.PlayerTimer.Status == EHearthwardTimedActionStatus::Running);

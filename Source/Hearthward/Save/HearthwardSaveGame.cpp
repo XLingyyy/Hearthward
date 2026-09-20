@@ -1,5 +1,6 @@
 #include "HearthwardSaveGame.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Gameplay/HearthwardGameData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/Crc.h"
 #include "Misc/FileHelper.h"
@@ -35,16 +36,29 @@ bool ValidTimer(const FHearthwardSavedTimer& Timer)
 bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Error)
 {
     // Check the envelope before Unreal allocates/deserializes its object payload.
-    constexpr uint32 Magic = 0x48575331;
+    constexpr uint32 LegacyMagic = 0x48575331, Magic = 0x48575332;
     uint32 Header[3] = {};
     if (Bytes.Num() < sizeof(Header) || Bytes.Num() > 64 * 1024 * 1024) { Error = TEXT("存档大小无效"); return false; }
     FMemory::Memcpy(Header, Bytes.GetData(), sizeof(Header));
     const int32 Length = Bytes.Num() - sizeof(Header);
-    if (Header[0] != Magic || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
+    if ((Header[0] != Magic && Header[0]!=LegacyMagic) || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
     { Error = TEXT("存档完整性校验失败"); return false; }
     TArray<uint8> Payload;
     Payload.Append(Bytes.GetData() + sizeof(Header), Length);
     Out = Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
+    // UE omits unchanged default-valued properties: old files may have no Schema tag.
+    // The envelope is the authoritative discriminator; a damaged v2 never enters migration.
+    if(Out && Header[0]==LegacyMagic && Out->Schema==2 && Out->Points.ContainsByPredicate([](const auto& P){return P.World.NPCStateVersion==0;}))Out->Schema=1;
+    if(Out && Header[0]==LegacyMagic && Out->Schema==1)
+    {
+        for(auto& P:Out->Points)
+        {
+            auto& S=P.World;S.NPCMemory.Migrate(P.CampaignId);S.NPCStateVersion=2;
+            S.Acquired=S.Delivered+FMath::Min(S.Bag.FindRef(S.Item),FMath::Max(0,S.Requested-S.Delivered));S.Carried=S.Acquired-S.Delivered;
+            if(S.Requested>0){S.AgentGoal.Intent=TEXT("collect");S.AgentGoal.Item=S.Item;S.AgentGoal.Quantity=S.Requested;S.AgentGoal.QuantityMode=TEXT("additional_acquired");S.AgentGoal.SourceRef=TEXT("S1");S.CommandId=FGuid::NewGuid();}
+        }
+        Out->Schema=2;
+    }
     if (!Out || !HearthwardSave::Validate(*Out)) { Error = TEXT("存档版本或快照状态无效"); Out = nullptr; return false; }
     return true;
 }
@@ -52,11 +66,26 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
 
 bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
 {
-    if (Pool.Schema != 1 || Pool.Points.Num() > MaxPoints) return false;
+    if (Pool.Schema != 2 || Pool.Points.Num() > MaxPoints) return false;
     TSet<FGuid> Ids;
     for (const auto& P : Pool.Points)
     {
         const auto& S = P.World;
+        if(S.NPCStateVersion!=2 || S.Acquired<0 || S.Carried<0 || S.Acquired<S.Delivered || S.Acquired>S.Requested || S.Carried!=S.Acquired-S.Delivered
+            || S.Carried>S.Bag.FindRef(S.Item) || S.NPCOperations.Num()>512 || S.NPCMemory.Campaign!=P.CampaignId) return false;
+        if(S.CommandActive && (S.AgentGoal.Intent.IsNone() || !S.CommandId.IsValid()))return false;
+        if(!S.AgentGoal.Intent.IsNone() && !HearthwardAgent::Validate(S.AgentGoal).IsEmpty())return false;
+        if(!ValidCounts(S.NPCSpent,true))return false;
+        TSet<FGuid> Operations;
+        for(const auto& Id:S.NPCOperations){if(!Id.IsValid() || Operations.Contains(Id))return false;Operations.Add(Id);}
+        Operations.Reset();if(S.NPCReceipts.Num()>512)return false;
+        for(const auto& R:S.NPCReceipts)
+        {if(!R.Id.IsValid() || R.Command!=S.CommandId || R.Payload.IsEmpty() || R.Payload.Len()>200 || Operations.Contains(R.Id))return false;Operations.Add(R.Id);}
+        for(const auto& D:S.NPCDurability)
+        {
+            auto Item=HearthwardData::Find(TEXT("items"),D.Key.ToString());
+            if(!Item || !FMath::IsFinite(D.Value) || D.Value<0 || D.Value>HearthwardData::Number(Item,TEXT("durability")))return false;
+        }
         if (!S.NPCMemory.IsValid(S.ActiveSeconds)) return false;
         if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) return false;
         if (!P.SaveId.IsValid() || !P.CampaignId.IsValid() || Ids.Contains(P.SaveId) || S.Map.IsEmpty()
@@ -65,12 +94,13 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
             || !S.Player.IsValid() || !S.Companion.IsValid() || !S.Source.IsValid() || !S.Camp.IsValid() || S.View.ContainsNaN()
             || !ValidCounts(S.Inventory, false) || !ValidCounts(S.Storage, true) || !ValidCounts(S.Bag, false) || !ValidCounts(S.Resource, false)
             || !ValidTimer(S.PlayerTimer) || !ValidTimer(S.CompanionTimer)
-            || uint8(S.Phase) > uint8(EHearthwardCompanionPhase::Cancelled)
+            || uint8(S.Phase) > uint8(EHearthwardCompanionPhase::HoldingSafely)
             || S.Requested < 0 || S.Delivered < 0 || S.Delivered > S.Requested) return false;
         if (S.Requested > 0 && !HearthwardBasicItems().ContainsByPredicate([&S](const auto& I) { return I.Id == S.Item; })) return false;
         if (S.CommandActive && (S.Requested == 0 || S.Delivered == S.Requested)) return false;
         const bool Executing = S.Phase == EHearthwardCompanionPhase::GoingToSource || S.Phase == EHearthwardCompanionPhase::Gathering
-            || S.Phase == EHearthwardCompanionPhase::Returning || S.Phase == EHearthwardCompanionPhase::ReturningBlocked;
+            || S.Phase == EHearthwardCompanionPhase::Returning || S.Phase == EHearthwardCompanionPhase::ReturningBlocked
+            || S.Phase == EHearthwardCompanionPhase::GoingToWorkshop || S.Phase == EHearthwardCompanionPhase::TakingMaterials || S.Phase == EHearthwardCompanionPhase::HoldingSafely;
         if (Executing && !S.CommandActive) return false;
         if (S.Phase == EHearthwardCompanionPhase::Completed && (S.Requested == 0 || S.Delivered != S.Requested || S.CommandActive)) return false;
         if (S.Phase == EHearthwardCompanionPhase::Gathering && S.CompanionTimer.Status != EHearthwardTimedActionStatus::Running
@@ -92,7 +122,7 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
     if (!Pool || !Validate(*Pool)) { Error = TEXT("拒绝写入无效快照"); return false; }
     TArray<uint8> Payload, Bytes;
     if (!UGameplayStatics::SaveGameToMemory(Pool, Payload)) { Error = TEXT("快照序列化失败"); return false; }
-    const uint32 Header[] = {0x48575331, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
+    const uint32 Header[] = {0x48575332, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
     Bytes.Append(reinterpret_cast<const uint8*>(Header), sizeof(Header));
     Bytes.Append(Payload);
     IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true);

@@ -1,0 +1,252 @@
+{
+  "started_utc": "2026-09-19T17:28:24.779108+00:00",
+  "mode": "interactions",
+  "code_sha": "2d50da3b596da6b314f1c11a47527df3daa5c9c9",
+  "source_diff_sha256": "146e2aab5b1b338bba9633287004cd9f499e7108d1177bea786dd474567b5aa5",
+  "source_worktree_dirty": true,
+  "testset_sha256": "dcfe340a8a0dd3c8323b610a50d08fb686904010956545a59d0eb07717446a29",
+  "os": "Windows-11-10.0.26100-SP0",
+  "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "command": [
+    "Hearthward/docs/qa/evidence/TASK-025/rev2/run_evaluation.py",
+    "interactions"
+  ],
+  "runtime": {
+    "schema_version": 1,
+    "model": {
+      "upstream": "Qwen/Qwen3.5-4B",
+      "repository": "unsloth/Qwen3.5-4B-GGUF",
+      "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+      "filename": "Qwen3.5-4B-Q4_K_M.gguf",
+      "size": 2740937888,
+      "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
+      "license": "Apache-2.0"
+    },
+    "runtime": {
+      "repository": "ggml-org/llama.cpp",
+      "revision": "b10964",
+      "license": "MIT",
+      "artifacts": [
+        {
+          "backend": "cpu",
+          "filename": "llama-b10964-bin-win-cpu-x64.zip",
+          "sha256": "917f39c076402c421224824607397af20f53625a60defc20e8dd22446bf4c5d7"
+        },
+        {
+          "backend": "vulkan",
+          "filename": "llama-b10964-bin-win-vulkan-x64.zip",
+          "sha256": "1ee3ad952f4ba71f438bd6d7bebef19e1c7af04adcaa35d08b4ddabb27d4c642"
+        }
+      ]
+    },
+    "deployment": {
+      "target": "Windows x64",
+      "default_backend": "cpu",
+      "context_size": 4096,
+      "max_output_tokens": 256,
+      "parallel": 1,
+      "gpu_layers": 16,
+      "thinking": false,
+      "runtime_network": "loopback only",
+      "prompt_version": "task025-agent-v2-4",
+      "knowledge_version": "hearthward-initial-knowledge-4",
+      "schema_version": "capability-registry-v2",
+      "memory_version": "active-records-events-revision-v2",
+      "temperature": 0,
+      "retrieval_version": "aliases-bigrams-v2"
+    }
+  },
+  "gpu_memory_scope": "combined UE and model device usage; not per-process VRAM",
+  "build_started_utc": "2026-09-19T17:25:58.792104+00:00",
+  "scenario_sha256": {
+    "fault_scenarios.py": "c255e604f3f8349f23575b39b84fdb75a69632e721c3284fd8ba712e6ce81423",
+    "lifecycle_scenarios.py": "851e758b2c739e26ef1f2f007460531e049a690aeeb8204ecf0846cb40666ea5",
+    "workshop_scenarios.py": "0497ac7e987966593c119c80732deb0df01e400a48b45618fe3ea3f96d5def3c",
+    "interaction_scenarios.py": "4025d71b28a0b11d2f35b85557bf8dd3a08c009cf6430d823d431f4504f036ab",
+    "timeout_scenarios.py": "14f2613edb0eef69e868aa397c4ab639167eff5cde3509c30b752b3a7a632a0e"
+  },
+  "harness_sha256": "c9698a26e76249d1d17f02f948f9788fe44ba607495fd771e03e7faccf644056",
+  "backend": "vulkan",
+  "launch_arguments": [
+    "-ExecutePythonScript=G:\\GameFactory\\Hearthward\\docs\\qa\\evidence\\TASK-025\\rev2\\verify_interactions.py",
+    "-HearthwardSaveTestPool=<isolated UUID>",
+    "-HearthwardAIBackend=vulkan",
+    "-HearthwardAIGpuLayers=32",
+    "-unattended"
+  ],
+  "gpu_samples": [
+    {
+      "seconds": 0.08,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1397, 8188, 577.00"
+    },
+    {
+      "seconds": 2.15,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1397, 8188, 577.00"
+    },
+    {
+      "seconds": 4.2,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1389, 8188, 577.00"
+    },
+    {
+      "seconds": 6.27,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1435, 8188, 577.00"
+    },
+    {
+      "seconds": 8.33,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1438, 8188, 577.00"
+    },
+    {
+      "seconds": 10.39,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1431, 8188, 577.00"
+    },
+    {
+      "seconds": 12.45,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1571, 8188, 577.00"
+    },
+    {
+      "seconds": 14.52,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1569, 8188, 577.00"
+    },
+    {
+      "seconds": 16.57,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 1651, 8188, 577.00"
+    },
+    {
+      "seconds": 18.64,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 2297, 8188, 577.00"
+    },
+    {
+      "seconds": 20.71,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 2455, 8188, 577.00"
+    },
+    {
+      "seconds": 22.78,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 2447, 8188, 577.00"
+    },
+    {
+      "seconds": 25.26,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 3471, 8188, 577.00"
+    },
+    {
+      "seconds": 27.36,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 4990, 8188, 577.00"
+    },
+    {
+      "seconds": 29.44,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5255, 8188, 577.00"
+    },
+    {
+      "seconds": 31.51,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5276, 8188, 577.00"
+    },
+    {
+      "seconds": 33.57,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5284, 8188, 577.00"
+    },
+    {
+      "seconds": 35.66,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5276, 8188, 577.00"
+    },
+    {
+      "seconds": 37.73,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5288, 8188, 577.00"
+    },
+    {
+      "seconds": 39.8,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5285, 8188, 577.00"
+    },
+    {
+      "seconds": 41.86,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5285, 8188, 577.00"
+    },
+    {
+      "seconds": 43.91,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5283, 8188, 577.00"
+    },
+    {
+      "seconds": 45.97,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5284, 8188, 577.00"
+    },
+    {
+      "seconds": 48.03,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5284, 8188, 577.00"
+    },
+    {
+      "seconds": 50.15,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5284, 8188, 577.00"
+    },
+    {
+      "seconds": 52.23,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5301, 8188, 577.00"
+    },
+    {
+      "seconds": 54.29,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5297, 8188, 577.00"
+    },
+    {
+      "seconds": 56.37,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5282, 8188, 577.00"
+    },
+    {
+      "seconds": 58.43,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5277, 8188, 577.00"
+    },
+    {
+      "seconds": 60.5,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5280, 8188, 577.00"
+    },
+    {
+      "seconds": 62.56,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5277, 8188, 577.00"
+    },
+    {
+      "seconds": 64.63,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5280, 8188, 577.00"
+    },
+    {
+      "seconds": 66.71,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5277, 8188, 577.00"
+    },
+    {
+      "seconds": 68.78,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5280, 8188, 577.00"
+    },
+    {
+      "seconds": 70.84,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5272, 8188, 577.00"
+    },
+    {
+      "seconds": 72.97,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5280, 8188, 577.00"
+    },
+    {
+      "seconds": 75.03,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5277, 8188, 577.00"
+    },
+    {
+      "seconds": 77.1,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5280, 8188, 577.00"
+    },
+    {
+      "seconds": 79.16,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5277, 8188, 577.00"
+    },
+    {
+      "seconds": 81.23,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5280, 8188, 577.00"
+    },
+    {
+      "seconds": 83.32,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5277, 8188, 577.00"
+    },
+    {
+      "seconds": 85.39,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5280, 8188, 577.00"
+    },
+    {
+      "seconds": 87.45,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, 5277, 8188, 577.00"
+    }
+  ],
+  "finished_utc": "2026-09-19T17:29:54.482200+00:00"
+}

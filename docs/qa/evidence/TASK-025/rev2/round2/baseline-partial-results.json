@@ -1,0 +1,980 @@
+{
+  "passed": false,
+  "code_sha": "d02b5fef111e783f80b99c3e96a1bc2d2cb97d3b",
+  "cases": [
+    {
+      "id": "dev-001",
+      "family": "A01",
+      "turns": [
+        "采集两份木材，带回营地仓库。"
+      ],
+      "expected": "collect",
+      "quantity": 2,
+      "turn_results": [
+        {
+          "input": "采集两份木材，带回营地仓库。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 2,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我现在去采集两份木材并带回营地仓库。\"\n}",
+          "intent": "collect",
+          "line": "好的，我现在去采集两份木材并带回营地仓库。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 10.793186001479626,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":14.507462311536074,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 2,
+        "delivered": 2,
+        "source_debit": 0,
+        "warehouse_wood": 2
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-002",
+      "family": "A01",
+      "turns": [
+        "帮我弄2份木头回来入库。"
+      ],
+      "expected": "collect",
+      "quantity": 2,
+      "turn_results": [
+        {
+          "input": "帮我弄2份木头回来入库。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 2,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\":\"好的，我去采两份木头并带回仓库。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采两份木头并带回仓库。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 3.0014028027653694,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.2024627029895782,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 2,
+        "delivered": 2,
+        "source_debit": 0,
+        "warehouse_wood": 2
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-003",
+      "family": "A01",
+      "turns": [
+        "请从当前安全点采两份木材。"
+      ],
+      "expected": "collect",
+      "quantity": 2,
+      "turn_results": [
+        {
+          "input": "请从当前安全点采两份木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 2,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\":\"好的，我现在去采两份木材并带回营地。\"\n}",
+          "intent": "collect",
+          "line": "好的，我现在去采两份木材并带回营地。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 2.8320165015757084,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710776016116142,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 2,
+        "delivered": 2,
+        "source_debit": 0,
+        "warehouse_wood": 2
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-004",
+      "family": "A01",
+      "turns": [
+        "给我采六份木材。"
+      ],
+      "expected": "collect",
+      "quantity": 6,
+      "turn_results": [
+        {
+          "input": "给我采六份木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 6,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我去采六份木材并带回营地。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采六份木材并带回营地。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 2.901069600135088,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710774041712284,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 6,
+        "delivered": 6,
+        "source_debit": 0,
+        "warehouse_wood": 6
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-005",
+      "family": "A01",
+      "turns": [
+        "新收集6份木头放仓库。"
+      ],
+      "expected": "collect",
+      "quantity": 6,
+      "turn_results": [
+        {
+          "input": "新收集6份木头放仓库。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 6,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我去采6份木头并带回仓库。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采6份木头并带回仓库。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 3.0838664025068283,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710775010287762,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 6,
+        "delivered": 6,
+        "source_debit": 0,
+        "warehouse_wood": 6
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-006",
+      "family": "A01",
+      "turns": [
+        "从S1采六份木材回来。"
+      ],
+      "expected": "collect",
+      "quantity": 6,
+      "turn_results": [
+        {
+          "input": "从S1采六份木材回来。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"S1 是哪里？我需要知道具体的采集地点才能出发。\"\n}",
+          "intent": "clarify",
+          "line": "S1 是哪里？我需要知道具体的采集地点才能出发。",
+          "status": "需要补充说明",
+          "seconds": 2.8516069017350674,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710776016116142,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-007",
+      "family": "A04",
+      "turns": [
+        "帮我采些木材。"
+      ],
+      "expected": "clarify",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "帮我采些木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"好呀，采木材没问题。不过得先告诉我具体要采多少份呢？\"\n}",
+          "intent": "clarify",
+          "line": "好呀，采木材没问题。不过得先告诉我具体要采多少份呢？",
+          "status": "需要补充说明",
+          "seconds": 2.8340320996940136,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710775010287762,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-008",
+      "family": "A04",
+      "turns": [
+        "去弄一点木头回来。"
+      ],
+      "expected": "clarify",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "去弄一点木头回来。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"好，我去采木头。不过得先问一句，你要多少份？\"\n}",
+          "intent": "clarify",
+          "line": "好，我去采木头。不过得先问一句，你要多少份？",
+          "status": "需要补充说明",
+          "seconds": 2.7654650025069714,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710777021944523,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-009",
+      "family": "A04",
+      "turns": [
+        "采集木材入库。"
+      ],
+      "expected": "clarify",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "采集木材入库。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"好，我去采木材。不过得先问一句，你要采多少份？\"\n}",
+          "intent": "clarify",
+          "line": "好，我去采木材。不过得先问一句，你要采多少份？",
+          "status": "需要补充说明",
+          "seconds": 2.783500999212265,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710775010287762,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-010",
+      "family": "A04",
+      "turns": [
+        "帮我采些木材。",
+        "四份就行。"
+      ],
+      "expected": "collect",
+      "quantity": 4,
+      "turn_results": [
+        {
+          "input": "帮我采些木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"好呀，采木材没问题。不过得先告诉我具体要采多少份呢？\"\n}",
+          "intent": "clarify",
+          "line": "好呀，采木材没问题。不过得先告诉我具体要采多少份呢？",
+          "status": "需要补充说明",
+          "seconds": 2.851381901651621,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710775010287762,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        },
+        {
+          "input": "四份就行。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 4,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\":\"好的，我去采四份木材并带回仓库。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采四份木材并带回仓库。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 5.100648999214172,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":10.037775099277496,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 4,
+        "delivered": 4,
+        "source_debit": 0,
+        "warehouse_wood": 4
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-011",
+      "family": "A04",
+      "turns": [
+        "采木头回来。",
+        "数量定四份。"
+      ],
+      "expected": "collect",
+      "quantity": 4,
+      "turn_results": [
+        {
+          "input": "采木头回来。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"好，我去采木头。不过得先问一句，你要采多少份呢？\"\n}",
+          "intent": "clarify",
+          "line": "好，我去采木头。不过得先问一句，你要采多少份呢？",
+          "status": "需要补充说明",
+          "seconds": 3.0842491015791893,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710776016116142,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        },
+        {
+          "input": "数量定四份。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 4,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\":\"好的，我去采四份木头，采完就带回营地。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采四份木头，采完就带回营地。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 3.2333258986473083,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":10.271130803972483,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 4,
+        "delivered": 4,
+        "source_debit": 0,
+        "warehouse_wood": 4
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-012",
+      "family": "A04",
+      "turns": [
+        "替我收集木材。",
+        "只要4份。"
+      ],
+      "expected": "collect",
+      "quantity": 4,
+      "turn_results": [
+        {
+          "input": "替我收集木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"好，我去帮你采木材。不过得先确认一下，你要收集多少份呢？\"\n}",
+          "intent": "clarify",
+          "line": "好，我去帮你采木材。不过得先确认一下，你要收集多少份呢？",
+          "status": "需要补充说明",
+          "seconds": 3.0397699996829033,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710777021944523,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        },
+        {
+          "input": "只要4份。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 4,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\":\"好的，我去采4份木材并带回仓库。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采4份木材并带回仓库。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 5.36674739792943,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":10.226939503103495,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 4,
+        "delivered": 4,
+        "source_debit": 0,
+        "warehouse_wood": 4
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-013",
+      "family": "A05",
+      "turns": [
+        "去未知北山采木材。",
+        "六份。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "去未知北山采木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"北山太远了，采多少份？\"\n}",
+          "intent": "clarify",
+          "line": "北山太远了，采多少份？",
+          "status": "需要补充说明",
+          "seconds": 2.6994365006685257,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710775047540665,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        },
+        {
+          "input": "六份。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 6,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我去北山采六份木材。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去北山采六份木材。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 3.017384398728609,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":9.8878024034202099,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 6,
+        "delivered": 6,
+        "source_debit": 0,
+        "warehouse_wood": 6
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-014",
+      "family": "A05",
+      "turns": [
+        "只从没发现的黑林采木头。",
+        "2份就行。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "只从没发现的黑林采木头。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"黑林听起来不太安全，而且你还没告诉我具体要采多少木头呢。\"\n}",
+          "intent": "clarify",
+          "line": "黑林听起来不太安全，而且你还没告诉我具体要采多少木头呢。",
+          "status": "需要补充说明",
+          "seconds": 2.933940999209881,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710776016116142,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        },
+        {
+          "input": "2份就行。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 2,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我去黑林采两份木头，采完就回营地。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去黑林采两份木头，采完就回营地。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 3.133005701005459,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":10.12109200283885,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 2,
+        "delivered": 2,
+        "source_debit": 0,
+        "warehouse_wood": 2
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-015",
+      "family": "A05",
+      "turns": [
+        "到未知山谷采些木料。",
+        "数量是四份。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "到未知山谷采些木料。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"去未知山谷采木料？具体要多少份呢？\"\n}",
+          "intent": "clarify",
+          "line": "去未知山谷采木料？具体要多少份呢？",
+          "status": "需要补充说明",
+          "seconds": 2.8326960019767284,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710776016116142,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        },
+        {
+          "input": "数量是四份。",
+          "accepted": true,
+          "raw": "{\n\"intent\": \"collect\",\n\"item\": \"wood\",\n\"quantity\": 4,\n\"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我去未知山谷采四份木材，采完就回营地。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去未知山谷采四份木材，采完就回营地。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 5.101695399731398,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":10.021110903471708,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 4,
+        "delivered": 4,
+        "source_debit": 0,
+        "warehouse_wood": 4
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-016",
+      "family": "A03",
+      "turns": [
+        "别采木材，只告诉我库存。"
+      ],
+      "expected": "inventory",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "别采木材，只告诉我库存。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"inventory\",\n  \"item\": \"wood\",\n  \"quantity\": 0,\n  \"steps\": [],\"npc_line\": \"好的，我现在就在营地，亲眼看到的木材库存是0份。\"\n}",
+          "intent": "inventory",
+          "line": "我现在看到仓库里有 0 份木材。",
+          "status": "弟弟的回复",
+          "seconds": 2.8168882988393307,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710772998631001,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-017",
+      "family": "A03",
+      "turns": [
+        "不下任务，查询仓库木材数量。"
+      ],
+      "expected": "inventory",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "不下任务，查询仓库木材数量。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"inventory\",\n  \"item\": \"wood\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"我还没去营地，不知道最新库存。\"\n}",
+          "intent": "inventory",
+          "line": "我现在看到仓库里有 0 份木材。",
+          "status": "弟弟的回复",
+          "seconds": 2.6333860978484154,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710777021944523,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-018",
+      "family": "A03",
+      "turns": [
+        "我只问营地有多少木头，不要去采。"
+      ],
+      "expected": "inventory",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "我只问营地有多少木头，不要去采。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"inventory\",\n  \"item\": \"wood\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"营地仓库里现在没有木头。\"\n}",
+          "intent": "inventory",
+          "line": "我现在看到仓库里有 0 份木材。",
+          "status": "弟弟的回复",
+          "seconds": 2.5982258021831512,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710878014564514,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-019",
+      "family": "A07",
+      "turns": [
+        "改为采三份石头。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "改为采三份石头。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"石头不能采集，只能采木材。你要采木材吗？\"\n}",
+          "intent": "clarify",
+          "line": "石头不能采集，只能采木材。你要采木材吗？",
+          "status": "需要补充说明",
+          "seconds": 2.8332521989941597,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710776016116142,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-020",
+      "family": "A07",
+      "turns": [
+        "去收集两份矿石。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "去收集两份矿石。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"矿石？我目前只能安全采集木材。而且你还没说要去哪里，是去营地附近还是敌营？\"\n}",
+          "intent": "clarify",
+          "line": "矿石？我目前只能安全采集木材。而且你还没说要去哪里，是去营地附近还是敌营？",
+          "status": "需要补充说明",
+          "seconds": 3.0662826001644135,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.171085100620985,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-021",
+      "family": "A07",
+      "turns": [
+        "帮我采5份草药。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "帮我采5份草药。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"meat\",\n  \"quantity\": 5,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我去采5份肉。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采5份肉。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 3.016701102256775,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710774041712284,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.WAITING_AT_CAMP: 5>",
+        "requested": 5,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 12
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-022",
+      "family": "A08",
+      "turns": [
+        "再来六份。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "再来六份。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 6,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我去采六份木材。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采六份木材。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 2.8331898003816605,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710775010287762,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 6,
+        "delivered": 6,
+        "source_debit": 0,
+        "warehouse_wood": 6
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-023",
+      "family": "A08",
+      "turns": [
+        "还是刚才的数量。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "还是刚才的数量。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 4,\n  \"steps\": [\"collect\",\"return\",\"deposit\"],\"npc_line\": \"好的，我去采四份木材并带回仓库。\"\n}",
+          "intent": "collect",
+          "line": "好的，我去采四份木材并带回仓库。",
+          "status": "委托已接受，进度以实际入库为准",
+          "seconds": 2.7992983013391495,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710775010287762,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+        "requested": 4,
+        "delivered": 4,
+        "source_debit": 0,
+        "warehouse_wood": 4
+      },
+      "pass": false
+    },
+    {
+      "id": "dev-024",
+      "family": "A08",
+      "turns": [
+        "补到十份吧。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "补到十份吧。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"补到十份？是指木材吗？还是其他东西？\"\n}",
+          "intent": "clarify",
+          "line": "补到十份？是指木材吗？还是其他东西？",
+          "status": "需要补充说明",
+          "seconds": 2.6832741983234882,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.188119400292635,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-025",
+      "family": "A09",
+      "turns": [
+        "先采两份木材再修我的弓。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "先采两份木材再修我的弓。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"refuse\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"我目前只能去安全的地方采木材，没法去敌营修弓。修弓的事我帮不上忙。\"\n}",
+          "intent": "refuse",
+          "line": "我目前只能去安全的地方采木材，没法去敌营修弓。修弓的事我帮不上忙。",
+          "status": "无法接受这项委托",
+          "seconds": 3.2330876998603344,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710778027772903,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-026",
+      "family": "A09",
+      "turns": [
+        "采三份木头，然后建工作台。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "采三份木头，然后建工作台。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"refuse\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"我采了三份木头，但无法帮你建造工作台。目前我只能采集木材并返回仓库，制作和建造任务我暂时帮不上忙。\"\n}",
+          "intent": "refuse",
+          "line": "我采了三份木头，但无法帮你建造工作台。目前我只能采集木材并返回仓库，制作和建造任务我暂时帮不上忙。",
+          "status": "无法接受这项委托",
+          "seconds": 3.2665911987423897,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1732225008308887,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-027",
+      "family": "A09",
+      "turns": [
+        "做两批箭矢，再去采四份木材。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "做两批箭矢，再去采四份木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"refuse\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"抱歉，我目前只能采集木材并返回仓库。制作箭矢、修理装备或建造房屋我暂时还做不到，这些任务我无法执行。\"\n}",
+          "intent": "refuse",
+          "line": "抱歉，我目前只能采集木材并返回仓库。制作箭矢、修理装备或建造房屋我暂时还做不到，这些任务我无法执行。",
+          "status": "无法接受这项委托",
+          "seconds": 3.253025498241186,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1711563020944595,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-028",
+      "family": "A10",
+      "turns": [
+        "采集负三份木材。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "采集负三份木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"采集负三份木材？数量不能是负数，请告诉我具体要采多少份。\"\n}",
+          "intent": "clarify",
+          "line": "采集负三份木材？数量不能是负数，请告诉我具体要采多少份。",
+          "status": "需要补充说明",
+          "seconds": 3.000992499291897,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1710777021944523,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "dev-029",
+      "family": "A10",
+      "turns": [
+        "收集1.5份木头。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "收集1.5份木头。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"steps\": [],\n  \"npc_line\": \"木头只能按整数份采集，1.5份怎么算呢？\"\n}",
+          "intent": "clarify",
+          "line": "木头只能按整数份采集，1.5份怎么算呢？",
+          "status": "需要补充说明",
+          "seconds": 2.8496918007731438,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":7.1911794021725655,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities\":\"当前仅能独立采集wood木材并返回入库；物品与正整数总量须明确。制作、修理、建造委托尚不可执行，须如实说明。旧委托进度不是新指令。\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "actual": {
+        "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+        "requested": 0,
+        "delivered": 0,
+        "source_debit": 0,
+        "warehouse_wood": 0
+      },
+      "pass": true
+    }
+  ],
+  "checks": {
+    "new": true,
+    "select_station": true,
+    "place_station": true,
+    "snapshot": true,
+    "dev-001_reset": true,
+    "dev-002_reset": true,
+    "dev-003_reset": true,
+    "dev-004_reset": true,
+    "dev-005_reset": true,
+    "dev-006_reset": true,
+    "dev-007_reset": true,
+    "dev-008_reset": true,
+    "dev-009_reset": true,
+    "dev-010_reset": true,
+    "dev-011_reset": true,
+    "dev-012_reset": true,
+    "dev-013_reset": true,
+    "dev-014_reset": true,
+    "dev-015_reset": true,
+    "dev-016_reset": true,
+    "dev-017_reset": true,
+    "dev-018_reset": true,
+    "dev-019_reset": true,
+    "dev-020_reset": true,
+    "dev-021_reset": true,
+    "dev-022_reset": true,
+    "dev-023_reset": true,
+    "dev-024_reset": true,
+    "dev-025_reset": true,
+    "dev-026_reset": true,
+    "dev-027_reset": true,
+    "dev-028_reset": true,
+    "dev-029_reset": true,
+    "dev-030_reset": true
+  },
+  "scope": "common pre-existing capabilities only; B and typed rule proposals excluded; original auto-accept policy retained",
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_baseline.py\", line 56, in tick\n    if time.monotonic()>d:raise TimeoutError(st['ai'].get_status())\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTimeoutError: 委托已接受，进度以实际入库为准\n"
+}

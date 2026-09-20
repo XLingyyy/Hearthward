@@ -1,0 +1,58 @@
+"""Deterministic PIE boundaries, repeated with real inventory/navigation/save subsystems."""
+import unreal
+def scenarios(check,wait,delay,w,pc,ui,p,c,a,s,store):
+    def goal(n=6):
+        g=unreal.HearthwardAgentGoal()
+        for k,v in {'intent':'collect','item':'wood','quantity':n,'quantity_mode':'additional_acquired','source_ref':'S1'}.items():g.set_editor_property(k,v)
+        return g
+    def card(n=6):
+        check('structured_card',a.set_structured_goal(p,c,goal(n)))
+        return a.get_candidate_id()
+    def confirm(n=6):return a.confirm_candidate(card(n))
+    yield delay(.4)
+    check('baseline_save',s.save_point(True));base=s.get_points()[-1].save_id
+    for repeat in range(3):
+        def ck(name,value):check(f'R{repeat+1}_{name}',value)
+        ck('reset',s.load_point(base));yield delay(.2)
+        ident=card();ck('proposal_has_no_effect',c.get_requested()==0 and c.get_acquired()==0)
+        p.set_actor_location(unreal.Vector(5000,400,100),False,True)
+        ck('remote_confirm_rejected',not a.confirm_candidate(ident));p.set_actor_location(unreal.Vector(-200,400,100),False,True)
+        ident=card();a.cancel_pending();ck('cancelled_card_rejected',not a.confirm_candidate(ident))
+        ident=card();a.put_player_memory(p,c,unreal.Guid(),'claim','此条记录使旧候选修订失效。');ck('memory_revision_rejects_old_card',not a.confirm_candidate(ident))
+        ident=card();ck('load',s.load_point(base));ck('cross_epoch_card_rejected',not a.confirm_candidate(ident))
+        c.bag.try_add('wood',2)
+        reentrant=[]
+        def during_inventory_commit():reentrant.append(s.save_point(True))
+        c.bag.on_inventory_changed.add_callable(during_inventory_commit)
+        ck('confirmed',confirm());ck('not_completed_early',c.get_delivered()==0)
+        p.set_actor_location(unreal.Vector(5000,400,100),False,True)
+        yield wait(lambda:c.get_delivered()>=4,65)
+        c.bag.on_inventory_changed.remove_callable(during_inventory_commit)
+        ck('reentrant_save_rejected',len(reentrant)>0 and not any(reentrant))
+        ck('accepted_goal_survives_distance',c.get_delivered()>=4)
+        ck('partial_save',s.save_point(True));partial=s.get_points()[-1].save_id
+        delivered=c.get_delivered();stock=store.get_item_count('wood');source=c.source.get_item_count('wood')
+        ck('partial_load',s.load_point(partial));ck('same_boundary',c.get_delivered()==delivered and store.get_item_count('wood')==stock and c.source.get_item_count('wood')==source)
+        yield wait(lambda:c.get_phase()==unreal.HearthwardCompanionPhase.COMPLETED,50)
+        ck('old_items_not_progress',c.get_acquired()==6 and c.get_delivered()==6 and store.get_item_count('wood')==8)
+        ck('load_for_block',s.load_point(base));yield delay(.2);ck('start_block_case',confirm(2))
+        yield wait(lambda:c.get_acquired()==2,35)
+        pos=c.get_actor_location();c.camp.set_actor_location(unreal.Vector(0,400,10000),False,True)
+        yield wait(lambda:c.get_phase()==unreal.HearthwardCompanionPhase.HOLDING_SAFELY,30)
+        ck('blocked_return_keeps_material',c.bag.get_item_count('wood')==2 and c.get_delivered()==0 and c.get_acquired()==2)
+        ck('no_teleport_to_camp',c.get_actor_location().z<500)
+        before=c.get_actor_location();yield delay(1)
+        ck('safe_hold_no_retry_loop',(c.get_actor_location()-before).length()<5)
+        ck('save_blocked',s.save_point(True))
+        c.camp.set_actor_location(unreal.Vector(0,400,100),False,True);p.set_actor_location(c.get_actor_location()+unreal.Vector(100,0,0),False,True)
+        ck('explicit_retry',c.resume_blocked(p));yield wait(lambda:c.get_phase()==unreal.HearthwardCompanionPhase.COMPLETED,30)
+        ck('exact_retry_delivery',c.get_delivered()==2 and store.get_item_count('wood')==2)
+        ck('reset_for_source_loss',s.load_point(base));yield delay(.2);ck('start_source_loss',confirm())
+        c.source.try_remove('wood',c.source.get_item_count('wood'))
+        yield wait(lambda:c.get_phase()==unreal.HearthwardCompanionPhase.WAITING_AT_CAMP,20)
+        ck('resource_loss_never_invents',c.get_acquired()==0 and store.get_item_count('wood')==0)
+        ck('reset_for_pause',s.load_point(base));yield delay(.2);ident=card()
+        unreal.GameplayStatics.set_game_paused(w,True);ck('paused_confirmation_blocked',not a.confirm_candidate(ident))
+        yield delay(.5);ck('paused_world_unchanged',c.get_requested()==0)
+        unreal.GameplayStatics.set_game_paused(w,False);ck('resume_revalidates',a.confirm_candidate(ident));ck('cancel_execution',c.cancel(p));ck('cancel_does_not_reactivate',not a.confirm_candidate(ident))
+    ck('new_campaign',s.start_new_progress());ck('new_campaign_has_no_memory_or_events',not a.get_player_memories() and not a.get_events())

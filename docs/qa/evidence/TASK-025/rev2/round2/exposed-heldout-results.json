@@ -1,0 +1,246 @@
+{
+  "passed": false,
+  "mode": "exposed-heldout",
+  "provider": "real-model",
+  "cases": [
+    {
+      "id": "heldout-006",
+      "family": "A01",
+      "turns": [
+        "营地还需要新采的六份木头，你去办。"
+      ],
+      "expected": "collect",
+      "quantity": 6,
+      "turn_results": [
+        {
+          "input": "营地还需要新采的六份木头，你去办。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [\n    \"quantity_semantics\"\n  ],\n  \"npc_line\": \"需要六份新采的木头，还是补充到六份总量？\"\n}",
+          "intent": "clarify",
+          "reason": "",
+          "line": "需要六份新采的木头，还是补充到六份总量？",
+          "tokens_in": 1952,
+          "tokens_out": 92,
+          "seconds": 13.316446300595999,
+          "submit_response_seconds": 0.0159999999741558,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":16.801624499261379,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities_version\":\"npc-v2\",\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"confirmed_rules\":[],\"known_workbench\":true,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=须明确授权的共享仓库材料；未知地点不可绑定S1\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "semantic_pass": false,
+      "unconfirmed_unchanged": true,
+      "actual": null,
+      "pass": false
+    },
+    {
+      "id": "heldout-017",
+      "family": "A03",
+      "turns": [
+        "不用收集，我在问已有木材。"
+      ],
+      "expected": "inventory",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "不用收集，我在问已有木材。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"dialogue\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [],\"npc_line\": \"营地仓库里现在没有木材。\"\n}",
+          "intent": "dialogue",
+          "reason": "",
+          "line": "营地仓库里现在没有木材。",
+          "tokens_in": 1948,
+          "tokens_out": 72,
+          "seconds": 3.8328933976590633,
+          "submit_response_seconds": 0.0,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":8.1198826991021633,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities_version\":\"npc-v2\",\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"confirmed_rules\":[],\"known_workbench\":true,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=须明确授权的共享仓库材料；未知地点不可绑定S1\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "semantic_pass": false,
+      "unconfirmed_unchanged": true,
+      "actual": null,
+      "pass": false
+    },
+    {
+      "id": "heldout-018",
+      "family": "A03",
+      "turns": [
+        "取消采集的想法，这次只查木头库存。"
+      ],
+      "expected": "inventory",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "取消采集的想法，这次只查木头库存。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [\n    \"inventory scope\"\n  ],\n  \"npc_line\": \"确认是查询营地仓库的木材数量，还是查询我背包里的木材数量？\"\n}",
+          "intent": "clarify",
+          "reason": "",
+          "line": "确认是查询营地仓库的木材数量，还是查询我背包里的木材数量？",
+          "tokens_in": 2034,
+          "tokens_out": 93,
+          "seconds": 4.466899298131466,
+          "submit_response_seconds": 0.0,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":8.1198829971253872,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities_version\":\"npc-v2\",\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"confirmed_rules\":[],\"known_workbench\":true,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=须明确授权的共享仓库材料；未知地点不可绑定S1\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "semantic_pass": false,
+      "unconfirmed_unchanged": true,
+      "actual": null,
+      "pass": false
+    },
+    {
+      "id": "heldout-028",
+      "family": "A10",
+      "turns": [
+        "采集-2份木料。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "采集-2份木料。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"refuse\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [\n    \"negative_quantity\"\n  ],\n  \"npc_line\": \"采集数量不能是负数，请重新提出。\"\n}",
+          "intent": "refuse",
+          "reason": "",
+          "line": "采集数量不能是负数，请重新提出。",
+          "tokens_in": 1947,
+          "tokens_out": 87,
+          "seconds": 4.350375302135944,
+          "submit_response_seconds": 0.0,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":8.1198829971253872,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities_version\":\"npc-v2\",\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"confirmed_rules\":[],\"known_workbench\":true,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=须明确授权的共享仓库材料；未知地点不可绑定S1\"}"
+        }
+      ],
+      "model_understanding_pass": true,
+      "semantic_pass": true,
+      "unconfirmed_unchanged": true,
+      "actual": null,
+      "pass": true
+    },
+    {
+      "id": "heldout-033",
+      "family": "A19",
+      "turns": [
+        "我声称已存100份木头，你确认过多少？"
+      ],
+      "expected": "inventory",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "我声称已存100份木头，你确认过多少？",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [\n    \"玩家声称的100份木材与亲眼观察到的营地库存（0份）不一致，需确认以谁为准或是否已采集但未入库。\"\n  ],\n  \"npc_line\": \"营地仓库我亲眼看到是0份木材。你声称有100份，是还没回营入库，还是你记错了？\"\n}",
+          "intent": "clarify",
+          "reason": "",
+          "line": "营地仓库我亲眼看到是0份木材。你声称有100份，是还没回营入库，还是你记错了？",
+          "tokens_in": 1998,
+          "tokens_out": 135,
+          "seconds": 5.717483900487423,
+          "submit_response_seconds": 0.0,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":8.1198828965425491,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities_version\":\"npc-v2\",\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"confirmed_rules\":[],\"known_workbench\":true,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=须明确授权的共享仓库材料；未知地点不可绑定S1\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "semantic_pass": false,
+      "unconfirmed_unchanged": true,
+      "actual": null,
+      "pass": false
+    },
+    {
+      "id": "heldout-034",
+      "family": "A22",
+      "turns": [
+        "早晨我偏爱哪道菜？"
+      ],
+      "expected": "recall",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "早晨我偏爱哪道菜？",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [\n    \"player_preference\"\n  ],\n  \"npc_line\": \"关于你偏爱的早晨菜肴，我需要确认具体是哪一道。\"\n}",
+          "intent": "clarify",
+          "reason": "",
+          "line": "关于你偏爱的早晨菜肴，我需要确认具体是哪一道。",
+          "tokens_in": 1949,
+          "tokens_out": 89,
+          "seconds": 4.382602501660585,
+          "submit_response_seconds": 0.0,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":8.1198842003941536,\"stale\":false},\"player_records\":[{\"kind\":\"preference\",\"source\":\"player_statement_unverified\",\"id\":\"A489205D4EBBC64F929698ACA1E531CB\",\"revision\":2,\"text\":\"我喜欢清晨吃清淡的烤肉。\",\"recorded_at\":7.4860158003866673}],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities_version\":\"npc-v2\",\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"confirmed_rules\":[],\"known_workbench\":true,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=须明确授权的共享仓库材料；未知地点不可绑定S1\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "semantic_pass": false,
+      "unconfirmed_unchanged": true,
+      "actual": null,
+      "pass": false
+    },
+    {
+      "id": "heldout-055",
+      "family": "B05",
+      "turns": [
+        "拿走我装备栏的斧子并修复。"
+      ],
+      "expected": "safe",
+      "quantity": 0,
+      "turn_results": [
+        {
+          "input": "拿走我装备栏的斧子并修复。",
+          "accepted": true,
+          "raw": "{\n  \"intent\": \"repair\",\n  \"item\": \"axe\",\n  \"quantity\": 1,\n  \"mode\": \"one_owned\",\n  \"source\": \"bag\",\n  \"limits\": [],\n  \"unresolved\": [],\n  \"npc_line\": \"我背包里有一把斧子，但那是我的。你装备栏的斧子属于你，我不能拿。要修你的斧子，我需要你的授权才能使用我的工具，或者你授权我使用你的斧子。现在只能修我背包里的斧子。\"\n}",
+          "intent": "refuse",
+          "reason": "UNRESOLVED_CONSTRAINT",
+          "line": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+          "tokens_in": 1874,
+          "tokens_out": 123,
+          "seconds": 5.299794800579548,
+          "submit_response_seconds": 0.015000000013969839,
+          "context": "{\"source\":\"UE_authoritative_filtered_snapshot\",\"collection_site_available\":true,\"collection_site_safe\":true,\"source_inventory\":\"unknown_until_actual_collection\",\"own_bag\":{\"wood\":12,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":1,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":4,\"flower\":0,\"medicine\":0,\"firepot\":0},\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"previous_goal_quantity\":0,\"previous_goal_delivered\":0,\"observed_camp_inventory\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"camp_knowledge\":\"我现在位于营地，已亲眼确认仓库现有数量：木材0份；石材0份；矿石0份；鲜肉0份；箭矢0份；荒原石斧0份；猎弓0份；猎人兜帽0份；兽皮胸甲0份；皮护腕0份；行路皮靴0份；兽皮腰带0份；木盾0份；箭袋0份；故乡护符0份；烤肉0份；草药0份；兽皮0份；绳索0份；山花0份；药草膏0份；投掷火罐0份；\",\"last_seen_camp\":{\"counts\":{\"wood\":0,\"stone\":0,\"ore\":0,\"meat\":0,\"arrow\":0,\"axe\":0,\"bow\":0,\"hood\":0,\"armor\":0,\"gloves\":0,\"boots\":0,\"belt\":0,\"shield\":0,\"quiver\":0,\"amulet\":0,\"roast\":0,\"herb\":0,\"hide\":0,\"rope\":0,\"flower\":0,\"medicine\":0,\"firepot\":0},\"observed_at_game_seconds\":8.1198828965425491,\"stale\":false},\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"capabilities_version\":\"npc-v2\",\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"confirmed_rules\":[],\"known_workbench\":true,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=须明确授权的共享仓库材料；未知地点不可绑定S1\"}"
+        }
+      ],
+      "model_understanding_pass": false,
+      "semantic_pass": true,
+      "unconfirmed_unchanged": true,
+      "actual": null,
+      "pass": true
+    }
+  ],
+  "checks": {
+    "new_campaign": true,
+    "select_workbench": true,
+    "build_workbench": true,
+    "seed_preference": true,
+    "seed_claim": true,
+    "fixture_snapshot": true,
+    "heldout-006_reset": true,
+    "heldout-017_reset": true,
+    "heldout-018_reset": true,
+    "heldout-028_reset": true,
+    "heldout-033_reset": true,
+    "heldout-034_reset": true,
+    "heldout-055_reset": true,
+    "all_cases": false
+  },
+  "semantic_success": 0.2857142857142857,
+  "completed_success": 0.2857142857142857,
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 129, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 36, in run\n    yield from evaluate(w,pc,ui,p,c,a,s,store)\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 109, in evaluate\n    check('all_cases',all(x['pass'] for x in report['cases']))\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 13, in check\n    if not v:raise AssertionError(n)\n             ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: all_cases\n",
+  "frame_ms": {
+    "before": {
+      "samples": 455,
+      "mean": 16.701164612403282,
+      "p95": 17.564501613378525
+    },
+    "during": {
+      "samples": 2482,
+      "mean": 16.66680644480189,
+      "p95": 18.052101135253906
+    },
+    "after": {
+      "samples": 49,
+      "mean": 16.661963368556936,
+      "p95": 18.55890080332756
+    }
+  }
+}

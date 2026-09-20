@@ -1,0 +1,205 @@
+{
+  "hardware": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13650HX",
+    "physical_cores": 14,
+    "logical_processors": 20,
+    "ram_bytes": 16780480512,
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "vram_mib": 8192,
+    "cpu_query": "Get-CimInstance Win32_Processor; Get-CimInstance Win32_ComputerSystem",
+    "gpu_query": "nvidia-smi --query-gpu=name,memory.used,memory.total,driver_version --format=csv,noheader,nounits",
+    "gpu_samples": "per-run manifest; combined UE/model/device usage, not per-process"
+  },
+  "datasets": {
+    "dev": {
+      "overall": {
+        "success": 59,
+        "total": 60,
+        "rate": 0.9833333333333333
+      },
+      "model_raw_understanding": {
+        "success": 40,
+        "total": 60,
+        "rate": 0.6666666666666666
+      },
+      "normalized_intent": {
+        "success": 59,
+        "total": 60,
+        "rate": 0.9833333333333333
+      },
+      "supported_actual": {
+        "success": 17,
+        "total": 18,
+        "rate": 0.9444444444444444
+      },
+      "complete_supported_actual": {
+        "success": 14,
+        "total": 15,
+        "rate": 0.9333333333333333
+      },
+      "conditioned_supported_actual": {
+        "success": 3,
+        "total": 3,
+        "rate": 1.0
+      },
+      "false_refusals": 1,
+      "false_refusal_denominator": 15,
+      "false_refusal_rate": 0.06666666666666667,
+      "unconfirmed_side_effects": 0,
+      "grounded_readonly": {
+        "pass": 9,
+        "total": 9
+      },
+      "failures": [
+        "dev-006"
+      ],
+      "model_failures": [
+        "dev-006",
+        "dev-007",
+        "dev-008",
+        "dev-009",
+        "dev-014",
+        "dev-015",
+        "dev-019",
+        "dev-020",
+        "dev-021",
+        "dev-027",
+        "dev-029",
+        "dev-036",
+        "dev-041",
+        "dev-042",
+        "dev-049",
+        "dev-050",
+        "dev-051",
+        "dev-055",
+        "dev-056",
+        "dev-057"
+      ],
+      "cold_first_seconds": 11.602635502815247,
+      "warm_seconds": {
+        "n": 65,
+        "min": 3.9162333011627197,
+        "median": 4.252842698246241,
+        "p95": 5.648686401546001,
+        "max": 7.20083199813962
+      },
+      "tokens_in": {
+        "n": 66,
+        "min": 1791,
+        "median": 1870.0,
+        "p95": 1917,
+        "max": 1921
+      },
+      "tokens_out": {
+        "n": 66,
+        "min": 71,
+        "median": 83.0,
+        "p95": 134,
+        "max": 176
+      },
+      "submit_api_seconds": {
+        "n": 66,
+        "min": 0.0,
+        "median": 0.0,
+        "p95": 0.01600000000325963,
+        "max": 0.01600000000325963
+      },
+      "confirm_api_seconds": {
+        "n": 17,
+        "min": 0.0,
+        "median": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "frame_ms": {
+        "before": {
+          "samples": 456,
+          "mean": 16.742495395112456,
+          "p95": 17.533399164676666
+        },
+        "during": {
+          "samples": 18250,
+          "mean": 16.679263462759042,
+          "p95": 18.055200576782227
+        },
+        "after": {
+          "samples": 7642,
+          "mean": 16.682740552918787,
+          "p95": 17.42900162935257
+        }
+      },
+      "device_vram_peak_mib": 5309
+    }
+  },
+  "runs": {
+    "native": {
+      "succeeded": 29,
+      "failed": 0,
+      "notRun": 0
+    },
+    "timeout": "NOT_RUN",
+    "workshop": {
+      "passed": true,
+      "checks": 129,
+      "failed_checks": [],
+      "model_cases": 0,
+      "error": null
+    },
+    "faults": {
+      "passed": true,
+      "checks": 101,
+      "failed_checks": [],
+      "model_cases": 0,
+      "error": null
+    },
+    "lifecycle": {
+      "passed": true,
+      "checks": 37,
+      "failed_checks": [],
+      "model_cases": 0,
+      "error": null
+    },
+    "interactions": {
+      "passed": true,
+      "checks": 35,
+      "failed_checks": [],
+      "model_cases": 0,
+      "error": null
+    },
+    "playercraft": {
+      "passed": true,
+      "checks": 58,
+      "failed_checks": [],
+      "model_cases": 0,
+      "error": null
+    },
+    "playerrepair": {
+      "passed": true,
+      "checks": 59,
+      "failed_checks": [],
+      "model_cases": 0,
+      "error": null
+    },
+    "regression": {
+      "passed": true,
+      "checks": 102,
+      "failed_checks": [],
+      "model_cases": 15,
+      "error": null
+    },
+    "physical": "NOT_RUN",
+    "physicalb": "NOT_RUN"
+  },
+  "shipping": "NOT_RUN",
+  "second_machine": "NOT_RUN",
+  "independent_character_review": "NOT_RUN",
+  "cancel_api": {
+    "seconds": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scope": "actual deterministic cancel API on game/UI thread; no model request"
+  },
+  "http_timeout": null
+}

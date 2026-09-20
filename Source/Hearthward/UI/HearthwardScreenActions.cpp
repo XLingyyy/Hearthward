@@ -58,7 +58,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action.StartsWith(TEXT("memory")))
     {
         auto* C=Companion(GetWorld());
-        if(Page!=TEXT("memory") || MemoryEpoch!=Store->GetTimelineEpoch() || !C || !C->CanCommunicate(GetOwningPlayerPawn()))
+        if(Page!=TEXT("memory") || (MemoryEpoch!=Store->GetTimelineEpoch() || MemoryRevision!=AI->GetMemoryRevision()) || !C || !C->CanCommunicate(GetOwningPlayerPawn()))
         { Message=TEXT("记录访问已失效，请重新靠近弟弟打开"); Refresh(); return false; }
         if(Action==TEXT("memoryNew")) { SelectedMemory.Invalidate(); MemoryKind=TEXT("claim"); MemoryBlockedItem=TEXT("wood"); Draft->SetText(FText::GetEmpty()); }
         else if(Action==TEXT("memoryNextItem"))
@@ -94,7 +94,28 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
             if(Success) { SelectedMemory.Invalidate(); Draft->SetText(FText::GetEmpty()); }
         }
         else return false;
-        Refresh(); return Success;
+        MemoryRevision=AI->GetMemoryRevision(); Refresh(); return Success;
+    }
+    if(Action.StartsWith(TEXT("agentConfirm:")) || Action.StartsWith(TEXT("agentMore:")) || Action.StartsWith(TEXT("agentLess:")))
+    {
+        if(Page!=TEXT("dialogue"))return false;FString Verb,IdText;Action.Split(TEXT(":"),&Verb,&IdText);FGuid Id;if(!FGuid::Parse(IdText,Id))return false;
+        Success=Verb==TEXT("agentConfirm")?AI->ConfirmCandidate(Id):AI->AdjustCandidate(Id,Verb==TEXT("agentMore")?1:-1);Message=AI->GetStatus();Refresh();return Success;
+    }
+    if(Action==TEXT("agentInventory")) {if(Page!=TEXT("dialogue"))return false;Success=AI->QueryInventory(GetOwningPlayerPawn(),Companion(GetWorld()),TEXT("wood"));Refresh();return Success;}
+    if(Action==TEXT("agentRetryPath")) {if(Page!=TEXT("dialogue"))return false;auto* C=Companion(GetWorld());Success=C && C->ResumeBlocked(GetOwningPlayerPawn());Refresh();return Success;}
+    if(Action==TEXT("agentTypeNext") || Action==TEXT("agentItemNext"))
+    {
+        if(Page!=TEXT("dialogue"))return false;
+        TArray<const FHearthwardAgentCapability*> Caps;for(const auto& C:HearthwardAgent::Capabilities())if(C.Writes)Caps.Add(&C);
+        if(Action==TEXT("agentTypeNext")){AgentCapabilityIndex=(AgentCapabilityIndex+1)%Caps.Num();AgentItemIndex=0;}
+        else AgentItemIndex=(AgentItemIndex+1)%Caps[AgentCapabilityIndex]->Items.Num();
+        Refresh();return true;
+    }
+    if(Action==TEXT("agentCollectCard"))
+    {
+        if(Page!=TEXT("dialogue"))return false;
+        TArray<const FHearthwardAgentCapability*> Caps;for(const auto& C:HearthwardAgent::Capabilities())if(C.Writes)Caps.Add(&C);
+        const auto& C=*Caps[AgentCapabilityIndex];FHearthwardAgentGoal Goal;Goal.Intent=C.Id;Goal.Item=C.Items[AgentItemIndex];Goal.Quantity=1;Goal.QuantityMode=C.QuantityMode;Goal.SourceRef=C.Sources[0];Success=AI->SetStructuredGoal(GetOwningPlayerPawn(),Companion(GetWorld()),Goal);Refresh();return Success;
     }
     if(Action==TEXT("clearClarification"))
     { if(Page!=TEXT("dialogue")) return false; AI->ClearClarification(); Refresh(); return true; }
@@ -230,12 +251,13 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action==TEXT("clearWaypoint")) { G->HasWaypoint=false; Message=TEXT("地图标记已清除"); }
     else if(Action==TEXT("cancelReply")) AI->CancelPending();
     else if(Action==TEXT("cancelTask"))
-    { auto* C=Companion(GetWorld()); Success=C && C->Cancel(GetOwningPlayerPawn()); Message=Success?TEXT("委托已取消"):TEXT("请靠近弟弟后取消委托"); }
+    { auto* C=Companion(GetWorld()); Success=C && AI->CancelExecution(GetOwningPlayerPawn(),C); Message=Success?TEXT("委托已取消"):TEXT("请靠近弟弟后取消委托"); }
     else if(Action==TEXT("send") || Action.StartsWith(TEXT("say:")))
     {
+        if(Page!=TEXT("dialogue"))return false;
         auto* C=Companion(GetWorld()); const FString Input=Action==TEXT("send")?Draft->GetText().ToString():Action.Mid(4);
         if(!C || !C->CanCommunicate(GetOwningPlayerPawn())) { Success=false; Message=TEXT("已超出30米交流范围"); }
-        else { Success=AI->SubmitPlayerText(GetOwningPlayerPawn(),C,Input); Message=AI->GetStatus(); if(Success) { G->Record(TEXT("talk"),TEXT("brother")); if(Action==TEXT("send")) Draft->SetText(FText::GetEmpty()); } }
+        else { Success=AI->SubmitPlayerText(GetOwningPlayerPawn(),C,Input); Message=AI->GetStatus(); if(Success) { G->Record(TEXT("talk"),TEXT("brother"));  } }
     }
     else Success=false;
     Refresh(); return Success;

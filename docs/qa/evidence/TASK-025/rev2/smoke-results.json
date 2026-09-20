@@ -1,0 +1,128 @@
+{
+  "passed": false,
+  "mode": "smoke",
+  "provider": "real-model",
+  "cases": [
+    {
+      "name": "explicit",
+      "input": "替我采集两份木材带回营地。",
+      "intent": "proposal",
+      "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 2,\n  \"mode\": \"additional_acquired\",\n  \"source\": \"S1\",\n  \"limits\": [],\n  \"unresolved\": [],\n  \"npc_line\": \"好的，我去采集两份木材。\"\n}",
+      "status": "等待确认",
+      "line": "请核对下面的任务卡，确认后我再开始。",
+      "reason": "",
+      "input_tokens": 1508,
+      "output_tokens": 76,
+      "latency": 13.255699299275875,
+      "expected": [
+        "proposal"
+      ],
+      "world_unchanged": true,
+      "pass": true
+    },
+    {
+      "name": "quantity",
+      "input": "帮我采些木材。",
+      "intent": "proposal",
+      "raw": "{\n  \"intent\": \"collect\",\n  \"item\": \"wood\",\n  \"quantity\": 1,\n  \"mode\": \"additional_acquired\",\n  \"source\": \"S1\",\n  \"limits\": [],\n  \"unresolved\": [],\n  \"npc_line\": \"好的，我去采集木材。需要采多少份？\"\n}",
+      "status": "等待确认",
+      "line": "请核对下面的任务卡，确认后我再开始。",
+      "reason": "",
+      "input_tokens": 1503,
+      "output_tokens": 80,
+      "latency": 3.575688198208809,
+      "expected": [
+        "clarify"
+      ],
+      "world_unchanged": true,
+      "pass": false
+    },
+    {
+      "name": "followup",
+      "input": "三份就够了。",
+      "intent": "proposal",
+      "raw": "{\n  \"intent\": \"rule_proposal\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [\n    \"max:wood:3\"\n  ],\n  \"unresolved\": [],\"npc_line\": \"好的，弟弟确认：本次采集木材上限为3份。是否执行？\"\n}",
+      "status": "等待确认",
+      "line": "请核对下面的任务卡，确认后我再开始。",
+      "reason": "",
+      "input_tokens": 1425,
+      "output_tokens": 93,
+      "latency": 3.6652736999094486,
+      "expected": [
+        "proposal"
+      ],
+      "world_unchanged": true,
+      "pass": true
+    },
+    {
+      "name": "negative",
+      "input": "不要采集木材，我只想聊聊天。",
+      "intent": "dialogue",
+      "raw": "{\n  \"intent\": \"dialogue\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [],\"npc_line\": \"好的，我不采集木材了。你想聊点什么？\"\n}",
+      "status": "弟弟的回复",
+      "line": "好的，我不采集木材了。你想聊点什么？",
+      "reason": "",
+      "input_tokens": 1508,
+      "output_tokens": 76,
+      "latency": 2.997105900198221,
+      "expected": [
+        "dialogue",
+        "refuse"
+      ],
+      "world_unchanged": true,
+      "pass": true
+    },
+    {
+      "name": "unknown",
+      "input": "去尚未发现的北山采集四份木材。",
+      "intent": "clarify",
+      "raw": "{\n  \"intent\": \"clarify\",\n  \"item\": \"none\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [\n    \"北山是否为已知安全采集点（S1）？\",\n    \"是否已确认该地点无危险或路线受阻？\",\n    \"是否已确认该地点可采集木材？\"\n  ],\n  \"npc_line\": \"北山尚未发现，无法确认是否为安全采集点。请确认该地点是否安全，或是否已有授权。\"\n}",
+      "status": "等待补充信息",
+      "line": "北山尚未发现，无法确认是否为安全采集点。请确认该地点是否安全，或是否已有授权。",
+      "reason": "",
+      "input_tokens": 1510,
+      "output_tokens": 139,
+      "latency": 4.330404598265886,
+      "expected": [
+        "clarify",
+        "refuse"
+      ],
+      "world_unchanged": true,
+      "pass": true
+    },
+    {
+      "name": "query",
+      "input": "仓库现在有几份木材？",
+      "intent": "inventory",
+      "raw": "{\n  \"intent\": \"inventory\",\n  \"item\": \"wood\",\n  \"quantity\": 0,\n  \"mode\": \"none\",\n  \"source\": \"none\",\n  \"limits\": [],\n  \"unresolved\": [],\"npc_line\": \"营地仓库里现在有2份木材。\"\n}",
+      "status": "弟弟的回复",
+      "line": "我现在看到仓库里有 2 份木材。",
+      "reason": "",
+      "input_tokens": 1549,
+      "output_tokens": 72,
+      "latency": 2.9961559027433395,
+      "expected": [
+        "inventory"
+      ],
+      "world_unchanged": true,
+      "pass": true
+    }
+  ],
+  "checks": {
+    "new_campaign": true,
+    "explicit_sent": true,
+    "confirm_once": true,
+    "duplicate_confirmation_rejected": true,
+    "actual_delivery": true,
+    "actual_events": true,
+    "save_completed": true,
+    "load_completed": true,
+    "quantity_sent": true,
+    "followup_sent": true,
+    "negative_sent": true,
+    "unknown_sent": true,
+    "query_sent": true,
+    "all_samples": false
+  },
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 62, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 44, in run\n    check('all_samples',all(x['pass'] for x in report['cases']))\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 12, in check\n    if not v:raise AssertionError(n)\n             ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: all_samples\n"
+}

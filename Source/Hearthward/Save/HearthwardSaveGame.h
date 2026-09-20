@@ -58,6 +58,15 @@ struct FHearthwardWorldSave
     UPROPERTY() TArray<FString> Knowledge;
     UPROPERTY() int64 KnowledgeRevision = 0;
     UPROPERTY() FHearthwardNPCMemory NPCMemory;
+    UPROPERTY() int32 NPCStateVersion = 0;
+    UPROPERTY() FHearthwardAgentGoal AgentGoal;
+    UPROPERTY() int32 Acquired = 0;
+    UPROPERTY() int32 Carried = 0;
+    UPROPERTY() FGuid CommandId;
+    UPROPERTY() TMap<FName,float> NPCDurability;
+    UPROPERTY() TMap<FName,int32> NPCSpent;
+    UPROPERTY() TArray<FGuid> NPCOperations;
+    UPROPERTY() TArray<FHearthwardAgentReceipt> NPCReceipts;
     UPROPERTY() int32 AutoMinutes = 10;
     UPROPERTY() FHearthwardSaveSafety Safety;
     UPROPERTY() FString Gameplay;
@@ -84,7 +93,7 @@ class HEARTHWARD_API UHearthwardSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Schema = 1;
+    UPROPERTY() int32 Schema = 2;
     UPROPERTY() TArray<FHearthwardSavePoint> Points;
 };
 

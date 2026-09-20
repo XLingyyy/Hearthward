@@ -1,0 +1,34 @@
+{
+  "passed": false,
+  "mode": "lifecycle",
+  "provider": "real-model",
+  "cases": [],
+  "checks": {
+    "new_campaign": true,
+    "warm_input": true,
+    "actual_model_ready": true,
+    "R1_accepted_before_crash": true,
+    "R1_owned_child_pid": true,
+    "R1_crash_has_no_side_effect": true,
+    "R1_fallback_inventory": true,
+    "R1_fallback_no_model_restart": false
+  },
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 128, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 33, in run\n    yield from scenarios(check,wait,delay,w,pc,ui,p,c,a,s,store)\n  File \"G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\..\\..\\..\\..\\..\\GameFactory\\Hearthward\\docs\\qa\\evidence\\TASK-025\\rev2\\lifecycle_scenarios.py\", line 14, in scenarios\n    check(prefix+'fallback_no_model_restart',not a.is_model_ready())\n  File \"G:/GameFactory/Hearthward/docs/qa/evidence/TASK-025/rev2/verify_agent.py\", line 13, in check\n    if not v:raise AssertionError(n)\n             ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: R1_fallback_no_model_restart\n",
+  "frame_ms": {
+    "before": {
+      "samples": 60,
+      "mean": 16.682389999429386,
+      "p95": 17.61239767074585
+    },
+    "during": {
+      "samples": 663,
+      "mean": 17.162053394910977,
+      "p95": 17.839200794696808
+    },
+    "after": {
+      "samples": 2,
+      "mean": 16.988499090075493,
+      "p95": 17.267297953367233
+    }
+  }
+}
