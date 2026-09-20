@@ -19,7 +19,7 @@
 | `Resource/polyhaven` | 53 | 约 1.210 GB |
 | `Resource/sketchfab` | 24 | 约 0.230 GB |
 
-本文只同步清单和分析，不把 `Resource` 中约 1.44 GB 的第三方源文件提交进 Hearthward 公开仓库，也不代表这些资产已经导入 UE、完成性能验证或成为正式世界设定。
+本分支同步完整清单和分析，并将许可已确认的 53 个 Poly Haven 源文件复制到 `art_source/TASK-004/polyhaven/`，通过 Git LFS 纳入 Hearthward 公开仓库。24 个 Sketchfab 文件因缺少确切许可证和公开再分发证明而没有上传。本次入库不代表这些资产已经导入 UE、完成性能验证或成为正式世界设定。
 
 项目内 `docs/tasks/TASK-004.md` 要求首批基础资产具备来源可追溯、许可清楚、厘米尺度统一、碰撞和 LOD/Nanite 方案明确，并在独立展示地图验证。本盘点以这些要求为判断基准。
 
@@ -141,6 +141,8 @@ UE 支持 FBX、OBJ 静态网格导入；项目最终源格式优先使用 FBX 2
 ### 9.1 Poly Haven
 
 Poly Haven 官方声明全部资产采用 CC0，可用于商业项目、修改并重新分发。尽管不强制署名，项目台账仍应记录资产名、作者、原始页面、下载日期和 CC0 链接。
+
+本次已经把本地 Poly Haven 集合的 53 个文件按原目录结构复制到 `art_source/TASK-004/polyhaven/`。源目录与仓库副本均为 1,300,014,678 字节，逐文件 SHA-256 比较结果为 0 个不匹配。
 
 - 许可：https://polyhaven.com/license
 - Grass Medium 01：https://polyhaven.com/a/grass_medium_01
@@ -308,9 +310,9 @@ ZIP 内补充内容：
 
 ## 12. 本次未执行事项
 
-- 未解压或修改原始资源。
+- 未解压或修改原始资源；Poly Haven 文件按原字节复制到仓库，Sketchfab 文件未复制。
 - 未安装或运行 Blender。
 - 未在 UE 5.8.1 中实际导入、保存或重开资产。
 - 未创建材质、碰撞、LOD、Nanite 设置或展示地图。
 - 未进行 UE 构建、PIE、帧率或显存验证。
-- 未将任何第三方模型或贴图提交进 Hearthward 仓库。
+- 未提交许可证不明确的 Sketchfab 模型或贴图。
