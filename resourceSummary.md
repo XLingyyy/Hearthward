@@ -19,7 +19,7 @@
 | `Resource/polyhaven` | 53 | 约 1.210 GB |
 | `Resource/sketchfab` | 24 | 约 0.230 GB |
 
-本分支同步完整清单和分析，并将许可已确认的 53 个 Poly Haven 源文件复制到 `art_source/TASK-004/polyhaven/`，通过 Git LFS 纳入 Hearthward 公开仓库。24 个 Sketchfab 文件因缺少确切许可证和公开再分发证明而没有上传。本次入库不代表这些资产已经导入 UE、完成性能验证或成为正式世界设定。
+本分支同步完整清单和分析，将 53 个 Poly Haven 源文件复制到 `art_source/TASK-004/polyhaven/`，并根据项目所有者对许可的明确确认，将其余 24 个 Sketchfab 文件复制到 `art_source/TASK-004/sketchfab/`。全部 77 个二进制源文件均通过 Git LFS 纳入 Hearthward 共享仓库。本次入库不代表这些资产已经导入 UE、完成性能验证或成为正式世界设定。
 
 项目内 `docs/tasks/TASK-004.md` 要求首批基础资产具备来源可追溯、许可清楚、厘米尺度统一、碰撞和 LOD/Nanite 方案明确，并在独立展示地图验证。本盘点以这些要求为判断基准。
 
@@ -155,7 +155,7 @@ Poly Haven 官方声明全部资产采用 CC0，可用于商业项目、修改�
 
 ### 9.2 Sketchfab
 
-当前本地四套 Sketchfab 资产没有附带：
+当前本地四套 Sketchfab 资产仍没有附带：
 
 - 原始模型页面 URL/UID；
 - 作者；
@@ -163,7 +163,9 @@ Poly Haven 官方声明全部资产采用 CC0，可用于商业项目、修改�
 - Creative Commons、Standard 或 Editorial 的具体许可；
 - 若为购买资产，对应的许可证或订单证明。
 
-因此这些文件目前只能作为本地技术候选，**不得提交到 Hearthward 公开仓库，也不能判定为可用于商业发行**。应找回原始页面并逐项确认：商业使用权、署名要求、修改权、源文件公开再分发权。Sketchfab 的 Standard/Editorial 与 Creative Commons 许可不可混为一谈。
+2026-09-20，项目所有者明确确认本地剩余 Sketchfab 文件均具备加入 Hearthward 共享仓库的许可，因此本分支按该授权将 24 个文件原样纳入 `art_source/TASK-004/sketchfab/`。这项确认允许本次仓库同步，但不等同于已经独立核验每个资产的具体许可证、作者署名或商业发行条款。原始页面与逐资产许可仍应补录，Sketchfab 的 Standard/Editorial 与 Creative Commons 许可不可混为一谈。
+
+仓库副本与本地源目录均为 24 个文件、242,345,494 字节；复制后逐文件 SHA-256 比较结果为 0 个不匹配。
 
 许可入口：https://sketchfab.com/licenses
 
@@ -300,7 +302,7 @@ ZIP 内补充内容：
 
 ## 11. 后续执行清单
 
-1. 找回四套 Sketchfab 资产的原始 URL、作者和确切许可；许可未闭合前不提交源文件。
+1. 补录四套 Sketchfab 资产的原始 URL/UID、作者、下载日期、具体许可类型和署名要求；当前入库依据是项目所有者确认，不能替代逐资产来源台账。
 2. 从 Poly Haven 重新下载 FBX/glTF、DirectX Normal 和适当分辨率贴图，可减少 Blender 与 EXR 转换工作。
 3. 优先制作三套地表材质实例、树桩和草原型。
 4. 对树木、灌木和岩石建立统一 Blender 导出预设、LOD、碰撞和命名规则。
@@ -310,9 +312,9 @@ ZIP 内补充内容：
 
 ## 12. 本次未执行事项
 
-- 未解压或修改原始资源；Poly Haven 文件按原字节复制到仓库，Sketchfab 文件未复制。
+- 未解压或修改原始资源；Poly Haven 与 Sketchfab 文件均按原字节复制到仓库。
 - 未安装或运行 Blender。
 - 未在 UE 5.8.1 中实际导入、保存或重开资产。
 - 未创建材质、碰撞、LOD、Nanite 设置或展示地图。
 - 未进行 UE 构建、PIE、帧率或显存验证。
-- 未提交许可证不明确的 Sketchfab 模型或贴图。
+- 未独立核验 Sketchfab 每个资产的原始页面、作者和具体许可证；本次提交依据项目所有者的明确许可确认。
