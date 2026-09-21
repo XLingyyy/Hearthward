@@ -8,7 +8,7 @@
 | [TASK-001](../tasks/TASK-001.json) | 裁定R01—R05并发布设计决定 | 无 | Backlog |
 | [TASK-002](../tasks/TASK-002.json) | 批准共享契约并建立唯一公共声明 | TASK-000 | Backlog |
 | [TASK-003](../tasks/TASK-003.json) | 建立 Hearthward UE 5.8.1 工程与第三人称灰盒行走基线 | 无 | Blocked |
-| [TASK-004](../tasks/TASK-004.json) | 获取／创建UE基础资产库与独立展示场景 | TASK-003 | Backlog |
+| [TASK-004](../tasks/TASK-004.json) | 获取／创建UE基础资产库与独立展示场景；已有部分自然源素材入库，UE适配未完成 | TASK-003 | Backlog，部分源资产交付 |
 | [TASK-005](../tasks/TASK-005.json) | 正常运行世界时钟与暂停冻结 | TASK-003 | Blocked |
 | [TASK-006](../tasks/TASK-006.json) | 五秒持续动作与中断基础 | TASK-003, TASK-005 | Blocked |
 | [TASK-007](../tasks/TASK-007.json) | 持续动作实时进度反馈 | TASK-006 | Blocked |
@@ -29,3 +29,4 @@
 | [TASK-022](../tasks/TASK-022.json) | 自由建造、五秒结算与建筑回档 | TASK-021 | Blocked |
 | [TASK-023](../tasks/TASK-023.json) | 工作台即时制作与原子库存结算 | TASK-022 | Blocked |
 | [TASK-024](../tasks/TASK-024.json) | 工作台装备维修与耐久回档 | TASK-023 | Blocked |
+| [TASK-026](../tasks/TASK-026.json) | 下一顺序：大地图自然场景底座，人文后置 | TASK-003；复用004已交付素材，无需004整单完成 | Backlog，仅任务单、未执行 |

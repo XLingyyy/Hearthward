@@ -7,7 +7,9 @@
 根 WORKFLOW.md 是工作流维护入口，docs 下中文工作流保留为交付快照。
 本次按 WORKFLOW 第20.1节为原空仓库建立初始 main；后续改动使用任务分支与PR。
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
-[TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog，仅任务单、未执行。
+[TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
+
+下一顺序任务为 [TASK-026 大地图自然场景底座](tasks/TASK-026.md)：本轮仅编写任务单，Backlog，尚未执行。人文场景后置，004人物和房屋缺项不阻塞自然底座；接手见 [026交接](handoffs/TASK-026.md)。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。
