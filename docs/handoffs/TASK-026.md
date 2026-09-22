@@ -7,7 +7,7 @@
 - 当前工作目录：`E:/AiAgent/XLingGame/Hearthward-TASK-026`；实施分支：`codex/TASK-026-natural-world`。
 - 分支起点和本地 `origin/main` 均为 `b1f85525697b79e6017455decab9d79a54977834`，即TASK-026任务单已进入main后的基线。
 - 2026-09-22用户要求把TASK-026当前进度同步到本地文件，并向 `https://github.com/XLingyyy/Hearthward.git` 创建Pull Request用于后续交接；该授权覆盖当前任务成果的提交与推送，不包含合并。
-- Owner为XLingyyy；真实Issue和独立评审人未分配。远端LFS锁查询因本机HTTPS凭据不可用失败，未声称锁已核验。
+- Owner为XLingyyy；真实Issue和独立评审人未分配。2026-09-22远端查询确认13个TASK-026主地图/材质/贴图资产锁由 `violet-sept` 持有；按项目约定保留到集成交接，不在本PR中解锁。
 
 ## 当前成果
 
@@ -42,7 +42,7 @@
 - 9个UE/验证Python脚本通过`py_compile`；`git diff --check`通过。二进制地图、资产和截图在索引中均为Git LFS指针。
 - 实现提交：`29d6513916e5427c393d350a49e77c9a331692c5`。
 - 证据绑定提交：`a55baefc8e822411ab10056b0dad18b52f20d392`（因GitHub邮箱隐私保护重写未发布的两次本地提交后所得SHA）。
-- 远端分支与Pull Request：`PENDING`。
+- 远端分支：`origin/codex/TASK-026-natural-world`；Pull Request：[PR #25](https://github.com/XLingyyy/Hearthward/pull/25)。
 
 ## 后续接手
 

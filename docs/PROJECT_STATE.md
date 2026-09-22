@@ -11,7 +11,7 @@
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
 | 当前分支 | `codex/TASK-026-natural-world`；基于main b1f8552，灰盒自然世界未合并main |
 | 游戏实现提交 | TASK-026实现提交与证据绑定见026交接；TASK-025 v2仍在独立分支 |
-| Git LFS | 已启用；026新增地图、资产、外部包和截图均匹配LFS规则；2026-09-22远端锁查询因本机HTTPS凭据不可用而失败 |
+| Git LFS | 已启用；026新增地图、资产、外部包和截图均匹配LFS规则，207个对象约77 MB已推送；远端确认13个TASK-026主地图/材质/贴图资产锁由violet-sept持有并保留到集成交接 |
 | 工具链 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
 | 构建／操作 | TASK-013 Editor/Game构建通过，68项AI运行依赖齐全；真实模型Vulkan两轮PIE43项、CPU缺文件/进程退出恢复9项通过；伙伴通路仍为隔离夹具 |
