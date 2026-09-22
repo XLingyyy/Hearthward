@@ -1,12 +1,14 @@
 # Hearthward（归火）
 
-UE 5.8.1 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收。当前 `codex/TASK-025-agent-rev2` 已完成用户增强版任务的AI NPC A+B实现与研发验证，等待用户复验，未合并main。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.1 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-下一顺序任务为 [TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md)，先做地形、水系、植被与自然环境，人文场景后置。当前仅完成任务单，尚未制作地图；约4×4公里为首轮规划提案，具体尺度与技术方案在实施启动时确认。见 [026交接](docs/handoffs/TASK-026.md)。
+当前分支 `codex/TASK-026-natural-world` 已形成 [TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 的可运行灰盒：4032 m World Partition地图、独立浏览GameMode、自然批次和局部PIE验证已落地，人文场景后置。现有视觉仍是基础形体，长路线、Standalone流送、性能与Owner视觉验收尚未完成，不能视为TASK-026验收通过。见[世界状态](docs/world/TASK-026/CURRENT.md)、[验证证据](docs/qa/evidence/TASK-026/README.md)与[026交接](docs/handoffs/TASK-026.md)。
 
 ## 运行
 
 打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`，在标题页选择“新游戏”。020 自动建立现有开发场景所需的伙伴、资源、初始物品和初始存档节点，无需先输入控制台命令。继续游戏与载入存档读取已有的全局50点原型池。
+
+TASK-026自然世界尚未接入标题页。要查看当前分支灰盒，在编辑器中直接打开 `/Game/Hearthward/World/Natural/L_NaturalWorld` 并运行PIE；地图级GameMode只复用第三人称角色，不生成营地、敌人、伙伴或仓储，也不启动本地模型。
 
 | 操作 | 键位 |
 |---|---|
@@ -53,9 +55,11 @@ UE 5.8.1 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5
 
 ## 验证与限制
 
+TASK-026于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
+
 025 v2实现与本轮验证见 [TASK-025交接](docs/handoffs/TASK-025.md)、[设计决定](docs/decisions/ADR-TASK-025-npc-cognition.md)和[rev2证据](docs/qa/evidence/TASK-025/rev2/)。原版测试不计本轮PASS，模型原始理解、护栏规范化与实际执行分别统计。020于2026-09-19通过用户验收；历史任务结果见各任务交接。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
 
-当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；菜单插画不代表三维城寨、森林或角色资产已制作。导航覆盖当前开发场景的可行走表面，支持静态障碍绕行和动态障碍重建；正式大世界导航、攀爬/跳跃导航连接仍未制作。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成，TASK-004已有77个自然素材源文件入库，UE适配与场景验证未完成，人物和房屋仍缺，见[资源汇总](resourceSummary.md)。020经验曲线、节点、任务与战斗参数为独立内容配置，未替代GDD未决R项。
+当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；TASK-026也只使用基础形体表达树木、草、岩石和地标，菜单插画不代表三维城寨、正式森林或角色资产已制作。导航覆盖现有开发场景的可行走表面，支持静态障碍绕行和动态障碍重建；正式大世界伙伴导航、攀爬/跳跃导航连接仍未制作。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004已有77个自然素材源文件入库，026只复用了其中三张地表贴图，004模型适配与整单验收仍未完成，人物和房屋仍缺，见[资源汇总](resourceSummary.md)。020经验曲线、节点、任务与战斗参数为独立内容配置，未替代GDD未决R项。
 
 旧界面及此前定向验证可使用 `-HearthwardLegacyUI`。正式流程仍缺Issue归属与独立评审；任务分支成果与main集成状态分别记录。
 

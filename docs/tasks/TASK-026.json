@@ -2,14 +2,15 @@
   "schema_version": 1,
   "id": "TASK-026",
   "title": "大地图自然场景底座构建（人文场景后置）",
-  "status": "Backlog",
-  "updated_at": "2026-09-21",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
   "branch": "codex/TASK-026-natural-world",
   "source_refs": [
-    "2026-09-21用户指定TASK-026为下一顺序任务：较大地图先构建自然场景，人文后置；本轮仅任务单",
+    "2026-09-21用户指定TASK-026为下一顺序任务：较大地图先构建自然场景，人文后置",
+    "2026-09-22用户要求将TASK-026当前进度同步到本地文件并以Pull Request交接",
     "GDD v0.3原件第4.1节：空间与地形，具体面积/布局未定；第9章四控制区不等于自然分区",
     "WORKFLOW.md 第5—10、12、14节",
     "resourceSummary.md；art_source/TASK-004/polyhaven/SOURCE.md；art_source/TASK-004/sketchfab/SOURCE.md",
@@ -65,7 +66,6 @@
     "A8：来源/转换/锁/外部包/证据和README交接完整，部分资产交付不冒充004整单完成。"
   ],
   "non_goals": [
-    "本轮仅编写任务单及关联文档，不执行地图制作、资产转换/导入或引擎验证。",
     "不布置建筑、营地设施、人工道路、桥梁、聚落及其他人文内容。",
     "不接入敌人/动物/任务/采集刷新/传送/存档/地图UI/伙伴大世界行为。",
     "不补定R17/R19/R22/R24和植物群、文化、最终地理风格，不修改GDD。",
@@ -77,19 +77,20 @@
     "T-002"
   ],
   "permissions": {
-    "network": "granted: public technical research for task sheet only; future asset execution not granted",
+    "network": "granted: 2026-09-22 user requested remote GitHub pull request",
     "install_dependencies": "not_granted",
-    "commit": "granted: 2026-09-21 user authorized TASK-026 task documents to main",
-    "push": "granted: TASK-026 task documents to main",
-    "merge": "granted: TASK-026 task documents only; no implementation"
+    "commit": "granted: 2026-09-22 user requested TASK-026 current progress handoff",
+    "push": "granted: 2026-09-22 user requested remote GitHub pull request",
+    "merge": "not_granted"
   },
   "notes": [
-    "本轮明确授权写入任务单与必要索引/交接；allowed_paths中场景、资产、脚本和证据目录为未来实施候选范围，不代表当前已授权执行。",
-    "未来转Ready/Active前确认Issue、独立评审、单写者、实际基线、地图尺度与World Partition/OFPA工程决定、共享资产锁；本轮未查询远端归属/锁。",
+    "2026-09-21本地工作树已形成4.032km World Partition灰盒自然世界、026专用材质/贴图、独立浏览GameMode、生成与验证脚本；2026-09-22按用户要求纳入版本交接。",
+    "PIE定向验证27项通过，覆盖重开、依赖闭包、隔离、普通移动与西侧浅滩；这不是A1—A8整体验收，长路线、Standalone、性能和Owner视觉验收仍未完成。",
+    "真实Issue和独立评审仍待协调；2026-09-22远端查询确认13个TASK-026主地图/材质/贴图资产锁由violet-sept持有并保留到集成交接。",
     "TASK-004仅按已交付源素材形成输入关系，不列为整单硬依赖；所需自然素材最小UE适配由026承担并登记归属。",
     "R项不阻塞纯环境工作，触及玩法的部分后置。任务单提出的面积、路线与性能数值尚非正式设计批准。",
     "正式地图是可复用自然底座；TEMP_VISUAL只描述候选植物外观，未批准任何新增玩法原型。",
     "required_tests的T-002为已有工作流用例；场景验收A1—A8定义于TASK-026.md，不将任务编号误作测试编号。",
-    "任务单基线不存在026快照，不伪称基线授权范围校验通过；未来实施以已批准任务快照为范围依据。"
+    "地图视觉目前是引擎基础形体加三张既有Poly Haven地表贴图的灰盒底座；树木/草/岩石并非最终自然资产，不得将观察点截图表述为视觉验收通过。"
   ]
 }
