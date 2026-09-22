@@ -40,8 +40,8 @@
 - `python scripts/validate_repo.py`通过；`python -m unittest discover -s scripts/tests -v`共31项通过。
 - `python scripts/validate_repo.py --task TASK-026 --base b1f85525697b79e6017455decab9d79a54977834`检查229个路径并通过；该结果只证明本地范围，不证明远端归属或锁。
 - 9个UE/验证Python脚本通过`py_compile`；`git diff --check`通过。二进制地图、资产和截图在索引中均为Git LFS指针。
-- 实现提交：`652558146a250df6359f60175b0c20170217cf06`。
-- 证据绑定提交：`PENDING`。
+- 实现提交：`29d6513916e5427c393d350a49e77c9a331692c5`。
+- 证据绑定提交：`a55baefc8e822411ab10056b0dad18b52f20d392`（因GitHub邮箱隐私保护重写未发布的两次本地提交后所得SHA）。
 - 远端分支与Pull Request：`PENDING`。
 
 ## 后续接手
