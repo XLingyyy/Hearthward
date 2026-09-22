@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "HearthwardAgentContract.h"
+#include "HearthwardNPCBelief.h"
 #include "HearthwardNPCMemory.generated.h"
 
 USTRUCT(BlueprintType)
@@ -53,6 +54,7 @@ struct FHearthwardNPCMemory
     UPROPERTY() int64 Revision = 1;
     UPROPERTY() FGuid Campaign;
     UPROPERTY() TArray<FHearthwardNPCEvent> Events;
+    UPROPERTY() TArray<FHearthwardNPCBelief> Beliefs;
     UPROPERTY() FHearthwardAgentGoal WorkingGoal;
 
     static constexpr int32 MaxRecords = 64;

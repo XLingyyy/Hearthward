@@ -31,6 +31,7 @@ public:
     UPROPERTY(BlueprintReadOnly) FString Feedback;
     UPROPERTY(BlueprintReadOnly) bool Enabled = false;
     UPROPERTY(BlueprintReadOnly) FName CompanionOrder = TEXT("wait");
+    UPROPERTY(BlueprintReadOnly) bool CompanionRoutineEnabled = true;
     UPROPERTY(BlueprintReadOnly) bool HasWaypoint = false;
     UPROPERTY(BlueprintReadOnly) FVector Waypoint = FVector::ZeroVector;
     UPROPERTY(BlueprintAssignable) FHearthwardGameplayChanged OnChanged;
@@ -65,6 +66,8 @@ public:
     UFUNCTION(BlueprintPure) FName GetCompanionTacticalIntent() const { return CompanionTacticalIntent; }
     UFUNCTION(BlueprintPure) FName GetCompanionCombatTarget() const { return CompanionCombatTarget; }
     UFUNCTION(BlueprintPure) FString GetCompanionCombatReason() const { return CompanionCombatReason; }
+    UFUNCTION(BlueprintPure) bool IsCompanionRoutineEnabled() const { return CompanionRoutineEnabled; }
+    UFUNCTION(BlueprintPure) FName GetCompanionRoutineActivity() const { return CompanionRoutineActivity; }
     UFUNCTION(BlueprintCallable) void SetWaypoint(FVector Position);
     UFUNCTION(BlueprintPure) float AttackPower() const;
     UFUNCTION(BlueprintPure) bool InCombat() const { return CombatRemaining>0; }
@@ -87,6 +90,7 @@ private:
     FName CompanionTacticalIntent = TEXT("hold");
     FName CompanionCombatTarget;
     FString CompanionCombatReason = TEXT("EXPLICIT_HOLD");
+    FName CompanionRoutineActivity;
     class UHearthwardInventoryComponent* Inventory() const;
     bool Result(bool Success, const FString& Message);
     double RecoveryDelay = 0;

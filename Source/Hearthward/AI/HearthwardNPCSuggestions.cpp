@@ -53,10 +53,31 @@ TArray<FHearthwardNPCSuggestion> HearthwardSuggestions::Build(const FHearthwardS
             TEXT("我们聊聊营地现在的情况吧。")));
     }
 
-    // Deliberately general: no hidden-map, enemy, quest-answer or economy-threshold knowledge.
-    Out.Add(Suggestion(TEXT("capabilities"),
-        TEXT("说说你现在能帮我什么"),
-        TEXT("说说你现在能帮我什么，以及哪些事情现在还做不了。")));
+    if(Context.PreferredDirective==TEXT("follow"))
+    {
+        Out.Add(Suggestion(TEXT("coordination"),
+            TEXT("按最近的协作习惯：跟随"),
+            TEXT("跟着我。")));
+    }
+    else if(Context.PreferredDirective==TEXT("assist"))
+    {
+        Out.Add(Suggestion(TEXT("coordination"),
+            TEXT("按最近的协作习惯：协助"),
+            TEXT("帮我对付附近的威胁。")));
+    }
+    else if(Context.PreferredDirective==TEXT("hold"))
+    {
+        Out.Add(Suggestion(TEXT("coordination"),
+            TEXT("按最近的协作习惯：等待"),
+            TEXT("先原地等我。")));
+    }
+    else
+    {
+        // Deliberately general: no hidden-map, enemy, quest-answer or economy-threshold knowledge.
+        Out.Add(Suggestion(TEXT("capabilities"),
+            TEXT("说说你现在能帮我什么"),
+            TEXT("说说你现在能帮我什么，以及哪些事情现在还做不了。")));
+    }
 
     // Keep the GDD invariant even if future branches accidentally add more candidates.
     if (Out.Num() > 3) Out.SetNum(3);

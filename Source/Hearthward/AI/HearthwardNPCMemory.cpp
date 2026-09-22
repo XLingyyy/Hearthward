@@ -5,6 +5,9 @@ namespace
 {
 bool ValidKind(FName Kind)
 { return Kind == TEXT("claim") || Kind == TEXT("preference") || Kind == TEXT("agreement") || Kind == TEXT("collection_ban") || Kind == TEXT("typed_constraint"); }
+
+bool ValidDirective(FName Item)
+{ return Item==TEXT("hold") || Item==TEXT("follow") || Item==TEXT("assist"); }
 int32 Relevance(const FString& Query, const FString& Text)
 {
     TSet<FString> Terms;
@@ -101,13 +104,16 @@ bool FHearthwardNPCMemory::IsValid(double Now) const
     if (!HasCampObservation && (!CampInventory.IsEmpty() || CampObservedAt!=0)) return false;
     for (const auto& Entry:CampInventory)
         if (Entry.Value<0 || !HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==Entry.Key;})) return false;
+    if(!HearthwardBeliefs::Validate(Beliefs,Revision,Campaign,Now)) return false;
     TSet<FGuid> EventIds;
     for(const auto& E:Events)
     {
         if(!E.Id.IsValid() || !E.Command.IsValid() || E.Campaign!=Campaign || E.At<0 || E.At>Now || !FMath::IsFinite(E.At) || E.Count<0 || E.Reason.Len()>200 || EventIds.Contains(E.Id)) return false;
-        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("completed"),TEXT("materials_taken"),TEXT("cancelled"),TEXT("blocked")}.Contains(E.Kind))return false;
-        if(!HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==E.Item;})
-            && !(E.Kind==TEXT("craft") && HearthwardAgent::Capabilities().ContainsByPredicate([&](const auto& C){return C.Id==TEXT("craft") && C.Items.Contains(E.Item);})))return false;
+        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("completed"),TEXT("materials_taken"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
+        const bool BasicItem=HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==E.Item;});
+        const bool CraftItem=E.Kind==TEXT("craft") && HearthwardAgent::Capabilities().ContainsByPredicate([&](const auto& C){return C.Id==TEXT("craft") && C.Items.Contains(E.Item);});
+        const bool DirectiveItem=E.Kind==TEXT("directive") && ValidDirective(E.Item);
+        if(!BasicItem && !CraftItem && !DirectiveItem)return false;
         EventIds.Add(E.Id);
     }
     return WorkingGoal.Original.Len()<=1000 && WorkingGoal.Unresolved.Num()<=4 && WorkingGoal.Limits.Num()<=4;
@@ -118,6 +124,10 @@ void FHearthwardNPCMemory::Migrate(FGuid CampaignId)
     Campaign=CampaignId;Revision=FMath::Max<int64>(1,Revision);
     Records.RemoveAll([](const auto& R){return R.Revoked;});
     for(auto& R:Records) {R.Campaign=Campaign;R.Revision=FMath::Max<int64>(1,R.Revision);}
+    for(auto& B:Beliefs){B.Campaign=Campaign;B.Revision=FMath::Clamp<int64>(B.Revision,1,Revision);}
+    if(Beliefs.IsEmpty() && HasCampObservation)
+        for(const auto& Entry:CampInventory)
+            HearthwardBeliefs::UpsertCampStock(Beliefs,Revision,Campaign,Entry.Key,Entry.Value,EHearthwardNPCBeliefSource::Firsthand,CampObservedAt);
 }
 bool FHearthwardNPCMemory::PutRule(const FString& Constraint,const FString& Original,double Now)
 {

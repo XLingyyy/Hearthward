@@ -9,7 +9,7 @@
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
 
-当前 main 已包含 [TASK-026 大地图自然场景底座](tasks/TASK-026.md) 的4032 m World Partition灰盒、独立浏览入口和局部PIE证据，但视觉、长路线、Standalone流送、性能与Owner验收仍未完成。当前 PR 分支 `codex/ai-npc-stack-pr` 在最新 main 上增加 TASK-027→031 AI NPC 栈；地图与 AI 状态分别以[026世界状态](world/TASK-026/CURRENT.md)和各 AI 任务交接为准。
+当前 main 已包含 [TASK-026 大地图自然场景底座](tasks/TASK-026.md) 的4032 m World Partition灰盒、独立浏览入口和局部PIE证据，但视觉、长路线、Standalone流送、性能与Owner验收仍未完成。AI PR 基线 `codex/ai-npc-stack-pr@27c4aaa` 包含 TASK-027→031；其后 [TASK-032](tasks/TASK-032.md) adaptive replanning/recovery、[TASK-033](tasks/TASK-033.md) provenance-aware belief state、[TASK-034](tasks/TASK-034.md) event-driven initiative、[TASK-035](tasks/TASK-035.md) grounded episode memory、[TASK-036](tasks/TASK-036.md) tactical cooperation、[TASK-037](tasks/TASK-037.md) coordination prior、[TASK-038](tasks/TASK-038.md) camp routine 与 [TASK-039](tasks/TASK-039.md) componentization 已做通并通过 UE/PIE/原生回归验证，尚未 push/merge。地图与 AI 状态分别以[026世界状态](world/TASK-026/CURRENT.md)和各 AI 任务交接为准。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。
@@ -59,4 +59,4 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 
 TASK-021伙伴原生导航已提交推送，见[021交接](handoffs/TASK-021.md)。[TASK-022](tasks/TASK-022.md)自由建造已提交推送，见[022交接](handoffs/TASK-022.md)。[TASK-023](tasks/TASK-023.md)即时制作已提交推送，见[023交接](handoffs/TASK-023.md)。当前[TASK-024](tasks/TASK-024.md)接入工作台装备维修与耐久回档，用户授权自主提交推送，见[024交接](handoffs/TASK-024.md)。
 
-[TASK-025](tasks/TASK-025.md) 增强版 v2 已通过 PR #23 合并 main `851d60e`；[TASK-026](tasks/TASK-026.md) 已通过 PR #25 合并 main `4114556`。当前 AI NPC 统一 PR 分支为 `codex/ai-npc-stack-pr`，包含 [TASK-027](tasks/TASK-027.md) 权威感知/安全、[TASK-028](tasks/TASK-028.md) typed executor、[TASK-029](tasks/TASK-029.md) contextual suggestions、[TASK-030](tasks/TASK-030.md) deterministic combat policy 与 [TASK-031](tasks/TASK-031.md) 用户复验修正。用户授权整理并提交 PR，不授权 Agent 直接合并。
+[TASK-025](tasks/TASK-025.md) 增强版 v2 已通过 PR #23 合并 main `851d60e`；[TASK-026](tasks/TASK-026.md) 已通过 PR #25 合并 main `4114556`。AI NPC 统一 PR 基线 `codex/ai-npc-stack-pr` 包含 [TASK-027](tasks/TASK-027.md) 权威感知/安全、[TASK-028](tasks/TASK-028.md) typed executor、[TASK-029](tasks/TASK-029.md) contextual suggestions、[TASK-030](tasks/TASK-030.md) deterministic combat policy 与 [TASK-031](tasks/TASK-031.md) 用户复验修正；后续 [TASK-032](tasks/TASK-032.md) 已增加 deterministic adaptive recovery，[TASK-033](tasks/TASK-033.md) 增加 provenance-aware Belief / Knowledge State，[TASK-034](tasks/TASK-034.md) 增加 Event-driven Initiative，[TASK-035](tasks/TASK-035.md) 增加 grounded Episode Memory，[TASK-036](tasks/TASK-036.md) 增加 Protect / Regroup 战斗协作，[TASK-037](tasks/TASK-037.md) 增加长期 Coordination Prior，[TASK-038](tasks/TASK-038.md) 增加营地自主 Routine，[TASK-039](tasks/TASK-039.md) 对 AI NPC 做不改行为的组件化收口。用户授权继续研发和整理 PR，不授权 Agent 直接合并。

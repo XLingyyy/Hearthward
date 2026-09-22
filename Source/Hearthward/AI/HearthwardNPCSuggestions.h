@@ -25,6 +25,8 @@ struct FHearthwardSuggestionContext
     bool bCanCollectWood = false;
     bool bHasCampWood = false;
     int32 CampWood = 0;
+    FName PreferredDirective;
+    float CoordinationConfidence = 0.0f;
 };
 
 namespace HearthwardSuggestions

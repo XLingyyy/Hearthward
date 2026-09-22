@@ -51,14 +51,22 @@ struct FHearthwardAgentExecutionState
     FHearthwardAgentPlan Plan;
     int32 Cursor = INDEX_NONE;
     bool bRecoveryToCamp = false;
+    bool bAdaptiveRecovery = false;
     bool bStarted = false;
+    int32 AdaptiveRecoveryAttempts = 0;
+    double AdaptiveRetryAt = 0.0;
+    FString LastRecoveryReason;
 
     void Reset()
     {
         Plan = {};
         Cursor = INDEX_NONE;
         bRecoveryToCamp = false;
+        bAdaptiveRecovery = false;
         bStarted = false;
+        AdaptiveRecoveryAttempts = 0;
+        AdaptiveRetryAt = 0.0;
+        LastRecoveryReason.Reset();
     }
 
     const FHearthwardAgentAction* Current() const

@@ -21,12 +21,6 @@ FHearthwardCompanionCombatDecision HearthwardCombatPolicy::Evaluate(const FHeart
 {
     FHearthwardCompanionCombatDecision Decision;
 
-    if (O.PlayerHealthRatio <= 0.0f)
-    {
-        Decision.Reason = TEXT("PLAYER_DOWN");
-        return Decision;
-    }
-
     if (O.RequestedOrder == TEXT("wait"))
     {
         Decision.Reason = TEXT("EXPLICIT_HOLD");
@@ -46,6 +40,13 @@ FHearthwardCompanionCombatDecision HearthwardCombatPolicy::Evaluate(const FHeart
         return Decision;
     }
 
+    if (O.PlayerHealthRatio <= 0.0f)
+    {
+        Decision.Intent = EHearthwardCompanionTacticalIntent::Regroup;
+        Decision.Reason = TEXT("PLAYER_DOWN_REGROUP");
+        return Decision;
+    }
+
     const float CommandRange = FMath::Max(0.0f, O.CommandRange);
     if (O.CompanionToPlayerDistance > CommandRange)
     {
@@ -61,6 +62,39 @@ FHearthwardCompanionCombatDecision HearthwardCombatPolicy::Evaluate(const FHeart
         if (Threat.Id.IsNone() || Threat.RemainingHealth <= 0.0f) continue;
         if (FVector::DistSquared2D(Threat.Position, O.PlayerPosition) > RangeSq) continue;
         if (!Best || BetterThreat(Threat, *Best, O)) Best = &Threat;
+    }
+
+    if (O.PlayerHealthRatio <= FMath::Clamp(O.ProtectHealthRatio,0.0f,1.0f))
+    {
+        const float ProtectSq=FMath::Square(FMath::Max(0.0f,O.ProtectRadius));
+        const FHearthwardCompanionThreat* ProtectTarget=nullptr;
+        int32 NearbyThreats=0;
+        for(const auto& Threat:O.Threats)
+        {
+            if(Threat.Id.IsNone() || Threat.RemainingHealth<=0.0f
+                || FVector::DistSquared2D(Threat.Position,O.PlayerPosition)>ProtectSq)continue;
+            ++NearbyThreats;
+            if(!ProtectTarget || BetterThreat(Threat,*ProtectTarget,O))ProtectTarget=&Threat;
+        }
+
+        if(NearbyThreats>=FMath::Max(2,O.RegroupThreatCount))
+        {
+            Decision.Intent=EHearthwardCompanionTacticalIntent::Regroup;
+            Decision.Reason=TEXT("LOW_HEALTH_OVERWHELMED");
+            return Decision;
+        }
+
+        if(ProtectTarget)
+        {
+            Decision.Intent=EHearthwardCompanionTacticalIntent::Protect;
+            Decision.Target=ProtectTarget->Id;
+            Decision.Reason=TEXT("PROTECT_LOW_HEALTH");
+            return Decision;
+        }
+
+        Decision.Intent=EHearthwardCompanionTacticalIntent::Regroup;
+        Decision.Reason=TEXT("LOW_HEALTH_REGROUP");
+        return Decision;
     }
 
     if (!Best)
@@ -83,6 +117,8 @@ FName HearthwardCombatPolicy::IntentName(EHearthwardCompanionTacticalIntent Inte
     case EHearthwardCompanionTacticalIntent::Hold: return TEXT("hold");
     case EHearthwardCompanionTacticalIntent::Follow: return TEXT("follow");
     case EHearthwardCompanionTacticalIntent::Assist: return TEXT("assist");
+    case EHearthwardCompanionTacticalIntent::Protect: return TEXT("protect");
+    case EHearthwardCompanionTacticalIntent::Regroup: return TEXT("regroup");
     default: return TEXT("hold");
     }
 }

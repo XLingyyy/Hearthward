@@ -8,7 +8,9 @@ enum class EHearthwardCompanionTacticalIntent : uint8
 {
     Hold,
     Follow,
-    Assist
+    Assist,
+    Protect,
+    Regroup
 };
 
 USTRUCT(BlueprintType)
@@ -34,6 +36,9 @@ struct FHearthwardCompanionCombatObservation
     UPROPERTY(BlueprintReadOnly) FVector CompanionPosition = FVector::ZeroVector;
     UPROPERTY(BlueprintReadOnly) float CompanionToPlayerDistance = 0.0f;
     UPROPERTY(BlueprintReadOnly) float CommandRange = 0.0f;
+    UPROPERTY(BlueprintReadOnly) float ProtectHealthRatio = 0.5f;
+    UPROPERTY(BlueprintReadOnly) float ProtectRadius = 300.0f;
+    UPROPERTY(BlueprintReadOnly) int32 RegroupThreatCount = 2;
     UPROPERTY(BlueprintReadOnly) TArray<FHearthwardCompanionThreat> Threats;
 };
 

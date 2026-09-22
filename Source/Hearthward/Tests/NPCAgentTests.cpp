@@ -2,7 +2,12 @@
 #include "../AI/HearthwardNPCMemory.h"
 #include "../AI/HearthwardNPCPerception.h"
 #include "../AI/HearthwardAgentPlan.h"
+#include "../AI/HearthwardAgentRecovery.h"
 #include "../AI/HearthwardNPCSuggestions.h"
+#include "../AI/HearthwardNPCInitiative.h"
+#include "../AI/HearthwardNPCEpisode.h"
+#include "../AI/HearthwardNPCCoordination.h"
+#include "../AI/HearthwardNPCRoutine.h"
 #include "../Gameplay/HearthwardCompanionCombatPolicy.h"
 #include "../Companion/HearthwardCompanionCommand.h"
 #include "../Building/HearthwardWorkshopService.h"
@@ -29,6 +34,9 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     TestFalse(TEXT("Unknown material"),HearthwardAgent::ValidLimit(TEXT("no:secret")));
     for(const auto& C:HearthwardAgent::Capabilities())
         TestTrue(TEXT("Registry drives grammar"),HearthwardAgent::Schema().Contains(C.Id.ToString()));
+    FHearthwardAgentGoal Report;Report.Intent=TEXT("inventory_report");Report.Item=TEXT("wood");Report.Quantity=20;
+    Report.QuantityMode=TEXT("reported_exact");Report.SourceRef=TEXT("player");
+    TestTrue(TEXT("Inventory report is valid cognition-only input"),HearthwardAgent::Validate(Report).IsEmpty() && !Report.WritesWorld());
     TestFalse(TEXT("Real crafting materials"),HearthwardWorkshop::Materials(TEXT("craft"),TEXT("arrows"),1).IsEmpty());
     return true;
 }
@@ -63,6 +71,9 @@ bool FNPCAgentMemoryTest::RunTest(const FString&)
     const auto Command=FGuid::NewGuid();FGuid Last;
     for(int32 I=0;I<140;++I){FHearthwardNPCEvent E;E.Id=FGuid::NewGuid();Last=E.Id;E.Command=Command;E.Campaign=M.Campaign;E.Kind=TEXT("acquired");E.Item=TEXT("wood");E.Count=1;M.RecordEvent(E);}
     TestEqual(TEXT("Bounded event view"),M.Events.Num(),128);M.RecordEvent(M.Events.Last());TestEqual(TEXT("No repeated last event"),M.Events.Num(),128);
+    FHearthwardNPCEvent Replanned;Replanned.Id=FGuid::NewGuid();Replanned.Command=Command;Replanned.Campaign=M.Campaign;
+    Replanned.Kind=TEXT("replanned");Replanned.Item=TEXT("wood");Replanned.Count=0;Replanned.Reason=TEXT("SOURCE_POSITION_CHANGED");M.RecordEvent(Replanned);
+    TestTrue(TEXT("Adaptive replan event remains save-valid"),M.IsValid(0));
     TestTrue(TEXT("Valid memory"),M.IsValid(0));M.Events.Last().Campaign=FGuid::NewGuid();TestFalse(TEXT("Foreign campaign rejected"),M.IsValid(0));
     FHearthwardNPCMemory Recycled;
     for(int32 I=0;I<128;++I)
@@ -70,6 +81,88 @@ bool FNPCAgentMemoryTest::RunTest(const FString&)
     TestTrue(TEXT("All capacity reclaimed"),Recycled.Records.IsEmpty());
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentBeliefStateTest,"Hearthward.NPCAgent.BeliefStateProvenance",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentBeliefStateTest::RunTest(const FString&)
+{
+    FHearthwardNPCMemory M;M.Campaign=FGuid::NewGuid();const int64 StartRevision=M.Revision;
+    TestTrue(TEXT("Firsthand camp fact stored"),HearthwardBeliefs::UpsertCampStock(M.Beliefs,M.Revision,M.Campaign,TEXT("wood"),5,EHearthwardNPCBeliefSource::Firsthand,10));
+    FHearthwardNPCBeliefView V;
+    TestTrue(TEXT("Firsthand resolves confirmed"),HearthwardBeliefs::ResolveCampStock(M.Beliefs,TEXT("wood"),V)
+        && V.Value==5 && V.Source==EHearthwardNPCBeliefSource::Firsthand && V.IsConfirmed());
+    const int64 FirsthandRevision=M.Revision;
+    TestTrue(TEXT("Identical observation is idempotent"),HearthwardBeliefs::UpsertCampStock(M.Beliefs,M.Revision,M.Campaign,TEXT("wood"),5,EHearthwardNPCBeliefSource::Firsthand,11));
+    TestEqual(TEXT("Idempotent observation does not churn memory revision"),M.Revision,FirsthandRevision);
+
+    TestTrue(TEXT("Later player report is stored with provenance"),HearthwardBeliefs::UpsertCampStock(M.Beliefs,M.Revision,M.Campaign,TEXT("wood"),20,EHearthwardNPCBeliefSource::PlayerReport,12));
+    HearthwardBeliefs::ResolveCampStock(M.Beliefs,TEXT("wood"),V);
+    TestTrue(TEXT("Player report remains explicitly unconfirmed"),V.Value==20 && V.Source==EHearthwardNPCBeliefSource::PlayerReport && !V.IsConfirmed());
+
+    TestTrue(TEXT("Firsthand evidence can correct report"),HearthwardBeliefs::UpsertCampStock(M.Beliefs,M.Revision,M.Campaign,TEXT("wood"),7,EHearthwardNPCBeliefSource::Firsthand,13));
+    HearthwardBeliefs::ResolveCampStock(M.Beliefs,TEXT("wood"),V);
+    TestTrue(TEXT("Corrected belief is confirmed"),V.Value==7 && V.Source==EHearthwardNPCBeliefSource::Firsthand && V.IsConfirmed());
+    TestTrue(TEXT("Belief memory validates"),M.Revision>StartRevision && M.IsValid(13));
+
+    FHearthwardNPCMemory Legacy;Legacy.Campaign=FGuid::NewGuid();Legacy.HasCampObservation=true;Legacy.CampObservedAt=4;Legacy.CampInventory.Add(TEXT("wood"),3);
+    Legacy.Migrate(Legacy.Campaign);
+    TestTrue(TEXT("Legacy camp snapshot migrates to typed belief"),HearthwardBeliefs::ResolveCampStock(Legacy.Beliefs,TEXT("wood"),V)
+        && V.Value==3 && V.Source==EHearthwardNPCBeliefSource::Firsthand);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentInitiativePolicyTest,"Hearthward.NPCAgent.EventDrivenInitiativePolicy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentInitiativePolicyTest::RunTest(const FString&)
+{
+    const auto Evidence=FGuid::NewGuid();
+    auto I=HearthwardInitiative::FromEvent(TEXT("completed"),TEXT("wood"),4,TEXT(""),Evidence,10);
+    TestTrue(TEXT("Completed event becomes initiative"),I.IsValid() && I.Kind==TEXT("task_completed") && I.EvidenceId==Evidence && I.Message.Contains(TEXT("4")));
+
+    I=HearthwardInitiative::FromEvent(TEXT("replanned"),TEXT("wood"),0,TEXT("SOURCE_POSITION_CHANGED"),FGuid::NewGuid(),11);
+    TestTrue(TEXT("Replan event becomes initiative"),I.IsValid() && I.Kind==TEXT("task_replanned"));
+
+    I=HearthwardInitiative::FromEvent(TEXT("blocked"),TEXT("wood"),0,TEXT("RETURN_UNREACHABLE"),FGuid::NewGuid(),12);
+    TestTrue(TEXT("Blocked reason is grounded"),I.IsValid() && I.Kind==TEXT("task_blocked") && I.Message.Contains(TEXT("RETURN_UNREACHABLE")));
+
+    I=HearthwardInitiative::FromEvent(TEXT("delivered"),TEXT("wood"),2,TEXT(""),FGuid::NewGuid(),13);
+    TestFalse(TEXT("Routine partial delivery does not chatter"),I.IsValid());
+
+    I=HearthwardInitiative::BeliefCorrection(TEXT("wood"),99,2,14);
+    TestTrue(TEXT("Belief correction is proactive"),I.IsValid() && I.Kind==TEXT("belief_corrected") && I.Message.Contains(TEXT("99")) && I.Message.Contains(TEXT("2")));
+    TestFalse(TEXT("No correction when report already matches"),HearthwardInitiative::BeliefCorrection(TEXT("wood"),2,2,15).IsValid());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentEpisodeProjectionTest,"Hearthward.NPCAgent.GroundedEpisodeProjection",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentEpisodeProjectionTest::RunTest(const FString&)
+{
+    const FGuid Campaign=FGuid::NewGuid(),Command=FGuid::NewGuid();TArray<FHearthwardNPCEvent> Events;
+    auto Add=[&](FName Kind,int32 Count,double At,const FString& Reason=FString())
+    {
+        FHearthwardNPCEvent E;E.Id=FGuid::NewGuid();E.Command=Command;E.Campaign=Campaign;E.Kind=Kind;E.Item=TEXT("wood");E.Count=Count;E.At=At;E.Reason=Reason;Events.Add(E);
+    };
+    Add(TEXT("acquired"),2,1);
+    Add(TEXT("replanned"),0,2,TEXT("SOURCE_POSITION_CHANGED"));
+    Add(TEXT("delivered"),2,3);
+    Add(TEXT("completed"),2,4);
+
+    FHearthwardNPCEvent Other;Other.Id=FGuid::NewGuid();Other.Command=FGuid::NewGuid();Other.Campaign=Campaign;
+    Other.Kind=TEXT("blocked");Other.Item=TEXT("wood");Other.At=5;Other.Reason=TEXT("RETURN_UNREACHABLE");Events.Add(Other);
+
+    const auto Episodes=HearthwardEpisodes::Build(Events,3);
+    TestEqual(TEXT("Two commands become two episodes"),Episodes.Num(),2);
+    TestTrue(TEXT("Newest command sorted first"),Episodes[0].Command==Other.Command && Episodes[0].Reasons.Contains(TEXT("RETURN_UNREACHABLE")));
+    const auto* Completed=Episodes.FindByPredicate([&](const auto& X){return X.Command==Command;});
+    TestTrue(TEXT("Completed episode found"),Completed!=nullptr);
+    if(Completed)
+    {
+        TestTrue(TEXT("Episode aggregates real effects"),Completed->Acquired==2 && Completed->Delivered==2 && Completed->Replans==1 && Completed->Completed);
+        TestTrue(TEXT("Episode keeps replan evidence"),Completed->Reasons.Contains(TEXT("SOURCE_POSITION_CHANGED")) && Completed->Evidence.Num()==4);
+        const FString Text=HearthwardEpisodes::Describe(*Completed);
+        TestTrue(TEXT("Description is evidence-grounded"),Text.Contains(TEXT("实际取得2")) && Text.Contains(TEXT("实际入库2"))
+            && Text.Contains(TEXT("重规划1次")) && Text.Contains(TEXT("SOURCE_POSITION_CHANGED")) && Text.Contains(TEXT("证据")));
+    }
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentCombatPolicyTest,"Hearthward.NPCAgent.CompanionCombatPolicy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FNPCAgentCombatPolicyTest::RunTest(const FString&)
 {
@@ -120,14 +213,39 @@ bool FNPCAgentCombatPolicyTest::RunTest(const FString&)
     D=HearthwardCombatPolicy::Evaluate(O);
     TestTrue(TEXT("No legal threat falls back to follow"),D.Intent==EHearthwardCompanionTacticalIntent::Follow && D.Target.IsNone());
 
+    O.PlayerHealthRatio=.3f;O.ProtectHealthRatio=.5f;O.ProtectRadius=300;O.RegroupThreatCount=2;
+    O.Threats={Near};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Low health protects against the nearest close threat"),
+        D.Intent==EHearthwardCompanionTacticalIntent::Protect && D.Target==TEXT("near_player") && D.Reason==TEXT("PROTECT_LOW_HEALTH"));
+
+    FHearthwardCompanionThreat CloseA;CloseA.Id=TEXT("close_a");CloseA.RemainingHealth=10;CloseA.Position=FVector(100,0,0);
+    FHearthwardCompanionThreat CloseB;CloseB.Id=TEXT("close_b");CloseB.RemainingHealth=10;CloseB.Position=FVector(0,120,0);
+    O.Threats={CloseA,CloseB};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Low health under multiple close threats regroups"),
+        D.Intent==EHearthwardCompanionTacticalIntent::Regroup && D.Target.IsNone() && D.Reason==TEXT("LOW_HEALTH_OVERWHELMED"));
+
+    O.Threats={Outside};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Low health without a close protect target regroups"),
+        D.Intent==EHearthwardCompanionTacticalIntent::Regroup && D.Target.IsNone() && D.Reason==TEXT("LOW_HEALTH_REGROUP"));
+
     O.PlayerHealthRatio=0;
     D=HearthwardCombatPolicy::Evaluate(O);
-    TestTrue(TEXT("Down player stops combat directive"),D.Intent==EHearthwardCompanionTacticalIntent::Hold);
+    TestTrue(TEXT("Down player regroups instead of chasing"),
+        D.Intent==EHearthwardCompanionTacticalIntent::Regroup && D.Target.IsNone() && D.Reason==TEXT("PLAYER_DOWN_REGROUP"));
+
+    O.RequestedOrder=TEXT("wait");
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Explicit hold still wins even while down"),D.Intent==EHearthwardCompanionTacticalIntent::Hold);
 
     FHearthwardAgentGoal Goal;Goal.Intent=TEXT("companion_order");Goal.Item=TEXT("assist");Goal.Quantity=1;
     Goal.QuantityMode=TEXT("directive");Goal.SourceRef=TEXT("player");
     TestTrue(TEXT("Companion order is a confirmed world-write capability"),Goal.WritesWorld());
     TestTrue(TEXT("Valid companion directive passes contract"),HearthwardAgent::Validate(Goal).IsEmpty());
+    Goal.Item=TEXT("routine");
+    TestTrue(TEXT("Routine is an explicit high-level companion directive"),HearthwardAgent::Validate(Goal).IsEmpty());
     Goal.Item=TEXT("wolf");
     TestEqual(TEXT("Model cannot name an arbitrary target"),HearthwardAgent::Validate(Goal),FString(TEXT("UNSUPPORTED_CAPABILITY")));
     return true;
@@ -153,6 +271,127 @@ bool FNPCAgentSuggestionTest::RunTest(const FString&)
     S=HearthwardSuggestions::Build(C);
     TestEqual(TEXT("No world facts still produces bounded safe set"),S.Num(),3);
     TestFalse(TEXT("Unknown camp stock is not fabricated"),S.ContainsByPredicate([](const auto& X){return X.Kind==TEXT("camp_stock");}));
+
+    C.PreferredDirective=TEXT("follow");C.CoordinationConfidence=.75f;
+    S=HearthwardSuggestions::Build(C);
+    TestTrue(TEXT("Stable coordination prior changes suggestion only"),
+        S.ContainsByPredicate([](const auto& X){return X.Kind==TEXT("coordination") && X.Message==TEXT("跟着我。");}));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentCoordinationPriorTest,"Hearthward.NPCAgent.CoordinationPrior",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentCoordinationPriorTest::RunTest(const FString&)
+{
+    TArray<FHearthwardNPCEvent> Events;
+    const FGuid Campaign=FGuid::NewGuid();
+    auto Add=[&](FName Directive,double At)
+    {
+        FHearthwardNPCEvent E;E.Id=FGuid::NewGuid();E.Command=FGuid::NewGuid();E.Campaign=Campaign;
+        E.Kind=TEXT("directive");E.Item=Directive;E.Count=1;E.At=At;E.Reason=TEXT("test");Events.Add(E);
+    };
+
+    Add(TEXT("follow"),1);Add(TEXT("follow"),2);
+    auto P=HearthwardCoordination::Build(Events);
+    TestFalse(TEXT("Two samples never create a learned prior"),P.Stable);
+    TestTrue(TEXT("Counts remain inspectable"),P.Samples==2 && P.FollowCount==2);
+
+    Add(TEXT("follow"),3);
+    P=HearthwardCoordination::Build(Events);
+    TestTrue(TEXT("Three consistent confirmations establish follow prior"),
+        P.Stable && P.PreferredDirective==TEXT("follow") && P.Confidence>=.99f);
+
+    Add(TEXT("assist"),4);
+    P=HearthwardCoordination::Build(Events);
+    TestTrue(TEXT("One contradictory command does not instantly erase history"),
+        P.Stable && P.PreferredDirective==TEXT("follow"));
+
+    Add(TEXT("assist"),5);Add(TEXT("assist"),6);Add(TEXT("assist"),7);Add(TEXT("assist"),8);
+    P=HearthwardCoordination::Build(Events);
+    TestFalse(TEXT("Mixed transition becomes uncertain before flipping"),P.Stable);
+
+    Add(TEXT("assist"),9);Add(TEXT("assist"),10);
+    P=HearthwardCoordination::Build(Events);
+    TestTrue(TEXT("Recent rolling window can adapt to a new stable habit"),
+        P.Stable && P.PreferredDirective==TEXT("assist") && P.Confidence>=.67f);
+
+    TestTrue(TEXT("Directive events remain valid memory facts"),[&]()
+    {
+        FHearthwardNPCMemory M;M.Campaign=Campaign;M.Events=Events;M.Revision=20;return M.IsValid(10);
+    }());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentRoutinePolicyTest,"Hearthward.NPCAgent.CampRoutinePolicy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentRoutinePolicyTest::RunTest(const FString&)
+{
+    FHearthwardNPCRoutineContext C;C.Enabled=true;C.bOrderIdle=true;C.GameSeconds=0;C.CompanionToCampDistance=0;
+    auto D=HearthwardRoutine::Evaluate(C);
+    TestTrue(TEXT("Idle authorized companion gets a routine phase"),D.Active && D.Activity==TEXT("rest"));
+
+    C.GameSeconds=7;
+    D=HearthwardRoutine::Evaluate(C);
+    TestTrue(TEXT("World time deterministically advances routine"),D.Active && D.Activity==TEXT("patrol"));
+
+    C.CompanionToCampDistance=500;
+    D=HearthwardRoutine::Evaluate(C);
+    TestTrue(TEXT("Far companion returns to camp before routine"),D.Active && D.Activity==TEXT("return_camp"));
+
+    C.CompanionToCampDistance=0;C.bPlayerInCombat=true;
+    TestFalse(TEXT("Combat suspends routine"),HearthwardRoutine::Evaluate(C).Active);
+    C.bPlayerInCombat=false;C.bPlayerDown=true;
+    TestFalse(TEXT("Player down suspends routine"),HearthwardRoutine::Evaluate(C).Active);
+    C.bPlayerDown=false;C.bTaskActive=true;
+    TestFalse(TEXT("Typed task owns navigation over routine"),HearthwardRoutine::Evaluate(C).Active);
+    C.bTaskActive=false;C.bOrderIdle=false;
+    TestFalse(TEXT("Explicit follow/assist/hold ownership suppresses routine"),HearthwardRoutine::Evaluate(C).Active);
+    C.bOrderIdle=true;C.Enabled=false;
+    TestFalse(TEXT("Explicitly disabled routine stays off"),HearthwardRoutine::Evaluate(C).Active);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentRecoveryPolicyTest,"Hearthward.NPCAgent.AdaptiveRecoveryPolicy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentRecoveryPolicyTest::RunTest(const FString&)
+{
+    using A=EHearthwardAgentActionType;
+    using T=EHearthwardAgentTarget;
+    using M=EHearthwardAgentRecoveryMode;
+
+    FHearthwardAgentRecoveryContext C;
+    C.FailedAction.Type=A::Gather;C.FailedAction.Target=T::Source;
+    C.FailureReason=TEXT("SOURCE_POSITION_CHANGED");
+    C.bCampAvailable=true;C.bSourceAvailable=true;C.bStationAvailable=true;
+    C.MaxAdaptiveAttempts=2;
+
+    auto D=HearthwardRecovery::Decide(C);
+    TestTrue(TEXT("Moved source rewinds to source move"),
+        D.Mode==M::RewindToMove && D.RewindTarget==T::Source && D.Reason==TEXT("REACQUIRE_SOURCE"));
+
+    C.FailedAction.Type=A::MoveTo;C.FailedAction.Target=T::Source;C.FailureReason=TEXT("去程受阻");
+    D=HearthwardRecovery::Decide(C);
+    TestTrue(TEXT("Transient source route retries same move"),D.Mode==M::RetryCurrent && D.Reason==TEXT("RETRY_ROUTE"));
+
+    C.FailedAction.Type=A::CommitWorkshop;C.FailedAction.Target=T::Workshop;C.FailureReason=TEXT("PATH_BLOCKED");
+    D=HearthwardRecovery::Decide(C);
+    TestTrue(TEXT("Workshop path failure rewinds to workshop move"),
+        D.Mode==M::RewindToMove && D.RewindTarget==T::Workshop);
+
+    C.bHasCargo=true;
+    D=HearthwardRecovery::Decide(C);
+    TestTrue(TEXT("Physical cargo overrides adaptive recovery"),D.Mode==M::ReturnToCamp && D.Reason==TEXT("PRESERVE_CARGO"));
+
+    C.bHasCargo=false;C.AdaptiveAttempts=2;
+    D=HearthwardRecovery::Decide(C);
+    TestTrue(TEXT("Adaptive budget is bounded"),D.Mode==M::ReturnToCamp && D.Reason==TEXT("REPLAN_BUDGET_EXHAUSTED"));
+
+    C.bCampAvailable=false;
+    D=HearthwardRecovery::Decide(C);
+    TestTrue(TEXT("No camp after exhausted budget holds safely"),D.Mode==M::Hold);
+
+    C.AdaptiveAttempts=0;C.bCampAvailable=true;C.bSourceAvailable=false;
+    C.FailedAction.Type=A::Gather;C.FailedAction.Target=T::Source;C.FailureReason=TEXT("实际资源不足");
+    D=HearthwardRecovery::Decide(C);
+    TestTrue(TEXT("Depleted resource is not invented into a replan"),D.Mode==M::ReturnToCamp && D.Reason==TEXT("HARD_BLOCK"));
+
     return true;
 }
 

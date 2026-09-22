@@ -506,7 +506,15 @@ void UHearthwardScreenWidget::ComposeHUD()
     Element(TEXT("text"),TEXT("北"),MiniPosition+FVector2D(MiniSize.X*.5-9,4),FVector2D(25,25),15);
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
     {
-        const FString Order=G->CompanionOrder==TEXT("follow")?TEXT("跟随中"):G->CompanionOrder==TEXT("attack")?TEXT("协助进攻"):It->GetRequested()>0?FString::Printf(TEXT("委托 %d / %d"),It->GetDelivered(),It->GetRequested()):TEXT("原地等待");
+        FString RoutineLabel;
+        const FName RoutineActivity=G->GetCompanionRoutineActivity();
+        if(RoutineActivity==TEXT("patrol"))RoutineLabel=TEXT("巡营");
+        else if(RoutineActivity==TEXT("check_camp"))RoutineLabel=TEXT("查看营地");
+        else if(RoutineActivity==TEXT("return_camp"))RoutineLabel=TEXT("回营");
+        else if(RoutineActivity==TEXT("rest"))RoutineLabel=TEXT("休息");
+        const FString Order=G->CompanionOrder==TEXT("follow")?TEXT("跟随中"):G->CompanionOrder==TEXT("attack")?TEXT("协助进攻")
+            :It->GetRequested()>0?FString::Printf(TEXT("委托 %d / %d"),It->GetDelivered(),It->GetRequested())
+            :G->IsCompanionRoutineEnabled()?TEXT("自由活动")+(!RoutineLabel.IsEmpty()?TEXT(" · ")+RoutineLabel:TEXT("")):TEXT("原地等待");
         Element(TEXT("text"),Order,FVector2D(146,282),FVector2D(320,30),18);
         Element(TEXT("text"),TEXT("Z   等待\nX   跟随\nC   进攻"),FVector2D(81,325),FVector2D(250,125),20);
         Element(TEXT("bar"),TEXT(""),FVector2D(119,265),FVector2D(151,7)); Elements.Last().Color=Color(TEXT("teal"));

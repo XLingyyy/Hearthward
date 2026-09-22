@@ -8,6 +8,7 @@
 
 class UHearthwardInventoryComponent;
 class UHearthwardTimedActionComponent;
+class UHearthwardCompanionNavigationComponent;
 
 UENUM(BlueprintType)
 enum class EHearthwardCompanionPhase : uint8
@@ -50,7 +51,7 @@ public:
     UPROPERTY(BlueprintReadWrite) TMap<FName,float> OwnedDurability;
     UPROPERTY(BlueprintReadOnly) TMap<FName,int32> Spent;
     FName GetItem() const { return Command.GetItem(); }
-    bool IsAtCamp() const { return At(Camp); }
+    bool IsAtCamp() const;
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
     FString GetPlayerStatement() const { return Statement; }
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
@@ -60,6 +61,7 @@ public:
 
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardInventoryComponent> Bag;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardTimedActionComponent> Action;
+    UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardCompanionNavigationComponent> Navigation;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardInventoryComponent> Source;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<AActor> Camp;
     // PROTOTYPE_ONLY safe-point evidence. Perception captures this input and the safety policy combines it
@@ -68,6 +70,7 @@ public:
     UPROPERTY(BlueprintReadOnly) FString BlockReason;
 
     bool NavigateTo(AActor* Target, float Speed, float AcceptanceRadius);
+    bool NavigateToLocation(const FVector& Location, float Speed, float AcceptanceRadius);
     void StopNavigation();
 
 private:
@@ -75,6 +78,7 @@ private:
     bool At(const AActor* Target) const;
     bool MoveTowards(const AActor* Target, float DeltaSeconds,float AcceptanceRadius=40);
     void ReturnBlocked(const FString& Reason);
+    void HandleExecutionFailure(const FString& Reason);
     void Deposit();
     bool IsSourceValid() const;
     EHearthwardProposalResult AcceptGoal(AActor* Speaker, FHearthwardCommandTicket Ticket,
@@ -97,9 +101,6 @@ private:
     EHearthwardCompanionPhase Phase = EHearthwardCompanionPhase::Idle;
     bool bSettling = false;
     bool bFixtureEnabled = false;
-    TWeakObjectPtr<AActor> NavigationTarget;
-    float NavigationAcceptance = 0;
-    double NavigationRetryAt = 0;
     int32 NavigationFailures = 0;
     FVector LastProgressPosition = FVector::ZeroVector;
     double LastProgressAt = 0;
