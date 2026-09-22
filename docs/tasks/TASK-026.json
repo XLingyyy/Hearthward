@@ -2,19 +2,20 @@
   "schema_version": 1,
   "id": "TASK-026",
   "title": "大地图自然场景底座构建（人文场景后置）",
-  "status": "Blocked",
+  "status": "Active",
   "updated_at": "2026-09-22",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": "codex/TASK-026-natural-world",
+  "branch": "codex/TASK-026-natural-world-rebuild",
   "source_refs": [
     "2026-09-21用户指定TASK-026为下一顺序任务：较大地图先构建自然场景，人文后置",
     "2026-09-22用户要求将TASK-026当前进度同步到本地文件并以Pull Request交接",
     "GDD v0.3原件第4.1节：空间与地形，具体面积/布局未定；第9章四控制区不等于自然分区",
     "WORKFLOW.md 第5—10、12、14节",
     "resourceSummary.md；art_source/TASK-004/polyhaven/SOURCE.md；art_source/TASK-004/sketchfab/SOURCE.md",
-    "本次main基线39e8610a490ea93467219656d0690ec50735e658：部分源资产已入库，UE自然资产适配未完成"
+    "本次main基线39e8610a490ea93467219656d0690ec50735e658：部分源资产已入库，UE自然资产适配未完成",
+    "2026-09-22当前用户授权接手TASK-026实施，允许继续修改或重构地图；以附图为构图参考，自然场景先行。"
   ],
   "dependencies": [
     "TASK-003"
@@ -79,8 +80,8 @@
   "permissions": {
     "network": "granted: 2026-09-22 user requested remote GitHub pull request",
     "install_dependencies": "not_granted",
-    "commit": "granted: 2026-09-22 user requested TASK-026 current progress handoff",
-    "push": "granted: 2026-09-22 user requested remote GitHub pull request",
+    "commit": "not_granted_current_session",
+    "push": "not_granted_current_session",
     "merge": "not_granted"
   },
   "notes": [
@@ -91,6 +92,8 @@
     "R项不阻塞纯环境工作，触及玩法的部分后置。任务单提出的面积、路线与性能数值尚非正式设计批准。",
     "正式地图是可复用自然底座；TEMP_VISUAL只描述候选植物外观，未批准任何新增玩法原型。",
     "required_tests的T-002为已有工作流用例；场景验收A1—A8定义于TASK-026.md，不将任务编号误作测试编号。",
-    "地图视觉目前是引擎基础形体加三张既有Poly Haven地表贴图的灰盒底座；树木/草/岩石并非最终自然资产，不得将观察点截图表述为视觉验收通过。"
+    "地图视觉目前是引擎基础形体加三张既有Poly Haven地表贴图的灰盒底座；树木/草/岩石并非最终自然资产，不得将观察点截图表述为视觉验收通过。",
+    "当前实施从origin/main 4114556开始；旧地图与其violet-sept锁保持不动；新地图位于World/Natural/Rebuild，派生资产位于Assets/NaturalWorld/Rebuild；用户当前请求覆盖本地实施，不将历史文档的提交推送授权外推为本次发布授权。",
+    "本次新地图已适配Nanite树木/岩石及地表草；旧27项PIE与灰盒视觉描述只属于PR25历史。首次新地图425m默认速度连续步行通过；完整A1-A8仍未验收。"
   ]
 }

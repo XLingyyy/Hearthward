@@ -1,5 +1,13 @@
 # TASK-026｜当前进度交接
 
+## 2026-09-22 本次接手
+
+当前工作目录 `G:/GameFactory/Hearthward`，分支 `codex/TASK-026-natural-world-rebuild`，基线 `4114556`。用户授权本地重建自然地图；新地图 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds`。最新实现、验证、限制与复现入口见[重建记录](../world/TASK-026/REBUILD.md)。旧地图和原有他人资产锁保留。
+
+## 以下为 PR #25 历史交接
+
+以下路径、测试和授权仅描述上一轮成果，不作为本次实施状态。
+
 更新时间：2026-09-22（Asia/Shanghai）。记录人：Codex。
 
 ## 定位与授权
@@ -53,3 +61,7 @@
 5. 独立评审和Owner验收后再决定是否合并；Agent没有自批或合并权限。
 
 撤回本分支时只处理TASK-026允许路径；不要删除TASK-004源资产、已有Bootstrap或其他任务成果。
+
+### 2026-09-22 最终局部复测补充
+
+新图最后修正了水面Nanite兼容、岩石足迹贴地和叶片远距透明采样。最终SM6 PIE连续行走124.98米/35秒，13项局部检查通过；运行林地可见草簇。详细记录与原始截图见 `docs/qa/evidence/TASK-026/rebuild/final-local-walk.json`、`runtime-forest.png`。Landscape Grass原生运行生成状态仍待专项确认；完整路线、Standalone跨区及性能、视觉验收尚未完成。任务维持Active。最新范围校验检查1509条路径，无越界错误；整体FAIL仅缺reviewer及真实Issue URL。29个任务Python脚本语法通过，git diff --check通过。
