@@ -26,4 +26,3 @@ UnrealEditor.exe Hearthward.uproject /Game/Hearthward/World/Natural/L_NaturalWor
 本轮没有验证主环线/两条支路/第二浅滩的连续通行，没有Standalone流送、性能采样、打包、干净克隆、第二机器或独立评审。截图显示灰盒运行状态，但也暴露悬空树冠、倾斜树干、重复基础形体、地表拼接和空白区域；因此不构成A4视觉验收。
 
 `Saved/Logs`中的原始引擎日志未纳入Git；受版本控制的JSON报告由验证脚本直接写出后原样复制。未来复测应保留新的JSON、截图、运行命令、硬件和实现提交SHA，不用本轮PASS替代修改后的验证。
-

@@ -37,9 +37,10 @@
 
 ## 仓库与提交绑定
 
-- `python scripts/validate_repo.py`、`python -m unittest discover -s scripts/tests -v`、任务范围校验和`git diff --check`将在提交前重跑，最终结果补记在Pull Request及本文件。
-- 二进制地图、资产和截图由Git LFS规则管理；提交前需检查索引中的LFS指针。
-- 实现提交：`PENDING`。
+- `python scripts/validate_repo.py`通过；`python -m unittest discover -s scripts/tests -v`共31项通过。
+- `python scripts/validate_repo.py --task TASK-026 --base b1f85525697b79e6017455decab9d79a54977834`检查229个路径并通过；该结果只证明本地范围，不证明远端归属或锁。
+- 9个UE/验证Python脚本通过`py_compile`；`git diff --check`通过。二进制地图、资产和截图在索引中均为Git LFS指针。
+- 实现提交：`652558146a250df6359f60175b0c20170217cf06`。
 - 证据绑定提交：`PENDING`。
 - 远端分支与Pull Request：`PENDING`。
 
