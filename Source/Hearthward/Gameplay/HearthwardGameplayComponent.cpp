@@ -16,12 +16,27 @@
 #include "EngineUtils.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
+#include "HearthwardCompanionCombatPolicy.h"
 
 using namespace HearthwardData;
 namespace
 {
 double Tune(const FString& Key) { return Number(Catalog()->GetObjectField(TEXT("tuning")), Key); }
 FName EventKey(FName Kind, FName Target) { return FName(*(Kind.ToString()+TEXT(":")+Target.ToString())); }
+FName LegacyOrderForDirective(FName Directive)
+{
+    if(Directive==TEXT("hold")) return TEXT("wait");
+    if(Directive==TEXT("follow")) return TEXT("follow");
+    if(Directive==TEXT("assist")) return TEXT("attack");
+    return NAME_None;
+}
+FName DirectiveForLegacyOrder(FName Order)
+{
+    if(Order==TEXT("wait")) return TEXT("hold");
+    if(Order==TEXT("follow")) return TEXT("follow");
+    if(Order==TEXT("attack")) return TEXT("assist");
+    return NAME_None;
+}
 TSharedPtr<FJsonObject> Parse(const FString& Text)
 {
     TSharedPtr<FJsonObject> Out;
@@ -352,59 +367,149 @@ void UHearthwardGameplayComponent::DamageOpponent(FName Target,float Damage)
         Record(TEXT("defeat"),Target);
     }
 }
-bool UHearthwardGameplayComponent::OrderCompanion(FName Order)
+FString UHearthwardGameplayComponent::PreviewCompanionDirective(AActor* Speaker,FName Directive) const
 {
-    if(!Enabled || Health<=0 || GetWorld()->IsPaused()) return false;
-    if(Order!=TEXT("wait") && Order!=TEXT("follow") && Order!=TEXT("attack")) return false;
+    if(LegacyOrderForDirective(Directive).IsNone()) return TEXT("UNSUPPORTED_CAPABILITY");
+    if(Speaker!=GetOwner()) return TEXT("PLAYER_MISMATCH");
+    if(!Enabled || Health<=0) return TEXT("PLAYER_UNAVAILABLE");
+    if(GetWorld()->IsPaused()) return TEXT("WORLD_PAUSED");
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+        return It->CanCommunicate(Speaker)?FString():TEXT("OUT_OF_RANGE");
+    return TEXT("COMPANION_UNAVAILABLE");
+}
+
+bool UHearthwardGameplayComponent::ApplyCompanionDirective(AActor* Speaker,FName Directive)
+{
+    const FString Error=PreviewCompanionDirective(Speaker,Directive);
+    if(!Error.IsEmpty()) return Result(false,TEXT("伙伴指令未执行：")+Error);
+
+    const FName Order=LegacyOrderForDirective(Directive);
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
     {
-        if(!It->CanCommunicate(GetOwner())) return Result(false,TEXT("请靠近弟弟，交流范围30米"));
-        GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
-        if(!It->Cancel(GetOwner())) return false;
+        // Explicitly replacing a task uses the companion's existing cancellation semantics:
+        // physical cargo remains in the companion bag and is never silently deleted.
+        if(!It->Cancel(Speaker)) return Result(false,TEXT("伙伴指令已失效，请重新靠近后再试"));
         CompanionOrder=Order;
-        return Result(true,Order==TEXT("wait")?TEXT("弟弟在原地等待"):Order==TEXT("follow")?TEXT("弟弟开始跟随"):TEXT("弟弟协助攻击附近敌人"));
+        CompanionTacticalIntent=Directive;
+        CompanionCombatTarget=NAME_None;
+        CompanionCombatReason=TEXT("DIRECTIVE_CHANGED");
+        return Result(true,Directive==TEXT("hold")?TEXT("弟弟在原地等待"):
+            Directive==TEXT("follow")?TEXT("弟弟开始跟随"):TEXT("弟弟协助处理玩家附近的有效威胁"));
     }
     return Result(false,TEXT("弟弟不在附近"));
 }
+
+bool UHearthwardGameplayComponent::OrderCompanion(FName Order)
+{
+    const FName Directive=DirectiveForLegacyOrder(Order);
+    if(Directive.IsNone()) return false;
+    const FString Error=PreviewCompanionDirective(GetOwner(),Directive);
+    if(!Error.IsEmpty()) return Result(false,TEXT("伙伴指令未执行：")+Error);
+    // A valid direct Z/X/C command is an explicit player override; only then invalidate an in-flight model reply.
+    GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
+    return ApplyCompanionDirective(GetOwner(),Directive);
+}
+
 void UHearthwardGameplayComponent::TickCompanion(float Delta)
 {
     CompanionAttackDelay=FMath::Max(0.f,CompanionAttackDelay-Delta);
-    if(CompanionOrder==TEXT("wait")) return;
+    CompanionTacticalIntent=TEXT("hold");
+    CompanionCombatTarget=NAME_None;
+    CompanionCombatReason=TEXT("COMPANION_UNAVAILABLE");
+
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
     {
         using P=EHearthwardCompanionPhase;
         const P Phase=It->GetPhase();
-        if(Phase==P::GoingToSource || Phase==P::Gathering || Phase==P::Returning || Phase==P::ReturningBlocked)
-        { CompanionOrder=TEXT("wait"); return; }
-        AActor* Destination=GetOwner(); FName Target;
-        if(CompanionOrder==TEXT("attack"))
+        if(Phase!=P::Idle && Phase!=P::Completed && Phase!=P::Cancelled)
         {
-            float Nearest=Tune(TEXT("companionCommandRange"));
-            for(const auto& Enemy:OpponentActors)
+            // A typed collect/craft/repair plan owns companion navigation while active.
+            // Combat/follow policy must yield without cancelling the executor's MoveTo request.
+            CompanionOrder=TEXT("wait");
+            CompanionCombatReason=TEXT("TASK_OWNS_COMPANION");
+            return;
+        }
+
+        FHearthwardCompanionCombatObservation Observation;
+        Observation.RequestedOrder=CompanionOrder;
+        Observation.PlayerHealthRatio=MaxHealth()>0?Health/MaxHealth():0;
+        Observation.bPlayerInCombat=InCombat();
+        Observation.PlayerPosition=GetOwner()->GetActorLocation();
+        Observation.CompanionPosition=It->GetActorLocation();
+        Observation.CompanionToPlayerDistance=FVector::Dist2D(Observation.CompanionPosition,Observation.PlayerPosition);
+        Observation.CommandRange=Tune(TEXT("companionCommandRange"));
+        for(const auto& Enemy:OpponentActors)
+        {
+            if(!Enemy.Value.IsValid()) continue;
+            FHearthwardCompanionThreat Threat;
+            Threat.Id=Enemy.Key;
+            Threat.Position=Enemy.Value->GetActorLocation();
+            Threat.RemainingHealth=Opponents.FindRef(Enemy.Key);
+            Observation.Threats.Add(Threat);
+        }
+
+        const FHearthwardCompanionCombatDecision Decision=HearthwardCombatPolicy::Evaluate(Observation);
+        CompanionTacticalIntent=HearthwardCombatPolicy::IntentName(Decision.Intent);
+        CompanionCombatTarget=Decision.Target;
+        CompanionCombatReason=Decision.Reason;
+
+        if(Decision.Intent==EHearthwardCompanionTacticalIntent::Hold)
+        {
+            It->StopNavigation();
+            It->BlockReason.Reset();
+            return;
+        }
+
+        AActor* Destination=GetOwner();
+        if(Decision.Intent==EHearthwardCompanionTacticalIntent::Assist)
+        {
+            const auto* TargetActor=OpponentActors.Find(Decision.Target);
+            if(!TargetActor || !TargetActor->IsValid())
             {
-                if(!Enemy.Value.IsValid() || Opponents.FindRef(Enemy.Key)<=0 || FVector::Dist2D(GetOwner()->GetActorLocation(),Enemy.Value->GetActorLocation())>Tune(TEXT("companionCommandRange"))) continue;
-                const float Distance=FVector::Dist2D(It->GetActorLocation(),Enemy.Value->GetActorLocation());
-                if(Distance<Nearest) { Nearest=Distance; Destination=Enemy.Value.Get(); Target=Enemy.Key; }
+                CompanionTacticalIntent=TEXT("follow");
+                CompanionCombatTarget=NAME_None;
+                CompanionCombatReason=TEXT("TARGET_DISAPPEARED");
             }
+            else Destination=TargetActor->Get();
         }
-        const float StopDistance=Target.IsNone()?Tune(TEXT("companionFollowDistance")):Tune(TEXT("attackRange"))*.8f;
-        FVector Direction=Destination->GetActorLocation()-It->GetActorLocation(); Direction.Z=0;
-        if(Direction.Size()>StopDistance)
+
+        const bool bTargeting=!CompanionCombatTarget.IsNone();
+        const float StopDistance=bTargeting?Tune(TEXT("attackRange"))*.8f:Tune(TEXT("companionFollowDistance"));
+        FVector Direction=Destination->GetActorLocation()-It->GetActorLocation();
+        Direction.Z=0;
+
+        if(bTargeting && Direction.Size()<=StopDistance)
         {
-            It->BlockReason=It->NavigateTo(Destination,Tune(TEXT("companionMoveSpeed")),StopDistance-10)?TEXT(""):TEXT("目标不可达，请调整位置");
-        }
-        else
-        {
-            if(Target.IsNone()) { It->StopNavigation(); It->BlockReason.Reset(); return; }
-            FHitResult Hit; FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardCompanionAttack),false,*It);
+            FHitResult Hit;
+            FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardCompanionAttack),false,*It);
             Query.AddIgnoredActor(GetOwner());
             if(!GetWorld()->LineTraceSingleByChannel(Hit,It->GetActorLocation(),Destination->GetActorLocation(),ECC_Visibility,Query))
             {
-                It->StopNavigation(); It->BlockReason.Reset();
+                It->StopNavigation();
+                It->BlockReason.Reset();
                 if(CompanionAttackDelay<=0)
-                { DamageOpponent(Target,Tune(TEXT("companionAttack"))); CompanionAttackDelay=Tune(TEXT("companionAttackCooldown")); CombatRemaining=3; }
+                {
+                    DamageOpponent(CompanionCombatTarget,Tune(TEXT("companionAttack")));
+                    CompanionAttackDelay=Tune(TEXT("companionAttackCooldown"));
+                    CombatRemaining=3;
+                }
+                return;
             }
-            else It->BlockReason=It->NavigateTo(Destination,Tune(TEXT("companionMoveSpeed")),30)?TEXT("正在绕行接近目标"):TEXT("目标不可达，请调整位置");
+            It->BlockReason=It->NavigateTo(Destination,Tune(TEXT("companionMoveSpeed")),30)
+                ?TEXT("正在绕行接近目标"):TEXT("目标不可达，请调整位置");
+            return;
+        }
+
+        if(Direction.Size()>StopDistance)
+        {
+            const float Acceptance=FMath::Max(20.f,StopDistance-10.f);
+            It->BlockReason=It->NavigateTo(Destination,Tune(TEXT("companionMoveSpeed")),Acceptance)
+                ?(bTargeting?TEXT("正在接近威胁"):TEXT("")):TEXT("目标不可达，请调整位置");
+        }
+        else
+        {
+            It->StopNavigation();
+            It->BlockReason.Reset();
         }
         return;
     }
@@ -545,7 +650,8 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     LandmarkActors.Reset(); OpponentActors.Reset(); Stunned.Reset();
     Skills.Reset(); Equipment.Reset(); Discovered.Reset(); Activated.Reset(); Claimed.Reset(); Events.Reset(); Explored.Reset(); Opponents.Reset(); Durability.Reset();
     Sprinting=false; RecoveryDelay=0; ExploreDelay=0; AttackDelay=EnemyAttackDelay=CombatRemaining=CompanionAttackDelay=0; Feedback.Reset();
-    CompanionOrder=TEXT("wait"); HasWaypoint=false; Waypoint=FVector::ZeroVector;
+    CompanionOrder=TEXT("wait"); CompanionTacticalIntent=TEXT("hold"); CompanionCombatTarget=NAME_None; CompanionCombatReason=TEXT("EXPLICIT_HOLD");
+    HasWaypoint=false; Waypoint=FVector::ZeroVector;
     if (Json.IsEmpty()) { Health=Hunger=Stamina=100; Experience=0; CampTier=1; Enabled=false; TrackedQuest=TEXT("ember"); return; }
     const auto J=Parse(Json);
     if(J->HasField(TEXT("companionOrder"))) CompanionOrder=FName(*Text(J,TEXT("companionOrder")));

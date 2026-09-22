@@ -6,6 +6,7 @@
 #include "../Companion/HearthwardCompanionCommand.h"
 #include "HearthwardLocalAIContext.h"
 #include "HearthwardNPCMemory.h"
+#include "HearthwardNPCSuggestions.h"
 #include "HearthwardLocalAISubsystem.generated.h"
 
 class AHearthwardCompanionFixture;
@@ -63,6 +64,10 @@ public:
     UFUNCTION(BlueprintCallable) bool QueryInventory(AActor* Speaker,AHearthwardCompanionFixture* Companion,FName Item);
     UFUNCTION(BlueprintCallable) bool CancelExecution(AActor* Speaker,AHearthwardCompanionFixture* Companion);
     UFUNCTION(BlueprintCallable) bool SetStructuredGoal(AActor* Speaker,AHearthwardCompanionFixture* Companion,const FHearthwardAgentGoal& Goal);
+    UFUNCTION(BlueprintCallable) bool RefreshSuggestions(AActor* Speaker,AHearthwardCompanionFixture* Companion);
+    UFUNCTION(BlueprintCallable) bool SubmitSuggestion(AActor* Speaker,AHearthwardCompanionFixture* Companion,FGuid Id);
+    UFUNCTION(BlueprintPure) TArray<FHearthwardNPCSuggestion> GetSuggestions() const { return Suggestions; }
+    UFUNCTION(BlueprintPure) FString GetLastInputSource() const { return LastInputSource; }
     void RecordEvent(const FHearthwardNPCEvent& E) {Memory.RecordEvent(E);}
     const FHearthwardNPCMemory& GetMemorySnapshot() const { return Memory; }
     void RestoreMemory(const FHearthwardNPCMemory& Snapshot);
@@ -70,6 +75,7 @@ public:
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 private:
+    bool SubmitPlayerTextInternal(AActor* Speaker, AHearthwardCompanionFixture* Companion, const FString& Text, const FString& Source);
     bool StartServer();
     void StopServer();
     void PollHealth();
@@ -83,7 +89,9 @@ private:
     FString BuildFilteredContext() const;
     void ObserveCamp();
     FHearthwardNPCMemory Memory;
+    TArray<FHearthwardNPCSuggestion> Suggestions;
     FString LastAppliedIntent;
+    FString LastInputSource = TEXT("free_text");
 
     FProcHandle Process;
     void* JobHandle = nullptr;

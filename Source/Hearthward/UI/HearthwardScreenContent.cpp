@@ -346,11 +346,11 @@ void UHearthwardScreenWidget::ComposeDialogue()
 {
     const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
     const FString CardText=AI->GetCandidateText();const bool ShowCard=!CardText.IsEmpty();
-    Element(TEXT("choice"),TEXT("记忆与约定"),FVector2D(1260,290),FVector2D(290,44),19,TEXT("page:memory"));
+    Element(TEXT("choice"),TEXT("记忆与约定"),FVector2D(1405,240),FVector2D(150,36),16,TEXT("page:memory"));
     Elements.Last().Component=TEXT("dialogue.panel");
     if(AI->GetClarificationTurns()>0)
     {
-        Element(TEXT("choice"),TEXT("结束本次澄清"),FVector2D(1260,240),FVector2D(290,40),18,TEXT("clearClarification"));
+        Element(TEXT("choice"),TEXT("结束本次澄清"),FVector2D(1370,160),FVector2D(185,36),16,TEXT("clearClarification"));
         Elements.Last().Component=TEXT("dialogue.panel");
     }
     FString Reply=AI->CanDisplay()?AI->GetNPCLine():FString();
@@ -359,13 +359,27 @@ void UHearthwardScreenWidget::ComposeDialogue()
     const int32 ReplyScroll=ShowCard?0:Scroll;
     TArray<FString> Lines; for(int32 I=ReplyScroll*23;I<FMath::Min(Reply.Len(),(ReplyScroll+4)*23);I+=23) Lines.Add(Reply.Mid(I,23));
     Element(TEXT("text"),FString::Join(Lines,TEXT("\n")),FVector2D(993,362),FVector2D(510,128),20);
-    if(!ShowCard) for(const auto& Entry:Theme->GetArrayField(TEXT("dialogueChoices")))
+    if(!ShowCard)
     {
-        const auto Choice=Entry->AsObject(); const auto& Rect=Choice->GetArrayField(TEXT("rect"));
-        const FVector2D P(Rect[0]->AsNumber(),Rect[1]->AsNumber());
-        Element(TEXT("choice"),Text(Choice,TEXT("label")),P,FVector2D(Rect[2]->AsNumber(),Rect[3]->AsNumber()),19,TEXT("say:")+Text(Choice,TEXT("message")));
-        Elements.Last().TextInset=76;
-        Element(TEXT("image"),TEXT(""),P+FVector2D(23,11),FVector2D(32,33),18,TEXT(""),Text(Choice,TEXT("icon")));
+        Element(TEXT("choice"),TEXT("刷新建议"),FVector2D(1260,240),FVector2D(140,36),16,TEXT("suggestRefresh"));
+        Elements.Last().Component=TEXT("dialogue.panel");
+        const auto Suggestions=AI->GetSuggestions();
+        const auto& Slots=Theme->GetArrayField(TEXT("dialogueChoices"));
+        if(Suggestions.IsEmpty())
+        {
+            Element(TEXT("text"),TEXT("建议不会自动刷新。点击上方按钮后生成；未选择的内容不会传给弟弟。"),
+                FVector2D(968,505),FVector2D(518,100),17);
+            Elements.Last().Component=TEXT("dialogue.panel");
+        }
+        for(int32 I=0;I<FMath::Min(3,Suggestions.Num()) && Slots.IsValidIndex(I);++I)
+        {
+            const auto Choice=Slots[I]->AsObject(); const auto& Rect=Choice->GetArrayField(TEXT("rect"));
+            const FVector2D P(Rect[0]->AsNumber(),Rect[1]->AsNumber());
+            Element(TEXT("choice"),Suggestions[I].Label,P,FVector2D(Rect[2]->AsNumber(),Rect[3]->AsNumber()),19,
+                TEXT("suggest:")+Suggestions[I].Id.ToString());
+            Elements.Last().TextInset=76;
+            Element(TEXT("image"),TEXT(""),P+FVector2D(23,11),FVector2D(32,33),18,TEXT(""),Text(Choice,TEXT("icon")));
+        }
     }
     if(ShowCard)
     {
@@ -384,7 +398,11 @@ void UHearthwardScreenWidget::ComposeDialogue()
         Element(TEXT("choice"),TEXT("确认这项任务"),FVector2D(975,716),FVector2D(285,42),19,TEXT("agentConfirm:")+Id);Elements.Last().Component=TEXT("dialogue.panel");
         Element(TEXT("choice"),TEXT("放弃提案"),FVector2D(1280,716),FVector2D(275,42),19,TEXT("cancelReply"));Elements.Last().Component=TEXT("dialogue.panel");
     }
-    TArray<const FHearthwardAgentCapability*> Caps;for(const auto& C:HearthwardAgent::Capabilities())if(C.Writes)Caps.Add(&C);
+    TArray<const FHearthwardAgentCapability*> Caps;
+    for(const auto& C:HearthwardAgent::Capabilities())
+        if(C.Id==TEXT("collect") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
+    AgentCapabilityIndex=FMath::Clamp(AgentCapabilityIndex,0,Caps.Num()-1);
+    AgentItemIndex=FMath::Clamp(AgentItemIndex,0,Caps[AgentCapabilityIndex]->Items.Num()-1);
     const auto& Cap=*Caps[AgentCapabilityIndex];
     Element(TEXT("choice"),Cap.Id==TEXT("craft")?TEXT("制作"):Cap.Id==TEXT("repair")?TEXT("维修"):TEXT("采集"),FVector2D(955,240),FVector2D(140,36),16,TEXT("agentTypeNext"));Elements.Last().Component=TEXT("dialogue.panel");
     Element(TEXT("choice"),HearthwardAgent::ItemText(Cap.Items[AgentItemIndex]),FVector2D(1100,240),FVector2D(150,36),16,TEXT("agentItemNext"));Elements.Last().Component=TEXT("dialogue.panel");

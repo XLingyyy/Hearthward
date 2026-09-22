@@ -53,8 +53,21 @@ TSharedRef<SWidget> UHearthwardDialogueWidget::RebuildWidget()
         auto* Scroll = WidgetTree->ConstructWidget<UScrollBox>();
         Rows->AddChildToVerticalBox(Scroll)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
         Reply = Text(TEXT(""),18,Ivory); Scroll->AddChild(Reply);
-        Rows->AddChildToVerticalBox(Text(TEXT("快捷建议暂不可用"),14,Muted))->SetPadding(FMargin(0,8,0,2));
-        Rows->AddChildToVerticalBox(Text(TEXT("尚无可用建议，当前不会自动刷新或替你发送。"),12,Muted));
+        Rows->AddChildToVerticalBox(Text(TEXT("快捷建议 · 只在你刷新时更换"),14,Muted))->SetPadding(FMargin(0,8,0,2));
+        auto MakeSuggestionButton = [&](const FString& Label,bool Track)
+        {
+            auto* B=WidgetTree->ConstructWidget<UButton>();
+            B->SetBackgroundColor(FLinearColor(.12f,.15f,.14f));
+            auto* L=Text(Label,13,Ivory); B->AddChild(L);
+            Rows->AddChildToVerticalBox(B)->SetPadding(FMargin(0,2,0,0));
+            if(Track){SuggestionButtons.Add(B);SuggestionLabels.Add(L);}
+            return B;
+        };
+        SuggestionRefresh=MakeSuggestionButton(TEXT("刷新3条建议"),false);
+        SuggestionRefresh->OnClicked.AddDynamic(this,&UHearthwardDialogueWidget::RefreshSuggestions);
+        auto* S0=MakeSuggestionButton(TEXT("尚未刷新"),true);S0->OnClicked.AddDynamic(this,&UHearthwardDialogueWidget::SelectSuggestion0);
+        auto* S1=MakeSuggestionButton(TEXT("尚未刷新"),true);S1->OnClicked.AddDynamic(this,&UHearthwardDialogueWidget::SelectSuggestion1);
+        auto* S2=MakeSuggestionButton(TEXT("尚未刷新"),true);S2->OnClicked.AddDynamic(this,&UHearthwardDialogueWidget::SelectSuggestion2);
         Draft = WidgetTree->ConstructWidget<UEditableTextBox>();
         auto InputStyle = Draft->GetWidgetStyle();
         InputStyle.TextStyle.Font.Size = 18;
@@ -96,6 +109,17 @@ void UHearthwardDialogueWidget::Refresh()
     Send->SetIsEnabled(HUD->CanSendDialogue() && !Value.IsEmpty() && Value.Len()<=1000);
     StopReply->SetIsEnabled(HUD->CanCancelDialogueReply());
     StopTask->SetIsEnabled(HUD->CanCancelDialogueTask());
+    const auto Suggestions=HUD->GetDialogueSuggestions();
+    SuggestionIds.Reset();
+    for(int32 I=0;I<SuggestionButtons.Num();++I)
+    {
+        const bool Available=Suggestions.IsValidIndex(I);
+        if(SuggestionLabels.IsValidIndex(I))
+            SuggestionLabels[I]->SetText(FText::FromString(Available?Suggestions[I].Label:TEXT("尚未刷新")));
+        SuggestionButtons[I]->SetIsEnabled(Available && HUD->CanSendDialogue());
+        if(Available)SuggestionIds.Add(Suggestions[I].Id);
+    }
+    if(SuggestionRefresh)SuggestionRefresh->SetIsEnabled(!HUD->CanCancelDialogueReply());
 }
 void UHearthwardDialogueWidget::NativeTick(const FGeometry& Geometry,float DeltaTime)
 {
@@ -104,6 +128,7 @@ void UHearthwardDialogueWidget::NativeTick(const FGeometry& Geometry,float Delta
     Refresh();
 }
 void UHearthwardDialogueWidget::SetDraft(const FString& Text) { if(Draft) Draft->SetText(FText::FromString(Text)); Refresh(); }
+void UHearthwardDialogueWidget::RefreshSuggestionChoices() { RefreshSuggestions(); }
 void UHearthwardDialogueWidget::SendDraft()
 {
     if(HUD.IsValid() && Draft && HUD->SubmitDialogue(Draft->GetText().ToString())) Draft->SetText(FText::GetEmpty());
@@ -112,6 +137,10 @@ void UHearthwardDialogueWidget::SendDraft()
 void UHearthwardDialogueWidget::CommitDraft(const FText&,ETextCommit::Type Method) { if(Method==ETextCommit::OnEnter) SendDraft(); }
 void UHearthwardDialogueWidget::CancelReply() { if(HUD.IsValid()) HUD->CancelDialogueReply(); Refresh(); }
 void UHearthwardDialogueWidget::CancelTask() { if(HUD.IsValid()) HUD->CancelDialogueTask(); Refresh(); }
+void UHearthwardDialogueWidget::RefreshSuggestions() { if(HUD.IsValid()) HUD->RefreshDialogueSuggestions(); Refresh(); }
+void UHearthwardDialogueWidget::SelectSuggestion0() { if(HUD.IsValid()&&SuggestionIds.IsValidIndex(0)) HUD->SubmitDialogueSuggestion(SuggestionIds[0]); Refresh(); }
+void UHearthwardDialogueWidget::SelectSuggestion1() { if(HUD.IsValid()&&SuggestionIds.IsValidIndex(1)) HUD->SubmitDialogueSuggestion(SuggestionIds[1]); Refresh(); }
+void UHearthwardDialogueWidget::SelectSuggestion2() { if(HUD.IsValid()&&SuggestionIds.IsValidIndex(2)) HUD->SubmitDialogueSuggestion(SuggestionIds[2]); Refresh(); }
 void UHearthwardDialogueWidget::Close() { if(HUD.IsValid()) HUD->CloseDialogue(); }
 void UHearthwardDialogueWidget::FocusDraft() { if(Draft) Draft->SetKeyboardFocus(); }
 bool UHearthwardDialogueWidget::HasDraftFocus() const { return Draft && (Draft->HasKeyboardFocus() || Draft->HasFocusedDescendants()); }
@@ -119,6 +148,10 @@ bool UHearthwardDialogueWidget::IsSendEnabled() const { return Send && Send->Get
 FString UHearthwardDialogueWidget::GetDisplayedStatus() const { return Status ? Status->GetText().ToString() : FString(); }
 FString UHearthwardDialogueWidget::GetDisplayedProgress() const { return Progress ? Progress->GetText().ToString() : FString(); }
 FString UHearthwardDialogueWidget::GetDisplayedReply() const { return Reply ? Reply->GetText().ToString() : FString(); }
+TArray<FString> UHearthwardDialogueWidget::GetDisplayedSuggestions() const
+{
+    TArray<FString> Out;for(const auto& Label:SuggestionLabels)if(Label)Out.Add(Label->GetText().ToString());return Out;
+}
 FReply UHearthwardDialogueWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
 {
     if(Event.GetKey()==EKeys::F6 && HUD.IsValid()) { HUD->ToggleSaveMenu(); return FReply::Handled(); }

@@ -1,17 +1,17 @@
 # Hearthward 项目状态
 
-2026-09-22局部更新：[TASK-026自然地图](tasks/TASK-026.md)实施分支已形成4032 m World Partition灰盒、独立浏览GameMode和局部PIE证据；27项定向检查通过，但视觉、长路线、Standalone流送、性能与Owner验收未完成，状态Blocked。main基线为 `b1f85525697b79e6017455decab9d79a54977834`；下方025记录为既有分支快照，不代表当前检出分支。004实际源资产状态以[资源汇总](../resourceSummary.md)及026交接为准。
+2026-09-22局部更新：main 当前为 `4114556`，已包含 TASK-025 v2（PR #23）、资源汇总（PR #24）与 TASK-026 自然世界灰盒（PR #25）。TASK-026 已形成 4032 m World Partition 灰盒、独立浏览 GameMode 和27项定向 PIE 证据，但视觉、长路线、Standalone 流送、性能与 Owner 验收仍未完成。当前 PR 分支 `codex/ai-npc-stack-pr` 基于该最新 main，整理 TASK-027→031 AI NPC 栈，不修改 TASK-026 的资产内容。
 
-更新：2026-09-20。当前TASK-020九页参考UI与配套玩法已形成可运行分支版本，功能验证通过，用户于2026-09-19明确验收通过；提交推送绑定见020交接。TASK-019及此前003、005至018已提交推送，024合并的主干包含此前任务成果；TASK-004已有部分自然素材源文件交付，UE适配未完成。TASK-021伙伴导航已提交推送；TASK-022自由建造已提交推送；TASK-023即时制作已提交推送；原025已通过PR #22合并main d02b5fe，用户否决验收后指定增强版v2 A+B；当前修订结果见025交接。
+历史基线：TASK-020 于2026-09-19通过用户验收；021伙伴导航、022自由建造、023即时制作、024维修已进入后续主干。原025经PR #22合并后被用户否决验收；增强版v2随后通过PR #23合并main。TASK-004已有77个自然素材源文件入库，UE适配未完成。
 
 | 项目 | 实际状态 |
 |---|---|
 | 开发根目录 | 独立 Hearthward 仓库，与上层 GameFactory 工具仓库隔离 |
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
-| 当前分支 | `codex/TASK-026-natural-world`；基于main b1f8552，灰盒自然世界未合并main |
-| 游戏实现提交 | TASK-026实现提交与证据绑定见026交接；TASK-025 v2仍在独立分支 |
-| Git LFS | 已启用；026新增地图、资产、外部包和截图均匹配LFS规则，207个对象约77 MB已推送；远端确认13个TASK-026主地图/材质/贴图资产锁由violet-sept持有并保留到集成交接 |
+| 当前分支 | `codex/ai-npc-stack-pr`；基于最新 `origin/main=4114556`，只增加 TASK-027→031 AI NPC 栈 |
+| 游戏实现提交 | main 已含 TASK-025 v2 `851d60e` 与 TASK-026 merge `4114556`；本 PR 提交链为 perception → executor → suggestions → combat policy → user-retest fixes |
+| Git LFS | 已启用；TASK-026 地图/资产由 main 继承，本 PR 不新增或修改其 LFS 资产 |
 | 工具链 | UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
 | 构建／操作 | TASK-013 Editor/Game构建通过，68项AI运行依赖齐全；真实模型Vulkan两轮PIE43项、CPU缺文件/进程退出恢复9项通过；伙伴通路仍为隔离夹具 |
@@ -36,15 +36,20 @@
 | TASK-022 | 独立工作台/篝火、真实五秒建造、中断不耗料、摆放校验及建筑回档；验证见022交接 |
 | TASK-023 | 工作台E访问、配方/批量即时制作、原子库存交换及回档；Editor构建、58项PIE与2项原生通过，实键结果见023交接 |
 | TASK-024 | 工作台装备维修、逐件原型费用、完整结算及耐久回档；Editor构建、59项PIE与1项原生通过，实键结果见024交接 |
-| TASK-025 | 原版已合并但用户未验收；v2新增一次确认、规范目标/约束、事件回执、真实制作维修与迁移；本轮证据见rev2目录和025交接，独立评审及用户复验待定 |
+| TASK-025 | v2 已通过 PR #23 合并 main `851d60e`；一次确认、规范目标/约束、事件回执、真实制作维修与迁移已进入主干 |
 | TASK-004 | 部分交付：77个自然素材源文件及来源说明已入库，见resourceSummary.md；UE适配/展示验证未完成，人物与房屋缺项，整单尚未验收 |
-| TASK-026 | 4032 m World Partition灰盒、026材质/贴图、独立浏览GameMode已生成；27项定向PIE通过。当前基础形体视觉未过，长路线/Standalone/性能/评审未跑，状态Blocked，见世界状态、证据与交接 |
-| Issue／评审 | GitHub 连接器创建 Issue 返回 403；独立评审人未分配；本地实现任务的正式流程仍为Blocked |
+| TASK-026 | 已通过 PR #25 合并 main `4114556`；4032 m World Partition灰盒、026材质/贴图、独立浏览GameMode与27项定向PIE已生成。视觉、长路线、Standalone、性能和Owner验收仍未完成 |
+| TASK-027 | 本 PR：authoritative NPC perception/safety。候选形成、确认和执行阶段共享 UE 权威观察；玩家/模型文本不能写入安全或隐藏世界事实。Safety PIE 27/27 PASS |
+| TASK-028 | 本 PR：deterministic Goal→Plan→Action executor。typed actions、plan cursor、retained cargo、receipt、存档计划重建；Executor PIE 49/49 PASS |
+| TASK-029 | 本 PR：显式刷新 contextual suggestions。未选择建议不进入 memory/model/context；Modern PIE 40/40、Legacy PIE 8/8 PASS |
+| TASK-030 | 本 PR：`companion_order=hold/follow/assist` 与 player-centered deterministic combat policy；UE负责目标、导航、LOS、cooldown与伤害。Combat PIE 29/29、真实Qwen directive 14/14 PASS |
+| TASK-031 | 本 PR：用户 UE 复验修正。修复 combat Tick 每帧停止 typed task 导航、整理对话页工具栏、过滤手动任务卡能力；用户反馈 PIE 11/11、真实Qwen“采两份木材”链 11/11 PASS |
+| Issue／评审 | 任务期内 GitHub Issue 创建曾返回403，因此027→031任务快照缺独立远端Issue/Reviewer；本次统一 PR 用于正式代码评审，不在 Agent 侧执行合并 |
 | 打包／两机验证／完整 M0 | NOT_RUN |
 | 本地模型 | 项目已含llama.cpp b10964及Qwen3.5-4B Q4_K_M；真实UE自然语言采集入库、澄清/拒绝与生命周期已验证；台词质量仍有记录限制，见TASK-013交接 |
 | 付费资产生成 | NOT_RUN |
 
-用户已验收TASK-020；TASK-025增强版v2仍在独立分支等待复验。2026-09-22用户授权把TASK-026当前本地进度同步、提交、推送并创建Pull Request用于交接，不授权合并。026当前只是可运行灰盒和局部PIE证据，不得表述为完整自然场景或A1—A8验收通过。
+用户已验收TASK-020；TASK-025 v2与TASK-026已进入main。2026-09-22用户授权把当前全部AI NPC修改整理后提交统一Pull Request，不授权直接合并。TASK-026仍只是可运行灰盒和局部PIE证据；TASK-027→031为本 PR 的AI NPC增量。
 [TASK-018交接](handoffs/TASK-018.md)记录当前玩家采集入库、回档、录像及边界。
 [TASK-017交接](handoffs/TASK-017.md)记录存档管理UI、实键录像、受测源码快照和限制。
 [TASK-013交接](handoffs/TASK-013.md)记录本地模型与设计修订的当前结果。

@@ -228,6 +228,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     PlayerTimer->SetComponentTickEnabled(S.PlayerTimer.Status == EHearthwardTimedActionStatus::Running);
     Companion->Action->State = TimerState(S.CompanionTimer, S.ActiveSeconds);
     Companion->Action->SetComponentTickEnabled(S.CompanionTimer.Status == EHearthwardTimedActionStatus::Running);
+    Companion->RestoreExecutionPlan();
     NextAutoSeconds = S.ActiveSeconds + AutoMinutes * 60.0;
     // All state is committed before consumers may observe it. No gameplay settlement events replay.
     if (auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>())

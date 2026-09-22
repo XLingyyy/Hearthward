@@ -94,6 +94,9 @@ void SubmitCompanionFixture(const TArray<FString>& Args, UWorld* World)
     auto* Companion = FindCompanionFixture(World);
     auto* Player = World ? UGameplayStatics::GetPlayerPawn(World, 0) : nullptr;
     if (!Companion || !Player || Args.Num() != 1) return;
+    // Development console entry is also the explicit "run this fixture" action. PIE can reopen on the
+    // prototype menu's paused state, so make the debug command resume simulation before requesting.
+    UGameplayStatics::SetGamePaused(World, false);
     int64 Count = 0;
     for (TCHAR Digit : Args[0])
     {

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "TASK-029",
+  "title": "AI NPC上下文快捷建议与显式刷新交互",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-029-contextual-suggestions",
+  "source_refs": [
+    "用户于2026-09-22要求继续深度推进AI NPC，后续统一交GitHub PR",
+    "DSGN-001：三条建议只在玩家主动刷新时更换；未选择的新信息不进入弟弟认知",
+    "GDD v0.3第11章：全局快捷建议可用最新营地数据，不泄露未知内容，点选后才传给弟弟",
+    "TASK-028 local commit d186dc1 typed NPC action executor"
+  ],
+  "dependencies": ["TASK-028"],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/design/DSGN-001-local-inference.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/HearthwardNPCSuggestions.h",
+    "Source/Hearthward/AI/HearthwardNPCSuggestions.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardDialogueWidget.h",
+    "Source/Hearthward/UI/HearthwardDialogueWidget.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.h",
+    "Source/Hearthward/UI/HearthwardHUDDialogue.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-029.json",
+    "docs/tasks/TASK-029.md",
+    "docs/handoffs/TASK-029.md",
+    "docs/qa/evidence/TASK-029/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Resources/Data/gameplay.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "快捷建议由确定性context generator生成，每次显式刷新最多3条；不自动刷新、不后台循环调用模型",
+    "未选中的建议内容不进入NPC memory、clarification、filtered context或执行目标",
+    "建议可使用当前最新营地木材数量等允许的全局信息，但选择时必须重新验证timeline/memory/world preconditions；陈旧建议明确拒绝并提示刷新",
+    "选择建议等价于一次标记来源为quick_suggestion的玩家输入；不会直接执行世界副作用或绕过现有一次确认任务卡",
+    "存在进行中委托时不生成会暗中替换该委托的采集建议，优先提供进度/状态交流",
+    "现代Screen对话页和Legacy DialogueWidget都提供显式刷新入口及当前建议显示",
+    "TASK-027/028 safety/executor与现有025 workshop行为不回归，全量原生自动化通过"
+  ],
+  "non_goals": [
+    "不关闭R20全部慢回复/陈旧文字问题，不实现三日主动闲聊R21",
+    "不做LLM自动生成建议、不做向量库、不做后台轮询或自动弹窗",
+    "不让建议直接确认任务，不替玩家发送未点击内容",
+    "不定义新的经济阈值或隐藏任务答案，不读取未探索地图/敌人/宝箱信息"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22授权继续深度推进AI NPC，并计划阶段性成果统一提交GitHub PR",
+  "required_tests": ["T-002", "T-008", "T-009", "T-020"],
+  "permissions": {
+    "network": "granted for GitHub coordination when available",
+    "install_dependencies": "not_granted",
+    "commit": "granted for staged local task commits before unified PR",
+    "push": "deferred until unified PR handoff",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "TASK-027与028分别已有本地清晰commit；029继续使用独立commit，最终PR保持可审查历史。",
+    "R20仍OPEN：本单只对当前建议做保守stale revalidation，不定义迟到模型文本如何长期呈现。",
+    "全局建议层与弟弟认知严格分离；只有玩家点击后才把那条文本作为quick_suggestion输入提交给AI子系统。"
+  ]
+}

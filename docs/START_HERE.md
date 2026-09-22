@@ -9,7 +9,7 @@
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
 
-当前实施分支为 [TASK-026 大地图自然场景底座](tasks/TASK-026.md)：已形成4032 m World Partition灰盒、独立浏览入口和局部PIE证据，但视觉、长路线、Standalone流送、性能与Owner验收未完成，机器状态为Blocked。人文场景后置，004人物和房屋缺项不阻塞自然底座；接手先看[世界状态](world/TASK-026/CURRENT.md)与[026交接](handoffs/TASK-026.md)。
+当前 main 已包含 [TASK-026 大地图自然场景底座](tasks/TASK-026.md) 的4032 m World Partition灰盒、独立浏览入口和局部PIE证据，但视觉、长路线、Standalone流送、性能与Owner验收仍未完成。当前 PR 分支 `codex/ai-npc-stack-pr` 在最新 main 上增加 TASK-027→031 AI NPC 栈；地图与 AI 状态分别以[026世界状态](world/TASK-026/CURRENT.md)和各 AI 任务交接为准。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。
@@ -59,4 +59,4 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 
 TASK-021伙伴原生导航已提交推送，见[021交接](handoffs/TASK-021.md)。[TASK-022](tasks/TASK-022.md)自由建造已提交推送，见[022交接](handoffs/TASK-022.md)。[TASK-023](tasks/TASK-023.md)即时制作已提交推送，见[023交接](handoffs/TASK-023.md)。当前[TASK-024](tasks/TASK-024.md)接入工作台装备维修与耐久回档，用户授权自主提交推送，见[024交接](handoffs/TASK-024.md)。
 
-当前[TASK-025](tasks/TASK-025.md)按用户提供的增强版v2执行A+B。原025已合并main d02b5fe但用户未验收；修订位于 `codex/TASK-025-agent-rev2`，见[025交接](handoffs/TASK-025.md)。用户授权提交推送，不授权合并。
+[TASK-025](tasks/TASK-025.md) 增强版 v2 已通过 PR #23 合并 main `851d60e`；[TASK-026](tasks/TASK-026.md) 已通过 PR #25 合并 main `4114556`。当前 AI NPC 统一 PR 分支为 `codex/ai-npc-stack-pr`，包含 [TASK-027](tasks/TASK-027.md) 权威感知/安全、[TASK-028](tasks/TASK-028.md) typed executor、[TASK-029](tasks/TASK-029.md) contextual suggestions、[TASK-030](tasks/TASK-030.md) deterministic combat policy 与 [TASK-031](tasks/TASK-031.md) 用户复验修正。用户授权整理并提交 PR，不授权 Agent 直接合并。

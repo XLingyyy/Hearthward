@@ -2,6 +2,7 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Building/HearthwardWorkshopService.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Save/HearthwardSaveSubsystem.h"
@@ -110,12 +111,20 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
     ReasonCode=HearthwardAgent::Validate(Goal);
     if(Goal.WritesWorld())
     {
-        if(Goal.Intent!=TEXT("collect"))
+        if(Goal.Intent==TEXT("craft") || Goal.Intent==TEXT("repair"))
         {
             auto* P=UGameplayStatics::GetPlayerPawn(GetWorld(),0);auto* B=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
             Goal.Station=B?B->KnownWorkbench(PendingCompanion.Get()):FGuid();
         }
-        if(ReasonCode.IsEmpty())ReasonCode=PendingCompanion->PreviewGoal(Goal);
+        if(ReasonCode.IsEmpty())
+        {
+            if(Goal.Intent==TEXT("companion_order"))
+            {
+                auto* Gameplay=PendingSpeaker.IsValid()?PendingSpeaker->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
+                ReasonCode=Gameplay?Gameplay->PreviewCompanionDirective(PendingSpeaker.Get(),Goal.Item):TEXT("PLAYER_UNAVAILABLE");
+            }
+            else ReasonCode=PendingCompanion->PreviewGoal(Goal);
+        }
     }
     Memory.WorkingGoal=Goal;
     if(!ReasonCode.IsEmpty())
@@ -141,6 +150,16 @@ bool UHearthwardLocalAISubsystem::ConfirmCandidate(FGuid Id)
         const double Now=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
         if(!Memory.PutRule(Candidate.Limits[0],Candidate.Original,Now)){ReasonCode=TEXT("MEMORY_CAPACITY");Status=TEXT("规则未保存，请缩短原话或管理记录容量");return false;}
         PendingCompanion->DiscardProposal(Ticket);NPCLine=TEXT("长期规则已确认，将用于后续接受的任务。当前任务保持原状。");
+    }
+    else if(Candidate.Intent==TEXT("companion_order"))
+    {
+        auto* Gameplay=PendingSpeaker.IsValid()?PendingSpeaker->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
+        ReasonCode=Gameplay?Gameplay->PreviewCompanionDirective(PendingSpeaker.Get(),Candidate.Item):TEXT("PLAYER_UNAVAILABLE");
+        if(!ReasonCode.IsEmpty()){Status=TEXT("条件已变化，未执行：")+ReasonCode;return false;}
+        if(!Gameplay->ApplyCompanionDirective(PendingSpeaker.Get(),Candidate.Item))
+        {ReasonCode=TEXT("STALE_CONFIRMATION");Status=TEXT("伙伴指令已失效，请重新交流");return false;}
+        NPCLine=Candidate.Item==TEXT("hold")?TEXT("好，我先原地等待。"):
+            Candidate.Item==TEXT("follow")?TEXT("好，我跟着你。"):TEXT("好，我会协助处理你附近的有效威胁。");
     }
     else
     {

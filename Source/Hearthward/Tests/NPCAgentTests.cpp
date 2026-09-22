@@ -1,5 +1,9 @@
 #include "../AI/HearthwardAgentContract.h"
 #include "../AI/HearthwardNPCMemory.h"
+#include "../AI/HearthwardNPCPerception.h"
+#include "../AI/HearthwardAgentPlan.h"
+#include "../AI/HearthwardNPCSuggestions.h"
+#include "../Gameplay/HearthwardCompanionCombatPolicy.h"
 #include "../Companion/HearthwardCompanionCommand.h"
 #include "../Building/HearthwardWorkshopService.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -66,6 +70,203 @@ bool FNPCAgentMemoryTest::RunTest(const FString&)
     TestTrue(TEXT("All capacity reclaimed"),Recycled.Records.IsEmpty());
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentCombatPolicyTest,"Hearthward.NPCAgent.CompanionCombatPolicy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentCombatPolicyTest::RunTest(const FString&)
+{
+    FHearthwardCompanionCombatObservation O;
+    O.CommandRange=1000;O.PlayerHealthRatio=1.0f;
+
+    auto D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Wait holds"),D.Intent==EHearthwardCompanionTacticalIntent::Hold && D.Reason==TEXT("EXPLICIT_HOLD"));
+
+    O.RequestedOrder=TEXT("follow");
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Follow ignores enemies"),D.Intent==EHearthwardCompanionTacticalIntent::Follow && D.Target.IsNone());
+
+    O.RequestedOrder=TEXT("attack");O.CompanionToPlayerDistance=1200;
+    FHearthwardCompanionThreat Wolf;Wolf.Id=TEXT("wolf");Wolf.RemainingHealth=10;Wolf.Position=FVector(100,0,0);
+    O.Threats={Wolf};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Leash overrides assist"),D.Intent==EHearthwardCompanionTacticalIntent::Follow && D.Target.IsNone()
+        && D.Reason==TEXT("RETURN_TO_PLAYER_LEASH"));
+
+    O.CompanionToPlayerDistance=100;O.PlayerPosition=FVector::ZeroVector;O.CompanionPosition=FVector(500,0,0);
+    FHearthwardCompanionThreat Far;Far.Id=TEXT("far_from_player");Far.RemainingHealth=10;Far.Position=FVector(700,0,0);
+    FHearthwardCompanionThreat Near;Near.Id=TEXT("near_player");Near.RemainingHealth=10;Near.Position=FVector(200,0,0);
+    O.Threats={Far,Near};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Threat nearest player has priority"),D.Target==TEXT("near_player") && D.Intent==EHearthwardCompanionTacticalIntent::Assist);
+
+    FHearthwardCompanionThreat Dead;Dead.Id=TEXT("dead");Dead.RemainingHealth=0;Dead.Position=FVector(10,0,0);
+    FHearthwardCompanionThreat Live;Live.Id=TEXT("live");Live.RemainingHealth=10;Live.Position=FVector(200,0,0);
+    FHearthwardCompanionThreat Outside;Outside.Id=TEXT("outside");Outside.RemainingHealth=10;Outside.Position=FVector(1200,0,0);
+    O.Threats={Dead,Live,Outside};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestEqual(TEXT("Dead and out-of-range targets excluded"),D.Target,FName(TEXT("live")));
+
+    FHearthwardCompanionThreat North;North.Id=TEXT("north");North.RemainingHealth=10;North.Position=FVector(0,200,0);
+    FHearthwardCompanionThreat East;East.Id=TEXT("east");East.RemainingHealth=10;East.Position=FVector(200,0,0);
+    O.Threats={North,East};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestEqual(TEXT("Equal player distance prefers threat nearer companion"),D.Target,FName(TEXT("east")));
+
+    FHearthwardCompanionThreat Beta;Beta.Id=TEXT("beta");Beta.RemainingHealth=10;Beta.Position=FVector(200,0,0);
+    FHearthwardCompanionThreat Alpha;Alpha.Id=TEXT("alpha");Alpha.RemainingHealth=10;Alpha.Position=FVector(200,0,0);
+    O.Threats={Beta,Alpha};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestEqual(TEXT("Stable ID tie-break"),D.Target,FName(TEXT("alpha")));
+
+    O.Threats={Outside};
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("No legal threat falls back to follow"),D.Intent==EHearthwardCompanionTacticalIntent::Follow && D.Target.IsNone());
+
+    O.PlayerHealthRatio=0;
+    D=HearthwardCombatPolicy::Evaluate(O);
+    TestTrue(TEXT("Down player stops combat directive"),D.Intent==EHearthwardCompanionTacticalIntent::Hold);
+
+    FHearthwardAgentGoal Goal;Goal.Intent=TEXT("companion_order");Goal.Item=TEXT("assist");Goal.Quantity=1;
+    Goal.QuantityMode=TEXT("directive");Goal.SourceRef=TEXT("player");
+    TestTrue(TEXT("Companion order is a confirmed world-write capability"),Goal.WritesWorld());
+    TestTrue(TEXT("Valid companion directive passes contract"),HearthwardAgent::Validate(Goal).IsEmpty());
+    Goal.Item=TEXT("wolf");
+    TestEqual(TEXT("Model cannot name an arbitrary target"),HearthwardAgent::Validate(Goal),FString(TEXT("UNSUPPORTED_CAPABILITY")));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentSuggestionTest,"Hearthward.NPCAgent.ContextualSuggestions",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentSuggestionTest::RunTest(const FString&)
+{
+    FHearthwardSuggestionContext C;
+    C.bCanCollectWood=true;C.bHasCampWood=true;C.CampWood=7;
+    auto S=HearthwardSuggestions::Build(C);
+    TestEqual(TEXT("Exactly three suggestions"),S.Num(),3);
+    TestEqual(TEXT("Idle safe context suggests collection"),S[0].Kind,FName(TEXT("collect")));
+    TestTrue(TEXT("Camp fact stays in global suggestion text"),S[1].Message.Contains(TEXT("7")));
+    TestEqual(TEXT("Camp suggestion tagged"),S[1].Kind,FName(TEXT("camp_stock")));
+
+    C.bHasActiveCommand=true;
+    S=HearthwardSuggestions::Build(C);
+    TestEqual(TEXT("Active command gets progress suggestion"),S[0].Kind,FName(TEXT("progress")));
+    TestFalse(TEXT("Active command never suggests replacement collect"),S.ContainsByPredicate([](const auto& X){return X.Kind==TEXT("collect");}));
+
+    C={};
+    S=HearthwardSuggestions::Build(C);
+    TestEqual(TEXT("No world facts still produces bounded safe set"),S.Num(),3);
+    TestFalse(TEXT("Unknown camp stock is not fabricated"),S.ContainsByPredicate([](const auto& X){return X.Kind==TEXT("camp_stock");}));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentPlanTest,"Hearthward.NPCAgent.TypedPlanCompilation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentPlanTest::RunTest(const FString&)
+{
+    auto Goal=[](FName Intent,const TCHAR* Source)
+    {
+        FHearthwardAgentGoal G;G.Intent=Intent;G.Item=Intent==TEXT("repair")?TEXT("axe"):Intent==TEXT("craft")?TEXT("arrows"):TEXT("wood");
+        G.Quantity=Intent==TEXT("repair")?1:2;G.QuantityMode=Intent==TEXT("repair")?TEXT("one_owned"):Intent==TEXT("craft")?TEXT("batches"):TEXT("additional_acquired");
+        G.SourceRef=Source;return G;
+    };
+    FString Error;FHearthwardAgentPlan Plan;
+
+    TestTrue(TEXT("Collect plan builds"),HearthwardPlan::Build(Goal(TEXT("collect"),TEXT("S1")),Plan,Error));
+    TestEqual(TEXT("Collect action count"),Plan.Actions.Num(),4);
+    TestTrue(TEXT("Collect move source"),Plan.Actions[0].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Source));
+    TestTrue(TEXT("Collect gather"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Gather,EHearthwardAgentTarget::Source));
+    TestTrue(TEXT("Collect return"),Plan.Actions[2].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp));
+    TestTrue(TEXT("Collect deposit"),Plan.Actions[3].Matches(EHearthwardAgentActionType::Deposit,EHearthwardAgentTarget::Camp));
+
+    TestTrue(TEXT("Bag craft plan builds"),HearthwardPlan::Build(Goal(TEXT("craft"),TEXT("bag")),Plan,Error));
+    TestEqual(TEXT("Bag craft count"),Plan.Actions.Num(),4);
+    TestTrue(TEXT("Bag craft starts at workshop"),Plan.Actions[0].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Workshop));
+    TestTrue(TEXT("Bag craft commits"),Plan.Actions[1].Matches(EHearthwardAgentActionType::CommitWorkshop,EHearthwardAgentTarget::Workshop));
+    TestTrue(TEXT("Bag craft deposits output"),Plan.Actions[3].Matches(EHearthwardAgentActionType::Deposit,EHearthwardAgentTarget::Camp));
+
+    TestTrue(TEXT("Camp craft plan builds"),HearthwardPlan::Build(Goal(TEXT("craft"),TEXT("camp")),Plan,Error));
+    TestEqual(TEXT("Camp craft count"),Plan.Actions.Num(),6);
+    TestTrue(TEXT("Camp craft first returns"),Plan.Actions[0].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp));
+    TestTrue(TEXT("Camp craft takes authorized materials"),Plan.Actions[1].Matches(EHearthwardAgentActionType::TakeMaterials,EHearthwardAgentTarget::Camp));
+    TestEqual(TEXT("Camp craft delivery uses final camp move"),HearthwardPlan::FindLast(Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp),4);
+
+    TestTrue(TEXT("Bag repair plan builds"),HearthwardPlan::Build(Goal(TEXT("repair"),TEXT("bag")),Plan,Error));
+    TestEqual(TEXT("Bag repair count"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Bag repair has no deposit"),HearthwardPlan::Find(Plan,EHearthwardAgentActionType::Deposit)==INDEX_NONE);
+
+    TestTrue(TEXT("Camp repair plan builds"),HearthwardPlan::Build(Goal(TEXT("repair"),TEXT("camp")),Plan,Error));
+    TestEqual(TEXT("Camp repair count"),Plan.Actions.Num(),4);
+    TestTrue(TEXT("Camp repair takes materials"),Plan.Actions[1].Matches(EHearthwardAgentActionType::TakeMaterials,EHearthwardAgentTarget::Camp));
+
+    auto Unsupported=Goal(TEXT("collect"),TEXT("S1"));Unsupported.Intent=TEXT("dialogue");
+    TestFalse(TEXT("Read-only intent has no executable plan"),HearthwardPlan::Build(Unsupported,Plan,Error));
+    TestTrue(TEXT("Unsupported plan returns reason"),!Error.IsEmpty());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentPerceptionSafetyTest,"Hearthward.NPCAgent.PerceptionSafety",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentPerceptionSafetyTest::RunTest(const FString&)
+{
+    FHearthwardNPCObservation O;
+    O.bWorldAvailable=true;O.bCombatStateAvailable=true;O.bCampAvailable=true;O.bCollectionSourceAvailable=true;O.bCollectionSourceTrustedSafe=true;
+
+    FHearthwardAgentGoal Collect;
+    Collect.Intent=TEXT("collect");Collect.Item=TEXT("wood");Collect.Quantity=4;
+    Collect.QuantityMode=TEXT("additional_acquired");Collect.SourceRef=TEXT("S1");
+    auto D=HearthwardPerception::Evaluate(O,Collect);
+    TestTrue(TEXT("Known safe collection is allowed"),D.IsAllowed());
+
+    O.bCombatActive=true;
+    D=HearthwardPerception::Evaluate(O,Collect);
+    TestTrue(TEXT("Active combat is unsafe"),D.Verdict==EHearthwardNPCSafetyVerdict::Unsafe);
+    TestEqual(TEXT("Combat reason is deterministic"),D.Reason,FString(TEXT("ACTIVE_COMBAT")));
+    O.bCombatActive=false;
+
+    O.bCollectionSourceTrustedSafe=false;
+    D=HearthwardPerception::Evaluate(O,Collect);
+    TestTrue(TEXT("Untrusted source is unsafe"),D.Verdict==EHearthwardNPCSafetyVerdict::Unsafe);
+    O.bCollectionSourceTrustedSafe=true;
+    O.bNavigationRebuilding=true;
+    D=HearthwardPerception::Evaluate(O,Collect);
+    TestTrue(TEXT("Navigation rebuild is observed but executor may wait"),D.IsAllowed());
+    O.bNavigationRebuilding=false;O.bCollectionSourceAvailable=false;
+    D=HearthwardPerception::Evaluate(O,Collect);
+    TestTrue(TEXT("Missing collection source is unavailable"),D.Verdict==EHearthwardNPCSafetyVerdict::Unavailable);
+    TestEqual(TEXT("Missing source reason"),D.Reason,FString(TEXT("SOURCE_UNAVAILABLE")));
+
+    O.bCampAvailable=true;
+    FHearthwardAgentGoal Craft;
+    Craft.Intent=TEXT("craft");Craft.Item=TEXT("arrows");Craft.Quantity=2;
+    Craft.QuantityMode=TEXT("batches");Craft.SourceRef=TEXT("bag");
+    D=HearthwardPerception::Evaluate(O,Craft);
+    TestTrue(TEXT("Own-bag craft does not depend on collection source"),D.IsAllowed());
+
+    O.bCampAvailable=false;
+    D=HearthwardPerception::Evaluate(O,Craft);
+    TestTrue(TEXT("Craft still requires the delivery camp"),D.Verdict==EHearthwardNPCSafetyVerdict::Unavailable);
+    TestEqual(TEXT("Missing craft camp reason"),D.Reason,FString(TEXT("CAMP_UNAVAILABLE")));
+
+    FHearthwardAgentGoal Repair;
+    Repair.Intent=TEXT("repair");Repair.Item=TEXT("axe");Repair.Quantity=1;
+    Repair.QuantityMode=TEXT("one_owned");Repair.SourceRef=TEXT("bag");
+    D=HearthwardPerception::Evaluate(O,Repair);
+    TestTrue(TEXT("Own-bag repair does not depend on collection source or camp"),D.IsAllowed());
+    Repair.SourceRef=TEXT("camp");
+    D=HearthwardPerception::Evaluate(O,Repair);
+    TestTrue(TEXT("Camp-authorized repair materials require a camp"),D.Verdict==EHearthwardNPCSafetyVerdict::Unavailable);
+    TestEqual(TEXT("Missing repair camp reason"),D.Reason,FString(TEXT("CAMP_UNAVAILABLE")));
+
+    O.bPaused=true;
+    Craft.SourceRef=TEXT("bag");
+    D=HearthwardPerception::Evaluate(O,Craft);
+    TestTrue(TEXT("Paused world blocks new world writes"),D.Verdict==EHearthwardNPCSafetyVerdict::Unavailable);
+    O.bPaused=false;O.bCombatStateAvailable=false;
+    D=HearthwardPerception::Evaluate(O,Craft);
+    TestTrue(TEXT("Unknown combat state fails closed"),D.Verdict==EHearthwardNPCSafetyVerdict::Unavailable);
+    TestEqual(TEXT("Missing safety-state reason"),D.Reason,FString(TEXT("SAFETY_STATE_UNAVAILABLE")));
+
+    FHearthwardAgentGoal ReadOnly;ReadOnly.Intent=TEXT("inventory");
+    D=HearthwardPerception::Evaluate(O,ReadOnly);
+    TestTrue(TEXT("Read-only reasoning is not promoted to a world write"),D.IsAllowed());
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentWorkshopTest,"Hearthward.NPCAgent.OwnBagWorkshopTransactions",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FNPCAgentWorkshopTest::RunTest(const FString&)
 {

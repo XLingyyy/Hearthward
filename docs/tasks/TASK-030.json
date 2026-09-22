@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "TASK-030",
+  "title": "AI NPC高层战斗指令与确定性战术策略",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-030-companion-combat-policy-stack",
+  "source_refs": [
+    "用户于2026-09-22要求继续深度推进AI NPC，阶段性成果后统一提交GitHub PR",
+    "TASK-027：UE authoritative perception/safety",
+    "TASK-028：deterministic Goal→Plan→Action executor",
+    "TASK-029：explicit contextual suggestions",
+    "既定原则：LLM负责高层策略，UE负责逐帧战术与世界事实"
+  ],
+  "dependencies": ["TASK-029"],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/decisions/ADR-TASK-025-npc-cognition.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/HearthwardAgentContract.h",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/Gameplay/HearthwardCompanionCombatPolicy.h",
+    "Source/Hearthward/Gameplay/HearthwardCompanionCombatPolicy.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-030.json",
+    "docs/tasks/TASK-030.md",
+    "docs/handoffs/TASK-030.md",
+    "docs/qa/evidence/TASK-030/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "新增companion_order高层能力，仅允许hold/follow/assist；自然语言模型不能指定逐帧移动、攻击时机或任意敌人坐标",
+    "companion_order仍生成候选卡，玩家确认前不取消现有委托、不改变战斗状态",
+    "确认时重新验证玩家/伙伴距离、暂停与玩法状态；确认后允许显式替换当前委托并保留真实携带物资",
+    "新增纯确定性combat policy：wait→hold、follow→follow、attack→assist；assist只在player-centered command leash内选有效威胁",
+    "战术目标选择可重复且与LLM无关：优先离玩家最近的有效威胁，再以伙伴距离和稳定ID打破平局",
+    "无合法威胁时assist退化为跟随玩家，不向未知/超范围目标追击",
+    "filtered context暴露requested order、当前tactical intent、target和reason，让后续对话能描述真实战斗状态",
+    "原Z/X/C直接命令、TASK-027/028/029与旧战斗/存档回归不破坏；全量原生自动化与定向PIE通过"
+  ],
+  "non_goals": [
+    "不新增NPC独立血量或伪造尚不存在的伙伴伤势系统",
+    "不让LLM每帧选目标、移动、攻击、闪避或决定命中",
+    "不实现敌营突袭、指定远程追杀、救援、复活或复杂Behavior Tree/EQS",
+    "不修改战斗数值、不增加新敌人、不修改地图/角色资产"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22持续授权AI NPC深度开发并计划统一PR",
+  "required_tests": ["T-002", "T-008", "T-009", "T-020"],
+  "permissions": {
+    "network": "read available; issue creation returned 403 Resource not accessible by integration",
+    "install_dependencies": "not_granted",
+    "commit": "granted for staged local task commits before unified PR",
+    "push": "deferred until unified PR handoff",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "本单沿用现有wait/follow/attack底层命令，不引入第二套战斗模拟；新增的是可测试策略边界与自然语言高层入口。",
+    "assist不是自由自治：它只在现有companionCommandRange内保护/协助，UE确定目标、导航、LOS、攻击冷却和伤害。",
+    "正式Issue/Reviewer流程仍Blocked；GitHub读取可用，但当前集成无Issue写权限。",
+    "2026-09-22本地实现验证：Editor build PASS；repo tests 31/31；full native 33/33；deterministic combat PIE 29/29；真实Qwen3.5-4B combat directive PIE 14/14 PASS。"
+  ]
+}

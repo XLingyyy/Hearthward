@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "HearthwardCompanionCommand.h"
+#include "../AI/HearthwardAgentPlan.h"
 #include "HearthwardCompanionFixture.generated.h"
 
 class UHearthwardInventoryComponent;
@@ -42,6 +43,7 @@ public:
     UFUNCTION(BlueprintPure) int32 GetCarried() const { return Command.GetCarried(); }
     UFUNCTION(BlueprintPure) FHearthwardAgentGoal GetGoal() const {return Command.Goal;}
     UFUNCTION(BlueprintPure) FGuid GetCommandId() const {return Command.GetActive().Id;}
+    UFUNCTION(BlueprintPure) FString GetExecutionAction() const;
     UFUNCTION(BlueprintCallable) bool ResumeBlocked(AActor* Speaker);
     EHearthwardProposalResult SubmitGoal(AActor* Speaker,FHearthwardCommandTicket Ticket,const FHearthwardAgentGoal& Goal);
     FString PreviewGoal(const FHearthwardAgentGoal& Goal) const;
@@ -60,7 +62,8 @@ public:
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardTimedActionComponent> Action;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardInventoryComponent> Source;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<AActor> Camp;
-    // Only fixture/world authority sets this; Submit never accepts a model's safety claim.
+    // PROTOTYPE_ONLY safe-point evidence. Perception captures this input and the safety policy combines it
+    // with current UE world state; player/model text never writes this value or the final verdict.
     UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bSourceSafe = false;
     UPROPERTY(BlueprintReadOnly) FString BlockReason;
 
@@ -74,10 +77,21 @@ private:
     void ReturnBlocked(const FString& Reason);
     void Deposit();
     bool IsSourceValid() const;
+    EHearthwardProposalResult AcceptGoal(AActor* Speaker, FHearthwardCommandTicket Ticket,
+        FName ItemId, int32 Quantity, const TArray<FName>& Steps, const FHearthwardAgentGoal& Goal);
     void WorkshopTick();
+    bool BuildExecutionPlan(bool PreferReturnForExistingCargo=true);
+    void RestoreExecutionPlan();
+    void TickExecution(float DeltaSeconds);
+    void TickRecovery(float DeltaSeconds);
+    void AdvanceExecution();
+    void SyncPhaseFromExecution();
+    AActor* ResolveActionTarget(const FHearthwardAgentAction& Action) const;
+    bool ActionRequiresSafety(const FHearthwardAgentAction& Action) const;
     void Event(FName Kind,FName Item,int32 Count,const FString& Reason=FString(),FGuid Operation=FGuid());
 
     FHearthwardCompanionCommand Command;
+    FHearthwardAgentExecutionState Execution;
     TWeakObjectPtr<AActor> RequestSpeaker;
     FString Statement;
     EHearthwardCompanionPhase Phase = EHearthwardCompanionPhase::Idle;

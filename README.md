@@ -1,8 +1,8 @@
 # Hearthward（归火）
 
-UE 5.8.1 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.1 单人第三人称生存冒险项目。TASK-025 增强版 v2 已通过 PR #23 合并 main（`851d60e`）；TASK-026 自然世界灰盒已通过 PR #25 合并 main（`4114556`），形成 4032 m World Partition 地图、独立浏览 GameMode 与局部 PIE 证据，但视觉、长路线、Standalone 流送、性能和 Owner 验收仍未完成。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-当前分支 `codex/TASK-026-natural-world` 已形成 [TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 的可运行灰盒：4032 m World Partition地图、独立浏览GameMode、自然批次和局部PIE验证已落地，人文场景后置。现有视觉仍是基础形体，长路线、Standalone流送、性能与Owner视觉验收尚未完成，不能视为TASK-026验收通过。见[世界状态](docs/world/TASK-026/CURRENT.md)、[验证证据](docs/qa/evidence/TASK-026/README.md)与[026交接](docs/handoffs/TASK-026.md)。
+当前 PR 分支 `codex/ai-npc-stack-pr` 在最新 main 上整理 TASK-027→031 AI NPC 栈：权威感知/安全、typed Goal→Plan→Action executor、显式上下文建议、高层伙伴战斗指令，以及用户 UE 复验后的导航仲裁与对话工具栏修正。地图与 AI 两条车道在此分支并存；本 PR 不把 TASK-026 视为已完成视觉验收。见 [026世界状态](docs/world/TASK-026/CURRENT.md)、[TASK-030 UE验证指南](docs/qa/evidence/TASK-030/MANUAL_UE_VALIDATION.md) 与各任务交接。
 
 ## 运行
 
@@ -43,7 +43,10 @@ TASK-026自然世界尚未接入标题页。要查看当前分支灰盒，在编
 - “记忆与约定”提供玩家显式管理的长期记录，按相关性检索旧信息；回忆答复引用现存原话，陈述保持玩家来源，不改写世界或角色。文字约定持续进入上下文作为交流参考；指定物品的采集限制由UE在接受任务前强制检查。撤销/编辑清除旧澄清并取消进行中的回复，已有执行委托需单独取消。
 - 未完成澄清保留原话、槽位和未解决限制；“帮我采些木材”→“三份”形成任务卡，核对后一次确认执行。关闭对话取消未确认卡片，已接受目标继续；改数量产生新卡片ID，旧确认失效。
 - 弟弟可使用自身背包材料到真实工作台制作箭矢/绳索，或维修自己持有的唯一装备；明确授权后可实际到营领取缺料。制作产物真实交付，装备和剩余材料保留。事件来自已提交的扣料、采集、交付和维修，随世界同边界保存。
-- 模型不可用时，对话页的手动任务卡、库存查询、取消和进度仍可用；不自动反复启动生成请求。
+- 模型不可用时，对话页的手动任务卡、库存查询、取消和进度仍可用；不自动反复启动生成请求。快捷建议只在玩家显式刷新时生成最多3条，未选择内容不进入弟弟的 memory / model input / filtered context；点击后仍走正常 model → candidate → confirm → executor 边界。
+- TASK-027 将世界事实和安全判定收敛到 UE authoritative perception；玩家或模型文本不能制造安全地点、库存或隐藏世界事实。
+- TASK-028 将 collect/craft/repair 收敛成 deterministic typed plan/actions，运行时使用 plan cursor、真实 inventory/cargo、receipt 和存档重建；取消任务不会凭空删除已携带物资。
+- TASK-030 将战斗收敛成 `companion_order = hold / follow / assist` 高层能力；自然语言路径仍需任务卡确认，具体威胁、leash、导航、LOS、攻击冷却、命中和伤害由 UE 确定性处理。TASK-031 修正了 combat Tick 抢占 typed task 导航的问题：执行 collect/craft/repair 时战斗策略只让出控制权，不再停止 executor 的 MoveTo。
 - 工作台和篝火自由摆放，检查地面支撑、坡度、障碍与角色重叠；工作台限营地，篝火可在野外。五实玩秒后扣除背包材料并生成有碰撞的独立建筑；移动、跳跃、受伤、取消或切换菜单终止施工且不耗料。建造中自动保存延后。
 - 已建工作台提供即时制作：普通箭矢/绳索配方、批量选择、实际材料/产出/负重预览。整批扣料并发放成品；材料不足、容量超限、超距、遮挡、持续动作中或旧时间线请求均不结算。制作结果和事件随库存一同回档。
 - 工作台维修页列出持有的9类可维修装备，损坏优先，滚轮浏览；显示真实耐久、逐件材料与全修结果。满耐久、缺料、访问失效和过期请求拒绝结算；材料一次扣除、耐久恢复、维修事件在同一保存边界完成。背包H仅跳转页面，不直接收费。
@@ -57,7 +60,7 @@ TASK-026自然世界尚未接入标题页。要查看当前分支灰盒，在编
 
 TASK-026于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
 
-025 v2实现与本轮验证见 [TASK-025交接](docs/handoffs/TASK-025.md)、[设计决定](docs/decisions/ADR-TASK-025-npc-cognition.md)和[rev2证据](docs/qa/evidence/TASK-025/rev2/)。原版测试不计本轮PASS，模型原始理解、护栏规范化与实际执行分别统计。020于2026-09-19通过用户验收；历史任务结果见各任务交接。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
+025 v2实现与验证见 [TASK-025交接](docs/handoffs/TASK-025.md)、[设计决定](docs/decisions/ADR-TASK-025-npc-cognition.md)和[rev2证据](docs/qa/evidence/TASK-025/rev2/)。AI NPC 栈本地/PR前验证包括：repo tests 31/31、UE Editor build PASS、全量原生 `Hearthward` 33/33、TASK-027 Safety PIE 27/27、TASK-028 Executor PIE 49/49、TASK-029 Modern suggestions 40/40 + Legacy 8/8、TASK-030 deterministic combat PIE 29/29、真实 Qwen3.5-4B combat directive PIE 14/14、用户反馈回归 PIE 11/11，以及用户原句“帮我采集两份木材带回营地。”真实 Qwen 链 11/11；确认后实际移动并完成2/2交付。TASK-026 的27项地图定向 PIE 结果和 AI 验证彼此独立记录。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
 
 当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；TASK-026也只使用基础形体表达树木、草、岩石和地标，菜单插画不代表三维城寨、正式森林或角色资产已制作。导航覆盖现有开发场景的可行走表面，支持静态障碍绕行和动态障碍重建；正式大世界伙伴导航、攀爬/跳跃导航连接仍未制作。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004已有77个自然素材源文件入库，026只复用了其中三张地表贴图，004模型适配与整单验收仍未完成，人物和房屋仍缺，见[资源汇总](resourceSummary.md)。020经验曲线、节点、任务与战斗参数为独立内容配置，未替代GDD未决R项。
 
@@ -73,4 +76,4 @@ TASK-026于2026-09-21完成27项定向PIE检查：地图重开、World Partition
 
 伙伴导航复用现有操作：X 跟随、Z 等待、C 协助进攻，T 下达采集委托。开发场景在创建伙伴时按碰撞几何生成临时导航边界；关卡已有 `NavMeshBoundsVolume` 时使用关卡设置，不改写地图资产。
 
-025 v2本机GPU复验使用 `-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32`；CPU兼容路径与Vulkan耗时分别记录，默认CPU策略未更改。启动方式和实际限制见025交接。
+025 v2本机GPU复验使用 `-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32`；CPU兼容路径与Vulkan耗时分别记录，默认CPU策略未更改。Development Editor 还支持 `-HearthwardAIBundlePath=<已有Runtime/LocalAI>`，便于隔离 worktree 复用本机模型包；Shipping 不接受该覆盖。最新 AI NPC 手动验收步骤见 [TASK-030 UE验证指南](docs/qa/evidence/TASK-030/MANUAL_UE_VALIDATION.md)。
