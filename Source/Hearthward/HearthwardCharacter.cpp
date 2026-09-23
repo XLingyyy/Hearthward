@@ -146,7 +146,7 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     InputMapping->MapKey(SprintAction, EKeys::LeftShift);
     AttackPreviewAction = NewObject<UInputAction>(this, TEXT("AttackPreviewAction"));
     AttackPreviewAction->ValueType = EInputActionValueType::Boolean;
-    AttackPreviewAction->bConsumeInput = false;
+    AttackPreviewAction->bConsumeInput = true;
     InputMapping->MapKey(AttackPreviewAction, EKeys::LeftMouseButton);
 
     auto* Negate = NewObject<UInputModifierNegate>(InputMapping);
@@ -225,10 +225,19 @@ void AHearthwardCharacter::StopSprint() { Gameplay->SetSprinting(false); }
 
 void AHearthwardCharacter::PreviewAttack()
 {
-    // Natural-world browsing has no combat targets; expose the motion without combat settlement.
     if (!Gameplay->Enabled)
+    {
         if (auto* Animation = Cast<UHearthwardHeroAnimInstance>(GetMesh()->GetAnimInstance()))
             Animation->PlayAttack();
+        return;
+    }
+    if (auto* Player = Cast<APlayerController>(GetController()))
+        if (auto* HUD = Cast<AHearthwardHUD>(Player->GetHUD()))
+        {
+            HUD->Attack();
+            return;
+        }
+    Gameplay->Attack();
 }
 
 void AHearthwardCharacter::ToggleInventory()

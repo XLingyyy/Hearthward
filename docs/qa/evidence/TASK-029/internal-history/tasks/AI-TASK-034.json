@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "TASK-034",
+  "title": "Event-driven NPC Initiative 主动交流",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-034-event-driven-initiative",
+  "source_refs": [
+    "用户于2026-09-22要求继续推进主动交流 / Event-driven Initiative",
+    "TASK-032 adaptive recovery events",
+    "TASK-033 provenance-aware belief corrections"
+  ],
+  "dependencies": [
+    "TASK-033"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/design/DSGN-001-local-inference.md",
+    "docs/design/DSGN-025-agent-boundaries.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/HearthwardNPCInitiative.h",
+    "Source/Hearthward/AI/HearthwardNPCInitiative.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "config/npc-agent.policy.json",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-034.json",
+    "docs/tasks/TASK-034.md",
+    "docs/handoffs/TASK-034.md",
+    "docs/qa/evidence/TASK-034/"
+  ],
+  "forbidden_paths": [
+    "Content/"
+  ],
+  "acceptance": [
+    "initiative只由真实事件或belief correction触发，不轮询LLM",
+    "玩家超出交流范围时initiative排队而非远距离显示",
+    "模型忙/候选待确认/澄清状态不被主动台词抢占",
+    "同一证据去重且队列/cooldown有界",
+    "完成/重规划/受阻/认知纠正可主动提醒，partial delivery不刷屏",
+    "复用现有HUD与对话显示通路"
+  ],
+  "non_goals": [
+    "不生成随机闲聊",
+    "不做定时LLM heartbeat",
+    "不实现Routine",
+    "不做多NPC广播"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22明确要求继续推进 Event-driven Initiative",
+  "required_tests": [
+    "T-002",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "not required for local implementation",
+    "install_dependencies": "not_granted",
+    "commit": "local task commit authorized as part of continued AI NPC development",
+    "push": "defer until next unified PR handoff",
+    "merge": "not_granted"
+  }
+}

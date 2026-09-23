@@ -78,7 +78,9 @@ UHearthwardInteractionTargetComponent* UHearthwardInteractionComponent::GetNeare
         {
             if (ValidateTarget(Target) != EHearthwardInteractionStatus::Ready) continue;
             const double CandidateDistance = FVector::DistSquared(GetOwner()->GetActorLocation(), Target->GetComponentLocation());
-            if (CandidateDistance < Distance) { Nearest = Target; Distance = CandidateDistance; }
+            if (CandidateDistance < Distance ||
+                (CandidateDistance == Distance && Nearest && Target->GetPathName() < Nearest->GetPathName()))
+            { Nearest = Target; Distance = CandidateDistance; }
         }
     }
     return Nearest;

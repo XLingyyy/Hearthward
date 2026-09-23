@@ -1,18 +1,18 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。main 已通过 PR #35、#36、#37 接入主角动作、弟弟模型与 TASK-030 Demo 营地循环；当前分支另交付 [TASK-028 阶段进度](https://github.com/XLingyyy/Hearthward/pull/38)，尚未合入 main。自然地图与资产底座中，[TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行的 4032 m World Partition 自然地图与营地入口，但完整路线、流送、性能和 Owner 视觉验收仍未全部闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。当前合并候选基于 `main@97af300`，结合 TASK-030 自然场景采集、TASK-028 房屋与装备资产，以及 `codex/integrated-latest-20260923` 的 AI、UI、攻击和伙伴跟随修正。自然地图与资产底座中，[TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行的 4032 m World Partition 自然地图与营地入口，但完整路线、流送、性能和 Owner 视觉验收仍未全部闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)，接入前的真实模型矩阵与失败记录见[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
+AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。当前合并候选包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与本轮证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)。融合工作树的代码与复验证据见[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)，已与 TASK-030 的 main 内容形成通过本地自动化复验的合并候选；当前尚待 PR 独立评审和 main 合并。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
 [TASK-030 Demo 采集与营地交互](docs/tasks/TASK-030.md) 将自然场景采集、四种工作台配方、床休息、篝火烤肉接成一个小型营地循环，复用角色、木桌、床、箱子和篝火模型。
 
-[TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md) 已在[草稿PR #38](https://github.com/XLingyyy/Hearthward/pull/38)交付部分实现：自然营地房屋由8类部件搭建，4件家具布置室内，石骨斧随装备状态显示。TASK-030 已在main接入工作台和篝火模型，本分支沿用其设施资源与制作行为；TASK-028单独导入的同类网格保留为候选。缺防具源模型、斧头骨骼手部挂接及完整视觉与性能验收，整单仍为 **Active**。
+[TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md) 已通过 [PR #38](https://github.com/XLingyyy/Hearthward/pull/38) 合入 main：自然营地房屋由 8 类部件搭建，4 件家具布置室内，石骨斧随装备状态显示。TASK-030 的工作台与篝火模型继续承担实际设施功能。石骨斧目前为临时挂接，缺手部 Socket 和动作适配；跳跃手臂异常、完整视觉与性能仍待真人验收。TASK-028 整单继续按任务交接的 Active 范围推进。
 
 ## 运行
 
 打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`。标题页“新游戏”进入自然地图的新营地并生成初始存档；营地中按 F6 打开存档页，暂停菜单也可手动保存。返回主菜单后“继续游戏”恢复最新节点；“载入存档”可选择自然地图节点。已有旧开发场景进度仍保留在同一50点档池。
 
-自然地图已接通伙伴、仓储、建造、制作/维修和技能页面。靠近弟弟按 T，输入“帮我采集两份木材带回营地。”，检查任务卡并确认。伙伴原有木材点初始 16 份；玩家也可以靠近场景树木、石头和灌木按 E 采集木材、石材、草药，每次5秒获得2份。每处上限分别为12/8/4份，余量随存档保存，不自动刷新。营地仓储附近按 R 存取物资，按 B 建造工作台、床或篝火。地图/任务日志及旧开发场景敌人尚未布置到自然地图，M/J 页面继续关闭。
+自然地图已接通伙伴、仓储、建造、制作/维修和技能页面。靠近弟弟按 T，输入“帮我采集两份木材带回营地。”，检查任务卡并确认。伙伴原有木材点初始 16 份；玩家也可以靠近场景树木、石头和灌木按 E 采集木材、石材、草药，每次5秒获得2份。每处上限分别为12/8/4份，余量随存档保存，不自动刷新。营地仓储附近按 R 存取物资，按 B 建造工作台、床或篝火。地图和任务日志页面可从自然地图打开；旧开发场景敌人尚未布置到自然地图。
 
 单独浏览自然地图时，在编辑器中打开 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds` 并运行PIE；地图级浏览GameMode只复用第三人称角色，不生成旧开发场景的敌人、伙伴或测试地标，也不启动本地模型。
 
@@ -73,6 +73,8 @@ AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然�
 
 ## 验证与限制
 
+本轮合并候选在 UE 5.8.2 Editor Development 构建通过，Python 31/31、原生 43/43、TASK-030 Demo 70/70、自然路线 51/51、TASK-028 房屋/石骨斧隔离路线 49/49；TASK-028 合入前源码的跨页 UI 62/62、疾跑跟随 8/8、攻击夹具 10/10、AI runtime smoke 23/23 见[前轮主干组合复验](docs/qa/evidence/TASK-029/main-integration-20260924/REPORT.md)。TASK-028 接入后的新组合证据见[最新主干集成复验](docs/qa/evidence/TASK-029/main-task028-integration-20260924/REPORT.md)。真人实键、石骨斧手部动作和跳跃手臂仍待验收。
+
 TASK-030 当前实现通过 UE 5.8.2 Editor Development 构建、原生自动化43/43、工具测试31/31，以及自然地图采集—制作—建床—烹饪—跨地图读档70项检查。已录制并检查家具场景片段；修复箱子高差导致伙伴返营不结算的问题，真实NPC入库复验3/3通过。详情、失败尝试和复现脚本见[Demo验证报告](docs/qa/evidence/TASK-030/demo/REPORT.md)。这次交付为UE内可试玩版本，尚未生成独立Shipping安装包。
 
 TASK-026本次重建记录见[REBUILD](docs/world/TASK-026/REBUILD.md)，历史检查不累计为新图验收。旧地图于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
@@ -83,7 +85,7 @@ TASK-029 自然营地接入基线曾通过 UE 5.8.2 Editor Development 构建、
 
 当前自然地图已使用树木、植被和岩石资产，demo新增家具模型；伙伴和敌人仍使用碰撞形体，菜单插画不代表三维城寨已制作。主角已接入 Tripo 模型与八种基础动画，待机/行走/冲刺来自 UE 模板重定向；伙伴与敌人仍为灰盒。角色来源与限制见[027交接](docs/handoffs/TASK-027.md)。导航使用动态 Recast 与 Navigation Invokers，按玩家/伙伴附近已加载地形生成，支持障碍绕行；全图可达性、长距离跨流送回营和攀爬/跳跃连接仍未验收。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004 自然素材源文件由此前 77 个增至 115 个，其中本批新增冷杉和松树的 38 个源文件。自然场景已接入部分树木模型与地表贴图，004其余模型适配与整单验收仍未完成，见[既有资源汇总](resourceSummary.md)与[新增树木来源](art_source/TASK-004/polyhaven/SOURCE.md)。020经验曲线、节点、任务、建筑、制作配方与战斗参数为独立内容配置，未替代GDD未决R项。
 
-四件 Tripo 道具源资产（石骨斧、原始鱼竿、骨肉袋、陶罐）的 FBX、参考图和预览已存入 `art_source/TASK-004/Tripo/妙妙道具`，其中石骨斧已在TASK-028分支导入并按现有装备状态显示，手部动作联动未完成；其余三件仍未接入玩法。
+四件 Tripo 道具源资产（石骨斧、原始鱼竿、骨肉袋、陶罐）的 FBX、参考图和预览已存入 `art_source/TASK-004/Tripo/妙妙道具`，其中石骨斧已随 TASK-028 合入 main 并按装备状态显示，手部动作联动未完成；其余三件仍未接入玩法。
 
 十五件 Tripo 动物源资产（两只雄鹿、野兔、山羊、雉鸡、猪、狼、黑熊、公羊、赤狐、母鸡、鲤鱼、鲫鱼、鲶鱼、鳗鱼）的参考图、静态 FBX、预览和带蒙皮权重的骨骼 FBX 已存入 `art_source/TASK-004/Tripo/动物`。骨架包含四足、鸟类、水生和蛇形四类；尚未导入 UE Content，也未附加动画或完成游戏内验收，不视为正式动物系统。
 
@@ -91,9 +93,9 @@ TASK-029 自然营地接入基线曾通过 UE 5.8.2 Editor Development 构建、
 
 同一 PR 在 `art_source/TASK-004/Tripo/篝火` 收录一件[静态候选模型](art_source/TASK-004/Tripo/篝火/篝火模型索引.md)的参考图、FBX 与预览。TASK-030已将该石圈、木柴和静态火焰模型接入可建篝火，完成尺寸、碰撞及烹饪验证；动态火焰和局部照明尚未制作。
 
-已通过 [PR #29](https://github.com/XLingyyy/Hearthward/pull/29) 合入 main 的 8 件 [Tripo 房屋建筑部件制作源资产](art_source/TASK-004/Tripo/房屋建筑部件/房屋建筑部件模型索引.md)，每件均有参考图、静态 FBX 和 PNG 预览。模型已完成文件格式核验，已由TASK-028分支导入并组装可进入的营地房屋，拼接与视觉仍待验收；它们是 `TEMP_VISUAL` 候选，不代表正式建筑风格。
+已通过 [PR #29](https://github.com/XLingyyy/Hearthward/pull/29) 合入 main 的 8 件 [Tripo 房屋建筑部件制作源资产](art_source/TASK-004/Tripo/房屋建筑部件/房屋建筑部件模型索引.md)，每件均有参考图、静态 FBX 和 PNG 预览。模型已完成文件格式核验，并随 TASK-028 的 [PR #38](https://github.com/XLingyyy/Hearthward/pull/38) 导入并组装可进入的营地房屋，拼接与视觉仍待验收；它们是 `TEMP_VISUAL` 候选，不代表正式建筑风格。
 
-资产库已有5件 [Tripo 室内家具制作源资产](art_source/TASK-004/Tripo/室内家具/室内家具模型索引.md)：绳网木床、带锁木箱、木桌、木椅和金属提灯，每件均有参考图、静态 FBX 和 PNG 预览。TASK-030已导入床、箱子和木桌，分别用于休息、营地仓储和工作台；TASK-028分支另将床、箱、木椅和提灯布置在营地房屋内，室内家具暂不提供新增交互；TASK-030的工作台与篝火模型在main中继续使用。专用工作台模型暂缺，持握工具挂接、专用采集音效和躺卧动画未实现。
+资产库已有5件 [Tripo 室内家具制作源资产](art_source/TASK-004/Tripo/室内家具/室内家具模型索引.md)：绳网木床、带锁木箱、木桌、木椅和金属提灯，每件均有参考图、静态 FBX 和 PNG 预览。TASK-030 已导入床、箱子和木桌，分别用于休息、营地仓储和工作台；TASK-028 另将床、箱、木椅和提灯布置在营地房屋内，室内家具暂无新增交互。专用工作台模型暂缺，手部工具挂接、专用采集音效和躺卧动画未实现。
 
 旧界面及此前定向验证可使用 `-HearthwardLegacyUI`。正式流程仍缺Issue归属与独立评审；任务分支成果与main集成状态分别记录。
 
