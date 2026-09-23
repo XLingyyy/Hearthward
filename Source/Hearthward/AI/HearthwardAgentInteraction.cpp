@@ -24,31 +24,92 @@ bool Object(FHttpResponsePtr R,TSharedPtr<FJsonObject>& O)
 }
 void UHearthwardLocalAISubsystem::RestoreMemory(const FHearthwardNPCMemory& Snapshot)
 {
+    // Save decoding/migration and validation happen before world mutation. Do not repair a current-format
+    // snapshot here, otherwise damaged new fields could be mistaken for legacy data.
     Memory=Snapshot;
-    Memory.Migrate(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId());
 }
-void UHearthwardLocalAISubsystem::CountRequest(const TSharedPtr<FJsonObject>& Body)
+void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObject>>& Bodies,
+    const TArray<FHearthwardNPCContextProjectionResult>& Projections,int32 TierIndex)
 {
-    Request=FHttpModule::Get().CreateRequest();Request->SetURL(Runtime.GetBaseUrl()+TEXT("/apply-template"));Request->SetVerb(TEXT("POST"));
-    Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+Runtime.GetApiKey());Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));Request->SetContentAsString(Json(Body));Request->SetTimeout(10);
+    if(!StillCurrent())return;
+    if(Bodies.Num()!=Projections.Num() || !Bodies.IsValidIndex(TierIndex))
+    {Fail(TEXT("上下文投影配置无效，未生成提案"));return;}
+
+    const auto Body=Bodies[TierIndex];
     const uint64 Expected=Serial;
-    Request->OnProcessRequestComplete().BindWeakLambda(this,[this,Expected,Body](FHttpRequestPtr,FHttpResponsePtr R,bool Ok)
+    Request=FHttpModule::Get().CreateRequest();
+    Request->SetURL(Runtime.GetBaseUrl()+TEXT("/apply-template"));
+    Request->SetVerb(TEXT("POST"));
+    Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+Runtime.GetApiKey());
+    Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));
+    Request->SetContentAsString(Json(Body));
+    Request->SetTimeout(10);
+    Request->OnProcessRequestComplete().BindWeakLambda(this,
+        [this,Expected,Bodies,Projections,TierIndex,Body](FHttpRequestPtr,FHttpResponsePtr R,bool Ok)
     {
-        if(Expected!=Serial)return;Request.Reset();TSharedPtr<FJsonObject> O;FString Prompt;
-        if(!Ok || !Object(R,O) || !O->TryGetStringField(TEXT("prompt"),Prompt)){Fail(TEXT("模型模板计数失败，未生成提案"));return;}
-        auto T=MakeShared<FJsonObject>();T->SetStringField(TEXT("content"),Prompt);T->SetBoolField(TEXT("add_special"),true);T->SetBoolField(TEXT("parse_special"),true);
-        Request=FHttpModule::Get().CreateRequest();Request->SetURL(Runtime.GetBaseUrl()+TEXT("/tokenize"));Request->SetVerb(TEXT("POST"));Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+Runtime.GetApiKey());Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));Request->SetContentAsString(Json(T));Request->SetTimeout(10);
-        Request->OnProcessRequestComplete().BindWeakLambda(this,[this,Expected,Body](FHttpRequestPtr,FHttpResponsePtr Response,bool Success)
+        if(Expected!=Serial)return;
+        Request.Reset();
+        if(!StillCurrent())return;
+
+        TSharedPtr<FJsonObject> O;FString Prompt;
+        if(!Ok || !Object(R,O) || !O->TryGetStringField(TEXT("prompt"),Prompt))
+        {Fail(TEXT("模型模板计数失败，未生成提案"));return;}
+
+        auto T=MakeShared<FJsonObject>();
+        T->SetStringField(TEXT("content"),Prompt);
+        T->SetBoolField(TEXT("add_special"),true);
+        T->SetBoolField(TEXT("parse_special"),true);
+
+        Request=FHttpModule::Get().CreateRequest();
+        Request->SetURL(Runtime.GetBaseUrl()+TEXT("/tokenize"));
+        Request->SetVerb(TEXT("POST"));
+        Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+Runtime.GetApiKey());
+        Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));
+        Request->SetContentAsString(Json(T));
+        Request->SetTimeout(10);
+        Request->OnProcessRequestComplete().BindWeakLambda(this,
+            [this,Expected,Bodies,Projections,TierIndex,Body](FHttpRequestPtr,FHttpResponsePtr Response,bool Success)
         {
-            if(Expected!=Serial)return;Request.Reset();TSharedPtr<FJsonObject> Counts;const TArray<TSharedPtr<FJsonValue>>* Tokens;
-            if(!Success || !Object(Response,Counts) || !Counts->TryGetArrayField(TEXT("tokens"),Tokens)){Fail(TEXT("模型token计数失败，未生成提案"));return;}
+            if(Expected!=Serial)return;
+            Request.Reset();
+            if(!StillCurrent())return;
+
+            TSharedPtr<FJsonObject> Counts;const TArray<TSharedPtr<FJsonValue>>* Tokens=nullptr;
+            if(!Success || !Object(Response,Counts) || !Counts->TryGetArrayField(TEXT("tokens"),Tokens))
+            {Fail(TEXT("模型token计数失败，未生成提案"));return;}
+
             InputTokens=Tokens->Num();
-            if(InputTokens>HearthwardAgent::Policy(TEXT("max_input_tokens"))){Fail(TEXT("上下文过长，请保留全部限制重新说明；草稿未删除"),TEXT("CONTEXT_OVERFLOW"));return;}
+            const int32 Limit=HearthwardAgent::Policy(TEXT("max_input_tokens"));
+            if(InputTokens>Limit)
+            {
+                if(Bodies.IsValidIndex(TierIndex+1))
+                {
+                    UE_LOG(LogTemp,Display,TEXT("Local AI context tier %s over budget: %d>%d; degrading once to %s"),
+                        *Projections[TierIndex].Tier,InputTokens,Limit,*Projections[TierIndex+1].Tier);
+                    CountRequest(Bodies,Projections,TierIndex+1);
+                    return;
+                }
+
+                LastFilteredContext=Projections[TierIndex].Json;
+                ContextTier=Projections[TierIndex].Tier;
+                DroppedContextFields=Projections[TierIndex].DroppedFields;
+                Fail(TEXT("固定规则、当前原话和未解决限制已超过内部上下文预算；未发送生成请求，请结束旧澄清或重新开始交流。"),
+                    TEXT("CONTEXT_OVERFLOW"));
+                return;
+            }
+
+            LastFilteredContext=Projections[TierIndex].Json;
+            ContextTier=Projections[TierIndex].Tier;
+            DroppedContextFields=Projections[TierIndex].DroppedFields;
+            UE_LOG(LogTemp,Display,TEXT("Local AI context accepted: tier=%s tokens=%d dropped=%s"),
+                *ContextTier,InputTokens,*FString::Join(DroppedContextFields,TEXT(",")));
             Generate(Body);
         });
         if(!Request->ProcessRequest()){Request.Reset();Fail(TEXT("无法检查输入长度"));}
     });
-    Status=TEXT("正在检查对话长度");if(!Request->ProcessRequest()){Request.Reset();Fail(TEXT("无法检查输入长度"));}
+
+    Status=TEXT("正在检查对话长度（")+Projections[TierIndex].Tier+TEXT("）");
+    if(!Request->ProcessRequest()){Request.Reset();Fail(TEXT("无法检查输入长度"));}
 }
 void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
 {
@@ -254,7 +315,7 @@ void UHearthwardLocalAISubsystem::RecordCampStockReceipt(FName Item,int32 ExactC
 FString UHearthwardLocalAISubsystem::BuildEpisodeRecall(FName Item) const
 {
     FString Out;int32 Added=0;
-    for(const auto& Episode:HearthwardEpisodes::Build(Memory.Events,8))
+    for(const auto& Episode:HearthwardEpisodes::Build(Memory,8))
     {
         if(!Item.IsNone() && Episode.Item!=Item)continue;
         const FString Line=HearthwardEpisodes::Describe(Episode);

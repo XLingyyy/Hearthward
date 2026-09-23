@@ -11,6 +11,7 @@
 #include "HearthwardNPCInitiativeQueue.h"
 #include "HearthwardNPCEpisode.h"
 #include "HearthwardNPCCoordination.h"
+#include "HearthwardNPCContextProjection.h"
 #include "HearthwardLocalAISubsystem.generated.h"
 
 class AHearthwardCompanionFixture;
@@ -60,10 +61,13 @@ public:
     UFUNCTION(BlueprintPure) int64 GetMemoryRevision() const {return Memory.Revision;}
     UFUNCTION(BlueprintPure) int32 GetInputTokens() const {return InputTokens;}
     UFUNCTION(BlueprintPure) int32 GetOutputTokens() const {return OutputTokens;}
+    UFUNCTION(BlueprintPure) int32 GetGenerationCalls() const {return GenerationCalls;}
+    UFUNCTION(BlueprintPure) FString GetContextTier() const {return ContextTier;}
+    UFUNCTION(BlueprintPure) TArray<FString> GetDroppedContextFields() const {return DroppedContextFields;}
     UFUNCTION(BlueprintPure) FString GetReasonCode() const {return ReasonCode;}
     UFUNCTION(BlueprintPure) FString GetLastInput() const {return Input;}
     UFUNCTION(BlueprintPure) TArray<FHearthwardNPCEvent> GetEvents() const {return Memory.Events;}
-    UFUNCTION(BlueprintPure) TArray<FHearthwardNPCEpisode> GetRecentEpisodes() const { return HearthwardEpisodes::Build(Memory.Events,3); }
+    UFUNCTION(BlueprintPure) TArray<FHearthwardNPCEpisode> GetRecentEpisodes() const { return HearthwardEpisodes::Build(Memory,3); }
     UFUNCTION(BlueprintPure) FHearthwardNPCCoordinationProfile GetCoordinationProfile() const { return HearthwardCoordination::Build(Memory.Events); }
     void RecordCoordinationDirective(FName Directive,const FString& Source);
     UFUNCTION(BlueprintCallable) bool QueryRecentHistory(AActor* Speaker,AHearthwardCompanionFixture* Companion,FName Item=NAME_None);
@@ -82,6 +86,7 @@ public:
     UFUNCTION(BlueprintCallable) bool SubmitSuggestion(AActor* Speaker,AHearthwardCompanionFixture* Companion,FGuid Id);
     UFUNCTION(BlueprintPure) TArray<FHearthwardNPCSuggestion> GetSuggestions() const { return Suggestions; }
     UFUNCTION(BlueprintPure) FString GetLastInputSource() const { return LastInputSource; }
+    void BeginCommandCoverage(FGuid Command) { Memory.BeginCommand(Command); }
     void RecordEvent(const FHearthwardNPCEvent& E);
     const FHearthwardNPCMemory& GetMemorySnapshot() const { return Memory; }
     void RestoreMemory(const FHearthwardNPCMemory& Snapshot);
@@ -93,13 +98,14 @@ private:
     bool StartServer();
     void StopServer();
     void SendInference();
-    void CountRequest(const TSharedPtr<FJsonObject>& Body);
+    void CountRequest(const TArray<TSharedPtr<FJsonObject>>& Bodies,
+        const TArray<FHearthwardNPCContextProjectionResult>& Projections,int32 TierIndex=0);
     void Generate(const TSharedPtr<FJsonObject>& Body);
     void StageCandidate(FHearthwardAgentGoal Goal);
     bool StillCurrent() const;
     void ApplyProposal();
     void Fail(const FString& Message,const FString& Code=TEXT("MODEL_UNAVAILABLE"));
-    FString BuildFilteredContext() const;
+    FHearthwardNPCContextSnapshot CaptureContextSnapshot();
     void ObserveCamp();
     bool RecordPlayerCampReport(FName Item,int32 Count);
     FString BuildEpisodeRecall(FName Item=NAME_None) const;
@@ -110,6 +116,8 @@ private:
 
     FHearthwardLocalAIRuntime Runtime;
     FString Status, NPCLine, LastStructuredResult, LastFilteredContext, Input;
+    FString ContextTier;
+    TArray<FString> DroppedContextFields;
     FHearthwardNPCInitiativeQueue Initiatives;
     FHttpRequestPtr Request;
     TWeakObjectPtr<AActor> PendingSpeaker;
@@ -119,7 +127,7 @@ private:
     FGuid CandidateId;
     int64 CandidateMemoryRevision = 0;
     FString ReasonCode;
-    int32 InputTokens = 0, OutputTokens = 0, FailureCount = 0;
+    int32 InputTokens = 0, OutputTokens = 0, FailureCount = 0, GenerationCalls = 0;
     uint64 Serial = 0;
     bool bPending = false, bResponseReady = false;
     double RequestStartedAt = 0, LastLatencySeconds = 0;

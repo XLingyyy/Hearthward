@@ -6,8 +6,41 @@ namespace
 bool ValidKind(FName Kind)
 { return Kind == TEXT("claim") || Kind == TEXT("preference") || Kind == TEXT("agreement") || Kind == TEXT("collection_ban") || Kind == TEXT("typed_constraint"); }
 
-bool ValidDirective(FName Item)
+bool ValidCoordinationDirective(FName Item)
 { return Item==TEXT("hold") || Item==TEXT("follow") || Item==TEXT("assist"); }
+
+bool IsEpisodeEvent(const FHearthwardNPCEvent& Event)
+{ return Event.Kind!=TEXT("directive"); }
+
+bool IsTerminalEvent(const FHearthwardNPCEvent& Event)
+{ return Event.Kind==TEXT("completed") || Event.Kind==TEXT("cancelled"); }
+
+FHearthwardNPCCommandCoverage* FindCoverage(TArray<FHearthwardNPCCommandCoverage>& Coverage,FGuid Command)
+{ return Coverage.FindByPredicate([&](const auto& C){return C.Command==Command;}); }
+
+const FHearthwardNPCCommandCoverage* FindCoverage(const TArray<FHearthwardNPCCommandCoverage>& Coverage,FGuid Command)
+{ return Coverage.FindByPredicate([&](const auto& C){return C.Command==Command;}); }
+
+FHearthwardNPCCommandCoverage& EnsureCoverage(TArray<FHearthwardNPCCommandCoverage>& Coverage,FGuid Command,
+    EHearthwardNPCEpisodeCoverage Initial,bool Active)
+{
+    if(auto* Existing=FindCoverage(Coverage,Command))
+    {
+        Existing->Active=Existing->Active || Active;
+        return *Existing;
+    }
+    auto& Added=Coverage.AddDefaulted_GetRef();
+    Added.Command=Command;Added.Coverage=Initial;Added.Active=Active;
+    return Added;
+}
+
+void PruneCoverage(FHearthwardNPCMemory& Memory)
+{
+    TSet<FGuid> Buffered;
+    for(const auto& E:Memory.Events) if(IsEpisodeEvent(E) && E.Command.IsValid()) Buffered.Add(E.Command);
+    Memory.CommandCoverage.RemoveAll([&](const auto& C){return !C.Active && !Buffered.Contains(C.Command);});
+}
+
 int32 Relevance(const FString& Query, const FString& Text)
 {
     TSet<FString> Terms;
@@ -18,9 +51,10 @@ int32 Relevance(const FString& Query, const FString& Text)
     return Score;
 }
 }
+
 bool FHearthwardNPCMemory::Put(FGuid Id,FName Kind,const FString& Text,double Now,FName BlockedItem)
 {
-    if(Kind==TEXT("typed_constraint")) return false; // Only the confirmed rule-card path can create this kind.
+    if(Kind==TEXT("typed_constraint")) return false;
     Records.RemoveAll([](const auto& R){return R.Revoked;});
     const FString Clean=Text.TrimStartAndEnd();
     if (!ValidKind(Kind) || Clean.IsEmpty() || Clean.Len()>MaxText || !FMath::IsFinite(Now) || Now<0) return false;
@@ -38,10 +72,10 @@ bool FHearthwardNPCMemory::Put(FGuid Id,FName Kind,const FString& Text,double No
     Existing->Kind=Kind; Existing->Text=Clean; Existing->RecordedAt=Now;
     Existing->Campaign=Campaign; Existing->Revision=++Revision;
     Existing->BlockedItem=Kind==TEXT("collection_ban")?BlockedItem:NAME_None;
-    // Editing a record invalidates any pending interpretation that used its old text.
     Clarification.Reset(); WorkingGoal={};
     return true;
 }
+
 bool FHearthwardNPCMemory::Revoke(FGuid Id)
 {
     auto* R=Records.FindByPredicate([&](const auto& Entry){return Entry.Id==Id && !Entry.Revoked;});
@@ -49,6 +83,7 @@ bool FHearthwardNPCMemory::Revoke(FGuid Id)
     Records.RemoveAll([&](const auto& Entry){return Entry.Id==Id;});
     ++Revision; Clarification.Reset(); WorkingGoal={}; return true;
 }
+
 bool FHearthwardNPCMemory::AddClarification(const FString& Player,const FString& Question)
 {
     int32 Characters=Player.Len()+Question.Len();
@@ -56,10 +91,12 @@ bool FHearthwardNPCMemory::AddClarification(const FString& Player,const FString&
     if (Clarification.Num()>=4 || Characters>MaxClarificationCharacters) return false;
     Clarification.Add({Player,Question}); return true;
 }
+
 bool FHearthwardNPCMemory::BlocksCollection(FName Item) const
 {
     return ApplicableRules(TEXT("collect")).Contains(TEXT("ban:")+Item.ToString());
 }
+
 TArray<FHearthwardPlayerMemory> FHearthwardNPCMemory::Retrieve(const FString& Query,bool IncludeAgreements) const
 {
     TArray<FHearthwardPlayerMemory> Out, Candidates;
@@ -78,6 +115,7 @@ TArray<FHearthwardPlayerMemory> FHearthwardNPCMemory::Retrieve(const FString& Qu
     for (int32 I=0; I<FMath::Min(3,Candidates.Num()); ++I) Out.Add(Candidates[I]);
     return Out;
 }
+
 bool FHearthwardNPCMemory::IsValid(double Now) const
 {
     if(Revision<1 || Events.Num()>HearthwardAgent::Policy(TEXT("max_events"))) return false;
@@ -105,35 +143,65 @@ bool FHearthwardNPCMemory::IsValid(double Now) const
     for (const auto& Entry:CampInventory)
         if (Entry.Value<0 || !HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==Entry.Key;})) return false;
     if(!HearthwardBeliefs::Validate(Beliefs,Revision,Campaign,Now)) return false;
-    TSet<FGuid> EventIds;
+
+    TSet<FGuid> EventIds,EpisodeCommands;
     for(const auto& E:Events)
     {
         if(!E.Id.IsValid() || !E.Command.IsValid() || E.Campaign!=Campaign || E.At<0 || E.At>Now || !FMath::IsFinite(E.At) || E.Count<0 || E.Reason.Len()>200 || EventIds.Contains(E.Id)) return false;
-        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("completed"),TEXT("materials_taken"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
+        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("completed"),TEXT("materials_taken"),TEXT("retained_adopted"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
         const bool BasicItem=HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==E.Item;});
         const bool CraftItem=E.Kind==TEXT("craft") && HearthwardAgent::Capabilities().ContainsByPredicate([&](const auto& C){return C.Id==TEXT("craft") && C.Items.Contains(E.Item);});
-        const bool DirectiveItem=E.Kind==TEXT("directive") && ValidDirective(E.Item);
+        const bool DirectiveItem=E.Kind==TEXT("directive") && ValidCoordinationDirective(E.Item);
         if(!BasicItem && !CraftItem && !DirectiveItem)return false;
         EventIds.Add(E.Id);
+        if(IsEpisodeEvent(E)) EpisodeCommands.Add(E.Command);
     }
+
+    TSet<FGuid> CoverageIds;int32 ActiveCount=0;
+    for(const auto& C:CommandCoverage)
+    {
+        if(!C.Command.IsValid() || CoverageIds.Contains(C.Command)
+            || uint8(C.Coverage)>uint8(EHearthwardNPCEpisodeCoverage::Truncated)) return false;
+        if(C.Active) ++ActiveCount;
+        if(!C.Active && !EpisodeCommands.Contains(C.Command)) return false;
+        CoverageIds.Add(C.Command);
+    }
+    if(ActiveCount>1 || CommandCoverage.Num()>EpisodeCommands.Num()+ActiveCount) return false;
+    for(const auto& Command:EpisodeCommands) if(!CoverageIds.Contains(Command)) return false;
+
     return WorkingGoal.Original.Len()<=1000 && WorkingGoal.Unresolved.Num()<=4 && WorkingGoal.Limits.Num()<=4;
 }
 
-void FHearthwardNPCMemory::Migrate(FGuid CampaignId)
+void FHearthwardNPCMemory::Migrate(FGuid CampaignId,bool bLegacyCognition,FGuid ActiveCommand)
 {
     Campaign=CampaignId;Revision=FMath::Max<int64>(1,Revision);
     Records.RemoveAll([](const auto& R){return R.Revoked;});
     for(auto& R:Records) {R.Campaign=Campaign;R.Revision=FMath::Max<int64>(1,R.Revision);}
-    for(auto& B:Beliefs){B.Campaign=Campaign;B.Revision=FMath::Clamp<int64>(B.Revision,1,Revision);}
+    for(auto& B:Beliefs)
+    {
+        B.Campaign=Campaign;B.Revision=FMath::Clamp<int64>(B.Revision,1,Revision);
+        if(bLegacyCognition && B.LastEvidenceAt<B.RecordedAt) B.LastEvidenceAt=B.RecordedAt;
+    }
     if(Beliefs.IsEmpty() && HasCampObservation)
         for(const auto& Entry:CampInventory)
             HearthwardBeliefs::UpsertCampStock(Beliefs,Revision,Campaign,Entry.Key,Entry.Value,EHearthwardNPCBeliefSource::Firsthand,CampObservedAt);
+
+    if(bLegacyCognition)
+    {
+        CommandCoverage.Reset();
+        for(const auto& E:Events)
+            if(IsEpisodeEvent(E) && E.Command.IsValid()) EnsureCoverage(CommandCoverage,E.Command,EHearthwardNPCEpisodeCoverage::Unknown,false);
+        if(ActiveCommand.IsValid()) EnsureCoverage(CommandCoverage,ActiveCommand,EHearthwardNPCEpisodeCoverage::Unknown,true).Active=true;
+        PruneCoverage(*this);
+    }
 }
+
 bool FHearthwardNPCMemory::PutRule(const FString& Constraint,const FString& Original,double Now)
 {
     if(!HearthwardAgent::ValidLimit(Constraint) || Records.Num()>=MaxRecords || Original.IsEmpty() || Original.Len()>MaxText || !FMath::IsFinite(Now) || Now<0) return false;
     FHearthwardPlayerMemory R;R.Id=FGuid::NewGuid();R.Kind=TEXT("typed_constraint");R.Text=Original;R.Constraint=Constraint;R.RecordedAt=Now;R.Campaign=Campaign;R.Revision=++Revision;Records.Add(R);Clarification.Reset();WorkingGoal={};return true;
 }
+
 TArray<FString> FHearthwardNPCMemory::ApplicableRules(FName Capability) const
 {
     TArray<FString> Out;
@@ -147,9 +215,50 @@ TArray<FString> FHearthwardNPCMemory::ApplicableRules(FName Capability) const
     }
     return Out;
 }
+
+void FHearthwardNPCMemory::BeginCommand(FGuid Command)
+{
+    if(!Command.IsValid()) return;
+    if(auto* Existing=FindCoverage(CommandCoverage,Command))
+    {
+        // BeginCommand is called only from the authoritative acceptance path. Events emitted
+        // synchronously during that acceptance may have created an Unknown placeholder first.
+        if(Existing->Coverage==EHearthwardNPCEpisodeCoverage::Unknown)
+            Existing->Coverage=EHearthwardNPCEpisodeCoverage::Complete;
+        Existing->Active=true;
+        return;
+    }
+    auto& C=CommandCoverage.AddDefaulted_GetRef();
+    C.Command=Command;C.Coverage=EHearthwardNPCEpisodeCoverage::Complete;C.Active=true;
+    PruneCoverage(*this);
+}
+
+EHearthwardNPCEpisodeCoverage FHearthwardNPCMemory::CoverageFor(FGuid Command) const
+{
+    if(const auto* C=FindCoverage(CommandCoverage,Command)) return C->Coverage;
+    return EHearthwardNPCEpisodeCoverage::Unknown;
+}
+
 void FHearthwardNPCMemory::RecordEvent(const FHearthwardNPCEvent& Event)
 {
     if(Events.ContainsByPredicate([&](const auto& E){return E.Id==Event.Id;})) return;
-    if(Events.Num()>=HearthwardAgent::Policy(TEXT("max_events"))) Events.RemoveAt(0);
+
+    if(IsEpisodeEvent(Event) && Event.Command.IsValid())
+        EnsureCoverage(CommandCoverage,Event.Command,EHearthwardNPCEpisodeCoverage::Unknown,false);
+
+    if(Events.Num()>=HearthwardAgent::Policy(TEXT("max_events")))
+    {
+        const auto Evicted=Events[0];
+        if(IsEpisodeEvent(Evicted) && Evicted.Command.IsValid())
+        {
+            auto& C=EnsureCoverage(CommandCoverage,Evicted.Command,EHearthwardNPCEpisodeCoverage::Truncated,false);
+            C.Coverage=EHearthwardNPCEpisodeCoverage::Truncated;
+        }
+        Events.RemoveAt(0);
+    }
+
     Events.Add(Event);
+    if(IsEpisodeEvent(Event) && IsTerminalEvent(Event))
+        if(auto* C=FindCoverage(CommandCoverage,Event.Command)) C->Active=false;
+    PruneCoverage(*this);
 }

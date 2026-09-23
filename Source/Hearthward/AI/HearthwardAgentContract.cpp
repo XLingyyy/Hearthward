@@ -71,6 +71,26 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
     }();
     return C;
 }
+const FHearthwardAgentCapability* HearthwardAgent::FindCapability(FName Id)
+{
+    return Capabilities().FindByPredicate([&](const auto& C){return C.Id==Id;});
+}
+
+bool HearthwardAgent::IsCapabilityItem(FName Capability,FName Item)
+{
+    const auto* C=FindCapability(Capability);
+    return C && C->Items.Contains(Item);
+}
+
+FString HearthwardAgent::CompanionOrderPrompt()
+{
+    const auto* C=FindCapability(TEXT("companion_order"));
+    if(!C) return TEXT("companion_order当前未注册，不得输出。");
+    TArray<FString> Items;for(FName Item:C->Items)Items.Add(Item.ToString());
+    return TEXT("companion_order仅允许目录中的高层指令：")+FString::Join(Items,TEXT("/"))
+        +TEXT("；quantity=1,mode=directive,source=player。模型不选择敌人、坐标、路径、攻击时机或伤害。");
+}
+
 FString HearthwardAgent::Describe()
 {
     FString Out=TEXT("目录v2；只有这些已注册能力。站点或物资不足可暂时不可用；战斗仅允许companion_order高层指令，不能生成逐帧战术、建造或未知物品能力。\n");

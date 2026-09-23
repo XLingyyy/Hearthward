@@ -14,7 +14,16 @@ bool HearthwardBeliefs::UpsertCampStock(TArray<FHearthwardNPCBelief>& Beliefs, i
 {
     if(!Campaign.IsValid() || !ValidItem(Item) || Value < 0 || !FMath::IsFinite(Now) || Now < 0) return false;
     auto* Existing=Beliefs.FindByPredicate([&](const auto& B){ return B.Kind==TEXT("camp_stock") && B.Item==Item; });
-    if(Existing && Existing->Value==Value && Existing->Source==Source && Existing->Campaign==Campaign) return true;
+    if(Existing && Existing->Campaign!=Campaign) return false;
+    if(Existing && (Now < Existing->RecordedAt || Now < Existing->LastEvidenceAt)) return false;
+
+    if(Existing && Existing->Value==Value && Existing->Source==Source)
+    {
+        // Evidence freshness is not a semantic memory change and must not invalidate pending cards.
+        Existing->LastEvidenceAt=Now;
+        return true;
+    }
+
     if(!Existing)
     {
         Existing=&Beliefs.AddDefaulted_GetRef();
@@ -25,6 +34,7 @@ bool HearthwardBeliefs::UpsertCampStock(TArray<FHearthwardNPCBelief>& Beliefs, i
     Existing->Value=Value;
     Existing->Source=Source;
     Existing->RecordedAt=Now;
+    Existing->LastEvidenceAt=Now;
     Existing->Campaign=Campaign;
     Existing->Revision=++MemoryRevision;
     return true;
@@ -35,7 +45,8 @@ bool HearthwardBeliefs::ResolveCampStock(const TArray<FHearthwardNPCBelief>& Bel
     Out={};
     const auto* B=Beliefs.FindByPredicate([&](const auto& X){ return X.Kind==TEXT("camp_stock") && X.Item==Item; });
     if(!B) return false;
-    Out.Known=true;Out.Value=B->Value;Out.Source=B->Source;Out.RecordedAt=B->RecordedAt;Out.Revision=B->Revision;
+    Out.Known=true;Out.Value=B->Value;Out.Source=B->Source;Out.RecordedAt=B->RecordedAt;
+    Out.LastEvidenceAt=B->LastEvidenceAt;Out.Revision=B->Revision;
     return true;
 }
 
@@ -46,7 +57,8 @@ bool HearthwardBeliefs::Validate(const TArray<FHearthwardNPCBelief>& Beliefs, in
     for(const auto& B:Beliefs)
     {
         if(!B.Id.IsValid() || Ids.Contains(B.Id) || B.Kind!=TEXT("camp_stock") || !ValidItem(B.Item)
-            || Items.Contains(B.Item) || B.Value<0 || !FMath::IsFinite(B.RecordedAt) || B.RecordedAt<0 || B.RecordedAt>Now
+            || Items.Contains(B.Item) || B.Value<0 || !FMath::IsFinite(B.RecordedAt) || !FMath::IsFinite(B.LastEvidenceAt)
+            || B.RecordedAt<0 || B.LastEvidenceAt<B.RecordedAt || B.LastEvidenceAt>Now
             || B.Revision<1 || B.Revision>MemoryRevision || B.Campaign!=Campaign) return false;
         Ids.Add(B.Id);Items.Add(B.Item);
     }

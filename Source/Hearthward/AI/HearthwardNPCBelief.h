@@ -19,7 +19,10 @@ struct FHearthwardNPCBelief
     UPROPERTY(BlueprintReadOnly) FName Item;
     UPROPERTY(BlueprintReadOnly) int32 Value = 0;
     UPROPERTY(BlueprintReadOnly) EHearthwardNPCBeliefSource Source = EHearthwardNPCBeliefSource::PlayerReport;
+    // Last semantic value/source change.
     UPROPERTY(BlueprintReadOnly) double RecordedAt = 0;
+    // Most recent valid evidence for the current value/source.
+    UPROPERTY(BlueprintReadOnly) double LastEvidenceAt = 0;
     UPROPERTY(BlueprintReadOnly) int64 Revision = 1;
     UPROPERTY(BlueprintReadOnly) FGuid Campaign;
 };
@@ -32,6 +35,7 @@ struct FHearthwardNPCBeliefView
     UPROPERTY(BlueprintReadOnly) int32 Value = 0;
     UPROPERTY(BlueprintReadOnly) EHearthwardNPCBeliefSource Source = EHearthwardNPCBeliefSource::PlayerReport;
     UPROPERTY(BlueprintReadOnly) double RecordedAt = 0;
+    UPROPERTY(BlueprintReadOnly) double LastEvidenceAt = 0;
     UPROPERTY(BlueprintReadOnly) int64 Revision = 0;
     bool IsConfirmed() const { return Known && Source != EHearthwardNPCBeliefSource::PlayerReport; }
 };

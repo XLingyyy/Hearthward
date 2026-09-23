@@ -46,6 +46,9 @@ struct FHearthwardAgentReceipt
 namespace HearthwardAgent
 {
     const TArray<FHearthwardAgentCapability>& Capabilities();
+    const FHearthwardAgentCapability* FindCapability(FName Id);
+    bool IsCapabilityItem(FName Capability, FName Item);
+    FString CompanionOrderPrompt();
     FString Describe();
     FString Schema();
     bool Parse(const FString& Json,FHearthwardAgentGoal& Out);

@@ -147,7 +147,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
     S.Knowledge = Knowledge; S.KnowledgeRevision = KnowledgeRevision; S.AutoMinutes = AutoMinutes; S.Safety = Safety;
     S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
-    S.NPCStateVersion=2;S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;
+    S.NPCStateVersion=HearthwardSave::NPCStateVersion;S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;
     S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability=Companion->OwnedDurability;S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
     S.NPCReceipts=Companion->Receipts;
     return true;

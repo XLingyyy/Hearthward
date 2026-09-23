@@ -692,7 +692,10 @@ EHearthwardProposalResult AHearthwardCompanionFixture::SubmitGoal(AActor* Speake
         const auto Outputs=HearthwardWorkshop::Outputs(Goal.Item,Goal.Quantity);if(Outputs.Num()!=1)return EHearthwardProposalResult::Unsupported;
         for(const auto& I:Outputs) {Output=I.Key;Count=I.Value;}
     }
-    return AcceptGoal(Speaker,Ticket,Output,Count,{TEXT("collect"),TEXT("return"),TEXT("deposit")},Goal);
+    const auto Result=AcceptGoal(Speaker,Ticket,Output,Count,{TEXT("collect"),TEXT("return"),TEXT("deposit")},Goal);
+    if(Result==EHearthwardProposalResult::Accepted)
+        GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->BeginCommandCoverage(GetCommandId());
+    return Result;
 }
 bool AHearthwardCompanionFixture::ResumeBlocked(AActor* Speaker)
 {

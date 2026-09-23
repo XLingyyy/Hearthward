@@ -7,12 +7,16 @@
 #include "../AI/HearthwardNPCInitiative.h"
 #include "../AI/HearthwardNPCEpisode.h"
 #include "../AI/HearthwardNPCCoordination.h"
+#include "../AI/HearthwardNPCContextProjection.h"
 #include "../AI/HearthwardNPCRoutine.h"
 #include "../Gameplay/HearthwardCompanionCombatPolicy.h"
 #include "../Companion/HearthwardCompanionCommand.h"
 #include "../Building/HearthwardWorkshopService.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "Misc/AutomationTest.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentContractTest,"Hearthward.NPCAgent.CapabilitiesAndLimits",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
@@ -32,11 +36,57 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     TestFalse(TEXT("Forbidden material"),HearthwardAgent::AllowsCost({TEXT("no:herb")},{{TEXT("herb"),1}},{}));
     TestFalse(TEXT("Malformed constraint"),HearthwardAgent::ValidLimit(TEXT("max:wood:-1")));
     TestFalse(TEXT("Unknown material"),HearthwardAgent::ValidLimit(TEXT("no:secret")));
-    for(const auto& C:HearthwardAgent::Capabilities())
-        TestTrue(TEXT("Registry drives grammar"),HearthwardAgent::Schema().Contains(C.Id.ToString()));
+    TSharedPtr<FJsonObject> SchemaRoot;
+    const TArray<TSharedPtr<FJsonValue>>* Branches=nullptr;
+    TestTrue(TEXT("Schema parses structurally"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(HearthwardAgent::Schema()),SchemaRoot)
+        && SchemaRoot.IsValid() && SchemaRoot->TryGetArrayField(TEXT("oneOf"),Branches));
+    if(Branches)
+    {
+        TestEqual(TEXT("Every registered capability has one schema branch"),Branches->Num(),HearthwardAgent::Capabilities().Num());
+        for(int32 I=0;I<FMath::Min(Branches->Num(),HearthwardAgent::Capabilities().Num());++I)
+        {
+            const auto& C=HearthwardAgent::Capabilities()[I];
+            const auto Branch=(*Branches)[I]->AsObject();
+            const TSharedPtr<FJsonObject>* Properties=nullptr;
+            TestTrue(TEXT("Capability branch has properties"),Branch.IsValid() && Branch->TryGetObjectField(TEXT("properties"),Properties));
+            if(!Properties)continue;
+            const auto IntentSchema=(*Properties)->GetObjectField(TEXT("intent"));
+            const auto ItemSchema=(*Properties)->GetObjectField(TEXT("item"));
+            const auto ModeSchema=(*Properties)->GetObjectField(TEXT("mode"));
+            const auto SourceSchema=(*Properties)->GetObjectField(TEXT("source"));
+            const auto& IntentEnum=IntentSchema->GetArrayField(TEXT("enum"));
+            const auto& ItemEnum=ItemSchema->GetArrayField(TEXT("enum"));
+            const auto& ModeEnum=ModeSchema->GetArrayField(TEXT("enum"));
+            const auto& SourceEnum=SourceSchema->GetArrayField(TEXT("enum"));
+            TestTrue(TEXT("Schema intent comes from registry"),IntentEnum.Num()==1 && IntentEnum[0]->AsString()==C.Id.ToString());
+            TestEqual(TEXT("Schema item count comes from registry"),ItemEnum.Num(),C.Items.Num());
+            TestTrue(TEXT("Schema mode comes from registry"),ModeEnum.Num()==1 && ModeEnum[0]->AsString()==C.QuantityMode);
+            TestEqual(TEXT("Schema source count comes from registry"),SourceEnum.Num(),C.Sources.Num());
+        }
+    }
+
+    const auto* Order=HearthwardAgent::FindCapability(TEXT("companion_order"));
+    TestTrue(TEXT("Companion order capability registered"),Order!=nullptr);
+    if(Order)
+    {
+        const FString Prompt=HearthwardAgent::CompanionOrderPrompt();
+        for(FName Directive:Order->Items)
+        {
+            TestTrue(TEXT("Prompt includes every registered directive"),Prompt.Contains(Directive.ToString()));
+            FHearthwardAgentGoal OrderGoal;OrderGoal.Intent=TEXT("companion_order");OrderGoal.Item=Directive;OrderGoal.Quantity=1;
+            OrderGoal.QuantityMode=Order->QuantityMode;OrderGoal.SourceRef=Order->Sources[0];
+            TestTrue(TEXT("Every registered directive passes the same preflight contract"),HearthwardAgent::Validate(OrderGoal).IsEmpty());
+        }
+        TestTrue(TEXT("Routine is not prompt-forbidden drift"),Order->Items.Contains(TEXT("routine")) && Prompt.Contains(TEXT("routine")));
+    }
+
     FHearthwardAgentGoal Report;Report.Intent=TEXT("inventory_report");Report.Item=TEXT("wood");Report.Quantity=20;
     Report.QuantityMode=TEXT("reported_exact");Report.SourceRef=TEXT("player");
     TestTrue(TEXT("Inventory report is valid cognition-only input"),HearthwardAgent::Validate(Report).IsEmpty() && !Report.WritesWorld());
+    FHearthwardAgentGoal Query;Query.Intent=TEXT("inventory");Query.Item=TEXT("wood");Query.Quantity=0;
+    Query.QuantityMode=TEXT("none");Query.SourceRef=TEXT("none");
+    TestTrue(TEXT("Inventory query is distinct read-only contract"),HearthwardAgent::Validate(Query).IsEmpty() && !Query.WritesWorld()
+        && Query.QuantityMode!=Report.QuantityMode && Query.SourceRef!=Report.SourceRef);
     TestFalse(TEXT("Real crafting materials"),HearthwardWorkshop::Materials(TEXT("craft"),TEXT("arrows"),1).IsEmpty());
     return true;
 }
@@ -90,8 +140,14 @@ bool FNPCAgentBeliefStateTest::RunTest(const FString&)
     TestTrue(TEXT("Firsthand resolves confirmed"),HearthwardBeliefs::ResolveCampStock(M.Beliefs,TEXT("wood"),V)
         && V.Value==5 && V.Source==EHearthwardNPCBeliefSource::Firsthand && V.IsConfirmed());
     const int64 FirsthandRevision=M.Revision;
-    TestTrue(TEXT("Identical observation is idempotent"),HearthwardBeliefs::UpsertCampStock(M.Beliefs,M.Revision,M.Campaign,TEXT("wood"),5,EHearthwardNPCBeliefSource::Firsthand,11));
-    TestEqual(TEXT("Idempotent observation does not churn memory revision"),M.Revision,FirsthandRevision);
+    TestEqual(TEXT("Initial semantic change time"),V.RecordedAt,10.0);
+    TestEqual(TEXT("Initial evidence time"),V.LastEvidenceAt,10.0);
+    TestTrue(TEXT("Identical observation refreshes evidence"),HearthwardBeliefs::UpsertCampStock(M.Beliefs,M.Revision,M.Campaign,TEXT("wood"),5,EHearthwardNPCBeliefSource::Firsthand,11));
+    HearthwardBeliefs::ResolveCampStock(M.Beliefs,TEXT("wood"),V);
+    TestEqual(TEXT("Evidence refresh does not churn semantic revision"),M.Revision,FirsthandRevision);
+    TestEqual(TEXT("Evidence refresh preserves semantic change time"),V.RecordedAt,10.0);
+    TestEqual(TEXT("Evidence refresh advances LastEvidenceAt"),V.LastEvidenceAt,11.0);
+    TestFalse(TEXT("Older evidence cannot move freshness backwards"),HearthwardBeliefs::UpsertCampStock(M.Beliefs,M.Revision,M.Campaign,TEXT("wood"),5,EHearthwardNPCBeliefSource::Firsthand,10.5));
 
     TestTrue(TEXT("Later player report is stored with provenance"),HearthwardBeliefs::UpsertCampStock(M.Beliefs,M.Revision,M.Campaign,TEXT("wood"),20,EHearthwardNPCBeliefSource::PlayerReport,12));
     HearthwardBeliefs::ResolveCampStock(M.Beliefs,TEXT("wood"),V);
@@ -134,31 +190,123 @@ bool FNPCAgentInitiativePolicyTest::RunTest(const FString&)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentEpisodeProjectionTest,"Hearthward.NPCAgent.GroundedEpisodeProjection",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FNPCAgentEpisodeProjectionTest::RunTest(const FString&)
 {
-    const FGuid Campaign=FGuid::NewGuid(),Command=FGuid::NewGuid();TArray<FHearthwardNPCEvent> Events;
-    auto Add=[&](FName Kind,int32 Count,double At,const FString& Reason=FString())
+    const FGuid Campaign=FGuid::NewGuid(),Command=FGuid::NewGuid();
+    FHearthwardNPCMemory Memory;Memory.Campaign=Campaign;Memory.BeginCommand(Command);
+    auto Add=[&](FHearthwardNPCMemory& Target,FGuid TargetCommand,FName Kind,int32 Count,double At,const FString& Reason=FString())
     {
-        FHearthwardNPCEvent E;E.Id=FGuid::NewGuid();E.Command=Command;E.Campaign=Campaign;E.Kind=Kind;E.Item=TEXT("wood");E.Count=Count;E.At=At;E.Reason=Reason;Events.Add(E);
+        FHearthwardNPCEvent E;E.Id=FGuid::NewGuid();E.Command=TargetCommand;E.Campaign=Campaign;
+        E.Kind=Kind;E.Item=TEXT("wood");E.Count=Count;E.At=At;E.Reason=Reason;Target.RecordEvent(E);
     };
-    Add(TEXT("acquired"),2,1);
-    Add(TEXT("replanned"),0,2,TEXT("SOURCE_POSITION_CHANGED"));
-    Add(TEXT("delivered"),2,3);
-    Add(TEXT("completed"),2,4);
+    Add(Memory,Command,TEXT("acquired"),2,1);
+    Add(Memory,Command,TEXT("replanned"),0,2,TEXT("SOURCE_POSITION_CHANGED"));
+    Add(Memory,Command,TEXT("delivered"),2,3);
+    Add(Memory,Command,TEXT("completed"),2,4);
 
-    FHearthwardNPCEvent Other;Other.Id=FGuid::NewGuid();Other.Command=FGuid::NewGuid();Other.Campaign=Campaign;
-    Other.Kind=TEXT("blocked");Other.Item=TEXT("wood");Other.At=5;Other.Reason=TEXT("RETURN_UNREACHABLE");Events.Add(Other);
+    const FGuid OtherCommand=FGuid::NewGuid();
+    Add(Memory,OtherCommand,TEXT("blocked"),0,5,TEXT("RETURN_UNREACHABLE"));
 
-    const auto Episodes=HearthwardEpisodes::Build(Events,3);
+    const auto Episodes=HearthwardEpisodes::Build(Memory,3);
     TestEqual(TEXT("Two commands become two episodes"),Episodes.Num(),2);
-    TestTrue(TEXT("Newest command sorted first"),Episodes[0].Command==Other.Command && Episodes[0].Reasons.Contains(TEXT("RETURN_UNREACHABLE")));
+    TestTrue(TEXT("Newest command sorted first"),Episodes[0].Command==OtherCommand && Episodes[0].Reasons.Contains(TEXT("RETURN_UNREACHABLE")));
     const auto* Completed=Episodes.FindByPredicate([&](const auto& X){return X.Command==Command;});
     TestTrue(TEXT("Completed episode found"),Completed!=nullptr);
     if(Completed)
     {
+        TestTrue(TEXT("Accepted command with intact events has complete coverage"),Completed->Coverage==EHearthwardNPCEpisodeCoverage::Complete);
         TestTrue(TEXT("Episode aggregates real effects"),Completed->Acquired==2 && Completed->Delivered==2 && Completed->Replans==1 && Completed->Completed);
         TestTrue(TEXT("Episode keeps replan evidence"),Completed->Reasons.Contains(TEXT("SOURCE_POSITION_CHANGED")) && Completed->Evidence.Num()==4);
         const FString Text=HearthwardEpisodes::Describe(*Completed);
-        TestTrue(TEXT("Description is evidence-grounded"),Text.Contains(TEXT("实际取得2")) && Text.Contains(TEXT("实际入库2"))
-            && Text.Contains(TEXT("重规划1次")) && Text.Contains(TEXT("SOURCE_POSITION_CHANGED")) && Text.Contains(TEXT("证据")));
+        TestTrue(TEXT("Complete description is evidence-grounded"),Text.Contains(TEXT("实际取得2")) && Text.Contains(TEXT("实际入库2"))
+            && Text.Contains(TEXT("重规划1次")) && Text.Contains(TEXT("SOURCE_POSITION_CHANGED")) && Text.Contains(TEXT("记录覆盖完整")));
+    }
+    const auto CompatibilityEpisodes=HearthwardEpisodes::Build(Memory.Events,3);
+    TestTrue(TEXT("Events without coverage metadata never claim completeness"),
+        CompatibilityEpisodes.ContainsByPredicate([&](const auto& X){return X.Command==Command && X.Coverage==EHearthwardNPCEpisodeCoverage::Unknown;}));
+
+    FHearthwardNPCMemory Truncated;Truncated.Campaign=Campaign;
+    const FGuid Active=FGuid::NewGuid();Truncated.BeginCommand(Active);
+    Add(Truncated,Active,TEXT("acquired"),1,10);
+    for(int32 I=0;I<128;++I)
+    {
+        FHearthwardNPCEvent Directive;Directive.Id=FGuid::NewGuid();Directive.Command=FGuid::NewGuid();Directive.Campaign=Campaign;
+        Directive.Kind=TEXT("directive");Directive.Item=TEXT("follow");Directive.Count=1;Directive.At=11+I;Directive.Reason=TEXT("coverage_pressure");
+        Truncated.RecordEvent(Directive);
+    }
+    TestEqual(TEXT("Event ring remains bounded"),Truncated.Events.Num(),128);
+    TestTrue(TEXT("Active command remains registered after all early events are evicted"),
+        Truncated.CommandCoverage.ContainsByPredicate([&](const auto& C){return C.Command==Active && C.Active;}));
+    TestTrue(TEXT("Eviction marks active command truncated"),Truncated.CoverageFor(Active)==EHearthwardNPCEpisodeCoverage::Truncated);
+
+    Add(Truncated,Active,TEXT("delivered"),1,200);
+    Add(Truncated,Active,TEXT("completed"),1,201);
+    const auto TruncatedEpisodes=HearthwardEpisodes::Build(Truncated,3);
+    const auto* TruncatedEpisode=TruncatedEpisodes.FindByPredicate([&](const auto& X){return X.Command==Active;});
+    TestTrue(TEXT("Later events do not reset truncated coverage"),TruncatedEpisode && TruncatedEpisode->Coverage==EHearthwardNPCEpisodeCoverage::Truncated);
+    if(TruncatedEpisode)
+    {
+        const FString Text=HearthwardEpisodes::Describe(*TruncatedEpisode);
+        TestTrue(TEXT("Terminal state remains reportable without inventing the missing process"),
+            TruncatedEpisode->Completed && Text.Contains(TEXT("记录已截断")) && Text.Contains(TEXT("不能据此确认全部过程或总量")));
+    }
+    TestTrue(TEXT("Coverage metadata remains bounded"),Truncated.CommandCoverage.Num()<=2 && Truncated.IsValid(201));
+
+    FHearthwardNPCMemory Legacy;Legacy.Campaign=Campaign;
+    FHearthwardNPCEvent LegacyCompleted;LegacyCompleted.Id=FGuid::NewGuid();LegacyCompleted.Command=FGuid::NewGuid();LegacyCompleted.Campaign=Campaign;
+    LegacyCompleted.Kind=TEXT("completed");LegacyCompleted.Item=TEXT("wood");LegacyCompleted.Count=1;LegacyCompleted.At=5;Legacy.Events.Add(LegacyCompleted);
+    Legacy.Migrate(Campaign,true);
+    TestTrue(TEXT("Legacy events migrate to unknown rather than fabricated complete"),
+        Legacy.CoverageFor(LegacyCompleted.Command)==EHearthwardNPCEpisodeCoverage::Unknown && Legacy.IsValid(5));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentContextProjectionTest,"Hearthward.NPCAgent.BoundedContextProjection",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentContextProjectionTest::RunTest(const FString&)
+{
+    FHearthwardNPCContextSnapshot S;S.Query=TEXT("请去新采四份木材并带回仓库");S.InputSource=TEXT("free_text");
+    S.bAtCamp=false;S.bCampAvailable=true;S.bCollectionSourceAvailable=true;S.bCollectionSourceTrustedSafe=true;
+    S.CollectionSafety=TEXT("allowed");S.Memory.Campaign=FGuid::NewGuid();
+    TestTrue(TEXT("Hard collection rule stored"),S.Memory.Put({},TEXT("collection_ban"),TEXT("以后不要采石头"),1,TEXT("stone")));
+    TestTrue(TEXT("Typed source rule stored"),S.Memory.PutRule(TEXT("source:S1"),TEXT("采集只能使用已知来源"),2));
+    for(int32 I=0;I<50;++I)
+        TestTrue(TEXT("Pressure player record stored"),S.Memory.Put({},TEXT("claim"),FString::Printf(TEXT("无关记录%02d"),I),3+I));
+
+    double At=100;
+    for(const auto& Item:HearthwardBasicItems())
+    {
+        TestTrue(TEXT("Pressure belief stored"),HearthwardBeliefs::UpsertCampStock(S.Memory.Beliefs,S.Memory.Revision,S.Memory.Campaign,
+            Item.Id,Item.Id==TEXT("wood")?10:1,EHearthwardNPCBeliefSource::Firsthand,At++));
+        S.OwnBag.Add(Item.Id,Item.Id==TEXT("wood")?2:1);
+    }
+    S.Memory.WorkingGoal.Intent=TEXT("collect");S.Memory.WorkingGoal.Item=TEXT("wood");S.Memory.WorkingGoal.Quantity=4;
+    S.Memory.WorkingGoal.QuantityMode=TEXT("additional_acquired");S.Memory.WorkingGoal.SourceRef=TEXT("S1");
+    S.Memory.WorkingGoal.Original=TEXT("请去新采四份木材并带回仓库，但不要改变其它限制");
+    S.Memory.WorkingGoal.Unresolved={TEXT("玩家明确限制必须保留")};
+
+    const auto Full=HearthwardContextProjection::Project(S,EHearthwardNPCContextTier::Full);
+    const auto Compact=HearthwardContextProjection::Project(S,EHearthwardNPCContextTier::Compact);
+    const auto Minimal=HearthwardContextProjection::Project(S,EHearthwardNPCContextTier::Minimal);
+    const auto MinimalAgain=HearthwardContextProjection::Project(S,EHearthwardNPCContextTier::Minimal);
+
+    TestTrue(TEXT("Projection is deterministic for the same snapshot"),Minimal.Json==MinimalAgain.Json);
+    TestTrue(TEXT("Minimal projection is smaller than full pressure projection"),Minimal.Json.Len()<Full.Json.Len());
+    TestFalse(TEXT("Legacy duplicate camp inventory is not a model fact source"),Full.Json.Contains(TEXT("observed_camp_inventory"))
+        || Full.Json.Contains(TEXT("last_seen_camp")) || Full.Json.Contains(TEXT("camp_knowledge")));
+    TestTrue(TEXT("Hard rules survive every degradation tier"),Minimal.Json.Contains(TEXT("collection_prohibited_items"))
+        && Minimal.Json.Contains(TEXT("stone")) && Minimal.Json.Contains(TEXT("source:S1")));
+    TestTrue(TEXT("Unresolved original constraint survives minimal tier"),Minimal.Json.Contains(TEXT("玩家明确限制必须保留")));
+    TestTrue(TEXT("Away firsthand evidence is explicitly possibly stale"),Minimal.Json.Contains(TEXT("\"freshness\":\"possibly_stale\"")));
+    TestTrue(TEXT("Relevant wood belief survives minimal tier"),Minimal.Json.Contains(TEXT("\"item\":\"wood\""))
+        && Minimal.Json.Contains(TEXT("\"last_evidence_time\"")));
+    TestTrue(TEXT("Unrelated beliefs are dropped from minimal tier"),Minimal.DroppedFields.Contains(TEXT("unrelated_beliefs")));
+    TestTrue(TEXT("Compact/full are named diagnostics, not extra generations"),Full.Tier==TEXT("full_relevant")
+        && Compact.Tier==TEXT("compact_relevant") && Minimal.Tier==TEXT("required_minimal"));
+
+    TSharedPtr<FJsonObject> MinimalObject;
+    TestTrue(TEXT("Projected JSON parses"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Minimal.Json),MinimalObject) && MinimalObject.IsValid());
+    if(MinimalObject)
+    {
+        const TArray<TSharedPtr<FJsonValue>>* Records=nullptr;
+        TestTrue(TEXT("Player records remain bounded under pressure"),MinimalObject->TryGetArrayField(TEXT("player_records"),Records) && Records && Records->Num()<=1);
     }
     return true;
 }

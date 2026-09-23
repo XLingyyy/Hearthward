@@ -93,12 +93,14 @@ class HEARTHWARD_API UHearthwardSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Schema = 2;
+    UPROPERTY() int32 Schema = 3;
     UPROPERTY() TArray<FHearthwardSavePoint> Points;
 };
 
 namespace HearthwardSave
 {
+    constexpr int32 CurrentSchema = 3;
+    constexpr int32 NPCStateVersion = 3;
     constexpr int32 MaxPoints = 50;
     // INDEX_NONE means no capacity. An index equal to Num means append.
     int32 SelectSlot(const TArray<FHearthwardSavePoint>& Points);
