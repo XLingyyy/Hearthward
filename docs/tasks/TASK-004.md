@@ -1,8 +1,8 @@
 # TASK-004 获取／创建 UE 基础资产库与展示场景
 
 状态：**Backlog，已有部分制作源资产入库，整单未执行完成**。Owner：XLingyyy；独立评审人、Issue 待分配。
-机器快照：[TASK-004.json](TASK-004.json)。整单拟用分支：`codex/TASK-004-foundation-assets`；本批资产同步分支：`assets/building-parts-trees-20260923`。
-前置工程：[TASK-003](TASK-003.md)。2026-09-23 用户分别授权将本地 Tripo 动物批次，以及房屋建筑部件与 Poly Haven 树木目录的新增内容作为制作源资产同步到任务分支并创建 PR；这些授权不扩展到 UE 导入、动画制作、玩法接入或合并 main。
+机器快照：[TASK-004.json](TASK-004.json)。整单拟用分支：`codex/TASK-004-foundation-assets`；本批家具同步分支：`assets/indoor-furniture-20260923`。
+前置工程：[TASK-003](TASK-003.md)。2026-09-23 用户分别授权将本地 Tripo 动物、房屋建筑部件与 Poly Haven 树木，以及室内家具作为制作源资产同步到任务分支并创建 PR；这些授权不扩展到 UE 导入、动画制作、玩法接入或合并 main。
 
 ## 当前局部进度（2026-09-23）
 
@@ -13,6 +13,8 @@
 本次分支在 `art_source/TASK-004/Tripo/房屋建筑部件` 增加 8 张参考图、8 个静态 FBX 和 8 张 PNG 预览：木地板、木楼梯、实心木墙、门洞木墙、窗洞木墙、木门、茅草坡屋顶及茅草屋脊。逐件任务 ID、生成配置和来源授权见该目录的索引与 `SOURCE.md`。这些房屋造型同样标记为 `TEMP_VISUAL`，尚未确定正式建筑风格、营地等级或 UE 中的吸附尺寸与碰撞。
 
 `art_source/TASK-004/polyhaven/树木` 新增 Poly Haven 的 Fir Tree 01 和 Pine Tree 01 原始 Blender 文件及 4K 贴图，共 38 个文件；原有岛树与蓝花楹的 22 个文件按 SHA-256 核对后保持不变。Poly Haven 来源页面、CC0 许可及复制规模见[来源说明](../../art_source/TASK-004/polyhaven/SOURCE.md)。本次只扩充制作源文件，尚未转换、优化或导入 UE。
+
+本批在 `art_source/TASK-004/Tripo/室内家具` 增加 5 张参考图、5 个静态 FBX 和 5 张 PNG 预览：绳网木床、带锁木箱、木桌、木椅和金属提灯。逐件任务 ID、生成配置、额度与来源见该目录的索引和 `SOURCE.md`。家具造型为 `TEMP_VISUAL` 候选，尚未导入 UE，也未验证尺寸、背面、碰撞或提灯的透明／发光材质。
 
 ## 交付目标
 
