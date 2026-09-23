@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "TASK-027",
+  "title": "已有主角资产接入与基础动作动画",
+  "status": "Active",
+  "updated_at": "2026-09-23",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-027-character-animation",
+  "source_refs": [
+    "2026-09-23用户要求同步最新main，导入已有角色并制作行走/冲刺/跳跃/攻击/挖掘动画",
+    "main 414dc70：已有Hero Tripo骨骼网格与动作资产",
+    "2026-09-23用户明确本次任务编号027并要求继续",
+    "2026-09-23 用户要求改用UE自带待机、行走、冲刺模板，修正右手穿身与左脚竖起",
+    "2026-09-23 用户明确授权提交推送027内容"
+  ],
+  "dependencies": [
+    "TASK-003"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-027.json",
+    "docs/tasks/TASK-027.md",
+    "docs/handoffs/TASK-027.md",
+    "docs/qa/evidence/TASK-027/",
+    "docs/assets/TASK-027/",
+    "scripts/characters/TASK-027/",
+    "Source/Hearthward/Animation/",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Interaction/HearthwardInteractionComponent.h",
+    "Content/Characters/Hero/Animation/",
+    "Source/Hearthward/Hearthward.Build.cs",
+    "Content/Mannequin/"
+  ],
+  "forbidden_paths": [
+    "Plugins/",
+    "Config/",
+    "config/",
+    "docs/design/",
+    "Content/Hearthward/World/",
+    "art_source/TASK-004/"
+  ],
+  "acceptance": [
+    "已有主角网格骨架材质加载，替换玩家灰盒；不改源资产",
+    "行走冲刺跟随真实速度；起跳/下落/落地动画连续",
+    "攻击与挖掘动作接入现有玩法状态，取消/死亡/菜单暂停一致",
+    "UE5.8.2构建和实际操作录像验证，记录动作来源与缺口"
+  ],
+  "non_goals": [
+    "新增战斗或采集规则",
+    "新建地图、付费生成或合并main"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: fetch main and reference documentation",
+    "install_dependencies": "not_granted",
+    "commit": "granted: TASK-027 contents",
+    "push": "granted: task branch only",
+    "merge": "not_granted"
+  }
+}

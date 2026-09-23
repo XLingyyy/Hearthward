@@ -1,4 +1,7 @@
 #include "HearthwardCharacter.h"
+#include "Animation/HearthwardHeroAnimInstance.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/SkeletalMesh.h"
 #include "Building/HearthwardBuildingComponent.h"
 #include "Building/HearthwardTask028CampHouse.h"
 #include "Gameplay/HearthwardGameplayComponent.h"
@@ -52,30 +55,15 @@ AHearthwardCharacter::AHearthwardCharacter()
     Camera->SetupAttachment(Boom, USpringArmComponent::SocketName);
     Camera->bUsePawnControlRotation = false;
 
-    // Engine primitives are a greybox silhouette, not final character art.
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> Cylinder(TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> Sphere(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> Cube(TEXT("/Engine/BasicShapes/Cube.Cube"));
-    auto* Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GreyboxBody"));
-    Body->SetupAttachment(GetRootComponent());
-    Body->SetStaticMesh(Cylinder.Object);
-    Body->SetRelativeLocation(FVector(0.0f, 0.0f, -20.0f));
-    Body->SetRelativeScale3D(FVector(0.5f, 0.5f, 1.4f));
-    Body->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    auto* Head = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GreyboxHead"));
-    Head->SetupAttachment(GetRootComponent());
-    Head->SetStaticMesh(Sphere.Object);
-    Head->SetRelativeLocation(FVector(0.0f, 0.0f, 65.0f));
-    Head->SetRelativeScale3D(FVector(0.5f));
-    Head->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    auto* Facing = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FacingMarker"));
-    Facing->SetupAttachment(GetRootComponent());
-    Facing->SetStaticMesh(Cube.Object);
-    Facing->SetRelativeLocation(FVector(27.0f, 0.0f, 65.0f));
-    Facing->SetRelativeScale3D(FVector(0.18f, 0.12f, 0.12f));
-    Facing->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> HeroMesh(TEXT("/Game/Characters/Hero/Tripo/SK_Hero_Tripo.SK_Hero_Tripo"));
+    GetMesh()->SetSkeletalMesh(HeroMesh.Object);
+    // Tripo import measures 99.803 cm; display at 180 cm with its verified +X forward axis.
+    GetMesh()->SetRelativeScale3D(FVector(180.f / 99.802912f));
+    GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMesh()->SetAnimInstanceClass(UHearthwardHeroAnimInstance::StaticClass());
 
-    // TASK-028: a provisional greybox hand position until TASK-027 publishes its final socket.
+    // TASK-028 provisional attachment until the hand socket and tool animation are integrated.
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Axe(TEXT("/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe.SM_stone_bone_axe"));
     HeldAxe=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldAxe"));
     HeldAxe->SetupAttachment(GetRootComponent());
@@ -152,6 +140,14 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     JumpAction = NewObject<UInputAction>(this, TEXT("JumpAction"));
     JumpAction->ValueType = EInputActionValueType::Boolean;
     InputMapping->MapKey(JumpAction, EKeys::SpaceBar);
+    SprintAction = NewObject<UInputAction>(this, TEXT("SprintAction"));
+    SprintAction->ValueType = EInputActionValueType::Boolean;
+    SprintAction->bConsumeInput = false;
+    InputMapping->MapKey(SprintAction, EKeys::LeftShift);
+    AttackPreviewAction = NewObject<UInputAction>(this, TEXT("AttackPreviewAction"));
+    AttackPreviewAction->ValueType = EInputActionValueType::Boolean;
+    AttackPreviewAction->bConsumeInput = false;
+    InputMapping->MapKey(AttackPreviewAction, EKeys::LeftMouseButton);
 
     auto* Negate = NewObject<UInputModifierNegate>(InputMapping);
     auto* Swizzle = NewObject<UInputModifierSwizzleAxis>(InputMapping);
@@ -175,6 +171,10 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     Input->BindAction(JumpAction, ETriggerEvent::Started, this, &AHearthwardCharacter::StartJump);
     Input->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
     Input->BindAction(JumpAction, ETriggerEvent::Canceled, this, &ACharacter::StopJumping);
+    Input->BindAction(SprintAction, ETriggerEvent::Started, this, &AHearthwardCharacter::StartSprint);
+    Input->BindAction(SprintAction, ETriggerEvent::Completed, this, &AHearthwardCharacter::StopSprint);
+    Input->BindAction(SprintAction, ETriggerEvent::Canceled, this, &AHearthwardCharacter::StopSprint);
+    Input->BindAction(AttackPreviewAction, ETriggerEvent::Started, this, &AHearthwardCharacter::PreviewAttack);
     Subsystem->AddMappingContext(InputMapping, 0);
     Player->SetInputMode(FInputModeGameOnly());
     Player->bShowMouseCursor = false;
@@ -218,6 +218,17 @@ void AHearthwardCharacter::StartJump()
     if ((Gameplay->Enabled && Gameplay->Health <= 0) || !CanJump()) return;
     TimedAction->InterruptAction();
     Jump();
+}
+
+void AHearthwardCharacter::StartSprint() { Gameplay->SetSprinting(true); }
+void AHearthwardCharacter::StopSprint() { Gameplay->SetSprinting(false); }
+
+void AHearthwardCharacter::PreviewAttack()
+{
+    // Natural-world browsing has no combat targets; expose the motion without combat settlement.
+    if (!Gameplay->Enabled)
+        if (auto* Animation = Cast<UHearthwardHeroAnimInstance>(GetMesh()->GetAnimInstance()))
+            Animation->PlayAttack();
 }
 
 void AHearthwardCharacter::ToggleInventory()

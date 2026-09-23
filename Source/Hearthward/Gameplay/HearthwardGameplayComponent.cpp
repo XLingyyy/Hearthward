@@ -1,4 +1,6 @@
 #include "HearthwardGameplayComponent.h"
+#include "../Animation/HearthwardHeroAnimInstance.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -252,7 +254,13 @@ bool UHearthwardGameplayComponent::Travel(FName Id)
     Character->GetCharacterMovement()->StopMovementImmediately();
     Record(TEXT("travel"),Id); return Result(true,TEXT("已抵达目的地"));
 }
-void UHearthwardGameplayComponent::SetSprinting(bool Value) { Sprinting=Value; }
+void UHearthwardGameplayComponent::SetSprinting(bool Value)
+{
+    Sprinting=Value;
+    if (!Enabled)
+        if (auto* Character=Cast<ACharacter>(GetOwner()))
+            Character->GetCharacterMovement()->MaxWalkSpeed=Tune(Value?TEXT("sprintSpeed"):TEXT("walkSpeed"))*Inventory()->GetMoveSpeedMultiplier();
+}
 bool UHearthwardGameplayComponent::SpendStamina(float Cost)
 {
     Cost*=Inventory()->GetStaminaCostMultiplier()*FMath::Max(.1f,1-Effect(TEXT("cost")));
@@ -338,6 +346,10 @@ bool UHearthwardGameplayComponent::AttackWith(bool Heavy,bool Ranged)
     if(!SpendStamina(Tune(Heavy?TEXT("heavyStamina"):Ranged?TEXT("rangedStamina"):TEXT("attackStamina")))) return Result(false,TEXT("耐力不足"));
     if(Ranged) Inventory()->TryRemove(TEXT("arrow"),1);
     AttackDelay=Tune(TEXT("attackCooldown")); CombatRemaining=3;
+    if (!Ranged)
+        if (auto* Character = Cast<ACharacter>(GetOwner()))
+            if (auto* Animation = Cast<UHearthwardHeroAnimInstance>(Character->GetMesh()->GetAnimInstance()))
+                Animation->PlayAttack();
     DamageOpponent(Target,Power);
     if(Heavy && FMath::FRand()<HeavySkill->GetArrayField(TEXT("stunChance"))[HeavyRank-1]->AsNumber())
         Stunned.Add(Target,HeavySkill->GetArrayField(TEXT("stunSeconds"))[HeavyRank-1]->AsNumber());

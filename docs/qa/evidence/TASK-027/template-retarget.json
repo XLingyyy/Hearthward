@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "ops": [
+    "Pelvis Motion",
+    "FK Chains",
+    "Run IK Rig",
+    "Root Motion",
+    "Remap Curves"
+  ],
+  "chains": {
+    "source": {
+      "Spine": [
+        "spine_01",
+        "spine_03"
+      ],
+      "Head": [
+        "head",
+        "head"
+      ],
+      "Clavicle_L": [
+        "clavicle_l",
+        "clavicle_l"
+      ],
+      "Clavicle_R": [
+        "clavicle_r",
+        "clavicle_r"
+      ],
+      "Arm_L": [
+        "upperarm_l",
+        "hand_l"
+      ],
+      "Arm_R": [
+        "upperarm_r",
+        "hand_r"
+      ],
+      "Leg_L": [
+        "thigh_l",
+        "foot_l"
+      ],
+      "Leg_R": [
+        "thigh_r",
+        "foot_r"
+      ]
+    },
+    "target": {
+      "Spine": [
+        "Spine_1",
+        "0_Left_Limb_0"
+      ],
+      "Head": [
+        "bone_4",
+        "bone_4"
+      ],
+      "Clavicle_L": [
+        "Head_0",
+        "Head_0"
+      ],
+      "Clavicle_R": [
+        "0_Left_Limb_1",
+        "0_Left_Limb_1"
+      ],
+      "Arm_L": [
+        "bone_6",
+        "bone_8"
+      ],
+      "Arm_R": [
+        "0_Left_Limb_2",
+        "0_Left_Limb_4"
+      ],
+      "Leg_L": [
+        "bone_17",
+        "0_Right_Limb_1"
+      ],
+      "Leg_R": [
+        "bone_21",
+        "1_Left_Limb_1"
+      ]
+    }
+  },
+  "output": [
+    "/Game/Characters/Hero/Animation/A_Hero_Idle",
+    "/Game/Characters/Hero/Animation/A_Hero_Walk",
+    "/Game/Characters/Hero/Animation/A_Hero_Sprint"
+  ],
+  "A_Hero_Idle_root": "<Struct 'Transform' (0x0000022CD10EE190) {rotation: {x: -0.000000, y: 0.000000, z: -0.999136, w: 0.041558}, translation: {x: 0.000003, y: -0.000001, z: -0.787062}, scale3d: {x: 100.001183, y: 100.000000, z: 100.000000}}>",
+  "A_Hero_Walk_root": "<Struct 'Transform' (0x0000022CD10EC060) {rotation: {x: -0.000000, y: 0.000000, z: -0.999136, w: 0.041558}, translation: {x: 0.000003, y: -0.000001, z: -0.038603}, scale3d: {x: 100.001183, y: 100.000000, z: 100.000000}}>",
+  "A_Hero_Sprint_root": "<Struct 'Transform' (0x0000022CD1108060) {rotation: {x: -0.000000, y: 0.000000, z: -0.999136, w: 0.041558}, translation: {x: 0.000003, y: -0.000001, z: -4.242342}, scale3d: {x: 100.001183, y: 100.000000, z: 100.000000}}>",
+  "visual_review": {
+    "date": "2026-09-23",
+    "views": "Idle/Walk/Sprint at four phases, front and side; original Tripo Idle comparison",
+    "observations": [
+      "Idle hands outside torso; feet flat in front/side review",
+      "Walk/Sprint face +X with forward/back stride",
+      "PIE support ankle height 11.04 cm; 24 functional checks pass"
+    ],
+    "limitations": [
+      "No runtime foot IK or terrain planting",
+      "Sprint flight/contact timing still basic",
+      "Jump/Attack/Dig retain previous keyed clips"
+    ]
+  }
+}
