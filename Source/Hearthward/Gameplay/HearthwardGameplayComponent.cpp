@@ -6,6 +6,7 @@
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Save/HearthwardSaveSubsystem.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Serialization/JsonSerializer.h"
@@ -18,12 +19,28 @@
 #include "EngineUtils.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
+#include "HearthwardCompanionBehavior.h"
 
 using namespace HearthwardData;
 namespace
 {
 double Tune(const FString& Key) { return Number(Catalog()->GetObjectField(TEXT("tuning")), Key); }
 FName EventKey(FName Kind, FName Target) { return FName(*(Kind.ToString()+TEXT(":")+Target.ToString())); }
+FName LegacyOrderForDirective(FName Directive)
+{
+    if(Directive==TEXT("hold")) return TEXT("wait");
+    if(Directive==TEXT("follow")) return TEXT("follow");
+    if(Directive==TEXT("assist")) return TEXT("attack");
+    if(Directive==TEXT("routine")) return TEXT("wait");
+    return NAME_None;
+}
+FName DirectiveForLegacyOrder(FName Order)
+{
+    if(Order==TEXT("wait")) return TEXT("hold");
+    if(Order==TEXT("follow")) return TEXT("follow");
+    if(Order==TEXT("attack")) return TEXT("assist");
+    return NAME_None;
+}
 TSharedPtr<FJsonObject> Parse(const FString& Text)
 {
     TSharedPtr<FJsonObject> Out;
@@ -61,6 +78,8 @@ void UHearthwardGameplayComponent::CreateLandmarks()
     LandmarkActors.Reset();
     for(auto& A:OpponentActors) if(A.Value.IsValid()) A.Value->Destroy();
     OpponentActors.Reset();
+    // The natural map supplies its own geography. Keep the old arena markers in the development map.
+    if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds")) return;
     for(const auto& V:Rows(TEXT("locations")))
     {
         const auto R=V->AsObject(); const FName Id(*Text(R,TEXT("id"))); if(Id==TEXT("camp")) continue;
@@ -231,6 +250,7 @@ FName UHearthwardGameplayComponent::NearbyLocation() const
     for (const auto& L : Rows(TEXT("locations")))
     {
         const FName Id(*Text(L->AsObject(),TEXT("id")));
+        if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp")) continue;
         if (FVector::Dist2D(GetOwner()->GetActorLocation(),LocationPosition(Id))<=Tune(TEXT("interactRadius"))) return Id;
     }
     return NAME_None;
@@ -367,61 +387,98 @@ void UHearthwardGameplayComponent::DamageOpponent(FName Target,float Damage)
         Record(TEXT("defeat"),Target);
     }
 }
-bool UHearthwardGameplayComponent::OrderCompanion(FName Order)
+FString UHearthwardGameplayComponent::PreviewCompanionDirective(AActor* Speaker,FName Directive) const
 {
-    if(!Enabled || Health<=0 || GetWorld()->IsPaused()) return false;
-    if(Order!=TEXT("wait") && Order!=TEXT("follow") && Order!=TEXT("attack")) return false;
+    if(LegacyOrderForDirective(Directive).IsNone()) return TEXT("UNSUPPORTED_CAPABILITY");
+    if(Speaker!=GetOwner()) return TEXT("PLAYER_MISMATCH");
+    if(!Enabled || Health<=0) return TEXT("PLAYER_UNAVAILABLE");
+    if(GetWorld()->IsPaused()) return TEXT("WORLD_PAUSED");
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+        return It->CanCommunicate(Speaker)?FString():TEXT("OUT_OF_RANGE");
+    return TEXT("COMPANION_UNAVAILABLE");
+}
+
+bool UHearthwardGameplayComponent::ApplyCompanionDirective(AActor* Speaker,FName Directive)
+{
+    const FString Error=PreviewCompanionDirective(Speaker,Directive);
+    if(!Error.IsEmpty()) return Result(false,TEXT("伙伴指令未执行：")+Error);
+
+    const FName Order=LegacyOrderForDirective(Directive);
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
     {
-        if(!It->CanCommunicate(GetOwner())) return Result(false,TEXT("请靠近弟弟，交流范围30米"));
-        GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
-        if(!It->Cancel(GetOwner())) return false;
+        // Explicitly replacing a task uses the companion's existing cancellation semantics:
+        // physical cargo remains in the companion bag and is never silently deleted.
+        if(!It->Cancel(Speaker)) return Result(false,TEXT("伙伴指令已失效，请重新靠近后再试"));
         CompanionOrder=Order;
-        return Result(true,Order==TEXT("wait")?TEXT("弟弟在原地等待"):Order==TEXT("follow")?TEXT("弟弟开始跟随"):TEXT("弟弟协助攻击附近敌人"));
+        CompanionRoutineEnabled=Directive==TEXT("routine");
+        CompanionRoutineActivity=NAME_None;
+        CompanionTacticalIntent=Directive;
+        CompanionCombatTarget=NAME_None;
+        CompanionCombatReason=TEXT("DIRECTIVE_CHANGED");
+        return Result(true,Directive==TEXT("hold")?TEXT("弟弟在原地等待"):
+            Directive==TEXT("follow")?TEXT("弟弟开始跟随"):
+            Directive==TEXT("routine")?TEXT("弟弟恢复营地自由活动"):TEXT("弟弟协助处理玩家附近的有效威胁"));
     }
     return Result(false,TEXT("弟弟不在附近"));
 }
+
+bool UHearthwardGameplayComponent::OrderCompanion(FName Order)
+{
+    const FName Directive=DirectiveForLegacyOrder(Order);
+    if(Directive.IsNone()) return false;
+    const FString Error=PreviewCompanionDirective(GetOwner(),Directive);
+    if(!Error.IsEmpty()) return Result(false,TEXT("伙伴指令未执行：")+Error);
+    // A valid direct Z/X/C command is an explicit player override; only then invalidate an in-flight model reply.
+    auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    AI->CancelPending();
+    const bool Applied=ApplyCompanionDirective(GetOwner(),Directive);
+    if(Applied)AI->RecordCoordinationDirective(Directive,TEXT("direct_control"));
+    return Applied;
+}
+
 void UHearthwardGameplayComponent::TickCompanion(float Delta)
 {
     CompanionAttackDelay=FMath::Max(0.f,CompanionAttackDelay-Delta);
-    if(CompanionOrder==TEXT("wait")) return;
-    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+    CompanionTacticalIntent=TEXT("hold");
+    CompanionCombatTarget=NAME_None;
+    CompanionCombatReason=TEXT("COMPANION_UNAVAILABLE");
+    CompanionRoutineActivity=NAME_None;
+
+    AHearthwardCompanionFixture* Companion=nullptr;
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Companion=*It;break;}
+    if(!Companion)return;
+
+    FHearthwardCompanionBehaviorContext Context;
+    Context.Player=GetOwner();
+    Context.Companion=Companion;
+    Context.RequestedOrder=CompanionOrder;
+    Context.bRoutineEnabled=CompanionRoutineEnabled;
+    Context.bPlayerInCombat=InCombat();
+    Context.bPlayerDown=Health<=0;
+    Context.bCanAttack=CompanionAttackDelay<=0;
+    Context.PlayerHealthRatio=MaxHealth()>0?Health/MaxHealth():0;
+    Context.GameSeconds=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
+    for(const auto& Enemy:OpponentActors)
     {
-        using P=EHearthwardCompanionPhase;
-        const P Phase=It->GetPhase();
-        if(Phase==P::GoingToSource || Phase==P::Gathering || Phase==P::Returning || Phase==P::ReturningBlocked)
-        { CompanionOrder=TEXT("wait"); return; }
-        AActor* Destination=GetOwner(); FName Target;
-        if(CompanionOrder==TEXT("attack"))
-        {
-            float Nearest=Tune(TEXT("companionCommandRange"));
-            for(const auto& Enemy:OpponentActors)
-            {
-                if(!Enemy.Value.IsValid() || Opponents.FindRef(Enemy.Key)<=0 || FVector::Dist2D(GetOwner()->GetActorLocation(),Enemy.Value->GetActorLocation())>Tune(TEXT("companionCommandRange"))) continue;
-                const float Distance=FVector::Dist2D(It->GetActorLocation(),Enemy.Value->GetActorLocation());
-                if(Distance<Nearest) { Nearest=Distance; Destination=Enemy.Value.Get(); Target=Enemy.Key; }
-            }
-        }
-        const float StopDistance=Target.IsNone()?Tune(TEXT("companionFollowDistance")):Tune(TEXT("attackRange"))*.8f;
-        FVector Direction=Destination->GetActorLocation()-It->GetActorLocation(); Direction.Z=0;
-        if(Direction.Size()>StopDistance)
-        {
-            It->BlockReason=It->NavigateTo(Destination,Tune(TEXT("companionMoveSpeed")),StopDistance-10)?TEXT(""):TEXT("目标不可达，请调整位置");
-        }
-        else
-        {
-            if(Target.IsNone()) { It->StopNavigation(); It->BlockReason.Reset(); return; }
-            FHitResult Hit; FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardCompanionAttack),false,*It);
-            Query.AddIgnoredActor(GetOwner());
-            if(!GetWorld()->LineTraceSingleByChannel(Hit,It->GetActorLocation(),Destination->GetActorLocation(),ECC_Visibility,Query))
-            {
-                It->StopNavigation(); It->BlockReason.Reset();
-                if(CompanionAttackDelay<=0)
-                { DamageOpponent(Target,Tune(TEXT("companionAttack"))); CompanionAttackDelay=Tune(TEXT("companionAttackCooldown")); CombatRemaining=3; }
-            }
-            else It->BlockReason=It->NavigateTo(Destination,Tune(TEXT("companionMoveSpeed")),30)?TEXT("正在绕行接近目标"):TEXT("目标不可达，请调整位置");
-        }
-        return;
+        if(!Enemy.Value.IsValid())continue;
+        FHearthwardCompanionBehaviorThreat Threat;
+        Threat.Id=Enemy.Key;
+        Threat.Actor=Enemy.Value;
+        Threat.RemainingHealth=Opponents.FindRef(Enemy.Key);
+        Context.Threats.Add(Threat);
+    }
+
+    const auto Result=HearthwardCompanionBehavior::Tick(Context);
+    CompanionOrder=Result.EffectiveOrder;
+    CompanionTacticalIntent=Result.TacticalIntent;
+    CompanionCombatTarget=Result.CombatTarget;
+    CompanionCombatReason=Result.Reason;
+    CompanionRoutineActivity=Result.RoutineActivity;
+    if(Result.bAttackCommitted)
+    {
+        DamageOpponent(Result.DamageTarget,Tune(TEXT("companionAttack")));
+        CompanionAttackDelay=Tune(TEXT("companionAttackCooldown"));
+        CombatRemaining=3;
     }
 }
 void UHearthwardGameplayComponent::SetWaypoint(FVector Position)
@@ -434,8 +491,10 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     if (!Enabled || GetWorld()->IsPaused()) return;
     AttackDelay=FMath::Max(0.f,AttackDelay-Delta); CombatRemaining=FMath::Max(0.f,CombatRemaining-Delta); EnemyAttackDelay-=Delta;
     for(auto& S:Stunned) S.Value=FMath::Max(0.f,S.Value-Delta);
-    if(Health<=0) { Sprinting=false; return; }
+    // Companion policy still owns its own movement when the player is down; this allows an
+    // explicit assist/follow order to collapse back toward the player instead of chasing threats.
     TickCompanion(Delta);
+    if(Health<=0) { Sprinting=false; return; }
     for(const auto& A:OpponentActors)
     {
         if(!A.Value.IsValid() || Opponents.FindRef(A.Key)<=0) continue;
@@ -465,6 +524,7 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     for (const auto& L : Rows(TEXT("locations")))
     {
         const FName Id(*Text(L->AsObject(),TEXT("id")));
+        if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp")) continue;
         if (!Discovered.Contains(Id) && FVector::Dist2D(P,LocationPosition(Id))<=Tune(TEXT("discoverRadius"))*(1+Effect(TEXT("discover"))))
         { Discovered.Add(Id); Record(TEXT("discover"),Id); Feedback=TEXT("发现：")+Text(L->AsObject(),TEXT("name")); }
     }
@@ -479,6 +539,7 @@ FString UHearthwardGameplayComponent::SaveSnapshot() const
     J->SetNumberField(TEXT("experience"),Experience); J->SetNumberField(TEXT("campTier"),CampTier); J->SetBoolField(TEXT("enabled"),Enabled);
     J->SetStringField(TEXT("tracked"),TrackedQuest.ToString());
     J->SetStringField(TEXT("companionOrder"),CompanionOrder.ToString());
+    J->SetBoolField(TEXT("companionRoutine"),CompanionRoutineEnabled);
     J->SetBoolField(TEXT("hasWaypoint"),HasWaypoint); J->SetStringField(TEXT("waypoint"),Waypoint.ToString());
     auto Map=[&](const TCHAR* Key,const TMap<FName,int32>& Values){ auto M=MakeShared<FJsonObject>(); for(const auto& V:Values) M->SetNumberField(V.Key.ToString(),V.Value); J->SetObjectField(Key,M); };
     Map(TEXT("skills"),Skills); Map(TEXT("events"),Events);
@@ -506,6 +567,7 @@ bool UHearthwardGameplayComponent::ValidateSnapshot(const FString& Json)
         FString Order;
         if(!J->TryGetStringField(TEXT("companionOrder"),Order) || (Order!=TEXT("wait") && Order!=TEXT("follow") && Order!=TEXT("attack"))) return false;
     }
+    if(J->HasField(TEXT("companionRoutine")) && !J->HasTypedField<EJson::Boolean>(TEXT("companionRoutine"))) return false;
     if(J->HasField(TEXT("hasWaypoint")) || J->HasField(TEXT("waypoint")))
     {
         FVector Marker; FString Value; bool HasMarker;
@@ -560,10 +622,13 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     LandmarkActors.Reset(); OpponentActors.Reset(); Stunned.Reset();
     Skills.Reset(); Equipment.Reset(); Discovered.Reset(); Activated.Reset(); Claimed.Reset(); Events.Reset(); Explored.Reset(); Opponents.Reset(); Durability.Reset();
     Sprinting=false; RecoveryDelay=0; ExploreDelay=0; AttackDelay=EnemyAttackDelay=CombatRemaining=CompanionAttackDelay=0; Feedback.Reset();
-    CompanionOrder=TEXT("wait"); HasWaypoint=false; Waypoint=FVector::ZeroVector;
+    CompanionOrder=TEXT("wait"); CompanionRoutineEnabled=false; CompanionRoutineActivity=NAME_None;
+    CompanionTacticalIntent=TEXT("hold"); CompanionCombatTarget=NAME_None; CompanionCombatReason=TEXT("EXPLICIT_HOLD");
+    HasWaypoint=false; Waypoint=FVector::ZeroVector;
     if (Json.IsEmpty()) { Health=Hunger=Stamina=100; Experience=0; CampTier=1; Enabled=false; TrackedQuest=TEXT("ember"); return; }
     const auto J=Parse(Json);
     if(J->HasField(TEXT("companionOrder"))) CompanionOrder=FName(*Text(J,TEXT("companionOrder")));
+    if(J->HasField(TEXT("companionRoutine"))) CompanionRoutineEnabled=J->GetBoolField(TEXT("companionRoutine"));
     if(J->HasField(TEXT("hasWaypoint"))) { HasWaypoint=J->GetBoolField(TEXT("hasWaypoint")); Waypoint.InitFromString(Text(J,TEXT("waypoint"))); }
     Health=Number(J,TEXT("health")); Hunger=Number(J,TEXT("hunger")); Stamina=Number(J,TEXT("stamina")); Experience=Number(J,TEXT("experience")); CampTier=Number(J,TEXT("campTier"));
     Enabled=J->GetBoolField(TEXT("enabled")); TrackedQuest=FName(*Text(J,TEXT("tracked"))); Origin.InitFromString(Text(J,TEXT("origin")));

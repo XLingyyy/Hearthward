@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "HearthwardAgentContract.h"
+#include "HearthwardNPCBelief.h"
 #include "HearthwardNPCMemory.generated.h"
 
 USTRUCT(BlueprintType)
@@ -32,6 +33,24 @@ struct FHearthwardNPCEvent
     UPROPERTY(BlueprintReadOnly) FString Reason;
 };
 
+UENUM(BlueprintType)
+enum class EHearthwardNPCEpisodeCoverage : uint8
+{
+    Unknown,
+    Complete,
+    Truncated
+};
+
+USTRUCT(BlueprintType)
+struct FHearthwardNPCCommandCoverage
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly) FGuid Command;
+    UPROPERTY(BlueprintReadOnly) EHearthwardNPCEpisodeCoverage Coverage = EHearthwardNPCEpisodeCoverage::Unknown;
+    // Active commands are retained even when every currently buffered event has been evicted.
+    UPROPERTY(BlueprintReadOnly) bool Active = false;
+};
+
 USTRUCT()
 struct FHearthwardClarificationTurn
 {
@@ -48,11 +67,14 @@ struct FHearthwardNPCMemory
     UPROPERTY() TArray<FHearthwardPlayerMemory> Records;
     UPROPERTY() TArray<FHearthwardClarificationTurn> Clarification;
     UPROPERTY() bool HasCampObservation = false;
+    // Legacy compatibility snapshot. It is not a parallel model fact source.
     UPROPERTY() TMap<FName, int32> CampInventory;
     UPROPERTY() double CampObservedAt = 0;
     UPROPERTY() int64 Revision = 1;
     UPROPERTY() FGuid Campaign;
     UPROPERTY() TArray<FHearthwardNPCEvent> Events;
+    UPROPERTY() TArray<FHearthwardNPCBelief> Beliefs;
+    UPROPERTY() TArray<FHearthwardNPCCommandCoverage> CommandCoverage;
     UPROPERTY() FHearthwardAgentGoal WorkingGoal;
 
     static constexpr int32 MaxRecords = 64;
@@ -67,6 +89,9 @@ struct FHearthwardNPCMemory
     bool IsValid(double Now) const;
     bool PutRule(const FString& Constraint,const FString& Original,double Now);
     TArray<FString> ApplicableRules(FName Capability) const;
+    void BeginCommand(FGuid Command);
+    EHearthwardNPCEpisodeCoverage CoverageFor(FGuid Command) const;
     void RecordEvent(const FHearthwardNPCEvent& Event);
-    void Migrate(FGuid CampaignId);
+    // bLegacyCognition is only true after an explicitly identified older save version.
+    void Migrate(FGuid CampaignId, bool bLegacyCognition=false, FGuid ActiveCommand=FGuid());
 };

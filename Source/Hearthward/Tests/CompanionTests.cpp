@@ -1,6 +1,10 @@
 #include "../Companion/HearthwardCompanionCommand.h"
 #include "../Inventory/HearthwardStorageState.h"
 #include "Misc/AutomationTest.h"
+#include "../Companion/HearthwardCompanionNavigationComponent.h"
+#include "Components/SceneComponent.h"
+#include "Engine/World.h"
+#include "GameFramework/Character.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCompanionCandidateTest, "Hearthward.Companion.CandidateAndSupersession",
@@ -67,6 +71,27 @@ bool FCompanionDeliveryTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Empty source cannot invent inventory"), Resource.TransferTo(Bag, TEXT("wood"), 100) == EHearthwardInventoryResult::InsufficientItems);
     TestEqual(TEXT("Failure preserves camp"), Camp.GetCount(TEXT("wood")), 10);
     TestFalse(TEXT("Late completion cannot duplicate"), Command.RecordDelivery(Ticket, 1));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCompanionLowPropArrivalTest, "Hearthward.Companion.LowPropArrival",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FCompanionLowPropArrivalTest::RunTest(const FString& Parameters)
+{
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,false);
+    auto* Character=World->SpawnActor<ACharacter>();
+    auto* Camp=World->SpawnActor<AActor>();
+    auto* Root=NewObject<USceneComponent>(Camp); Camp->AddInstanceComponent(Root); Camp->SetRootComponent(Root); Root->RegisterComponent();
+    auto* Navigation=NewObject<UHearthwardCompanionNavigationComponent>(Character);
+    Character->AddInstanceComponent(Navigation); Navigation->RegisterComponent();
+    Camp->SetActorLocation(FVector::ZeroVector);
+    // Observed stuck return: path arrived 37 cm from a 37 cm tall camp chest, carrying real cargo.
+    Character->SetActorLocation(FVector(1,37,39));
+    TestTrue(TEXT("Low chest arrival can settle cargo"),Navigation->IsAt(Camp));
+    Character->SetActorLocation(FVector(0,51,39));
+    TestFalse(TEXT("Horizontal distance remains bounded"),Navigation->IsAt(Camp));
+    Character->SetActorLocation(FVector(0,0,51));
+    TestFalse(TEXT("Different height remains out of range"),Navigation->IsAt(Camp));
+    World->DestroyWorld(false);
     return true;
 }
 #endif

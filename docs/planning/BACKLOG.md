@@ -7,7 +7,7 @@
 | [TASK-000](../tasks/TASK-000.json) | 仓库治理、环境锁定与两机启动验证 | 无 | Blocked |
 | [TASK-001](../tasks/TASK-001.json) | 裁定R01—R05并发布设计决定 | 无 | Backlog |
 | [TASK-002](../tasks/TASK-002.json) | 批准共享契约并建立唯一公共声明 | TASK-000 | Backlog |
-| [TASK-003](../tasks/TASK-003.json) | 建立 Hearthward UE 5.8.1 工程与第三人称灰盒行走基线 | 无 | Blocked |
+| [TASK-003](../tasks/TASK-003.json) | 建立 Hearthward UE 5.8.2 工程与第三人称灰盒行走基线 | 无 | Blocked |
 | [TASK-004](../tasks/TASK-004.json) | 获取／创建UE基础资产库与独立展示场景；已有部分自然源素材入库，UE适配未完成 | TASK-003 | Backlog，部分源资产交付 |
 | [TASK-005](../tasks/TASK-005.json) | 正常运行世界时钟与暂停冻结 | TASK-003 | Blocked |
 | [TASK-006](../tasks/TASK-006.json) | 五秒持续动作与中断基础 | TASK-003, TASK-005 | Blocked |

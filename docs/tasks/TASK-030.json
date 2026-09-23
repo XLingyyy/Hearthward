@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "id": "TASK-030",
+  "title": "Demo采集、家具交互与合成",
+  "status": "Blocked",
+  "updated_at": "2026-09-23",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-030-demo-interactions",
+  "source_refs": [
+    "2026-09-23 用户要求同步最新 main、继续030，设计可封版体验demo的采集、家具及配方"
+  ],
+  "dependencies": [
+    "TASK-027",
+    "TASK-029"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/",
+    "Resources/Data/gameplay.json",
+    "Content/Hearthward/Assets/Demo/",
+    "README.md",
+    "docs/tasks/TASK-030.json",
+    "docs/tasks/TASK-030.md",
+    "docs/handoffs/TASK-030.md",
+    "docs/qa/evidence/TASK-030/",
+    "docs/qa/evidence/TASK-029/internal-history/"
+  ],
+  "forbidden_paths": [
+    "Runtime/LocalAI/",
+    "config/local-ai.lock.json"
+  ],
+  "acceptance": [
+    "真实地图树木、石头、灌木可通过既有交互组件采集，扣资源并入背包；满载、中断不扣料",
+    "工作台四种配方、床休息及篝火烤肉使用真实材料/状态",
+    "资源消耗、家具、背包及demo进度可保存和回档，旧档缺省兼容",
+    "复用已有角色及家具资产，列出缺失资产和demo替代关系",
+    "构建、定向测试及实际试玩/录像验证"
+  ],
+  "non_goals": [
+    "不扩张为完整生存经济、全剧情或全图视觉验收",
+    "不新增付费生成、动物狩猎、科技树或多人玩法"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "2026-09-23 用户明确要求按可封版体验demo设计采集、家具和最小配方，自主复用现有资产。",
+  "required_tests": [
+    "T-002",
+    "T-008",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "granted for dedicated branch push and PR creation",
+    "install_dependencies": "not_granted",
+    "commit": "granted",
+    "push": "granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "旧内部AI TASK-030战斗记录保留在TASK-029/internal-history，既有证据仍留原路径。",
+    "用户授权自主实现和最小demo配方设计，覆盖本任务路径及向后兼容存档扩展。",
+    "实现按用户直接授权执行；仓库流程状态待真实Issue和独立Reviewer登记，不以本Agent自批代替。"
+  ]
+}

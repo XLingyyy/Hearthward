@@ -1,17 +1,19 @@
 # Hearthward 项目状态
 
-2026-09-23局部更新：[TASK-026自然地图](tasks/TASK-026.md)按用户新方向先精修新营地，远区暂缓；主菜单新游戏、存档和继续游戏已接入营地，实机闭环通过。main 新增冷杉、松树源文件已取回并接入营地，林缘补 48 棵；现有树冠仍比参考图稀疏，等待更密常绿树/幼树自然资产后再扩林。全图质量、长路线、跨区流送、性能与Owner视觉验收仍未完成，任务状态 Active。见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。004实际源资产状态以[资源汇总](../resourceSummary.md)及026交接为准。
+2026-09-23局部更新：remote main 已前进到 `28e7c52`。TASK-026 自然地图继续按用户新方向精修新营地，主菜单新游戏、存档和继续游戏已接入；全图质量、长路线、跨区流送、性能与 Owner 视觉验收仍未完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
 
-更新：2026-09-20。当前TASK-020九页参考UI与配套玩法已形成可运行分支版本，功能验证通过，用户于2026-09-19明确验收通过；提交推送绑定见020交接。TASK-019及此前003、005至018已提交推送，024合并的主干包含此前任务成果；TASK-004已有部分自然素材源文件交付，UE适配未完成。TASK-021伙伴导航已提交推送；TASK-022自由建造已提交推送；TASK-023即时制作已提交推送；原025已通过PR #22合并main d02b5fe，用户否决验收后指定增强版v2 A+B；当前修订结果见025交接。
+AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。候选分支 `codex/ai-npc-vnext-rework-01-fix` 已同步 `main@28e7c52`，最终候选 `037628f` 已推送并创建 [PR #34](https://github.com/XLingyyy/Hearthward/pull/34)。同步后 repo validator 0 errors、Python 31/31、Editor build PASS、native 41/41、TASK-029 runtime smoke 23/23；同步前真实 Qwen 32-case matrix、CTX-03/04 与 Schema 2→3 real-file migration 已完成。旧内部编号只保留在 TASK-029 的 evidence/internal-history 中，不再作为项目对外任务口径。
+
+历史基线：TASK-020 于2026-09-19通过用户验收；021伙伴导航、022自由建造、023即时制作、024维修已进入后续主干。原025经PR #22合并后被用户否决验收；增强版v2随后通过PR #23合并main。TASK-004已有77个自然素材源文件入库，UE适配未完成。
 
 | 项目 | 实际状态 |
 |---|---|
 | 开发根目录 | 独立 Hearthward 仓库，与上层 GameFactory 工具仓库隔离 |
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
-| GitHub | origin 为 XLingyyy/Hearthward，公开仓库；本轮营地与入口修改位于 026 任务分支，提交绑定见 026 交接 |
-| 当前分支 | `codex/TASK-026-natural-world-rebuild`；v2返工基线b9ff4ea，S1样段精修与审阅准备中，未合并main |
-| 游戏实现提交 | TASK-026实现提交与证据绑定见026交接；TASK-025 v2仍在独立分支 |
-| Git LFS | 已启用；Rebuild包修改前核验XLingyyy本人远端锁，保存到明确计划的包；旧图及004他人持锁源素材不改，锁保留到集成交接 |
+| GitHub | origin 为 XLingyyy/Hearthward，公开仓库；TASK-026 地图工作与 TASK-029 AI NPC 工作保持分支隔离 |
+| 当前分支 | AI NPC：`codex/ai-npc-vnext-rework-01-fix`；对外统一 TASK-029。地图：`codex/TASK-026-natural-world-rebuild` 另行推进 |
+| 游戏实现提交 | main 当前为 `28e7c52`；TASK-029 AI NPC 候选 `037628f` 已进入 PR #34，等待 review/Owner 验收，不自动 merge |
+| Git LFS | 已启用；本次 AI NPC PR 不主动修改地图/资产 LFS 内容，main 资产更新仅作为同步基线继承 |
 | 工具链 | UE 5.8.2、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
 | 构建／操作 | TASK-013 Editor/Game构建通过，68项AI运行依赖齐全；真实模型Vulkan两轮PIE43项、CPU缺文件/进程退出恢复9项通过；伙伴通路仍为隔离夹具 |
@@ -36,15 +38,17 @@
 | TASK-022 | 独立工作台/篝火、真实五秒建造、中断不耗料、摆放校验及建筑回档；验证见022交接 |
 | TASK-023 | 工作台E访问、配方/批量即时制作、原子库存交换及回档；Editor构建、58项PIE与2项原生通过，实键结果见023交接 |
 | TASK-024 | 工作台装备维修、逐件原型费用、完整结算及耐久回档；Editor构建、59项PIE与1项原生通过，实键结果见024交接 |
-| TASK-025 | 原版已合并但用户未验收；v2新增一次确认、规范目标/约束、事件回执、真实制作维修与迁移；本轮证据见rev2目录和025交接，独立评审及用户复验待定 |
+| TASK-025 | v2 已通过 PR #23 合并 main `851d60e`；一次确认、规范目标/约束、事件回执、真实制作维修与迁移已进入主干 |
 | TASK-004 | 部分交付：77个自然素材源文件及来源说明已入库，见resourceSummary.md；UE适配/展示验证未完成，人物与房屋缺项，整单尚未验收 |
-| TASK-026 | Active：Rebuild地图保留4.032 km底座，营地局部增加树石灌木并接入主菜单新游戏、存档/继续游戏；实机闭环通过，完整验收待完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md) |
-| Issue／评审 | GitHub 连接器创建 Issue 返回 403；独立评审人未分配；本地实现任务的正式流程仍为Blocked |
+| TASK-026 | 实施进度持续，但 workflow 状态为 Blocked：Rebuild 地图保留 4.032 km 底座，营地局部增加树石灌木并接入主菜单新游戏、存档/继续游戏；实机闭环通过，完整验收与正式 Issue/Reviewer 待完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md) |
+| TASK-028 | main canonical：建筑、物品、武器、防具等 3D 资产导入与游戏应用；当前 Backlog，仅规划，未执行 |
+| TASK-029 | **AI NPC 完整交付**：统一包含 authoritative perception/safety、deterministic executor、contextual suggestions、hold/follow/assist/routine、adaptive recovery、typed Belief、event-driven Initiative、grounded Episode、tactical cooperation、Coordination Prior、componentization、bounded context、real Qwen guardrail 与 Schema 2→3 migration。同步 main 前：Editor build PASS、native 41/41、真实 Qwen 32/32 safety、M01～M10 raw 20/20、CTX-03 compact 2832/1 generation、CTX-04 minimal 4020/0 generation、Schema migration 1/1；关键 runtime PIE 49/49、16/16、16/16、26/26 PASS |
+| Issue／评审 | TASK-029 将通过本次统一 PR 进入正式代码评审；Agent 不执行 main merge，Owner/独立 Reviewer 验收仍单列 |
 | 打包／两机验证／完整 M0 | NOT_RUN |
 | 本地模型 | 项目已含llama.cpp b10964及Qwen3.5-4B Q4_K_M；真实UE自然语言采集入库、澄清/拒绝与生命周期已验证；台词质量仍有记录限制，见TASK-013交接 |
 | 付费资产生成 | NOT_RUN |
 
-用户已验收TASK-020；TASK-025增强版v2仍在独立分支等待复验。TASK-026 现有营地实机闭环与局部视觉结果不代表完整自然场景或A1—A8验收通过；本轮分支提交与推送结果见 026 交接。
+用户已验收 TASK-020。TASK-026 当前营地实机闭环与局部视觉结果不代表完整自然场景验收通过。AI NPC 本轮统一按 **TASK-029 完整交付** 收口；同步 main 前的实现与真实模型证据已经闭合，main 同步后的最终集成 build/native/validator 仍需完成，随后创建 PR 供独立 Reviewer / Owner 验收，明确不由 Agent 直接合并。
 [TASK-018交接](handoffs/TASK-018.md)记录当前玩家采集入库、回档、录像及边界。
 [TASK-017交接](handoffs/TASK-017.md)记录存档管理UI、实键录像、受测源码快照和限制。
 [TASK-013交接](handoffs/TASK-013.md)记录本地模型与设计修订的当前结果。

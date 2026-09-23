@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "checks": {
+    "enable_prototype": true,
+    "new_campaign": true,
+    "complete_candidate": true,
+    "complete_confirm": true,
+    "completion_kind": true,
+    "completion_line_grounded": true,
+    "initiative_overrides_display": true,
+    "initiative_does_not_start_model": true,
+    "report_for_correction": true,
+    "correction_kind": true,
+    "correction_mentions_report": true,
+    "replan_candidate": true,
+    "replan_confirm": true,
+    "no_remote_initiative": true,
+    "replan_kind": true,
+    "replan_line_grounded": true,
+    "replan_no_model": true
+  },
+  "samples": [
+    {
+      "label": "completion_initiative",
+      "active": true,
+      "kind": "task_completed",
+      "initiative": "木材已经处理好了，实际完成 2。",
+      "display_line": "木材已经处理好了，实际完成 2。",
+      "status": "弟弟主动提醒",
+      "busy": false
+    },
+    {
+      "label": "belief_correction_initiative",
+      "active": true,
+      "kind": "belief_corrected",
+      "initiative": "我刚回营亲自确认了：木材实际是 2 份，不是之前报告的 99 份。",
+      "display_line": "我刚回营亲自确认了：木材实际是 2 份，不是之前报告的 99 份。",
+      "status": "弟弟主动提醒",
+      "busy": false
+    },
+    {
+      "label": "replan_queued_player_far",
+      "active": false,
+      "kind": "None",
+      "initiative": "",
+      "display_line": "任务已接受，完成数量以实际交付为准。",
+      "status": "任务已接受，完成数量以实际交付为准。",
+      "busy": false
+    },
+    {
+      "label": "replan_delivered_when_near",
+      "active": true,
+      "kind": "task_replanned",
+      "initiative": "木材那边情况变了，我已经重新调整路线继续做。",
+      "display_line": "木材那边情况变了，我已经重新调整路线继续做。",
+      "status": "弟弟主动提醒",
+      "busy": false
+    }
+  ]
+}

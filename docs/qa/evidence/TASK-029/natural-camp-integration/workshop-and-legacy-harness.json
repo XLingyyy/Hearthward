@@ -1,0 +1,31 @@
+{
+  "ok": false,
+  "checks": {
+    "natural_session": true,
+    "new_campaign": true,
+    "single_companion": true,
+    "gameplay_enabled": true,
+    "initial_resource": true,
+    "dialogue_range": true,
+    "collect_building_materials": true,
+    "confirm_materials": true,
+    "materials_delivered": true,
+    "storage_open": true,
+    "withdraw_eight": true,
+    "valid_camp_placement": true,
+    "build_workbench": true,
+    "nearby_workbench": true,
+    "crafting_page": true,
+    "npc_craft_goal": true,
+    "npc_craft_confirm": true,
+    "npc_craft_settlement": true,
+    "save_built_camp": true,
+    "title_load": true,
+    "workbench_restored_after_travel": true,
+    "inventory_restored_after_travel": true,
+    "single_companion_after_travel": true
+  },
+  "steps": [],
+  "placement_feedback": "可以建造：左键确认，Q旋转，右键取消",
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-ai-npc-fix/docs/qa/evidence/TASK-029/verify_natural_camp_pie.py\", line 226, in tick\n    pending = next(flow)\n              ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-ai-npc-fix/docs/qa/evidence/TASK-029/verify_natural_camp_pie.py\", line 71, in run\n    yield from workshop(w, p, c, ui, save, ai, store, g)\n  File \"G:/GameFactory/Hearthward-ai-npc-fix/docs/qa/evidence/TASK-029/verify_natural_camp_pie.py\", line 176, in workshop\n    points = list(pool.get_editor_property('points'))\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nException: HearthwardSaveGame: Property 'Points' for attribute 'points' on 'HearthwardSaveGame' is protected and cannot be read\n"
+}

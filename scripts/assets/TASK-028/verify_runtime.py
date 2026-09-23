@@ -20,7 +20,7 @@ levels = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
 unreal.EditorPythonScripting.set_keep_python_script_alive(True)
 report = {"ok": False, "map": MAP, "checks": {},
-          "test_only_material_injection": {"wood": 20, "axe": 1}}
+          "test_only_material_injection": {"wood": 20, "stone": 4, "axe": 1}}
 state = {}
 
 
@@ -103,12 +103,14 @@ def flow():
     check("building_page_available", screen.execute_action("page:building") and str(screen.get_page()) == "building", str(screen.get_page()))
     screen.execute_action("page:hud")
     inventory.try_add("wood", 20)
+    inventory.try_add("stone", 4)
     check("test_wood_in_bag", inventory.get_item_count("wood") == 20, inventory.get_item_count("wood"))
+    check("test_stone_in_bag", inventory.get_item_count("stone") == 4, inventory.get_item_count("stone"))
     check("campfire_selected", screen.execute_action("build:campfire") and building.is_placing(), building.feedback)
     yield sleep_stage(2)
     previews = unreal.GameplayStatics.get_all_actors_with_tag(world, "Hearthward.Building.Preview")
     check("campfire_preview_uses_real_mesh", len(previews) == 1 and
-          any("/TASK-028/facilities/campfire/SM_campfire" in x for x in facility_meshes(previews[0])),
+          any("/Assets/Demo/campfire/campfire_model" in x for x in facility_meshes(previews[0])),
           [facility_meshes(x) for x in previews])
     check("campfire_placement_valid", building.valid_placement, building.feedback)
     check("campfire_confirmation", building.confirm_placement(), building.feedback)
@@ -117,31 +119,49 @@ def flow():
           inventory.get_item_count("wood"))
     built = building.get_buildings()
     check("completed_campfire_uses_real_mesh", len(built) == 1 and
-          any("/TASK-028/facilities/campfire/SM_campfire" in x for x in facility_meshes(built[0])),
+          any("/Assets/Demo/campfire/campfire_model" in x for x in facility_meshes(built[0])),
           [facility_meshes(x) for x in built])
     pc.set_control_rotation(unreal.Rotator(pitch=0, yaw=180, roll=0))
     check("workbench_selected", screen.execute_action("build:workbench") and building.is_placing(), building.feedback)
     yield sleep_stage(2)
+    if not building.valid_placement:
+        camp = p + unreal.Vector(600, 500, 0)
+        for dx, dy, yaw in ((500, 500, 0), (500, 500, 90), (0, 650, 180),
+                            (650, 0, 270), (350, -600, 45), (-300, 650, 135)):
+            building.cancel_placement()
+            pawn.set_actor_location(camp + unreal.Vector(dx, dy, 100), False, True)
+            pc.set_control_rotation(unreal.Rotator(pitch=-20, yaw=yaw, roll=0))
+            screen.execute_action("build:workbench")
+            yield sleep_stage(.7)
+            if building.valid_placement:
+                report["workbench_placement_setup"] = {"offset": [dx, dy, 100], "yaw": yaw}
+                break
     previews = unreal.GameplayStatics.get_all_actors_with_tag(world, "Hearthward.Building.Preview")
     check("workbench_preview_uses_real_mesh", len(previews) == 1 and
-          any("/TASK-028/furniture/wood_table/SM_wood_table" in x for x in facility_meshes(previews[0])),
+          any("/Assets/Demo/table/wood_table_model" in x for x in facility_meshes(previews[0])),
           [facility_meshes(x) for x in previews])
     check("workbench_placement_valid", building.valid_placement, building.feedback)
     check("workbench_confirmation", building.confirm_placement(), building.feedback)
     yield wait_for(lambda: building.building_count() == 2, 25)
     check("workbench_consumed_exact_materials", inventory.get_item_count("wood") == 8,
           inventory.get_item_count("wood"))
-    check("completed_workbench_uses_real_mesh", any("/TASK-028/furniture/wood_table/SM_wood_table" in x
+    check("completed_workbench_uses_real_mesh", any("/Assets/Demo/table/wood_table_model" in x
           for x in facility_meshes(building.get_buildings()[1])))
     check("workbench_crafting_page", screen.execute_action("page:crafting") and
           str(screen.get_page()) == "crafting", str(screen.get_page()))
     screen.execute_action("page:hud")
 
-    inventory.try_add("axe", 1)
-    check("axe_in_bag", inventory.get_item_count("axe") == 1)
+    if inventory.get_item_count("axe") == 0:
+        inventory.try_add("axe", 1)
+        report["test_only_material_injection"]["axe"] = 1
+    else:
+        report["test_only_material_injection"]["axe"] = 0
+    check("axe_in_bag", inventory.get_item_count("axe") == 1, inventory.get_item_count("axe"))
     held = next(c for c in pawn.get_components_by_class(unreal.StaticMeshComponent) if c.get_name() == "HeldAxe")
     check("axe_mesh_bound", "/TASK-028/props/stone_bone_axe/SM_stone_bone_axe" in
           held.get_editor_property("static_mesh").get_path_name())
+    if held.get_editor_property("visible"):
+        check("initial_axe_unequip", gameplay.equip("axe") and not held.get_editor_property("visible"))
     check("axe_equip_shows_mesh", gameplay.equip("axe") and held.get_editor_property("visible"))
     check("axe_unequip_hides_mesh", gameplay.equip("axe") and not held.get_editor_property("visible"))
     check("axe_reequip_shows_mesh", gameplay.equip("axe") and held.get_editor_property("visible"))
@@ -151,8 +171,8 @@ def flow():
     report["isolated_save_points"] = len(points)
     check("saved_point_reloads", save.load_point(saved_id), save.get_status())
     check("facilities_restored", building.building_count() == 2 and
-          any("/TASK-028/facilities/campfire/SM_campfire" in x for x in facility_meshes(building.get_buildings()[0])))
-    check("workbench_mesh_restored", any("/TASK-028/furniture/wood_table/SM_wood_table" in x
+          any("/Assets/Demo/campfire/campfire_model" in x for x in facility_meshes(building.get_buildings()[0])))
+    check("workbench_mesh_restored", any("/Assets/Demo/table/wood_table_model" in x
           for x in facility_meshes(building.get_buildings()[1])))
     check("materials_restored", inventory.get_item_count("wood") == 8, inventory.get_item_count("wood"))
     check("held_axe_restored", held.get_editor_property("visible") and inventory.get_item_count("axe") == 1)

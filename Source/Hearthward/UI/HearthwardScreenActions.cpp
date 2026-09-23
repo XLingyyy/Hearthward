@@ -123,7 +123,9 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action==TEXT("agentTypeNext") || Action==TEXT("agentItemNext"))
     {
         if(Page!=TEXT("dialogue"))return false;
-        TArray<const FHearthwardAgentCapability*> Caps;for(const auto& C:HearthwardAgent::Capabilities())if(C.Writes)Caps.Add(&C);
+        TArray<const FHearthwardAgentCapability*> Caps;
+        for(const auto& C:HearthwardAgent::Capabilities())
+            if(C.Id==TEXT("collect") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
         if(Action==TEXT("agentTypeNext")){AgentCapabilityIndex=(AgentCapabilityIndex+1)%Caps.Num();AgentItemIndex=0;}
         else AgentItemIndex=(AgentItemIndex+1)%Caps[AgentCapabilityIndex]->Items.Num();
         Refresh();return true;
@@ -131,7 +133,11 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action==TEXT("agentCollectCard"))
     {
         if(Page!=TEXT("dialogue"))return false;
-        TArray<const FHearthwardAgentCapability*> Caps;for(const auto& C:HearthwardAgent::Capabilities())if(C.Writes)Caps.Add(&C);
+        TArray<const FHearthwardAgentCapability*> Caps;
+        for(const auto& C:HearthwardAgent::Capabilities())
+            if(C.Id==TEXT("collect") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
+        AgentCapabilityIndex=FMath::Clamp(AgentCapabilityIndex,0,Caps.Num()-1);
+        AgentItemIndex=FMath::Clamp(AgentItemIndex,0,Caps[AgentCapabilityIndex]->Items.Num()-1);
         const auto& C=*Caps[AgentCapabilityIndex];FHearthwardAgentGoal Goal;Goal.Intent=C.Id;Goal.Item=C.Items[AgentItemIndex];Goal.Quantity=1;Goal.QuantityMode=C.QuantityMode;Goal.SourceRef=C.Sources[0];Success=AI->SetStructuredGoal(GetOwningPlayerPawn(),Companion(GetWorld()),Goal);Refresh();return Success;
     }
     if(Action==TEXT("clearClarification"))
@@ -280,6 +286,24 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action==TEXT("travel")) { Success=G->Travel(SelectedLocation); Message=G->Feedback; if(Success) OpenPage(TEXT("hud")); }
     else if(Action==TEXT("clearWaypoint")) { G->HasWaypoint=false; Message=TEXT("地图标记已清除"); }
     else if(Action==TEXT("cancelReply")) AI->CancelPending();
+    else if(Action==TEXT("suggestRefresh"))
+    {
+        auto* C=Companion(GetWorld());
+        Success=C && AI->RefreshSuggestions(GetOwningPlayerPawn(),C);
+        Message=Success?TEXT("已刷新3条建议；只有点击的那条才会发送给弟弟"):TEXT("当前无法刷新建议");
+    }
+    else if(Action.StartsWith(TEXT("suggest:")))
+    {
+        FGuid Id;
+        if(!FGuid::Parse(Action.Mid(8),Id)) { Success=false; Message=TEXT("建议ID无效"); }
+        else
+        {
+            auto* C=Companion(GetWorld());
+            Success=C && AI->SubmitSuggestion(GetOwningPlayerPawn(),C,Id);
+            Message=AI->GetStatus();
+            if(Success) G->Record(TEXT("talk"),TEXT("brother"));
+        }
+    }
     else if(Action==TEXT("cancelTask"))
     { auto* C=Companion(GetWorld()); Success=C && AI->CancelExecution(GetOwningPlayerPawn(),C); Message=Success?TEXT("委托已取消"):TEXT("请靠近弟弟后取消委托"); }
     else if(Action==TEXT("send") || Action.StartsWith(TEXT("say:")))

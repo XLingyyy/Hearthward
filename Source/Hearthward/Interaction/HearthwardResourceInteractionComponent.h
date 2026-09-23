@@ -11,6 +11,7 @@ class HEARTHWARD_API UHearthwardResourceInteractionComponent : public UHearthwar
     GENERATED_BODY()
 public:
     void InitializePrototype(bool bAtCamp);
+    void InitializeResource(bool bAtCamp);
     bool CanAccessStorage(AActor* Interactor) const;
     virtual FString GetInteractionPrompt(AActor* Interactor) const override;
     virtual FString CompleteInteraction(AActor* Interactor) override;

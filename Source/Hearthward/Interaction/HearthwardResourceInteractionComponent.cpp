@@ -6,10 +6,15 @@
 void UHearthwardResourceInteractionComponent::InitializePrototype(bool bAtCamp)
 {
 #if !UE_BUILD_SHIPPING
+    InitializeResource(bAtCamp);
+#endif
+}
+
+void UHearthwardResourceInteractionComponent::InitializeResource(bool bAtCamp)
+{
     bEnabled = true;
     bDeposit = bAtCamp;
     MaxDistance = 150.0f; // PROTOTYPE_ONLY; not a universal interaction distance.
-#endif
 }
 
 bool UHearthwardResourceInteractionComponent::CanAccessStorage(AActor* Interactor) const
@@ -30,7 +35,7 @@ FString UHearthwardResourceInteractionComponent::GetInteractionPrompt(AActor* In
             Bag->GetItemCount(TEXT("wood")), Storage->GetItemCount(TEXT("wood")));
     }
     const auto* Source = GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>();
-    return FString::Printf(TEXT("E 采集木材 ×1 · 资源测试点\n剩余 %d   单重 1   背包余量 %.2f"),
+    return FString::Printf(TEXT("E 采集木材 ×1\n剩余 %d   单重 1   背包余量 %.2f"),
         Source ? Source->GetItemCount(TEXT("wood")) : 0, Bag->GetCapacity() - Bag->GetWeight());
 }
 

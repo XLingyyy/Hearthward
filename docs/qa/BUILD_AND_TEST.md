@@ -286,7 +286,7 @@ UEClient构建HearthwardEditor后，以Bootstrap地图和 `-ExecutePythonScript=
 
 ## TASK-020 九页UI及配套玩法
 
-UE 5.8.1，Bootstrap地图。通过GameFactory公开UEClient构建HearthwardEditor Development；原生测试筛选Hearthward.，17项。图形测试使用真实渲染，不能以NullRHI代替截图。
+UE 5.8.2，Bootstrap地图。通过GameFactory公开UEClient构建HearthwardEditor Development；原生测试筛选Hearthward.，17项。图形测试使用真实渲染，不能以NullRHI代替截图。
 
 ```python
 from engine_adapters.ue5 import UEClient

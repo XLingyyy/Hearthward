@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "Engine/GameViewportClient.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
@@ -117,7 +118,8 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled()
         && Name!=TEXT("hud") && Name!=TEXT("title") && Name!=TEXT("pause")
         && Name!=TEXT("save") && Name!=TEXT("settings") && Name!=TEXT("inventory")
-        && Name!=TEXT("building") && Name!=TEXT("crafting") && Name!=TEXT("repairing"))
+        && Name!=TEXT("dialogue") && Name!=TEXT("memory") && Name!=TEXT("storage")
+        && Name!=TEXT("building") && Name!=TEXT("crafting") && Name!=TEXT("repairing") && Name!=TEXT("skills"))
     { Message=TEXT("该功能尚未接入自然地图"); MessageUntil=FPlatformTime::Seconds()+4; Refresh(); return; }
     if(Page==TEXT("dialogue") && Name!=Page) GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
     if(Name==TEXT("crafting") || Name==TEXT("repairing"))
@@ -136,6 +138,15 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if (Gameplay()) Gameplay()->SetSprinting(false);
     if((Name==TEXT("settings") || Name==TEXT("save")) && Page!=Name) ReturnPage=Page;
     if(Page!=Name) Category.Reset();
+    // The opaque dialogue illustration covers the scene. Keep simulation running without competing
+    // with local GPU inference for rendering work that the player cannot see.
+    if(Name==TEXT("dialogue") && !DialogueViewport.IsValid())
+    {
+        if(auto* Viewport=GetWorld()->GetGameViewport(); Viewport && !Viewport->bDisableWorldRendering)
+        { DialogueViewport=Viewport; Viewport->bDisableWorldRendering=true; }
+    }
+    else if(Name!=TEXT("dialogue") && DialogueViewport.IsValid())
+    { DialogueViewport->bDisableWorldRendering=false; DialogueViewport.Reset(); }
     Page=Name; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
     const bool Pause=LayoutEditing || (Name!=TEXT("hud") && Name!=TEXT("dialogue"));
@@ -240,6 +251,12 @@ void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
     Super::NativeTick(G,Delta);
     if((RefreshDelay-=Delta)<=0) { RefreshDelay=.2f; Refresh(); }
     if(!Message.IsEmpty() && FPlatformTime::Seconds()>MessageUntil) { Message.Reset(); }
+}
+void UHearthwardScreenWidget::NativeDestruct()
+{
+    if(DialogueViewport.IsValid()) DialogueViewport->bDisableWorldRendering=false;
+    DialogueViewport.Reset();
+    Super::NativeDestruct();
 }
 FVector2D UHearthwardScreenWidget::CanvasPoint(const FGeometry& G,const FVector2D& Screen) const
 {

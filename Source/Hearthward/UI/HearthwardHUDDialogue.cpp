@@ -22,13 +22,13 @@ void AHearthwardHUD::BeginPlay()
         Screen->AddToViewport(10); Screen->InitializeScreen(this);
     }
     GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this, &AHearthwardHUD::SnapshotRestored);
-#if !UE_BUILD_SHIPPING
-    // R23: temporary prototype key, kept in the UI input component.
     EnableInput(GetOwningPlayerController());
     InputComponent->BindKey(EKeys::T,IE_Pressed,this,&AHearthwardHUD::ToggleDialogue);
     InputComponent->BindKey(EKeys::R,IE_Pressed,this,&AHearthwardHUD::ToggleStorageMenu).bExecuteWhenPaused = true;
     InputComponent->BindKey(EKeys::F6,IE_Pressed,this,&AHearthwardHUD::ToggleSaveMenu).bExecuteWhenPaused = true;
+#if !UE_BUILD_SHIPPING
     InputComponent->BindKey(EKeys::F10,IE_Pressed,this,&AHearthwardHUD::EditUILayout).bExecuteWhenPaused = true;
+#endif
     InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::P,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::M,IE_Pressed,this,&AHearthwardHUD::OpenMap).bExecuteWhenPaused=true;
@@ -46,7 +46,6 @@ void AHearthwardHUD::BeginPlay()
     InputComponent->BindKey(EKeys::Z,IE_Pressed,this,&AHearthwardHUD::CompanionWait);
     InputComponent->BindKey(EKeys::X,IE_Pressed,this,&AHearthwardHUD::CompanionFollow);
     InputComponent->BindKey(EKeys::C,IE_Pressed,this,&AHearthwardHUD::CompanionAttack);
-#endif
 }
 void AHearthwardHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
@@ -157,6 +156,27 @@ bool AHearthwardHUD::SubmitDialogue(const FString& Text)
     if(!CanSendDialogue()) return false;
     DialogueFeedback.Reset();
     return GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->SubmitPlayerText(GetOwningPawn(),DialogueCompanion.Get(),Value);
+}
+bool AHearthwardHUD::RefreshDialogueSuggestions()
+{
+    if(!DialogueCompanion.IsValid() || !DialogueCompanion->CanCommunicate(GetOwningPawn()))return false;
+    auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    const bool Ok=AI && AI->RefreshSuggestions(GetOwningPawn(),DialogueCompanion.Get());
+    DialogueFeedback=Ok?TEXT("已刷新3条建议；只有点击的那条才会发送"):TEXT("当前无法刷新建议");
+    return Ok;
+}
+bool AHearthwardHUD::SubmitDialogueSuggestion(FGuid Id)
+{
+    if(!DialogueCompanion.IsValid() || !DialogueCompanion->CanCommunicate(GetOwningPawn()))return false;
+    auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    const bool Ok=AI && AI->SubmitSuggestion(GetOwningPawn(),DialogueCompanion.Get(),Id);
+    DialogueFeedback=AI?AI->GetStatus():TEXT("建议不可用");
+    return Ok;
+}
+TArray<FHearthwardNPCSuggestion> AHearthwardHUD::GetDialogueSuggestions() const
+{
+    const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    return AI?AI->GetSuggestions():TArray<FHearthwardNPCSuggestion>();
 }
 bool AHearthwardHUD::CanCancelDialogueReply() const
 {

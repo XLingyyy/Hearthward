@@ -1,4 +1,5 @@
 #include "HearthwardBuildingComponent.h"
+#include "../Interaction/HearthwardFurnitureInteractionComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -57,6 +58,12 @@ AActor* UHearthwardBuildingComponent::SpawnBuilding(FName Id,FVector Position,fl
         const auto& Scale=Part->GetArrayField(TEXT("scale"));
         Mesh->SetRelativeScale3D(FVector(Scale[0]->AsNumber(),Scale[1]->AsNumber(),Scale[2]->AsNumber()));
         Mesh->RegisterComponent();
+    }
+    if(!PreviewOnly && (Id==TEXT("bed") || Id==TEXT("campfire")))
+    {
+        auto* Interaction=NewObject<UHearthwardFurnitureInteractionComponent>(A);
+        A->AddInstanceComponent(Interaction); Interaction->SetupAttachment(Root);
+        Interaction->Kind=Id; Interaction->MaxDistance=220; Interaction->RegisterComponent();
     }
     return A;
 }
