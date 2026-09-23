@@ -55,11 +55,12 @@ AHearthwardCharacter::AHearthwardCharacter()
     Camera->SetupAttachment(Boom, USpringArmComponent::SocketName);
     Camera->bUsePawnControlRotation = false;
 
-    static ConstructorHelpers::FObjectFinder<USkeletalMesh> HeroMesh(TEXT("/Game/Characters/Hero/Tripo/SK_Hero_Tripo.SK_Hero_Tripo"));
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> HeroMesh(TEXT("/Game/Characters/Hero/UE5/SK_Hero.SK_Hero"));
     GetMesh()->SetSkeletalMesh(HeroMesh.Object);
-    // Tripo import measures 99.803 cm; display at 180 cm with its verified +X forward axis.
-    GetMesh()->SetRelativeScale3D(FVector(180.f / 99.802912f));
+    // New Tripo UE skeleton export: display at 180 cm, rotate +Y forward into character +X.
+    GetMesh()->SetRelativeScale3D(FVector(180.f / 97.869893f));
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
+    GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMesh()->SetAnimInstanceClass(UHearthwardHeroAnimInstance::StaticClass());
 

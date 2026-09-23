@@ -82,11 +82,11 @@ struct FHeroAnimProxy : FAnimInstanceProxy
 
 UHearthwardHeroAnimInstance::UHearthwardHeroAnimInstance()
 {
-    const TCHAR* Names[] = {TEXT("Idle"), TEXT("Walk"), TEXT("Sprint"), TEXT("JumpStart"),
+    const TCHAR* Names[] = {TEXT("Idle"), TEXT("Walk"), TEXT("Run"), TEXT("JumpStart"),
         TEXT("Fall"), TEXT("Land"), TEXT("Attack"), TEXT("Dig")};
     for (const TCHAR* Name : Names)
     {
-        const FString Path = FString::Printf(TEXT("/Game/Characters/Hero/Animation/A_Hero_%s"), Name);
+        const FString Path = FString::Printf(TEXT("/Game/Characters/Hero/AnimationV2/A_Hero_%s"), Name);
         ConstructorHelpers::FObjectFinder<UAnimSequence> Clip(*Path);
         Clips.Add(Clip.Object);
     }
