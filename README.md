@@ -2,7 +2,7 @@
 
 UE 5.8.1 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-当前分支 `codex/TASK-026-natural-world` 已形成 [TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 的可运行灰盒：4032 m World Partition地图、独立浏览GameMode、自然批次和局部PIE验证已落地，人文场景后置。现有视觉仍是基础形体，长路线、Standalone流送、性能与Owner视觉验收尚未完成，不能视为TASK-026验收通过。见[世界状态](docs/world/TASK-026/CURRENT.md)、[验证证据](docs/qa/evidence/TASK-026/README.md)与[026交接](docs/handoffs/TASK-026.md)。
+通过 PR #25 合入 main 的 [TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行灰盒：4032 m World Partition地图、独立浏览GameMode、自然批次和局部PIE验证已落地，人文场景后置。现有视觉仍是基础形体，长路线、Standalone流送、性能与Owner视觉验收尚未完成，不能视为TASK-026验收通过。见[世界状态](docs/world/TASK-026/CURRENT.md)、[验证证据](docs/qa/evidence/TASK-026/README.md)与[026交接](docs/handoffs/TASK-026.md)。
 
 ## 运行
 
@@ -59,11 +59,13 @@ TASK-026于2026-09-21完成27项定向PIE检查：地图重开、World Partition
 
 025 v2实现与本轮验证见 [TASK-025交接](docs/handoffs/TASK-025.md)、[设计决定](docs/decisions/ADR-TASK-025-npc-cognition.md)和[rev2证据](docs/qa/evidence/TASK-025/rev2/)。原版测试不计本轮PASS，模型原始理解、护栏规范化与实际执行分别统计。020于2026-09-19通过用户验收；历史任务结果见各任务交接。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
 
-当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；TASK-026也只使用基础形体表达树木、草、岩石和地标，菜单插画不代表三维城寨或正式森林资产已制作。`Content/Characters/Hero/Tripo` 已导入一套 Tripo 主角原型骨架网格、材质贴图和动作资源，但尚未接入现有玩法角色，也未完成独立展示、重定向、许可台账或运行验收，不能视为正式角色美术。导航覆盖现有开发场景的可行走表面，支持静态障碍绕行和动态障碍重建；正式大世界伙伴导航、攀爬/跳跃导航连接仍未制作。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004已有77个自然素材源文件入库，026只复用了其中三张地表贴图，004模型适配与整单验收仍未完成，弟弟、房屋及其余首批模型仍缺，见[资源汇总](resourceSummary.md)。020经验曲线、节点、任务、建筑、制作配方与战斗参数为独立内容配置，未替代GDD未决R项。
+当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；TASK-026也只使用基础形体表达树木、草、岩石和地标，菜单插画不代表三维城寨或正式森林资产已制作。`Content/Characters/Hero/Tripo` 已导入一套 Tripo 主角原型骨架网格、材质贴图和动作资源，但尚未接入现有玩法角色，也未完成独立展示、重定向、许可台账或运行验收，不能视为正式角色美术。导航覆盖现有开发场景的可行走表面，支持静态障碍绕行和动态障碍重建；正式大世界伙伴导航、攀爬/跳跃导航连接仍未制作。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。main原有77个自然素材源文件；本资产分支再增加冷杉和松树的38个源文件，合计115个。026只复用了其中三张地表贴图，004模型适配与整单验收仍未完成，见[既有资源汇总](resourceSummary.md)与[新增树木来源](art_source/TASK-004/polyhaven/SOURCE.md)。020经验曲线、节点、任务、建筑、制作配方与战斗参数为独立内容配置，未替代GDD未决R项。
 
 四件 Tripo 道具源资产（石骨斧、原始鱼竿、骨肉袋、陶罐）的 FBX、参考图和预览已存入 `art_source/TASK-004/Tripo/妙妙道具`，但尚未导入 UE Content 或完成游戏内验收，不视为已接入玩法。
 
 十五件 Tripo 动物源资产（两只雄鹿、野兔、山羊、雉鸡、猪、狼、黑熊、公羊、赤狐、母鸡、鲤鱼、鲫鱼、鲶鱼、鳗鱼）的参考图、静态 FBX、预览和带蒙皮权重的骨骼 FBX 已存入 `art_source/TASK-004/Tripo/动物`。骨架包含四足、鸟类、水生和蛇形四类；尚未导入 UE Content，也未附加动画或完成游戏内验收，不视为正式动物系统。
+
+本批资产 PR 增加 8 件 [Tripo 房屋建筑部件制作源资产](art_source/TASK-004/Tripo/房屋建筑部件/房屋建筑部件模型索引.md)：每件均有参考图、静态 FBX 和 PNG 预览。模型已完成文件格式核验，尚未导入 UE、统一吸附尺度或完成碰撞及拼接验证；它们是 `TEMP_VISUAL` 候选，不代表正式建筑风格。本批同步状态以该 PR 的合并状态为准。
 
 旧界面及此前定向验证可使用 `-HearthwardLegacyUI`。正式流程仍缺Issue归属与独立评审；任务分支成果与main集成状态分别记录。
 
