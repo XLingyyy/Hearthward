@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "TASK-036",
+  "title": "战斗协作 Agent：Protect / Regroup",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-036-tactical-cooperation",
+  "source_refs": [
+    "用户于2026-09-22要求继续推进战斗协作Agent：跟随、救援、撤退、掩护等动态策略",
+    "TASK-030 deterministic companion combat policy",
+    "TASK-031 typed-task navigation arbitration fix"
+  ],
+  "dependencies": [
+    "TASK-035"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/design/DSGN-025-agent-boundaries.md"
+  ],
+  "allowed_paths": [
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Gameplay/HearthwardCompanionCombatPolicy.h",
+    "Source/Hearthward/Gameplay/HearthwardCompanionCombatPolicy.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-036.json",
+    "docs/tasks/TASK-036.md",
+    "docs/handoffs/TASK-036.md",
+    "docs/qa/evidence/TASK-036/"
+  ],
+  "forbidden_paths": [
+    "Content/"
+  ],
+  "acceptance": [
+    "assist在健康状态保持原有UE权威目标选择与真实伤害",
+    "低血单近身威胁进入Protect",
+    "低血多近身威胁进入Regroup且不保留攻击目标",
+    "玩家倒地后companion tick仍运行并进入PLAYER_DOWN_REGROUP",
+    "typed collect/craft/repair仍优先拥有伙伴导航",
+    "LLM不能选择具体敌人、坐标、攻击时机或伤害"
+  ],
+  "non_goals": [
+    "不实现复活系统",
+    "不实现不存在的cover-point系统",
+    "不让模型输出逐帧战术"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22明确要求继续推进战斗协作Agent",
+  "required_tests": [
+    "T-002",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "not required for local implementation",
+    "install_dependencies": "not_granted",
+    "commit": "local task commit authorized as part of continued AI NPC development",
+    "push": "defer until unified PR handoff",
+    "merge": "not_granted"
+  }
+}

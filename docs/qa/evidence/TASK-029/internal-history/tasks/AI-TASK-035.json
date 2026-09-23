@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "TASK-035",
+  "title": "行动结果驱动对话与 Episode Memory",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-035-grounded-episodes",
+  "source_refs": [
+    "用户于2026-09-22要求继续推进行动结果驱动对话与记忆：做过什么决定NPC说什么",
+    "TASK-025 persisted NPC events",
+    "TASK-032 replanned events",
+    "TASK-034 event-driven initiative"
+  ],
+  "dependencies": [
+    "TASK-034"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/design/DSGN-001-local-inference.md",
+    "docs/design/DSGN-025-agent-boundaries.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/HearthwardNPCEpisode.h",
+    "Source/Hearthward/AI/HearthwardNPCEpisode.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-035.json",
+    "docs/tasks/TASK-035.md",
+    "docs/handoffs/TASK-035.md",
+    "docs/qa/evidence/TASK-035/"
+  ],
+  "forbidden_paths": [
+    "Content/"
+  ],
+  "acceptance": [
+    "Episode只由持久化Events派生，不新增重复摘要事实源",
+    "同一command的取得/交付/重规划/阻塞/完成被聚合并保留evidence IDs",
+    "过去行动相关回答只能使用episode/evidence或玩家显式记录",
+    "filtered context暴露最近3个grounded episodes",
+    "save/load后episode identity/evidence/projection保持一致"
+  ],
+  "non_goals": [
+    "不生成自由发挥的自传",
+    "不做向量数据库",
+    "不持久化第二份episode摘要",
+    "不将背包当前持有量解释为历史行为"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22明确要求继续推进行动结果驱动对话与记忆",
+  "required_tests": [
+    "T-002",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "not required for local implementation",
+    "install_dependencies": "not_granted",
+    "commit": "local task commit authorized as part of continued AI NPC development",
+    "push": "defer until next unified PR handoff",
+    "merge": "not_granted"
+  }
+}

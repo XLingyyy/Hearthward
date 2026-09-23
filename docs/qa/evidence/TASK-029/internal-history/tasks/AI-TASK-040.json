@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "id": "TASK-040",
+  "title": "AI NPC vNext context, cognition and contract rework",
+  "status": "Blocked",
+  "updated_at": "2026-09-23",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/ai-npc-vnext-rework-01-fix",
+  "source_refs": [
+    "AI-NPC-VNEXT-REWORK-01 (2026-09-22)",
+    "AI NPC vNext integration baseline 04239f542ee99c1a735a380a66faa6ec99dc614b",
+    "TASK-032 through TASK-039 handoffs"
+  ],
+  "dependencies": [
+    "TASK-039"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/design/DSGN-001-local-inference.md",
+    "docs/design/DSGN-025-agent-boundaries.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/AI/HearthwardAgentContract.h",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardNPCContextProjection.h",
+    "Source/Hearthward/AI/HearthwardNPCContextProjection.cpp",
+    "Source/Hearthward/AI/HearthwardNPCBelief.h",
+    "Source/Hearthward/AI/HearthwardNPCBelief.cpp",
+    "Source/Hearthward/AI/HearthwardNPCMemory.h",
+    "Source/Hearthward/AI/HearthwardNPCMemory.cpp",
+    "Source/Hearthward/AI/HearthwardNPCEpisode.h",
+    "Source/Hearthward/AI/HearthwardNPCEpisode.cpp",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Save/HearthwardSaveGame.h",
+    "Source/Hearthward/Save/HearthwardSaveGame.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.h",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Building/HearthwardWorkshopService.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/decisions/ADR-TASK-040-npc-context-and-cognition.md",
+    "docs/tasks/TASK-040.json",
+    "docs/tasks/TASK-040.md",
+    "docs/handoffs/TASK-040.md",
+    "docs/qa/evidence/TASK-040/",
+    "AGENTS.md",
+    "config/toolchain.lock.json",
+    "docs/ENVIRONMENT.md",
+    "docs/handoffs/AI-NPC-VNEXT-PR.md",
+    "docs/handoffs/TASK-000.md",
+    "docs/handoffs/TASK-003.md",
+    "docs/tasks/TASK-003.json",
+    "docs/tasks/TASK-003.md",
+    "docs/tasks/TASK-004.json",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-026.md",
+    "docs/planning/BACKLOG.md",
+    "docs/qa/BUILD_AND_TEST.md",
+    "docs/qa/evidence/TASK-026/README.md",
+    "docs/qa/evidence/TASK-027/VALIDATION.md",
+    "docs/world/TASK-026/CURRENT.md",
+    "resourceSummary.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/LocalAI/",
+    "config/local-ai.lock.json",
+    "Hearthward.uproject"
+  ],
+  "acceptance": [
+    "R0 baseline and failing samples are recorded without rewriting history",
+    "R1 context uses bounded deterministic projection with at most three tiers and real template token counting before one generation",
+    "R2 capability registry, schema, prompt guidance, manual entry and preflight agree including routine",
+    "R3 repeated valid evidence refreshes evidence time without semantic revision churn",
+    "R4 episode coverage distinguishes complete, truncated and unknown using bounded persistent metadata",
+    "R5 old/new save migration, callback invalidation, cancellation, settlement and navigation arbitration regressions remain protected",
+    "Current-source build/tests/evidence are recorded with PASS/FAIL/NOT_RUN/BLOCKED truthfully",
+    "Owner-approved repository toolchain alignment to UE 5.8.2; current instructions use the new target while historical run evidence retains its actual environment.",
+    "External final acceptance and PR wording uses TASK-029 AI NPC complete delivery while retaining TASK-027 through TASK-040 as internal traceable implementation records."
+  ],
+  "non_goals": [
+    "No new agent capabilities, multi-agent layer, heartbeat, embeddings, vector database or production routine expansion",
+    "No model/GGUF/llama.cpp replacement and no max_input_tokens increase",
+    "No binary assets, maps, input mappings or formal CompanionCharacter migration",
+    "No rewriting executor, Recovery, NavigationComponent, InitiativeQueue or LocalAIRuntime"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "User explicitly requested strict implementation of AI-NPC-VNEXT-REWORK-01 on the latest TASK-032 through TASK-039 AI stack",
+  "required_tests": [
+    "T-002",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "push to dedicated TASK-040 branch authorized by user on 2026-09-23",
+    "install_dependencies": "not_granted",
+    "commit": "granted by user on 2026-09-23 for TASK-040 branch",
+    "push": "granted by user on 2026-09-23 for TASK-040 branch",
+    "merge": "not_granted"
+  }
+}

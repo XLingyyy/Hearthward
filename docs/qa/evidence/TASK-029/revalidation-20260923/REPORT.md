@@ -11,7 +11,7 @@
 | 验证 | 结果 | 证据 |
 |---|---|---|
 | UE 5.8.2 Editor Development 构建 | PASS，退出码 0 | [build.json](build.json) |
-| 仓库检查 / Python 工具测试 | 0 errors / 31 tests PASS | [repository.log](repository.log)、[python-tests.log](python-tests.log) |
+| 仓库检查 / Python 工具测试 | 0 errors / 31 tests PASS | 本机运行日志：`repository.log`、`python-tests.log`（未作为仓库证据提交） |
 | 原生 Hearthward 自动化 | 41/41 Success，0 failed、0 not-run；包含 Schema 2→3 实际文件迁移 | [native-index.json](native-index.json) |
 | 采集、途中保存恢复、建议刷新 | 23/23 checks PASS | [smoke.json](smoke.json) |
 | 执行器 | 50/50 checks PASS | [executor.json](executor.json) |
@@ -76,7 +76,7 @@
 
 第一次构建被用户已打开编辑器的 Live Coding 阻止。用户保存并关闭后，同一公开 UEClient 构建成功，未绕过构建保护。
 
-原生运行日志在引擎初始化完成前出现 13 条 `Condition failed`；Hearthward 测试在其后开始，导出报告 41 项全部 Success、退出码0。保留[初始化诊断时序](native-startup-diagnostics.log)，不将此次运行描述为“日志零错误”。
+原生运行日志在引擎初始化完成前出现 13 条 `Condition failed`；Hearthward 测试在其后开始，导出报告 41 项全部 Success、退出码0。初始化诊断时序保存在本机 `native-startup-diagnostics.log`（未作为仓库证据提交），不将此次运行描述为“日志零错误”。
 
 ## 运行方式与证据绑定
 

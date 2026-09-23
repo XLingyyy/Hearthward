@@ -6,6 +6,8 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Companion/HearthwardCompanionNavigationComponent.h"
 #include "Engine/World.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 namespace
 {
@@ -146,7 +148,11 @@ FHearthwardCompanionBehaviorResult HearthwardCompanionBehavior::Tick(const FHear
     if(Direction.Size()>StopDistance)
     {
         const float Acceptance=FMath::Max(20.f,StopDistance-10.f);
-        Companion->BlockReason=Companion->Navigation->MoveToActor(Destination,BehaviorTune(TEXT("companionMoveSpeed")),Acceptance)
+        float MoveSpeed=BehaviorTune(TEXT("companionMoveSpeed"));
+        if(!bTargeting)
+            if(const auto* PlayerCharacter=Cast<ACharacter>(Player))
+                MoveSpeed=FMath::Max(MoveSpeed,PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed+100.f);
+        Companion->BlockReason=Companion->Navigation->MoveToActor(Destination,MoveSpeed,Acceptance)
             ?(Decision.Intent==EHearthwardCompanionTacticalIntent::Protect?TEXT("正在保护你，拦截近身威胁")
                 :bTargeting?TEXT("正在接近威胁")
                 :bRegroup?TEXT("压力过大，正在回撤会合"):TEXT(""))

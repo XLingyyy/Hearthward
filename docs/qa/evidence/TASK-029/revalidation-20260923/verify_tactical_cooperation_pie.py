@@ -39,6 +39,7 @@ def run():
     # Production New Game travels to Natural World; AI validation uses an explicit prototype.
     unreal.SystemLibrary.execute_console_command(w,"Hearthward.Companion.CreateTest",pc)
     fixture_player=unreal.GameplayStatics.get_player_pawn(w,0)
+    adventure_origin=fixture_player.get_actor_location()
     fixture_player.get_component_by_class(unreal.HearthwardGameplayComponent).enable_adventure()
     fixture_bag=fixture_player.get_component_by_class(unreal.HearthwardInventoryComponent)
     for item,count in json.loads((Path(unreal.Paths.project_dir())/"Resources/Data/gameplay.json").read_text(encoding="utf-8"))["loadout"].items():
@@ -52,8 +53,8 @@ def run():
     g=p.get_component_by_class(unreal.HearthwardGameplayComponent);st["g"]=g;st["c"]=c
     camp=c.camp.get_actor_location()
 
-    # Known encounter geometry: guard_1 is camp+(1000,-600), guard_2 camp+(1400,-500).
-    guard1=camp+unreal.Vector(1000,-600,0)
+    # Encounters are created relative to the player origin captured by EnableAdventure, not the later test camp.
+    guard1=adventure_origin+unreal.Vector(1000,-600,0)
     healthy_player=guard1+unreal.Vector(-280,0,0)
     p.set_actor_location(healthy_player,False,True)
     # Keep the companion inside the deterministic attack stop distance. This verifies
@@ -88,7 +89,7 @@ def run():
     check("protect_still_uses_real_attack_settlement",protect_after<protect_before)
 
     # Position both guard_1 and guard_2 within 300cm but outside their 240cm player attack radius.
-    regroup_player=camp+unreal.Vector(1154,-367,0)
+    regroup_player=adventure_origin+unreal.Vector(1154,-367,0)
     p.set_actor_location(regroup_player,False,True)
     c.set_actor_location(regroup_player+unreal.Vector(500,0,0),False,True)
     start_dist=dist2d(c.get_actor_location(),p.get_actor_location())

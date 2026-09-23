@@ -67,6 +67,8 @@ bool UHearthwardScreenWidget::OpenSavePoint(const FHearthwardSavePoint& Point)
 bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
 {
     const FString Action=InAction; // Refresh can invalidate the element that supplied this string.
+    // A confirmation owns input until the player confirms or cancels it.
+    if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")) return false;
     MessageUntil=FPlatformTime::Seconds()+4;
     auto* G=Gameplay(); auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
     auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
@@ -187,7 +189,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         return ExecuteAction(Save->GetCampaignId().IsValid()?TEXT("ask:")+Target:Target);
     }
     if(Action==TEXT("back"))
-    { return ExecuteAction(TEXT("page:")+(Page==TEXT("settings") || Page==TEXT("save")?ReturnPage.ToString():FString(TEXT("hud")))); }
+    { return ExecuteAction(TEXT("page:")+(ReturnPages.IsEmpty()?(Page==TEXT("title")?FString(TEXT("title")):FString(TEXT("hud"))):ReturnPages.Last().ToString())); }
     if(Action.StartsWith(TEXT("ask:"))) { ConfirmAction=Action.Mid(4); Refresh(); return true; }
     if(Action==TEXT("cancel")) { ConfirmAction.Reset(); Refresh(); return true; }
     if(Action==TEXT("confirm")) { const FString Confirmed=ConfirmAction; ConfirmAction.Reset(); return ExecuteAction(Confirmed); }
@@ -199,7 +201,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Next==TEXT("dialogue") || Next==TEXT("memory"))
         { auto* C=Companion(GetWorld()); if(!C || !C->CanCommunicate(GetOwningPlayerPawn())) { Message=TEXT("请靠近弟弟，交流范围30米"); Refresh(); return false; } }
         if(Next==TEXT("hud") && !Save->GetCampaignId().IsValid()) { OpenPage(TEXT("title")); return false; }
-        Category.Reset(); OpenPage(Next); return Page==Next;
+        OpenPage(Next); return Page==Next;
     }
     if(Action==TEXT("new"))
     {
