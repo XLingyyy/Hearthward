@@ -1,6 +1,6 @@
 # Hearthward 项目状态
 
-2026-09-23局部更新：remote main 当前为 `e729349`，已含 TASK-026（PR #25）及 PR #26–#28 资产更新；AI NPC 候选分支 `codex/ai-npc-vnext-rework-01` 仍基于 `4114556`，比 main 落后6个提交。该分支包含 TASK-027～040；TASK-040 的当前干净提交验证结果已更新到证据文档。
+2026-09-23局部更新：remote main 当前为 `73bb10e`（PR #30 后）；AI NPC 修复候选分支为 `codex/ai-npc-vnext-rework-01-fix`。Owner 指定最终对外验收/PR 统一使用 **TASK-029 AI NPC 完整交付**；仓库内部 TASK-027～040 继续保留为可追溯实现与证据。当前返工源码已完成 default Unity Editor build、native 41/41、真实 Qwen 32-case matrix、CTX-03/04、Schema 2→3 real-file migration 与 TASK-028/034/036/038 最终 PIE 回归；尚待同步 main、最终集成 validate、PR review 与 Owner 验收。
 
 历史基线：TASK-020 于2026-09-19通过用户验收；021伙伴导航、022自由建造、023即时制作、024维修已进入后续主干。原025经PR #22合并后被用户否决验收；增强版v2随后通过PR #23合并main。TASK-004已有77个自然素材源文件入库，UE适配未完成。
 
@@ -9,8 +9,8 @@
 | 开发根目录 | 独立 Hearthward 仓库，与上层 GameFactory 工具仓库隔离 |
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
-| 当前分支 | `codex/ai-npc-vnext-rework-01`，基于 AI vNext `04239f5`（TASK-032～039）实施 TASK-040；本轮授权 commit / push 到任务分支，PR / merge 未执行 |
-| 游戏实现提交 | main 当前为 `e729349`，包含 TASK-025 v2、TASK-026 与后续资产提交；AI NPC 代码仍留在候选任务分支 |
+| 当前分支 | `codex/ai-npc-vnext-rework-01-fix`；内部承接 TASK-027～040，对外统一作为 TASK-029 AI NPC 完整交付；已授权 commit / push / 创建 PR，明确不直接 merge |
+| 游戏实现提交 | main 当前为 `73bb10e`，包含 TASK-025 v2、TASK-026 与后续资产/地图提交；AI NPC 完整栈仍留在候选任务分支，等待 PR |
 | Git LFS | 已启用；TASK-026 地图/资产由 main 继承，本 PR 不新增或修改其 LFS 资产 |
 | 工具链 | 当前统一锁定 UE 5.8.2 CL 56702186、MSVC 19.44.35228.0、SDK 10.0.22621.0；目标引擎安装与锁定版本一致 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
@@ -41,7 +41,7 @@
 | TASK-026 | 已通过 PR #25 合并 main `4114556`；4032 m World Partition灰盒、026材质/贴图、独立浏览GameMode与27项定向PIE已生成。视觉、长路线、Standalone、性能和Owner验收仍未完成 |
 | TASK-027 | 本 PR：authoritative NPC perception/safety。候选形成、确认和执行阶段共享 UE 权威观察；玩家/模型文本不能写入安全或隐藏世界事实。Safety PIE 27/27 PASS |
 | TASK-028 | 本 PR：deterministic Goal→Plan→Action executor。typed actions、plan cursor、retained cargo、receipt、存档计划重建；Executor PIE 49/49 PASS |
-| TASK-029 | 本 PR：显式刷新 contextual suggestions。未选择建议不进入 memory/model/context；Modern PIE 40/40、Legacy PIE 8/8 PASS |
+| TASK-029 | **对外总交付口径**：AI NPC 完整交付。原 029 contextual suggestions 仍保留为内部能力之一；总交付实际由 TASK-027～040 共同构成，包含 perception/safety、executor、suggestions、combat/directives、recovery、belief、initiative、episode、coordination、routine、componentization、bounded context、real Qwen guardrail 与 save migration。 |
 | TASK-030 | 本 PR：`companion_order=hold/follow/assist` 与 player-centered deterministic combat policy；UE负责目标、导航、LOS、cooldown与伤害。Combat PIE 29/29、真实Qwen directive 14/14 PASS |
 | TASK-031 | 本 PR：用户 UE 复验修正。修复 combat Tick 每帧停止 typed task 导航、整理对话页工具栏、过滤手动任务卡能力；用户反馈 PIE 11/11、真实Qwen“采两份木材”链 11/11 PASS |
 | TASK-032 | 本地增量：deterministic adaptive recovery。Source relocation / transient route failure 进入 bounded retry/rewind；真实 cargo 优先返营。UE build PASS、NPCAgent 9/9、runtime PIE 11/11 PASS，未 push/merge |
@@ -52,13 +52,13 @@
 | TASK-037 | 本地增量：Coordination Prior。真实已确认 hold/follow/assist 形成滚动行为 prior，只影响建议/上下文，不自动执行；save/load 从 events 重建。UE build PASS、NPCAgent 13/13、runtime PIE 28/28 PASS，未 push/merge |
 | TASK-038 | 本地增量：营地自主 Routine。无任务/显式指令/战斗时按世界时间低权限巡营、查看营地、休息/回营；真实导航、不生产、不调用LLM。UE build PASS、NPCAgent 14/14、runtime PIE 26/26、TASK-028 executor 49/49 PASS，未 push/merge |
 | TASK-039 | 本地增量：AI NPC 组件化收口。导航、Initiative队列、伙伴Behavior编排、Local AI Runtime抽成深模块；不改玩法/存档/权限。UE build PASS、全量native 39/39、Executor 49/49、Initiative 16/16、Tactical 16/16、Routine 26/26 PASS，未 push/merge |
-| TASK-040 | 本地返工：一次可信 snapshot → full/compact/minimal ContextProjection，真实 template/token count 后最多一次 generation；capability prompt 从 registry 派生；Belief 分离 semantic time / `LastEvidenceAt`；Episode 增加 Complete/Truncated/Unknown coverage；Save schema 3 显式迁移。repo validator PASS、Python 31/31、UE build PASS、native `Hearthward.*` 40/40 PASS。当前源码真实 Qwen e2e 因可操控 Game WorldContext/UEClient 入口缺失 BLOCKED/NOT_RUN；本轮获授权提交/推送任务分支，PR/merge 未执行；真实 Schema 2 文件迁移及相关 PIE 复验仍缺 |
+| TASK-040 | 内部返工已技术闭合：Unity helper collision 修复；bounded ContextProjection；registry-driven prompt；Belief `LastEvidenceAt`；Episode coverage；Schema 3 migration。Editor build PASS、native 41/41、Schema2→3 real-file 1/1、真实 Qwen 32/32 safety、M01～M10 raw 20/20、CTX-03 compact 2832/1 generation、CTX-04 minimal 4020/0 generation；最终 TASK-028/034/036/038 PIE 分别 49/49、16/16、16/16、26/26 PASS。对外并入 TASK-029 总交付。 |
 | Issue／评审 | 任务期内 GitHub Issue 创建曾返回403，因此027→031任务快照缺独立远端Issue/Reviewer；本次统一 PR 用于正式代码评审，不在 Agent 侧执行合并 |
 | 打包／两机验证／完整 M0 | NOT_RUN |
 | 本地模型 | 项目已含llama.cpp b10964及Qwen3.5-4B Q4_K_M；真实UE自然语言采集入库、澄清/拒绝与生命周期已验证；台词质量仍有记录限制，见TASK-013交接 |
 | 付费资产生成 | NOT_RUN |
 
-用户已验收TASK-020；TASK-025 v2与TASK-026已进入main。AI NPC 候选分支承接 `04239f5` 的 TASK-032～039 集成栈并增加 TASK-040。2026-09-23 干净提交 `6d1ca5e` 的默认 Unity Editor 构建失败，完整结论见 [TASK-040 clean-tree review](qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md)。当前 TASK-040 保持 Blocked，真实模型 e2e、相关 PIE 回归、Schema 2真实存档迁移及独立 Reviewer/Owner 验收仍未闭合。
+用户已验收TASK-020；TASK-025 v2与TASK-026已进入main。AI NPC 当前对外按 **TASK-029 完整交付** 收口，内部 TASK-027～040 保留完整历史。返工分支已闭合 Unity build、41/41 native、32-case real Qwen、CTX-03/04、Schema 2→3 real-file migration 及 028/034/036/038 当前源码 PIE；详细结论见 [TASK-040 clean-tree review](qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md) 与 [validation](qa/evidence/TASK-040/VALIDATION.md)。尚未完成的是 main 同步后的最终集成验证、独立 Reviewer / Owner 验收和 main merge。
 [TASK-018交接](handoffs/TASK-018.md)记录当前玩家采集入库、回档、录像及边界。
 [TASK-017交接](handoffs/TASK-017.md)记录存档管理UI、实键录像、受测源码快照和限制。
 [TASK-013交接](handoffs/TASK-013.md)记录本地模型与设计修订的当前结果。

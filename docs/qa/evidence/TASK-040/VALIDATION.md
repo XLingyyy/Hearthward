@@ -1,129 +1,176 @@
 # TASK-040 Validation
-> 2026-09-23 clean committed-tree verification supersedes the PASS/NOT_RUN summary below. See [CLEAN_TREE_REVIEW.md](CLEAN_TREE_REVIEW.md); the earlier 40/40 native run is historical worktree evidence.
 
+> **External acceptance alias:** per Owner instruction on 2026-09-23, the final AI NPC vNext delivery is reported externally as **TASK-029 AI NPC complete delivery**. TASK-040 remains the internal rework/evidence identifier and does not replace the historical TASK-027～040 task trail.
 
-基线：`04239f542ee99c1a735a380a66faa6ec99dc614b`
+Date: 2026-09-23
+Working branch: `codex/ai-npc-vnext-rework-01-fix`
+Source baseline before final main sync: `origin/codex/ai-npc-vnext-rework-01@97f8818`
+Target main: `73bb10ec4c19260cb72112c7e282a2c29f6c2432`
 
-工作分支：`codex/ai-npc-vnext-rework-01`
+## Final technical result before main sync
 
-日期：2026-09-23
+| Check | Result | Evidence |
+|---|---:|---|
+| UE 5.8.2 Editor Development build | PASS | default Unity build succeeded after helper collision cleanup |
+| full native `Hearthward.*` | **41/41 PASS** | `final-regression/native-41-index.json` |
+| real Schema 2 → Schema 3 disk migration | **1/1 PASS** | `final-regression/schema2-migration-index.json` |
+| real Qwen M01–M16 clean + CTX-02 pressure | **32/32 safety PASS** | `model-results.json`, `model-results.jsonl` |
+| Qwen core raw contract M01–M10 | **20/20 PASS** | same model evidence |
+| total real generation calls in 32-case matrix | **32** | exactly one per case; no normal overflow |
+| CTX-03 legal multi-turn degradation | PASS | full → `compact_relevant`, 2832 tokens, one generation, restriction preserved |
+| CTX-04 required-content overflow | PASS | `required_minimal` 4020 tokens, `generation_calls=0`, no candidate/world write |
+| TASK-028 Executor PIE | **49/49 PASS** | `final-regression/task028-executor.json` |
+| TASK-034 Initiative PIE | **16/16 PASS** | `final-regression/task034-initiative.json` |
+| TASK-036 Tactical Cooperation PIE | **16/16 PASS** | `final-regression/task036-tactical.json` |
+| TASK-038 Camp Routine PIE | **26/26 PASS** | `final-regression/task038-routine.json` |
+| repo validator | PASS | 0 errors on current rework source before final main sync |
+| repository Python tests | PASS | 31/31 before final main sync |
+| Content/ binary changes | PASS | zero changes in this rework |
 
-## R0 原始工作树环境与锁（历史记录）
+## R0 — Unity collision and helper audit
 
-- HEAD / AI vNext 基线：`04239f542ee99c1a735a380a66faa6ec99dc614b`
-- `config/local-ai.lock.json` SHA256：`9910343014e0159e5e18d6603fdb2303c131b2f53b633488297d3fbe0814c4b2`
-- `config/toolchain.lock.json` SHA256：`ecce1cdde269a1130f189ec9ba56bc31f8f51a7b4425972885fd6ef6d92ed12b`
-- `Hearthward.uproject` SHA256：`357a6365d8c22035c528b1c9a5288cbee1bed7db6a3b1cd891dc15e552bf3f8c`
-- 锁定工具链：UE 5.8.1 / MSVC 19.44.35228 / Windows SDK 10.0.22621.0
-- 本机实际 UE：5.8.2-56702186，`D:\UE5.8\UE_5.8`
-- 本机模型：`D:\Dev\Hearthward\Runtime\LocalAI\models\Qwen3.5-4B-Q4_K_M.gguf`
-- GGUF SHA256：`00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4`，与 lock 一致
+The clean committed candidate originally failed default Unity compilation because two anonymous-namespace helpers named `Json` were concatenated into the same Unity translation unit.
 
-环境偏差：本机可编译 UE 5.8.2，但不是仓库锁定的 5.8.1，因此构建结果是当前机器诊断/回归信号，不替代锁定工具链复验。
+Fixes:
 
-## 自动验证（历史工作树；当前结果见 CLEAN_TREE_REVIEW.md）
+- `HearthwardAgentInteraction.cpp`: `Json/Object` → module-prefixed helpers.
+- `HearthwardNPCContextProjection.cpp`: all generic anonymous helpers received `ContextProjection*` prefixes.
+- final audit also removed the remaining duplicated anonymous helper name `Counts`:
+  - workshop helper → `WorkshopCounts`
+  - save helper → `SaveSubsystemCounts`
 
-| 项目 | 状态 | 证据 |
-|---|---|---|
-| repository validator | PASS | `python scripts/validate_repo.py` → 0 errors |
-| repository Python tests | PASS | 31/31 |
-| Editor Development build | PASS | 当前 worktree 源码在 UE 5.8.2 下编译、链接 `UnrealEditor-Hearthward.dll` 成功 |
-| native `Hearthward.*` | PASS | 40/40 Success；无 Fail/Error/Assertion/Fatal/Ensure |
-| task baseline scope validator | BLOCKED | TASK-040 是本轮新任务，不存在于 `04239f5` 基线，validator 正确拒绝把当前 JSON 冒充 baseline-approved snapshot |
-| locked UE 5.8.1 build | NOT_RUN | 当前机器仅发现 5.8.2 |
-| current-source real Qwen CTX e2e | BLOCKED | 见“真实模型验证” |
-| 16 类样本 × 干净/压力进度 | NOT_RUN | 至少 32 次真实请求尚无当前源码结果 |
-| real pre-TASK-040 Schema 2 file migration | NOT_RUN | 现有测试使用更早真实旧档及新结构构造；缺真实 Schema 2 文件或旧版序列化路径 |
-| related TASK-028/034/036/038 runtime PIE | NOT_RUN | 本轮尚未逐套重跑 |
+Default `HearthwardEditor Win64 Development` then compiled and linked successfully.
 
-原生完整结果保存在运行时日志 `Saved/Logs/Hearthward-backup-2026.09.23-03.51.07.log`；该日志不是 Git 交付物。本轮复核检查到 40 条 `Test Completed. Result={Success}`、0 条失败/崩溃标记，并重新执行 repo validator 0 errors、Python 31/31。基线工作树共有 28 个改动文件，全部在 TASK-040 allowed_paths，Content/ 零修改。
+## R1 — bounded ContextProjection and real token budget
 
-关键新回归均 PASS：
+The final path captures one UE-authoritative snapshot and produces at most three deterministic projections:
 
-- `Hearthward.NPCAgent.CapabilitiesAndLimits`
-- `Hearthward.NPCAgent.BeliefStateProvenance`
-- `Hearthward.NPCAgent.BoundedContextProjection`
-- `Hearthward.NPCAgent.GroundedEpisodeProjection`
-- `Hearthward.Save.FileIntegrityAndSnapshot`
-- `Hearthward.Save.NPCMemoryCompatibility`
-- `Hearthward.Save.PoolProtectionAndSafety`
+1. `full_relevant`
+2. `compact_relevant`
+3. `required_minimal`
 
-## R1 ContextProjection
+Every attempted tier is counted using the real llama.cpp `/apply-template` → `/tokenize` path. Only the accepted, already-counted body can enter generation. `max_input_tokens=3328` and output limit 256 remain unchanged.
 
-PASS（原生/静态）：
+The pressure fix deliberately stopped treating “full” as “dump every belief”. Irrelevant camp beliefs are filtered, and collect requests no longer inject current camp stock just because the phrase contains “带回仓库”. Generic crafting recipe material/output quantities were also removed from the always-on capability prompt because they caused the model to confuse request quantities with recipe quantities.
 
-- full / compact / minimal 只有三档。
-- 三档从同一 `FHearthwardNPCContextSnapshot` 纯投影，测试确认同一 snapshot 输出 deterministic。
-- minimal 在压力数据下小于 full。
-- 硬规则和 unresolved 原始限制不会被普通 Top-K 裁剪。
-- 旧的 `observed_camp_inventory / last_seen_camp / camp_knowledge` 不再作为新的并行模型事实通道。
-- 真实 request 流使用 llama.cpp `/apply-template` + `/tokenize`，超限只降档，不调用 generation。
-- 只有通过 token count 的同一 Body 才进入 `Generate`；`GenerationCalls` 在真实 `/v1/chat/completions` 前递增。
+### CTX-01 / CTX-02 and 32-case real-Qwen matrix
 
-BLOCKED（真实模型 e2e）：
+`model-results.json` records M01–M16 twice: clean and CTX-02 pressure state.
 
-- CTX-01 正常输入实际 token/tier/generation=1
-- CTX-02 压力输入实际自动降档
-- CTX-03 必保内容保持不丢
-- CTX-04 三档均超限时实际 generation=0
+Summary:
 
-原因不是模型文件缺失。bundle 与 GGUF hash 已确认，且 Unreal built-in Python Remote Execution 可以发现当前 worktree 的 UE 5.8.2 process；但当前 `-game` 实例中 remote Python 无可用 Game WorldContext，项目 world-scoped debug commands 无法可靠触发。当前 Python 环境也没有仓库约定的 GameFactory `engine_adapters.ue5` UEClient。因此不把 TASK-039 的历史 overflow 当作本轮当前源码 PASS/FAIL。
+- 32 cases
+- 32 generation calls
+- 32/32 final safety/behavior checks pass
+- M01–M10 core raw model contract: 20/20 pass
+- no normal `CONTEXT_OVERFLOW`
+- M11/M12/M14/M16 raw model JSON can still be broader than the ideal refusal/clarification intent, but deterministic guardrails reject or clarify correctly; these are reported as raw-model imperfections, not hidden as model success.
 
-## R2 Capability Contract
+Pressure state includes 64 player records with 4 agreements, 22 beliefs and 128 events. It completes without dumping all history into the model.
 
-PASS：
+### CTX-03
 
-- schema 从 registry 生成。
-- system prompt 的 companion directive 列表从 registry 生成。
-- `routine` 与 hold/follow/assist 走相同 Validate/preflight。
-- `inventory` 与 `inventory_report` 保持不同 mode/source/authority。
-- 未扩张能力集合或世界写权限。
+A legal four-turn clarification history is combined with large optional pressure context.
 
-## R3 Belief Freshness
+Final probe:
 
-PASS：
+- full tier exceeds the budget and degrades
+- accepted tier: `compact_relevant`
+- actual input tokens: 2832
+- generation calls: 1
+- raw model still returns clarification
+- unknown North Mountain / oral-safety constraints remain preserved
+- no executable candidate
+- world authority unchanged
 
-- 同值、同 source 新证据刷新 `LastEvidenceAt`。
-- `RecordedAt` 保持 semantic change time。
-- `Memory.Revision` 不因为 freshness-only 更新增长。
-- 旧时间证据不能倒退 freshness。
-- source/value 变化仍走 semantic revision。
-- Schema 2 旧档缺失字段保守迁移为 `LastEvidenceAt = RecordedAt`。
+### CTX-04
 
-## R4 Episode Coverage
+A legal ≤1000-character required player utterance plus valid clarification history is deliberately constructed with high tokenizer density.
 
-PASS：
+Final result:
 
-- current accepted command 完整事件时为 `Complete`。
-- event-only compatibility projection 为 `Unknown`。
-- 活动 command 早期事件被 128 ring 全部挤出后仍保留 metadata 并变为 `Truncated`。
-- 后续 delivered/completed 不会把 Truncated 恢复为 Complete。
-- terminal state 与 coverage 分离。
-- legacy event history 迁移为 Unknown。
-- metadata 按活动 command + 当前 buffered episode command 有界。
+- `required_minimal`: 4020 tokens > 3328
+- reason: `CONTEXT_OVERFLOW`
+- generation calls: **0**
+- no candidate
+- no world write
+- original player text retained exactly
 
-## R5 Save / Regression
+Evidence: `context-boundary-results.json`.
 
-PASS（原生）：
+## R2 — capability contract and natural-language guardrails
 
-- Save schema / cognition state 显式升级到 3。
-- Schema 2 旧 vNext 的迁移路径已实现；真实 Schema 2 文件级迁移证据仍缺。
-- current Schema 3 损坏 `LastEvidenceAt` 直接拒绝，不走 legacy repair。
-- existing Save file integrity / snapshot / NPC memory compatibility tests 全绿。
-- Local AI cancel / pending / structured boundary tests 全绿。
-- full `Hearthward.*` 40/40 覆盖现有 inventory、gameplay、companion、save 等原生回归。
+- capability registry remains the capability source of truth.
+- routine is represented consistently in registry/schema/prompt/preflight.
+- generic prompt no longer dumps recipe material/output amounts.
+- Chinese numeric quantities are explicit quantities; “四份” and “十份” are not treated as missing numbers.
+- inventory report guardrail now accepts explicit Chinese quantity forms while keeping the report cognition-only.
+- inventory query vs inventory report remains separated.
+- negative/fraction quantities, unknown locations, oral safety claims, multi-goal requests and rule conflicts cannot silently become executable world writes.
 
-NOT_RUN：
+## R3 — Belief freshness
 
-- TASK-028/034/036/038 的既有专门 runtime PIE 脚本本轮未逐套重新执行。
-- 当前源码真实模型 end-to-end 未完成，原因见上。
+The rework keeps:
 
-## 流程状态
+- `RecordedAt` = semantic value/source change time
+- `LastEvidenceAt` = newest valid evidence time
+- freshness-only evidence refresh does not churn semantic revision
+- value/source changes still advance semantic state
+- off-camp queries do not leak changed world inventory
 
-- commit：本轮用户已授权在独立任务分支提交；实际提交以 Git 历史为准
-- push：本轮用户已授权推送独立任务分支；实际发布以 GitHub 分支为准
-- PR：NOT_RUN / 未授权创建
-- merge：NOT_RUN / explicitly not authorized
-- real GitHub Issue / reviewer：BLOCKED / 未登记
+## R4 — Episode coverage
 
-该文件保存此前工作树的详细实现与测试记录。当前分支结论以 [CLEAN_TREE_REVIEW.md](CLEAN_TREE_REVIEW.md) 为准：默认 UE 构建失败，当前干净提交原生测试未运行，TASK-040 保持 `Blocked`。
+Coverage remains separate from task terminal state:
+
+- `Complete`
+- `Truncated`
+- `Unknown`
+
+Active-command coverage survives event-ring eviction; legacy history does not get falsely promoted to complete.
+
+## R5 — real Schema 2 → Schema 3 file migration
+
+A dedicated native automation now creates an actual Schema 2 `.hws` file on disk, serializes it through the normal save payload/header format, reads it through `HearthwardSave::Read`, migrates it, writes a Schema 3 file and reloads that file.
+
+Verified:
+
+- Schema promoted to 3
+- NPC cognition state promoted to v3
+- legacy `LastEvidenceAt` conservatively initialized from `RecordedAt`
+- historical command coverage becomes `Unknown`
+- campaign binding remains unchanged
+- migrated Schema 3 file passes strict validation after round trip
+
+Automation: `Hearthward.Save.Schema2To3RealFileMigration` — 1/1 PASS.
+
+## R5 — final runtime regressions
+
+Current source was re-run, not merely credited with historical results:
+
+- TASK-028 Executor: 49/49 PASS
+- TASK-034 Initiative: 16/16 PASS
+- TASK-036 Tactical Cooperation: 16/16 PASS
+- TASK-038 Camp Routine: 26/26 PASS
+
+The full native suite is now 41/41 because the Schema 2→3 real-file migration automation adds one new test to the prior 40-test suite.
+
+## R6 — remaining release process
+
+Internal implementation/evidence is complete enough for PR preparation. Remaining release steps are procedural/integration steps:
+
+1. sync `origin/main@73bb10e+`
+2. resolve README/documentation conflict without dropping main asset/documentation changes
+3. rerun final repository/build/native smoke validation on the merged candidate
+4. update project state / PR handoff with the final candidate SHA
+5. push the dedicated rework branch and create a PR
+6. **do not merge**
+
+Independent Reviewer / Owner experience acceptance remains outside the executing agent's authority.
+
+## External TASK-029 acceptance wording
+
+The PR/final report should say:
+
+> **TASK-029 AI NPC complete delivery** — internally implemented and evidenced across TASK-027～040.
+
+The internal task numbers remain available for traceability and should not be renumbered or deleted.

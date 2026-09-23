@@ -1,5 +1,11 @@
 # TASK-029 交接
 
+## 2026-09-23 对外总交付口径
+
+Owner 指定：AI NPC vNext 最终对外验收统一使用 **TASK-029**。内部 TASK-027～040 继续作为实现分解与可追溯证据，不删除、不改号。最终 PR 应将以下内部工作作为 TASK-029 的完整能力增量说明：authoritative perception/safety、deterministic Goal→Plan→Action executor、contextual suggestions、hold/follow/assist/routine、adaptive recovery、typed Belief、event-driven initiative、grounded Episode、tactical cooperation、coordination prior、camp routine、组件化收口、bounded context/token budget、真实 Qwen guardrail 与 Schema 2→3 migration。
+
+当前最终证据汇总见 `docs/qa/evidence/TASK-040/`；该目录保留内部返工编号，仅作为 TASK-029 总交付的底层证据来源。
+
 ## 基线
 
 - TASK-027：`25e8f13 feat: add authoritative NPC perception safety layer`。

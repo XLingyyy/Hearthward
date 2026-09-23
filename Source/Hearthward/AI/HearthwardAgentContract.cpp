@@ -60,8 +60,8 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
             {TEXT("craft"),TEXT("取得授权材料→到工作台制作→产物入库；quantity是批数；默认弟弟背包bag，明确授权才用camp仓库"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max")},true},
             {TEXT("repair"),TEXT("到工作台修理自己背包中唯一一件装备；quantity=1；不操作玩家装备"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max")},true},
             {TEXT("companion_order"),TEXT("高层伙伴指令；hold原地等待，follow跟随玩家，assist在玩家附近协助有效威胁，routine恢复营地低权限自由活动；UE决定目标、导航、攻击时机和伤害"),{TEXT("hold"),TEXT("follow"),TEXT("assist"),TEXT("routine")},1,TEXT("directive"),{TEXT("player")},{},true},
-            {TEXT("inventory"),TEXT("只读营地当前或已有belief库存；回复必须说明来源与是否亲自确认"),All,0,TEXT("none"),{TEXT("none")},{},false},
-            {TEXT("inventory_report"),TEXT("玩家明确报告营地某物品当前数量；只更新弟弟的belief，不修改实际仓库；quantity为玩家报告的精确数量"),All,100000,TEXT("reported_exact"),{TEXT("player")},{},false},
+            {TEXT("inventory"),TEXT("只读询问营地当前或已有belief库存；‘多少/几份/是不是有/吗/？’这类疑问句属于inventory；回复必须说明来源与是否亲自确认"),All,0,TEXT("none"),{TEXT("none")},{},false},
+            {TEXT("inventory_report"),TEXT("仅限玩家用陈述句明确报告营地某物品的精确当前数量；疑问句不是report；只更新弟弟的belief，不修改实际仓库"),All,100000,TEXT("reported_exact"),{TEXT("player")},{},false},
             {TEXT("recall"),TEXT("只读有效原话和本人实际事件"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{},false},
             {TEXT("rule_proposal"),TEXT("提出长期规则卡，确认后生效；limits一条ban:wood或source:S1或no:物品或max:物品:整数"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{TEXT("ban"),TEXT("source"),TEXT("no"),TEXT("max")},false}
         };
@@ -96,16 +96,15 @@ FString HearthwardAgent::Describe()
     FString Out=TEXT("目录v2；只有这些已注册能力。站点或物资不足可暂时不可用；战斗仅允许companion_order高层指令，不能生成逐帧战术、建造或未知物品能力。\n");
     for(const auto& C:Capabilities())
     {
-        TArray<FString> I; for(FName Id:C.Items) I.Add(Id.ToString());
+        TArray<FString> I;
+        for(FName Id:C.Items)
+        {
+            const FString Label=ItemText(Id);
+            I.Add(Label.IsEmpty() || Label==Id.ToString()?Id.ToString():Id.ToString()+TEXT("=")+Label);
+        }
         Out+=C.Id.ToString()+TEXT(": ")+C.Description+TEXT("；item=")+FString::Join(I,TEXT(","))+FString::Printf(TEXT("；quantity上限%d；mode="),C.MaxQuantity)+C.QuantityMode+TEXT("\n");
     }
-    for(const auto& V:HearthwardData::Rows(TEXT("craftingRecipes")))
-    {
-        const auto R=V->AsObject();Out+=HearthwardData::Text(R,TEXT("id"))+TEXT(" 每批消耗");
-        for(const auto& M:R->GetObjectField(TEXT("materials"))->Values)Out+=FString::Printf(TEXT(" %s:%d"),*M.Key,int32(M.Value->AsNumber()));
-        Out+=TEXT("，每批产出");for(const auto& M:R->GetObjectField(TEXT("outputs"))->Values)Out+=FString::Printf(TEXT(" %s:%d"),*M.Key,int32(M.Value->AsNumber()));Out+=TEXT("\n");
-    }
-    Out+=TEXT("制作请求已明确批数和配方即可提卡。背包材料默认有使用权，无须额外确认；实际库存、配方扣料、到站距离由UE再校验，不能把这些自动检查列成玩家未解决问题。\n");
+    Out+=TEXT("制作请求已明确批数和配方即可提卡。背包材料默认有使用权，无须额外确认；实际库存、配方成本/产量、到站距离由UE再校验，模型不需要推算材料或产量，不能把这些自动检查列成玩家未解决问题。\n");
     return Out;
 }
 FString HearthwardAgent::Schema()

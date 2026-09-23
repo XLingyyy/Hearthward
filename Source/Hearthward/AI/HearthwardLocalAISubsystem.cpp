@@ -36,6 +36,27 @@ TSharedPtr<FJsonValue> LocalAIMessage(const FString& Role, const FString& Text)
     Message->SetStringField(TEXT("content"), Text);
     return MakeShared<FJsonValueObject>(Message);
 }
+
+FString LocalAIChineseQuantity(int32 Value)
+{
+    static const TCHAR* Digits[]={TEXT("零"),TEXT("一"),TEXT("二"),TEXT("三"),TEXT("四"),TEXT("五"),TEXT("六"),TEXT("七"),TEXT("八"),TEXT("九")};
+    if(Value<0 || Value>99)return {};
+    if(Value<10)return Digits[Value];
+    if(Value==10)return TEXT("十");
+    if(Value<20)return FString(TEXT("十"))+Digits[Value%10];
+    const int32 Tens=Value/10,Ones=Value%10;
+    return FString(Digits[Tens])+TEXT("十")+(Ones?Digits[Ones]:TEXT(""));
+}
+
+bool LocalAIContainsExplicitQuantity(const FString& Text,int32 Quantity)
+{
+    if(Text.Contains(FString::FromInt(Quantity)))return true;
+    const FString Chinese=LocalAIChineseQuantity(Quantity);
+    if(Chinese.IsEmpty())return false;
+    for(const TCHAR* Unit:{TEXT("份"),TEXT("个"),TEXT("件"),TEXT("块"),TEXT("根"),TEXT("批"),TEXT("单位")})
+        if(Text.Contains(Chinese+Unit))return true;
+    return false;
+}
 }
 
 bool UHearthwardLocalAISubsystem::DoesSupportWorldType(EWorldType::Type WorldType) const
@@ -372,9 +393,9 @@ void UHearthwardLocalAISubsystem::SendInference()
         +TEXT("\n世界写入只提出一个已注册能力候选，确认前绝不执行；缺必要信息用clarify并保留unresolved，不能默认、猜测或删除玩家限制。")
         +HearthwardAgent::CompanionOrderPrompt()
         +TEXT("\n伙伴高层指令按目录直译：‘恢复/继续营地自由活动’必须提出companion_order/routine候选；‘跟着我’=follow，‘在这里等’=hold，‘帮我对付附近威胁’=assist。候选npc_line只能请求核对或说明确认后会做什么，确认前不能说‘已恢复/已开始/已经执行’。")
-        +TEXT("\ncollect数量是本次新取得份数；缺数量必须clarify，负数/小数/超上限必须refuse，不取绝对值、不四舍五入。craft数量是批数；repair只能弟弟自己持有的唯一装备。bag默认可用，camp只有玩家明确授权共享仓库材料时可选。")
+        +TEXT("\n数量判定必须按玩家原话直接读取：中文数词也是明确数量；“新采四份木材”=collect wood quantity 4，不得因现有库存、背包或配方再询问数量；只有原话完全没有数量时才clarify。“制作一批箭矢”=craft arrows quantity 1 batches。负数/小数/超上限必须refuse，不取绝对值、不四舍五入。repair只能弟弟自己持有的唯一装备。bag默认可用，camp只有玩家明确授权共享仓库材料时可选。")
         +TEXT("\n未知地点、玩家口述安全、自由坐标、具体敌人、逐帧攻击、多目标或未注册能力不能转成可执行候选；多目标必须clarify/refuse。")
-        +TEXT("\ninventory是询问已有认知；inventory_report只在玩家明确报告物品和精确数量时使用，结果始终是未核实belief且不修改真实仓库。过去行为用recall，只能依据episode evidence；coverage不是complete时不能把保留计数说成全过程总量。")
+        +TEXT("\ninventory是询问已有认知：‘营地仓库还有多少木材？’和‘仓库是不是有10份木材？’都必须是inventory，不得写成inventory_report。inventory_report只用于陈述式明确报告，例如‘我报告营地有10份木材’，结果始终是未核实belief且不修改真实仓库。过去行为用recall，只能依据episode evidence；coverage不是complete时不能把保留计数说成全过程总量。")
         +TEXT("\n长期硬规则必须保留并服从。澄清历史中的玩家原话和未解决限制不能静默截断；插入查询/闲聊不能执行旧目标。npc_line简短，不声称候选已完成，不提Schema或内部字段。");
 
     TSharedPtr<FJsonObject> Schema;
@@ -477,9 +498,13 @@ void UHearthwardLocalAISubsystem::ApplyProposal()
     if(!StillCurrent()){Fail(TEXT("请求已失效，未执行模型结果"));return;}
     bResponseReady=false;FailureCount=0;ReasonCode=HearthwardAgent::Validate(Proposal);
     const FString Normalized=HearthwardAgent::Normalize(Input);
-    if((Proposal.Intent==TEXT("recall") || Proposal.Intent==TEXT("clarify") || Proposal.Intent==TEXT("dialogue"))
-        && (Input.Contains(TEXT("仓库")) || Input.Contains(TEXT("仓储")) || Input.Contains(TEXT("营地")) || Input.Contains(TEXT("库存")) || Input.Contains(TEXT("已存")) || Input.Contains(TEXT("问已有")))
-        && (Input.Contains(TEXT("多少")) || Input.Contains(TEXT("几份")) || Input.Contains(TEXT("数量")) || Input.Contains(TEXT("库存")) || Input.Contains(TEXT("问已有")))
+    const bool InventoryQuestion=Input.Contains(TEXT("多少")) || Input.Contains(TEXT("几份")) || Input.Contains(TEXT("是不是"))
+        || Input.Contains(TEXT("吗")) || Input.Contains(TEXT("？")) || Input.Contains(TEXT("?")) || Input.Contains(TEXT("问已有"));
+    const bool InventoryContext=Input.Contains(TEXT("仓库")) || Input.Contains(TEXT("仓储")) || Input.Contains(TEXT("营地"))
+        || Input.Contains(TEXT("库存")) || Input.Contains(TEXT("已存"));
+    if(((Proposal.Intent==TEXT("recall") || Proposal.Intent==TEXT("clarify") || Proposal.Intent==TEXT("dialogue"))
+            || (Proposal.Intent==TEXT("inventory_report") && InventoryQuestion))
+        && InventoryContext && (InventoryQuestion || Input.Contains(TEXT("数量")) || Input.Contains(TEXT("库存")))
         && !Input.Contains(TEXT("背包")))
     {
         TArray<FName> Items;
@@ -538,7 +563,7 @@ void UHearthwardLocalAISubsystem::ApplyProposal()
     {
         const auto* Item=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==Proposal.Item;});
         const bool ExplicitItem=Item && (Normalized.Contains(HearthwardAgent::Normalize(Item->DisplayName.ToString())) || Normalized.Contains(Proposal.Item.ToString()));
-        const bool ExplicitCount=Input.Contains(FString::FromInt(Proposal.Quantity));
+        const bool ExplicitCount=LocalAIContainsExplicitQuantity(Input,Proposal.Quantity);
         if(!ExplicitItem || !ExplicitCount || !RecordPlayerCampReport(Proposal.Item,Proposal.Quantity))
         {
             NPCLine=TEXT("如果要我记作库存报告，请明确说出物品和阿拉伯数字数量，例如“营地现在有20份木材”。");

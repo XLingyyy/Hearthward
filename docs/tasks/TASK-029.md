@@ -1,6 +1,8 @@
 # TASK-029｜AI NPC 上下文快捷建议与显式刷新
 
-状态：Blocked（用户已授权本地研发；GitHub Issue/Reviewer待远端通路恢复）。
+状态：Blocked（实现与技术回归已扩展完成；独立 Reviewer / Owner 最终验收与 main 合并仍待完成）。
+
+> **对外交付口径（2026-09-23 Owner 指示）**：最终 AI NPC vNext 总验收、PR 与项目状态统一对外称为 **TASK-029 AI NPC 完整交付**。仓库内部仍保留 TASK-027～040 的原始任务编号与证据，用于追踪 perception/safety、executor、suggestions、combat、recovery、belief、initiative、episode、coordination、routine、componentization 与 context/cognition rework；不重写历史任务编号。
 
 ## 目标
 

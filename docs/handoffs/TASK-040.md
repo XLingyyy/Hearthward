@@ -1,122 +1,118 @@
 # TASK-040 交接
 
-## 基线与分支
+> **对外发布/验收口径：TASK-029 AI NPC 完整交付。** TASK-040 是内部返工与证据编号，TASK-027～040 原始历史继续保留。
 
-- AI NPC vNext 基线：`04239f542ee99c1a735a380a66faa6ec99dc614b`
-- 来源分支：`codex/ai-npc-vnext-pr`
-- 当前本地分支：`codex/ai-npc-vnext-rework-01`
-- 基线已包含 TASK-032～039；本任务没有回退到 TASK-029 脏工作区。
-- 原始 `D:\Dev\Hearthward` checkout 的未知未提交改动没有被清理、覆盖或纳入当前 worktree。
+## 基线与工作分支
 
-## 完成内容
+- AI NPC vNext 集成基线：`04239f542ee99c1a735a380a66faa6ec99dc614b`
+- 返工来源：`origin/codex/ai-npc-vnext-rework-01@97f8818`
+- 当前修复分支：`codex/ai-npc-vnext-rework-01-fix`
+- 目标 main：`73bb10ec4c19260cb72112c7e282a2c29f6c2432`
+- 用户主 checkout `D:\Dev\Hearthward` 的未提交改动始终未被 reset/switch/覆盖。
 
-### R1｜ContextProjection
+## 本轮实际修复
 
-新增 `HearthwardNPCContextProjection` 深模块。
+### 1. Unity build collision
 
-- UE 只捕获一次可信快照。
-- full / compact / minimal 三档都对同一 snapshot 做纯投影。
-- 当前能力相关 belief、episode、记录优先；硬规则、玩家原话和 unresolved 限制不进入普通 Top-K。
-- 不再把 `observed_camp_inventory / last_seen_camp / camp_knowledge` 作为并行模型事实源重复注入。
-- 每档都通过实际 llama.cpp `/apply-template` → `/tokenize` 计真实模板 token。
-- 保持 `max_input_tokens=3328`、输出 256。
-- 超限只尝试下一档，不生成；三档都超限时 `CONTEXT_OVERFLOW` 且 generation=0。
-- 只有通过计数的同一个 Body 才进入唯一一次 `/v1/chat/completions`。
-- 诊断保留 `context tier / dropped fields / input tokens / generation calls`。
+原 clean-tree 默认 Unity build 在 `AgentInteraction.cpp` 与 `NPCContextProjection.cpp` 的匿名 `Json` helper 上 C2084/C2264。
 
-### R2｜能力契约单一来源
+已改为模块前缀 helper，并继续审计匿名 helper；Workshop / Save 重复通用 `Counts` 也完成前缀收口。
 
-- `Capabilities()` 继续作为能力枚举唯一事实来源。
-- `CompanionOrderPrompt()` 从 registry 自动生成指令集合。
-- prompt 不再硬编码 hold/follow/assist 而漏掉 routine。
-- schema 测试改为结构化逐 branch 对照 registry。
-- hold/follow/assist/routine 全部走相同 `Validate` 边界。
-- `inventory` 与 `inventory_report` 的 read-only / cognition-write 语义仍严格分离。
+结果：默认 Editor Development build PASS。
 
-### R3｜Belief 时效
+### 2. CTX-02 压力下真实模型误判
 
-`FHearthwardNPCBelief` 新增 `LastEvidenceAt`。
+真实 Qwen 在压力状态曾把明确“新采四份木材”误判为缺数量。定位到两类上下文污染：
 
-- `RecordedAt`：最后一次 value/source 语义变化。
-- `LastEvidenceAt`：当前 value/source 最近一次有效证据。
-- 同值同来源刷新只推进 evidence time，不推进 `Memory.Revision`，因此不会仅因重新观察相同事实使待确认卡失效。
-- 来源/数值变化继续视为语义变化。
-- 旧档缺字段时保守继承 `RecordedAt`。
+- Full tier 无差别注入无关 camp beliefs。
+- 通用 capability prompt 永久带所有 crafting recipe 数量。
 
-### R4｜Episode 完整性
+修复后：
 
-新增 persistent bounded command coverage：
+- Full = full detail for relevant facts，不再等于 dump all facts。
+- collect 不读取无关营地库存 belief。
+- inventory query 判定收紧，避免“带回仓库”误命中。
+- recipe prompt 只保留能力/物品身份，不再永久注入材料/产出数。
+- system prompt 明确中文数词与 batch 语义。
 
-- `Complete`
-- `Truncated`
-- `Unknown`
+### 3. inventory_report 中文数量
 
-新任务只在真实 `SubmitGoal -> Accepted` 后登记 Complete。事件从 128 ring 被淘汰时相应 command 降为 Truncated；后续 completed/cancelled 不能恢复完整性。旧档没有 coverage 证据时迁移为 Unknown。
+M08 “十份木材”原先会被只认阿拉伯数字的 guardrail 拒绝。新增显式中文数量识别（0～99 + 合法量词），仍不允许报告修改真实仓库。
 
-Episode 的终态与 coverage 分开表达：任务可以“已完成但记录已截断”。
+### 4. Context budget
 
-### R5｜Save / 恢复
+真实三档计数已验证：
 
-- Save schema：3
-- NPC cognition state version：3
-- 明确的 Schema 2 → 3 迁移：
-  - `LastEvidenceAt = RecordedAt`
-  - coverage = Unknown
-- current-format 损坏字段严格拒绝，不自动伪装成旧档迁移。
-- migration / validation 在 Restore 修改世界状态前完成。
-- `RestoreMemory` 不再二次猜测迁移。
+- normal / CTX-02 pressure 均可在预算内单次生成
+- CTX-03：full 超预算后降到 compact，2832 tokens，限制保留
+- CTX-04：required-minimal 4020 tokens，generation=0，明确失败
 
-## 当前验证
+### 5. Schema 2 → 3
 
-PASS：
+新增真实磁盘文件级 automation：
 
-- `python scripts/validate_repo.py`：0 errors
-- repository Python tests：31/31
-- UE Editor Development build：PASS
-- full native `Hearthward.*`：40/40 Success
-- 关键新回归：
-  - `Hearthward.NPCAgent.CapabilitiesAndLimits`
-  - `Hearthward.NPCAgent.BeliefStateProvenance`
-  - `Hearthward.NPCAgent.BoundedContextProjection`
-  - `Hearthward.NPCAgent.GroundedEpisodeProjection`
-  - `Hearthward.Save.FileIntegrityAndSnapshot`
-  - `Hearthward.Save.NPCMemoryCompatibility`
-  - `Hearthward.Save.PoolProtectionAndSafety`
+- 生成 Schema 2 `.hws`
+- 正常 `HearthwardSave::Read` 迁移
+- 写出 Schema 3
+- 二次读取并严格 Validate
 
-构建环境说明：
+1/1 PASS。
 
-- 统一目标与锁定版本：UE 5.8.2 CL 56702186；本机安装版本一致。
-- 在干净提交 `6d1ca5e` 上通过 UEClient 执行默认 Editor Development 构建，失败于 `HearthwardAgentInteraction.cpp` 与 `HearthwardNPCContextProjection.cpp` 的 Unity 编译单元 `Json` 重定义（C2084/C2264）。
-- 本轮 repo validator 0 errors、Python 31/31；当前提交的原生测试因构建失败未运行。此前日志中 40/40 成功属于历史工作树记录。
+## 当前最终证据（同步 main 前）
 
-真实模型当前源码：
+- Unity Editor build：PASS
+- native：**41/41 PASS**
+- real Qwen matrix：**32/32 safety PASS**
+- core M01～M10 raw contract：**20/20 PASS**
+- generation：32 cases / 32 calls / 0 normal overflow
+- CTX-03：PASS
+- CTX-04：PASS，0 generation
+- Schema 2→3 file migration：1/1 PASS
+- TASK-028：49/49 PASS
+- TASK-034：16/16 PASS
+- TASK-036：16/16 PASS
+- TASK-038：26/26 PASS
+- repo validator：0 errors
+- Python：31/31
 
-- 模型 bundle 存在于 `D:\Dev\Hearthward\Runtime\LocalAI`。
-- GGUF SHA256 与 `config/local-ai.lock.json` 一致。
-- Unreal built-in Python Remote Execution 能发现当前 worktree 的 UE process。
-- 本轮使用 GameFactory `engine_adapters.ue5` UEClient 完成默认 Editor 构建；真实 Qwen e2e 本轮未执行，也未验证当前 Game WorldContext 的触发路径。此前工作树记录的 WorldContext 阻塞属于历史验证状态。
-- 因此当前源码真实 Qwen CTX-01～CTX-04：**BLOCKED / NOT_RUN**。
-- TASK-039 的历史 `CONTEXT_OVERFLOW` 不作为 TASK-040 当前源码结果复用。
+证据目录：`docs/qa/evidence/TASK-040/`。
 
-详见 [TASK-040 当前验证](../qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md)、[历史工作树验证](../qa/evidence/TASK-040/VALIDATION.md) 与 [ADR](../decisions/ADR-TASK-040-npc-context-and-cognition.md)。
+## Raw model 与 guardrail 分开报告
 
-## 尚未验收完毕
+M11/M12/M14/M16 在 clean/pressure 下的 raw JSON 仍可能给出较宽的 collect/repair intent。最终 deterministic guardrail 均正确拒绝/澄清，不产生禁止的世界写。该差异保留在 `model-results.json[l]`，不会把 guardrail 成功写成 raw model 成功。
 
-- 当前源码真实 Qwen CTX-01～04 与 16 类样本 × 干净/压力进度至少 32 次请求尚未执行；现有 PIE 脚本只准备了 collect 正常/压力和 routine 局部场景，不能替代整套验收。
-- TASK-028/034/036/038 的本轮相关 runtime PIE 回归尚未逐套重跑。
-- Save 测试读取了更早的真实旧档，但尚无真实 pre-TASK-040 Schema 2 文件或对应旧版序列化路径的迁移证明。
-- 当前源码默认 Unity 构建失败，原生测试未运行；真实模型 e2e、相关 PIE、Schema 2真实存档迁移、独立 Reviewer、Owner 体验验收和技术合并条件仍未闭合。
-- 原 TASK-040 实现范围为 28 个文件，Content/ 为零修改；Owner 随后明确授权同步仓库 UE 目标版本口径并提交推送验证记录，扩展范围已写入 TASK-040 allowed_paths。
+## 对外 TASK-029 说明
 
-## 流程状态
+最终 PR/验收不写成“只完成 TASK-040”，而应写：
 
-TASK-040 保持 `Blocked`：
+**TASK-029 AI NPC complete delivery — internally implemented across TASK-027～040.**
 
-- 真实 GitHub Issue：未登记
-- 独立 Reviewer：未登记
-- commit：用户已于本轮授权提交到独立任务分支；提交标识以 Git 历史为准
-- push：用户已于本轮授权推送独立任务分支；远端状态以 GitHub 分支为准
-- PR：未执行
-- merge：明确未授权，未执行
+并说明实际包含：
 
-当前代码在 UE 5.8.2 默认 Unity 编译下存在可复现的 C++ 编译错误；repo validator 与 Python 31/31通过，当前干净提交的原生测试未运行。TASK-040 保持 Blocked，见 clean-tree review。
+- perception/safety
+- executor
+- suggestions
+- combat/directives
+- recovery
+- belief
+- initiative
+- episode memory
+- tactical cooperation
+- coordination prior
+- camp routine
+- componentization
+- bounded context
+- real Qwen + guardrail
+- save migration
+
+## 下一步
+
+仅剩集成/发布流程：
+
+1. 同步 main `73bb10e+`
+2. 解决 README 冲突
+3. 最终 validate/build/native smoke
+4. 更新最终 SHA
+5. commit/push
+6. 创建 PR
+7. **不 merge**

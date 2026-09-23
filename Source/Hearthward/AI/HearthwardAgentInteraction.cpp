@@ -18,9 +18,10 @@
 
 namespace
 {
-FString Json(const TSharedPtr<FJsonObject>& O){FString S;FJsonSerializer::Serialize(O.ToSharedRef(),TJsonWriterFactory<>::Create(&S));return S;}
-bool Object(FHttpResponsePtr R,TSharedPtr<FJsonObject>& O)
+FString AgentInteractionJson(const TSharedPtr<FJsonObject>& O){FString S;FJsonSerializer::Serialize(O.ToSharedRef(),TJsonWriterFactory<>::Create(&S));return S;}
+bool AgentInteractionObject(FHttpResponsePtr R,TSharedPtr<FJsonObject>& O)
 {return R.IsValid() && R->GetResponseCode()==200 && R->GetContentLength()<256*1024 && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(R->GetContentAsString()),O) && O.IsValid();}
+
 }
 void UHearthwardLocalAISubsystem::RestoreMemory(const FHearthwardNPCMemory& Snapshot)
 {
@@ -42,7 +43,7 @@ void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObje
     Request->SetVerb(TEXT("POST"));
     Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+Runtime.GetApiKey());
     Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));
-    Request->SetContentAsString(Json(Body));
+    Request->SetContentAsString(AgentInteractionJson(Body));
     Request->SetTimeout(10);
     Request->OnProcessRequestComplete().BindWeakLambda(this,
         [this,Expected,Bodies,Projections,TierIndex,Body](FHttpRequestPtr,FHttpResponsePtr R,bool Ok)
@@ -52,7 +53,7 @@ void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObje
         if(!StillCurrent())return;
 
         TSharedPtr<FJsonObject> O;FString Prompt;
-        if(!Ok || !Object(R,O) || !O->TryGetStringField(TEXT("prompt"),Prompt))
+        if(!Ok || !AgentInteractionObject(R,O) || !O->TryGetStringField(TEXT("prompt"),Prompt))
         {Fail(TEXT("模型模板计数失败，未生成提案"));return;}
 
         auto T=MakeShared<FJsonObject>();
@@ -65,7 +66,7 @@ void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObje
         Request->SetVerb(TEXT("POST"));
         Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+Runtime.GetApiKey());
         Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));
-        Request->SetContentAsString(Json(T));
+        Request->SetContentAsString(AgentInteractionJson(T));
         Request->SetTimeout(10);
         Request->OnProcessRequestComplete().BindWeakLambda(this,
             [this,Expected,Bodies,Projections,TierIndex,Body](FHttpRequestPtr,FHttpResponsePtr Response,bool Success)
@@ -75,7 +76,7 @@ void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObje
             if(!StillCurrent())return;
 
             TSharedPtr<FJsonObject> Counts;const TArray<TSharedPtr<FJsonValue>>* Tokens=nullptr;
-            if(!Success || !Object(Response,Counts) || !Counts->TryGetArrayField(TEXT("tokens"),Tokens))
+            if(!Success || !AgentInteractionObject(Response,Counts) || !Counts->TryGetArrayField(TEXT("tokens"),Tokens))
             {Fail(TEXT("模型token计数失败，未生成提案"));return;}
 
             InputTokens=Tokens->Num();
@@ -120,6 +121,9 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
         // Schema-constrained generation can discard a sign or round a fraction. Preserve the player's numeric boundary.
         FRegexMatcher InvalidQuantity(FRegexPattern(TEXT("[-−负]\\s*[0-9一二两三四五六七八九十]|[0-9]+[.．][0-9]+|[零一二两三四五六七八九十]+点[零一二两三四五六七八九十]+")),Goal.Original);
         if(InvalidQuantity.FindNext())Goal.Unresolved.AddUnique(TEXT("原话含负数或小数数量，不能改写成正整数任务"));
+        if(Goal.Intent==TEXT("collect") && (Input.Contains(TEXT("尚未发现")) || Input.Contains(TEXT("未发现"))
+            || Input.Contains(TEXT("未知地点")) || Input.Contains(TEXT("没去过"))))
+            Goal.Unresolved.AddUnique(TEXT("未知地点不能映射为当前已知安全采集点；玩家口述安全不是权威安全证据"));
         if(Goal.Intent==TEXT("collect") && (Input.Contains(TEXT("改成")) || Input.Contains(TEXT("改为")) || Input.Contains(TEXT("换成")) || Input.Contains(TEXT("不是"))))
         {
             const FString Correction=HearthwardAgent::Normalize(Input);

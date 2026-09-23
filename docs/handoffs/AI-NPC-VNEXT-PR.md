@@ -1,146 +1,135 @@
-# AI NPC vNext 统一 PR 交接
+# TASK-029 AI NPC vNext 完整交付｜统一 PR 交接
 
 日期：2026-09-23
-分支：`codex/ai-npc-vnext-rework-01`
-目标 main：`e729349`；共同基线：`4114556`
-当前受测源码 HEAD：`6d1ca5e`
+工作分支：`codex/ai-npc-vnext-rework-01-fix`
+目标：`main@73bb10e+`
+
+> Owner 指定本次最终对外口径为 **TASK-029 AI NPC 完整交付**。仓库内部 TASK-027～040 继续作为设计、实现和证据分解，不重写历史编号。
 
 ## PR 建议标题
 
-`feat: integrate grounded adaptive AI NPC stack`
+`feat: complete TASK-029 grounded adaptive AI NPC stack`
 
-## 范围
+## 这次到底做了什么
 
-本分支统一整理 TASK-027 → TASK-038，不修改 TASK-026 World Partition / Content 资产。
-
-核心链路：
+从玩家自然语言到 UE 世界执行，形成完整的受控 AI NPC 链路：
 
 ```text
-Player language / explicit controls
+player text / explicit suggestions
         ↓
-typed Goal / companion directive
+local Qwen structured proposal
         ↓
-authoritative perception + safety
+deterministic capability + guardrail validation
         ↓
-deterministic plan / combat / routine policy
+candidate card + player confirmation
         ↓
-typed actions + UE navigation + real settlement
+authoritative UE Goal → Plan → Action
         ↓
-receipts / events
+navigation / combat / crafting / repair / settlement
         ↓
-beliefs + grounded episodes + coordination prior
+receipts + events
         ↓
-contextual suggestions + event-driven initiative
+belief / episode / coordination / initiative
+        ↓
+bounded context for the next interaction
 ```
 
-### TASK-027 → 031：现有 AI NPC 基线
+### 内部 TASK-027～031：基础闭环
 
 - authoritative perception / safety
-- typed Goal → Plan → Action executor
+- deterministic Goal → Plan → Action executor
 - explicit contextual suggestions
-- hold / follow / assist deterministic combat policy
-- UE 用户复测修正：typed task 导航仲裁、对话工具栏
+- hold / follow / assist directives
+- UI / navigation arbitration fixes
 
-### TASK-032：Adaptive Replanning / Recovery
+### TASK-032～039：Agent 能力扩展与组件化
 
-- action failure 先经过 deterministic Recovery Policy
-- Source 在采集中移动可自动 rewind 到 `MoveTo(Source)`
-- transient route failure 有界 retry / rewind
-- 真实 command cargo 始终优先返营保货
-- hard block 不凭空生成替代资源或权限
+- adaptive recovery / replanning
+- typed Belief / Knowledge State
+- event-driven Initiative
+- grounded Episode Memory
+- tactical cooperation: Assist / Protect / Regroup
+- bounded Coordination Prior
+- camp autonomous Routine
+- Navigation / Initiative / Behavior / Local AI Runtime componentization
 
-### TASK-033：Belief / Knowledge State
+### TASK-040 内部返工：可信上下文与真实模型收口
 
-- World Truth 与 NPC Belief 分离
-- `firsthand / player_report / receipt` provenance
-- 离营后不偷看真实仓库
-- 回营后 firsthand 可纠正玩家报告
-- World Truth 与 stale belief 可在同一 SaveGame 边界独立恢复
+- 修复 default Unity build helper collision
+- single authoritative snapshot → full / compact / required-minimal projection
+- real llama.cpp apply-template + tokenize budget checks
+- one accepted body → at most one generation
+- capability prompt registry alignment
+- remove irrelevant belief / recipe quantity prompt pollution
+- explicit Chinese quantity handling
+- Belief semantic time vs `LastEvidenceAt`
+- Episode Complete / Truncated / Unknown coverage
+- Save Schema 2 → 3 real-file migration
+- real Qwen M01～M16 clean/pressure validation
 
-### TASK-034：Event-driven Initiative
+## 权限边界
 
-- completed / replanned / blocked / belief correction 可主动提醒
-- 无 LLM heartbeat
-- 超出交流范围时排队，靠近后再显示
-- candidate / clarification / active inference 不被主动台词抢占
+AI/LLM **不直接决定**：
 
-### TASK-035：Grounded Episode Memory
+- world coordinates
+- concrete enemy IDs
+- pathfinding
+- frame-by-frame combat
+- hit/damage
+- inventory settlement
+- arbitrary world facts
+- safety truth
 
-- 从持久化 Events 即时派生 command-scoped Episode
-- 聚合 acquired / delivered / craft / repair / replans / reasons / evidence
-- past-action recall 只引用 episode evidence
-- 不持久化第二份会漂移的摘要
+这些继续由 UE authoritative systems 决定。
 
-### TASK-036：Tactical Cooperation
+Belief / Episode / Coordination Prior / Suggestions 都是 cognition/read-model；不能成为第二套 world authority。
 
-- healthy → Assist
-- low health + one close threat → Protect
-- low health + multiple close threats → Regroup
-- player down → Regroup
-- enemy target / LOS / navigation / cooldown / damage 始终 UE-authoritative
-
-### TASK-037：Coordination Prior
-
-- 从真实成功的 hold / follow / assist 指令事件学习 bounded rolling prior
-- stable prior 只影响 suggestions / model context
-- 不自动覆盖当前玩家命令
-- save/load 从 events 重建
-
-### TASK-038：Camp Routine
-
-- 无 typed task / 显式控制 / combat / downed 时，低权限营地自由活动
-- rest / patrol / check_camp / return_camp
-- 使用真实 UE NavMesh / AAIController，不 teleport
-- 不生产物资、不接任务、不调用 LLM
-- Z/X/C 显式关闭；confirmed `routine` 可重新授权
-- typed task 暂停 routine，但不撤销授权；任务结束后恢复
-
-## 关键验证
-
-以下各任务计数来自先前的任务工作树验证，不能替代本分支当前受测提交的 clean-tree 结果；当前结果见 [TASK-040 clean-tree review](../qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md)。
+## 最终技术证据（main 同步前）
 
 | 验证 | 结果 |
 |---|---:|
-| repository Python tests | 31/31 PASS |
-| repo validator | 0 errors |
-| UE Editor Development build | PASS |
-| full native `Hearthward.` | 39/39 PASS |
-| TASK-027 Safety PIE | 27/27 PASS |
-| TASK-028 Executor PIE | 49/49 PASS |
-| TASK-029 Modern / Legacy Suggestions | 40/40 + 8/8 PASS |
-| TASK-030 Combat PIE | 29/29 PASS |
-| TASK-030 real Qwen directive | 14/14 PASS |
-| user retest / exact collect phrase | 11/11 + 11/11 PASS |
-| TASK-032 Adaptive Recovery PIE | 11/11 PASS |
-| TASK-033 Belief PIE | 25/25 PASS |
-| TASK-034 Initiative PIE | 16/16 PASS |
-| TASK-035 Episode PIE | 21/21 PASS |
-| TASK-036 Tactical Cooperation PIE | 16/16 PASS |
-| TASK-037 Coordination Prior PIE | 28/28 PASS |
-| TASK-038 Camp Routine PIE | 26/26 PASS |
+| UE Editor Development default Unity build | PASS |
+| full native `Hearthward.*` | **41/41 PASS** |
+| real Schema 2 → 3 file migration | **1/1 PASS** |
+| real Qwen M01～M16 clean + pressure | **32/32 safety PASS** |
+| core M01～M10 raw model contract | **20/20 PASS** |
+| total matrix generations | **32 / 32 cases** |
+| normal matrix context overflow | **0** |
+| CTX-03 degradation | PASS — compact 2832 tokens, one generation, restrictions preserved |
+| CTX-04 mandatory overflow | PASS — minimal 4020 tokens, zero generation |
+| TASK-028 Executor PIE | **49/49 PASS** |
+| TASK-034 Initiative PIE | **16/16 PASS** |
+| TASK-036 Tactical Cooperation PIE | **16/16 PASS** |
+| TASK-038 Camp Routine PIE | **26/26 PASS** |
+| repository Python tests | **31/31 PASS** before final main sync |
+| repo validator | **0 errors** before final main sync |
 
-TASK-038 完成后再次重跑 TASK-028 executor：49/49 PASS。
+Evidence: `docs/qa/evidence/TASK-040/`.
 
-## 重要边界
+## Real Qwen result interpretation
 
-- LLM 不选择世界坐标、具体敌人、路径、逐帧动作、命中、伤害或库存结算。
-- 玩家/模型文本不能制造世界事实、安全事实、资源、权限或任务完成。
-- Belief / Coordination Prior / Episode 都是 cognition/read-model，不是 world authority。
-- Routine 不生产资源。
-- 本 PR 不修改 TASK-026 Content 资产。
-- 不在 Agent 侧直接 merge。
+M01～M10 core semantic raw contract is 20/20 across clean + pressure.
 
-## 远端状态
+M11/M12/M14/M16 can still produce raw collect/repair proposals instead of an ideal immediate refusal/clarification. The deterministic validation layer correctly returns `AMBIGUOUS_TARGET / UNRESOLVED_CONSTRAINT / POLICY_CONFLICT` and prevents prohibited execution. Raw JSON, guardrail result and world result are all retained separately in `model-results.json[l]`; guardrail success is not reported as raw model success.
 
-当前远端分支 `codex/ai-npc-vnext-rework-01` 已存在。本机 GitHub CLI 返回 HTTP 401，无法查询 PR 和 Reviewer 实时状态；TASK-040 记录显示当前未登记 Issue/Reviewer，也未创建 PR。候选分支当前构建未通过，见上方 clean-tree review。
+## Save compatibility
 
-修复当前 Unity 编译错误、同步最新 main 并完成独立评审后，可按 Owner 授权创建 PR：
+A new native automation writes a real Schema 2 `.hws` file, loads it through the production read/migration path, verifies conservative migration fields, writes Schema 3, reloads and strictly validates it.
 
-```bash
-git push -u origin codex/ai-npc-vnext-rework-01
-gh pr create --base main --head codex/ai-npc-vnext-rework-01 \
-  --title "feat: integrate grounded adaptive AI NPC stack" \
-  --body-file docs/handoffs/AI-NPC-VNEXT-PR.md
-```
+## Release process
 
-PR 与合并需按项目流程另行授权；当前分支构建失败，暂不创建 PR。
+Before opening the PR:
+
+1. sync current `origin/main@73bb10e+`
+2. resolve README/docs conflict while retaining main asset changes
+3. rerun final integrated validate/build/native smoke
+4. update candidate SHA in this handoff
+
+Then:
+
+- push `codex/ai-npc-vnext-rework-01-fix`
+- create PR to `main`
+- request review
+- **do not merge**
+
+Independent Reviewer / Owner gameplay acceptance remains a separate final step.

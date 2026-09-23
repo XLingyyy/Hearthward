@@ -1,40 +1,61 @@
 # TASK-040 clean-tree branch review
 
-日期：2026-09-23
+Date: 2026-09-23
 
-## 受测对象
+> This file supersedes the earlier failed-clean-tree snapshot. External release/acceptance wording is **TASK-029 AI NPC complete delivery**; TASK-040 remains the internal rework evidence identifier.
 
-- 仓库：`XLingyyy/Hearthward`
-- 远端分支：`origin/codex/ai-npc-vnext-rework-01`
-- 受测源码提交：`6d1ca5e35050566408f69329cedf2bd2b526d4a4`
-- 受测前本地验证 worktree 干净；验证后只增加文档与工具链口径更新。
-- `origin/main`：`73bb10ec4c19260cb72112c7e282a2c29f6c2432`。候选分支比 main 落后 11 个提交、领先 4 个提交；最新 `git merge-tree --write-tree origin/main HEAD` 预演发现 `README.md` 内容冲突，`docs/tasks/TASK-004.json` 和 `docs/tasks/TASK-004.md` 可自动合并。未执行合并。
+## Reviewed source before final main sync
 
-## 工具链
+- repository: `XLingyyy/Hearthward`
+- working branch: `codex/ai-npc-vnext-rework-01-fix`
+- source baseline: `origin/codex/ai-npc-vnext-rework-01@97f8818`
+- target main: `73bb10ec4c19260cb72112c7e282a2c29f6c2432`
+- main checkout with user changes was not switched, reset or overwritten
 
-- 统一锁定目标：UE 5.8.2，Installed Build changelist `56702186`。
-- 实际引擎：UE 5.8.2 changelist `56702186`，`G:/UnrealEngine/UE_5.8`。
-- UBT 检测到 MSVC 14.44.35228、Windows SDK 10.0.22621.0。
+## Closed defects
 
-## 验证结果
+The original default Unity build failure was reproduced and fixed.
 
-| 检查 | 结果 | 详情 |
-|---|---|---|
-| `scripts/validate_repo.py` | PASS | 0 errors |
-| `python -m unittest discover -s scripts/tests -v` | PASS | 31/31 |
-| `HearthwardEditor Win64 Development` | FAIL | UEClient 默认 Unity 构建报 `C2084` / `C2264` |
-| 当前受测提交原生 `Hearthward.*` 自动化 | NOT_RUN | Editor 构建失败，自动化测试未启动 |
-| 当前源码真实 Qwen CTX-01～04 | NOT_RUN / BLOCKED | 未进入 PIE 模型验证 |
-| 16 类样本 × 干净/压力进度 | NOT_RUN | 至少 32 次请求未执行 |
-| TASK-028/034/036/038 runtime PIE 回归 | NOT_RUN | 本轮未执行 |
-| 真实 pre-TASK-040 Schema 2 文件迁移 | NOT_RUN | 当前缺少对应真实存档 |
+Root cause:
 
-Editor 构建命令通过 GameFactory `UEClient.build.project(target="HearthwardEditor", configuration="Development", timeout=1200)` 执行。失败发生在生成的 `Module.Hearthward.cpp`：[`HearthwardAgentInteraction.cpp:21`](../../../../Source/Hearthward/AI/HearthwardAgentInteraction.cpp#L21) 与 [`HearthwardNPCContextProjection.cpp:11`](../../../../Source/Hearthward/AI/HearthwardNPCContextProjection.cpp#L11) 在匿名命名空间中定义相同签名的 `Json`，触发 `C2084`；其后 `Result.Json=Json(Facts)` 产生 `C2264`。
+- generic anonymous helper `Json` existed in both `HearthwardAgentInteraction.cpp` and `HearthwardNPCContextProjection.cpp`
+- Unity concatenation caused C2084/C2264
 
-下一步应让两个 Unity 编译源文件中的辅助符号名称唯一，然后从干净提交运行默认 Editor Development build，再运行全量原生测试。该复验完成前，先前工作树记录的 40/40 native PASS 不作为当前 clean-tree PASS。
+Fix:
 
-## 远端与合并状态
+- unique module-prefixed helper names
+- related anonymous helper audit completed
+- duplicate generic `Counts` helpers in workshop/save were also renamed to module-prefixed names
 
-- 当前文档差异的 `git diff --check`：PASS。
-- GitHub CLI 查询因 HTTP 401 未能读取 PR / Reviewer 实时状态；TASK-040 任务记录中 Issue 和 Reviewer 均未登记。
-- 当前分支未创建 PR，未合并。当前代码构建失败，且仍缺真实模型、相关 PIE、旧档迁移、独立评审与 Owner 验收证据，暂未达到合并条件。
+Result: default `HearthwardEditor Win64 Development` build **Succeeded**.
+
+## Current evidence
+
+| Check | Result |
+|---|---:|
+| Editor Development Unity build | PASS |
+| full native `Hearthward.*` | **41/41 PASS** |
+| real Schema 2 → 3 disk migration | **1/1 PASS** |
+| real Qwen M01–M16 clean/pressure | **32 cases, 32 generations, 32/32 safety PASS** |
+| core M01–M10 raw contract | **20/20 PASS** |
+| CTX-03 degradation | PASS — `compact_relevant`, 2832 tokens, one generation |
+| CTX-04 required overflow | PASS — `required_minimal` 4020 tokens, zero generation |
+| TASK-028 PIE | **49/49 PASS** |
+| TASK-034 PIE | **16/16 PASS** |
+| TASK-036 PIE | **16/16 PASS** |
+| TASK-038 PIE | **26/26 PASS** |
+| repository Python tests | 31/31 PASS before final main sync |
+| repo validator | 0 errors before final main sync |
+| Content/ | zero rework changes |
+
+Committed evidence is under `docs/qa/evidence/TASK-040/`.
+
+## Truthful model-result split
+
+The real-model report keeps four layers separate: raw JSON, normalized/applied result, deterministic guardrail, and resulting world state.
+
+M11/M12/M14/M16 can produce a broader raw write-intent under both clean and pressure states. Those raw-model imperfections are visible in `model-results.json[l]`; the final guardrail result is still safe and no prohibited world write occurs. They are not presented as raw-model successes.
+
+## Remaining process
+
+The code/evidence rework is closed. Before PR creation the branch still needs to sync current `origin/main`, resolve README/documentation conflicts, and rerun final candidate validation. PR may then be created for review; merge remains explicitly out of scope.

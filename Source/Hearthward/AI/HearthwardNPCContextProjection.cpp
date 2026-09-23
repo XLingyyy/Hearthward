@@ -8,27 +8,27 @@
 
 namespace
 {
-FString Json(const TSharedPtr<FJsonObject>& Value)
+FString ContextProjectionJson(const TSharedPtr<FJsonObject>& Value)
 {
     FString Result;
     FJsonSerializer::Serialize(Value.ToSharedRef(),TJsonWriterFactory<TCHAR,TCondensedJsonPrintPolicy<TCHAR>>::Create(&Result));
     return Result;
 }
 
-bool ContainsAny(const FString& Text,std::initializer_list<const TCHAR*> Terms)
+bool ContextProjectionContainsAny(const FString& Text,std::initializer_list<const TCHAR*> Terms)
 {
     for(const auto* Term:Terms) if(Text.Contains(Term,ESearchCase::IgnoreCase)) return true;
     return false;
 }
 
-bool MentionsItem(const FString& Query,FName Item)
+bool ContextProjectionMentionsItem(const FString& Query,FName Item)
 {
     const FString Normalized=HearthwardAgent::Normalize(Query);
     return Normalized.Contains(Item.ToString(),ESearchCase::IgnoreCase)
         || Normalized.Contains(HearthwardAgent::Normalize(HearthwardAgent::ItemText(Item)),ESearchCase::IgnoreCase);
 }
 
-int32 TextRelevance(const FString& Query,const FString& Text)
+int32 ContextProjectionTextRelevance(const FString& Query,const FString& Text)
 {
     TSet<FString> Terms;
     for(int32 I=0;I+1<Query.Len();++I)
@@ -39,17 +39,17 @@ int32 TextRelevance(const FString& Query,const FString& Text)
     return Score;
 }
 
-TArray<FName> RelevantItems(const FString& Query)
+TArray<FName> ContextProjectionRelevantItems(const FString& Query)
 {
     TArray<FName> Out;
-    for(const auto& Item:HearthwardBasicItems()) if(MentionsItem(Query,Item.Id)) Out.Add(Item.Id);
+    for(const auto& Item:HearthwardBasicItems()) if(ContextProjectionMentionsItem(Query,Item.Id)) Out.Add(Item.Id);
     for(const auto& C:HearthwardAgent::Capabilities())
         for(FName Item:C.Items)
-            if(!Item.IsNone() && Item!=TEXT("none") && MentionsItem(Query,Item)) Out.AddUnique(Item);
+            if(!Item.IsNone() && Item!=TEXT("none") && ContextProjectionMentionsItem(Query,Item)) Out.AddUnique(Item);
     return Out;
 }
 
-TSharedPtr<FJsonObject> EpisodeJson(const FHearthwardNPCEpisode& E,int32& EvidenceAlias)
+TSharedPtr<FJsonObject> ContextProjectionEpisodeJson(const FHearthwardNPCEpisode& E,int32& EvidenceAlias)
 {
     auto Row=MakeShared<FJsonObject>();
     Row->SetStringField(TEXT("command"),FString::Printf(TEXT("cmd%d"),EvidenceAlias));
@@ -73,7 +73,7 @@ TSharedPtr<FJsonObject> EpisodeJson(const FHearthwardNPCEpisode& E,int32& Eviden
     return Row;
 }
 
-void AddDropped(TArray<FString>& Dropped,const TCHAR* Field)
+void ContextProjectionAddDropped(TArray<FString>& Dropped,const TCHAR* Field)
 {
     Dropped.AddUnique(Field);
 }
@@ -99,11 +99,12 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     Facts->SetStringField(TEXT("input_source"),S.InputSource);
 
     const FString Query=HearthwardAgent::Normalize(S.Query+TEXT(" ")+S.Memory.WorkingGoal.Original);
-    const bool HistoryQuery=ContainsAny(Query,{TEXT("上次"),TEXT("过去"),TEXT("经历"),TEXT("为什么"),TEXT("受阻"),TEXT("实际交付"),TEXT("完成"),TEXT("任务"),TEXT("委托"),TEXT("replan"),TEXT("history")});
-    const bool OrderQuery=ContainsAny(Query,{TEXT("跟着"),TEXT("等待"),TEXT("威胁"),TEXT("协助"),TEXT("自由活动"),TEXT("routine"),TEXT("follow"),TEXT("assist"),TEXT("hold")});
-    const bool InventoryQuery=ContainsAny(Query,{TEXT("库存"),TEXT("仓库"),TEXT("多少"),TEXT("报告")});
-    const bool CollectionQuery=ContainsAny(Query,{TEXT("采"),TEXT("收集"),TEXT("木材"),TEXT("collect")});
-    const TArray<FName> Relevant=RelevantItems(Query);
+    const bool HistoryQuery=ContextProjectionContainsAny(Query,{TEXT("上次"),TEXT("过去"),TEXT("经历"),TEXT("为什么"),TEXT("受阻"),TEXT("实际交付"),TEXT("完成"),TEXT("任务"),TEXT("委托"),TEXT("replan"),TEXT("history")});
+    const bool OrderQuery=ContextProjectionContainsAny(Query,{TEXT("跟着"),TEXT("等待"),TEXT("威胁"),TEXT("协助"),TEXT("自由活动"),TEXT("routine"),TEXT("follow"),TEXT("assist"),TEXT("hold")});
+    const bool InventoryQuery=ContextProjectionContainsAny(Query,{TEXT("库存"),TEXT("报告")})
+        || (Query.Contains(TEXT("仓库")) && ContextProjectionContainsAny(Query,{TEXT("多少"),TEXT("几份"),TEXT("数量"),TEXT("还有"),TEXT("里面有")}));
+    const bool CollectionQuery=ContextProjectionContainsAny(Query,{TEXT("采"),TEXT("收集"),TEXT("木材"),TEXT("collect")});
+    const TArray<FName> Relevant=ContextProjectionRelevantItems(Query);
 
     auto Perception=MakeShared<FJsonObject>();
     Perception->SetBoolField(TEXT("paused"),S.bPaused);
@@ -132,7 +133,7 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
         }
         if(InventoryQuery)Perception->SetBoolField(TEXT("at_camp"),S.bAtCamp);
         if(!S.ExecutionPhase.IsEmpty() && S.ExecutionPhase!=TEXT("Idle"))Perception->SetStringField(TEXT("execution_phase"),S.ExecutionPhase);
-        AddDropped(Result.DroppedFields,TEXT("perception_debug_details"));
+        ContextProjectionAddDropped(Result.DroppedFields,TEXT("perception_debug_details"));
     }
     Facts->SetObjectField(TEXT("npc_observation"),Perception);
 
@@ -144,7 +145,7 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
         if(Keep){Bag->SetNumberField(Pair.Key.ToString(),Pair.Value);++BagFields;}
     }
     if(BagFields>0 && Tier!=EHearthwardNPCContextTier::Minimal)Facts->SetObjectField(TEXT("own_bag"),Bag);
-    else AddDropped(Result.DroppedFields,TEXT("own_bag_optional"));
+    else ContextProjectionAddDropped(Result.DroppedFields,TEXT("own_bag_optional"));
 
     if(Tier==EHearthwardNPCContextTier::Full || OrderQuery)
     {
@@ -161,7 +162,7 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
         }
         Facts->SetObjectField(TEXT("companion_state"),Combat);
     }
-    else AddDropped(Result.DroppedFields,TEXT("companion_state"));
+    else ContextProjectionAddDropped(Result.DroppedFields,TEXT("companion_state"));
 
     if(Tier==EHearthwardNPCContextTier::Full || (Tier==EHearthwardNPCContextTier::Compact && OrderQuery))
     {
@@ -173,15 +174,21 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
         Profile->SetStringField(TEXT("semantics"),TEXT("derived_recent_behavior_not_explicit_player_preference"));
         Facts->SetObjectField(TEXT("coordination_profile"),Profile);
     }
-    else AddDropped(Result.DroppedFields,TEXT("coordination_profile"));
+    else ContextProjectionAddDropped(Result.DroppedFields,TEXT("coordination_profile"));
 
     TArray<TSharedPtr<FJsonValue>> Beliefs;
     int32 KeptBeliefs=0;
     for(const auto& B:S.Memory.Beliefs)
     {
         const bool IsRelevant=Relevant.Contains(B.Item);
-        bool Keep=Tier==EHearthwardNPCContextTier::Full || IsRelevant;
-        if(Tier==EHearthwardNPCContextTier::Compact && Relevant.IsEmpty())Keep=KeptBeliefs<6;
+        // Camp-stock beliefs are authority-bearing evidence for inventory/report questions. A collect
+        // request does not need the current camp quantity to interpret "newly acquire N", and injecting
+        // that quantity makes the model conflate existing stock with the requested acquisition amount.
+        bool Keep=InventoryQuery && IsRelevant;
+        // "full_relevant" means full detail for relevant facts, not an unbounded dump of every belief.
+        // For generic inventory questions without an item, keep a small deterministic sample.
+        if(InventoryQuery && Relevant.IsEmpty() && Tier==EHearthwardNPCContextTier::Full)Keep=KeptBeliefs<8;
+        if(InventoryQuery && Relevant.IsEmpty() && Tier==EHearthwardNPCContextTier::Compact)Keep=KeptBeliefs<6;
         if(Tier==EHearthwardNPCContextTier::Minimal && Relevant.IsEmpty())Keep=false;
         if(!Keep)continue;
         auto Row=MakeShared<FJsonObject>();
@@ -196,7 +203,7 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     }
     Facts->SetArrayField(TEXT("camp_stock_beliefs"),Beliefs);
     Facts->SetStringField(TEXT("belief_rule"),TEXT("player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。"));
-    if(KeptBeliefs<S.Memory.Beliefs.Num())AddDropped(Result.DroppedFields,TEXT("unrelated_beliefs"));
+    if(KeptBeliefs<S.Memory.Beliefs.Num())ContextProjectionAddDropped(Result.DroppedFields,TEXT("unrelated_beliefs"));
 
     auto Episodes=HearthwardEpisodes::Build(S.Memory,3);
     TArray<TSharedPtr<FJsonValue>> EpisodeRows;
@@ -207,11 +214,11 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     {
         if(!Relevant.IsEmpty() && !Relevant.Contains(E.Item) && HistoryQuery)continue;
         if(AddedEpisodes>=MaxEpisodes)break;
-        EpisodeRows.Add(MakeShared<FJsonValueObject>(EpisodeJson(E,Alias)));++AddedEpisodes;
+        EpisodeRows.Add(MakeShared<FJsonValueObject>(ContextProjectionEpisodeJson(E,Alias)));++AddedEpisodes;
     }
     Facts->SetArrayField(TEXT("recent_episodes"),EpisodeRows);
     Facts->SetStringField(TEXT("episode_rule"),TEXT("complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。"));
-    if(AddedEpisodes<Episodes.Num())AddDropped(Result.DroppedFields,TEXT("older_episodes"));
+    if(AddedEpisodes<Episodes.Num())ContextProjectionAddDropped(Result.DroppedFields,TEXT("older_episodes"));
 
     TArray<TSharedPtr<FJsonValue>> Records,Agreements;
     const auto Retrieved=S.Memory.Retrieve(Query,true);
@@ -221,7 +228,7 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     {
         if(R.Kind==TEXT("agreement"))
         {
-            if(Tier==EHearthwardNPCContextTier::Full || TextRelevance(Query,HearthwardAgent::Normalize(R.Text))>0)
+            if(Tier==EHearthwardNPCContextTier::Full || ContextProjectionTextRelevance(Query,HearthwardAgent::Normalize(R.Text))>0)
                 Agreements.Add(MakeShared<FJsonValueString>(R.Text));
             continue;
         }
@@ -235,7 +242,7 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     }
     Facts->SetArrayField(TEXT("player_records"),Records);
     Facts->SetArrayField(TEXT("active_agreements"),Agreements);
-    if(Records.Num()+Agreements.Num()<Retrieved.Num())AddDropped(Result.DroppedFields,TEXT("unrelated_player_records"));
+    if(Records.Num()+Agreements.Num()<Retrieved.Num())ContextProjectionAddDropped(Result.DroppedFields,TEXT("unrelated_player_records"));
 
     // Hard rules and unresolved player constraints are never part of ordinary Top-K trimming.
     TArray<TSharedPtr<FJsonValue>> Prohibited;
@@ -254,6 +261,6 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     Facts->SetStringField(TEXT("source_refs"),TEXT("S1=当前已知采集点；bag=弟弟背包；camp=仅限玩家明确授权共享仓库材料；未知地点不可绑定S1"));
     Facts->SetStringField(TEXT("capabilities_version"),TEXT("npc-v2"));
 
-    Result.Json=Json(Facts);
+    Result.Json=ContextProjectionJson(Facts);
     return Result;
 }

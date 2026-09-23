@@ -87,6 +87,9 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     Query.QuantityMode=TEXT("none");Query.SourceRef=TEXT("none");
     TestTrue(TEXT("Inventory query is distinct read-only contract"),HearthwardAgent::Validate(Query).IsEmpty() && !Query.WritesWorld()
         && Query.QuantityMode!=Report.QuantityMode && Query.SourceRef!=Report.SourceRef);
+    const FString Description=HearthwardAgent::Describe();
+    TestTrue(TEXT("Capability description keeps localized recipe identity"),Description.Contains(TEXT("arrows=箭矢")));
+    TestFalse(TEXT("Generic capability description does not inject recipe quantities"),Description.Contains(TEXT("每批消耗")) || Description.Contains(TEXT("每批产出")));
     TestFalse(TEXT("Real crafting materials"),HearthwardWorkshop::Materials(TEXT("craft"),TEXT("arrows"),1).IsEmpty());
     return true;
 }
@@ -294,10 +297,19 @@ bool FNPCAgentContextProjectionTest::RunTest(const FString&)
     TestTrue(TEXT("Hard rules survive every degradation tier"),Minimal.Json.Contains(TEXT("collection_prohibited_items"))
         && Minimal.Json.Contains(TEXT("stone")) && Minimal.Json.Contains(TEXT("source:S1")));
     TestTrue(TEXT("Unresolved original constraint survives minimal tier"),Minimal.Json.Contains(TEXT("玩家明确限制必须保留")));
-    TestTrue(TEXT("Away firsthand evidence is explicitly possibly stale"),Minimal.Json.Contains(TEXT("\"freshness\":\"possibly_stale\"")));
-    TestTrue(TEXT("Relevant wood belief survives minimal tier"),Minimal.Json.Contains(TEXT("\"item\":\"wood\""))
-        && Minimal.Json.Contains(TEXT("\"last_evidence_time\"")));
-    TestTrue(TEXT("Unrelated beliefs are dropped from minimal tier"),Minimal.DroppedFields.Contains(TEXT("unrelated_beliefs")));
+    TestTrue(TEXT("Collect projection does not inject camp-stock beliefs"),Full.Json.Contains(TEXT("\"camp_stock_beliefs\":[]"))
+        && Minimal.Json.Contains(TEXT("\"camp_stock_beliefs\":[]")));
+    TestTrue(TEXT("Unneeded beliefs are reported as dropped"),Full.DroppedFields.Contains(TEXT("unrelated_beliefs"))
+        && Minimal.DroppedFields.Contains(TEXT("unrelated_beliefs")));
+
+    auto InventorySnapshot=S;
+    InventorySnapshot.Query=TEXT("营地仓库还有多少木材？");
+    InventorySnapshot.Memory.WorkingGoal={};
+    const auto InventoryMinimal=HearthwardContextProjection::Project(InventorySnapshot,EHearthwardNPCContextTier::Minimal);
+    TestTrue(TEXT("Inventory query keeps relevant wood belief"),InventoryMinimal.Json.Contains(TEXT("\"item\":\"wood\""))
+        && InventoryMinimal.Json.Contains(TEXT("\"last_evidence_time\""))
+        && InventoryMinimal.Json.Contains(TEXT("\"freshness\":\"possibly_stale\"")));
+    TestFalse(TEXT("Inventory query still drops unrelated pressure beliefs"),InventoryMinimal.Json.Contains(TEXT("\"item\":\"stone\"")));
     TestTrue(TEXT("Compact/full are named diagnostics, not extra generations"),Full.Tier==TEXT("full_relevant")
         && Compact.Tier==TEXT("compact_relevant") && Minimal.Tier==TEXT("required_minimal"));
 
