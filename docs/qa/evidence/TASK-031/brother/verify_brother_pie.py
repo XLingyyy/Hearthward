@@ -11,7 +11,7 @@ import unreal
 
 unreal.EditorPythonScripting.set_keep_python_script_alive(True)
 root = Path(unreal.Paths.project_dir())
-out = root / 'Saved/BrotherValidation/playtest3'
+out = root / 'Saved/BrotherValidation/playtest4'
 out.mkdir(parents=True, exist_ok=True)
 workshop_only = 'HearthwardCampWorkshopTest' in unreal.SystemLibrary.get_command_line()
 report = {'ok': False, 'checks': {}, 'steps': []}

@@ -8,7 +8,7 @@ import unreal
 
 unreal.EditorPythonScripting.set_keep_python_script_alive(True)
 interactive='-Task027Interactive' in unreal.SystemLibrary.get_command_line()
-out=Path(unreal.Paths.project_saved_dir())/'HeroValidation/playtest4'
+out=Path(unreal.Paths.project_saved_dir())/'HeroValidation/playtest5'
 out.mkdir(parents=True,exist_ok=True)
 (out/'frames').mkdir(exist_ok=True)
 levels=unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
@@ -118,8 +118,12 @@ def run():
     check('movement_cancels_dig',str(anim.motion_state)!='Dig' and interaction.get_status()!=unreal.HearthwardInteractionStatus.RUNNING)
     active['axis']=unreal.Vector();player.character_movement.stop_movement_immediately()
     player.set_actor_location(source.get_owner().get_actor_location()+unreal.Vector(0,90,0),False,True);yield delay(.3)
-    before=bag.get_item_count('wood');report['second_target']=interaction.get_nearest_target().get_path_name()
-    check('second_interaction_starts',interaction.interact_nearest());stage='dig_complete';yield delay(5.6)
+    before=bag.get_item_count('wood');target=source.get_owner().get_component_by_class(unreal.HearthwardResourceInteractionComponent)
+    report['second_target']=target.get_path_name()
+    check('second_interaction_starts',interaction.begin_interaction(target));stage='dig_complete'
+    end=time.monotonic()+10
+    yield lambda:interaction.get_status()!=unreal.HearthwardInteractionStatus.RUNNING or time.monotonic()>end
+    yield delay(.2)
     report['resource_result']={'before':before,'after':bag.get_item_count('wood'),'status':str(interaction.get_status()),'feedback':interaction.get_completion_feedback(),'motion':str(anim.motion_state)}
     check('resource_settles_once_and_animation_exits',bag.get_item_count('wood')==before+1 and str(anim.motion_state)=='Idle')
     origin=companion.camp.get_actor_location()-unreal.Vector(0,0,100)

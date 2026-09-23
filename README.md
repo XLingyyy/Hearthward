@@ -81,7 +81,7 @@ TASK-029 自然营地接入基线曾通过 UE 5.8.2 Editor Development 构建、
 
 接入前同一基线的真实 Qwen 32-case matrix：安全边界 32/32、核心 M01～M10 原始分类 20/20、全部原始分类 24/32；其余表达由确定性校验拒绝或澄清。CTX-03/04 及 executor/recovery/initiative/tactical/routine 复验记录见[基线复验](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。这些结果分别记录，不能视为任意自然语言表达、全地图行为或发布版本的保证。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
 
-当前自然地图已使用树木、植被和岩石资产，demo新增家具模型；主角与弟弟均已接入用户提供的新 Tripo 模型、完整 61 骨骼和 PBR 材质。主角使用弟弟包内动作重定向，接通待机、行走、冲刺、起跳/下落/落地、采集和攻击；弟弟接通移动、等待、采集与协攻。敌人仍为灰盒，菜单插画不代表三维城寨已制作。角色来源与限制见[031交接](docs/handoffs/TASK-031.md)。导航使用动态 Recast 与 Navigation Invokers，按玩家/伙伴附近已加载地形生成，支持障碍绕行；全图可达性、长距离跨流送回营和攀爬/跳跃连接仍未验收。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004 自然素材源文件由此前 77 个增至 115 个，其中本批新增冷杉和松树的 38 个源文件。自然场景已接入部分树木模型与地表贴图，004其余模型适配与整单验收仍未完成，见[既有资源汇总](resourceSummary.md)与[新增树木来源](art_source/TASK-004/polyhaven/SOURCE.md)。020经验曲线、节点、任务、建筑、制作配方与战斗参数为独立内容配置，未替代GDD未决R项。
+当前自然地图已使用树木、植被和岩石资产，demo新增家具模型；主角与弟弟均已接入用户提供的新 Tripo 模型、完整 61 骨骼和 PBR 材质。主角使用重新导出的自身八段动作，接通待机、行走、冲刺、起跳/下落/落地、采集和攻击；弟弟接通移动、等待、采集与协攻。敌人仍为灰盒，菜单插画不代表三维城寨已制作。角色来源与限制见[031交接](docs/handoffs/TASK-031.md)。导航使用动态 Recast 与 Navigation Invokers，按玩家/伙伴附近已加载地形生成，支持障碍绕行；全图可达性、长距离跨流送回营和攀爬/跳跃连接仍未验收。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004 自然素材源文件由此前 77 个增至 115 个，其中本批新增冷杉和松树的 38 个源文件。自然场景已接入部分树木模型与地表贴图，004其余模型适配与整单验收仍未完成，见[既有资源汇总](resourceSummary.md)与[新增树木来源](art_source/TASK-004/polyhaven/SOURCE.md)。020经验曲线、节点、任务、建筑、制作配方与战斗参数为独立内容配置，未替代GDD未决R项。
 
 四件 Tripo 道具源资产（石骨斧、原始鱼竿、骨肉袋、陶罐）的 FBX、参考图和预览已存入 `art_source/TASK-004/Tripo/妙妙道具`，但尚未导入 UE Content 或完成游戏内验收，不视为已接入玩法。
 
@@ -110,4 +110,4 @@ TASK-029 自然营地接入基线曾通过 UE 5.8.2 Editor Development 构建、
 025 v2本机GPU复验使用 `-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32`；CPU兼容路径与Vulkan耗时分别记录，默认CPU策略未更改。Development Editor 还支持 `-HearthwardAIBundlePath=<已有Runtime/LocalAI>`，便于隔离 worktree 复用本机模型包；Shipping 不接受该覆盖。本机隔离工作树启动还需 `-HearthwardAIBundlePath=G:/GameFactory/Hearthward/Runtime/LocalAI`，或按锁定版本准备此工作树自己的模型包；直接双击尚未准备模型包的工作树工程只能使用手动任务卡。当前手动入口见上方“运行”。TASK-029 及内部 032—040 的当前回归脚本使用显式夹具初始化；更早的历史脚本需按其记录版本运行，不能用其旧“新游戏创建夹具”假设测试当前入口。
 
 
-TASK-031 双角色替换通过 Editor Development 构建、伙伴原生测试 3/3、Python 工具测试 31/31、主角 PIE 26/26 和自然地图弟弟检查 22/22。主角包没有动画，已重定向弟弟包的八段新动作；双方使用新骨骼和材质。保留原有胶囊碰撞，尚无布娃娃、披风布料、工具持握或攀爬玩法。动作与开发灰盒目标仍可穿插。证据和本轮验证边界见 [TASK-031报告](docs/qa/evidence/TASK-031/REPORT.md)。
+TASK-031 主角已换用用户重新导出包内的自身八段动作，双方行走/跑步已去除骨盆前进轨迹，修复模型超前于胶囊和镜头、循环跳回的问题。本轮连续行走/冲刺回归 6/6、主角 PIE 26/26、弟弟自然地图检查 22/22 通过。C++ 未改动，先前 Editor Development 构建、伙伴原生测试 3/3 和 Python 工具测试 31/31 记录仍归属上一轮。保留原有胶囊碰撞，尚无布娃娃、披风布料、工具持握或攀爬玩法。动作与开发灰盒目标仍可穿插。当前证据与边界见 [TASK-031位移修复报告](docs/qa/evidence/TASK-031/inplace-fix/REPORT.md)。
