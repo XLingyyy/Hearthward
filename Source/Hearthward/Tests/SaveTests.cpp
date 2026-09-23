@@ -16,7 +16,7 @@ FHearthwardSavePoint Point(bool Manual = false)
     FHearthwardSavePoint P;
     P.SaveId = FGuid::NewGuid(); P.CampaignId = FGuid::NewGuid(); P.Created = FDateTime::UtcNow(); P.Manual = Manual;
     P.World.Map = TEXT("PROTOTYPE_ONLY");
-    P.World.NPCStateVersion=2;
+    P.World.NPCStateVersion=HearthwardSave::NPCStateVersion;
     P.World.NPCMemory.Campaign=P.CampaignId;
     return P;
 }
@@ -90,7 +90,7 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     FFileHelper::SaveArrayToFile(OldFile, *Path);
     TestFalse(TEXT("Intact old-schema file rejected at load"), HearthwardSave::Read(Path, Loaded, Error));
     FFileHelper::SaveArrayToFile(Original, *Path);
-    Pool->Schema = 2;
+    Pool->Schema = HearthwardSave::CurrentSchema;
     S.Inventory[TEXT("wood")] = 101;
     TestFalse(TEXT("Invalid capacity rejected before mutation"), HearthwardSave::Write(Path, Pool, Error));
     S.Inventory[TEXT("wood")] = 5;
@@ -115,6 +115,63 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     IFileManager::Get().Delete(*Path); IFileManager::Get().Delete(*(Path + TEXT(".pending")));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveSchema2MigrationFileTest, "Hearthward.Save.Schema2To3RealFileMigration",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSaveSchema2MigrationFileTest::RunTest(const FString& Parameters)
+{
+    const FString Dir=FPaths::Combine(FPaths::ProjectSavedDir(),TEXT("Task040"));
+    IFileManager::Get().MakeDirectory(*Dir,true);
+    const FString SourcePath=FPaths::Combine(Dir,FGuid::NewGuid().ToString()+TEXT("-schema2.hws"));
+    const FString MigratedPath=FPaths::Combine(Dir,FGuid::NewGuid().ToString()+TEXT("-schema3.hws"));
+
+    auto* Legacy=NewObject<UHearthwardSaveGame>();
+    Legacy->Schema=2;
+    Legacy->Points.Add(Point());
+    auto& P=Legacy->Points[0];
+    auto& S=P.World;
+    S.ActiveSeconds=30;
+    S.NPCStateVersion=2;
+    S.NPCMemory.Campaign=P.CampaignId;
+    S.NPCMemory.Revision=3;
+
+    FHearthwardNPCBelief Belief;
+    Belief.Id=FGuid::NewGuid();Belief.Item=TEXT("wood");Belief.Value=7;Belief.Source=EHearthwardNPCBeliefSource::Firsthand;
+    Belief.RecordedAt=12;Belief.LastEvidenceAt=0;Belief.Revision=2;Belief.Campaign=P.CampaignId;
+    S.NPCMemory.Beliefs.Add(Belief);
+
+    const FGuid HistoricalCommand=FGuid::NewGuid();
+    FHearthwardNPCEvent Event;
+    Event.Id=FGuid::NewGuid();Event.Command=HistoricalCommand;Event.Campaign=P.CampaignId;Event.Kind=TEXT("blocked");
+    Event.Item=TEXT("wood");Event.Count=0;Event.At=14;Event.Reason=TEXT("source_shortage");
+    S.NPCMemory.Events.Add(Event);
+    TestTrue(TEXT("Schema 2 fixture starts without TASK-040 coverage metadata"),S.NPCMemory.CommandCoverage.IsEmpty());
+
+    TArray<uint8> Payload,Bytes;
+    TestTrue(TEXT("Serialize explicit schema 2 payload"),UGameplayStatics::SaveGameToMemory(Legacy,Payload));
+    const uint32 Header[]={0x48575332,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
+    Bytes.Append(reinterpret_cast<const uint8*>(Header),sizeof(Header));Bytes.Append(Payload);
+    TestTrue(TEXT("Write real schema 2 file"),FFileHelper::SaveArrayToFile(Bytes,*SourcePath));
+
+    UHearthwardSaveGame* Migrated=nullptr;FString Error;
+    TestTrue(TEXT("Read and migrate real schema 2 file"),HearthwardSave::Read(SourcePath,Migrated,Error));
+    if(Migrated)
+    {
+        TestEqual(TEXT("Schema promoted to 3"),Migrated->Schema,HearthwardSave::CurrentSchema);
+        const auto& MS=Migrated->Points[0].World;
+        TestEqual(TEXT("NPC state promoted to v3"),MS.NPCStateVersion,HearthwardSave::NPCStateVersion);
+        TestEqual(TEXT("Legacy belief receives evidence timestamp"),MS.NPCMemory.Beliefs[0].LastEvidenceAt,MS.NPCMemory.Beliefs[0].RecordedAt);
+        TestTrue(TEXT("Historical episode receives explicit unknown coverage"),
+            MS.NPCMemory.CoverageFor(HistoricalCommand)==EHearthwardNPCEpisodeCoverage::Unknown);
+        TestTrue(TEXT("Migrated cognition stays bound to original campaign"),MS.NPCMemory.Campaign==P.CampaignId);
+        TestTrue(TEXT("Write migrated schema 3 file"),HearthwardSave::Write(MigratedPath,Migrated,Error));
+        UHearthwardSaveGame* RoundTrip=nullptr;
+        TestTrue(TEXT("Reload migrated schema 3 file"),HearthwardSave::Read(MigratedPath,RoundTrip,Error));
+        TestTrue(TEXT("Reloaded migrated file validates strictly"),RoundTrip && HearthwardSave::Validate(*RoundTrip));
+    }
+    IFileManager::Get().Delete(*SourcePath);IFileManager::Get().Delete(*MigratedPath);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveNPCMemoryTest, "Hearthward.Save.NPCMemoryCompatibility",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
@@ -126,7 +183,7 @@ bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Actual original-025 pool migrates"),HearthwardSave::Read(FPaths::ProjectDir()/TEXT("docs/qa/evidence/TASK-025/rev2/legacy-v1.hws"),Legacy,Error));
     if(Legacy)
     {
-        TestEqual(TEXT("Migrated schema"),Legacy->Schema,2);
+        TestEqual(TEXT("Migrated schema"),Legacy->Schema,HearthwardSave::CurrentSchema);
         TestTrue(TEXT("Existing cognition retained"),Legacy->Points.ContainsByPredicate([](const auto& P){return !P.World.NPCMemory.Records.IsEmpty();}));
         for(const auto& P:Legacy->Points)TestEqual(TEXT("Memory bound to original campaign"),P.World.NPCMemory.Campaign,P.CampaignId);
     }
@@ -136,6 +193,7 @@ bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
     S.NPCMemory.Put({},TEXT("collection_ban"),TEXT("不采木材"),3,TEXT("wood"));
     S.NPCMemory.AddClarification(TEXT("采木材，限制未解除"),TEXT("需要多少？"));
     S.NPCMemory.HasCampObservation=true; S.NPCMemory.CampInventory.Add(TEXT("wood"),3); S.NPCMemory.CampObservedAt=10;
+    S.NPCMemory.Migrate(S.NPCMemory.Campaign);
     TArray<uint8> Bytes; TestTrue(TEXT("Cognition serialized with world"),UGameplayStatics::SaveGameToMemory(Pool,Bytes));
     auto* Loaded=Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Bytes));
     TestTrue(TEXT("Cognition round trip valid"),Loaded && HearthwardSave::Validate(*Loaded));
@@ -149,7 +207,15 @@ bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
     }
     S.NPCMemory.CampObservedAt=21;
     TestFalse(TEXT("Future cognition rejects entire snapshot before world mutation"),HearthwardSave::Validate(*Pool));
-    S.NPCMemory.CampObservedAt=10;S.NPCStateVersion=0;
+    S.NPCMemory.CampObservedAt=10;
+    if(!S.NPCMemory.Beliefs.IsEmpty())
+    {
+        const double SavedEvidence=S.NPCMemory.Beliefs[0].LastEvidenceAt;
+        S.NPCMemory.Beliefs[0].LastEvidenceAt=S.NPCMemory.Beliefs[0].RecordedAt-1;
+        TestFalse(TEXT("Damaged current-format evidence time is rejected, not migrated"),HearthwardSave::Validate(*Pool));
+        S.NPCMemory.Beliefs[0].LastEvidenceAt=SavedEvidence;
+    }
+    S.NPCStateVersion=0;
     TestFalse(TEXT("Missing version in new snapshot not silently defaulted"),HearthwardSave::Validate(*Pool));
     return true;
 }

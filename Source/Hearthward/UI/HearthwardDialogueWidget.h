@@ -19,8 +19,10 @@ public:
     UFUNCTION(BlueprintPure) FString GetDisplayedStatus() const;
     UFUNCTION(BlueprintPure) FString GetDisplayedProgress() const;
     UFUNCTION(BlueprintPure) FString GetDisplayedReply() const;
+    UFUNCTION(BlueprintPure) TArray<FString> GetDisplayedSuggestions() const;
     UFUNCTION(BlueprintPure) bool IsSendEnabled() const;
     UFUNCTION(BlueprintPure) bool HasDraftFocus() const;
+    UFUNCTION(BlueprintCallable) void RefreshSuggestionChoices();
     void FocusDraft();
 protected:
     virtual TSharedRef<SWidget> RebuildWidget() override;
@@ -31,6 +33,10 @@ private:
     UFUNCTION() void CommitDraft(const FText& Text, ETextCommit::Type Method);
     UFUNCTION() void CancelReply();
     UFUNCTION() void CancelTask();
+    UFUNCTION() void RefreshSuggestions();
+    UFUNCTION() void SelectSuggestion0();
+    UFUNCTION() void SelectSuggestion1();
+    UFUNCTION() void SelectSuggestion2();
     UFUNCTION() void Close();
     TWeakObjectPtr<AHearthwardHUD> HUD;
     bool bFocusWhenMounted = true;
@@ -42,4 +48,8 @@ private:
     UPROPERTY() TObjectPtr<UButton> Send;
     UPROPERTY() TObjectPtr<UButton> StopReply;
     UPROPERTY() TObjectPtr<UButton> StopTask;
+    UPROPERTY() TObjectPtr<UButton> SuggestionRefresh;
+    UPROPERTY() TArray<TObjectPtr<UButton>> SuggestionButtons;
+    UPROPERTY() TArray<TObjectPtr<UTextBlock>> SuggestionLabels;
+    TArray<FGuid> SuggestionIds;
 };

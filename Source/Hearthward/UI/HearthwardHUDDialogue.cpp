@@ -158,6 +158,27 @@ bool AHearthwardHUD::SubmitDialogue(const FString& Text)
     DialogueFeedback.Reset();
     return GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->SubmitPlayerText(GetOwningPawn(),DialogueCompanion.Get(),Value);
 }
+bool AHearthwardHUD::RefreshDialogueSuggestions()
+{
+    if(!DialogueCompanion.IsValid() || !DialogueCompanion->CanCommunicate(GetOwningPawn()))return false;
+    auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    const bool Ok=AI && AI->RefreshSuggestions(GetOwningPawn(),DialogueCompanion.Get());
+    DialogueFeedback=Ok?TEXT("已刷新3条建议；只有点击的那条才会发送"):TEXT("当前无法刷新建议");
+    return Ok;
+}
+bool AHearthwardHUD::SubmitDialogueSuggestion(FGuid Id)
+{
+    if(!DialogueCompanion.IsValid() || !DialogueCompanion->CanCommunicate(GetOwningPawn()))return false;
+    auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    const bool Ok=AI && AI->SubmitSuggestion(GetOwningPawn(),DialogueCompanion.Get(),Id);
+    DialogueFeedback=AI?AI->GetStatus():TEXT("建议不可用");
+    return Ok;
+}
+TArray<FHearthwardNPCSuggestion> AHearthwardHUD::GetDialogueSuggestions() const
+{
+    const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    return AI?AI->GetSuggestions():TArray<FHearthwardNPCSuggestion>();
+}
 bool AHearthwardHUD::CanCancelDialogueReply() const
 {
     const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();

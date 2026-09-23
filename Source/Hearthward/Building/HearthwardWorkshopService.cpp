@@ -7,16 +7,16 @@
 using namespace HearthwardData;
 namespace
 {
-TMap<FName,int32> Counts(const TSharedPtr<FJsonObject>& R,const TCHAR* Field,int32 N)
+TMap<FName,int32> WorkshopCounts(const TSharedPtr<FJsonObject>& R,const TCHAR* Field,int32 N)
 {
     TMap<FName,int32> Out;if(!R || N<1 || N>99)return Out;
     for(const auto& V:R->GetObjectField(Field)->Values)Out.Add(FName(*V.Key),int32(V.Value->AsNumber())*N);return Out;
 }
 }
 TMap<FName,int32> HearthwardWorkshop::Materials(FName Intent,FName Item,int32 N)
-{return Counts(Find(Intent==TEXT("craft")?TEXT("craftingRecipes"):TEXT("repairRecipes"),Item.ToString()),TEXT("materials"),N);}
+{return WorkshopCounts(Find(Intent==TEXT("craft")?TEXT("craftingRecipes"):TEXT("repairRecipes"),Item.ToString()),TEXT("materials"),N);}
 TMap<FName,int32> HearthwardWorkshop::Outputs(FName Recipe,int32 N)
-{return Counts(Find(TEXT("craftingRecipes"),Recipe.ToString()),TEXT("outputs"),N);}
+{return WorkshopCounts(Find(TEXT("craftingRecipes"),Recipe.ToString()),TEXT("outputs"),N);}
 FString HearthwardWorkshop::Check(AActor* Operator,AActor* Station,UHearthwardInventoryComponent* Bag,const TMap<FName,float>* Durability,FName Intent,FName Item,int32 N)
 {
     if(!IsValid(Operator) || !IsValid(Station) || Operator->IsActorBeingDestroyed() || Station->IsActorBeingDestroyed() || !IsValid(Bag)

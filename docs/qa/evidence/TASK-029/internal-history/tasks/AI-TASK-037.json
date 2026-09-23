@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "id": "TASK-037",
+  "title": "长期协作习惯 / Coordination Prior",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-037-coordination-prior",
+  "source_refs": [
+    "用户于2026-09-22要求继续推进长期偏好与协作习惯，让NPC逐渐适应玩家玩法",
+    "TASK-029 contextual suggestions",
+    "TASK-030 companion directives",
+    "TASK-035 persisted grounded events"
+  ],
+  "dependencies": [
+    "TASK-036"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/design/DSGN-025-agent-boundaries.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/HearthwardNPCCoordination.h",
+    "Source/Hearthward/AI/HearthwardNPCCoordination.cpp",
+    "Source/Hearthward/AI/HearthwardNPCMemory.cpp",
+    "Source/Hearthward/AI/HearthwardNPCEpisode.cpp",
+    "Source/Hearthward/AI/HearthwardNPCSuggestions.h",
+    "Source/Hearthward/AI/HearthwardNPCSuggestions.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "config/local-ai.lock.json",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-037.json",
+    "docs/tasks/TASK-037.md",
+    "docs/handoffs/TASK-037.md",
+    "docs/qa/evidence/TASK-037/"
+  ],
+  "forbidden_paths": [
+    "Content/"
+  ],
+  "acceptance": [
+    "只记录成功执行的显式hold/follow/assist为directive event",
+    "profile从最近事件派生且有最小样本/置信度/领先差阈值",
+    "stable prior只影响建议和上下文，不自动执行world action",
+    "持续新行为可翻转rolling prior",
+    "save/load通过persisted directive events重建同一profile",
+    "direct_control与dialogue_confirm来源均可追溯"
+  ],
+  "non_goals": [
+    "不把行为统计冒充玩家显式偏好",
+    "不自动执行习惯动作",
+    "不使用向量数据库或模型推断隐性人格"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22明确要求继续推进长期偏好与协作习惯",
+  "required_tests": [
+    "T-002",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "not required for local implementation",
+    "install_dependencies": "not_granted",
+    "commit": "local task commit authorized as part of continued AI NPC development",
+    "push": "defer until unified PR handoff",
+    "merge": "not_granted"
+  }
+}

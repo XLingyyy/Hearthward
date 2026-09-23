@@ -23,7 +23,7 @@
 
 namespace
 {
-TMap<FName, int32> Counts(const FHearthwardInventoryState& State)
+TMap<FName, int32> SaveSubsystemCounts(const FHearthwardInventoryState& State)
 {
     TMap<FName, int32> Out;
     for (const auto& I : HearthwardBasicItems()) if (State.GetCount(I.Id) > 0) Out.Add(I.Id, State.GetCount(I.Id));
@@ -164,17 +164,17 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     S.ActiveSeconds = GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.GetActivePlaySeconds();
     S.Player = Player->GetActorTransform();
     S.View = Player->GetControlRotation();
-    S.Inventory = Counts(Player->FindComponentByClass<UHearthwardInventoryComponent>()->State);
+    S.Inventory = SaveSubsystemCounts(Player->FindComponentByClass<UHearthwardInventoryComponent>()->State);
     if (const auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>()) S.Gameplay=Gameplay->SaveSnapshot();
-    S.Storage = Counts(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->State.Shared);
+    S.Storage = SaveSubsystemCounts(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->State.Shared);
     S.PlayerTimer = TimerSnapshot(Player->FindComponentByClass<UHearthwardTimedActionComponent>()->State, S.ActiveSeconds);
     S.Knowledge = Knowledge; S.KnowledgeRevision = KnowledgeRevision; S.AutoMinutes = AutoMinutes; S.Safety = Safety;
-    S.NPCStateVersion = 2;
+    S.NPCStateVersion = HearthwardSave::NPCStateVersion;
     if (Companion)
     {
         S.Companion = Companion->GetActorTransform(); S.Camp = Companion->Camp->GetActorTransform();
         S.Source = Companion->Source->GetOwner()->GetActorTransform();
-        S.Bag = Counts(Companion->Bag->State); S.Resource = Counts(Companion->Source->State);
+        S.Bag = SaveSubsystemCounts(Companion->Bag->State); S.Resource = SaveSubsystemCounts(Companion->Source->State);
         S.SourceSafe = Companion->bSourceSafe; S.Phase = Companion->Phase;
         S.Item = Companion->Command.ItemId; S.Requested = Companion->Command.Requested; S.Delivered = Companion->Command.Delivered;
         S.CommandActive = Companion->Command.bActive; S.Statement = Companion->Statement; S.BlockReason = Companion->BlockReason;
@@ -277,6 +277,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     {
         Companion->Action->State = TimerState(S.CompanionTimer, S.ActiveSeconds);
         Companion->Action->SetComponentTickEnabled(S.CompanionTimer.Status == EHearthwardTimedActionStatus::Running);
+        Companion->RestoreExecutionPlan();
     }
     NextAutoSeconds = S.ActiveSeconds + AutoMinutes * 60.0;
     // All state is committed before consumers may observe it. No gameplay settlement events replay.

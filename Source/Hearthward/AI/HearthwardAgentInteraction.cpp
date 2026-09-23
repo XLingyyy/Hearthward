@@ -2,6 +2,7 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Building/HearthwardWorkshopService.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Save/HearthwardSaveSubsystem.h"
@@ -17,36 +18,99 @@
 
 namespace
 {
-FString Json(const TSharedPtr<FJsonObject>& O){FString S;FJsonSerializer::Serialize(O.ToSharedRef(),TJsonWriterFactory<>::Create(&S));return S;}
-bool Object(FHttpResponsePtr R,TSharedPtr<FJsonObject>& O)
+FString AgentInteractionJson(const TSharedPtr<FJsonObject>& O){FString S;FJsonSerializer::Serialize(O.ToSharedRef(),TJsonWriterFactory<>::Create(&S));return S;}
+bool AgentInteractionObject(FHttpResponsePtr R,TSharedPtr<FJsonObject>& O)
 {return R.IsValid() && R->GetResponseCode()==200 && R->GetContentLength()<256*1024 && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(R->GetContentAsString()),O) && O.IsValid();}
+
 }
 void UHearthwardLocalAISubsystem::RestoreMemory(const FHearthwardNPCMemory& Snapshot)
 {
-    Memory=Snapshot;Memory.Campaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId();
+    // Save decoding/migration and validation happen before world mutation. Do not repair a current-format
+    // snapshot here, otherwise damaged new fields could be mistaken for legacy data.
+    Memory=Snapshot;
 }
-void UHearthwardLocalAISubsystem::CountRequest(const TSharedPtr<FJsonObject>& Body)
+void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObject>>& Bodies,
+    const TArray<FHearthwardNPCContextProjectionResult>& Projections,int32 TierIndex)
 {
-    Request=FHttpModule::Get().CreateRequest();Request->SetURL(BaseUrl+TEXT("/apply-template"));Request->SetVerb(TEXT("POST"));
-    Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+ApiKey);Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));Request->SetContentAsString(Json(Body));Request->SetTimeout(10);
+    if(!StillCurrent())return;
+    if(Bodies.Num()!=Projections.Num() || !Bodies.IsValidIndex(TierIndex))
+    {Fail(TEXT("上下文投影配置无效，未生成提案"));return;}
+
+    const auto Body=Bodies[TierIndex];
     const uint64 Expected=Serial;
-    Request->OnProcessRequestComplete().BindWeakLambda(this,[this,Expected,Body](FHttpRequestPtr,FHttpResponsePtr R,bool Ok)
+    Request=FHttpModule::Get().CreateRequest();
+    Request->SetURL(Runtime.GetBaseUrl()+TEXT("/apply-template"));
+    Request->SetVerb(TEXT("POST"));
+    Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+Runtime.GetApiKey());
+    Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));
+    Request->SetContentAsString(AgentInteractionJson(Body));
+    Request->SetTimeout(10);
+    Request->OnProcessRequestComplete().BindWeakLambda(this,
+        [this,Expected,Bodies,Projections,TierIndex,Body](FHttpRequestPtr,FHttpResponsePtr R,bool Ok)
     {
-        if(Expected!=Serial)return;Request.Reset();TSharedPtr<FJsonObject> O;FString Prompt;
-        if(!Ok || !Object(R,O) || !O->TryGetStringField(TEXT("prompt"),Prompt)){Fail(TEXT("模型模板计数失败，未生成提案"));return;}
-        auto T=MakeShared<FJsonObject>();T->SetStringField(TEXT("content"),Prompt);T->SetBoolField(TEXT("add_special"),true);T->SetBoolField(TEXT("parse_special"),true);
-        Request=FHttpModule::Get().CreateRequest();Request->SetURL(BaseUrl+TEXT("/tokenize"));Request->SetVerb(TEXT("POST"));Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+ApiKey);Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));Request->SetContentAsString(Json(T));Request->SetTimeout(10);
-        Request->OnProcessRequestComplete().BindWeakLambda(this,[this,Expected,Body](FHttpRequestPtr,FHttpResponsePtr Response,bool Success)
+        if(Expected!=Serial)return;
+        Request.Reset();
+        if(!StillCurrent())return;
+
+        TSharedPtr<FJsonObject> O;FString Prompt;
+        if(!Ok || !AgentInteractionObject(R,O) || !O->TryGetStringField(TEXT("prompt"),Prompt))
+        {Fail(TEXT("模型模板计数失败，未生成提案"));return;}
+
+        auto T=MakeShared<FJsonObject>();
+        T->SetStringField(TEXT("content"),Prompt);
+        T->SetBoolField(TEXT("add_special"),true);
+        T->SetBoolField(TEXT("parse_special"),true);
+
+        Request=FHttpModule::Get().CreateRequest();
+        Request->SetURL(Runtime.GetBaseUrl()+TEXT("/tokenize"));
+        Request->SetVerb(TEXT("POST"));
+        Request->SetHeader(TEXT("Authorization"),TEXT("Bearer ")+Runtime.GetApiKey());
+        Request->SetHeader(TEXT("Content-Type"),TEXT("application/json"));
+        Request->SetContentAsString(AgentInteractionJson(T));
+        Request->SetTimeout(10);
+        Request->OnProcessRequestComplete().BindWeakLambda(this,
+            [this,Expected,Bodies,Projections,TierIndex,Body](FHttpRequestPtr,FHttpResponsePtr Response,bool Success)
         {
-            if(Expected!=Serial)return;Request.Reset();TSharedPtr<FJsonObject> Counts;const TArray<TSharedPtr<FJsonValue>>* Tokens;
-            if(!Success || !Object(Response,Counts) || !Counts->TryGetArrayField(TEXT("tokens"),Tokens)){Fail(TEXT("模型token计数失败，未生成提案"));return;}
+            if(Expected!=Serial)return;
+            Request.Reset();
+            if(!StillCurrent())return;
+
+            TSharedPtr<FJsonObject> Counts;const TArray<TSharedPtr<FJsonValue>>* Tokens=nullptr;
+            if(!Success || !AgentInteractionObject(Response,Counts) || !Counts->TryGetArrayField(TEXT("tokens"),Tokens))
+            {Fail(TEXT("模型token计数失败，未生成提案"));return;}
+
             InputTokens=Tokens->Num();
-            if(InputTokens>HearthwardAgent::Policy(TEXT("max_input_tokens"))){Fail(TEXT("上下文过长，请保留全部限制重新说明；草稿未删除"),TEXT("CONTEXT_OVERFLOW"));return;}
+            const int32 Limit=HearthwardAgent::Policy(TEXT("max_input_tokens"));
+            if(InputTokens>Limit)
+            {
+                if(Bodies.IsValidIndex(TierIndex+1))
+                {
+                    UE_LOG(LogTemp,Display,TEXT("Local AI context tier %s over budget: %d>%d; degrading once to %s"),
+                        *Projections[TierIndex].Tier,InputTokens,Limit,*Projections[TierIndex+1].Tier);
+                    CountRequest(Bodies,Projections,TierIndex+1);
+                    return;
+                }
+
+                LastFilteredContext=Projections[TierIndex].Json;
+                ContextTier=Projections[TierIndex].Tier;
+                DroppedContextFields=Projections[TierIndex].DroppedFields;
+                Fail(TEXT("固定规则、当前原话和未解决限制已超过内部上下文预算；未发送生成请求，请结束旧澄清或重新开始交流。"),
+                    TEXT("CONTEXT_OVERFLOW"));
+                return;
+            }
+
+            LastFilteredContext=Projections[TierIndex].Json;
+            ContextTier=Projections[TierIndex].Tier;
+            DroppedContextFields=Projections[TierIndex].DroppedFields;
+            UE_LOG(LogTemp,Display,TEXT("Local AI context accepted: tier=%s tokens=%d dropped=%s"),
+                *ContextTier,InputTokens,*FString::Join(DroppedContextFields,TEXT(",")));
             Generate(Body);
         });
         if(!Request->ProcessRequest()){Request.Reset();Fail(TEXT("无法检查输入长度"));}
     });
-    Status=TEXT("正在检查对话长度");if(!Request->ProcessRequest()){Request.Reset();Fail(TEXT("无法检查输入长度"));}
+
+    Status=TEXT("正在检查对话长度（")+Projections[TierIndex].Tier+TEXT("）");
+    if(!Request->ProcessRequest()){Request.Reset();Fail(TEXT("无法检查输入长度"));}
 }
 void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
 {
@@ -57,6 +121,9 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
         // Schema-constrained generation can discard a sign or round a fraction. Preserve the player's numeric boundary.
         FRegexMatcher InvalidQuantity(FRegexPattern(TEXT("[-−负]\\s*[0-9一二两三四五六七八九十]|[0-9]+[.．][0-9]+|[零一二两三四五六七八九十]+点[零一二两三四五六七八九十]+")),Goal.Original);
         if(InvalidQuantity.FindNext())Goal.Unresolved.AddUnique(TEXT("原话含负数或小数数量，不能改写成正整数任务"));
+        if(Goal.Intent==TEXT("collect") && (Input.Contains(TEXT("尚未发现")) || Input.Contains(TEXT("未发现"))
+            || Input.Contains(TEXT("未知地点")) || Input.Contains(TEXT("没去过"))))
+            Goal.Unresolved.AddUnique(TEXT("未知地点不能映射为当前已知安全采集点；玩家口述安全不是权威安全证据"));
         if(Goal.Intent==TEXT("collect") && (Input.Contains(TEXT("改成")) || Input.Contains(TEXT("改为")) || Input.Contains(TEXT("换成")) || Input.Contains(TEXT("不是"))))
         {
             const FString Correction=HearthwardAgent::Normalize(Input);
@@ -110,12 +177,20 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
     ReasonCode=HearthwardAgent::Validate(Goal);
     if(Goal.WritesWorld())
     {
-        if(Goal.Intent!=TEXT("collect"))
+        if(Goal.Intent==TEXT("craft") || Goal.Intent==TEXT("repair"))
         {
             auto* P=UGameplayStatics::GetPlayerPawn(GetWorld(),0);auto* B=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
             Goal.Station=B?B->KnownWorkbench(PendingCompanion.Get()):FGuid();
         }
-        if(ReasonCode.IsEmpty())ReasonCode=PendingCompanion->PreviewGoal(Goal);
+        if(ReasonCode.IsEmpty())
+        {
+            if(Goal.Intent==TEXT("companion_order"))
+            {
+                auto* Gameplay=PendingSpeaker.IsValid()?PendingSpeaker->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
+                ReasonCode=Gameplay?Gameplay->PreviewCompanionDirective(PendingSpeaker.Get(),Goal.Item):TEXT("PLAYER_UNAVAILABLE");
+            }
+            else ReasonCode=PendingCompanion->PreviewGoal(Goal);
+        }
     }
     Memory.WorkingGoal=Goal;
     if(!ReasonCode.IsEmpty())
@@ -141,6 +216,19 @@ bool UHearthwardLocalAISubsystem::ConfirmCandidate(FGuid Id)
         const double Now=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
         if(!Memory.PutRule(Candidate.Limits[0],Candidate.Original,Now)){ReasonCode=TEXT("MEMORY_CAPACITY");Status=TEXT("规则未保存，请缩短原话或管理记录容量");return false;}
         PendingCompanion->DiscardProposal(Ticket);NPCLine=TEXT("长期规则已确认，将用于后续接受的任务。当前任务保持原状。");
+    }
+    else if(Candidate.Intent==TEXT("companion_order"))
+    {
+        auto* Gameplay=PendingSpeaker.IsValid()?PendingSpeaker->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
+        ReasonCode=Gameplay?Gameplay->PreviewCompanionDirective(PendingSpeaker.Get(),Candidate.Item):TEXT("PLAYER_UNAVAILABLE");
+        if(!ReasonCode.IsEmpty()){Status=TEXT("条件已变化，未执行：")+ReasonCode;return false;}
+        if(!Gameplay->ApplyCompanionDirective(PendingSpeaker.Get(),Candidate.Item))
+        {ReasonCode=TEXT("STALE_CONFIRMATION");Status=TEXT("伙伴指令已失效，请重新交流");return false;}
+        RecordCoordinationDirective(Candidate.Item,TEXT("dialogue_confirm"));
+        NPCLine=Candidate.Item==TEXT("hold")?TEXT("好，我先原地等待。"):
+            Candidate.Item==TEXT("follow")?TEXT("好，我跟着你。"):
+            Candidate.Item==TEXT("routine")?TEXT("好，我在营地附近自己活动，有事你再叫我。"):
+            TEXT("好，我会协助处理你附近的有效威胁。");
     }
     else
     {
@@ -183,6 +271,74 @@ bool UHearthwardLocalAISubsystem::QueryInventory(AActor* Speaker,AHearthwardComp
     CancelPending();PendingSpeaker=Speaker;PendingCompanion=Companion;Ticket=Companion->Request(Speaker,TEXT("显式库存查询"));if(!Ticket.Id.IsValid())return false;
     Proposal={};Proposal.Intent=TEXT("inventory");Proposal.Item=Item;Proposal.QuantityMode=TEXT("none");Proposal.SourceRef=TEXT("none");bPending=true;ApplyProposal();ReasonCode=TEXT("deterministic_fallback");return true;
 }
+
+bool UHearthwardLocalAISubsystem::RecordPlayerCampReport(FName Item,int32 Count)
+{
+    if(Count<0 || Count>100000 || !HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==Item;}))return false;
+    const double Now=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
+    return HearthwardBeliefs::UpsertCampStock(Memory.Beliefs,Memory.Revision,Memory.Campaign,Item,Count,EHearthwardNPCBeliefSource::PlayerReport,Now);
+}
+
+bool UHearthwardLocalAISubsystem::ReportCampInventory(AActor* Speaker,AHearthwardCompanionFixture* Companion,FName Item,int32 Count)
+{
+    if(!IsValid(Companion) || !Companion->CanCommunicate(Speaker) || GetWorld()->IsPaused()
+        || GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring())return false;
+    CancelPending();
+    if(!RecordPlayerCampReport(Item,Count))return false;
+    const auto* Def=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==Item;});
+    NPCLine=FString::Printf(TEXT("我记下你说营地现在有 %d 份%s；这是你的报告，我还没有亲自确认。"),Count,*Def->DisplayName.ToString());
+    Status=NPCLine;LastAppliedIntent=TEXT("inventory_report");ReasonCode=TEXT("player_report");return true;
+}
+
+FHearthwardNPCBeliefView UHearthwardLocalAISubsystem::GetCampStockBelief(FName Item) const
+{
+    FHearthwardNPCBeliefView Out;HearthwardBeliefs::ResolveCampStock(Memory.Beliefs,Item,Out);return Out;
+}
+
+void UHearthwardLocalAISubsystem::RecordCoordinationDirective(FName Directive,const FString& Source)
+{
+    if(Directive!=TEXT("hold") && Directive!=TEXT("follow") && Directive!=TEXT("assist"))return;
+    FHearthwardNPCEvent E;
+    E.Id=FGuid::NewGuid();
+    E.Command=FGuid::NewGuid();
+    E.Campaign=Memory.Campaign;
+    E.Kind=TEXT("directive");
+    E.Item=Directive;
+    E.Count=1;
+    E.At=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
+    E.Reason=Source.Left(200);
+    RecordEvent(E);
+}
+
+void UHearthwardLocalAISubsystem::RecordCampStockReceipt(FName Item,int32 ExactCount)
+{
+    if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring())return;
+    const double Now=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
+    HearthwardBeliefs::UpsertCampStock(Memory.Beliefs,Memory.Revision,Memory.Campaign,Item,ExactCount,EHearthwardNPCBeliefSource::Receipt,Now);
+}
+FString UHearthwardLocalAISubsystem::BuildEpisodeRecall(FName Item) const
+{
+    FString Out;int32 Added=0;
+    for(const auto& Episode:HearthwardEpisodes::Build(Memory,8))
+    {
+        if(!Item.IsNone() && Episode.Item!=Item)continue;
+        const FString Line=HearthwardEpisodes::Describe(Episode);
+        if(Line.IsEmpty())continue;
+        Out+=Line+TEXT("\n");
+        if(++Added>=3)break;
+    }
+    return Out;
+}
+
+bool UHearthwardLocalAISubsystem::QueryRecentHistory(AActor* Speaker,AHearthwardCompanionFixture* Companion,FName Item)
+{
+    if(!IsValid(Companion) || !Companion->CanCommunicate(Speaker))return false;
+    CancelPending();Initiatives.Reset();PendingSpeaker=Speaker;PendingCompanion=Companion;
+    NPCLine=BuildEpisodeRecall(Item);
+    if(NPCLine.IsEmpty())NPCLine=TEXT("我没有找到对应的实际行动记录。");
+    Status=TEXT("弟弟的实际经历");LastAppliedIntent=TEXT("recall");ReasonCode=TEXT("deterministic_fallback");return true;
+}
+
 bool UHearthwardLocalAISubsystem::CancelExecution(AActor* Speaker,AHearthwardCompanionFixture* Companion)
 {
     if(!IsValid(Companion) || !Companion->Cancel(Speaker))return false;

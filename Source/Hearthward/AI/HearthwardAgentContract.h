@@ -19,7 +19,7 @@ struct FHearthwardAgentGoal
     UPROPERTY(BlueprintReadOnly) FGuid Station;
     UPROPERTY(BlueprintReadOnly) int64 RuleRevision = 0;
     UPROPERTY(BlueprintReadOnly) int32 CapabilityVersion = 2;
-    bool WritesWorld() const { return Intent==TEXT("collect") || Intent==TEXT("craft") || Intent==TEXT("repair"); }
+    bool WritesWorld() const { return Intent==TEXT("collect") || Intent==TEXT("craft") || Intent==TEXT("repair") || Intent==TEXT("companion_order"); }
 };
 
 struct FHearthwardAgentCapability
@@ -46,6 +46,9 @@ struct FHearthwardAgentReceipt
 namespace HearthwardAgent
 {
     const TArray<FHearthwardAgentCapability>& Capabilities();
+    const FHearthwardAgentCapability* FindCapability(FName Id);
+    bool IsCapabilityItem(FName Capability, FName Item);
+    FString CompanionOrderPrompt();
     FString Describe();
     FString Schema();
     bool Parse(const FString& Json,FHearthwardAgentGoal& Out);

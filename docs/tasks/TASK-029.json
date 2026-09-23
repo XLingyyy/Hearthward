@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "id": "TASK-029",
+  "title": "AI NPC完整交付",
+  "status": "Blocked",
+  "updated_at": "2026-09-23",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/ai-npc-vnext-rework-01-fix",
+  "source_refs": [
+    "2026-09-23 Owner: AI NPC final delivery and acceptance use TASK-029",
+    "docs/handoffs/TASK-029.md",
+    "docs/qa/evidence/TASK-029/FINAL_ACCEPTANCE.md",
+    "DSGN-001 local inference and DSGN-025 agent boundaries"
+  ],
+  "dependencies": [
+    "TASK-025"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/design/DSGN-001-local-inference.md",
+    "docs/decisions/ADR-TASK-025-npc-cognition.md"
+  ],
+  "allowed_paths": [
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/AI/",
+    "Source/Hearthward/Companion/",
+    "Source/Hearthward/Building/HearthwardWorkshopService.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Source/Hearthward/Save/",
+    "Source/Hearthward/Tests/",
+    "Source/Hearthward/UI/",
+    "config/local-ai.lock.json",
+    "config/npc-agent.policy.json",
+    "config/toolchain.lock.json",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-029.json",
+    "docs/tasks/TASK-029.md",
+    "docs/handoffs/TASK-029.md",
+    "docs/handoffs/AI-NPC-VNEXT-PR.md",
+    "docs/qa/evidence/TASK-029/"
+  ],
+  "forbidden_paths": [
+    "Runtime/LocalAI/",
+    "Content/"
+  ],
+  "acceptance": [
+    "AI NPC natural-language proposals cannot directly author world truth or world side effects",
+    "collect/craft/repair execute through deterministic typed plans with confirmation, receipts and save reconstruction",
+    "contextual suggestions are explicit, ephemeral and stale-revalidated",
+    "hold/follow/assist/routine and tactical cooperation remain UE-authoritative below the high-level directive",
+    "recovery, belief, initiative, episode, coordination and routine are bounded and do not create a second world authority",
+    "bounded context uses at most full/compact/required-minimal tiers with real template token counting and at most one generation",
+    "mandatory context overflow produces explicit failure with zero generation and no world mutation",
+    "Schema 2 save data migrates through the real file path to Schema 3 without inventing cognition history",
+    "real Qwen clean/pressure matrix and current-source runtime regressions are recorded with raw model, guardrail and world-state results separated",
+    "latest main is integrated, final build/native/repository checks pass, PR is updated for review and is not merged by the agent"
+  ],
+  "non_goals": [
+    "No model or GGUF replacement",
+    "No increase to the 3328 input-token budget or second-generation fallback",
+    "No LLM-owned coordinates, paths, concrete targets, damage or inventory settlement",
+    "No map, character or art redesign as part of the AI delivery"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "User explicitly requested completion of the full AI NPC stack and unified final TASK-029 acceptance",
+  "required_tests": [
+    "T-002",
+    "T-008",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "granted for dedicated branch push and PR update",
+    "install_dependencies": "not_granted",
+    "commit": "granted",
+    "push": "granted",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Earlier AI development used temporary 027-040 labels; they are archived only under TASK-029/internal-history and do not claim canonical task numbers.",
+    "Project-wide canonical TASK-027 is character animation and TASK-028 is 3D asset integration.",
+    "Current latest-main integration baseline is origin/main@ba547c0ee5a1d8dae41e747a5d1d0674d7702899."
+  ]
+}
