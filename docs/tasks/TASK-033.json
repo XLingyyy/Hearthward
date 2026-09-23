@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "TASK-033",
+  "title": "AI NPC Belief / Knowledge State 与认知来源",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-033-belief-state",
+  "source_refs": [
+    "用户于2026-09-22要求继续推进 Belief / Knowledge State：NPC 只依据自己知道的世界行动与交流",
+    "TASK-025 existing last-seen camp observation and editable memory",
+    "TASK-032 adaptive recovery baseline 33763df"
+  ],
+  "dependencies": [
+    "TASK-032"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/design/DSGN-001-local-inference.md",
+    "docs/design/DSGN-025-agent-boundaries.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/HearthwardNPCBelief.h",
+    "Source/Hearthward/AI/HearthwardNPCBelief.cpp",
+    "Source/Hearthward/AI/HearthwardNPCMemory.h",
+    "Source/Hearthward/AI/HearthwardNPCMemory.cpp",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "config/local-ai.lock.json",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-033.json",
+    "docs/tasks/TASK-033.md",
+    "docs/handoffs/TASK-033.md",
+    "docs/qa/evidence/TASK-033/"
+  ],
+  "forbidden_paths": [
+    "Content/"
+  ],
+  "acceptance": [
+    "World Truth 与 NPC Belief 在代码层分离，执行结算仍只信 UE 权威状态",
+    "camp stock belief 记录 value/source/time/revision/campaign",
+    "player_report 不改变真实仓库且明确标为未核实",
+    "NPC 离营时仓库变化不会自动同步 belief",
+    "firsthand observation 可纠正旧 player report",
+    "belief 与世界同边界保存恢复但允许值不同",
+    "旧 CampInventory 快照向 typed belief 向后兼容迁移"
+  ],
+  "non_goals": [
+    "不实现通用知识图谱",
+    "不实现多NPC知识传播",
+    "不实现主动交流/initiative",
+    "不允许belief绕过安全、库存或settlement authority"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22明确要求继续推进 Belief / Knowledge State AI NPC 亮点",
+  "required_tests": [
+    "T-002",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "not required for local implementation",
+    "install_dependencies": "not_granted",
+    "commit": "local task commit authorized as part of continued AI NPC development",
+    "push": "defer until next unified PR handoff",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "TASK-033 基于 TASK-032 本地提交 33763df。",
+    "第一版只将 camp stock 做成 typed beliefs，避免过早引入任意字符串知识图谱。"
+  ]
+}

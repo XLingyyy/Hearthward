@@ -124,7 +124,7 @@ A6为本单拟定工程门槛，启动时与地图方案一并确认；记录实
 
 ## 8. 技术参考
 
-2026-09-21查阅Epic官方文档；指导工程选型，具体支持以本机UE 5.8.1核验为准。优先复用引擎能力，不自行开发替代流送/地形系统。
+2026-09-21查阅Epic官方文档；指导工程选型，具体支持以当前统一目标 UE 5.8.2 核验为准；本任务旧版PIE记录不替代新版本复验。优先复用引擎能力，不自行开发替代流送/地形系统。
 
 - [World Partition](https://dev.epicgames.com/documentation/unreal-engine/world-partition-in-unreal-engine)：分格与流送源。
 - [Landscape概览](https://dev.epicgames.com/documentation/unreal-engine/landscape-overview)和[技术指南](https://dev.epicgames.com/documentation/unreal-engine/landscape-technical-guide-in-unreal-engine)：地形结构、有效尺寸和组件成本。

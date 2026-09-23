@@ -14,8 +14,8 @@
 ## 游戏入口与存档
 
 - Bootstrap 保持默认入口。主菜单“新游戏”打开自然地图，并用 URL `game` 选项选择 `AHearthwardGameMode`、`HearthwardNewGame=1`。地图加载后才创建自然世界进度；玩家从现有 CAMP_A PlayerStart 出生。
-- 主菜单“继续游戏”和“载入存档”先读取节点索引。自然地图节点先切换地图，再按 `HearthwardLoad=<SaveId>` 恢复。自然世界与旧伙伴测试进度共享原有存档池，但 `FHearthwardWorldSave.NaturalWorld` 区分模式；旧节点默认值为 false，原有文件格式仍为 schema 2。
-- 自然世界快照保存地图、玩家位置和朝向、背包、共享仓储、世界时钟及玩家计时状态，不要求生成伙伴测试夹具，也不启用旧测试地标或敌人。自然世界只显示探索 HUD 与原主菜单、暂停、存档等已接通的页面；旧任务地图等页面暂不在此模式打开。
+- 主菜单“继续游戏”和“载入存档”先读取节点索引。自然地图节点先切换地图，再按 `HearthwardLoad=<SaveId>` 恢复。自然世界与旧伙伴测试进度共享原有存档池，但 `FHearthwardWorldSave.NaturalWorld` 区分模式；旧节点默认值为 false，当前文件格式为 schema 3，schema 2 通过已有认知迁移读取。
+- TASK-029 当前工作分支已接入运行时营地伙伴、有限木材点和仓储。自然快照同时保存伙伴位置、携带物资、资源余额、执行委托、认知与已建建筑；`NaturalCompanion` 标记区分旧的无伙伴自然存档，旧档保留玩家物资并补建伙伴。HUD 显示伙伴状态，开放对话、记忆、仓储、建造、制作/维修与技能；旧开发场景路标和敌人仍不自动生成，地图/任务日志继续关闭。最新验证见[AI 接入报告](../../qa/evidence/TASK-029/natural-camp-integration/REPORT.md)。
 
 ## 定向验证与边界
 

@@ -1,9 +1,15 @@
 # 环境与复现
 
-当前锁文件为 [toolchain.lock.json](../config/toolchain.lock.json)，字段null代表未决定；
-候选内部名已改为 Hearthward，仍待工程初始化确认。TASK-000已记录本机工具版本，未创建 .uproject。
+当前锁文件为 [toolchain.lock.json](../config/toolchain.lock.json)，字段 null 代表未决定。Hearthward 工程已初始化，当前统一目标为 UE 5.8.2。
 
-## 2026-09-17 本机准备
+## 2026-09-23 当前统一工具链
+
+- UE 5.8.2 Installed Build，Build.version changelist 56702186，路径 `G:/UnrealEngine/UE_5.8`。
+- MSVC 工具目录 14.44.35207，cl.exe 19.44.35228.0；Windows SDK 10.0.22621.0。
+- 本机版本与仓库目标一致。当前干净提交的 Editor Development 构建失败，原因与结果见 [TASK-040 clean-tree review](qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md)。
+- 已完成任务的验证记录保留执行当时的引擎版本，仅用于追溯；当前新增和复验目标统一为 UE 5.8.2。
+
+## 2026-09-17 历史安装快照
 
 - UE：5.8.1，Installed Build，Build.version changelist 56057345。
 - Visual Studio Community 2026：18.9.12120.119。

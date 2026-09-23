@@ -1,4 +1,5 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Companion/HearthwardNaturalCamp.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
@@ -129,6 +130,15 @@ bool UHearthwardSaveSubsystem::EnableNaturalWorld()
     if (!Player || !Player->FindComponentByClass<UHearthwardInventoryComponent>()
         || !Player->FindComponentByClass<UHearthwardTimedActionComponent>())
     { Status = TEXT("自然地图玩家尚未就绪"); return false; }
+    if (!HearthwardNaturalCamp::Initialize(GetWorld(), Status)) return false;
+    auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>();
+    if (Gameplay && !Gameplay->Enabled)
+    {
+        Gameplay->EnableAdventure();
+        auto* Inventory=Player->FindComponentByClass<UHearthwardInventoryComponent>();
+        for (const auto& Item:HearthwardData::Catalog()->GetObjectField(TEXT("loadout"))->Values)
+            Inventory->TryAdd(FName(*Item.Key),Item.Value->AsNumber());
+    }
     bNaturalWorld = true;
     if (!ReloadPool() || !Capture(InitialWorld)) { bNaturalWorld = false; return false; }
     bEnabled = true;
@@ -140,14 +150,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
     APawn* Player = nullptr;
     AHearthwardCompanionFixture* Companion = nullptr;
-    if (bNaturalWorld)
-    {
-        Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-        if (!Player || !Player->FindComponentByClass<UHearthwardInventoryComponent>()
-            || !Player->FindComponentByClass<UHearthwardTimedActionComponent>())
-        { Status = TEXT("自然地图玩家无法保存"); return false; }
-    }
-    else if (!Participants(Player, Companion)) { Status = TEXT("快照参与者缺失或正在结算"); return false; }
+    if (!Participants(Player, Companion)) { Status = TEXT("快照参与者缺失或正在结算"); return false; }
     if(const auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>(); B && B->IsBuilding())
     { Status=TEXT("建造中，保存将在完成后可用"); return false; }
     if(const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>(); G && G->Enabled && (G->InCombat() || G->Health<=0))
@@ -160,6 +163,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
             && (!Companion || (*It != Companion && *It != Companion->Source->GetOwner())))
         { Status = TEXT("场景存在未接入快照的容器"); return false; }
     S.NaturalWorld = bNaturalWorld;
+    S.NaturalCompanion = bNaturalWorld;
     S.Map = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
     S.ActiveSeconds = GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.GetActivePlaySeconds();
     S.Player = Player->GetActorTransform();
@@ -224,16 +228,19 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
 {
     if (S.Map != UGameplayStatics::GetCurrentLevelName(GetWorld(), true) || S.NaturalWorld != bNaturalWorld)
     { Status = TEXT("请先打开存档所属地图"); return false; }
+    if (bNaturalWorld && !S.NaturalCompanion)
+    {
+        // Old natural saves contain no NPC. Seed only that missing part from the new-session state.
+        FHearthwardWorldSave Upgraded=InitialWorld;
+        Upgraded.Player=S.Player; Upgraded.View=S.View; Upgraded.Inventory=S.Inventory; Upgraded.Storage=S.Storage;
+        Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
+        Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
+        Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
+        return Restore(Upgraded);
+    }
     APawn* Player = nullptr;
     AHearthwardCompanionFixture* Companion = nullptr;
-    if (bNaturalWorld)
-    {
-        Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-        if (!Player || !Player->FindComponentByClass<UHearthwardInventoryComponent>()
-            || !Player->FindComponentByClass<UHearthwardTimedActionComponent>())
-        { Status = TEXT("自然地图玩家无法恢复"); return false; }
-    }
-    else if (!Participants(Player, Companion)) { Status = TEXT("恢复参与者缺失，请重新创建测试夹具"); return false; }
+    if (!Participants(Player, Companion)) { Status = TEXT("恢复参与者缺失"); return false; }
     TGuardValue<bool> Guard(bRestoring, true);
     if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
@@ -285,6 +292,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     {
         const bool UpgradeLegacy=Companion && S.Gameplay.IsEmpty() && Gameplay->Enabled;
         Gameplay->Restore(S.Gameplay);
+        if (bNaturalWorld && !Gameplay->Enabled) Gameplay->EnableAdventure();
         if(UpgradeLegacy)
         {
             Gameplay->EnableAdventure();

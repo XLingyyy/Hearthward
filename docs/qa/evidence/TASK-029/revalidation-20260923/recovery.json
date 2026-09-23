@@ -1,0 +1,70 @@
+{
+  "ok": true,
+  "checks": {
+    "enable_prototype": true,
+    "new_campaign": true,
+    "stage_collect": true,
+    "confirm_collect": true,
+    "starts_typed_executor": true,
+    "enters_adaptive_replan": true,
+    "replan_reason_visible": true,
+    "no_fake_progress_during_replan": true,
+    "completes_without_manual_resume": true,
+    "real_source_debited": true,
+    "real_camp_credit": true,
+    "recovery_status_cleared": true,
+    "routine_resumed_after_recovery": true
+  },
+  "samples": [
+    {
+      "label": "gather_before_source_move",
+      "action": "Gather:Source",
+      "phase": "<HearthwardCompanionPhase.GATHERING: 2>",
+      "block": "",
+      "acquired": 0,
+      "delivered": 0,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x00000179633D5820) {x: 356.025706, y: 99.107345, z: 82.150002}>"
+    },
+    {
+      "label": "after_source_move",
+      "action": "Recovery:Replan->MoveTo:Source",
+      "phase": "<HearthwardCompanionPhase.GOING_TO_SOURCE: 1>",
+      "block": "REPLANNING：SOURCE_POSITION_CHANGED",
+      "acquired": 0,
+      "delivered": 0,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x00000179633D58C0) {x: 356.025706, y: 99.107345, z: 82.150002}>"
+    },
+    {
+      "label": "replan_released",
+      "action": "MoveTo:Source",
+      "phase": "<HearthwardCompanionPhase.GOING_TO_SOURCE: 1>",
+      "block": "",
+      "acquired": 0,
+      "delivered": 0,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x00000179633D58C0) {x: 356.025706, y: 99.107345, z: 82.150002}>"
+    },
+    {
+      "label": "gather_after_reposition",
+      "action": "Gather:Source",
+      "phase": "<HearthwardCompanionPhase.GATHERING: 2>",
+      "block": "",
+      "acquired": 0,
+      "delivered": 0,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x00000179633D58C0) {x: 807.250766, y: 209.537779, z: 82.150002}>"
+    },
+    {
+      "label": "completed",
+      "action": "None",
+      "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+      "block": "自由活动 · patrol",
+      "acquired": 2,
+      "delivered": 2,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x00000179633D58C0) {x: -155.636341, y: 104.824515, z: 82.150001}>"
+    }
+  ]
+}

@@ -2,95 +2,68 @@
 
 ## 当前口径
 
-AI NPC vNext 最终统一使用 **TASK-029**。
+AI NPC vNext 最终统一使用 **TASK-029**。早期 027～040 仅作为内部历史证据标签；项目 canonical TASK-027 为人物动作，canonical TASK-028 为 3D 资产任务。
 
-早期研发的 027～040 编号只作为内部历史来源；其中历史 “AI TASK-028 executor” 已归档到 `docs/qa/evidence/TASK-029/internal-history/TASK-028-agent-executor/`，因为项目 main 当前 canonical TASK-028 已被用于 3D 资产任务。
+目标分支：`codex/ai-npc-vnext-rework-01-fix`。GitHub PR：[#34](https://github.com/XLingyyy/Hearthward/pull/34)。**Agent 不直接 merge main。**
 
-当前候选分支：`codex/ai-npc-vnext-rework-01-fix`。
+## 最终集成结构
 
-最终候选：`037628f`。GitHub PR：[#34](https://github.com/XLingyyy/Hearthward/pull/34)，目标 `main`，当前保持 open，Agent 不执行 merge。
+最终候选把两条已经存在的开发线收口到一起：
 
-## 架构
+1. `main@ba547c0`：包含 PR #35 主角模型与基础动作；
+2. PR #34 原 head `25d53d8`：包含自然地图营地 AI 接入、有限资源、Navigation Invoker、UI 与兼容旧自然档；
+3. latest-main AI 核心返工：保留 authoritative perception、typed executor、Recovery、Belief、Initiative、Episode、Tactical、Coordination、Routine、ContextProjection、Schema 3 migration。
 
-```text
-Player / Suggestions
-        ↓
-Local Qwen
-        ↓
-ContextProjection + Capability Contract
-        ↓
-Deterministic Guardrail
-        ↓
-Candidate + Confirm
-        ↓
-Goal → Plan → Action
-        ↓
-UE authoritative world systems
-        ↓
-Receipts / Events
-        ↓
-Belief / Episode / Coordination / Initiative
-```
+核心原则仍是：LLM 做理解与表达；UE 做世界事实、安全、路径、战斗、结算和持久化权威。
 
-核心原则：LLM 做理解与表达；UE 做世界事实、安全、路径、战斗、结算和持久化权威。
+## latest-main 核心验证
 
-## 已完成内容
+隔离 latest-main candidate 基于 `ba547c0`：
 
-- authoritative perception / safety
-- typed Goal → Plan → Action executor
-- contextual suggestion cache + stale revalidation
-- hold / follow / assist / routine
-- deterministic combat policy and tactical Assist/Protect/Regroup
-- adaptive recovery
-- typed Belief with provenance + freshness
-- event-driven Initiative
-- grounded Episode + coverage
-- Coordination Prior
-- camp autonomous Routine
-- Navigation / Behavior / Initiative / Local AI Runtime componentization
-- bounded ContextProjection with real template token count
-- capability registry/prompt alignment
-- Chinese numeric quantity handling
-- Schema 2 → 3 real-file migration
-
-## 本轮返工修复
-
-1. 修复 Unity build 中匿名 helper `Json` collision，并审计/前缀化其它通用 helper。
-2. 修复 CTX-02 压力下无关 Belief 与配方数量污染 prompt，导致“新采四份木材”被误判缺数量的问题。
-3. 修复 `inventory_report` 只识别阿拉伯数字、无法接受“十份木材”的 guardrail 缺陷。
-4. 验证 full → compact 降档时 unresolved 安全限制不会丢失。
-5. 验证 required-minimal 真正超预算时明确失败且 generation=0。
-6. 新增真实 Schema 2 `.hws` → Schema 3 disk migration automation。
-7. 最终重跑 executor / Initiative / tactical / routine runtime PIE。
-
-## 同步 main 前证据
-
-- Editor Development default Unity build：PASS
+- Editor Development：PASS
+- Python：31/31 PASS
 - native：41/41 PASS
-- Schema migration：1/1 PASS
-- real Qwen matrix：32 cases / 32 generations / 32/32 safety PASS
-- core raw M01～M10：20/20 PASS
-- CTX-03：compact 2832 tokens / generation=1 / restriction preserved
-- CTX-04：required-minimal 4020 tokens / generation=0 / no candidate / no world write
-- executor PIE：49/49
-- Initiative PIE：16/16
-- Tactical PIE：16/16
-- Routine PIE：26/26
-- repo validator：0 errors
-- Python：31/31
+- Schema 2 → 3 real-file migration：1/1 PASS
+- Executor：49/49
+- Initiative：16/16
+- Tactical：16/16
+- Routine：26/26
+- explicit runtime smoke：23/23
 
-## 真实模型说明
+TASK-036 初次 tactical 回归失败来自 runner 的旧坐标假设：旧脚本以 camp 作为敌人原点，而当前 adventure 启用时 encounter 以玩家 Origin 创建。生产 tactical code 未改；runner 改为玩家 Origin 后恢复 16/16。
 
-M11/M12/M14/M16 的 raw JSON 在部分 clean/pressure run 中仍可能给出偏宽的 collect/repair intent；deterministic guardrail 均正确拒绝/澄清并阻止世界写。raw model 与 guardrail 成功分开记录，不混为一谈。
+## 自然营地接入证据
 
-## Evidence
+PR #34 的自然地图接入此前已完成：
 
-统一入口：[FINAL_ACCEPTANCE](../qa/evidence/TASK-029/FINAL_ACCEPTANCE.md)。
+- Editor build PASS
+- native 42/42
+- Python 31/31
+- 自然采集/存读档 22/22
+- 工作台闭环 23 项
+- 旧自然档升级 12/12
+- 真实键鼠完成输入、任务卡确认、两份木材采集入库
 
-历史建议层证据仍在 `docs/qa/evidence/TASK-029/VALIDATION.md`。更早内部任务证据由 `internal-history/` 索引；上下文/Qwen/Schema 的原始大文件保留原来源路径并由 FINAL_ACCEPTANCE 链接。
+详见 [natural-camp integration report](../qa/evidence/TASK-029/natural-camp-integration/REPORT.md)。
 
-## Release
+## repository validator 真实状态
 
-最新 `origin/main@28e7c52` 已同步到候选，保留 main 的自然地图/资产更新并合入 TASK-029 AI NPC 栈。最终 post-merge 验证已经完成：repo validator 0 errors、Python 31/31、Editor build PASS、native 41/41、TASK-029 runtime smoke 23/23。
+全仓 validator **不是 0 errors**。当前 9 项错误全部来自 canonical TASK-026/027/028 的 reviewer / Issue URL / required_tests metadata。纯净 `main@ba547c0` 运行相同命令得到完全相同的 9 项，因此不把它们记为 TASK-029 回归，也不越权修改其他任务元数据。
 
-分支已 push，PR #34 已创建并保持 open。后续只需要独立 Reviewer / Owner 审查与体验验收；**Agent 不直接 merge**。
+task-scope validator 在隔离验证 worktree 额外记录 detached branch 与 TASK-029 baseline snapshot 两项流程约束。
+
+详见 [latest-main finalization](../qa/evidence/TASK-029/LATEST_MAIN_FINALIZATION.md)。
+
+## 真实模型边界
+
+Qwen M01～M16 clean + pressure 为 32/32 safety PASS；M01～M10 core raw contract 20/20。CTX-03 降档到 compact 2832 tokens、generation=1；CTX-04 required-minimal 4020 tokens、CONTEXT_OVERFLOW、generation=0、无 candidate/world write。
+
+部分安全样本 raw intent 可能偏宽；deterministic guardrail 正确拒绝/澄清。raw model 与 guardrail 结果继续分开报告。
+
+## 下一步
+
+1. 在最终合并树上重跑 build/native/runtime smoke 与 Python。
+2. 记录 repository validator（预期仍包含 main 基线 9 项，除非对应 canonical tasks 被独立修复）。
+3. commit/push 到 `codex/ai-npc-vnext-rework-01-fix`，更新 PR #34。
+4. 等待独立 Reviewer / Owner 体验验收。
+5. **不由 Agent 合并 main。**

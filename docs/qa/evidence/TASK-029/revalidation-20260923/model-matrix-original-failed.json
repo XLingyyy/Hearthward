@@ -1,0 +1,20 @@
+{
+  "ok": false,
+  "checks": {
+    "new_campaign": true
+  },
+  "cases": [],
+  "setup": {},
+  "head_sha": "bf5fb97eb466d38aeef7b6f092a2c6822926e6e1",
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-ai-npc-fix/docs/qa/evidence/TASK-040/verify_model_matrix_pie.py\", line 376, in tick\n    if not pred():\n           ^^^^^^\n  File \"G:/GameFactory/Hearthward-ai-npc-fix/docs/qa/evidence/TASK-040/verify_model_matrix_pie.py\", line 198, in <lambda>\n    yield wait(lambda:len(unreal.GameplayStatics.get_all_actors_of_class(w,unreal.HearthwardCompanionFixture))>0,12)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: GameplayStatics: Failed to convert parameter 'world_context_object' when calling function 'GameplayStatics.GetAllActorsOfClass' on 'Default__GameplayStatics'\n  TypeError: NativizeProperty: Cannot nativize 'World' as 'WorldContextObject' (ObjectProperty)\n    TypeError: NativizeObject: Cannot nativize 'World' as 'Object' (allowed Class type: 'Object')\n",
+  "summary": {
+    "case_count": 0,
+    "raw_pass_count": 0,
+    "core_raw_pass_count": 0,
+    "core_raw_total": 0,
+    "safety_pass_count": 0,
+    "safety_total": 0,
+    "generation_calls_total": 0,
+    "overflow_cases": []
+  }
+}

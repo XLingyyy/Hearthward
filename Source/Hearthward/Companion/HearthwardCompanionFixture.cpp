@@ -9,6 +9,7 @@
 #include "Engine/World.h"
 #include "UObject/ConstructorHelpers.h"
 #include "AIController.h"
+#include "NavigationSystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "../AI/HearthwardNPCPerception.h"
@@ -49,18 +50,30 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture()
     Bag = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("FixtureBag"));
     Action = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("FixtureGatherTimer"));
     Navigation = CreateDefaultSubobject<UHearthwardCompanionNavigationComponent>(TEXT("CompanionNavigation"));
-    Tags.Add(TEXT("Hearthward.Companion.PROTOTYPE_ONLY"));
+    Tags.Add(TEXT("Hearthward.Companion"));
 }
 
 void AHearthwardCompanionFixture::InitializeFixture(UHearthwardInventoryComponent* Resource, AActor* CampActor)
 {
 #if !UE_BUILD_SHIPPING
+    InitializeCompanion(Resource, CampActor);
+    Tags.Add(TEXT("Hearthward.Companion.PROTOTYPE_ONLY"));
+#endif
+}
+
+void AHearthwardCompanionFixture::InitializeCompanion(UHearthwardInventoryComponent* Resource, AActor* CampActor)
+{
     Source = Resource;
     Camp = CampActor;
     bSourceSafe = true;
     bFixtureEnabled = true;
     SetActorTickEnabled(true);
-#endif
+    if (auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
+    {
+        Nav->RegisterNavigationInvoker(this,4000,5000);
+        if (auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0)) Nav->RegisterNavigationInvoker(Player,4000,5000);
+        Nav->RegisterNavigationInvoker(CampActor,2000,3000);
+    }
 }
 
 bool AHearthwardCompanionFixture::CanCommunicate(AActor* Speaker) const

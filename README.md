@@ -1,16 +1,16 @@
 # Hearthward（归火）
 
-下一任务：[TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md)。状态为 **Backlog，仅下单，未执行**；范围包含实际场景应用、装备显示和存档恢复验收，执行等待另行授权。
+UE 5.8.2 单人第三人称生存冒险项目。TASK-029 最终候选已基于 `main@ba547c0` 收口，因此同时保留 PR #35 的主角模型/移动动画与 PR #34 的自然营地 AI 接入。自然地图与资产底座中，[TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行的 4032 m World Partition 自然地图与营地入口，但完整路线、流送、性能和 Owner 视觉验收仍未全部闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-UE 5.8.2 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。当前 `codex/ai-npc-vnext-rework-01-fix` 工作分支已将现有伙伴玩法接入自然地图：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与本轮证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)。本次提交收录接入实现、测试入口修正与证据，尚未合入 main。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
-通过 PR #25 合入 main 的 [TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行灰盒：4032 m World Partition地图、独立浏览GameMode、自然批次和局部PIE验证已落地，人文场景后置。现有视觉仍是基础形体，长路线、Standalone流送、性能与Owner视觉验收尚未完成，不能视为TASK-026验收通过。见[世界状态](docs/world/TASK-026/CURRENT.md)、[验证证据](docs/qa/evidence/TASK-026/README.md)与[026交接](docs/handoffs/TASK-026.md)。
+下一规划任务：[TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md)。该任务是 main 当前 canonical TASK-028，状态为 **Backlog，仅下单，未执行**；执行等待另行授权。
 
 ## 运行
 
 打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`。标题页“新游戏”进入自然地图的新营地并生成初始存档；营地中按 F6 打开存档页，暂停菜单也可手动保存。返回主菜单后“继续游戏”恢复最新节点；“载入存档”可选择自然地图节点。已有旧开发场景进度仍保留在同一50点档池。
 
-自然地图目前提供移动、视角、背包、暂停与存档；下表的伙伴、战斗、建造、任务等键位对应旧开发场景，尚未接入自然地图。
+自然地图已接通伙伴、仓储、建造、制作/维修和技能页面。靠近弟弟按 T，输入“帮我采集两份木材带回营地。”，检查任务卡并确认。木材点初始 16 份，使用现有有限资源规则；营地仓储附近按 R 取出 8 份木材，再按 B 建造工作台。地图/任务日志及旧开发场景敌人尚未布置到自然地图，M/J 页面继续关闭。
 
 单独浏览自然地图时，在编辑器中打开 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds` 并运行PIE；地图级浏览GameMode只复用第三人称角色，不生成旧开发场景的敌人、伙伴或测试地标，也不启动本地模型。
 
@@ -20,7 +20,7 @@ UE 5.8.2 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5
 | 跳跃 | 空格；落地后可再次起跳，起跳中断采集或建造 |
 | 建造 | B 打开目录；移动/转动视角摆放、Q 每次旋转15°、左键确认、右键取消 |
 | 工作台制作 | 靠近已建工作台 E；选择配方、−/+调整批数、F 制作、返回按钮关闭 |
-| 背包、技能、地图、任务 | Tab、K、M、J |
+| 背包、技能 | Tab、K；M 地图、J 任务日志目前仅开发场景开放 |
 | 仓储、伙伴交流、存档 | 营地附近 R、弟弟30米内 T、F6 |
 | 伙伴记忆 | T 对话 → 记忆与约定；填写陈述/偏好/文字约定，或设置指定物品的采集限制；选择已有记录可修改或撤销 |
 | 暂停 | 独立运行 Esc；PIE 使用 P 避免编辑器停止Play快捷键 |
@@ -33,7 +33,7 @@ UE 5.8.2 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5
 
 标题页没有默认选中项；鼠标悬停与键盘导航控制高亮。HUD顶部方位及度数显示已移除。
 
-菜单默认暂停，对话继续运行；输入框 Enter 发送，Esc 返回。技能选节点后 F 学习，可免费洗点。仓储鼠标选择一侧物品，−/+选数量，E或按钮执行真实转移。任务依据实际行为更新，领取奖励后只结算一次。
+菜单默认暂停，对话继续模拟世界，并停止绘制被全屏对话插画遮住的三维场景，关闭对话恢复渲染；输入框 Enter 发送，Esc 返回。技能选节点后 F 学习，可免费洗点。仓储鼠标选择一侧物品，−/+选数量，E或按钮执行真实转移。任务依据实际行为更新，领取奖励后只结算一次。
 
 ## 当前能力
 
@@ -42,12 +42,24 @@ UE 5.8.2 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5
 - 生命/饱食/耐力与负重影响，经验与等级，四系29个技能节点及前置、点数、免费重置；近战、主动重击、弓箭和投掷消耗实际物品与体力。
 - 8个主线步骤、3个支线目标；4处地点的发现、交互激活、站点间传送、地图标记、任务追踪与一次性奖励。
 - 日志六类入口：主线、支线、世界见闻、人物、势力、收集。4条地点见闻、1个人物和2个势力按实际行为解锁；22物品的获得历史进入存档。
-- 伙伴采集多趟入库、等待/跟随/协助进攻，统一使用UE原生导航和角色移动。能绕行时继续任务；确实不可达时受阻返营，返程受阻保留物资，通路恢复后需显式重试。取消命令或读档停止旧路径，恢复后重新求路。交流继续通过本地Qwen3.5 4B、规则/词项检索、可知状态过滤与UE结构化校验。
-- AI NPC保留最后亲见的营地库存与观察时间，离营后不会自动知道新变化；库存询问通过只读能力从亲见快照生成数量答复。
+- 伙伴采集多趟入库、等待/跟随/协助进攻，统一使用UE原生导航和角色移动。AI NPC vNext 中，资源点在采集中移动、短暂去程/工作台路径失败等可恢复情况会进入有界 `Recovery:Replan`，自动回退到对应 MoveTo 并继续原目标；已经携带真实任务物资时始终优先返营保货。资源耗尽、目标消失、安全失败、材料不足等硬阻塞仍不会凭空生成替代目标，返程不可达时继续安全持有并等待显式处理。取消命令或读档停止旧路径，恢复后重新求路。交流继续通过本地Qwen3.5 4B、规则/词项检索、可知状态过滤与UE结构化校验。
+- AI NPC 的营地库存认知已升级为 typed Belief Store：每条记录包含数量、来源、游戏时间、revision 与 campaign。`firsthand` 来自亲眼观察，`player_report` 来自玩家明确报告且保持未核实标记，`receipt` 来自本人真实入库。离营后世界仓库变化不会自动同步 belief；回营后 firsthand 会纠正旧报告。库存询问只引用 belief，并明确来源/是否可能过期。
 - “记忆与约定”提供玩家显式管理的长期记录，按相关性检索旧信息；回忆答复引用现存原话，陈述保持玩家来源，不改写世界或角色。文字约定持续进入上下文作为交流参考；指定物品的采集限制由UE在接受任务前强制检查。撤销/编辑清除旧澄清并取消进行中的回复，已有执行委托需单独取消。
 - 未完成澄清保留原话、槽位和未解决限制；“帮我采些木材”→“三份”形成任务卡，核对后一次确认执行。关闭对话取消未确认卡片，已接受目标继续；改数量产生新卡片ID，旧确认失效。
 - 弟弟可使用自身背包材料到真实工作台制作箭矢/绳索，或维修自己持有的唯一装备；明确授权后可实际到营领取缺料。制作产物真实交付，装备和剩余材料保留。事件来自已提交的扣料、采集、交付和维修，随世界同边界保存。
-- 模型不可用时，对话页的手动任务卡、库存查询、取消和进度仍可用；不自动反复启动生成请求。
+- 模型不可用时，对话页的手动任务卡、库存查询、取消和进度仍可用；不自动反复启动生成请求。快捷建议只在玩家显式刷新时生成最多3条，未选择内容不进入弟弟的 memory / model input / filtered context；点击后仍走正常 model → candidate → confirm → executor 边界。
+- TASK-029 的 perception/safety 将世界事实和安全判定收敛到 UE authoritative perception；玩家或模型文本不能制造安全地点、库存或隐藏世界事实。
+- TASK-029 的 executor 将 collect/craft/repair 收敛成 deterministic typed plan/actions，运行时使用 plan cursor、真实 inventory/cargo、receipt 和存档重建；取消任务不会凭空删除已携带物资。
+- TASK-030 将战斗收敛成 `companion_order = hold / follow / assist` 高层能力；自然语言路径仍需任务卡确认，具体威胁、leash、导航、LOS、攻击冷却、命中和伤害由 UE 确定性处理。TASK-031 修正了 combat Tick 抢占 typed task 导航的问题：执行 collect/craft/repair 时战斗策略只让出控制权，不再停止 executor 的 MoveTo。
+- TASK-032 新增纯 `HearthwardAgentRecovery` 策略模块：action failure 先区分 retry / rewind / return-to-camp / hold；Source 在 Gather 中移动会回退到 `MoveTo(Source)`，短暂 path failure 有界重试，成功 world effect 后恢复预算归零。LLM 不生成恢复步骤，也不能借恢复获得未知目标、坐标或额外权限。
+- TASK-033 新增 `HearthwardNPCBelief`：World Truth 与 NPC Belief 在代码层分离。`inventory_report` 只更新弟弟认知，不修改真实仓库；模型上下文读取 provenance-aware `camp_beliefs`，执行器、库存、安全和结算继续只信 UE 权威状态。
+- TASK-034 新增 event-driven Initiative：任务完成、自动重规划、受阻、belief 被亲见纠正时可主动提醒。触发、去重、队列、communication range 与 cooldown 全由 UE 确定；不定时轮询 LLM，也不远距离“心灵感应”。主动台词复用现有 HUD。
+- TASK-035 新增 grounded Episode Memory：同一 command 的实际取得、交付、制作/维修、重规划、阻塞原因、完成/取消和 evidence IDs 从持久化 Events 即时聚合。过去行动相关回答只引用 episode evidence；Save/load 不保存第二份摘要，读档后重新派生相同 episode。
+- TASK-036 扩展战斗协作策略：健康时维持 Assist；玩家低血且单个近身威胁时切 Protect；低血且多威胁时 Regroup；玩家倒地后不再追敌，回到玩家附近。具体目标、导航、LOS、攻击与伤害仍由 UE 权威处理，模型仍只发高层 `assist` 指令。
+- TASK-037 增加 Coordination Prior：只从成功执行的 hold/follow/assist 真实指令事件学习近期协作习惯，达到样本与置信阈值后仅影响 contextual suggestion 和模型上下文；不会自动覆盖玩家当前指令。prior 由持久化 events 派生，可随 save/load 恢复，也会随着持续的新行为翻转。
+- TASK-038 增加营地自主 Routine：没有 typed task、显式 follow/assist/hold、战斗或倒地时，伙伴按世界时间在营地附近休息、巡营、查看营地或回营，使用真实 UE 导航且不生产物资、不调用 LLM。Z/X/C 会显式关闭 Routine；确认 `companion_order=routine` 可重新授权；typed task 只暂时抢占导航，任务结束后自动恢复。
+- TASK-039 完成组件化收口：`CompanionNavigationComponent` 统一导航与 retry，`NPCInitiativeQueue` 统一主动消息状态，`CompanionBehavior` 统一 Routine/Combat/任务导航仲裁，`LocalAIRuntime` 统一 llama.cpp 进程/端口/health/job 生命周期。玩法、存档与权限语义不变，热点类不再直接拥有这些底层实现。
+- TASK-040（内部返工编号，对外并入 TASK-029）在 039 深模块边界上补齐上下文预算与认知完整性：`HearthwardNPCContextProjection` 从一次可信 snapshot 生成 full/compact/minimal 三档，并在实际 `/apply-template` + `/tokenize` 后只允许一个通过预算的 request 进入 generation；capability prompt 从 registry 派生，`routine` 不再漂移。Belief 将 semantic `RecordedAt` 与 `LastEvidenceAt` 分离；Episode 增加 `Complete/Truncated/Unknown` coverage，并随 Save schema 3 显式迁移。固定 3328 input-token 上限、256 output、UE 世界权威边界均未放宽；真实 CTX-03 验证可降到 compact，CTX-04 验证 minimal 超限时 generation=0。
 - 工作台和篝火自由摆放，检查地面支撑、坡度、障碍与角色重叠；工作台限营地，篝火可在野外。五实玩秒后扣除背包材料并生成有碰撞的独立建筑；移动、跳跃、受伤、取消或切换菜单终止施工且不耗料。建造中自动保存延后。
 - 已建工作台提供即时制作：普通箭矢/绳索配方、批量选择、实际材料/产出/负重预览。整批扣料并发放成品；材料不足、容量超限、超距、遮挡、持续动作中或旧时间线请求均不结算。制作结果和事件随库存一同回档。
 - 工作台维修页列出持有的9类可维修装备，损坏优先，滚轮浏览；显示真实耐久、逐件材料与全修结果。满耐久、缺料、访问失效和过期请求拒绝结算；材料一次扣除、耐久恢复、维修事件在同一保存边界完成。背包H仅跳转页面，不直接收费。
@@ -61,9 +73,13 @@ UE 5.8.2 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5
 
 TASK-026本次重建记录见[REBUILD](docs/world/TASK-026/REBUILD.md)，历史检查不累计为新图验收。旧地图于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
 
-025 v2实现与本轮验证见 [TASK-025交接](docs/handoffs/TASK-025.md)、[设计决定](docs/decisions/ADR-TASK-025-npc-cognition.md)和[rev2证据](docs/qa/evidence/TASK-025/rev2/)。原版测试不计本轮PASS，模型原始理解、护栏规范化与实际执行分别统计。020于2026-09-19通过用户验收；历史任务结果见各任务交接。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
+当前自然营地接入已通过 UE 5.8.2 Editor Development 构建、原生自动化 42/42、Python 31/31、自然地图采集与存档 22/22、工作台制作与跨地图读档 23 项、旧自然存档升级 12/12。真实键鼠完成了输入、任务卡确认、两份木材采集入库。完整结果、失败尝试和验证边界见[本轮接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)。
 
-当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；TASK-026也只使用基础形体表达树木、草、岩石和地标，菜单插画不代表三维城寨或正式森林资产已制作。当前TASK-027分支已将既有Tripo主角接入玩家，提供待机、行走、冲刺、起跳、下落、落地、挥击、挖掘八个基础动画。待机、行走、冲刺已改为UE自带第三人称模板经IK Retargeter重定向的动画，其余五段为本地关键帧。自然地图Shift冲刺、左键预览挥击；开发场景近战成功及E五秒资源交互分别驱动挥击和挖掘。未新增矿点、矿石收益或手持工具，伙伴与敌人的外观未替换。验证与限制见[027交接](docs/handoffs/TASK-027.md)及[来源](docs/assets/TASK-027/PROVENANCE.md)。027成果在任务分支交付，尚未合并main。导航覆盖现有开发场景的可行走表面，支持静态障碍绕行和动态障碍重建；正式大世界伙伴导航、攀爬/跳跃导航连接仍未制作。完整十小时剧情、带工具和脚部IK的完整动作系统、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004 自然素材源文件由此前 77 个增至 115 个，其中本批新增冷杉和松树的 38 个源文件。026只复用了其中三张地表贴图，004模型适配与整单验收仍未完成，见[既有资源汇总](resourceSummary.md)与[新增树木来源](art_source/TASK-004/polyhaven/SOURCE.md)。020经验曲线、节点、任务、建筑、制作配方与战斗参数为独立内容配置，未替代GDD未决R项。
+latest-main AI 核心快照基于 `main@ba547c0`：Editor Build PASS、Python 31/31、native 41/41（含 Schema2→3 real-file migration）、Executor 49/49、Initiative 16/16、Tactical 16/16、Routine 26/26、runtime smoke 23/23。仓库 validator 仍被 main 已存在的 TASK-026/027/028 workflow metadata 问题阻塞；纯净 `main@ba547c0` 与候选均复现相同 9 项，因此不把它写成 TASK-029 的 PASS。详见 [latest-main finalization](docs/qa/evidence/TASK-029/LATEST_MAIN_FINALIZATION.md)。
+
+接入前同一基线的真实 Qwen 32-case matrix：安全边界 32/32、核心 M01～M10 原始分类 20/20、全部原始分类 24/32；其余表达由确定性校验拒绝或澄清。CTX-03/04 及 executor/recovery/initiative/tactical/routine 复验记录见[基线复验](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。这些结果分别记录，不能视为任意自然语言表达、全地图行为或发布版本的保证。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
+
+当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；TASK-026也只使用基础形体表达树木、草、岩石和地标，菜单插画不代表三维城寨或正式森林资产已制作。latest-main 候选已同时保留主角模型与八段基础动画：待机/行走/冲刺采用 UE 第三人称模板经 IK Retargeter 重定向，其余五段为本地关键帧；自然地图 Shift 冲刺、左键预览挥击，开发场景近战成功与资源交互分别驱动挥击和挖掘。导航使用动态 Recast 与 Navigation Invokers，按玩家/伙伴附近已加载地形生成，支持障碍绕行；全图可达性、长距离跨流送回营和攀爬/跳跃连接仍未验收。完整十小时剧情、带工具和脚部IK的完整动作系统、营地生产/设施升级、重伤救援和 Shipping 打包尚未完成。TASK-004 自然素材源文件由此前 77 个增至 115 个，其中本批新增冷杉和松树的 38 个源文件。026只复用了其中三张地表贴图，004模型适配与整单验收仍未完成，见[既有资源汇总](resourceSummary.md)与[新增树木来源](art_source/TASK-004/polyhaven/SOURCE.md)。020经验曲线、节点、任务、建筑、制作配方与战斗参数为独立内容配置，未替代GDD未决R项。
 
 四件 Tripo 道具源资产（石骨斧、原始鱼竿、骨肉袋、陶罐）的 FBX、参考图和预览已存入 `art_source/TASK-004/Tripo/妙妙道具`，但尚未导入 UE Content 或完成游戏内验收，不视为已接入玩法。
 
@@ -87,6 +103,6 @@ TASK-026本次重建记录见[REBUILD](docs/world/TASK-026/REBUILD.md)，历史�
 
 游戏为独立Git仓库，上层GameFactory是工具仓库。引擎生命周期和构建通过GameFactory的UEClient公开API进行。新会话先读 [AGENTS.md](AGENTS.md)、[START_HERE](docs/START_HERE.md) 和当前任务交接。
 
-伙伴导航复用现有操作：X 跟随、Z 等待、C 协助进攻，T 下达采集委托。开发场景在创建伙伴时按碰撞几何生成临时导航边界；关卡已有 `NavMeshBoundsVolume` 时使用关卡设置，不改写地图资产。
+伙伴导航操作：X 跟随、Z 等待、C 协助有效威胁，T 下达委托；自然地图目前没有布置战斗敌人。自然地图运行时创建覆盖已知地图尺寸的导航边界，通过 invoker 只生成附近 tiles，不改写地图资产。开发场景保留显式 `Hearthward.Companion.CreateTest` 夹具。
 
-025 v2本机GPU复验使用 `-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32`；CPU兼容路径与Vulkan耗时分别记录，默认CPU策略未更改。启动方式和实际限制见025交接。
+025 v2本机GPU复验使用 `-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32`；CPU兼容路径与Vulkan耗时分别记录，默认CPU策略未更改。Development Editor 还支持 `-HearthwardAIBundlePath=<已有Runtime/LocalAI>`，便于隔离 worktree 复用本机模型包；Shipping 不接受该覆盖。本机隔离工作树启动还需 `-HearthwardAIBundlePath=G:/GameFactory/Hearthward/Runtime/LocalAI`，或按锁定版本准备此工作树自己的模型包；直接双击尚未准备模型包的工作树工程只能使用手动任务卡。当前手动入口见上方“运行”。TASK-029 及内部 032—040 的当前回归脚本使用显式夹具初始化；更早的历史脚本需按其记录版本运行，不能用其旧“新游戏创建夹具”假设测试当前入口。

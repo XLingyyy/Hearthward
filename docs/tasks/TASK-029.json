@@ -12,6 +12,7 @@
     "2026-09-23 Owner: AI NPC final delivery and acceptance use TASK-029",
     "docs/handoffs/TASK-029.md",
     "docs/qa/evidence/TASK-029/FINAL_ACCEPTANCE.md",
+    "docs/qa/evidence/TASK-029/LATEST_MAIN_FINALIZATION.md",
     "DSGN-001 local inference and DSGN-025 agent boundaries"
   ],
   "dependencies": [
@@ -28,11 +29,12 @@
     "Source/Hearthward/AI/",
     "Source/Hearthward/Companion/",
     "Source/Hearthward/Building/HearthwardWorkshopService.cpp",
-    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
-    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Source/Hearthward/Gameplay/",
+    "Source/Hearthward/Interaction/",
     "Source/Hearthward/Save/",
     "Source/Hearthward/Tests/",
     "Source/Hearthward/UI/",
+    "Config/DefaultEngine.ini",
     "config/local-ai.lock.json",
     "config/npc-agent.policy.json",
     "config/toolchain.lock.json",
@@ -43,7 +45,16 @@
     "docs/tasks/TASK-029.md",
     "docs/handoffs/TASK-029.md",
     "docs/handoffs/AI-NPC-VNEXT-PR.md",
-    "docs/qa/evidence/TASK-029/"
+    "docs/qa/evidence/TASK-029/",
+    "docs/qa/evidence/TASK-032/verify_adaptive_recovery_pie.py",
+    "docs/qa/evidence/TASK-033/verify_belief_state_pie.py",
+    "docs/qa/evidence/TASK-034/verify_initiative_pie.py",
+    "docs/qa/evidence/TASK-035/verify_episode_pie.py",
+    "docs/qa/evidence/TASK-036/verify_tactical_cooperation_pie.py",
+    "docs/qa/evidence/TASK-037/verify_coordination_prior_pie.py",
+    "docs/qa/evidence/TASK-038/verify_camp_routine_pie.py",
+    "docs/qa/evidence/TASK-040/",
+    "docs/world/TASK-026/CAMP_INTEGRATION.md"
   ],
   "forbidden_paths": [
     "Runtime/LocalAI/",
@@ -58,8 +69,9 @@
     "bounded context uses at most full/compact/required-minimal tiers with real template token counting and at most one generation",
     "mandatory context overflow produces explicit failure with zero generation and no world mutation",
     "Schema 2 save data migrates through the real file path to Schema 3 without inventing cognition history",
+    "natural-map camp runtime supports companion creation, finite resources, dialogue, collection, storage, crafting and backward-compatible saves",
     "real Qwen clean/pressure matrix and current-source runtime regressions are recorded with raw model, guardrail and world-state results separated",
-    "latest main is integrated, final build/native/repository checks pass, PR is updated for review and is not merged by the agent"
+    "latest main is integrated; build/native/runtime results are recorded; repository-validator baseline failures are explicitly separated from TASK-029; PR is updated for review and is not merged by the agent"
   ],
   "non_goals": [
     "No model or GGUF replacement",
@@ -83,8 +95,11 @@
     "merge": "not_granted"
   },
   "notes": [
-    "Earlier AI development used temporary 027-040 labels; they are archived only under TASK-029/internal-history and do not claim canonical task numbers.",
+    "Earlier AI development used temporary 027-040 labels; they are historical evidence labels only and do not claim canonical task numbers.",
     "Project-wide canonical TASK-027 is character animation and TASK-028 is 3D asset integration.",
-    "Current latest-main integration baseline is origin/main@ba547c0ee5a1d8dae41e747a5d1d0674d7702899."
+    "Current latest-main integration baseline is origin/main@ba547c0ee5a1d8dae41e747a5d1d0674d7702899.",
+    "Natural-camp integration from PR head 25d53d8 is merged with the latest-main AI candidate before final PR update.",
+    "TASK-036 latest-main regression uses the player Origin captured by EnableAdventure rather than camp as the encounter coordinate baseline; production tactical code was unchanged.",
+    "Repository validator is baseline-blocked: the same nine TASK-026/027/028 workflow metadata errors reproduce on clean main@ba547c0."
   ]
 }

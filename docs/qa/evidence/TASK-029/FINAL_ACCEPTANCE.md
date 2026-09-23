@@ -21,7 +21,7 @@ This is the canonical evidence index for the AI NPC vNext delivery. Earlier inte
 | event-driven Initiative runtime | **16/16 PASS** |
 | tactical cooperation runtime | **16/16 PASS** |
 | camp Routine runtime | **26/26 PASS** |
-| repository validator | 0 errors |
+| repository validator | **Baseline-blocked** — 9 pre-existing main workflow-metadata errors, none attributed to TASK-029 |
 | repository Python tests | **31/31 PASS** |
 
 ## Raw evidence
@@ -87,16 +87,16 @@ The safety set M11–M16 is evaluated primarily on whether prohibited world writ
 
 ## Final post-merge integration
 
-Latest `origin/main@28e7c52` was merged into the candidate branch before PR creation. The only substantive source conflict was `HearthwardSaveSubsystem.cpp`; the resolution preserves main's Natural World save path while retaining TASK-029 NPC schema v3 memory and execution-plan restoration when a companion exists.
+The final candidate synchronizes `origin/main@ba547c0ee5a1d8dae41e747a5d1d0674d7702899` and merges the PR #34 natural-camp AI line. The combined tree preserves main's hero/animation integration, Natural World save support, natural-camp companion/resources, and TASK-029 NPC schema v3 memory / execution-plan restoration.
 
 Post-merge validation:
 
-- repository validator: PASS, 0 errors
+- repository validator: baseline-blocked by the same 9 TASK-026/027/028 workflow-metadata errors reproduced on clean `main@ba547c0`; no TASK-029-specific validator regression observed
 - Python repository tests: 31/31 PASS
 - clean/rebuilt `HearthwardEditor Win64 Development`: PASS
 - full native `Hearthward.*`: 41/41 PASS, 0 warnings/failures/not-run
 - TASK-029 explicit-prototype runtime smoke: 23/23 PASS
 
-See [POST_MERGE_VALIDATION](POST_MERGE_VALIDATION.md).
+See [POST_MERGE_VALIDATION](POST_MERGE_VALIDATION.md) and [LATEST_MAIN_FINALIZATION](LATEST_MAIN_FINALIZATION.md).
 
 The production New Game path now targets the Natural World. AI tests therefore use the explicit Development-only `Hearthward.Companion.CreateTest → EnablePrototype → StartNewProgress` fixture instead of repurposing production navigation.

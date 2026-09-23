@@ -22,13 +22,13 @@ void AHearthwardHUD::BeginPlay()
         Screen->AddToViewport(10); Screen->InitializeScreen(this);
     }
     GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this, &AHearthwardHUD::SnapshotRestored);
-#if !UE_BUILD_SHIPPING
-    // R23: temporary prototype key, kept in the UI input component.
     EnableInput(GetOwningPlayerController());
     InputComponent->BindKey(EKeys::T,IE_Pressed,this,&AHearthwardHUD::ToggleDialogue);
     InputComponent->BindKey(EKeys::R,IE_Pressed,this,&AHearthwardHUD::ToggleStorageMenu).bExecuteWhenPaused = true;
     InputComponent->BindKey(EKeys::F6,IE_Pressed,this,&AHearthwardHUD::ToggleSaveMenu).bExecuteWhenPaused = true;
+#if !UE_BUILD_SHIPPING
     InputComponent->BindKey(EKeys::F10,IE_Pressed,this,&AHearthwardHUD::EditUILayout).bExecuteWhenPaused = true;
+#endif
     InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::P,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::M,IE_Pressed,this,&AHearthwardHUD::OpenMap).bExecuteWhenPaused=true;
@@ -46,7 +46,6 @@ void AHearthwardHUD::BeginPlay()
     InputComponent->BindKey(EKeys::Z,IE_Pressed,this,&AHearthwardHUD::CompanionWait);
     InputComponent->BindKey(EKeys::X,IE_Pressed,this,&AHearthwardHUD::CompanionFollow);
     InputComponent->BindKey(EKeys::C,IE_Pressed,this,&AHearthwardHUD::CompanionAttack);
-#endif
 }
 void AHearthwardHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
