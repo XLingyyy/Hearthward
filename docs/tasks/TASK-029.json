@@ -7,12 +7,13 @@
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": "codex/ai-npc-vnext-rework-01-fix",
+  "branch": "codex/integrated-latest-20260923",
   "source_refs": [
     "2026-09-23 Owner: AI NPC final delivery and acceptance use TASK-029",
     "docs/handoffs/TASK-029.md",
     "docs/qa/evidence/TASK-029/FINAL_ACCEPTANCE.md",
     "docs/qa/evidence/TASK-029/LATEST_MAIN_FINALIZATION.md",
+    "2026-09-23 Owner: integrate latest TASK-029 and TASK-042 worktrees on a new branch",
     "DSGN-001 local inference and DSGN-025 agent boundaries"
   ],
   "dependencies": [
@@ -30,6 +31,7 @@
     "Source/Hearthward/Companion/",
     "Source/Hearthward/Building/HearthwardWorkshopService.cpp",
     "Source/Hearthward/Gameplay/",
+    "Source/Hearthward/HearthwardCharacter.cpp",
     "Source/Hearthward/Interaction/",
     "Source/Hearthward/Save/",
     "Source/Hearthward/Tests/",
@@ -71,7 +73,7 @@
     "Schema 2 save data migrates through the real file path to Schema 3 without inventing cognition history",
     "natural-map camp runtime supports companion creation, finite resources, dialogue, collection, storage, crafting and backward-compatible saves",
     "real Qwen clean/pressure matrix and current-source runtime regressions are recorded with raw model, guardrail and world-state results separated",
-    "latest main is integrated; build/native/runtime results are recorded; repository-validator baseline failures are explicitly separated from TASK-029; PR is updated for review and is not merged by the agent"
+    "the named main@ba547c0 baseline and selected TASK-042 worktree changes are integrated; build/native/runtime results and repository-validator baseline failures are recorded; this new branch is pushed for review without agent merge"
   ],
   "non_goals": [
     "No model or GGUF replacement",
@@ -88,7 +90,7 @@
     "T-020"
   ],
   "permissions": {
-    "network": "granted for dedicated branch push and PR update",
+    "network": "granted for dedicated integrated branch push",
     "install_dependencies": "not_granted",
     "commit": "granted",
     "push": "granted",
@@ -97,7 +99,8 @@
   "notes": [
     "Earlier AI development used temporary 027-040 labels; they are historical evidence labels only and do not claim canonical task numbers.",
     "Project-wide canonical TASK-027 is character animation and TASK-028 is 3D asset integration.",
-    "Current latest-main integration baseline is origin/main@ba547c0ee5a1d8dae41e747a5d1d0674d7702899.",
+    "Integrated worktree baseline is main@ba547c0 plus PR #34 and TASK-029 core at checkpoint 66d0107; remote main subsequently advanced to be9286f through independent TASK-030 work.",
+    "This branch integrates selected TASK-042 gameplay, interaction, natural tree, and UI patches without replacing TASK-029 AI or touching locked assets.",
     "Natural-camp integration from PR head 25d53d8 is merged with the latest-main AI candidate before final PR update.",
     "TASK-036 latest-main regression uses the player Origin captured by EnableAdventure rather than camp as the encounter coordinate baseline; production tactical code was unchanged.",
     "Repository validator is baseline-blocked: the same nine TASK-026/027/028 workflow metadata errors reproduce on clean main@ba547c0."
