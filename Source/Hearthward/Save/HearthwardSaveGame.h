@@ -33,6 +33,7 @@ USTRUCT()
 struct FHearthwardWorldSave
 {
     GENERATED_BODY()
+    UPROPERTY() bool NaturalWorld = false;
     UPROPERTY() FString Map;
     UPROPERTY() double ActiveSeconds = 0;
     UPROPERTY() FTransform Player = FTransform::Identity;

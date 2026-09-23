@@ -9,7 +9,7 @@
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
 
-当前实施分支为 [TASK-026 大地图自然场景底座](tasks/TASK-026.md)：已形成4032 m World Partition灰盒、独立浏览入口和局部PIE证据，但视觉、长路线、Standalone流送、性能与Owner验收未完成，机器状态为Blocked。人文场景后置，004人物和房屋缺项不阻塞自然底座；接手先看[世界状态](world/TASK-026/CURRENT.md)与[026交接](handoffs/TASK-026.md)。
+当前实施分支为 `codex/TASK-026-natural-world-rebuild`。TASK-026 使用 UE 5.8.2 构建4.032 km自然地图，现按用户最新要求先精修新营地，远区暂缓。Bootstrap 主菜单的新游戏、存档和继续游戏已接入新营地；入口、局部树石实例及验证见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。任务仍为 Active，完整路线、流送、性能和Owner视觉验收尚未完成；人文内容后置。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。

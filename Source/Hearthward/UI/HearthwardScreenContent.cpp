@@ -443,6 +443,15 @@ void UHearthwardScreenWidget::ComposeMemory()
 }
 void UHearthwardScreenWidget::ComposeHUD()
 {
+    if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled())
+    {
+        const FVector Camp(-98000,-75000,0),Here=GetOwningPlayerPawn()->GetActorLocation();
+        Element(TEXT("text"),TEXT("新营地 · 自然探索"),FVector2D(48,52),FVector2D(440,48),24);
+        Elements.Last().Color=Color(TEXT("gold"));
+        Element(TEXT("text"),FString::Printf(TEXT("距营地 %.0f 米"),FVector::Dist2D(Camp,Here)/100),FVector2D(48,103),FVector2D(340,34),18);
+        Element(TEXT("text"),TEXT("Esc 暂停 · F6 存档"),FVector2D(1270,872),FVector2D(355,35),18);
+        return;
+    }
     if(const auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && !B->Feedback.IsEmpty())
     {
         Element(TEXT("notice"),B->Feedback,FVector2D(500,625),FVector2D(680,55),18);

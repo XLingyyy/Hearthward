@@ -29,4 +29,4 @@
 | [TASK-022](../tasks/TASK-022.json) | 自由建造、五秒结算与建筑回档 | TASK-021 | Blocked |
 | [TASK-023](../tasks/TASK-023.json) | 工作台即时制作与原子库存结算 | TASK-022 | Blocked |
 | [TASK-024](../tasks/TASK-024.json) | 工作台装备维修与耐久回档 | TASK-023 | Blocked |
-| [TASK-026](../tasks/TASK-026.json) | 大地图自然场景底座，人文后置 | TASK-003；复用004已交付素材，无需004整单完成 | Blocked：灰盒地图与局部PIE已完成；视觉、长路线、Standalone、性能和独立评审待补 |
+| [TASK-026](../tasks/TASK-026.json) | 世界自然地图v2返工，人文后置 | TASK-003；复用004已交付素材，无需004整单完成 | Active：UE5.8.2，S1植被/地表/湖岸精修及局部实走已有证据；Owner样段批准、全图扩展、完整路线、正式流送/性能及独立评审待完成 |
