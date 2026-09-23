@@ -12,7 +12,7 @@ AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。集
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；TASK-026 地图工作与 TASK-029 AI NPC 工作保持分支隔离 |
 | 当前分支 | 本轮融合：`codex/integrated-latest-20260923`；对外统一 TASK-029。地图：`codex/TASK-026-natural-world-rebuild` 另行推进 |
-| 游戏实现提交 | 远端 main 当前为 `be9286f`；本轮分支原基于 `ba547c0`，现已在本地合入 `main@be9286f` 并完成组合复验；旧 PR #34 不代表本轮分支；等待 review/Owner 验收，不自动 merge |
+| 游戏实现提交 | 远端 main 当前为 `be9286f`；本轮分支原基于 `ba547c0`，现已在 `1f8e4dd2c9c2e7b921c4aeb36e49ff5419f5ff6a` 合入 `main@be9286f` 并完成组合复验；旧 PR #34 不代表本轮分支；等待 review/Owner 验收，不自动 merge |
 | Git LFS | 已启用；本次 AI NPC PR 不主动修改地图/资产 LFS 内容，main 资产更新仅作为同步基线继承 |
 | 工具链 | UE 5.8.2、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |

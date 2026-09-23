@@ -1,6 +1,6 @@
 # TASK-029 + TASK-030 主干组合复验
 
-日期：2026-09-24。操作环境：Windows、UE 5.8.2、Editor Development、隔离 `-HearthwardSaveTestPool`。合并候选从 `codex/integrated-latest-20260923@cbf0ebe50cb120dafd9e497c7ff1d7d36659737a` 引入 `main@be9286fdc09beac8cf10ec21126472b0ce5bfbcb`；本报告记录合并提交前相同源码的复验，提交 SHA 由后续交接补记。
+日期：2026-09-24。操作环境：Windows、UE 5.8.2、Editor Development、隔离 `-HearthwardSaveTestPool`。合并候选从 `codex/integrated-latest-20260923@cbf0ebe50cb120dafd9e497c7ff1d7d36659737a` 引入 `main@be9286fdc09beac8cf10ec21126472b0ce5bfbcb`；验证源码提交为 `1f8e4dd2c9c2e7b921c4aeb36e49ff5419f5ff6a`。测试在提交前的相同源码树运行，提交只归档经验证的代码与结果。
 
 ## 冲突与代码范围
 

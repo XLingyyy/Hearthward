@@ -16,7 +16,7 @@ AI NPC vNext 最终统一使用 **TASK-029**。早期 027～040 仅作为内部�
 
 ## 2026-09-24 当前 main 组合候选
 
-用户明确要求将本轮分支按最佳结果合入 main。已从 `main@be9286fdc09beac8cf10ec21126472b0ce5bfbcb` 无提交合并到专用分支，解决 README 和 NaturalCamp 两处冲突。新组合源码通过 UE Editor Development 构建、Python 31/31、原生 43/43、TASK-030 Demo 70/70、UI 62/62、自然路线 51/51、跟随 8/8、攻击 10/10、runtime smoke 23/23。原始结果与测试边界见[主干组合报告](../qa/evidence/TASK-029/main-integration-20260924/REPORT.md)。后续需要提交并推送组合分支、建立 PR，接受非作者真人审查，再按保护规则合并；合并后的 main SHA 仍需单独记录集成验收。
+用户明确要求将本轮分支按最佳结果合入 main。已将 `main@be9286fdc09beac8cf10ec21126472b0ce5bfbcb` 合入专用分支，解决 README 和 NaturalCamp 两处冲突，源码提交为 `1f8e4dd2c9c2e7b921c4aeb36e49ff5419f5ff6a`。新组合源码通过 UE Editor Development 构建、Python 31/31、原生 43/43、TASK-030 Demo 70/70、UI 62/62、自然路线 51/51、跟随 8/8、攻击 10/10、runtime smoke 23/23。原始结果与测试边界见[主干组合报告](../qa/evidence/TASK-029/main-integration-20260924/REPORT.md)。后续需推送组合分支、建立 PR，接受非作者真人审查，再按保护规则合并；合并后的 main SHA 仍需单独记录集成验收。
 
 GitHub 连接器尝试创建 TASK-029 集成 Issue 返回 `403 Resource not accessible by integration`；未创建 Issue，不编造 URL。canonical TASK-027 reviewer / Issue URL 两项既有 validator 错误仍在。
 
