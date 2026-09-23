@@ -1,8 +1,8 @@
 # TASK-004 获取／创建 UE 基础资产库与展示场景
 
 状态：**Backlog，已有部分制作源资产入库，整单未执行完成**。Owner：XLingyyy；独立评审人、Issue 待分配。
-机器快照：[TASK-004.json](TASK-004.json)。整单拟用分支：`codex/TASK-004-foundation-assets`；本批资产同步分支：`assets/building-parts-trees-20260923`。
-前置工程：[TASK-003](TASK-003.md)。2026-09-23 用户分别授权将本地 Tripo 动物批次，以及房屋建筑部件与 Poly Haven 树木目录的新增内容作为制作源资产同步到任务分支并创建 PR；这些授权不扩展到 UE 导入、动画制作、玩法接入或合并 main。
+机器快照：[TASK-004.json](TASK-004.json)。整单拟用分支：`codex/TASK-004-foundation-assets`；本批敌人与篝火同步分支：`assets/enemies-campfire-20260923`。
+前置工程：[TASK-003](TASK-003.md)。2026-09-23 用户分别授权将本地 Tripo 动物、房屋建筑部件、敌人与篝火批次，以及 Poly Haven 树木目录的新增内容作为制作源资产同步到任务分支并创建 PR；这些授权不扩展到 UE 导入、动画制作、玩法接入或合并 main。
 
 ## 当前局部进度（2026-09-23）
 
@@ -10,9 +10,11 @@
 
 这批内容仅是 `TEMP_VISUAL` 制作候选，不把雄鹿、野兔、山羊等条目解释为 R16 已批准的正式物种清单。当前未导入 UE `Content/`，未附加动作动画，也未进行尺寸、枢轴、碰撞、材质、LOD/Nanite、展示场景或游戏内验收；因此不计为本任务整单完成。
 
-本次分支在 `art_source/TASK-004/Tripo/房屋建筑部件` 增加 8 张参考图、8 个静态 FBX 和 8 张 PNG 预览：木地板、木楼梯、实心木墙、门洞木墙、窗洞木墙、木门、茅草坡屋顶及茅草屋脊。逐件任务 ID、生成配置和来源授权见该目录的索引与 `SOURCE.md`。这些房屋造型同样标记为 `TEMP_VISUAL`，尚未确定正式建筑风格、营地等级或 UE 中的吸附尺寸与碰撞。
+此前已合入 main 的 `art_source/TASK-004/Tripo/房屋建筑部件` 包含 8 张参考图、8 个静态 FBX 和 8 张 PNG 预览：木地板、木楼梯、实心木墙、门洞木墙、窗洞木墙、木门、茅草坡屋顶及茅草屋脊。逐件任务 ID、生成配置和来源授权见该目录的索引与 `SOURCE.md`。这些房屋造型同样标记为 `TEMP_VISUAL`，尚未确定正式建筑风格、营地等级或 UE 中的吸附尺寸与碰撞。
 
-`art_source/TASK-004/polyhaven/树木` 新增 Poly Haven 的 Fir Tree 01 和 Pine Tree 01 原始 Blender 文件及 4K 贴图，共 38 个文件；原有岛树与蓝花楹的 22 个文件按 SHA-256 核对后保持不变。Poly Haven 来源页面、CC0 许可及复制规模见[来源说明](../../art_source/TASK-004/polyhaven/SOURCE.md)。本次只扩充制作源文件，尚未转换、优化或导入 UE。
+此前已合入 main 的 `art_source/TASK-004/polyhaven/树木` 新增 Poly Haven 的 Fir Tree 01 和 Pine Tree 01 原始 Blender 文件及 4K 贴图，共 38 个文件；原有岛树与蓝花楹的 22 个文件按 SHA-256 核对后保持不变。Poly Haven 来源页面、CC0 许可及复制规模见[来源说明](../../art_source/TASK-004/polyhaven/SOURCE.md)。这部分只扩充制作源文件，尚未转换、优化或导入 UE。
+
+本批 `art_source/TASK-004/Tripo/敌人` 增加短刀兵与重甲兵各 1 张参考 PNG、1 个静态 FBX、1 张预览及 1 个通过双足适配检查的带骨骼 FBX；`art_source/TASK-004/Tripo/篝火` 增加 1 张参考 PNG、1 个静态 FBX 和 1 张预览。来源、任务 ID 与额度见各目录索引和 `SOURCE.md`。三件均为 `TEMP_VISUAL` 制作源资产：敌人未做动作重定向、武器/盾牌权重检查或 UE 导入；篝火火焰是静态造型，尚无动态特效、灯光或游戏内验证。它们不代表正式兵种、美术风格或篝火玩法外观已定。
 
 ## 交付目标
 
