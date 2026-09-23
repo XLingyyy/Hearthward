@@ -8,7 +8,7 @@
 - 远端分支：`origin/codex/ai-npc-vnext-rework-01`
 - 受测源码提交：`6d1ca5e35050566408f69329cedf2bd2b526d4a4`
 - 受测前本地验证 worktree 干净；验证后只增加文档与工具链口径更新。
-- `origin/main`：`e729349a6dc462e4945351cc2ad6a6cc678656ce`。候选分支比 main 落后 6 个提交、领先 3 个提交；`git merge-tree --write-tree` 预演无冲突，未执行合并。
+- `origin/main`：`73bb10ec4c19260cb72112c7e282a2c29f6c2432`。候选分支比 main 落后 11 个提交、领先 4 个提交；最新 `git merge-tree --write-tree origin/main HEAD` 预演发现 `README.md` 内容冲突，`docs/tasks/TASK-004.json` 和 `docs/tasks/TASK-004.md` 可自动合并。未执行合并。
 
 ## 工具链
 
