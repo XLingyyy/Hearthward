@@ -19,11 +19,13 @@ Poly Haven states that all of its assets are released under CC0. Commercial use,
 | Tree Stump 01 | https://polyhaven.com/a/tree_stump_01 |
 | Jacaranda Tree | https://polyhaven.com/a/jacaranda_tree |
 | Island Tree 02 | https://polyhaven.com/a/island_tree_02 |
+| Fir Tree 01 | https://polyhaven.com/a/fir_tree_01 |
+| Pine Tree 01 | https://polyhaven.com/a/pine_tree_01 |
 | Grass Ground | https://polyhaven.com/a/grass_ground |
 | Dirt | https://polyhaven.com/a/dirt |
 | Rocky Terrain | https://polyhaven.com/a/rocky_terrain |
 
-The copied collection contains 53 source files totaling 1,300,014,678 bytes. A byte-for-byte SHA-256 comparison against the local source collection reported zero mismatches before commit.
+The collection now contains 91 source files totaling 3,566,021,342 bytes. This batch adds 38 Fir Tree 01 and Pine Tree 01 files (2,266,006,664 bytes) to the 53 files already in the repository. The 22 previously present tree files and all 38 new tree files were compared byte-for-byte by SHA-256 with the local source collection; no mismatches were found.
 
 ## Repository handling
 
