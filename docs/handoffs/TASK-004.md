@@ -1,6 +1,16 @@
 # TASK-004 制作源资产同步交接（2026-09-23）
 
-本交接记录房屋建筑部件及树木的局部进度。TASK-004 仍为 Backlog，整单 UE 导入、展示与验收未完成。
+本交接记录房屋建筑部件、树木和室内家具的局部进度。TASK-004 仍为 Backlog，整单 UE 导入、展示与验收未完成。
+
+## 室内家具批次：PR #31
+
+- 用户授权：将本地 `Resource/Tripo/室内家具` 的已生成内容提交、推送并以 PR 同步到公开的 Hearthward 仓库；未授权合并或 UE 接入。
+- 基线：`origin/main`，`73bb10ec4c19260cb72112c7e282a2c29f6c2432`。独立分支：`assets/indoor-furniture-20260923`；资产与进度文档提交：`8e3bb7f4e529f317c134fdb101e25c16a244e4b7`；[PR #31](https://github.com/XLingyyy/Hearthward/pull/31) 指向 `main`。
+- `art_source/TASK-004/Tripo/室内家具`：5 张参考 PNG、5 个静态 FBX、5 张 PNG 预览、来源说明及逐件索引。Tripo `v3.1-20260211`，每件 45 credits，共 225；任务 ID 见索引。API key、上传令牌、签名 URL、本地生成脚本及运行清单均未入库。
+- 二进制文件 15/15 与本地生成源文件按 SHA-256 一致，合计 46,435,221 字节；FBX 文件头 5/5 有效，预览 PNG 文件头 5/5 有效。15/15 二进制由 Git LFS 跟踪，新增 5 个 FBX 均已取得 LFS 锁并保留到集成交接。
+- `python scripts/validate_repo.py`：PASS，0 errors；`python scripts/validate_repo.py --task TASK-004 --base origin/main`：PASS，0 errors；`python -m unittest discover -s scripts/tests -v`：PASS，31 tests；`git diff --cached --check`：PASS。敏感令牌模式扫描无匹配。
+- UE Editor、PIE、打包与目标机性能：NOT_RUN。模型只是 `TEMP_VISUAL` 制作候选，尚未导入 UE；尺寸、枢轴、背面、碰撞、LOD、材质和提灯透明／发光表现仍需验证。
+- Tripo 付费用户分发权说明及原图权利责任见本批 `SOURCE.md`。本次 PR 不改游戏地图、源代码或玩法，也不代表 TASK-004 整单验收。
 
 ## 分支与授权
 
