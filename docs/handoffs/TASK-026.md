@@ -4,6 +4,14 @@
 
 最新用户方向为营地局部精修，远区暂缓，并接通原主界面新游戏、自然地图存档和继续游戏。用户随后要求取回 main 新推送的冷杉与松树。已从 `origin/main 73bb10e` 选择性取回 TASK-004 源素材作为本机只读输入，派生 4 件针叶树 UE 网格；营地四个树木批次切换网格，另在林缘补 48 棵并保留成对树干碰撞实例。冷杉源 LOD 的通用角点 UV 已转换；覆盖重导入曾触发 UE 编辑器断言，改为新包导入和地图切换，错误包确认无引用后清理。当前实机树冠仍比样图稀疏；若要达到密林轮廓，需要更密树冠的常绿树或幼树资产。完整现场与证据见[营地接入记录](../world/TASK-026/CAMP_INTEGRATION.md)。2026-09-23 用户授权提交并推送当前 026 分支；004 两份 `.blend` 仍由 `violet-sept` 持锁，本分支仅交付 026 派生资产与场景改动，重建源文件由 `origin/main 73bb10e` 提供，不重复提交持他人锁的源包。下方 2026-09-22 的全图顺序与发布授权是历史交接信息。
 
+### 本轮提交与验证绑定
+
+- 实现提交及 `tested_commit`：`20db5cc69ff7a35cf6dc9f3cd54290a1301a2535`。运行验证发生在提交前的同一工作树，此后功能代码和 UE 资产未再改动。
+- UE 5.8.2 `HearthwardEditor Win64 Development` 构建通过；`Hearthward.Save.FileIntegrityAndSnapshot` 与 `Hearthward.Save.NPCMemoryCompatibility` 各 1/1 通过。隔离档池实机完成“新游戏→营地出生→F6 手动存档→主菜单→继续游戏”；针叶树清理后再次从主菜单继续游戏到营地。截图、计划和应用结果见[营地接入记录](../world/TASK-026/CAMP_INTEGRATION.md)及其链接的证据。
+- 提交前 `git diff --cached --check` 通过；仅暂存 365 个 026 范围文件。`.uproject` 的本机引擎关联、IDE 文件、未选用的中间截图及从 main 取回的 004 源文件留在本机，未纳入本提交。5 个新 FBX 已由 `XLingyyy` 加 LFS 锁，其他改动的 Rebuild 包沿用本人锁。
+- `scripts/validate_repo.py --task TASK-026 --base b9ff4ea` 返回 63 个范围错误：该工具固定按旧基线的 026 路径表判定，包含本轮用户批准的 UI/存档路径，也扫描未暂存的 004 源文件和本机工程文件。该结果不能当作本轮新范围通过；暂存列表已单独核对，没有任务单禁止路径。
+- 完整自然地图、远区、性能、独立评审和 Owner 视觉验收仍未完成；本轮提交保持 TASK-026 为 Active。
+
 ## 2026-09-22 本次接手
 
 当前工作目录 `G:/GameFactory/Hearthward`，分支 `codex/TASK-026-natural-world-rebuild`。v2返工基线 `b9ff4eafb6263bc0efb5b24d8d4e27d584462418`，UE 5.8.2。新地图 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds`，通过GameFactory根目录的 `.venv/Scripts/python.exe -X utf8 Hearthward/scripts/world/TASK-026/open_rebuild.py --game --medium` 浏览。样段现状、证据和缺项见[审阅记录](../world/TASK-026/rework-v2/S1-review.md)、[前后对照](../world/TASK-026/rework-v2/S1-review.html)、[当前计划](../world/TASK-026/rework-v2/PLAN.md)。用户授权提交与推送，未授权合并；样段未经Owner批准不得推广全图。旧地图、原有他人资产锁、004源素材及本机工程/IDE改动保留。
