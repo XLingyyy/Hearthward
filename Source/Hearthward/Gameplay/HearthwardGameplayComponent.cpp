@@ -44,10 +44,13 @@ void UHearthwardGameplayComponent::EnableAdventure()
     if (Enabled) return;
     Enabled = true; Origin = GetOwner()->GetActorLocation();
     Origin.Z = GetOwner()->GetActorLocation().Z - 100;
-    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+    const bool NaturalWorld = UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds");
+    if(NaturalWorld) Origin=FVector(-98000,-75000,16100);
+    else for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
         if(IsValid(It->Camp)) { Origin=It->Camp->GetActorLocation()-FVector(0,0,100); break; }
     Discovered.Add(TEXT("camp")); Activated.Add(TEXT("camp"));
-    CreateLandmarks();
+    // The natural map already owns its terrain and encounters; the old prototype cylinders do not belong there.
+    if(!NaturalWorld) CreateLandmarks();
     OnChanged.Broadcast();
 }
 void UHearthwardGameplayComponent::CreateLandmarks()
@@ -560,5 +563,13 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     auto Set=[&](const TCHAR* Key,TSet<FName>& Values){ for(const auto& V:J->GetArrayField(Key)) Values.Add(FName(*V->AsString())); };
     Set(TEXT("discovered"),Discovered); Set(TEXT("activated"),Activated); Set(TEXT("claimed"),Claimed);
     for(const auto& V:J->GetArrayField(TEXT("explored"))) Explored.Add(FVector2D(Number(V->AsObject(),TEXT("x")),Number(V->AsObject(),TEXT("y"))));
-    if(Enabled) CreateLandmarks();
+    if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled())
+    {
+        // Legacy natural saves contain a disabled gameplay snapshot. Keep their format and enable
+        // the existing building/equipment state after the player's saved transform has been restored.
+        Origin=FVector(-98000,-75000,16100);
+        Enabled=true;
+        Discovered.Add(TEXT("camp")); Activated.Add(TEXT("camp"));
+    }
+    else if(Enabled) CreateLandmarks();
 }

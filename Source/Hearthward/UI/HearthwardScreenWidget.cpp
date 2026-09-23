@@ -116,7 +116,8 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
 {
     if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled()
         && Name!=TEXT("hud") && Name!=TEXT("title") && Name!=TEXT("pause")
-        && Name!=TEXT("save") && Name!=TEXT("settings") && Name!=TEXT("inventory"))
+        && Name!=TEXT("save") && Name!=TEXT("settings") && Name!=TEXT("inventory")
+        && Name!=TEXT("building") && Name!=TEXT("crafting") && Name!=TEXT("repairing"))
     { Message=TEXT("该功能尚未接入自然地图"); MessageUntil=FPlatformTime::Seconds()+4; Refresh(); return; }
     if(Page==TEXT("dialogue") && Name!=Page) GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
     if(Name==TEXT("crafting") || Name==TEXT("repairing"))

@@ -2,16 +2,18 @@
   "schema_version": 1,
   "id": "TASK-028",
   "title": "建筑、物品、武器、防具等3D资产导入与游戏应用",
-  "status": "Backlog",
+  "status": "Active",
   "updated_at": "2026-09-23",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
   "branch": "codex/TASK-028-3d-assets-integration",
   "source_refs": [
-    "2026-09-23用户：仅下发028任务单并推送main，不执行",
+    "2026-09-23用户：先仅下发028任务单并推送main，不执行；随后明确要求部署工作流并执行TASK-028",
+    "2026-09-23用户：明确批准将 Source/Hearthward/UI/HearthwardScreenWidget.cpp 与 Source/Hearthward/UI/HearthwardScreenContent.cpp 纳入TASK-028范围；Issue及独立评审人尚未分配",
+    "2026-09-23用户：要求将当前TASK-028进度通过Pull Request同步到XLingyyy/Hearthward远端；授权任务分支提交、推送和创建PR，不包含合并main",
     "docs/tasks/TASK-028.md",
-    "main 414dc70：自然营地、既有玩法及已入库Tripo素材"
+    "main 28e7c52e10e3988a19ca1e4b7e4fcf86ab2f3b93：本次任务工作树实际实施基线"
   ],
   "dependencies": [
     "TASK-003",
@@ -38,6 +40,8 @@
     "Source/Hearthward/Building/",
     "Source/Hearthward/Gameplay/",
     "Source/Hearthward/Interaction/",
+    "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
     "Source/Hearthward/HearthwardCharacter.cpp",
     "Source/Hearthward/HearthwardCharacter.h",
     "Source/Hearthward/HearthwardGameMode.cpp",
@@ -64,7 +68,7 @@
     "A7：记录定向性能对比、操作录像、来源/锁/外部包、版本与Owner视觉验收"
   ],
   "non_goals": [
-    "本次不执行，仅下单",
+    "不把未验证的候选资产宣称为已应用或已验收",
     "不重做026自然地图或027角色动画",
     "不新增配方、数值、生态AI、房屋模块建造或修改存档格式",
     "不自行付费生成、采购资产或安装大型依赖"
@@ -72,22 +76,27 @@
   "prototype_only": false,
   "prototype_approval": null,
   "required_tests": [
-    "规划：TASK-028 JSON结构、文档链接及提交范围检查",
-    "实施：保存重开、真实新游戏/继续游戏及A3-A6操作录像",
-    "实施：仅对修改代码运行相关目标构建和定向测试",
-    "实施：营地固定路线同设置性能对比及Owner视觉验收"
+    "T-002",
+    "T-006",
+    "T-011",
+    "T-021"
   ],
   "permissions": {
-    "network": "granted: reference documentation and fetch/push planning documents only",
+    "network": "granted: TASK-028 implementation requires fetching existing references and Git/LFS status; no paid asset generation",
     "install_dependencies": "not_granted",
-    "commit": "granted: TASK-028 planning documents and README/index only",
-    "push": "granted: TASK-028 planning documents to main only",
+    "commit": "granted: commit current TASK-028 progress to the task branch for PR review",
+    "push": "granted: push the TASK-028 task branch and create a pull request against main",
     "merge": "not_granted: no implementation branch or PR merge"
   },
   "notes": [
-    "当前仅下发任务，未授权实施；allowed_paths为未来实施范围，现轮只写规划文档。",
+    "用户后续明确要求执行TASK-028；独立工作树 codex/TASK-028-3d-assets-integration 从 main 28e7c52 开始实施。",
     "027本地未提交任务不作为不存在的main JSON依赖；挂接前核验最终角色接口。",
     "004源素材按单件复用，无需整单完成；武器/防具缺口不得宣称完成。",
-    "共享代码、地图和外部包开工前登记实际文件及单一写者；不以目录许可覆盖026/027改动。"
+    "共享代码、地图和外部包开工前登记实际文件及单一写者；不以目录许可覆盖026/027改动。",
+    "本分支已导入15件静态模型，房屋8部件与4件陈设、篝火、木桌工作台和石骨斧进入自然营地；完整结果见单任务交接。",
+    "用户确认没有其他可穿戴防具FBX或已提交TASK-027最终骨架接口；A5及武器最终动作挂接仍未达标。",
+    "自然图尚无正式木材获取路径；隔离PIE测试仅注入测试材料，不改变正式存档或物品规则。",
+    "用户已批准两处自然地图UI入口文件纳入TASK-028；本地任务快照已列出路径，基线范围校验仍按起始提交的旧快照报告OUT_OF_SCOPE。",
+    "用户确认TASK-028的GitHub Issue URL及独立Reviewer均未分配；reviewer与issue_url继续留空，不伪造归属。"
   ]
 }
