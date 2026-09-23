@@ -8,6 +8,8 @@ AI NPC vNext 最终统一使用 **TASK-029**。
 
 当前候选分支：`codex/ai-npc-vnext-rework-01-fix`。
 
+最终候选：`037628f`。GitHub PR：[#34](https://github.com/XLingyyy/Hearthward/pull/34)，目标 `main`，当前保持 open，Agent 不执行 merge。
+
 ## 架构
 
 ```text
@@ -89,15 +91,6 @@ M11/M12/M14/M16 的 raw JSON 在部分 clean/pressure run 中仍可能给出偏�
 
 ## Release
 
-当前正在同步最新 main（已从用户指定的 `73bb10e+` 前进到 `28e7c52`），保留 main 的自然地图/资产更新并合入 TASK-029 AI NPC 栈。
+最新 `origin/main@28e7c52` 已同步到候选，保留 main 的自然地图/资产更新并合入 TASK-029 AI NPC 栈。最终 post-merge 验证已经完成：repo validator 0 errors、Python 31/31、Editor build PASS、native 41/41、TASK-029 runtime smoke 23/23。
 
-完成冲突解决后：
-
-1. repo validator + Python
-2. Editor build
-3. full native
-4. 必要 runtime smoke
-5. commit merge result
-6. push branch
-7. create PR
-8. **do not merge**
+分支已 push，PR #34 已创建并保持 open。后续只需要独立 Reviewer / Owner 审查与体验验收；**Agent 不直接 merge**。

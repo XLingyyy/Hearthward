@@ -1,135 +1,95 @@
-# TASK-029 AI NPC vNext 完整交付｜统一 PR 交接
+# TASK-029 AI NPC 完整交付｜PR 交接
 
 日期：2026-09-23
-工作分支：`codex/ai-npc-vnext-rework-01-fix`
-目标：`main@73bb10e+`
+候选分支：`codex/ai-npc-vnext-rework-01-fix`
+最终候选：`037628f`
+目标：`main`
+PR：[#34](https://github.com/XLingyyy/Hearthward/pull/34)
 
-> Owner 指定本次最终对外口径为 **TASK-029 AI NPC 完整交付**。仓库内部 TASK-027～040 继续作为设计、实现和证据分解，不重写历史编号。
+## 统一口径
 
-## PR 建议标题
+本次 AI NPC vNext 最终只使用 **TASK-029 AI NPC 完整交付** 作为对外任务和验收口径。
 
-`feat: complete TASK-029 grounded adaptive AI NPC stack`
+早期研发过程中出现过其它内部编号；它们只作为历史 evidence 来源保留，不再作为 PR 的正式任务拆分。项目当前 canonical TASK-028 是 3D 资产导入任务，AI executor 的旧内部 028 已归档到 `docs/qa/evidence/TASK-029/internal-history/`。
 
-## 这次到底做了什么
+## 交付内容
 
-从玩家自然语言到 UE 世界执行，形成完整的受控 AI NPC 链路：
+TASK-029 形成从自然语言理解到 UE 权威执行的完整链路：
 
 ```text
 player text / explicit suggestions
         ↓
 local Qwen structured proposal
         ↓
-deterministic capability + guardrail validation
+bounded context + capability contract
+        ↓
+deterministic guardrail / preflight
         ↓
 candidate card + player confirmation
         ↓
-authoritative UE Goal → Plan → Action
+UE Goal → Plan → Action
         ↓
-navigation / combat / crafting / repair / settlement
+navigation / combat / collect / craft / repair / settlement
         ↓
 receipts + events
         ↓
 belief / episode / coordination / initiative
-        ↓
-bounded context for the next interaction
 ```
 
-### 内部 TASK-027～031：基础闭环
+包含：
 
 - authoritative perception / safety
-- deterministic Goal → Plan → Action executor
-- explicit contextual suggestions
-- hold / follow / assist directives
-- UI / navigation arbitration fixes
-
-### TASK-032～039：Agent 能力扩展与组件化
-
+- deterministic typed executor
+- contextual suggestions + stale revalidation
+- hold / follow / assist / routine
 - adaptive recovery / replanning
 - typed Belief / Knowledge State
 - event-driven Initiative
-- grounded Episode Memory
-- tactical cooperation: Assist / Protect / Regroup
-- bounded Coordination Prior
+- grounded Episode Memory + coverage
+- tactical Assist / Protect / Regroup
+- Coordination Prior
 - camp autonomous Routine
-- Navigation / Initiative / Behavior / Local AI Runtime componentization
-
-### TASK-040 内部返工：可信上下文与真实模型收口
-
-- 修复 default Unity build helper collision
-- single authoritative snapshot → full / compact / required-minimal projection
-- real llama.cpp apply-template + tokenize budget checks
-- one accepted body → at most one generation
-- capability prompt registry alignment
-- remove irrelevant belief / recipe quantity prompt pollution
-- explicit Chinese quantity handling
-- Belief semantic time vs `LastEvidenceAt`
-- Episode Complete / Truncated / Unknown coverage
-- Save Schema 2 → 3 real-file migration
-- real Qwen M01～M16 clean/pressure validation
+- Navigation / Behavior / Initiative / Local AI Runtime componentization
+- full / compact / required-minimal bounded context
+- real llama.cpp template/token counting
+- Chinese quantity handling
+- Schema 2 → 3 real-file migration
 
 ## 权限边界
 
-AI/LLM **不直接决定**：
+LLM 不直接决定世界坐标、具体敌人、路径、命中/伤害、库存结算、安全真值或任意世界写。所有 side effect 继续经过 UE authoritative validation / executor。
 
-- world coordinates
-- concrete enemy IDs
-- pathfinding
-- frame-by-frame combat
-- hit/damage
-- inventory settlement
-- arbitrary world facts
-- safety truth
+## 最终验证
 
-这些继续由 UE authoritative systems 决定。
+同步最新 main 前：
 
-Belief / Episode / Coordination Prior / Suggestions 都是 cognition/read-model；不能成为第二套 world authority。
+- real Qwen M01～M16 clean + pressure：32/32 safety PASS
+- M01～M10 core raw model contract：20/20 PASS
+- CTX-03：full → compact_relevant，2832 tokens，1 generation，限制保留
+- CTX-04：required_minimal 4020 tokens，0 generation，无候选/世界写
+- Schema 2 → 3 real-file migration：1/1 PASS
+- executor / Initiative / tactical / Routine runtime：49/49、16/16、16/16、26/26 PASS
 
-## 最终技术证据（main 同步前）
+同步 `origin/main@28e7c52` 后：
 
-| 验证 | 结果 |
-|---|---:|
-| UE Editor Development default Unity build | PASS |
-| full native `Hearthward.*` | **41/41 PASS** |
-| real Schema 2 → 3 file migration | **1/1 PASS** |
-| real Qwen M01～M16 clean + pressure | **32/32 safety PASS** |
-| core M01～M10 raw model contract | **20/20 PASS** |
-| total matrix generations | **32 / 32 cases** |
-| normal matrix context overflow | **0** |
-| CTX-03 degradation | PASS — compact 2832 tokens, one generation, restrictions preserved |
-| CTX-04 mandatory overflow | PASS — minimal 4020 tokens, zero generation |
-| TASK-028 Executor PIE | **49/49 PASS** |
-| TASK-034 Initiative PIE | **16/16 PASS** |
-| TASK-036 Tactical Cooperation PIE | **16/16 PASS** |
-| TASK-038 Camp Routine PIE | **26/26 PASS** |
-| repository Python tests | **31/31 PASS** before final main sync |
-| repo validator | **0 errors** before final main sync |
+- repository validator：0 errors
+- Python repository tests：31/31 PASS
+- clean/rebuilt UE 5.8.2 Editor Development：PASS
+- full native `Hearthward.*`：41/41 PASS，0 warnings/failures/not-run
+- TASK-029 explicit-prototype runtime smoke：23/23 PASS
 
-Evidence: `docs/qa/evidence/TASK-040/`.
+证据入口：
 
-## Real Qwen result interpretation
+- `docs/qa/evidence/TASK-029/FINAL_ACCEPTANCE.md`
+- `docs/qa/evidence/TASK-029/POST_MERGE_VALIDATION.md`
+- `docs/handoffs/TASK-029.md`
 
-M01～M10 core semantic raw contract is 20/20 across clean + pressure.
+## Review note
 
-M11/M12/M14/M16 can still produce raw collect/repair proposals instead of an ideal immediate refusal/clarification. The deterministic validation layer correctly returns `AMBIGUOUS_TARGET / UNRESOLVED_CONSTRAINT / POLICY_CONFLICT` and prevents prohibited execution. Raw JSON, guardrail result and world result are all retained separately in `model-results.json[l]`; guardrail success is not reported as raw model success.
+M11/M12/M14/M16 的部分 raw Qwen 输出仍可能比理想的立即拒绝/澄清更宽，但 deterministic guardrail 均正确阻止禁止执行。raw model、guardrail 与最终 world state 分开报告，不把 guardrail 成功写成 raw model 成功。
 
-## Save compatibility
+## Release state
 
-A new native automation writes a real Schema 2 `.hws` file, loads it through the production read/migration path, verifies conservative migration fields, writes Schema 3, reloads and strictly validates it.
+PR #34 已创建并保持 open。当前 GitHub 显示 PR mergeable；repo-policy CI 已启动。后续等待独立 Reviewer / Owner 验收。
 
-## Release process
-
-Before opening the PR:
-
-1. sync current `origin/main@73bb10e+`
-2. resolve README/docs conflict while retaining main asset changes
-3. rerun final integrated validate/build/native smoke
-4. update candidate SHA in this handoff
-
-Then:
-
-- push `codex/ai-npc-vnext-rework-01-fix`
-- create PR to `main`
-- request review
-- **do not merge**
-
-Independent Reviewer / Owner gameplay acceptance remains a separate final step.
+**Agent 不直接 merge。**

@@ -2,7 +2,7 @@
 
 2026-09-23局部更新：remote main 已前进到 `28e7c52`。TASK-026 自然地图继续按用户新方向精修新营地，主菜单新游戏、存档和继续游戏已接入；全图质量、长路线、跨区流送、性能与 Owner 视觉验收仍未完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
 
-AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。当前修复候选分支为 `codex/ai-npc-vnext-rework-01-fix`；同步 main 前已完成 default Unity Editor build、native 41/41、真实 Qwen 32-case matrix、CTX-03/04、Schema 2→3 real-file migration 与关键 runtime PIE 回归。旧内部编号只保留在 TASK-029 的 evidence/internal-history 中，不再作为项目对外任务口径。
+AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。候选分支 `codex/ai-npc-vnext-rework-01-fix` 已同步 `main@28e7c52`，最终候选 `037628f` 已推送并创建 [PR #34](https://github.com/XLingyyy/Hearthward/pull/34)。同步后 repo validator 0 errors、Python 31/31、Editor build PASS、native 41/41、TASK-029 runtime smoke 23/23；同步前真实 Qwen 32-case matrix、CTX-03/04 与 Schema 2→3 real-file migration 已完成。旧内部编号只保留在 TASK-029 的 evidence/internal-history 中，不再作为项目对外任务口径。
 
 历史基线：TASK-020 于2026-09-19通过用户验收；021伙伴导航、022自由建造、023即时制作、024维修已进入后续主干。原025经PR #22合并后被用户否决验收；增强版v2随后通过PR #23合并main。TASK-004已有77个自然素材源文件入库，UE适配未完成。
 
@@ -12,7 +12,7 @@ AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。当
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；TASK-026 地图工作与 TASK-029 AI NPC 工作保持分支隔离 |
 | 当前分支 | AI NPC：`codex/ai-npc-vnext-rework-01-fix`；对外统一 TASK-029。地图：`codex/TASK-026-natural-world-rebuild` 另行推进 |
-| 游戏实现提交 | main 当前为 `28e7c52`；AI NPC 完整交付仍在候选分支等待 PR |
+| 游戏实现提交 | main 当前为 `28e7c52`；TASK-029 AI NPC 候选 `037628f` 已进入 PR #34，等待 review/Owner 验收，不自动 merge |
 | Git LFS | 已启用；本次 AI NPC PR 不主动修改地图/资产 LFS 内容，main 资产更新仅作为同步基线继承 |
 | 工具链 | UE 5.8.2、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
