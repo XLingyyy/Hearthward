@@ -14,6 +14,7 @@
 #include "Components/ScaleBox.h"
 #include "Components/SizeBox.h"
 #include "Engine/Texture2D.h"
+#include "Engine/World.h"
 #include "ImageUtils.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -45,6 +46,21 @@ TSharedRef<SWidget> UHearthwardScreenWidget::RebuildWidget()
 void UHearthwardScreenWidget::InitializeScreen(AHearthwardHUD* HUD)
 {
     OwnerHUD=HUD; SetIsFocusable(true); if(!Theme) LoadTheme(); OpenPage(TEXT("title"));
+    auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
+    if(!Save->LoadPointIndex()) { Message=Save->GetStatus(); Refresh(); return; }
+    if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)!=TEXT("L_HearthwardWilds")) return;
+    const FString LoadId=GetWorld()->URL.GetOption(TEXT("HearthwardLoad="),TEXT(""));
+    if(FCString::Strcmp(GetWorld()->URL.GetOption(TEXT("HearthwardNewGame="),TEXT("")),TEXT("1"))==0)
+    {
+        if(Save->EnableNaturalWorld() && Save->StartNewProgress()) { OpenPage(TEXT("hud")); return; }
+    }
+    else if(!LoadId.IsEmpty())
+    {
+        FGuid Id;
+        if(FGuid::Parse(LoadId,Id) && Save->EnableNaturalWorld() && Save->LoadPoint(Id)) { OpenPage(TEXT("hud")); return; }
+    }
+    else return;
+    Message=Save->GetStatus(); Refresh();
 }
 UHearthwardGameplayComponent* UHearthwardScreenWidget::Gameplay() const
 { return GetOwningPlayerPawn() ? GetOwningPlayerPawn()->FindComponentByClass<UHearthwardGameplayComponent>() : nullptr; }
@@ -98,6 +114,10 @@ FLinearColor UHearthwardScreenWidget::Color(const FString& Name) const
 }
 void UHearthwardScreenWidget::OpenPage(FName Name)
 {
+    if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled()
+        && Name!=TEXT("hud") && Name!=TEXT("title") && Name!=TEXT("pause")
+        && Name!=TEXT("save") && Name!=TEXT("settings") && Name!=TEXT("inventory"))
+    { Message=TEXT("该功能尚未接入自然地图"); MessageUntil=FPlatformTime::Seconds()+4; Refresh(); return; }
     if(Page==TEXT("dialogue") && Name!=Page) GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
     if(Name==TEXT("crafting") || Name==TEXT("repairing"))
     {
@@ -152,6 +172,16 @@ void UHearthwardScreenWidget::LoadElements(const TArray<TSharedPtr<FJsonValue>>&
     for(const auto& V:Rows)
     {
         const auto R=V->AsObject();
+        if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled())
+        {
+            if(Page==TEXT("hud")) continue;
+            if(Page==TEXT("pause"))
+            {
+                const FString Bind=Text(R,TEXT("bind")),Label=Text(R,TEXT("text"));
+                if(Bind==TEXT("quest") || Bind==TEXT("objective") || Bind==TEXT("location")
+                    || Label==TEXT("当前任务") || Label==TEXT("当前位置")) continue;
+            }
+        }
         const TArray<TSharedPtr<FJsonValue>>* Categories;
         if(R->TryGetArrayField(TEXT("categories"),Categories) && !Categories->ContainsByPredicate([&](const auto& C){return C->AsString()==Category;})) continue;
         const auto& Rect=R->GetArrayField(TEXT("rect"));
@@ -175,6 +205,12 @@ void UHearthwardScreenWidget::Refresh()
     LoadComponents();
     if(P->GetBoolField(TEXT("header"))) LoadElements(Theme->GetArrayField(TEXT("header")));
     LoadElements(P->GetArrayField(TEXT("elements")));
+    if(Page==TEXT("pause") && GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled())
+    {
+        Element(TEXT("text"),TEXT("自然地图探索"),FVector2D(1096,220),FVector2D(280,36),22);
+        const FVector Camp(-98000,-75000,0),Here=GetOwningPlayerPawn()->GetActorLocation();
+        Element(TEXT("text"),FString::Printf(TEXT("距新营地 %.0f 米"),FVector::Dist2D(Camp,Here)/100),FVector2D(1152,510),FVector2D(245,40),19);
+    }
     if(Page==TEXT("inventory")) ComposeInventory(false);
     if(Page==TEXT("storage")) ComposeInventory(true);
     if(Page==TEXT("skills")) ComposeSkills();

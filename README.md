@@ -1,14 +1,18 @@
 # Hearthward（归火）
 
-UE 5.8.1 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+下一任务：[TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md)。状态为 **Backlog，仅下单，未执行**；范围包含实际场景应用、装备显示和存档恢复验收，执行等待另行授权。
+
+UE 5.8.2 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
 通过 PR #25 合入 main 的 [TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行灰盒：4032 m World Partition地图、独立浏览GameMode、自然批次和局部PIE验证已落地，人文场景后置。现有视觉仍是基础形体，长路线、Standalone流送、性能与Owner视觉验收尚未完成，不能视为TASK-026验收通过。见[世界状态](docs/world/TASK-026/CURRENT.md)、[验证证据](docs/qa/evidence/TASK-026/README.md)与[026交接](docs/handoffs/TASK-026.md)。
 
 ## 运行
 
-打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`，在标题页选择“新游戏”。020 自动建立现有开发场景所需的伙伴、资源、初始物品和初始存档节点，无需先输入控制台命令。继续游戏与载入存档读取已有的全局50点原型池。
+打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`。标题页“新游戏”进入自然地图的新营地并生成初始存档；营地中按 F6 打开存档页，暂停菜单也可手动保存。返回主菜单后“继续游戏”恢复最新节点；“载入存档”可选择自然地图节点。已有旧开发场景进度仍保留在同一50点档池。
 
-TASK-026自然世界尚未接入标题页。要查看当前分支灰盒，在编辑器中直接打开 `/Game/Hearthward/World/Natural/L_NaturalWorld` 并运行PIE；地图级GameMode只复用第三人称角色，不生成营地、敌人、伙伴或仓储，也不启动本地模型。
+自然地图目前提供移动、视角、背包、暂停与存档；下表的伙伴、战斗、建造、任务等键位对应旧开发场景，尚未接入自然地图。
+
+单独浏览自然地图时，在编辑器中打开 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds` 并运行PIE；地图级浏览GameMode只复用第三人称角色，不生成旧开发场景的敌人、伙伴或测试地标，也不启动本地模型。
 
 | 操作 | 键位 |
 |---|---|
@@ -55,7 +59,7 @@ TASK-026自然世界尚未接入标题页。要查看当前分支灰盒，在编
 
 ## 验证与限制
 
-TASK-026于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
+TASK-026本次重建记录见[REBUILD](docs/world/TASK-026/REBUILD.md)，历史检查不累计为新图验收。旧地图于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
 
 025 v2实现与本轮验证见 [TASK-025交接](docs/handoffs/TASK-025.md)、[设计决定](docs/decisions/ADR-TASK-025-npc-cognition.md)和[rev2证据](docs/qa/evidence/TASK-025/rev2/)。原版测试不计本轮PASS，模型原始理解、护栏规范化与实际执行分别统计。020于2026-09-19通过用户验收；历史任务结果见各任务交接。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
 
@@ -65,7 +69,11 @@ TASK-026于2026-09-21完成27项定向PIE检查：地图重开、World Partition
 
 十五件 Tripo 动物源资产（两只雄鹿、野兔、山羊、雉鸡、猪、狼、黑熊、公羊、赤狐、母鸡、鲤鱼、鲫鱼、鲶鱼、鳗鱼）的参考图、静态 FBX、预览和带蒙皮权重的骨骼 FBX 已存入 `art_source/TASK-004/Tripo/动物`。骨架包含四足、鸟类、水生和蛇形四类；尚未导入 UE Content，也未附加动画或完成游戏内验收，不视为正式动物系统。
 
-本批资产 [PR #29](https://github.com/XLingyyy/Hearthward/pull/29) 增加 8 件 [Tripo 房屋建筑部件制作源资产](art_source/TASK-004/Tripo/房屋建筑部件/房屋建筑部件模型索引.md)：每件均有参考图、静态 FBX 和 PNG 预览。模型已完成文件格式核验，尚未导入 UE、统一吸附尺度或完成碰撞及拼接验证；它们是 `TEMP_VISUAL` 候选，不代表正式建筑风格。本批同步状态以 PR 的合并状态为准。
+已推送的 [PR #33](https://github.com/XLingyyy/Hearthward/pull/33) 在 `art_source/TASK-004/Tripo/敌人` 收录短刀兵、重甲兵两件候选的参考图、静态 FBX、预览和带双足骨骼的 FBX；[逐件索引](art_source/TASK-004/Tripo/敌人/敌人模型与骨骼索引.md)记录任务 ID 与文件。它们尚未导入 UE，武器、盾牌、护甲权重和动作表现未在引擎中验证；现有玩法敌人仍使用碰撞形体，不视为正式敌人美术。
+
+同一 PR 在 `art_source/TASK-004/Tripo/篝火` 收录一件[静态候选模型](art_source/TASK-004/Tripo/篝火/篝火模型索引.md)的参考图、FBX 与预览。石圈、木柴和火焰已形成静态造型，但未接入现有可建篝火；动态火焰、发光/透明材质、照明和碰撞仍待在 UE 中制作或验证。
+
+已通过 [PR #29](https://github.com/XLingyyy/Hearthward/pull/29) 合入 main 的 8 件 [Tripo 房屋建筑部件制作源资产](art_source/TASK-004/Tripo/房屋建筑部件/房屋建筑部件模型索引.md)，每件均有参考图、静态 FBX 和 PNG 预览。模型已完成文件格式核验，尚未导入 UE、统一吸附尺度或完成碰撞及拼接验证；它们是 `TEMP_VISUAL` 候选，不代表正式建筑风格。
 
 当前家具分支新增 5 件 [Tripo 室内家具制作源资产](art_source/TASK-004/Tripo/室内家具/室内家具模型索引.md)：绳网木床、带锁木箱、木桌、木椅和金属提灯，每件均有参考图、静态 FBX 和 PNG 预览。它们尚未导入 UE，尺寸、背面、碰撞及提灯发光表现未验收，也未接入玩法；分支 PR 合并前不视为 main 已集成。
 

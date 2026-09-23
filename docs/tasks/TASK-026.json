@@ -1,20 +1,24 @@
 {
   "schema_version": 1,
   "id": "TASK-026",
-  "title": "大地图自然场景底座构建（人文场景后置）",
-  "status": "Blocked",
-  "updated_at": "2026-09-22",
+  "title": "自然地图营地局部精修与游戏入口接入",
+  "status": "Active",
+  "updated_at": "2026-09-23",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": "codex/TASK-026-natural-world",
+  "branch": "codex/TASK-026-natural-world-rebuild",
   "source_refs": [
     "2026-09-21用户指定TASK-026为下一顺序任务：较大地图先构建自然场景，人文后置",
     "2026-09-22用户要求将TASK-026当前进度同步到本地文件并以Pull Request交接",
     "GDD v0.3原件第4.1节：空间与地形，具体面积/布局未定；第9章四控制区不等于自然分区",
     "WORKFLOW.md 第5—10、12、14节",
     "resourceSummary.md；art_source/TASK-004/polyhaven/SOURCE.md；art_source/TASK-004/sketchfab/SOURCE.md",
-    "本次main基线39e8610a490ea93467219656d0690ec50735e658：部分源资产已入库，UE自然资产适配未完成"
+    "本次main基线39e8610a490ea93467219656d0690ec50735e658：部分源资产已入库，UE自然资产适配未完成",
+    "2026-09-22当前用户授权接手TASK-026实施，允许继续修改或重构地图；以附图为构图参考，自然场景先行。",
+    "用户采用docs/world/TASK-026/rework-v2/SPEC.md（v2.0）并明确要求按新版返工；起点b9ff4eafb6263bc0efb5b24d8d4e27d584462418",
+    "2026-09-23用户调整026方向：先精修新营地及周边，远处暂缓；从原主界面新游戏出生于新营地，并接通存档/继续游戏；树石保留后续交互空间。",
+    "2026-09-23用户要求从main取回新推送的松树、冷杉资产并继续026；仅将两种TASK-004源资产及其来源记录用作只读输入。"
   ],
   "dependencies": [
     "TASK-003"
@@ -36,24 +40,33 @@
     "Content/__ExternalActors__/Hearthward/World/Natural/",
     "Content/__ExternalObjects__/Hearthward/World/Natural/",
     "art_source/TASK-026/",
-    "scripts/world/TASK-026/"
+    "art_source/TASK-004/polyhaven/SOURCE.md",
+    "art_source/TASK-004/polyhaven/树木/冷杉树/",
+    "art_source/TASK-004/polyhaven/树木/松树/",
+    "scripts/world/TASK-026/",
+    "AGENTS.md",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.h",
+    "Source/Hearthward/Save/HearthwardSaveGame.h",
+    "Source/Hearthward/Tests/SaveTests.cpp"
   ],
   "forbidden_paths": [
-    "Source/",
     "Plugins/",
     "Config/",
     "config/",
     "Hearthward.uproject",
     ".github/",
-    "AGENTS.md",
     "WORKFLOW.md",
     "docs/design/",
     "docs/contracts/",
     "Resources/",
     "Content/Hearthward/Bootstrap/",
     "Content/Hearthward/Tests/",
-    "Content/Hearthward/AssetReview/",
-    "art_source/TASK-004/"
+    "Content/Hearthward/AssetReview/"
   ],
   "acceptance": [
     "A1：确认约4×4km首轮目标与总体图；至少6km²连通地面、5类自然分区、3处自然地标、2片未来布置候选空地。数值为规划提案，启动时确认。",
@@ -63,24 +76,30 @@
     "A5：Standalone跨区往返流送正常，远景连续，记录加载/卸载与停顿。",
     "A6：拟定RTX4060 Laptop 8GB、1080p Medium平均≥30FPS、P95≤50ms，三类场景及跨区路线实测，具体口径见任务单。",
     "A7：独立浏览入口隔离旧玩法生成与正式存档，保留Bootstrap默认入口。",
-    "A8：来源/转换/锁/外部包/证据和README交接完整，部分资产交付不冒充004整单完成。"
+    "A8：来源/转换/锁/外部包/证据和README交接完整，部分资产交付不冒充004整单完成。",
+    "V2：保留原A1—A8、T-002；执行rework-v2/SPEC.md中的R0—R7与Q26-01—24，样段经Owner明确批准后才能推广全图。",
+    "V2：4032m底座不变；RT-MAIN沿用11.264km全环线，除非Owner另行批准；性能保持1080p原生Medium、平均>=30FPS、P95<=50ms。",
+    "V2：正式完成须Owner视觉验收、独立评审及第二成员干净克隆复现；缺项保持未完成。",
+    "V3：以CAMP_A出生点及可步行周边为精修范围，保留可用空地、湖边视线、路线与可交互实例身份；远区不按本轮局部质量门槛验收。",
+    "V3：主菜单新游戏进入L_HearthwardWilds的CAMP_A；存档与继续游戏可跨主菜单回到自然地图，旧原型进度保持可读。"
   ],
   "non_goals": [
     "不布置建筑、营地设施、人工道路、桥梁、聚落及其他人文内容。",
-    "不接入敌人/动物/任务/采集刷新/传送/存档/地图UI/伙伴大世界行为。",
     "不补定R17/R19/R22/R24和植物群、文化、最终地理风格，不修改GDD。",
-    "不要求004人物/房屋先完成，不重做全资产库，不擅自付费、安装依赖或合并。"
+    "不要求004人物/房屋先完成，不重做全资产库，不擅自付费、安装依赖或合并。",
+    "暂不接入树石砍伐/挖掘、掉落、刷新、伙伴任务、敌人和旧原型地标；远区精修后置。"
   ],
   "prototype_only": false,
   "prototype_approval": null,
   "required_tests": [
-    "T-002"
+    "T-002",
+    "Hearthward.Save.FileIntegrityAndSnapshot"
   ],
   "permissions": {
     "network": "granted: 2026-09-22 user requested remote GitHub pull request",
     "install_dependencies": "not_granted",
-    "commit": "granted: 2026-09-22 user requested TASK-026 current progress handoff",
-    "push": "granted: 2026-09-22 user requested remote GitHub pull request",
+    "commit": "granted: current conversation user explicitly requested commit and push",
+    "push": "granted: current conversation user explicitly requested commit and push",
     "merge": "not_granted"
   },
   "notes": [
@@ -91,6 +110,13 @@
     "R项不阻塞纯环境工作，触及玩法的部分后置。任务单提出的面积、路线与性能数值尚非正式设计批准。",
     "正式地图是可复用自然底座；TEMP_VISUAL只描述候选植物外观，未批准任何新增玩法原型。",
     "required_tests的T-002为已有工作流用例；场景验收A1—A8定义于TASK-026.md，不将任务编号误作测试编号。",
-    "地图视觉目前是引擎基础形体加三张既有Poly Haven地表贴图的灰盒底座；树木/草/岩石并非最终自然资产，不得将观察点截图表述为视觉验收通过。"
+    "地图视觉目前是引擎基础形体加三张既有Poly Haven地表贴图的灰盒底座；树木/草/岩石并非最终自然资产，不得将观察点截图表述为视觉验收通过。",
+    "当前实施从origin/main 4114556开始；旧地图与其violet-sept锁保持不动；新地图位于World/Natural/Rebuild，派生资产位于Assets/NaturalWorld/Rebuild；用户当前请求覆盖本地实施，不将历史文档的提交推送授权外推为本次发布授权。",
+    "本次新地图已适配Nanite树木/岩石及地表草；旧27项PIE与灰盒视觉描述只属于PR25历史。首次新地图425m默认速度连续步行通过；完整A1-A8仍未验收。",
+    "2026-09-22新版返工从已推送b9ff4ea继续；4份本机工程/IDE改动保留，不纳入026；R0基线已记录，R1批次保护/幂等已验证；S1局部植被、地表、水面精修及正向Standalone实走已有证据，整体未完成。",
+    "2026-09-22用户明确批准使用UE 5.8.2，并授权同步项目版本约定文档；覆盖原始026 v2任务单中的5.8.1要求。历史验证证据保留原版本。",
+    "2026-09-23当前请求覆盖v2中禁止UI/存档接入及全图先行的旧边界；本轮仅更新营地局部和自然世界入口，历史全图门槛仍作为未完成项记录。",
+    "2026-09-23用户已明确要求提交并推送026分支；004两份源blend仍由violet-sept持锁，本分支不重复提交持他人锁的源包，引用origin/main 73bb10e。",
+    "用户追加授权取回main中的冷杉/松树源文件；只读来源保持原路径与原内容，UE派生资产及场景实例归026。现有两种树冠在出生视角仍较疏，达到样图密林轮廓需另有更密树冠的常绿树或幼树资产。"
   ]
 }

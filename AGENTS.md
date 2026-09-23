@@ -6,7 +6,7 @@
 - TASK-003、TASK-005至TASK-012已提交推送；TASK-004仅任务单，明确不执行。TASK-013本地模型和设计修订已提交推送。TASK-014独立灰盒已提交推送。TASK-015伙伴UI已提交推送。TASK-016世界知识快照已提交推送。TASK-017存档UI及交接已提交推送。TASK-018玩家采集/入库已提交推送。TASK-019已提交推送。TASK-020九页UI及配套玩法已于2026-09-19通过用户验收。TASK-021导航已提交推送；TASK-022建造已提交推送；TASK-023即时制作已提交推送；TASK-024已由用户PR #21合并到main；原025经PR #22合并main d02b5fe后用户未通过验收；当前TASK-025按用户增强版v2执行A+B，分支codex/TASK-025-agent-rev2，范围/验收见025任务单，延续任务分支提交推送授权，未授权Agent合并。仅显式非Shipping夹具，不把R22未定边界补成正式玩法。
 - 原始输入保留于 docs；WORKFLOW.md 是后续维护入口，docs/工作流_v1.0.md 作为原始快照保留。
 - 文本通过 Python 显式 UTF-8 读取；未知编码先检查 BOM。禁止用 LibreOffice 读取文档。
-- UE 目标为 5.8.1；首次生成新工程时 Game/Editor Target 使用 BuildSettingsVersion.V7，EngineAssociation 使用 5.8。
+- UE 目标为 5.8.2；首次生成新工程时 Game/Editor Target 使用 BuildSettingsVersion.V7，EngineAssociation 使用 5.8。
 - 本机绝对路径见被忽略的 .agent-local/environment.json。不要直接激活上层脚本：它默认指向 GameFactoryUE 准备工程。
 - 引擎操作使用 GameFactory 的 UEClient 公开 API，并显式指定本游戏工程；创建工程前按上层 setting_overview 路由读取所需引擎文档。
 - 当前提交／推送授权涵盖 TASK-003 成果、TASK-004 任务单及相应状态／交接文档；不包含合并、变更远端保护或执行 TASK-004。用户随后授权 TASK-005、TASK-006、TASK-007、TASK-008、TASK-009、TASK-010、TASK-011、TASK-012 实现、任务单与证据提交推送；合并权限仍未授予。

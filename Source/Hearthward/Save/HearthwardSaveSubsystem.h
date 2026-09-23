@@ -17,6 +17,8 @@ public:
     virtual TStatId GetStatId() const override;
     // Explicit non-Shipping fixture opt-in; no production danger detection is implied.
     UFUNCTION(BlueprintCallable) bool EnablePrototype();
+    UFUNCTION(BlueprintCallable) bool EnableNaturalWorld();
+    UFUNCTION(BlueprintCallable) bool LoadPointIndex();
     UFUNCTION(BlueprintCallable) bool StartNewProgress();
     UFUNCTION(BlueprintCallable) bool SavePoint(bool Manual);
     UFUNCTION(BlueprintCallable) bool LoadPoint(FGuid SaveId);
@@ -30,6 +32,7 @@ public:
     UFUNCTION(BlueprintPure) FString GetKnowledge() const { return FString::Join(Knowledge, TEXT("\n")); }
     UFUNCTION(BlueprintPure) int32 GetAutoMinutes() const { return AutoMinutes; }
     UFUNCTION(BlueprintPure) bool IsPrototypeEnabled() const { return bEnabled; }
+    UFUNCTION(BlueprintPure) bool IsNaturalWorldEnabled() const { return bEnabled && bNaturalWorld; }
     UFUNCTION(BlueprintPure) FString GetSafetyDescription() const;
     UPROPERTY(BlueprintAssignable) FHearthwardSnapshotRestored OnSnapshotRestored;
     void RememberExchange(const FString& Speaker, const FString& Text);
@@ -54,6 +57,7 @@ private:
     int32 AutoMinutes = 10;
     double NextAutoSeconds = 0;
     bool bEnabled = false;
+    bool bNaturalWorld = false;
     bool bRestoring = false;
     FString Status = TEXT("存档原型未启用");
 };

@@ -98,6 +98,15 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Atomic replacement of existing committed pool"), HearthwardSave::Write(Path, Pool, Error));
     TestTrue(TEXT("Read replaced pool"), HearthwardSave::Read(Path, Loaded, Error));
     if (Loaded) TestEqual(TEXT("Replacement includes knowledge"), Loaded->Points[0].World.Knowledge.Num(), 2);
+    auto Natural = Point();
+    Natural.World.NaturalWorld = true;
+    Natural.World.Map = TEXT("L_HearthwardWilds");
+    Natural.World.Player.SetLocation(FVector(-97600, -75200, 16195));
+    Pool->Points.Add(Natural);
+    TestTrue(TEXT("Natural world point shares the pool without a companion fixture"), HearthwardSave::Write(Path, Pool, Error));
+    TestTrue(TEXT("Natural world point reads from disk"), HearthwardSave::Read(Path, Loaded, Error));
+    if (Loaded) TestTrue(TEXT("Natural world marker and spawn survive serialization"),
+        Loaded->Points.Last().World.NaturalWorld && Loaded->Points.Last().World.Player.Equals(Natural.World.Player));
     auto Corrupt = Original; Corrupt.Last() ^= 1;
     FFileHelper::SaveArrayToFile(Corrupt, *Path);
     TestFalse(TEXT("Payload corruption rejected"), HearthwardSave::Read(Path, Loaded, Error));
