@@ -22,7 +22,7 @@ TASK-027 建立 AI NPC 的第一层真实世界感知与确定性安全策略，
 
 ## 验证
 
-详见 [VALIDATION](../qa/evidence/TASK-027/VALIDATION.md)。
+详见 [VALIDATION](../../TASK-027/VALIDATION.md)。
 
 - `git diff --check`：PASS。
 - `python scripts/validate_repo.py`：PASS，0 errors。
