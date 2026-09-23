@@ -107,6 +107,16 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Natural world point reads from disk"), HearthwardSave::Read(Path, Loaded, Error));
     if (Loaded) TestTrue(TEXT("Natural world marker and spawn survive serialization"),
         Loaded->Points.Last().World.NaturalWorld && Loaded->Points.Last().World.Player.Equals(Natural.World.Player));
+    if (Loaded) TestFalse(TEXT("Old natural saves explicitly lack companion state"), Loaded->Points.Last().World.NaturalCompanion);
+    auto& Integrated=Pool->Points.Last().World;
+    Integrated.NaturalCompanion=true;
+    Integrated.Resource.Add(TEXT("wood"),14);
+    Integrated.Companion.SetLocation(FVector(-97800,-75000,16180));
+    TestTrue(TEXT("Integrated camp writes through the same save format"), HearthwardSave::Write(Path, Pool, Error));
+    TestTrue(TEXT("Integrated camp reads from disk"), HearthwardSave::Read(Path, Loaded, Error));
+    if (Loaded) TestTrue(TEXT("Companion presence and finite resources survive disk round trip"),
+        Loaded->Points.Last().World.NaturalCompanion && Loaded->Points.Last().World.Resource.FindRef(TEXT("wood"))==14
+        && Loaded->Points.Last().World.Companion.Equals(Integrated.Companion));
     auto Corrupt = Original; Corrupt.Last() ^= 1;
     FFileHelper::SaveArrayToFile(Corrupt, *Path);
     TestFalse(TEXT("Payload corruption rejected"), HearthwardSave::Read(Path, Loaded, Error));
@@ -115,6 +125,27 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     IFileManager::Get().Delete(*Path); IFileManager::Get().Delete(*(Path + TEXT(".pending")));
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveNaturalLegacyFixtureTest, "Hearthward.Save.NaturalLegacyFile",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSaveNaturalLegacyFixtureTest::RunTest(const FString& Parameters)
+{
+    auto* Pool=NewObject<UHearthwardSaveGame>();
+    auto Legacy=Point();
+    Legacy.World.NaturalWorld=true;
+    Legacy.World.Map=TEXT("L_HearthwardWilds");
+    Legacy.World.Player.SetLocation(FVector(-97600,-75200,16195));
+    Legacy.World.Inventory.Add(TEXT("wood"),3);
+    Legacy.World.Storage.Add(TEXT("wood"),5);
+    Pool->Points.Add(Legacy);
+    FString Error;
+    const FString Path=FPaths::ProjectSavedDir()/TEXT("NaturalCampValidation/legacy-natural.hws");
+    TestTrue(TEXT("Write real pre-integration natural file for runtime migration test"),HearthwardSave::Write(Path,Pool,Error));
+    UHearthwardSaveGame* Read=nullptr;
+    TestTrue(TEXT("Read pre-integration natural file"),HearthwardSave::Read(Path,Read,Error));
+    if(Read) TestFalse(TEXT("Legacy presence marker remains absent"),Read->Points[0].World.NaturalCompanion);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveSchema2MigrationFileTest, "Hearthward.Save.Schema2To3RealFileMigration",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FSaveSchema2MigrationFileTest::RunTest(const FString& Parameters)

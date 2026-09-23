@@ -34,6 +34,8 @@ struct FHearthwardWorldSave
 {
     GENERATED_BODY()
     UPROPERTY() bool NaturalWorld = false;
+    // Absent in pre-integration natural-world saves. Prototype saves always have a companion.
+    UPROPERTY() bool NaturalCompanion = false;
     UPROPERTY() FString Map;
     UPROPERTY() double ActiveSeconds = 0;
     UPROPERTY() FTransform Player = FTransform::Identity;

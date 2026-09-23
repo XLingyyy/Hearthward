@@ -1,0 +1,82 @@
+{
+  "ok": true,
+  "checks": {
+    "enable_prototype": true,
+    "new_campaign": true,
+    "assist_directive": true,
+    "healthy_assist_target": true,
+    "assist_uses_real_damage": true,
+    "player_is_low_health": true,
+    "protect_targets_close_threat": true,
+    "protect_reason": true,
+    "protect_still_uses_real_attack_settlement": true,
+    "regroup_has_no_target": true,
+    "regroup_reason": true,
+    "regroup_moves_toward_player": true,
+    "player_survives_regroup_probe": true,
+    "player_downed": true,
+    "down_regroup_reason": true,
+    "downed_regroup_moves_toward_player": true,
+    "downed_regroup_has_no_target": true
+  },
+  "samples": [
+    {
+      "label": "healthy_assist",
+      "health": 100.0,
+      "health_ratio": 1.0,
+      "intent": "assist",
+      "target": "guard_1",
+      "reason": "ASSIST_NEAREST_PLAYER_THREAT",
+      "companion_block": "",
+      "companion_location": "<Struct 'Vector' (0x00000221D784FDF0) {x: 1084.370604, y: -425.615062, z: 82.149994}>"
+    },
+    {
+      "label": "low_health_protect",
+      "health": 36.00166702270508,
+      "health_ratio": 0.3600166702270508,
+      "intent": "protect",
+      "target": "guard_1",
+      "reason": "PROTECT_LOW_HEALTH",
+      "companion_block": "",
+      "companion_location": "<Struct 'Vector' (0x00000221D784FF30) {x: 1079.974901, y: -400.000000, z: 93.150004}>"
+    },
+    {
+      "label": "overwhelmed_regroup_start",
+      "health": 36.12169647216797,
+      "health_ratio": 0.3612169647216797,
+      "intent": "regroup",
+      "target": "None",
+      "reason": "LOW_HEALTH_OVERWHELMED",
+      "companion_block": "压力过大，正在回撤会合",
+      "companion_location": "<Struct 'Vector' (0x00000221D784FFD0) {x: 1854.000000, y: -167.000000, z: 82.150004}>"
+    },
+    {
+      "label": "overwhelmed_regroup_after_move",
+      "health": 36.25339126586914,
+      "health_ratio": 0.3625339126586914,
+      "intent": "regroup",
+      "target": "None",
+      "reason": "LOW_HEALTH_OVERWHELMED",
+      "companion_block": "",
+      "companion_location": "<Struct 'Vector' (0x00000221D784FFD0) {x: 1443.541489, y: -167.000000, z: 82.150004}>"
+    },
+    {
+      "label": "player_down_regroup_start",
+      "health": 0.0,
+      "health_ratio": 0.0,
+      "intent": "regroup",
+      "target": "None",
+      "reason": "PLAYER_DOWN_REGROUP",
+      "companion_block": "压力过大，正在回撤会合",
+      "companion_location": "<Struct 'Vector' (0x00000221D784F350) {x: 0.000000, y: 350.000000, z: 83.150000}>"
+    }
+  ],
+  "regroup_distance": {
+    "start": 500.0,
+    "end": 89.54148888583995
+  },
+  "down_regroup_distance": {
+    "start": 500.0,
+    "end": 136.20975680281208
+  }
+}

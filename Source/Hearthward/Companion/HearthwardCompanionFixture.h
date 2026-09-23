@@ -17,7 +17,7 @@ enum class EHearthwardCompanionPhase : uint8
     GoingToWorkshop, TakingMaterials, HoldingSafely
 };
 
-// Runtime-only development fixture: no final resource, bag or safety defaults.
+// Runtime companion. Development fixtures and the natural camp supply explicit world participants.
 UCLASS(NotPlaceable)
 class HEARTHWARD_API AHearthwardCompanionFixture : public ACharacter
 {
@@ -26,6 +26,7 @@ public:
     AHearthwardCompanionFixture();
     virtual void Tick(float DeltaSeconds) override;
     void InitializeFixture(UHearthwardInventoryComponent* Resource, AActor* CampActor);
+    void InitializeCompanion(UHearthwardInventoryComponent* Resource, AActor* CampActor);
 
     UFUNCTION(BlueprintCallable, Category="Hearthward|Companion|Prototype")
     FHearthwardCommandTicket Request(AActor* Speaker, const FString& PlayerStatement);

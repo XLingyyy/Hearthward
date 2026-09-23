@@ -41,7 +41,17 @@ def run():
     levels.editor_request_begin_play();yield wait(levels.is_in_play_in_editor,30);yield delay(1)
     w=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
     pc=unreal.GameplayStatics.get_player_controller(w,0);ui=pc.get_hud().screen
-    check("new_campaign",ui.execute_action("new"));yield delay(.8)
+    # Production New Game travels to Natural World; AI validation uses an explicit prototype.
+    unreal.SystemLibrary.execute_console_command(w,"Hearthward.Companion.CreateTest",pc)
+    fixture_player=unreal.GameplayStatics.get_player_pawn(w,0)
+    fixture_player.get_component_by_class(unreal.HearthwardGameplayComponent).enable_adventure()
+    fixture_bag=fixture_player.get_component_by_class(unreal.HearthwardInventoryComponent)
+    for item,count in json.loads((Path(unreal.Paths.project_dir())/"Resources/Data/gameplay.json").read_text(encoding="utf-8"))["loadout"].items():
+        fixture_bag.try_add(item,int(count))
+    fixture_save=next(x for x in unreal.ObjectIterator(unreal.HearthwardSaveSubsystem) if x.get_outer()==w)
+    check("enable_prototype",fixture_save.enable_prototype())
+    check("new_campaign",fixture_save.start_new_progress())
+    ui.open_page("hud");yield delay(.8)
     p=unreal.GameplayStatics.get_player_pawn(w,0)
     c=unreal.GameplayStatics.get_all_actors_of_class(w,unreal.HearthwardCompanionFixture)[0]
     p.set_actor_location(c.get_actor_location()+unreal.Vector(-120,0,0),False,True)

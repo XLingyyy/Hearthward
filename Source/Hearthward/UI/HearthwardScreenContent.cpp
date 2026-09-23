@@ -411,7 +411,11 @@ void UHearthwardScreenWidget::ComposeDialogue()
     Element(TEXT("choice"),TEXT("重试返营"),FVector2D(1370,200),FVector2D(185,36),16,TEXT("agentRetryPath"));Elements.Last().Component=TEXT("dialogue.panel");
     FString Status=AI->GetStatus();if(AI->IsBusy())Status+=FString::Printf(TEXT(" · %.1f秒"),AI->GetElapsedSeconds());
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
-        if(!It->BlockReason.IsEmpty()) { Status=TEXT("委托受阻：")+It->BlockReason; break; }
+        if(!AI->IsBusy() && !AI->HasCandidate() && !It->BlockReason.IsEmpty()
+            && It->GetPhase()!=EHearthwardCompanionPhase::Idle
+            && It->GetPhase()!=EHearthwardCompanionPhase::Completed
+            && It->GetPhase()!=EHearthwardCompanionPhase::Cancelled)
+        { Status=TEXT("委托受阻：")+It->BlockReason; break; }
     Element(TEXT("text"),Status,FVector2D(965,824),FVector2D(620,30),15);
     Element(TEXT("choice"),AI->IsBusy()?TEXT("取消回复"):TEXT("发送"),FVector2D(1484,766),FVector2D(105,51),19,AI->IsBusy()?TEXT("cancelReply"):TEXT("send"));
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
@@ -461,14 +465,14 @@ void UHearthwardScreenWidget::ComposeMemory()
 }
 void UHearthwardScreenWidget::ComposeHUD()
 {
-    if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled())
+    const bool Natural=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled();
+    if(Natural)
     {
-        const FVector Camp(-98000,-75000,0),Here=GetOwningPlayerPawn()->GetActorLocation();
-        Element(TEXT("text"),TEXT("新营地 · 自然探索"),FVector2D(48,52),FVector2D(440,48),24);
+        const FVector Camp=Gameplay()->LocationPosition(TEXT("camp")),Here=GetOwningPlayerPawn()->GetActorLocation();
+        Element(TEXT("text"),TEXT("新营地 · 兄弟同行"),FVector2D(48,52),FVector2D(440,48),24);
         Elements.Last().Color=Color(TEXT("gold"));
         Element(TEXT("text"),FString::Printf(TEXT("距营地 %.0f 米"),FVector::Dist2D(Camp,Here)/100),FVector2D(48,103),FVector2D(340,34),18);
-        Element(TEXT("text"),TEXT("Esc 暂停 · F6 存档"),FVector2D(1270,872),FVector2D(355,35),18);
-        return;
+        Element(TEXT("text"),TEXT("T 与弟弟交谈 · B 建造 · Esc 暂停 · F6 存档"),FVector2D(1030,872),FVector2D(630,35),18);
     }
     if(const auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && !B->Feedback.IsEmpty())
     {
@@ -476,10 +480,13 @@ void UHearthwardScreenWidget::ComposeHUD()
         Elements.Last().Component=TEXT("hud.construction"); Elements.Last().LayoutId=TEXT("hud.construction.feedback");
     }
     auto* G=Gameplay();
+    if(!Natural)
+    {
     const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
     Element(TEXT("text"),TEXT("◇  ")+Text(Q,TEXT("name")),FVector2D(46,59),FVector2D(540,48),24); Elements.Last().Color=Color(TEXT("gold"));
     Element(TEXT("text"),Text(Q,TEXT("objective")),FVector2D(90,102),FVector2D(540,55),19);
     Element(TEXT("text"),FString::Printf(TEXT("◇  进度 %d / %.0f"),G->QuestProgress(G->TrackedQuest),Number(Q,TEXT("required"))),FVector2D(96,138),FVector2D(470,35),18);
+    }
     const float V[]={G->Health,G->Hunger,G->Stamina},Max[]={G->MaxHealth(),100,G->MaxStamina()}; const FString C[]={TEXT("health"),TEXT("hunger"),TEXT("stamina")};
     for(int32 I=0;I<3;++I)
     {
@@ -497,6 +504,8 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("slot"),FString::Printf(TEXT("%d     %d"),I+1,Inventory()->GetItemCount(Quick[I])),P,FVector2D(80,78),15);
         Element(TEXT("text"),Text(R,TEXT("name")),P+FVector2D(20,84),FVector2D(95,25),15);
     }
+    if(!Natural)
+    {
     const auto Mini=Theme->GetObjectField(TEXT("minimap")); const auto& Rect=Mini->GetArrayField(TEXT("rect"));
     const FVector2D MiniPosition(Rect[0]->AsNumber(),Rect[1]->AsNumber()),MiniSize(Rect[2]->AsNumber(),Rect[3]->AsNumber());
     const FVector2D MiniCenter=MiniPosition+MiniSize*.5;
@@ -513,6 +522,7 @@ void UHearthwardScreenWidget::ComposeHUD()
     if((PlayerPoint-MiniCenter).Size()<MiniSize.X*.47)
     { Element(TEXT("arrow"),TEXT(""),PlayerPoint-FVector2D(10,10),FVector2D(20,20)); Elements.Last().Value=GetOwningPlayer()->GetControlRotation().Yaw+90; Elements.Last().Color=Color(TEXT("gold")); }
     Element(TEXT("text"),TEXT("北"),MiniPosition+FVector2D(MiniSize.X*.5-9,4),FVector2D(25,25),15);
+    }
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
     {
         FString RoutineLabel;

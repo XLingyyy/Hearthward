@@ -73,6 +73,8 @@ void UHearthwardGameplayComponent::CreateLandmarks()
     LandmarkActors.Reset();
     for(auto& A:OpponentActors) if(A.Value.IsValid()) A.Value->Destroy();
     OpponentActors.Reset();
+    // The natural map supplies its own geography. Keep the old arena markers in the development map.
+    if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds")) return;
     for(const auto& V:Rows(TEXT("locations")))
     {
         const auto R=V->AsObject(); const FName Id(*Text(R,TEXT("id"))); if(Id==TEXT("camp")) continue;
@@ -243,6 +245,7 @@ FName UHearthwardGameplayComponent::NearbyLocation() const
     for (const auto& L : Rows(TEXT("locations")))
     {
         const FName Id(*Text(L->AsObject(),TEXT("id")));
+        if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp")) continue;
         if (FVector::Dist2D(GetOwner()->GetActorLocation(),LocationPosition(Id))<=Tune(TEXT("interactRadius"))) return Id;
     }
     return NAME_None;
@@ -506,6 +509,7 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     for (const auto& L : Rows(TEXT("locations")))
     {
         const FName Id(*Text(L->AsObject(),TEXT("id")));
+        if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp")) continue;
         if (!Discovered.Contains(Id) && FVector::Dist2D(P,LocationPosition(Id))<=Tune(TEXT("discoverRadius"))*(1+Effect(TEXT("discover"))))
         { Discovered.Add(Id); Record(TEXT("discover"),Id); Feedback=TEXT("发现：")+Text(L->AsObject(),TEXT("name")); }
     }

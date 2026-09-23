@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "operation": "build.project",
+  "artifacts": [
+    {
+      "type": "unreal_build",
+      "path": "G:\\GameFactory\\Hearthward-ai-npc-fix",
+      "state": "ready"
+    }
+  ],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [],
+  "payload": {
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=G:\\GameFactory\\Hearthward-ai-npc-fix\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "G:\\GameFactory\\Hearthward-ai-npc-fix",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 0,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=G:\\GameFactory\\Hearthward-ai-npc-fix\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\n  Requested 1.5 GB memory per action, 15.63 GB available: limiting max parallel actions to 10\nUsing 'git status' to determine working set for adaptive non-unity build (G:\\GameFactory\\Hearthward-ai-npc-fix).\nUbaServer - Listening on 0.0.0.0:1345\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (G:\\UnrealEngine\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35228 toolchain (E:\\VSC++\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.22621.0 SDK (C:\\Program Files (x86)\\Windows Kits\\10).\n=================================\nUsing Unreal Build Accelerator local executor to run 11 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 15.63 GB physical, 21.93 GB/31.26 GB committed\n  UBA Storage capacity 40 GB\n[1/11] Compile Resource [x64] Default.rc2\n[2/11] Compile Resource [x64] Default.rc2\n[3/11] Compile [x64] SharedPCH.UnrealEd.Project.ValApi.ValExpApi.Cpp20.cpp\n[4/11] Compile [x64] Module.Hearthward.1.cpp\n[5/11] Compile [x64] Module.Hearthward.2.cpp\n[6/11] Link [x64] UnrealEditor-Hearthward.lib\n  正在创建库 G:/GameFactory/Hearthward-ai-npc-fix/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.lib 和对象 G:/GameFactory/Hearthward-ai-npc-fix/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.exp\n[7/11] Link [x64] UnrealEditor-Hearthward.dll\n[8/11] Compile [x64] Module.A3GamePlayable.cpp\n[9/11] Link [x64] UnrealEditor-A3GamePlayable.lib\n  正在创建库 G:/GameFactory/Hearthward-ai-npc-fix/Plugins/A3GamePlayable/Intermediate/Build/Win64/x64/UnrealEditor/Development/A3GamePlayable/UnrealEditor-A3GamePlayable.lib 和对象 G:/GameFactory/Hearthward-ai-npc-fix/Plugins/A3GamePlayable/Intermediate/Build/Win64/x64/UnrealEditor/Development/A3GamePlayable/UnrealEditor-A3GamePlayable.exp\n[10/11] Link [x64] UnrealEditor-A3GamePlayable.dll\n[11/11] WriteMetadata HearthwardEditor.target [NoUba]\n\nTotal time in Unreal Build Accelerator local executor: 71.98 seconds\nOutput binary: G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\n\nResult: Succeeded\nTotal execution time: 73.63 seconds\nTrace written to file C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 14.1kb\n",
+    "stderr": ""
+  }
+}
