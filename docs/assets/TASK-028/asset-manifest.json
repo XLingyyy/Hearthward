@@ -1,0 +1,1746 @@
+{
+  "schema_version": 1,
+  "task": "TASK-028",
+  "baseline_commit": "28e7c52e10e3988a19ca1e4b7e4fcf86ab2f3b93",
+  "status_definitions": [
+    "source_missing",
+    "source_available",
+    "imported",
+    "applied",
+    "verified"
+  ],
+  "assets": [
+    {
+      "id": "t028.building_part.thatched_roof_ridge",
+      "category": "building_part",
+      "source": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/adc6123b-d9ce-4595-aa1d-491bfb435956/thatched_roof_ridge_model.fbx",
+      "source_sha256": "f6bc727784a9d1d36524ce2b3dc9b523873cfd6ac09400a9ecba38fb346a7e3d",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/adc6123b-d9ce-4595-aa1d-491bfb435956/thatched_roof_ridge_model.fbx",
+          "sha256": "f6bc727784a9d1d36524ce2b3dc9b523873cfd6ac09400a9ecba38fb346a7e3d",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/房屋建筑部件/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_ridge/SM_thatched_roof_ridge",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_ridge/SM_thatched_roof_ridge",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_ridge/tripo_mat_adc6123b"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_ridge/Color",
+          "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_ridge/Normal",
+          "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_ridge/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          42.15,
+          100.64,
+          16.52
+        ],
+        "bounds_origin_cm": [
+          0.2,
+          0.15,
+          0.06
+        ],
+        "scale": "(1.5, 6.3, 2.3)",
+        "axis": "UE Z-up, component orientation set in house actor",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; 11 task-owned box components cover floor, walls, door frame and steps; roof and open door are nonblocking"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Runtime-spawned TASK-028 camp house at natural-world camp; all eight module types present, walkable door and steps",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied to camp house; final runtime path walks in and out; three DX12 screenshots capture exterior, entry and interior. Owner visual acceptance remains open"
+      ]
+    },
+    {
+      "id": "t028.building_part.thatched_roof_slope",
+      "category": "building_part",
+      "source": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/204bb2c0-6cd4-4930-9b75-f0df1167d0f5/thatched_roof_slope_model.fbx",
+      "source_sha256": "fbc293278ff8804b638f32a64284c47f207b87e0b5ee13d8952917c694721739",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/204bb2c0-6cd4-4930-9b75-f0df1167d0f5/thatched_roof_slope_model.fbx",
+          "sha256": "fbc293278ff8804b638f32a64284c47f207b87e0b5ee13d8952917c694721739",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/房屋建筑部件/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_slope/SM_thatched_roof_slope",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_slope/SM_thatched_roof_slope",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_slope/tripo_mat_204bb2c0"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_slope/Color",
+          "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_slope/Normal",
+          "/Game/Hearthward/Assets/TASK-028/house/thatched_roof_slope/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          123.77,
+          120.47,
+          33.77
+        ],
+        "bounds_origin_cm": [
+          -1.97,
+          1.47,
+          -0.01
+        ],
+        "scale": "(3.2, 3.2, 2.3), four panels",
+        "axis": "UE Z-up, component orientation set in house actor",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; 11 task-owned box components cover floor, walls, door frame and steps; roof and open door are nonblocking"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Runtime-spawned TASK-028 camp house at natural-world camp; all eight module types present, walkable door and steps",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied to camp house; final runtime path walks in and out; three DX12 screenshots capture exterior, entry and interior. Owner visual acceptance remains open"
+      ],
+      "runtime_backing_material": "/Game/Hearthward/Assets/TASK-028/house/backing/M_RoofBacking"
+    },
+    {
+      "id": "t028.building_part.wood_door",
+      "category": "building_part",
+      "source": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/9a0e2767-f1cf-4964-bdbe-2db52b27dfcf/wood_door_model.fbx",
+      "source_sha256": "03653336f07f496d90433007e88b9d6b063a65ff85d9dff983f66af4f77efb05",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/9a0e2767-f1cf-4964-bdbe-2db52b27dfcf/wood_door_model.fbx",
+          "sha256": "03653336f07f496d90433007e88b9d6b063a65ff85d9dff983f66af4f77efb05",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/房屋建筑部件/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_door/SM_wood_door",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_door/SM_wood_door",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_door/tripo_mat_9a0e2767"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_door/Color",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_door/Normal",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_door/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          30.66,
+          47.05,
+          99.98
+        ],
+        "bounds_origin_cm": [
+          -0.63,
+          -0.79,
+          0.0
+        ],
+        "scale": "(0.5, 2.2, 2.2), fixed open",
+        "axis": "UE Z-up, component orientation set in house actor",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; 11 task-owned box components cover floor, walls, door frame and steps; roof and open door are nonblocking"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Runtime-spawned TASK-028 camp house at natural-world camp; all eight module types present, walkable door and steps",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied to camp house; final runtime path walks in and out; three DX12 screenshots capture exterior, entry and interior. Owner visual acceptance remains open"
+      ]
+    },
+    {
+      "id": "t028.building_part.wood_floor_panel",
+      "category": "building_part",
+      "source": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/91c736a2-f678-410a-8865-1e76d3a6be60/wood_floor_panel_model.fbx",
+      "source_sha256": "b6a784402433bf8ef328a5183b1991e162d0903de53359064533a02c143c7a16",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/91c736a2-f678-410a-8865-1e76d3a6be60/wood_floor_panel_model.fbx",
+          "sha256": "b6a784402433bf8ef328a5183b1991e162d0903de53359064533a02c143c7a16",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/房屋建筑部件/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/SM_wood_floor_panel",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/SM_wood_floor_panel",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/tripo_mat_91c736a2"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/Color",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/Normal",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          136.32,
+          136.29,
+          17.4
+        ],
+        "bounds_origin_cm": [
+          -0.03,
+          0.01,
+          -0.15
+        ],
+        "scale": "(2.4, 2.4, 2.1), four panels",
+        "axis": "UE Z-up, component orientation set in house actor",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; 11 task-owned box components cover floor, walls, door frame and steps; roof and open door are nonblocking"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Runtime-spawned TASK-028 camp house at natural-world camp; all eight module types present, walkable door and steps",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied to camp house; final runtime path walks in and out; three DX12 screenshots capture exterior, entry and interior. Owner visual acceptance remains open"
+      ],
+      "runtime_backing_material": "/Game/Hearthward/Assets/TASK-028/house/backing/M_FloorBacking"
+    },
+    {
+      "id": "t028.building_part.wood_stairs",
+      "category": "building_part",
+      "source": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/77f7c347-95e6-420c-a558-6024087b8e6a/wood_stairs_model.fbx",
+      "source_sha256": "6cde433f14ebb1615819c92355e66f7076ed5725ea833dcc1bdab7973d6e926f",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/77f7c347-95e6-420c-a558-6024087b8e6a/wood_stairs_model.fbx",
+          "sha256": "6cde433f14ebb1615819c92355e66f7076ed5725ea833dcc1bdab7973d6e926f",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/房屋建筑部件/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_stairs/SM_wood_stairs",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_stairs/SM_wood_stairs",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_stairs/tripo_mat_77f7c347"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_stairs/Color",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_stairs/Normal",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_stairs/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          120.62,
+          125.25,
+          43.76
+        ],
+        "bounds_origin_cm": [
+          -0.39,
+          0.2,
+          -0.13
+        ],
+        "scale": "(1.5, 1.5, 1.2)",
+        "axis": "UE Z-up, component orientation set in house actor",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; 11 task-owned box components cover floor, walls, door frame and steps; roof and open door are nonblocking"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Runtime-spawned TASK-028 camp house at natural-world camp; all eight module types present, walkable door and steps",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied to camp house; final runtime path walks in and out; three DX12 screenshots capture exterior, entry and interior. Owner visual acceptance remains open"
+      ]
+    },
+    {
+      "id": "t028.building_part.wood_wall_doorway",
+      "category": "building_part",
+      "source": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/6dc110ab-9947-4858-a542-21f5fa074e8e/wood_wall_doorway_model.fbx",
+      "source_sha256": "1bba5c6e1d08f0ae7297e8ac36053d36fd298f82beffaa23037742524402208a",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/6dc110ab-9947-4858-a542-21f5fa074e8e/wood_wall_doorway_model.fbx",
+          "sha256": "1bba5c6e1d08f0ae7297e8ac36053d36fd298f82beffaa23037742524402208a",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/房屋建筑部件/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_wall_doorway/SM_wood_wall_doorway",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_wall_doorway/SM_wood_wall_doorway",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_doorway/tripo_mat_6dc110ab"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_doorway/Color",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_doorway/Normal",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_doorway/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          58.51,
+          90.87,
+          76.49
+        ],
+        "bounds_origin_cm": [
+          0.02,
+          -0.05,
+          -0.0
+        ],
+        "scale": "(0.5, 3, 3)",
+        "axis": "UE Z-up, component orientation set in house actor",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; 11 task-owned box components cover floor, walls, door frame and steps; roof and open door are nonblocking"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Runtime-spawned TASK-028 camp house at natural-world camp; all eight module types present, walkable door and steps",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied to camp house; final runtime path walks in and out; three DX12 screenshots capture exterior, entry and interior. Owner visual acceptance remains open"
+      ]
+    },
+    {
+      "id": "t028.building_part.wood_wall_solid",
+      "category": "building_part",
+      "source": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/5ab09d9b-b28e-4619-a708-59b175a8ffe1/wood_wall_solid_model.fbx",
+      "source_sha256": "9915cddb39bab015d85384bb814a1b88ca6be35de4c0e957e30c47b64a07eda1",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/5ab09d9b-b28e-4619-a708-59b175a8ffe1/wood_wall_solid_model.fbx",
+          "sha256": "9915cddb39bab015d85384bb814a1b88ca6be35de4c0e957e30c47b64a07eda1",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/房屋建筑部件/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/SM_wood_wall_solid",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/SM_wood_wall_solid",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/tripo_mat_5ab09d9b"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/Color",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/Normal",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          59.15,
+          91.78,
+          77.32
+        ],
+        "bounds_origin_cm": [
+          -0.03,
+          0.01,
+          0.0
+        ],
+        "scale": "(0.5, 3, 3), four panels",
+        "axis": "UE Z-up, component orientation set in house actor",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; 11 task-owned box components cover floor, walls, door frame and steps; roof and open door are nonblocking"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Runtime-spawned TASK-028 camp house at natural-world camp; all eight module types present, walkable door and steps",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied to camp house; final runtime path walks in and out; three DX12 screenshots capture exterior, entry and interior. Owner visual acceptance remains open"
+      ]
+    },
+    {
+      "id": "t028.building_part.wood_wall_window",
+      "category": "building_part",
+      "source": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/17b709d0-4ce6-4e92-b83c-4009a0047ef4/wood_wall_window_model.fbx",
+      "source_sha256": "0d3327053860cc56f2ab113effb39e6518e18b361a0646a0bc1203d0af96186e",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/房屋建筑部件/outputs/17b709d0-4ce6-4e92-b83c-4009a0047ef4/wood_wall_window_model.fbx",
+          "sha256": "0d3327053860cc56f2ab113effb39e6518e18b361a0646a0bc1203d0af96186e",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/房屋建筑部件/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_wall_window/SM_wood_wall_window",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/house/wood_wall_window/SM_wood_wall_window",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_window/tripo_mat_17b709d0"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_window/Color",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_window/Normal",
+          "/Game/Hearthward/Assets/TASK-028/house/wood_wall_window/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          64.6,
+          87.39,
+          75.35
+        ],
+        "bounds_origin_cm": [
+          0.02,
+          0.02,
+          -0.0
+        ],
+        "scale": "(0.5, 3, 3), three panels",
+        "axis": "UE Z-up, component orientation set in house actor",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; 11 task-owned box components cover floor, walls, door frame and steps; roof and open door are nonblocking"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Runtime-spawned TASK-028 camp house at natural-world camp; all eight module types present, walkable door and steps",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied to camp house; final runtime path walks in and out; three DX12 screenshots capture exterior, entry and interior. Owner visual acceptance remains open"
+      ]
+    },
+    {
+      "id": "t028.prop.bone_meat_pouch",
+      "category": "prop",
+      "source": "art_source/TASK-004/Tripo/妙妙道具/outputs/bc0cff56-3857-4364-b763-64dfb1e489d1/bone_meat_pouch_model.fbx",
+      "source_sha256": "ecc2106b56135f1228971e155e944bfdc1530369c75429c8103c06a67c7f7b44",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/妙妙道具/outputs/bc0cff56-3857-4364-b763-64dfb1e489d1/bone_meat_pouch_model.fbx",
+          "sha256": "ecc2106b56135f1228971e155e944bfdc1530369c75429c8103c06a67c7f7b44",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/妙妙道具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/props/bone_meat_pouch/SM_bone_meat_pouch",
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching gameplay item/use state; stone_bone_axe is the exception",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.prop.clay_flask",
+      "category": "prop",
+      "source": "art_source/TASK-004/Tripo/妙妙道具/outputs/3f03eb70-835b-4167-930f-6d6a525b9d9c/clay_flask_model.fbx",
+      "source_sha256": "bb1416d47141d7ad8ac07b53ef7f2a872cebf53525088a002d861a087392ba2f",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/妙妙道具/outputs/3f03eb70-835b-4167-930f-6d6a525b9d9c/clay_flask_model.fbx",
+          "sha256": "bb1416d47141d7ad8ac07b53ef7f2a872cebf53525088a002d861a087392ba2f",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/妙妙道具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/props/clay_flask/SM_clay_flask",
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching gameplay item/use state; stone_bone_axe is the exception",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.prop.primitive_fishing_rod",
+      "category": "prop",
+      "source": "art_source/TASK-004/Tripo/妙妙道具/outputs/411884f6-12c4-466f-b0da-a5939596b967/primitive_fishing_rod_model.fbx",
+      "source_sha256": "cca0a81343235d5c0350260bc4fc670b6d22d237f35a0f4f7475a7ed4063717f",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/妙妙道具/outputs/411884f6-12c4-466f-b0da-a5939596b967/primitive_fishing_rod_model.fbx",
+          "sha256": "cca0a81343235d5c0350260bc4fc670b6d22d237f35a0f4f7475a7ed4063717f",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/妙妙道具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/props/primitive_fishing_rod/SM_primitive_fishing_rod",
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching gameplay item/use state; stone_bone_axe is the exception",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.prop.stone_bone_axe",
+      "category": "prop",
+      "source": "art_source/TASK-004/Tripo/妙妙道具/outputs/5ce74ca3-7123-488b-babd-d69a75aec742/stone_bone_axe_model.fbx",
+      "source_sha256": "35cdf73c81a92870b63a694e6e7377c4322522735d0b66e0e56c706b7c0b1909",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/妙妙道具/outputs/5ce74ca3-7123-488b-babd-d69a75aec742/stone_bone_axe_model.fbx",
+          "sha256": "35cdf73c81a92870b63a694e6e7377c4322522735d0b66e0e56c706b7c0b1909",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/妙妙道具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": "axe",
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/tripo_mat_5ce74ca3"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/Color",
+          "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/Normal",
+          "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          72.24,
+          51.67,
+          99.82
+        ],
+        "bounds_origin_cm": [
+          1.42,
+          0.71,
+          -0.04
+        ],
+        "scale": "(0.7, 0.7, 0.7); offset (30,35,25) cm",
+        "axis": "UE Z-up; final hand/socket orientation pending TASK-027",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Held visual NoCollision; character capsule unchanged"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "apply",
+      "application_location": "Provisional HeldAxe on greybox character root while existing weapon slot contains axe and inventory contains an axe",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Final runtime QA confirmed equip, unequip, re-equip, save/load and Continue Game; action animation and final skeleton socket not verified"
+      ]
+    },
+    {
+      "id": "t028.furniture.metal_lantern",
+      "category": "furniture",
+      "source": "art_source/TASK-004/Tripo/室内家具/outputs/45e9542a-58d1-457b-a18f-42fe1648f018/metal_lantern_model.fbx",
+      "source_sha256": "686def2e391361b690e677e65ab1fa4cfc46abf648094faa2456f79094cfa522",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/室内家具/outputs/45e9542a-58d1-457b-a18f-42fe1648f018/metal_lantern_model.fbx",
+          "sha256": "686def2e391361b690e677e65ab1fa4cfc46abf648094faa2456f79094cfa522",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/室内家具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/metal_lantern/SM_metal_lantern",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/metal_lantern/SM_metal_lantern",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/metal_lantern/tripo_mat_45e9542a"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/metal_lantern/Color",
+          "/Game/Hearthward/Assets/TASK-028/furniture/metal_lantern/Normal",
+          "/Game/Hearthward/Assets/TASK-028/furniture/metal_lantern/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          50.9,
+          50.77,
+          99.97
+        ],
+        "bounds_origin_cm": [
+          0.18,
+          -0.18,
+          -0.0
+        ],
+        "scale": "(0.35, 0.35, 0.35)",
+        "axis": "UE Z-up; house actor local orientation",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Scenic mesh NoCollision; no furniture blocking volume"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "scene_prop",
+      "application_location": "Runtime-spawned TASK-028 camp house scenery; no new item, storage or furniture interaction",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied as house scenery and included in final DX12 visual capture; no furniture gameplay or Owner visual acceptance claimed"
+      ]
+    },
+    {
+      "id": "t028.furniture.rope_wood_bed",
+      "category": "furniture",
+      "source": "art_source/TASK-004/Tripo/室内家具/outputs/4f3ec881-0fe3-41ef-b9fe-8bcbc1a55536/rope_wood_bed_model.fbx",
+      "source_sha256": "e2af550b48a6549831a4987aad3c75fedcb96dde8c881b96e3388f79d308e0c7",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/室内家具/outputs/4f3ec881-0fe3-41ef-b9fe-8bcbc1a55536/rope_wood_bed_model.fbx",
+          "sha256": "e2af550b48a6549831a4987aad3c75fedcb96dde8c881b96e3388f79d308e0c7",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/室内家具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/SM_rope_wood_bed",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/SM_rope_wood_bed",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/tripo_mat_4f3ec881"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/Color",
+          "/Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/Normal",
+          "/Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          99.74,
+          53.78,
+          16.32
+        ],
+        "bounds_origin_cm": [
+          -0.03,
+          -0.0,
+          -0.0
+        ],
+        "scale": "(1.4, 1.4, 1.4)",
+        "axis": "UE Z-up; house actor local orientation",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Scenic mesh NoCollision; no furniture blocking volume"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "scene_prop",
+      "application_location": "Runtime-spawned TASK-028 camp house scenery; no new item, storage or furniture interaction",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied as house scenery and included in final DX12 visual capture; no furniture gameplay or Owner visual acceptance claimed"
+      ]
+    },
+    {
+      "id": "t028.furniture.wood_chair",
+      "category": "furniture",
+      "source": "art_source/TASK-004/Tripo/室内家具/outputs/45dc3a60-2b22-40a0-bdf1-f04165f9c302/wood_chair_model.fbx",
+      "source_sha256": "2d36b9597064188a3ab45e18688c25bda5446e7c5fc4b1a019ed339d263dc4f2",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/室内家具/outputs/45dc3a60-2b22-40a0-bdf1-f04165f9c302/wood_chair_model.fbx",
+          "sha256": "2d36b9597064188a3ab45e18688c25bda5446e7c5fc4b1a019ed339d263dc4f2",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/室内家具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/wood_chair/SM_wood_chair",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/wood_chair/SM_wood_chair",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_chair/tripo_mat_45dc3a60"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_chair/Color",
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_chair/Normal",
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_chair/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          88.65,
+          88.94,
+          99.97
+        ],
+        "bounds_origin_cm": [
+          0.64,
+          -0.71,
+          -0.0
+        ],
+        "scale": "(0.7, 0.7, 0.7)",
+        "axis": "UE Z-up; house actor local orientation",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Scenic mesh NoCollision; no furniture blocking volume"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "scene_prop",
+      "application_location": "Runtime-spawned TASK-028 camp house scenery; no new item, storage or furniture interaction",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied as house scenery and included in final DX12 visual capture; no furniture gameplay or Owner visual acceptance claimed"
+      ]
+    },
+    {
+      "id": "t028.furniture.wood_chest",
+      "category": "furniture",
+      "source": "art_source/TASK-004/Tripo/室内家具/outputs/911b746d-38db-4697-80ff-a48d2fe938c8/wood_chest_model.fbx",
+      "source_sha256": "b3aacea3986318b1947ed6674e627ae40a1e71e5d8e902c43c2b2fcb10ab4a16",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/室内家具/outputs/911b746d-38db-4697-80ff-a48d2fe938c8/wood_chest_model.fbx",
+          "sha256": "b3aacea3986318b1947ed6674e627ae40a1e71e5d8e902c43c2b2fcb10ab4a16",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/室内家具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/SM_wood_chest",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/SM_wood_chest",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/tripo_mat_911b746d"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/Color",
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/Normal",
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          101.07,
+          114.45,
+          30.76
+        ],
+        "bounds_origin_cm": [
+          -0.82,
+          0.51,
+          -0.02
+        ],
+        "scale": "(0.85, 0.85, 0.85)",
+        "axis": "UE Z-up; house actor local orientation",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Scenic mesh NoCollision; no furniture blocking volume"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "scene_prop",
+      "application_location": "Runtime-spawned TASK-028 camp house scenery; no new item, storage or furniture interaction",
+      "status": "applied",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Applied as house scenery and included in final DX12 visual capture; no furniture gameplay or Owner visual acceptance claimed"
+      ]
+    },
+    {
+      "id": "t028.furniture.wood_table",
+      "category": "furniture",
+      "source": "art_source/TASK-004/Tripo/室内家具/outputs/a463c066-8b01-4996-8d9b-7cf4a36b4d54/wood_table_model.fbx",
+      "source_sha256": "cf9b094f5a3c7542748bb10a3881166b3e285374f84e236e2d48c78afd26e391",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/室内家具/outputs/a463c066-8b01-4996-8d9b-7cf4a36b4d54/wood_table_model.fbx",
+          "sha256": "cf9b094f5a3c7542748bb10a3881166b3e285374f84e236e2d48c78afd26e391",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/室内家具/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": "workbench",
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/wood_table/SM_wood_table",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/furniture/wood_table/SM_wood_table",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_table/tripo_mat_a463c066"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_table/Color",
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_table/Normal",
+          "/Game/Hearthward/Assets/TASK-028/furniture/wood_table/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          106.92,
+          115.74,
+          54.66
+        ],
+        "bounds_origin_cm": [
+          -0.03,
+          -0.03,
+          -0.07
+        ],
+        "scale": "(1.5, 0.78, 1.6)",
+        "axis": "UE Z-up; existing building actor orientation",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; existing building root box half extent (80,45,45) cm"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "duplicate_candidate",
+      "application_location": "TASK-030 main owns the workbench/campfire mesh through /Game/Hearthward/Assets/Demo; this TASK-028 import is no longer referenced by gameplay.json",
+      "status": "imported",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Historical TASK-028 pre-TASK-030 runtime QA used this mesh; latest main uses the equivalent TASK-030 Demo mesh, so current applied status is withdrawn"
+      ]
+    },
+    {
+      "id": "t028.facility.campfire",
+      "category": "facility",
+      "source": "art_source/TASK-004/Tripo/篝火/outputs/campfire_model.fbx",
+      "source_sha256": "01489228eb1873190cbc9490a454aab1ecc70437a22a54642ada08e7c1b3f90d",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/篝火/outputs/campfire_model.fbx",
+          "sha256": "01489228eb1873190cbc9490a454aab1ecc70437a22a54642ada08e7c1b3f90d",
+          "kind": "static"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/篝火/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": "campfire",
+      "planned_ue_asset": "/Game/Hearthward/Assets/TASK-028/facilities/campfire/SM_campfire",
+      "ue_asset": "/Game/Hearthward/Assets/TASK-028/facilities/campfire/SM_campfire",
+      "materials_textures": {
+        "materials": [
+          "/Game/Hearthward/Assets/TASK-028/facilities/campfire/tripo_mat_578cc516"
+        ],
+        "textures": [
+          "/Game/Hearthward/Assets/TASK-028/facilities/campfire/Color",
+          "/Game/Hearthward/Assets/TASK-028/facilities/campfire/Normal",
+          "/Game/Hearthward/Assets/TASK-028/facilities/campfire/Roughness"
+        ],
+        "texture_max_size": 2048,
+        "roughness_linear": true
+      },
+      "scale_axis_pivot": {
+        "unscaled_bounds_cm": [
+          97.71,
+          100.21,
+          48.62
+        ],
+        "bounds_origin_cm": [
+          -0.04,
+          0.0,
+          -0.27
+        ],
+        "scale": "(0.9, 0.9, 0.65)",
+        "axis": "UE Z-up; existing building actor orientation",
+        "pivot": "FBX origin retained; bounds origin recorded above"
+      },
+      "collision": {
+        "simple_count": 0,
+        "strategy": "Visual mesh NoCollision; existing building root box half extent (45,45,16) cm"
+      },
+      "lod_nanite": {
+        "lod_count": 1,
+        "nanite": "Unverified; no blanket enablement"
+      },
+      "disposition": "duplicate_candidate",
+      "application_location": "TASK-030 main owns the workbench/campfire mesh through /Game/Hearthward/Assets/Demo; this TASK-028 import is no longer referenced by gameplay.json",
+      "status": "imported",
+      "verification": [
+        "UE 5.8.2 static FBX import succeeded and packages saved",
+        "Fresh UE Editor reopen verified all packages, material slots, normal and roughness texture settings",
+        "Material slots and package closure recorded in static-import-report.json",
+        "Roughness textures changed to linear TC_MASKS; normal textures imported as TC_NORMALMAP",
+        "Historical TASK-028 pre-TASK-030 runtime QA used this mesh; latest main uses the equivalent TASK-030 Demo mesh, so current applied status is withdrawn"
+      ]
+    },
+    {
+      "id": "t028.enemy_candidate.heavy_armored_soldier",
+      "category": "enemy_candidate",
+      "source": "art_source/TASK-004/Tripo/敌人/outputs/heavy_armored_soldier/heavy_armored_soldier_model.fbx",
+      "source_sha256": "86eb7b38a55fa8dc23c5bb39dcac0982ee73fd94c41ec3bee3550ee63986a2da",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/敌人/outputs/heavy_armored_soldier/heavy_armored_soldier_model.fbx",
+          "sha256": "86eb7b38a55fa8dc23c5bb39dcac0982ee73fd94c41ec3bee3550ee63986a2da",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/敌人/outputs/heavy_armored_soldier/heavy_armored_soldier_rigged.fbx",
+          "sha256": "9320a49dfdc7b444a530aa1e0705285c25c6e0998f9fcaa00c849f45ca9c3ddc",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/敌人/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No compatible enemy animation and behavior integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.enemy_candidate.short_blade_soldier",
+      "category": "enemy_candidate",
+      "source": "art_source/TASK-004/Tripo/敌人/outputs/short_blade_soldier/short_blade_soldier_model.fbx",
+      "source_sha256": "e0a23d0b845793ecfb0ec7af198d073c2e6619ee0a752b35a8d7280b8776e0a5",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/敌人/outputs/short_blade_soldier/short_blade_soldier_model.fbx",
+          "sha256": "e0a23d0b845793ecfb0ec7af198d073c2e6619ee0a752b35a8d7280b8776e0a5",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/敌人/outputs/short_blade_soldier/short_blade_soldier_rigged.fbx",
+          "sha256": "f8700ab9571afa70a78bbc9ef14701e3ca53e38e8055414010c3a8bad0312d9b",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/敌人/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No compatible enemy animation and behavior integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.black_bear",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/7f5206d7-7c0a-41da-a755-7250f789f84b/black_bear_model.fbx",
+      "source_sha256": "cb35bb61569e6977236028bce8e40dcfca6302c09caf439b2af41eae91616372",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/7f5206d7-7c0a-41da-a755-7250f789f84b/black_bear_model.fbx",
+          "sha256": "cb35bb61569e6977236028bce8e40dcfca6302c09caf439b2af41eae91616372",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/7cad7852-6c8a-4cce-b7c8-d376901dd007/black_bear_rigged.fbx",
+          "sha256": "a099d2aad71f036926d07eeb0ac5c9612b859ecc1d3ab27147ca4b4eb6b140eb",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.carp",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/b2ce3e41-e542-4b01-978c-2ce448eaf8b0/carp_model.fbx",
+      "source_sha256": "3e8f7dee3bb1f400fce44297b1b2247e35934c051501839b9c73304cba0ee018",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/b2ce3e41-e542-4b01-978c-2ce448eaf8b0/carp_model.fbx",
+          "sha256": "3e8f7dee3bb1f400fce44297b1b2247e35934c051501839b9c73304cba0ee018",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/4b774d6e-f721-4d28-8de1-7ba317dea2a5/carp_rigged.fbx",
+          "sha256": "e8baad574246edeb9b9a5656b298fa09c2e368914f52ff3036a0ff2c69d43da5",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.catfish",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/d8fb01be-19a2-4706-88fd-eb16471c8c27/catfish_model.fbx",
+      "source_sha256": "6bbd5086a54c8a8573e7beefb2c0345e658e849e5ef5e5a156c0babf77dca780",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/d8fb01be-19a2-4706-88fd-eb16471c8c27/catfish_model.fbx",
+          "sha256": "6bbd5086a54c8a8573e7beefb2c0345e658e849e5ef5e5a156c0babf77dca780",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/e97151ca-323f-4786-b576-ecd4d5bee2bb/catfish_rigged.fbx",
+          "sha256": "0cdb310cf823fdb5ee0902020bcadd937bd500038960a0fa4e298417ca1d916d",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.crucian_carp",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/e193cb21-fa34-4bb1-b522-c0198e186127/crucian_carp_model.fbx",
+      "source_sha256": "9a23a4c6d7f2c3992b90cbe6bbaaf4e0669656f49f8dd2e9825da865c847c768",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/e193cb21-fa34-4bb1-b522-c0198e186127/crucian_carp_model.fbx",
+          "sha256": "9a23a4c6d7f2c3992b90cbe6bbaaf4e0669656f49f8dd2e9825da865c847c768",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/a87ebcaf-a4d7-412a-b10d-c7b90717dcef/crucian_carp_rigged.fbx",
+          "sha256": "9b255e42c6d93f98be96b8d58928453fa378f94d4a68d38c82ad016c8113a200",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.eel",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/e473cc70-a885-4fc7-abe4-b64643fb1bbf/eel_model.fbx",
+      "source_sha256": "6101ca9f12af6167ae188ec5bbcff65359aa3410fbca177f50ee5f6d58c0b09c",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/e473cc70-a885-4fc7-abe4-b64643fb1bbf/eel_model.fbx",
+          "sha256": "6101ca9f12af6167ae188ec5bbcff65359aa3410fbca177f50ee5f6d58c0b09c",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/e15f6550-5028-47db-8efe-9d22d46178b5/eel_rigged.fbx",
+          "sha256": "3c2d5b0b7cf11d049e88650890e9f18370a4a0d2cd5286cfee874cf7e3db9bdf",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.goat",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/d005ba13-ec3b-4bc8-8bd4-dcc4a3c6e639/goat_model.fbx",
+      "source_sha256": "cb2838f18551dd722b0af976b7cddf9347104ee22089f85939550093b93c96ce",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/d005ba13-ec3b-4bc8-8bd4-dcc4a3c6e639/goat_model.fbx",
+          "sha256": "cb2838f18551dd722b0af976b7cddf9347104ee22089f85939550093b93c96ce",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/496dc3de-1fa5-4773-b0b9-a68b301f3a31/goat_rigged.fbx",
+          "sha256": "1f0ae5b499b3a6cb2e5937deb64f38933962ab1ec55292ed521db8754a7673f0",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.hare",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/588471a5-d278-414e-bd5b-de3209def6d4/hare_model.fbx",
+      "source_sha256": "f533280431a5b96099297635b1fb4e0f455757e012e8d3609e04b0bd170a7b9c",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/588471a5-d278-414e-bd5b-de3209def6d4/hare_model.fbx",
+          "sha256": "f533280431a5b96099297635b1fb4e0f455757e012e8d3609e04b0bd170a7b9c",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/f5903e26-3215-4370-a17b-730a1dc0fbe4/hare_rigged.fbx",
+          "sha256": "bc49e30f0bba702c79e92324ca711226f208e564d1c1262ede68ecf20c38661c",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.hen",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/bcc1c840-fd3e-4e0a-b429-d3b9e27ee67e/hen_model.fbx",
+      "source_sha256": "51c2574492c2d6a065cda679b75658d34bed4076c15ba2b876c3cf5e65c55148",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/bcc1c840-fd3e-4e0a-b429-d3b9e27ee67e/hen_model.fbx",
+          "sha256": "51c2574492c2d6a065cda679b75658d34bed4076c15ba2b876c3cf5e65c55148",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/26fa1cc2-4548-4062-ad40-c4fd8ba30863/hen_rigged.fbx",
+          "sha256": "14de89a8885108d6b965227256891d6ad2bb0aee42a79a94a4c3c5cbb9d37f03",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.pheasant",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/59a5036b-7578-46b1-8716-558e6df2b8f6/pheasant_model.fbx",
+      "source_sha256": "fbfce53128734de7f5aa9dba681904bc4ed8d765585e941595b734fd58c214b4",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/59a5036b-7578-46b1-8716-558e6df2b8f6/pheasant_model.fbx",
+          "sha256": "fbfce53128734de7f5aa9dba681904bc4ed8d765585e941595b734fd58c214b4",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/34208956-0641-428d-9406-7c2b67c3fa9c/pheasant_rigged.fbx",
+          "sha256": "b53fbbf6121fa529c858340e2dda9dc3f291ee3b91b02d3dbb8bf91b54b21d2c",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.pig",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/0059d8b0-37bf-4db1-9336-41c0debd81e0/pig_model.fbx",
+      "source_sha256": "a05e2410712a979fdca184ddb9a292019c772f122c671a7aadddf2c43394e204",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/0059d8b0-37bf-4db1-9336-41c0debd81e0/pig_model.fbx",
+          "sha256": "a05e2410712a979fdca184ddb9a292019c772f122c671a7aadddf2c43394e204",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/b52f3438-f5a5-4442-9f72-3ab9dbcbfa2b/pig_rigged.fbx",
+          "sha256": "b294ec7439340e18998f9e8d34808ac8ec872c90940730b59a6eb3b089091555",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.ram",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/8334bd78-63dd-4981-917c-e2430e97a48d/ram_model.fbx",
+      "source_sha256": "0aec2a9d1dd43256a9905596e88c1283186ae03dcf7242d80a85994239d127b9",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/8334bd78-63dd-4981-917c-e2430e97a48d/ram_model.fbx",
+          "sha256": "0aec2a9d1dd43256a9905596e88c1283186ae03dcf7242d80a85994239d127b9",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/898640cb-65dd-43ea-8658-3ce51bb79acf/ram_rigged.fbx",
+          "sha256": "cb9183718a1cd6ee84f387a76d2abf2aed9c34d84786704336ccd92ea267bdda",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.red_fox",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/e976d24b-8ce3-4b1f-9cbd-e23883468b83/red_fox_model.fbx",
+      "source_sha256": "bb5b241a633be3ead24ab800fb8e47ed86b5adfaeaf6de43c3c6b744bdbece5a",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/e976d24b-8ce3-4b1f-9cbd-e23883468b83/red_fox_model.fbx",
+          "sha256": "bb5b241a633be3ead24ab800fb8e47ed86b5adfaeaf6de43c3c6b744bdbece5a",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/5fd7f6b9-9e53-4a39-95f9-e56e66a6893f/red_fox_rigged.fbx",
+          "sha256": "42884de64d766e475bfc0a94859480c6209458788ef81cf4e47b366dee0cb0a7",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.stag_a",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/6cda5dcd-6fcb-4588-a12f-820a1393de76/stag_a_model.fbx",
+      "source_sha256": "6c2805dae1f2810eaef76ce955dae4acce6f1b08c2abe4c6639f75992cf4e08c",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/6cda5dcd-6fcb-4588-a12f-820a1393de76/stag_a_model.fbx",
+          "sha256": "6c2805dae1f2810eaef76ce955dae4acce6f1b08c2abe4c6639f75992cf4e08c",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/9719b0c5-89b2-4754-959e-03e085f78059/stag_a_rigged.fbx",
+          "sha256": "71c686ec245022bcfecd2b4d7b2ff231d941caacbf52d1bb7c5d7e6941f99d10",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.stag_b",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/e86826cc-027c-4e29-b6ad-e1428670703a/stag_b_model.fbx",
+      "source_sha256": "5ec64c8974f1b31351e33f191dd2363c9d7f872113e5c4eb18b6eee75f16c2d6",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/e86826cc-027c-4e29-b6ad-e1428670703a/stag_b_model.fbx",
+          "sha256": "5ec64c8974f1b31351e33f191dd2363c9d7f872113e5c4eb18b6eee75f16c2d6",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/382a944f-7630-4b0f-afcc-72133fe5bf90/stag_b_rigged.fbx",
+          "sha256": "09880934ca7e9efb8036a9e5884ceb22ece7697d947f357232b981f3298971a5",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.animal_candidate.wolf",
+      "category": "animal_candidate",
+      "source": "art_source/TASK-004/Tripo/动物/outputs/4ca01192-6ab4-4df4-bb58-b1928304cd8b/wolf_model.fbx",
+      "source_sha256": "4f4b7bbe854bfeba3dbcb369580795b04f3180c89d9821af290b42e4a033386e",
+      "variants": [
+        {
+          "path": "art_source/TASK-004/Tripo/动物/outputs/4ca01192-6ab4-4df4-bb58-b1928304cd8b/wolf_model.fbx",
+          "sha256": "4f4b7bbe854bfeba3dbcb369580795b04f3180c89d9821af290b42e4a033386e",
+          "kind": "static"
+        },
+        {
+          "path": "art_source/TASK-004/Tripo/动物/rigged_outputs/f16365c7-739d-4dd0-a081-74188b4a2453/wolf_rigged.fbx",
+          "sha256": "9c4aeb3e8d6c59b94293880b364355c82ad8930ebe1369a98fc0b11ea1638fbc",
+          "kind": "rigged"
+        }
+      ],
+      "provenance": "art_source/TASK-004/Tripo/动物/SOURCE.md",
+      "rights": "See linked TASK-004 SOURCE.md; input-image rights remain Owner responsibility",
+      "gameplay_id": null,
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": "FBX embedded/dependent materials to inspect in UE",
+      "scale_axis_pivot": "unverified",
+      "collision": "unverified",
+      "lod_nanite": "unverified; decide from measured geometry and use",
+      "disposition": "defer",
+      "application_location": "No matching animal behavior and animation integration validated",
+      "status": "source_available",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.bow",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "bow",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot ranged; source model required",
+      "status": "source_missing",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.hood",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "hood",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot head; source model required",
+      "status": "source_missing",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.armor",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "armor",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot chest; source model required",
+      "status": "source_missing",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.gloves",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "gloves",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot hands; source model required",
+      "status": "source_missing",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.boots",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "boots",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot feet; source model required",
+      "status": "source_missing",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.belt",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "belt",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot waist; source model required",
+      "status": "source_missing",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.shield",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "shield",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot offhand; source model required",
+      "status": "source_missing",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.quiver",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "quiver",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot quiver; source model required",
+      "status": "source_missing",
+      "verification": []
+    },
+    {
+      "id": "t028.missing_equipment.amulet",
+      "category": "equipment_gap",
+      "source": null,
+      "source_sha256": null,
+      "variants": [],
+      "provenance": null,
+      "rights": null,
+      "gameplay_id": "amulet",
+      "planned_ue_asset": null,
+      "ue_asset": null,
+      "materials_textures": null,
+      "scale_axis_pivot": null,
+      "collision": null,
+      "lod_nanite": null,
+      "disposition": "blocked",
+      "application_location": "equipment slot charm; source model required",
+      "status": "source_missing",
+      "verification": []
+    }
+  ]
+}

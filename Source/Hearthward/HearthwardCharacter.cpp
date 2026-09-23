@@ -3,12 +3,14 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Building/HearthwardBuildingComponent.h"
+#include "Building/HearthwardTask028CampHouse.h"
 #include "Gameplay/HearthwardGameplayComponent.h"
 #include "Actions/HearthwardTimedActionComponent.h"
 #include "Inventory/HearthwardInventoryComponent.h"
 #include "UI/HearthwardHUD.h"
 #include "UI/HearthwardScreenWidget.h"
 #include "Interaction/HearthwardInteractionComponent.h"
+#include "Save/HearthwardSaveSubsystem.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -19,6 +21,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
 #include "InputMappingContext.h"
@@ -58,18 +62,57 @@ AHearthwardCharacter::AHearthwardCharacter()
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMesh()->SetAnimInstanceClass(UHearthwardHeroAnimInstance::StaticClass());
+
+    // TASK-028 provisional attachment until the hand socket and tool animation are integrated.
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> Axe(TEXT("/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe.SM_stone_bone_axe"));
+    HeldAxe=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldAxe"));
+    HeldAxe->SetupAttachment(GetRootComponent());
+    HeldAxe->SetStaticMesh(Axe.Object);
+    HeldAxe->SetRelativeLocation(FVector(30,35,25));
+    HeldAxe->SetRelativeScale3D(FVector(.7));
+    HeldAxe->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    HeldAxe->SetVisibility(false);
 }
 
 void AHearthwardCharacter::BeginPlay()
 {
     Super::BeginPlay();
     Inventory->OnInventoryChanged.AddDynamic(this, &AHearthwardCharacter::UpdateCarrySpeed);
+    Inventory->OnInventoryChanged.AddDynamic(this, &AHearthwardCharacter::RefreshHeldTool);
+    Gameplay->OnChanged.AddDynamic(this, &AHearthwardCharacter::RefreshHeldTool);
+    GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this, &AHearthwardCharacter::RefreshHeldTool);
     UpdateCarrySpeed();
+    RefreshHeldTool();
+    if(HasAuthority() && UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds"))
+    {
+        // This level can run under its own map GameMode in PIE, or HearthwardGameMode from the menu.
+        // Attach the task-owned camp structure to the player bootstrap in both cases.
+        bool AlreadySpawned=false;
+        for(TActorIterator<AHearthwardTask028CampHouse> It(GetWorld());It;++It) { AlreadySpawned=true; break; }
+        if(!AlreadySpawned)
+        {
+            const FVector CampHouseXY(-98600,-75500,0);
+            FHitResult Hit;
+            FCollisionQueryParams Query(SCENE_QUERY_STAT(Task028CampHouse),false);
+            if(GetWorld()->LineTraceSingleByChannel(Hit,CampHouseXY+FVector(0,0,30000),
+                                                    CampHouseXY-FVector(0,0,30000),ECC_Visibility,Query))
+                GetWorld()->SpawnActor<AHearthwardTask028CampHouse>(Hit.ImpactPoint,FRotator::ZeroRotator);
+            else UE_LOG(LogTemp,Error,TEXT("TASK-028 camp house ground trace failed"));
+        }
+    }
 }
 
 void AHearthwardCharacter::UpdateCarrySpeed()
 {
     GetCharacterMovement()->MaxWalkSpeed = 350.0f * Inventory->GetMoveSpeedMultiplier();
+}
+
+void AHearthwardCharacter::RefreshHeldTool()
+{
+    // The existing equipment and inventory state remain the sole source of truth.
+    const bool HoldingAxe=Gameplay->Equipment.FindRef(TEXT("weapon"))==TEXT("axe")
+        && Inventory->GetItemCount(TEXT("axe"))>0;
+    HeldAxe->SetVisibility(HoldingAxe);
 }
 
 void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -140,6 +183,9 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 void AHearthwardCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Inventory->OnInventoryChanged.RemoveDynamic(this, &AHearthwardCharacter::UpdateCarrySpeed);
+    Inventory->OnInventoryChanged.RemoveDynamic(this, &AHearthwardCharacter::RefreshHeldTool);
+    Gameplay->OnChanged.RemoveDynamic(this, &AHearthwardCharacter::RefreshHeldTool);
+    GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.RemoveDynamic(this, &AHearthwardCharacter::RefreshHeldTool);
     if (auto* Player = Cast<APlayerController>(GetController()))
     {
         if (auto* LocalPlayer = Player->GetLocalPlayer())
