@@ -38,6 +38,12 @@ private:
     void ToggleInventory();
     void Interact();
     void StartJump();
+    void StartSprint();
+    void StopSprint();
+    void PreviewAttack();
+
+    UPROPERTY() TObjectPtr<UInputAction> SprintAction;
+    UPROPERTY() TObjectPtr<UInputAction> AttackPreviewAction;
 
     UPROPERTY(VisibleAnywhere, Category="Hearthward|Interaction")
     TObjectPtr<UHearthwardInteractionComponent> Interaction;

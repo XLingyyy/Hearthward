@@ -34,6 +34,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Hearthward|Interaction")
     EHearthwardInteractionStatus GetStatus() const { return Status; }
     uint32 GetFeedbackRevision() const { return FeedbackRevision; }
+    UHearthwardInteractionTargetComponent* GetActiveTarget() const { return bActive ? PendingTarget.Get() : nullptr; }
 private:
     friend class UHearthwardSaveSubsystem;
     EHearthwardInteractionStatus ValidateTarget(UHearthwardInteractionTargetComponent* Target) const;
