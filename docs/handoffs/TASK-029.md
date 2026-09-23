@@ -12,6 +12,8 @@ AI NPC vNext 最终统一使用 **TASK-029**。早期 027～040 仅作为内部�
 
 该分支明确继承 `main@ba547c0`；远端 main 已在本轮之后前进到 `be9286f`（TASK-030）。这次任务只融合指定的两个工作树，TASK-030 的独立资产和逻辑未并入。真实键鼠、可见武器网格及跳跃手臂动画还需单独验收。
 
+本轮范围提交 `4b3489aba85eac5dd2960200056a4b4302f36553` 和已验证源码提交 `4dae443094346f7d1ed8e4a62ba11370dc2165d7` 已推送至 GitHub 分支 `codex/integrated-latest-20260923`。本分支没有创建 PR 或合并 main；独立评审与真人验收仍未完成。
+
 ## 最终集成结构
 
 最终候选把两条已经存在的开发线收口到一起：
@@ -69,6 +71,6 @@ Qwen M01～M16 clean + pressure 为 32/32 safety PASS；M01～M10 core raw contr
 ## 下一步
 
 1. 本轮统一分支的 build/native/Python/runtime/UI/自然路线/跟随/攻击夹具复验已完成，结果见上文集成报告。
-2. 将本轮提交推送到 `codex/integrated-latest-20260923`；旧 PR #34 保持原 head，另行评审新分支。
+2. 新分支已推送；旧 PR #34 保持原 head，需另行评审新分支。
 3. 等待真实键鼠、可见武器/跳跃动画、独立 Reviewer / Owner 体验验收。
 4. **不由 Agent 合并 main。**
