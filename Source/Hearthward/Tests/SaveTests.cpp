@@ -111,12 +111,16 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     auto& Integrated=Pool->Points.Last().World;
     Integrated.NaturalCompanion=true;
     Integrated.Resource.Add(TEXT("wood"),14);
+    Integrated.HarvestedResources.Add(TEXT("tree-instance-42"),6);
     Integrated.Companion.SetLocation(FVector(-97800,-75000,16180));
     TestTrue(TEXT("Integrated camp writes through the same save format"), HearthwardSave::Write(Path, Pool, Error));
     TestTrue(TEXT("Integrated camp reads from disk"), HearthwardSave::Read(Path, Loaded, Error));
     if (Loaded) TestTrue(TEXT("Companion presence and finite resources survive disk round trip"),
         Loaded->Points.Last().World.NaturalCompanion && Loaded->Points.Last().World.Resource.FindRef(TEXT("wood"))==14
-        && Loaded->Points.Last().World.Companion.Equals(Integrated.Companion));
+        && Loaded->Points.Last().World.Companion.Equals(Integrated.Companion)
+        && Loaded->Points.Last().World.HarvestedResources.FindRef(TEXT("tree-instance-42"))==6);
+    Integrated.HarvestedResources.Add(TEXT("tree-instance-42"),-1);
+    TestFalse(TEXT("Invalid resource consumption rejected"), HearthwardSave::Validate(*Pool));
     auto Corrupt = Original; Corrupt.Last() ^= 1;
     FFileHelper::SaveArrayToFile(Corrupt, *Path);
     TestFalse(TEXT("Payload corruption rejected"), HearthwardSave::Read(Path, Loaded, Error));

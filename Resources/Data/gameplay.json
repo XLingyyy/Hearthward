@@ -947,7 +947,8 @@
     "roast": 4,
     "arrow": 24,
     "medicine": 3,
-    "firepot": 3
+    "firepot": 3,
+    "meat": 3
   },
   "encounters": [
     {
@@ -1061,77 +1062,25 @@
       "description": "营地内建造 · 五秒完成 · 从背包消耗材料",
       "wilderness": false,
       "extent": [
-        80,
-        45,
-        45
+        70,
+        76,
+        36
       ],
       "materials": {
         "wood": 8
       },
       "parts": [
         {
-          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "mesh": "/Game/Hearthward/Assets/Demo/table/wood_table_model.wood_table_model",
           "position": [
             0,
             0,
-            35
+            -0.3814092
           ],
           "scale": [
-            1.6,
-            0.9,
-            0.2
-          ]
-        },
-        {
-          "mesh": "/Engine/BasicShapes/Cube.Cube",
-          "position": [
-            -65,
-            -30,
-            -5
-          ],
-          "scale": [
-            0.16,
-            0.16,
-            0.8
-          ]
-        },
-        {
-          "mesh": "/Engine/BasicShapes/Cube.Cube",
-          "position": [
-            -65,
-            30,
-            -5
-          ],
-          "scale": [
-            0.16,
-            0.16,
-            0.8
-          ]
-        },
-        {
-          "mesh": "/Engine/BasicShapes/Cube.Cube",
-          "position": [
-            65,
-            -30,
-            -5
-          ],
-          "scale": [
-            0.16,
-            0.16,
-            0.8
-          ]
-        },
-        {
-          "mesh": "/Engine/BasicShapes/Cube.Cube",
-          "position": [
-            65,
-            30,
-            -5
-          ],
-          "scale": [
-            0.16,
-            0.16,
-            0.8
+            1.3,
+            1.3,
+            1.3
           ]
         }
       ]
@@ -1142,51 +1091,56 @@
       "description": "可在野外建造 · 五秒完成 · 从背包消耗材料",
       "wilderness": true,
       "extent": [
-        45,
-        45,
-        16
+        54,
+        56,
+        27
       ],
       "materials": {
-        "wood": 4
+        "wood": 4,
+        "stone": 4
       },
       "parts": [
         {
-          "mesh": "/Engine/BasicShapes/Cylinder.Cylinder",
+          "mesh": "/Game/Hearthward/Assets/Demo/campfire/campfire_model.campfire_model",
           "position": [
             0,
             0,
-            -8
+            0.0355888
           ],
           "scale": [
-            0.9,
-            0.9,
-            0.16
+            1.1,
+            1.1,
+            1.1
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "bed",
+      "name": "绳网木床",
+      "description": "营地内建造 · E休息：饱食-10，生命+30，耐力恢复",
+      "wilderness": false,
+      "extent": [
+        105,
+        57,
+        18
+      ],
+      "materials": {
+        "wood": 6,
+        "rope": 2
+      },
+      "parts": [
         {
-          "mesh": "/Engine/BasicShapes/Cube.Cube",
+          "mesh": "/Game/Hearthward/Assets/Demo/bed/rope_wood_bed_model.rope_wood_bed_model",
           "position": [
             0,
             0,
-            4
+            -0.855894
           ],
           "scale": [
-            0.65,
-            0.18,
-            0.18
-          ]
-        },
-        {
-          "mesh": "/Engine/BasicShapes/Cube.Cube",
-          "position": [
-            0,
-            0,
-            5
-          ],
-          "scale": [
-            0.18,
-            0.65,
-            0.18
+            2.1,
+            2.1,
+            2.1
           ]
         }
       ]
@@ -1220,6 +1174,31 @@
       },
       "outputs": {
         "rope": 1
+      }
+    },
+    {
+      "id": "stone_axe",
+      "name": "荒原石斧",
+      "icon": "axe",
+      "description": "木柄与石刃，供demo使用的基础工具。",
+      "materials": {
+        "wood": 2,
+        "stone": 3
+      },
+      "outputs": {
+        "axe": 1
+      }
+    },
+    {
+      "id": "medicine",
+      "name": "药草膏",
+      "icon": "medicineQuick",
+      "description": "两份草药调制一份药膏，使用恢复30生命。",
+      "materials": {
+        "herb": 2
+      },
+      "outputs": {
+        "medicine": 1
       }
     }
   ],

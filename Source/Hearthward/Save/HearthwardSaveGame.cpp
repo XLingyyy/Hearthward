@@ -1,4 +1,5 @@
 #include "HearthwardSaveGame.h"
+#include "../Interaction/HearthwardHarvestSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "Kismet/GameplayStatics.h"
@@ -113,7 +114,7 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
             if(!Item || !FMath::IsFinite(D.Value) || D.Value<0 || D.Value>HearthwardData::Number(Item,TEXT("durability")))return false;
         }
         if (!S.NPCMemory.IsValid(S.ActiveSeconds)) return false;
-        if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) return false;
+        if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay) || !UHearthwardHarvestSubsystem::Validate(S.HarvestedResources)) return false;
         if (!P.SaveId.IsValid() || !P.CampaignId.IsValid() || Ids.Contains(P.SaveId) || S.Map.IsEmpty()
             || !FMath::IsFinite(S.ActiveSeconds) || S.ActiveSeconds < 0 || S.KnowledgeRevision != S.Knowledge.Num()
             || S.AutoMinutes < 1 || S.AutoMinutes > 60 || !S.Safety.CanSave()

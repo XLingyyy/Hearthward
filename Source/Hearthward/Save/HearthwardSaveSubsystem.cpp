@@ -1,4 +1,5 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Interaction/HearthwardHarvestSubsystem.h"
 #include "../Companion/HearthwardNaturalCamp.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
@@ -162,6 +163,9 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
         if (It->FindComponentByClass<UHearthwardInventoryComponent>() && *It != Player
             && (!Companion || (*It != Companion && *It != Companion->Source->GetOwner())))
         { Status = TEXT("场景存在未接入快照的容器"); return false; }
+    if(GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->IsSettling())
+    { Status=TEXT("资源正在结算，请稍后保存"); return false; }
+    S.HarvestedResources = GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Snapshot();
     S.NaturalWorld = bNaturalWorld;
     S.NaturalCompanion = bNaturalWorld;
     S.Map = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
@@ -245,6 +249,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     Storage->AdvanceTimeline();
+    GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Restore(S.HarvestedResources);
     if(auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>()) B->CancelPlacement();
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->ResetForSnapshot();
     if (auto* Interaction = Player->FindComponentByClass<UHearthwardInteractionComponent>())

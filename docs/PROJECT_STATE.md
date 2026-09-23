@@ -1,6 +1,6 @@
 # Hearthward 项目状态
 
-2026-09-23局部更新：远端 main 已前进到 `be9286f`（TASK-030），本地 `codex/integrated-latest-20260923` 分支明确从 `main@ba547c0` 的 checkpoint `66d0107` 融合 TASK-041/042 的选定代码，尚未并入后续 TASK-030。TASK-026 自然地图继续按用户新方向精修新营地，主菜单新游戏、存档和继续游戏已接入；全图质量、长路线、跨区流送、性能与 Owner 视觉验收仍未完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
+2026-09-23局部更新：远端 main 为 `be9286f`（TASK-030）；`codex/integrated-latest-20260923` 已将该 main 合入本地候选，同时保留此前 TASK-029/041/042 选定代码。组合源码的构建、Python 31/31、原生 43/43、Demo 70/70、UI 62/62、自然路线 51/51、跟随 8/8、攻击 10/10 和 runtime smoke 23/23 已通过；见[组合复验](qa/evidence/TASK-029/main-integration-20260924/REPORT.md)。独立 PR 评审与 main 合并尚未完成。TASK-026 自然地图继续按用户新方向精修新营地，主菜单新游戏、存档和继续游戏已接入；全图质量、长路线、跨区流送、性能与 Owner 视觉验收仍未完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
 
 AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。集成分支已把 `main@ba547c0` 的角色动画、latest-main AI 核心返工、PR #34 `25d53d8` 的自然营地 AI 与 TASK-041/042 的 UI/交互/攻击/跟随修正收口为同一树。latest-main AI 核心已验证 Python 31/31、Editor build PASS、native 41/41、runtime smoke 23/23、Executor 49/49、Initiative 16/16、Tactical 16/16、Routine 26/26；自然营地线此前验证 native 42/42、自然采集/存档 22/22、工作台闭环 23 项、旧自然档升级 12/12。旧 `main@ba547c0` 的 validator 有 9 项既有 workflow metadata 错误；本轮集成树只剩 canonical TASK-027 的 reviewer 与 Issue URL 两项。两次检查对应不同提交，均不冒充 0 errors。详见 [latest-main finalization](qa/evidence/TASK-029/LATEST_MAIN_FINALIZATION.md)。
 
@@ -12,7 +12,7 @@ AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。集
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；TASK-026 地图工作与 TASK-029 AI NPC 工作保持分支隔离 |
 | 当前分支 | 本轮融合：`codex/integrated-latest-20260923`；对外统一 TASK-029。地图：`codex/TASK-026-natural-world-rebuild` 另行推进 |
-| 游戏实现提交 | 远端 main 当前为 `be9286f`；本轮集成分支基于 `ba547c0` 的 checkpoint，选定 TASK-041/042 补丁已验证并推送，源码提交 `4dae443094346f7d1ed8e4a62ba11370dc2165d7`；旧 PR #34 不代表本轮分支；等待 review/Owner 验收，不自动 merge |
+| 游戏实现提交 | 远端 main 当前为 `be9286f`；本轮分支原基于 `ba547c0`，现已在本地合入 `main@be9286f` 并完成组合复验；旧 PR #34 不代表本轮分支；等待 review/Owner 验收，不自动 merge |
 | Git LFS | 已启用；本次 AI NPC PR 不主动修改地图/资产 LFS 内容，main 资产更新仅作为同步基线继承 |
 | 工具链 | UE 5.8.2、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |

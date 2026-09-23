@@ -21,7 +21,9 @@ bool UHearthwardCompanionNavigationComponent::IsAt(const AActor* Other,float Acc
 {
     const auto* Character=CharacterOwner();
     return Character && IsValid(Other) && !Other->IsActorBeingDestroyed() && Other->GetWorld()==GetWorld()
-        && FVector::DistSquared(Character->GetActorLocation(),Other->GetActorLocation())<=FMath::Square(double(AcceptanceRadius));
+        // MoveTo uses horizontal acceptance; stepping onto low props must not leave an arrived path unsettled.
+        && FVector::DistSquared2D(Character->GetActorLocation(),Other->GetActorLocation())<=FMath::Square(double(AcceptanceRadius))
+        && FMath::Abs(Character->GetActorLocation().Z-Other->GetActorLocation().Z)<=AcceptanceRadius;
 }
 
 void UHearthwardCompanionNavigationComponent::Stop()

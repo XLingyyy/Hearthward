@@ -99,6 +99,13 @@ bool HearthwardNaturalCamp::Initialize(UWorld* World, FString& Error)
     { Error=TEXT("木材采集点地形尚未就绪，请稍后重试"); return false; }
 
     auto* Camp=Marker(World,CampPosition,FVector(1.2,1.2,.4),TEXT("营地仓储"));
+    auto* Chest=Camp->FindComponentByClass<UStaticMeshComponent>();
+    Chest->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Hearthward/Assets/Demo/chest/wood_chest_model.wood_chest_model")));
+    Chest->SetRelativeScale3D(FVector(1.2)); Chest->SetRelativeLocation(FVector(0,0,-61.5234));
+    auto* ChestCollision=NewObject<UBoxComponent>(Camp);
+    Camp->AddInstanceComponent(ChestCollision); ChestCollision->SetupAttachment(Camp->GetRootComponent());
+    ChestCollision->SetBoxExtent(FVector(61,69,18.5)); ChestCollision->SetRelativeLocation(FVector(0,0,-61.5));
+    ChestCollision->SetCollisionProfileName(TEXT("BlockAll")); ChestCollision->RegisterComponent();
     auto* Resource=Marker(World,SourcePosition,FVector(.7,.7,.7),TEXT("木材采集点"),!AuthoredTree);
     Camp->Tags.Add(TEXT("Hearthward.NaturalCamp"));
     Resource->Tags.Add(TEXT("Hearthward.NaturalCamp.Resource"));

@@ -1,4 +1,5 @@
 #include "HearthwardInteractionComponent.h"
+#include "HearthwardHarvestSubsystem.h"
 #include "HearthwardInteractionTargetComponent.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "Engine/World.h"
@@ -66,6 +67,7 @@ bool UHearthwardInteractionComponent::InteractNearest()
 
 UHearthwardInteractionTargetComponent* UHearthwardInteractionComponent::GetNearestTarget() const
 {
+    GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->RefreshNearby(GetOwner());
     UHearthwardInteractionTargetComponent* Nearest = nullptr;
     double Distance = TNumericLimits<double>::Max();
     for (TActorIterator<AActor> It(GetWorld()); It; ++It)

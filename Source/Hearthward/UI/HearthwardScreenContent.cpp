@@ -560,6 +560,14 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("panel"),TEXT(""),FVector2D(530,320),FVector2D(610,230));
         Element(TEXT("text"),TEXT("你已倒下\n按 Esc 打开菜单，载入保存节点"),FVector2D(590,362),FVector2D(540,130),26);
     }
+    if(Natural)
+    {
+        const bool Bench=G->Events.FindRef(TEXT("build:workbench"))>0;
+        const bool Bed=G->Events.FindRef(TEXT("build:bed"))>0;
+        const bool Rope=G->Events.FindRef(TEXT("craft:rope"))>0;
+        Element(TEXT("notice"),FString::Printf(TEXT("营地小目标  %s工作台  %s绳索  %s床\nE 采集树木/石头/灌木 · R 仓储 · B 建造"),
+            Bench?TEXT("✓"):TEXT("○"),Rope?TEXT("✓"):TEXT("○"),Bed?TEXT("✓"):TEXT("○")),FVector2D(1120,120),FVector2D(530,85),18);
+    }
     const auto* Workshop=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
     const bool NearWorkbench=Workshop && Workshop->NearbyWorkbench().IsValid();
     if(NearWorkbench)
