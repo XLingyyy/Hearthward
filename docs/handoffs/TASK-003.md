@@ -11,7 +11,7 @@
 
 ## 实现与设计对应
 
-根目录 UE 5.8.1 C++ 工程，Game/Editor Target 均使用 V7；启动地图为 `/Game/Hearthward/Bootstrap/L_Bootstrap`。
+根目录 UE 5.8.2 C++ 工程，Game/Editor Target 均使用 V7；启动地图为 `/Game/Hearthward/Bootstrap/L_Bootstrap`。
 Character、CharacterMovement、SpringArm、Camera 和 Enhanced Input 均复用引擎组件。
 Q002 对应单人第三人称；Q177 对应无负重常态速度 350 cm/s。未修改原始 DOCX、设计归档、OPEN 问题或契约。
 

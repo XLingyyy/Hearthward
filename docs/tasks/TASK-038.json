@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "TASK-038",
+  "title": "营地自主生活 / Routine",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-038-camp-routine",
+  "source_refs": [
+    "用户于2026-09-22要求继续推进营地自主生活 / Routine：NPC不接命令时也像一个人",
+    "TASK-021 companion native navigation",
+    "TASK-031 navigation arbitration",
+    "TASK-037 coordination prior"
+  ],
+  "dependencies": [
+    "TASK-037"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/design/DSGN-025-agent-boundaries.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/AI/HearthwardNPCRoutine.h",
+    "Source/Hearthward/AI/HearthwardNPCRoutine.cpp",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-038.json",
+    "docs/tasks/TASK-038.md",
+    "docs/handoffs/TASK-038.md",
+    "docs/qa/evidence/TASK-038/"
+  ],
+  "forbidden_paths": [
+    "Content/"
+  ],
+  "acceptance": [
+    "routine仅在无typed task且玩家未显式占用伙伴时运行",
+    "routine使用真实UE导航而非teleport",
+    "Wait/Follow/Assist显式指令立即关闭routine",
+    "confirmed routine directive可重新授权",
+    "typed task暂停routine但不清除授权，结束后可恢复",
+    "save/load保存授权位，旧档无字段时保持旧行为",
+    "routine不写物资、不完成任务、不调用LLM"
+  ],
+  "non_goals": [
+    "不实现正式动画日程",
+    "不实现营地生产或设施升级",
+    "不在Routine中自动接任务或消耗物资",
+    "不让LLM逐帧决定日常行动"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22明确要求继续推进营地自主生活 / Routine",
+  "required_tests": [
+    "T-002",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "not required for local implementation",
+    "install_dependencies": "not_granted",
+    "commit": "local task commit authorized as part of continued AI NPC development",
+    "push": "defer until unified PR handoff",
+    "merge": "not_granted"
+  }
+}

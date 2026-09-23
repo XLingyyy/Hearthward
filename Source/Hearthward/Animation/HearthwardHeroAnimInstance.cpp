@@ -8,6 +8,7 @@
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
 #include "../Interaction/HearthwardResourceInteractionComponent.h"
+#include "../Interaction/HearthwardHarvestSubsystem.h"
 #include "UObject/ConstructorHelpers.h"
 
 namespace
@@ -123,7 +124,8 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     }
     const auto* Interaction = Character->FindComponentByClass<UHearthwardInteractionComponent>();
     const auto* Resource = Interaction ? Cast<UHearthwardResourceInteractionComponent>(Interaction->GetActiveTarget()) : nullptr;
-    if (Resource && !Resource->CanAccessStorage(const_cast<ACharacter*>(Character)))
+    if ((Resource && !Resource->CanAccessStorage(const_cast<ACharacter*>(Character)))
+        || (Interaction && Cast<UHearthwardHarvestTargetComponent>(Interaction->GetActiveTarget())))
     {
         ActionState = 5;
         MotionState = TEXT("Dig");

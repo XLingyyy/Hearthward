@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "id": "TASK-031",
+  "title": "AI NPC用户复验修正：任务导航仲裁与对话工具栏",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-031-user-retest-fixes",
+  "source_refs": [
+    "用户于2026-09-22在UE实机复验反馈：现代对话页右上工具栏与‘弟弟’标题重叠",
+    "用户于2026-09-22在UE实机复验反馈：‘帮我采集两份木材带回营地’确认后伙伴没有移动",
+    "TASK-028 deterministic Goal→Plan→Action executor",
+    "TASK-030 companion combat policy"
+  ],
+  "dependencies": ["TASK-030"],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/decisions/ADR-TASK-025-npc-cognition.md"
+  ],
+  "allowed_paths": [
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-031.json",
+    "docs/tasks/TASK-031.md",
+    "docs/handoffs/TASK-031.md",
+    "docs/handoffs/TASK-030.md",
+    "docs/qa/evidence/TASK-030/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "active collect/craft/repair typed task拥有伙伴导航时，TASK-030 combat policy不得停止或覆盖executor导航",
+    "用户原句‘帮我采集两份木材带回营地。’通过真实Qwen形成collect/wood/2候选卡后，确认会产生实际移动并完成2/2交付",
+    "现代对话页动态工具栏不得覆盖静态‘弟弟’标题区域，刷新建议、记忆入口与手动任务入口仍可用",
+    "手动任务卡轮播仅包含collect/craft/repair，不把companion_order错误显示成采集任务",
+    "TASK-028 executor定向PIE、TASK-030 combat PIE与全量原生Automation保持通过"
+  ],
+  "non_goals": [
+    "不重做对话页整体视觉",
+    "不修改地图、角色、Content资产或玩法数值",
+    "不改变LLM/UE高层策略与战术权威边界",
+    "不新增伙伴能力或任务类型"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22明确要求修复本次UE实机复验发现的问题",
+  "required_tests": ["T-002", "T-008", "T-009", "T-020"],
+  "permissions": {
+    "network": "read available; issue creation previously returned 403 Resource not accessible by integration",
+    "install_dependencies": "not_granted",
+    "commit": "granted for staged local task commits before unified PR",
+    "push": "deferred until unified PR handoff",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "本单是TASK-030用户复验后的窄修正，不扩展AI NPC能力边界。",
+    "正式Issue/Reviewer流程仍Blocked；用户已明确批准当前修正范围。"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "ok": true,
+  "checks": {
+    "enable_prototype": true,
+    "new_campaign": true,
+    "select_workbench": true,
+    "build_workbench": true,
+    "baseline_save": true,
+    "baseline_save_new_id": true,
+    "collect_card": true,
+    "collect_confirm": true,
+    "collect_existing_cargo_returns_first": true,
+    "existing_cargo_not_counted_as_goal_progress": true,
+    "collect_enters_gather": true,
+    "collect_moves_to_camp_after_real_acquire": true,
+    "partial_save": true,
+    "partial_save_new_id": true,
+    "partial_load": true,
+    "plan_reconstructed_from_phase": true,
+    "load_preserves_progress": true,
+    "collect_exact_after_restore": true,
+    "collect_no_duplicate_after_completion": true,
+    "reset_for_shortage": true,
+    "shortage_card": true,
+    "shortage_confirm": true,
+    "shortage_starts_at_source": true,
+    "shortage_starts_without_progress": true,
+    "shortage_only_delivers_real_units": true,
+    "shortage_conserves_inventory": true,
+    "shortage_waits_on_same_plan": true,
+    "reset_for_retained": true,
+    "retained_seed_card": true,
+    "retained_seed_confirm": true,
+    "retained_seed_has_real_four": true,
+    "retained_cancel": true,
+    "retained_replacement_card": true,
+    "retained_replacement_confirm": true,
+    "retained_replacement_returns_first": true,
+    "retained_only_requested_unit_delivered": true,
+    "retained_surplus_stays_physical": true,
+    "reset_for_craft": true,
+    "craft_card": true,
+    "craft_confirm": true,
+    "craft_starts_move_workshop": true,
+    "craft_commit_advances_to_return": true,
+    "craft_output_real_before_deposit": true,
+    "craft_exact_delivery": true,
+    "reset_for_repair": true,
+    "repair_card": true,
+    "repair_confirm": true,
+    "repair_starts_move_workshop": true,
+    "repair_completed_without_deposit": true,
+    "repair_material_cost": true
+  },
+  "samples": [
+    {
+      "label": "collect_start",
+      "action": "MoveTo:Camp",
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "label": "collect_after_acquire",
+      "action": "MoveTo:Camp",
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "label": "collect_after_load",
+      "action": "MoveTo:Camp",
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "label": "shortage_start",
+      "action": "MoveTo:Source",
+      "phase": "<HearthwardCompanionPhase.GOING_TO_SOURCE: 1>"
+    },
+    {
+      "label": "retained_replacement_start",
+      "action": "MoveTo:Camp",
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "label": "craft_start",
+      "action": "MoveTo:Workshop",
+      "phase": "<HearthwardCompanionPhase.GOING_TO_WORKSHOP: 8>"
+    },
+    {
+      "label": "craft_after_commit",
+      "action": "MoveTo:Camp",
+      "phase": "<HearthwardCompanionPhase.RETURNING: 3>"
+    },
+    {
+      "label": "repair_start",
+      "action": "MoveTo:Workshop",
+      "phase": "<HearthwardCompanionPhase.GOING_TO_WORKSHOP: 8>"
+    }
+  ]
+}

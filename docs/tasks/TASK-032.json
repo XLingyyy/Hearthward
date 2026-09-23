@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "TASK-032",
+  "title": "AI NPC自适应重规划与执行恢复",
+  "status": "Blocked",
+  "updated_at": "2026-09-22",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "isolated worktree from codex/ai-npc-stack-pr@27c4aaa; intended codex/TASK-032-adaptive-replanning",
+  "source_refs": [
+    "用户于2026-09-22要求在现有AI NPC能力做通后继续推进动态重规划/Recovery等亮点",
+    "TASK-028 deterministic Goal→Plan→typed Action executor",
+    "TASK-031 user retest fixes / integrated AI NPC baseline 27c4aaa"
+  ],
+  "dependencies": [
+    "TASK-031"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/design/DSGN-001-local-inference.md"
+  ],
+  "allowed_paths": [
+    "Config/npc-agent.policy.json",
+    "Source/Hearthward/AI/HearthwardAgentPlan.h",
+    "Source/Hearthward/AI/HearthwardAgentRecovery.h",
+    "Source/Hearthward/AI/HearthwardAgentRecovery.cpp",
+    "Source/Hearthward/AI/HearthwardNPCMemory.cpp",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/tasks/TASK-032.json",
+    "docs/tasks/TASK-032.md",
+    "docs/handoffs/TASK-032.md",
+    "docs/qa/evidence/TASK-032/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "action失败先进入确定性Recovery Policy，不由LLM生成逐步恢复脚本",
+    "SOURCE_POSITION_CHANGED自动rewind到MoveTo(Source)并在真实PIE中完成原目标",
+    "短暂route/path失败最多按配置有界自动恢复，预算耗尽后降级为安全返营/等待",
+    "已有真实command cargo时恢复策略优先返营保货；营地不可用时安全持有",
+    "资源耗尽/目标缺失/安全失败/材料不足/权限冲突不会凭空选择未知替代资源",
+    "全程不改变存档schema，不修改Content/地图资产"
+  ],
+  "non_goals": [
+    "不实现多资源点搜索/EQS",
+    "不实现LLM planner",
+    "不实现Belief State、主动交流或Routine；这些后续独立任务"
+  ],
+  "prototype_only": true,
+  "prototype_approval": "用户于2026-09-22明确要求继续推进AI NPC动态重规划/Recovery亮点",
+  "required_tests": [
+    "T-002",
+    "T-009",
+    "T-020"
+  ],
+  "permissions": {
+    "network": "not required for local implementation",
+    "install_dependencies": "not_granted",
+    "commit": "local task commit previously authorized for staged AI NPC development",
+    "push": "defer until next unified PR handoff",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "开发在从codex/ai-npc-stack-pr@27c4aaa创建的隔离detached worktree中进行，不触碰D:/Dev/Hearthward原有脏工作树。",
+    "恢复策略只对当前权威世界模型可证明可恢复的情况生效。"
+  ]
+}

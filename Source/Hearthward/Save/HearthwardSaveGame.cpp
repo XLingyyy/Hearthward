@@ -1,4 +1,5 @@
 #include "HearthwardSaveGame.h"
+#include "../Interaction/HearthwardHarvestSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "Kismet/GameplayStatics.h"
@@ -35,7 +36,6 @@ bool ValidTimer(const FHearthwardSavedTimer& Timer)
 }
 bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Error)
 {
-    // Check the envelope before Unreal allocates/deserializes its object payload.
     constexpr uint32 LegacyMagic = 0x48575331, Magic = 0x48575332;
     uint32 Header[3] = {};
     if (Bytes.Num() < sizeof(Header) || Bytes.Num() > 64 * 1024 * 1024) { Error = TEXT("存档大小无效"); return false; }
@@ -46,19 +46,46 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
     TArray<uint8> Payload;
     Payload.Append(Bytes.GetData() + sizeof(Header), Length);
     Out = Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
-    // UE omits unchanged default-valued properties: old files may have no Schema tag.
-    // The envelope is the authoritative discriminator; a damaged v2 never enters migration.
-    if(Out && Header[0]==LegacyMagic && Out->Schema==2 && Out->Points.ContainsByPredicate([](const auto& P){return P.World.NPCStateVersion==0;}))Out->Schema=1;
+
+    // Historical files may omit a property that matched the class default of that build.
+    // Only the legacy envelope may use this fallback; current-format damaged files never enter it.
+    if(Out && Header[0]==LegacyMagic && Out->Schema==HearthwardSave::CurrentSchema
+        && Out->Points.ContainsByPredicate([](const auto& P){return P.World.NPCStateVersion==0;}))
+        Out->Schema=1;
+
     if(Out && Header[0]==LegacyMagic && Out->Schema==1)
     {
         for(auto& P:Out->Points)
         {
-            auto& S=P.World;S.NPCMemory.Migrate(P.CampaignId);S.NPCStateVersion=2;
-            S.Acquired=S.Delivered+FMath::Min(S.Bag.FindRef(S.Item),FMath::Max(0,S.Requested-S.Delivered));S.Carried=S.Acquired-S.Delivered;
-            if(S.Requested>0){S.AgentGoal.Intent=TEXT("collect");S.AgentGoal.Item=S.Item;S.AgentGoal.Quantity=S.Requested;S.AgentGoal.QuantityMode=TEXT("additional_acquired");S.AgentGoal.SourceRef=TEXT("S1");S.CommandId=FGuid::NewGuid();}
+            auto& S=P.World;
+            S.NPCMemory.Migrate(P.CampaignId);
+            S.NPCStateVersion=2;
+            S.Acquired=S.Delivered+FMath::Min(S.Bag.FindRef(S.Item),FMath::Max(0,S.Requested-S.Delivered));
+            S.Carried=S.Acquired-S.Delivered;
+            if(S.Requested>0)
+            {
+                S.AgentGoal.Intent=TEXT("collect");S.AgentGoal.Item=S.Item;S.AgentGoal.Quantity=S.Requested;
+                S.AgentGoal.QuantityMode=TEXT("additional_acquired");S.AgentGoal.SourceRef=TEXT("S1");
+                S.CommandId=FGuid::NewGuid();
+            }
         }
         Out->Schema=2;
     }
+
+    // Schema 2 is the real pre-TASK-040 vNext format. It has no LastEvidenceAt or coverage metadata.
+    // Migrate that explicit format once, then validate the new format strictly.
+    if(Out && Out->Schema==2)
+    {
+        for(auto& P:Out->Points)
+        {
+            auto& S=P.World;
+            if(S.NPCStateVersion!=2) { Error=TEXT("旧版认知快照版本无效"); Out=nullptr; return false; }
+            S.NPCMemory.Migrate(P.CampaignId,true,S.CommandActive?S.CommandId:FGuid());
+            S.NPCStateVersion=HearthwardSave::NPCStateVersion;
+        }
+        Out->Schema=HearthwardSave::CurrentSchema;
+    }
+
     if (!Out || !HearthwardSave::Validate(*Out)) { Error = TEXT("存档版本或快照状态无效"); Out = nullptr; return false; }
     return true;
 }
@@ -66,12 +93,12 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
 
 bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
 {
-    if (Pool.Schema != 2 || Pool.Points.Num() > MaxPoints) return false;
+    if (Pool.Schema != CurrentSchema || Pool.Points.Num() > MaxPoints) return false;
     TSet<FGuid> Ids;
     for (const auto& P : Pool.Points)
     {
         const auto& S = P.World;
-        if(S.NPCStateVersion!=2 || S.Acquired<0 || S.Carried<0 || S.Acquired<S.Delivered || S.Acquired>S.Requested || S.Carried!=S.Acquired-S.Delivered
+        if(S.NPCStateVersion!=NPCStateVersion || S.Acquired<0 || S.Carried<0 || S.Acquired<S.Delivered || S.Acquired>S.Requested || S.Carried!=S.Acquired-S.Delivered
             || S.Carried>S.Bag.FindRef(S.Item) || S.NPCOperations.Num()>512 || S.NPCMemory.Campaign!=P.CampaignId) return false;
         if(S.CommandActive && (S.AgentGoal.Intent.IsNone() || !S.CommandId.IsValid()))return false;
         if(!S.AgentGoal.Intent.IsNone() && !HearthwardAgent::Validate(S.AgentGoal).IsEmpty())return false;
@@ -87,7 +114,7 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
             if(!Item || !FMath::IsFinite(D.Value) || D.Value<0 || D.Value>HearthwardData::Number(Item,TEXT("durability")))return false;
         }
         if (!S.NPCMemory.IsValid(S.ActiveSeconds)) return false;
-        if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) return false;
+        if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay) || !UHearthwardHarvestSubsystem::Validate(S.HarvestedResources)) return false;
         if (!P.SaveId.IsValid() || !P.CampaignId.IsValid() || Ids.Contains(P.SaveId) || S.Map.IsEmpty()
             || !FMath::IsFinite(S.ActiveSeconds) || S.ActiveSeconds < 0 || S.KnowledgeRevision != S.Knowledge.Num()
             || S.AutoMinutes < 1 || S.AutoMinutes > 60 || !S.Safety.CanSave()

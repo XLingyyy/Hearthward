@@ -1,0 +1,70 @@
+{
+  "ok": false,
+  "checks": {
+    "enable_prototype": true,
+    "new_campaign": true,
+    "stage_collect": true,
+    "confirm_collect": true,
+    "starts_typed_executor": true,
+    "enters_adaptive_replan": true,
+    "replan_reason_visible": true,
+    "no_fake_progress_during_replan": true,
+    "completes_without_manual_resume": true,
+    "real_source_debited": true,
+    "real_camp_credit": true,
+    "recovery_status_cleared": false
+  },
+  "samples": [
+    {
+      "label": "gather_before_source_move",
+      "action": "Gather:Source",
+      "phase": "<HearthwardCompanionPhase.GATHERING: 2>",
+      "block": "",
+      "acquired": 0,
+      "delivered": 0,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x000001B3E8755780) {x: 356.053345, y: 99.108317, z: 82.150002}>"
+    },
+    {
+      "label": "after_source_move",
+      "action": "Recovery:Replan->MoveTo:Source",
+      "phase": "<HearthwardCompanionPhase.GOING_TO_SOURCE: 1>",
+      "block": "REPLANNING：SOURCE_POSITION_CHANGED",
+      "acquired": 0,
+      "delivered": 0,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x000001B3E8756A40) {x: 356.053345, y: 99.108317, z: 82.150002}>"
+    },
+    {
+      "label": "replan_released",
+      "action": "MoveTo:Source",
+      "phase": "<HearthwardCompanionPhase.GOING_TO_SOURCE: 1>",
+      "block": "",
+      "acquired": 0,
+      "delivered": 0,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x000001B3E8756A40) {x: 356.053345, y: 99.108317, z: 82.150002}>"
+    },
+    {
+      "label": "gather_after_reposition",
+      "action": "Gather:Source",
+      "phase": "<HearthwardCompanionPhase.GATHERING: 2>",
+      "block": "",
+      "acquired": 0,
+      "delivered": 0,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x000001B3E8756A40) {x: 807.274622, y: 209.543116, z: 82.150002}>"
+    },
+    {
+      "label": "completed",
+      "action": "None",
+      "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+      "block": "自由活动 · patrol",
+      "acquired": 2,
+      "delivered": 2,
+      "carried": 0,
+      "location": "<Struct 'Vector' (0x000001B3E8756A40) {x: -155.589297, y: 104.829752, z: 82.150002}>"
+    }
+  ],
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-ai-npc-fix/Saved/NPCValidation/verify_adaptive_recovery_pie.py\", line 123, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-ai-npc-fix/Saved/NPCValidation/verify_adaptive_recovery_pie.py\", line 98, in run\n    check(\"recovery_status_cleared\",not c.block_reason and c.get_execution_action()==\"None\")\n  File \"G:/GameFactory/Hearthward-ai-npc-fix/Saved/NPCValidation/verify_adaptive_recovery_pie.py\", line 15, in check\n    if not value: raise AssertionError(name)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: recovery_status_cleared\n"
+}

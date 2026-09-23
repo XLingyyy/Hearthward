@@ -1,4 +1,5 @@
 #include "HearthwardCompanionFixture.h"
+#include "HearthwardCompanionNavigationComponent.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
@@ -8,16 +9,22 @@
 #include "Engine/World.h"
 #include "UObject/ConstructorHelpers.h"
 #include "AIController.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "NavigationSystem.h"
-#include "Navigation/PathFollowingComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
+#include "../AI/HearthwardNPCPerception.h"
+#include "../AI/HearthwardAgentRecovery.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Building/HearthwardWorkshopService.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Save/HearthwardSaveSubsystem.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
 #include "Kismet/GameplayStatics.h"
+
+namespace
+{
+UHearthwardBuildingComponent* WorkshopRegistry(UWorld* World);
+}
 
 AHearthwardCompanionFixture::AHearthwardCompanionFixture()
 {
@@ -42,18 +49,31 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture()
     MarkerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Bag = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("FixtureBag"));
     Action = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("FixtureGatherTimer"));
-    Tags.Add(TEXT("Hearthward.Companion.PROTOTYPE_ONLY"));
+    Navigation = CreateDefaultSubobject<UHearthwardCompanionNavigationComponent>(TEXT("CompanionNavigation"));
+    Tags.Add(TEXT("Hearthward.Companion"));
 }
 
 void AHearthwardCompanionFixture::InitializeFixture(UHearthwardInventoryComponent* Resource, AActor* CampActor)
 {
 #if !UE_BUILD_SHIPPING
+    InitializeCompanion(Resource, CampActor);
+    Tags.Add(TEXT("Hearthward.Companion.PROTOTYPE_ONLY"));
+#endif
+}
+
+void AHearthwardCompanionFixture::InitializeCompanion(UHearthwardInventoryComponent* Resource, AActor* CampActor)
+{
     Source = Resource;
     Camp = CampActor;
     bSourceSafe = true;
     bFixtureEnabled = true;
     SetActorTickEnabled(true);
-#endif
+    if (auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
+    {
+        Nav->RegisterNavigationInvoker(this,4000,5000);
+        if (auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0)) Nav->RegisterNavigationInvoker(Player,4000,5000);
+        Nav->RegisterNavigationInvoker(CampActor,2000,3000);
+    }
 }
 
 bool AHearthwardCompanionFixture::CanCommunicate(AActor* Speaker) const
@@ -73,12 +93,24 @@ FHearthwardCommandTicket AHearthwardCompanionFixture::Request(AActor* Speaker, c
 EHearthwardProposalResult AHearthwardCompanionFixture::Submit(AActor* Speaker, FHearthwardCommandTicket Ticket,
     FName ItemId, int32 Quantity, const TArray<FName>& Steps)
 {
+    FHearthwardAgentGoal Goal;
+    Goal.Intent=TEXT("collect");Goal.Item=ItemId;Goal.Quantity=Quantity;
+    Goal.QuantityMode=TEXT("additional_acquired");Goal.SourceRef=TEXT("S1");
+    return AcceptGoal(Speaker,Ticket,ItemId,Quantity,Steps,Goal);
+}
+
+EHearthwardProposalResult AHearthwardCompanionFixture::AcceptGoal(AActor* Speaker, FHearthwardCommandTicket Ticket,
+    FName ItemId, int32 Quantity, const TArray<FName>& Steps, const FHearthwardAgentGoal& Goal)
+{
     using R = EHearthwardProposalResult;
-    if (bSettling || !bFixtureEnabled || GetWorld()->IsPaused()) return R::Unavailable;
+    if (bSettling || !bFixtureEnabled) return R::Unavailable;
     if (!CanCommunicate(Speaker)) return R::OutOfRange;
     if (RequestSpeaker.Get() != Speaker) return R::Stale;
-    if (!IsSourceValid() || !IsValid(Camp) || Camp->IsActorBeingDestroyed()) return R::Unavailable;
-    if (!bSourceSafe) return R::Unsafe;
+
+    const auto Safety=HearthwardPerception::Evaluate(HearthwardPerception::Capture(this),Goal);
+    if(!Safety.IsAllowed())
+        return Safety.Verdict==EHearthwardNPCSafetyVerdict::Unsafe ? R::Unsafe : R::Unavailable;
+
     const auto Result = Command.Accept(Ticket, GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(), ItemId, Quantity, Steps);
     if (Result == R::Accepted)
     {
@@ -86,7 +118,24 @@ EHearthwardProposalResult AHearthwardCompanionFixture::Submit(AActor* Speaker, F
         Action->InterruptAction();
         BlockReason.Reset();
         Spent.Reset();AppliedOperations.Reset();Receipts.Reset();NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();
-        Phase = Bag->GetWeight() > 0 ? EHearthwardCompanionPhase::Returning : EHearthwardCompanionPhase::GoingToSource;
+        Command.Goal=Goal;
+        if(Goal.Intent==TEXT("collect"))
+        {
+            // Physical cargo retained from a cancelled/superseded command may satisfy a later request,
+            // but only up to the new requested quantity. The surplus remains in the bag and is never
+            // silently attributed to the new command.
+            const int32 Adopted=FMath::Min(Bag->GetItemCount(Goal.Item),Command.GetRequested());
+            if(Adopted>0)
+            {
+                Command.RecordAcquisition(Adopted);
+                Event(TEXT("retained_adopted"),Goal.Item,Adopted,TEXT("physical_cargo_reused"));
+            }
+        }
+        if(!BuildExecutionPlan(true))
+        {
+            Command.Cancel();
+            return R::Unsupported;
+        }
     }
     return Result;
 }
@@ -96,6 +145,7 @@ bool AHearthwardCompanionFixture::Cancel(AActor* Speaker)
     if (bSettling || !CanCommunicate(Speaker) || GetWorld()->IsPaused()) return false;
     if(Command.IsCurrent(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())) Event(TEXT("cancelled"),Command.GetItem(),Command.GetDelivered());
     Command.Cancel();
+    Execution.Reset();
     StopNavigation();
     Action->InterruptAction();
     Phase = EHearthwardCompanionPhase::Cancelled;
@@ -114,11 +164,171 @@ bool AHearthwardCompanionFixture::IsSourceValid() const
         && Source->GetWorld() == GetWorld();
 }
 
+FString AHearthwardCompanionFixture::GetExecutionAction() const
+{
+    if(Execution.bRecoveryToCamp)return TEXT("Recovery:Camp");
+    if(Execution.bAdaptiveRecovery)
+    {
+        if(const auto* Current=Execution.Current())
+            return TEXT("Recovery:Replan->") + HearthwardPlan::ActionName(*Current);
+        return TEXT("Recovery:Replan");
+    }
+    if(const auto* Current=Execution.Current())return HearthwardPlan::ActionName(*Current);
+    return TEXT("None");
+}
+
+bool AHearthwardCompanionFixture::BuildExecutionPlan(bool PreferReturnForExistingCargo)
+{
+    FString Error;
+    Execution.Reset();
+    if(!HearthwardPlan::Build(Command.Goal,Execution.Plan,Error))
+    {
+        BlockReason=Error.IsEmpty()?TEXT("NO_EXECUTABLE_PLAN"):Error;
+        return false;
+    }
+    Execution.Cursor=0;
+    if(PreferReturnForExistingCargo && Command.Goal.Intent==TEXT("collect") && Bag->GetWeight()>0)
+    {
+        const int32 Return=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp);
+        if(Return!=INDEX_NONE)Execution.Cursor=Return;
+    }
+    SyncPhaseFromExecution();
+    return true;
+}
+
+void AHearthwardCompanionFixture::RestoreExecutionPlan()
+{
+    Execution.Reset();
+    auto* Storage=GetWorld()?GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>():nullptr;
+    if(!Storage || !Command.IsCurrent(Storage->GetTimelineEpoch()) || Command.Goal.Intent.IsNone())return;
+
+    FString Error;
+    if(!HearthwardPlan::Build(Command.Goal,Execution.Plan,Error))return;
+
+    using P=EHearthwardCompanionPhase;
+    switch(Phase)
+    {
+    case P::GoingToSource:
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Source);break;
+    case P::Gathering:
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::Gather,EHearthwardAgentTarget::Source);
+        Execution.bStarted=true;break;
+    case P::TakingMaterials:
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::TakeMaterials,EHearthwardAgentTarget::Camp);break;
+    case P::GoingToWorkshop:
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Workshop);break;
+    case P::Returning:
+        Execution.Cursor=HearthwardPlan::FindLast(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp);break;
+    case P::ReturningBlocked:
+    case P::HoldingSafely:
+        Execution.bRecoveryToCamp=true;
+        Execution.Cursor=Command.Carried>0
+            ? HearthwardPlan::FindLast(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp)
+            : 0;
+        break;
+    case P::WaitingAtCamp:
+        if(Command.Goal.Intent==TEXT("collect"))
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Source);
+        else if(Command.Goal.SourceRef==TEXT("camp"))
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp);
+        else
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Workshop);
+        break;
+    default:
+        Execution.Reset();
+        return;
+    }
+    if(!Execution.Plan.Actions.IsValidIndex(Execution.Cursor))Execution.Reset();
+}
+
+AActor* AHearthwardCompanionFixture::ResolveActionTarget(const FHearthwardAgentAction& Current) const
+{
+    switch(Current.Target)
+    {
+    case EHearthwardAgentTarget::Source:
+        return IsSourceValid()?Source->GetOwner():nullptr;
+    case EHearthwardAgentTarget::Camp:
+        return IsValid(Camp)&&!Camp->IsActorBeingDestroyed()?Camp.Get():nullptr;
+    case EHearthwardAgentTarget::Workshop:
+    {
+        auto* Registry=WorkshopRegistry(GetWorld());
+        return Registry?Registry->ResolveWorkbench(Command.Goal.Station):nullptr;
+    }
+    default:
+        return nullptr;
+    }
+}
+
+bool AHearthwardCompanionFixture::ActionRequiresSafety(const FHearthwardAgentAction& Current) const
+{
+    if(Current.Type==EHearthwardAgentActionType::Deposit)return false;
+    if(Current.Type==EHearthwardAgentActionType::MoveTo && Current.Target==EHearthwardAgentTarget::Camp)return false;
+    return true;
+}
+
+void AHearthwardCompanionFixture::SyncPhaseFromExecution()
+{
+    if(Execution.bRecoveryToCamp)
+    {
+        Phase=EHearthwardCompanionPhase::ReturningBlocked;
+        return;
+    }
+    const auto* Current=Execution.Current();
+    if(!Current)return;
+    using A=EHearthwardAgentActionType;
+    using T=EHearthwardAgentTarget;
+    if(Current->Type==A::MoveTo && Current->Target==T::Source)Phase=EHearthwardCompanionPhase::GoingToSource;
+    else if(Current->Type==A::Gather)Phase=EHearthwardCompanionPhase::Gathering;
+    else if(Current->Type==A::MoveTo && Current->Target==T::Camp)Phase=EHearthwardCompanionPhase::Returning;
+    else if(Current->Type==A::Deposit)Phase=EHearthwardCompanionPhase::Returning;
+    else if(Current->Type==A::TakeMaterials)Phase=EHearthwardCompanionPhase::TakingMaterials;
+    else if((Current->Type==A::MoveTo && Current->Target==T::Workshop) || Current->Type==A::CommitWorkshop)
+        Phase=EHearthwardCompanionPhase::GoingToWorkshop;
+}
+
+void AHearthwardCompanionFixture::AdvanceExecution()
+{
+    Execution.bStarted=false;
+    ++Execution.Cursor;
+    if(Execution.Plan.Actions.IsValidIndex(Execution.Cursor))
+    {
+        NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();
+        SyncPhaseFromExecution();
+        return;
+    }
+
+    if(Command.Goal.Intent==TEXT("collect") && Command.GetDelivered()<Command.GetRequested())
+    {
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Source);
+        NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();
+        SyncPhaseFromExecution();
+        return;
+    }
+
+    if(Command.GetDelivered()==Command.GetRequested())
+    {
+        Execution.Reset();
+        Phase=EHearthwardCompanionPhase::Completed;
+        BlockReason.Reset();
+        Event(TEXT("completed"),Command.GetItem(),Command.GetDelivered());
+    }
+    else
+    {
+        Execution.Reset();
+        Phase=EHearthwardCompanionPhase::WaitingAtCamp;
+        BlockReason=TEXT("PLAN_INCOMPLETE");
+    }
+}
+
+
+bool AHearthwardCompanionFixture::IsAtCamp() const
+{
+    return Navigation && Navigation->IsAt(Camp);
+}
+
 bool AHearthwardCompanionFixture::At(const AActor* Target) const
 {
-    return IsValid(Target) && !Target->IsActorBeingDestroyed() && Target->GetWorld() == GetWorld()
-        && FVector::DistSquared2D(GetActorLocation(), Target->GetActorLocation()) <= FMath::Square(50.0)
-        && FMath::Abs(GetActorLocation().Z-Target->GetActorLocation().Z) < 100;
+    return Navigation && Navigation->IsAt(Target);
 }
 
 bool AHearthwardCompanionFixture::MoveTowards(const AActor* Target, float DeltaSeconds,float AcceptanceRadius)
@@ -129,7 +339,7 @@ bool AHearthwardCompanionFixture::MoveTowards(const AActor* Target, float DeltaS
     {LastProgressPosition=GetActorLocation();LastProgressAt=Now;}
     if(Now-LastProgressAt>HearthwardAgent::Policy(TEXT("no_progress_seconds"))) return false;
     if(NavigationFailures>HearthwardAgent::Policy(TEXT("max_navigation_retries"))) return false;
-    const bool Attempt=Now>=NavigationRetryAt;
+    const bool Attempt=Navigation && Navigation->IsRetryReady();
     if(NavigateTo(const_cast<AActor*>(Target),180,AcceptanceRadius))return true;
     if(Attempt) ++NavigationFailures;
     return NavigationFailures<=HearthwardAgent::Policy(TEXT("max_navigation_retries"));
@@ -137,61 +347,112 @@ bool AHearthwardCompanionFixture::MoveTowards(const AActor* Target, float DeltaS
 
 void AHearthwardCompanionFixture::StopNavigation()
 {
-    if (auto* AI = Cast<AAIController>(GetController())) AI->StopMovement();
-    GetCharacterMovement()->StopMovementImmediately();
-    NavigationTarget.Reset(); NavigationRetryAt = 0;
+    if(Navigation)Navigation->Stop();
 }
 
 bool AHearthwardCompanionFixture::NavigateTo(AActor* Target, float Speed, float AcceptanceRadius)
 {
-    auto* AI = Cast<AAIController>(GetController());
-    if (!AI || !IsValid(Target) || Target->IsActorBeingDestroyed()) { StopNavigation(); return false; }
-    GetCharacterMovement()->MaxWalkSpeed = Speed;
-    if (NavigationTarget != Target || !FMath::IsNearlyEqual(NavigationAcceptance, AcceptanceRadius))
-    {
-        StopNavigation(); NavigationTarget = Target; NavigationAcceptance = AcceptanceRadius;
-    }
-    auto* Nav = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-    // Runtime tiles may still be rebuilding after a world obstacle changes.
-    if (Nav && Nav->IsNavigationBuildInProgress()) return true;
-    if (AI->GetMoveStatus() != EPathFollowingStatus::Idle) return true;
-    if (GetWorld()->GetTimeSeconds() < NavigationRetryAt) return false;
-    EPathFollowingRequestResult::Type Result;
-    if(Target->ActorHasTag(TEXT("Hearthward.Building.Completed")))
-    {
-        // A built workbench cuts a hole in navigation. Its solid centre cannot be the path endpoint.
-        FVector Direction=(GetActorLocation()-Target->GetActorLocation()).GetSafeNormal2D();
-        if(Direction.IsNearlyZero())Direction=Target->GetActorForwardVector();
-        const double Reach=HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("crafting")),TEXT("reach"));
-        const FVector Approach=Target->GetActorLocation()+Direction*(Reach-60);
-        FNavLocation Projected;
-        const bool ProjectedOK=Nav && Nav->ProjectPointToNavigation(Approach,Projected,FVector(50,50,200));
-        Result=ProjectedOK ? AI->MoveToLocation(Projected.Location,30,false,true,false,false,nullptr,false) : EPathFollowingRequestResult::Failed;
-        UE_LOG(LogTemp,Display,TEXT("NPC workshop approach: actor=%s station=%s desired=%s projected=%s valid=%d move=%d"),
-            *GetActorLocation().ToString(),*Target->GetActorLocation().ToString(),*Approach.ToString(),*Projected.Location.ToString(),ProjectedOK,int32(Result));
-    }
-    else Result=AI->MoveToActor(Target, AcceptanceRadius, false, true, false, nullptr, false);
-    if (Result == EPathFollowingRequestResult::Failed)
-    {
-        NavigationRetryAt = GetWorld()->GetTimeSeconds() + .5;
-        return false;
-    }
-    return true;
+    return Navigation && Navigation->MoveToActor(Target,Speed,AcceptanceRadius);
+}
+
+bool AHearthwardCompanionFixture::NavigateToLocation(const FVector& Location,float Speed,float AcceptanceRadius)
+{
+    return Navigation && Navigation->MoveToLocation(Location,Speed,AcceptanceRadius);
 }
 
 void AHearthwardCompanionFixture::ReturnBlocked(const FString& Reason)
 {
-    if (Phase != EHearthwardCompanionPhase::ReturningBlocked) {StopNavigation();NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();Event(TEXT("blocked"),Command.GetItem(),Command.GetDelivered(),Reason);}
+    if (!Execution.bRecoveryToCamp)
+    {
+        StopNavigation();NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();
+        Event(TEXT("blocked"),Command.GetItem(),Command.GetDelivered(),Reason);
+    }
     Action->InterruptAction();
+    Execution.bStarted=false;
+    Execution.bAdaptiveRecovery=false;
+    Execution.AdaptiveRetryAt=0.0;
+    Execution.LastRecoveryReason=Reason;
+    Execution.bRecoveryToCamp=true;
     Phase = EHearthwardCompanionPhase::ReturningBlocked;
     BlockReason = Reason;
+}
+
+void AHearthwardCompanionFixture::HandleExecutionFailure(const FString& Reason)
+{
+    const auto* Current=Execution.Current();
+    if(!Current)
+    {
+        ReturnBlocked(Reason);
+        return;
+    }
+
+    FHearthwardAgentRecoveryContext Context;
+    Context.FailedAction=*Current;
+    Context.FailureReason=Reason;
+    Context.bHasCargo=Command.Carried>0;
+    Context.bCampAvailable=IsValid(Camp) && !Camp->IsActorBeingDestroyed();
+    Context.bSourceAvailable=IsSourceValid() && Source->GetItemCount(Command.GetItem())>0;
+    auto* Registry=WorkshopRegistry(GetWorld());
+    Context.bStationAvailable=Registry && Registry->ResolveWorkbench(Command.Goal.Station);
+    Context.AdaptiveAttempts=Execution.AdaptiveRecoveryAttempts;
+    Context.MaxAdaptiveAttempts=HearthwardAgent::Policy(TEXT("max_adaptive_replans"));
+
+    const auto Decision=HearthwardRecovery::Decide(Context);
+    if(Decision.Mode==EHearthwardAgentRecoveryMode::RetryCurrent
+        || Decision.Mode==EHearthwardAgentRecoveryMode::RewindToMove)
+    {
+        int32 ResumeCursor=Execution.Cursor;
+        if(Decision.Mode==EHearthwardAgentRecoveryMode::RewindToMove)
+            ResumeCursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,Decision.RewindTarget);
+
+        if(!Execution.Plan.Actions.IsValidIndex(ResumeCursor))
+        {
+            ReturnBlocked(Reason);
+            return;
+        }
+
+        StopNavigation();
+        Action->InterruptAction();
+        Execution.Cursor=ResumeCursor;
+        Execution.bStarted=false;
+        Execution.bRecoveryToCamp=false;
+        Execution.bAdaptiveRecovery=true;
+        ++Execution.AdaptiveRecoveryAttempts;
+        Execution.AdaptiveRetryAt=GetWorld()->GetTimeSeconds()
+            + double(HearthwardAgent::Policy(TEXT("adaptive_replan_delay_ms")))/1000.0;
+        Execution.LastRecoveryReason=Reason;
+        NavigationFailures=0;
+        LastProgressAt=GetWorld()->GetTimeSeconds();
+        LastProgressPosition=GetActorLocation();
+        BlockReason=TEXT("REPLANNING：")+Reason;
+        Event(TEXT("replanned"),Command.GetItem(),Command.GetDelivered(),Reason);
+        SyncPhaseFromExecution();
+        return;
+    }
+
+    if(Decision.Mode==EHearthwardAgentRecoveryMode::Hold)
+    {
+        StopNavigation();
+        Action->InterruptAction();
+        Execution.bStarted=false;
+        Execution.bAdaptiveRecovery=false;
+        Execution.bRecoveryToCamp=false;
+        Execution.AdaptiveRetryAt=0.0;
+        Execution.LastRecoveryReason=Reason;
+        Phase=EHearthwardCompanionPhase::HoldingSafely;
+        BlockReason=Reason;
+        Event(TEXT("blocked"),Command.GetItem(),Command.GetDelivered(),Reason);
+        return;
+    }
+
+    ReturnBlocked(Reason);
 }
 
 void AHearthwardCompanionFixture::Deposit()
 {
     if (!At(Camp)) return;
     StopNavigation();
-    const bool bWasBlocked = Phase == EHearthwardCompanionPhase::ReturningBlocked;
+    const bool bRecovery=Execution.bRecoveryToCamp;
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     const auto Ticket = Command.GetActive();
     TGuardValue<bool> Guard(bSettling, true);
@@ -199,14 +460,14 @@ void AHearthwardCompanionFixture::Deposit()
     {
         if (!Command.IsCurrent(Storage->GetTimelineEpoch()))
         {
-            Command.Cancel();
+            Command.Cancel();Execution.Reset();
             Phase = EHearthwardCompanionPhase::Cancelled;
             return;
         }
         int32 Count = Bag->GetItemCount(Item.Id);
         const int32 Owned=Item.Id==Command.GetItem()?FMath::Min(Count,Command.Carried):0;
         if(OwnedDurability.Contains(Item.Id))continue;
-        if(Command.Goal.Intent!=TEXT("collect"))Count=Owned;
+        if(Command.Goal.Intent!=TEXT("collect") || Item.Id==Command.GetItem())Count=Owned;
         if (Count == 0) continue;
         const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xDE01^FCrc::StrCrc32(*Item.Id.ToString()),Ticket.Id.D^uint32(Command.Acquired));
         const bool Settled=HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
@@ -214,13 +475,15 @@ void AHearthwardCompanionFixture::Deposit()
             {
                 const auto Result=Storage->Transfer(Bag,true,Item.Id,Count,Op,Ticket.Epoch);
                 if(Result.Result!=EHearthwardInventoryResult::Success)return false;
+                if(Result.MovedCount>0)
+                    GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RecordCampStockReceipt(Item.Id,Storage->GetItemCount(Item.Id));
                 if(Item.Id==Command.GetItem() && Result.MovedCount>0 && Owned>0)
                 {Command.Carried-=Owned;Command.RecordDelivery(Ticket,Owned);Event(TEXT("delivered"),Item.Id,Owned,FString(),Op);}
                 return true;
             });
         if (Storage->GetTimelineEpoch() != Ticket.Epoch)
         {
-            Command.Cancel();
+            Command.Cancel();Execution.Reset();
             Phase = EHearthwardCompanionPhase::Cancelled;
             return;
         }
@@ -231,14 +494,24 @@ void AHearthwardCompanionFixture::Deposit()
         }
         if (Command.GetDelivered() == Command.GetRequested())
         {
-            BlockReason.Reset();
+            BlockReason.Reset();Execution.Reset();
             Phase = EHearthwardCompanionPhase::Completed;
             Event(TEXT("completed"),Command.GetItem(),Command.GetDelivered());
             return;
         }
     }
-    Phase = bWasBlocked ? EHearthwardCompanionPhase::WaitingAtCamp : EHearthwardCompanionPhase::GoingToSource;
+
     NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();
+    if(bRecovery)
+    {
+        Execution.bRecoveryToCamp=false;
+        Phase=EHearthwardCompanionPhase::WaitingAtCamp;
+        return;
+    }
+
+    const auto* Current=Execution.Current();
+    if(Current && Current->Type==EHearthwardAgentActionType::Deposit)AdvanceExecution();
+    else Phase=EHearthwardCompanionPhase::WaitingAtCamp;
 }
 
 void AHearthwardCompanionFixture::Tick(float DeltaSeconds)
@@ -247,61 +520,159 @@ void AHearthwardCompanionFixture::Tick(float DeltaSeconds)
     using P = EHearthwardCompanionPhase;
     if (!bFixtureEnabled || GetWorld()->IsPaused() || bSettling) return;
     if (Phase == P::Idle || Phase == P::Cancelled || Phase == P::Completed || Phase == P::WaitingAtCamp || Phase==P::HoldingSafely) return;
+
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     if (!Command.IsCurrent(Storage->GetTimelineEpoch()))
     {
         StopNavigation();
         Command.Cancel();
+        Execution.Reset();
         Action->InterruptAction();
         Phase = P::Cancelled;
         return;
     }
-    if(Phase==P::GoingToWorkshop || Phase==P::TakingMaterials) {WorkshopTick();return;}
-    if (Phase == P::GoingToSource || Phase == P::Gathering)
+
+    if(Execution.bRecoveryToCamp)
     {
-        if (!IsSourceValid() || !bSourceSafe) ReturnBlocked(TEXT("资源点失效或不再安全"));
-        else if (Source->GetItemCount(Command.GetItem()) == 0) ReturnBlocked(TEXT("实际资源不足"));
+        TickRecovery(DeltaSeconds);
+        return;
     }
-    if (Phase == P::GoingToSource)
+
+    if(Execution.bAdaptiveRecovery)
     {
-        if (!At(Source->GetOwner()))
-        {
-            if (!MoveTowards(Source->GetOwner(), DeltaSeconds)) ReturnBlocked(TEXT("去程受阻"));
-            return;
-        }
+        if(GetWorld()->GetTimeSeconds()<Execution.AdaptiveRetryAt)return;
+        Execution.bAdaptiveRecovery=false;
+        Execution.AdaptiveRetryAt=0.0;
+        BlockReason.Reset();
+        NavigationFailures=0;
+        LastProgressAt=GetWorld()->GetTimeSeconds();
+        LastProgressPosition=GetActorLocation();
+    }
+
+    if(!Execution.Current())
+    {
+        if(!BuildExecutionPlan(false)){ReturnBlocked(TEXT("NO_EXECUTABLE_PLAN"));return;}
+    }
+    TickExecution(DeltaSeconds);
+}
+
+void AHearthwardCompanionFixture::TickRecovery(float DeltaSeconds)
+{
+    if(!IsValid(Camp) || Camp->IsActorBeingDestroyed())
+    {
+        StopNavigation();Phase=EHearthwardCompanionPhase::HoldingSafely;BlockReason=TEXT("CAMP_UNAVAILABLE：保留物资；营地恢复后可重试");
+        return;
+    }
+    if(At(Camp))
+    {
+        Deposit();
+        return;
+    }
+    if(!MoveTowards(Camp,DeltaSeconds))
+    {
         StopNavigation();
-        if (Action->StartAction()) Phase = P::Gathering;
-        else ReturnBlocked(TEXT("无法开始采集"));
+        Phase=EHearthwardCompanionPhase::HoldingSafely;
+        BlockReason=TEXT("RETURN_UNREACHABLE：返营路线受阻，保留物资；会合后可重试");
     }
-    else if (Phase == P::Gathering)
+}
+
+void AHearthwardCompanionFixture::TickExecution(float DeltaSeconds)
+{
+    const auto* Current=Execution.Current();
+    if(!Current)return;
+
+    if(ActionRequiresSafety(*Current))
     {
-        if (!At(Source->GetOwner()) || Action->GetStatus() == EHearthwardTimedActionStatus::Interrupted)
+        const auto Safety=HearthwardPerception::Evaluate(HearthwardPerception::Capture(this),Command.Goal);
+        if(!Safety.IsAllowed()){HandleExecutionFailure(Safety.Reason);return;}
+    }
+
+    using A=EHearthwardAgentActionType;
+    using T=EHearthwardAgentTarget;
+    if(Current->Type==A::MoveTo)
+    {
+        if(Current->Target==T::Source)
         {
-            ReturnBlocked(TEXT("采集被中断"));
+            if(!IsSourceValid()){HandleExecutionFailure(TEXT("SOURCE_UNAVAILABLE"));return;}
+            if(Source->GetItemCount(Command.GetItem())<=0){HandleExecutionFailure(TEXT("实际资源不足"));return;}
+        }
+        AActor* Target=ResolveActionTarget(*Current);
+        if(!IsValid(Target))
+        {
+            HandleExecutionFailure(Current->Target==T::Source?TEXT("SOURCE_UNAVAILABLE"):
+                Current->Target==T::Camp?TEXT("CAMP_UNAVAILABLE"):TEXT("STATION_UNAVAILABLE"));
             return;
         }
-        if (Action->GetStatus() != EHearthwardTimedActionStatus::Completed) return;
-        const auto* Item = HearthwardBasicItems().FindByPredicate([this](const auto& Def) { return Def.Id == Command.GetItem(); });
+        const float Acceptance=Current->Target==T::Workshop
+            ? float(HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("crafting")),TEXT("reach"))) : 40.f;
+        if(At(Target) || (Current->Target==T::Workshop && FVector::Dist2D(GetActorLocation(),Target->GetActorLocation())<=Acceptance))
+        {
+            StopNavigation();
+            AdvanceExecution();
+            return;
+        }
+        if(!MoveTowards(Target,DeltaSeconds,Acceptance))
+        {
+            HandleExecutionFailure(Current->Target==T::Camp?TEXT("RETURN_UNREACHABLE"):
+                Current->Target==T::Source?TEXT("去程受阻"):TEXT("PATH_BLOCKED"));
+        }
+        return;
+    }
+
+    if(Current->Type==A::Gather)
+    {
+        if(!IsSourceValid()){HandleExecutionFailure(TEXT("SOURCE_UNAVAILABLE"));return;}
+        if(Source->GetItemCount(Command.GetItem())<=0){HandleExecutionFailure(TEXT("实际资源不足"));return;}
+        if(!At(Source->GetOwner())){HandleExecutionFailure(TEXT("SOURCE_POSITION_CHANGED"));return;}
+
+        if(!Execution.bStarted)
+        {
+            StopNavigation();
+            if(!Action->StartAction()){HandleExecutionFailure(TEXT("无法开始采集"));return;}
+            Execution.bStarted=true;
+            return;
+        }
+        if(Action->GetStatus()==EHearthwardTimedActionStatus::Interrupted){HandleExecutionFailure(TEXT("采集被中断"));return;}
+        if(Action->GetStatus()!=EHearthwardTimedActionStatus::Completed)return;
+
+        const auto* Item=HearthwardBasicItems().FindByPredicate([this](const auto& Def){return Def.Id==Command.GetItem();});
+        if(!Item){HandleExecutionFailure(TEXT("ITEM_UNAVAILABLE"));return;}
         int32 CargoWeight=0;
         for(const auto& D:HearthwardBasicItems())if(!OwnedDurability.Contains(D.Id))CargoWeight+=Bag->GetItemCount(D.Id)*D.WeightHundredths;
         const int32 Free=FMath::Max(0,FMath::Min(400-CargoWeight,FMath::RoundToInt((Bag->GetCapacity()-Bag->GetWeight())*100)));
-        const int32 Count = FMath::Min3(Free / Item->WeightHundredths,
-            Source->GetItemCount(Item->Id), Command.GetRequested() - Command.GetAcquired());
-        if (Count <= 0) { ReturnBlocked(TEXT("本趟无法携带目标物品")); return; }
-        Phase = P::Returning;
-        TGuardValue<bool> Guard(bSettling, true);
-        const auto T=Command.GetActive();const FGuid Op(T.Id.A,T.Id.B,T.Id.C^0xAC01,T.Id.D^uint32(Command.Acquired));
-        if (!HearthwardAgent::Settle(Receipts,Op,T.Id,T.Epoch,Storage->GetTimelineEpoch(),
+        const int32 Count=FMath::Min3(Free/Item->WeightHundredths,Source->GetItemCount(Item->Id),Command.GetRequested()-Command.GetAcquired());
+        if(Count<=0){HandleExecutionFailure(TEXT("本趟无法携带目标物品"));return;}
+
+        auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+        TGuardValue<bool> Guard(bSettling,true);
+        const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xAC01,Ticket.Id.D^uint32(Command.Acquired));
+        if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
             FString::Printf(TEXT("acquire:%s:%d:%d"),*Item->Id.ToString(),Count,Command.Acquired),[&]
-            {if(Source->TransferTo(Bag,Item->Id,Count)!=EHearthwardInventoryResult::Success)return false;
-             Command.RecordAcquisition(Count);Event(TEXT("acquired"),Item->Id,Count,FString(),Op);return true;}))
-            ReturnBlocked(TEXT("采集结算时资源或容量不足"));
-        else {NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();}
+            {
+                if(Source->TransferTo(Bag,Item->Id,Count)!=EHearthwardInventoryResult::Success)return false;
+                Command.RecordAcquisition(Count);
+                Execution.AdaptiveRecoveryAttempts=0;
+                Execution.LastRecoveryReason.Reset();
+                Event(TEXT("acquired"),Item->Id,Count,FString(),Op);return true;
+            }))
+        {
+            HandleExecutionFailure(TEXT("采集结算时资源或容量不足"));
+            return;
+        }
+        AdvanceExecution();
+        return;
     }
-    else if (Phase == P::Returning || Phase == P::ReturningBlocked)
+
+    if(Current->Type==A::TakeMaterials || Current->Type==A::CommitWorkshop)
     {
-        if (At(Camp)) Deposit();
-        else if (!MoveTowards(Camp, DeltaSeconds)) {StopNavigation();Phase=P::HoldingSafely;BlockReason=TEXT("RETURN_UNREACHABLE：返营路线受阻，保留物资；会合后可重试");Event(TEXT("blocked"),Command.GetItem(),Command.GetDelivered(),BlockReason);}
+        WorkshopTick();
+        return;
+    }
+
+    if(Current->Type==A::Deposit)
+    {
+        Deposit();
+        return;
     }
 }
 
@@ -313,7 +684,8 @@ UHearthwardBuildingComponent* WorkshopRegistry(UWorld* World)
 FString AHearthwardCompanionFixture::PreviewGoal(const FHearthwardAgentGoal& Goal) const
 {
     const FString Error=HearthwardAgent::Validate(Goal);if(!Error.IsEmpty())return Error;
-    if(!bSourceSafe || !IsValid(Camp) || !IsSourceValid())return TEXT("UNAVAILABLE");
+    const auto Safety=HearthwardPerception::Evaluate(HearthwardPerception::Capture(this),Goal);
+    if(!Safety.IsAllowed())return Safety.Reason;
     if(Goal.Intent==TEXT("collect")) return {};
     auto* Registry=WorkshopRegistry(GetWorld());if(!Registry || !Registry->ResolveWorkbench(Goal.Station))return TEXT("STATION_UNAVAILABLE");
     if(Goal.Intent==TEXT("repair"))
@@ -333,16 +705,43 @@ EHearthwardProposalResult AHearthwardCompanionFixture::SubmitGoal(AActor* Speake
         const auto Outputs=HearthwardWorkshop::Outputs(Goal.Item,Goal.Quantity);if(Outputs.Num()!=1)return EHearthwardProposalResult::Unsupported;
         for(const auto& I:Outputs) {Output=I.Key;Count=I.Value;}
     }
-    const auto R=Submit(Speaker,Ticket,Output,Count,{TEXT("collect"),TEXT("return"),TEXT("deposit")});
-    if(R!=EHearthwardProposalResult::Accepted)return R;
-    Command.Goal=Goal;
-    if(Goal.Intent!=TEXT("collect"))Phase=Goal.SourceRef==TEXT("camp")?EHearthwardCompanionPhase::TakingMaterials:EHearthwardCompanionPhase::GoingToWorkshop;
-    return R;
+    const auto Result=AcceptGoal(Speaker,Ticket,Output,Count,{TEXT("collect"),TEXT("return"),TEXT("deposit")},Goal);
+    if(Result==EHearthwardProposalResult::Accepted)
+        GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->BeginCommandCoverage(GetCommandId());
+    return Result;
 }
 bool AHearthwardCompanionFixture::ResumeBlocked(AActor* Speaker)
 {
-    if(!CanCommunicate(Speaker) || bSettling || GetWorld()->IsPaused() || (Phase!=EHearthwardCompanionPhase::HoldingSafely && Phase!=EHearthwardCompanionPhase::WaitingAtCamp))return false;
-    NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();BlockReason.Reset();Phase=EHearthwardCompanionPhase::ReturningBlocked;return true;
+    using P=EHearthwardCompanionPhase;
+    if(!CanCommunicate(Speaker) || bSettling || GetWorld()->IsPaused() || (Phase!=P::HoldingSafely && Phase!=P::WaitingAtCamp))return false;
+    auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    if(!Command.IsCurrent(Storage->GetTimelineEpoch()))return false;
+    if(!Execution.Current())RestoreExecutionPlan();
+    if(!Execution.Current() && !BuildExecutionPlan(false))return false;
+
+    NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();BlockReason.Reset();
+    if(Command.Carried>0)
+    {
+        Execution.bRecoveryToCamp=true;
+        Phase=P::ReturningBlocked;
+        return true;
+    }
+
+    const auto Safety=HearthwardPerception::Evaluate(HearthwardPerception::Capture(this),Command.Goal);
+    if(!Safety.IsAllowed()){BlockReason=Safety.Reason;return false;}
+
+    if(const auto* Current=Execution.Current())
+    {
+        using A=EHearthwardAgentActionType;using T=EHearthwardAgentTarget;
+        if(Current->Type==A::Gather)
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,A::MoveTo,T::Source);
+        else if(Current->Type==A::TakeMaterials)
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,A::MoveTo,T::Camp);
+        else if(Current->Type==A::CommitWorkshop)
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,A::MoveTo,T::Workshop);
+    }
+    Execution.bRecoveryToCamp=false;Execution.bStarted=false;Action->InterruptAction();SyncPhaseFromExecution();
+    return Execution.Current()!=nullptr;
 }
 void AHearthwardCompanionFixture::Event(FName Kind,FName Item,int32 Count,const FString& Reason,FGuid Operation)
 {
@@ -354,47 +753,61 @@ void AHearthwardCompanionFixture::Event(FName Kind,FName Item,int32 Count,const 
 }
 void AHearthwardCompanionFixture::WorkshopTick()
 {
-    using P=EHearthwardCompanionPhase;const auto& G=Command.Goal;
-    if(!bSourceSafe) {ReturnBlocked(TEXT("UNSAFE"));return;}
+    const auto* Current=Execution.Current();
+    if(!Current)return;
+    const auto& G=Command.Goal;
     auto* Registry=WorkshopRegistry(GetWorld());AActor* Station=Registry?Registry->ResolveWorkbench(G.Station):nullptr;
-    if(!IsValid(Station)) {ReturnBlocked(TEXT("STATION_UNAVAILABLE"));return;}
+    if(!IsValid(Station)){HandleExecutionFailure(TEXT("STATION_UNAVAILABLE"));return;}
     const auto Cost=HearthwardWorkshop::Materials(G.Intent,G.Item,G.Quantity);
-    if(!HearthwardAgent::AllowsCost(G.Limits,Cost,Spent)) {ReturnBlocked(TEXT("POLICY_CONFLICT"));return;}
-    if(Phase==P::TakingMaterials)
+    if(!HearthwardAgent::AllowsCost(G.Limits,Cost,Spent)){HandleExecutionFailure(TEXT("POLICY_CONFLICT"));return;}
+
+    if(Current->Type==EHearthwardAgentActionType::TakeMaterials)
     {
-        if(!At(Camp)){if(!MoveTowards(Camp,0))ReturnBlocked(TEXT("PATH_BLOCKED"));return;}
+        if(!At(Camp))
+        {
+            if(!MoveTowards(Camp,0)){HandleExecutionFailure(TEXT("PATH_BLOCKED"));return;}
+            return;
+        }
         auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
-        // Preflight every missing ingredient before touching any container. No reservation.
         int64 AddedWeight=0;
         for(const auto& C:Cost)
         {
             const int32 Missing=FMath::Max(0,C.Value-Bag->GetItemCount(C.Key));
-            if(Storage->GetItemCount(C.Key)<Missing){ReturnBlocked(TEXT("INSUFFICIENT_MATERIAL"));return;}
-            const auto* D=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==C.Key;});AddedWeight+=int64(Missing)*D->WeightHundredths;
+            if(Storage->GetItemCount(C.Key)<Missing){HandleExecutionFailure(TEXT("INSUFFICIENT_MATERIAL"));return;}
+            const auto* D=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==C.Key;});
+            if(!D){HandleExecutionFailure(TEXT("ITEM_UNAVAILABLE"));return;}
+            AddedWeight+=int64(Missing)*D->WeightHundredths;
         }
-        if(Bag->GetWeight()*100+AddedWeight>10000){ReturnBlocked(TEXT("CAPACITY_EXCEEDED"));return;}
+        if(Bag->GetWeight()*100+AddedWeight>10000){HandleExecutionFailure(TEXT("CAPACITY_EXCEEDED"));return;}
+
         TGuardValue<bool> Guard(bSettling,true);
         for(const auto& C:Cost)
         {
             const int32 Missing=FMath::Max(0,C.Value-Bag->GetItemCount(C.Key));if(!Missing)continue;
-            const auto T=Command.GetActive();const FGuid Op(T.Id.A,T.Id.B,T.Id.C^0xCA01^FCrc::StrCrc32(*C.Key.ToString()),T.Id.D);
-            if(!HearthwardAgent::Settle(Receipts,Op,T.Id,T.Epoch,Storage->GetTimelineEpoch(),
-                FString::Printf(TEXT("take:%s:%d:r%lld"),*C.Key.ToString(),Missing,T.Revision),[&]
+            const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCA01^FCrc::StrCrc32(*C.Key.ToString()),Ticket.Id.D);
+            if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
+                FString::Printf(TEXT("take:%s:%d:r%lld"),*C.Key.ToString(),Missing,Ticket.Revision),[&]
                 {
-                    const auto R=Storage->Transfer(Bag,false,C.Key,Missing,Op,T.Epoch);
+                    const auto R=Storage->Transfer(Bag,false,C.Key,Missing,Op,Ticket.Epoch);
                     if(R.Result!=EHearthwardInventoryResult::Success)return false;
                     Event(TEXT("materials_taken"),C.Key,R.MovedCount,TEXT("authorized_camp"),Op);return true;
-                })){ReturnBlocked(TEXT("INSUFFICIENT_MATERIAL"));return;}
+                }))
+            {HandleExecutionFailure(TEXT("INSUFFICIENT_MATERIAL"));return;}
         }
-        StopNavigation();NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();Phase=P::GoingToWorkshop;return;
+        Execution.AdaptiveRecoveryAttempts=0;
+        Execution.LastRecoveryReason.Reset();
+        StopNavigation();AdvanceExecution();return;
     }
+
+    if(Current->Type!=EHearthwardAgentActionType::CommitWorkshop)return;
     const FString Error=HearthwardWorkshop::Check(this,Station,Bag,&OwnedDurability,G.Intent,G.Item,G.Quantity);
     if(Error==TEXT("OUT_OF_RANGE") || Error==TEXT("PATH_BLOCKED"))
     {
-        if(!MoveTowards(Station,0,160))ReturnBlocked(TEXT("PATH_BLOCKED"));
+        if(!MoveTowards(Station,0,160))HandleExecutionFailure(TEXT("PATH_BLOCKED"));
         return;
     }
-    if(!Error.IsEmpty()){ReturnBlocked(Error);return;}
+    if(!Error.IsEmpty()){HandleExecutionFailure(Error);return;}
+
     StopNavigation();TGuardValue<bool> Guard(bSettling,true);
     const float Before=OwnedDurability.FindRef(G.Item);
     const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCFA1,Ticket.Id.D);
@@ -403,11 +816,16 @@ void AHearthwardCompanionFixture::WorkshopTick()
         {
             if(!HearthwardWorkshop::Commit(Bag,&OwnedDurability,G.Intent,G.Item,G.Quantity))return false;
             for(const auto& C:Cost)Spent.FindOrAdd(C.Key)+=C.Value;
+            Execution.AdaptiveRecoveryAttempts=0;
+            Execution.LastRecoveryReason.Reset();
             Event(G.Intent,G.Item,G.Quantity,G.Intent==TEXT("repair")?FString::Printf(TEXT("耐久 %.0f → %.0f"),Before,OwnedDurability.FindRef(G.Item)):TEXT("实际扣料并产生物品"),Op);
             Command.RecordAcquisition(Command.GetRequested());
             if(G.Intent==TEXT("repair"))
-            {Command.Carried=0;Command.RecordDelivery(Command.GetActive(),1);Phase=P::Completed;Event(TEXT("completed"),G.Item,1);}
-            else {Phase=P::Returning;NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();}
+            {
+                Command.Carried=0;
+                Command.RecordDelivery(Command.GetActive(),1);
+            }
+            AdvanceExecution();
             return true;
-        }))ReturnBlocked(TEXT("SETTLEMENT_FAILED"));
+        }))HandleExecutionFailure(TEXT("SETTLEMENT_FAILED"));
 }

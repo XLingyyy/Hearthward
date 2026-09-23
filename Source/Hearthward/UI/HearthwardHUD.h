@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "../Actions/HearthwardTimedActionState.h"
+#include "../AI/HearthwardNPCSuggestions.h"
 #include "HearthwardHUD.generated.h"
 
 UCLASS()
@@ -48,6 +49,9 @@ public:
     UFUNCTION(BlueprintCallable) bool SubmitDialogue(const FString& Text);
     UFUNCTION(BlueprintCallable) void CancelDialogueReply();
     UFUNCTION(BlueprintCallable) void CancelDialogueTask();
+    UFUNCTION(BlueprintCallable) bool RefreshDialogueSuggestions();
+    UFUNCTION(BlueprintCallable) bool SubmitDialogueSuggestion(FGuid Id);
+    UFUNCTION(BlueprintPure) TArray<FHearthwardNPCSuggestion> GetDialogueSuggestions() const;
     UFUNCTION(BlueprintPure) bool IsDialogueOpen() const { return DialogueWidget != nullptr; }
     UFUNCTION(BlueprintPure) class UHearthwardDialogueWidget* GetDialogueWidget() const { return DialogueWidget; }
     UFUNCTION(BlueprintPure) FString GetDialogueStatus() const;

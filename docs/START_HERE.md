@@ -9,7 +9,9 @@
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
 
-当前实施分支为 `codex/TASK-026-natural-world-rebuild`。TASK-026 使用 UE 5.8.2 构建4.032 km自然地图，现按用户最新要求先精修新营地，远区暂缓。Bootstrap 主菜单的新游戏、存档和继续游戏已接入新营地；入口、局部树石实例及验证见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。任务仍为 Active，完整路线、流送、性能和Owner视觉验收尚未完成；人文内容后置。
+当前 main 的自然地图工作以 [TASK-026](tasks/TASK-026.md) 为准：UE 5.8.2 下的 4.032 km World Partition 地图已接入 Bootstrap 新游戏/存档/继续游戏，新营地与局部树石实例已落地；完整路线、流送、性能和 Owner 视觉验收仍未完成，详见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
+
+AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 作为对外任务口径。当前候选已完成 world-authority safety、deterministic executor、suggestions、directives/combat、recovery、belief、initiative、episode、coordination、routine、componentization、bounded context、真实 Qwen guardrail 与 Save migration；同步 main 前 default Unity build、native 41/41、32-case real Qwen、CTX-03/04、Schema 2→3 real-file migration 和关键 PIE 回归均已通过。开发与验收状态优先看 [TASK-029 交接](handoffs/TASK-029.md) 和其证据索引。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。
@@ -59,4 +61,4 @@ TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK
 
 TASK-021伙伴原生导航已提交推送，见[021交接](handoffs/TASK-021.md)。[TASK-022](tasks/TASK-022.md)自由建造已提交推送，见[022交接](handoffs/TASK-022.md)。[TASK-023](tasks/TASK-023.md)即时制作已提交推送，见[023交接](handoffs/TASK-023.md)。当前[TASK-024](tasks/TASK-024.md)接入工作台装备维修与耐久回档，用户授权自主提交推送，见[024交接](handoffs/TASK-024.md)。
 
-当前[TASK-025](tasks/TASK-025.md)按用户提供的增强版v2执行A+B。原025已合并main d02b5fe但用户未验收；修订位于 `codex/TASK-025-agent-rev2`，见[025交接](handoffs/TASK-025.md)。用户授权提交推送，不授权合并。
+[TASK-025](tasks/TASK-025.md) 增强版 v2 已通过 PR #23 合并 main `851d60e`；[TASK-026](tasks/TASK-026.md) 已通过 PR #25 合并 main `4114556`。AI NPC 内部从 TASK-027 延伸到 [TASK-040](tasks/TASK-040.md)，但 Owner 指定最终对外统一按 **TASK-029** 作为完整交付口径。返工必须在最新 AI 栈上继续，不从旧/脏 TASK-029 工作区回退。当前已授权在独立修复分支 commit、push 和创建 PR；明确不得直接 merge。
