@@ -9,7 +9,9 @@
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
 
-当前 main 已包含 [TASK-026 大地图自然场景底座](tasks/TASK-026.md) 的4032 m World Partition灰盒、独立浏览入口和局部PIE证据，但视觉、长路线、Standalone流送、性能与Owner验收仍未完成。AI NPC 最终对外统一按 **TASK-029 AI NPC 完整交付** 验收，内部仍保留 TASK-027～040 的实现分解。当前修复分支已完成 recovery / belief / initiative / episode / tactical cooperation / coordination / routine / componentization，以及 bounded ContextProjection、registry-driven capability contract、Belief freshness、Episode coverage、Save schema 3；default Unity build PASS、native 41/41、真实 Qwen 32-case matrix、CTX-03/04、Schema 2→3 real-file migration 与 TASK-028/034/036/038 当前源码 PIE 均已通过。地图与 AI 状态分别以[026世界状态](world/TASK-026/CURRENT.md)、[TASK-040 交接](handoffs/TASK-040.md)和各 AI 任务交接为准。
+当前 main 的自然地图工作以 [TASK-026](tasks/TASK-026.md) 为准：UE 5.8.2 下的 4.032 km World Partition 地图已接入 Bootstrap 新游戏/存档/继续游戏，新营地与局部树石实例已落地；完整路线、流送、性能和 Owner 视觉验收仍未完成，详见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
+
+AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 作为对外任务口径。当前候选已完成 world-authority safety、deterministic executor、suggestions、directives/combat、recovery、belief、initiative、episode、coordination、routine、componentization、bounded context、真实 Qwen guardrail 与 Save migration；同步 main 前 default Unity build、native 41/41、32-case real Qwen、CTX-03/04、Schema 2→3 real-file migration 和关键 PIE 回归均已通过。开发与验收状态优先看 [TASK-029 交接](handoffs/TASK-029.md) 和其证据索引。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。

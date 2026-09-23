@@ -77,6 +77,10 @@ bool UHearthwardSaveSubsystem::ReloadPool()
     Pool = Loaded;
     return true;
 }
+bool UHearthwardSaveSubsystem::LoadPointIndex()
+{
+    return ReloadPool();
+}
 bool UHearthwardSaveSubsystem::CommitPool(UHearthwardSaveGame* Candidate)
 {
     if (!HearthwardSave::Write(PoolPath(), Candidate, Status)) return false;
@@ -116,10 +120,34 @@ bool UHearthwardSaveSubsystem::EnablePrototype()
 #endif
 }
 
+bool UHearthwardSaveSubsystem::EnableNaturalWorld()
+{
+    if (bEnabled) return bNaturalWorld;
+    if (UGameplayStatics::GetCurrentLevelName(GetWorld(), true) != TEXT("L_HearthwardWilds"))
+    { Status = TEXT("当前不在自然地图"); return false; }
+    APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    if (!Player || !Player->FindComponentByClass<UHearthwardInventoryComponent>()
+        || !Player->FindComponentByClass<UHearthwardTimedActionComponent>())
+    { Status = TEXT("自然地图玩家尚未就绪"); return false; }
+    bNaturalWorld = true;
+    if (!ReloadPool() || !Capture(InitialWorld)) { bNaturalWorld = false; return false; }
+    bEnabled = true;
+    Status = TEXT("自然地图存档已启用");
+    return true;
+}
+
 bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
-    APawn* Player; AHearthwardCompanionFixture* Companion;
-    if (!Participants(Player, Companion)) { Status = TEXT("快照参与者缺失或正在结算"); return false; }
+    APawn* Player = nullptr;
+    AHearthwardCompanionFixture* Companion = nullptr;
+    if (bNaturalWorld)
+    {
+        Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+        if (!Player || !Player->FindComponentByClass<UHearthwardInventoryComponent>()
+            || !Player->FindComponentByClass<UHearthwardTimedActionComponent>())
+        { Status = TEXT("自然地图玩家无法保存"); return false; }
+    }
+    else if (!Participants(Player, Companion)) { Status = TEXT("快照参与者缺失或正在结算"); return false; }
     if(const auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>(); B && B->IsBuilding())
     { Status=TEXT("建造中，保存将在完成后可用"); return false; }
     if(const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>(); G && G->Enabled && (G->InCombat() || G->Health<=0))
@@ -128,8 +156,10 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     { Status = TEXT("当前交互目标尚未接入存档，请结束交互后保存"); return false; }
     // Reject additional inventory-bearing actors instead of silently losing their state.
     for (TActorIterator<AActor> It(GetWorld()); It; ++It)
-        if (It->FindComponentByClass<UHearthwardInventoryComponent>() && *It != Player && *It != Companion && *It != Companion->Source->GetOwner())
+        if (It->FindComponentByClass<UHearthwardInventoryComponent>() && *It != Player
+            && (!Companion || (*It != Companion && *It != Companion->Source->GetOwner())))
         { Status = TEXT("场景存在未接入快照的容器"); return false; }
+    S.NaturalWorld = bNaturalWorld;
     S.Map = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
     S.ActiveSeconds = GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.GetActivePlaySeconds();
     S.Player = Player->GetActorTransform();
@@ -138,18 +168,22 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     if (const auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>()) S.Gameplay=Gameplay->SaveSnapshot();
     S.Storage = SaveSubsystemCounts(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->State.Shared);
     S.PlayerTimer = TimerSnapshot(Player->FindComponentByClass<UHearthwardTimedActionComponent>()->State, S.ActiveSeconds);
-    S.Companion = Companion->GetActorTransform(); S.Camp = Companion->Camp->GetActorTransform();
-    S.Source = Companion->Source->GetOwner()->GetActorTransform();
-    S.Bag = SaveSubsystemCounts(Companion->Bag->State); S.Resource = SaveSubsystemCounts(Companion->Source->State);
-    S.SourceSafe = Companion->bSourceSafe; S.Phase = Companion->Phase;
-    S.Item = Companion->Command.ItemId; S.Requested = Companion->Command.Requested; S.Delivered = Companion->Command.Delivered;
-    S.CommandActive = Companion->Command.bActive; S.Statement = Companion->Statement; S.BlockReason = Companion->BlockReason;
-    S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
     S.Knowledge = Knowledge; S.KnowledgeRevision = KnowledgeRevision; S.AutoMinutes = AutoMinutes; S.Safety = Safety;
-    S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
-    S.NPCStateVersion=HearthwardSave::NPCStateVersion;S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;
-    S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability=Companion->OwnedDurability;S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
-    S.NPCReceipts=Companion->Receipts;
+    S.NPCStateVersion = HearthwardSave::NPCStateVersion;
+    if (Companion)
+    {
+        S.Companion = Companion->GetActorTransform(); S.Camp = Companion->Camp->GetActorTransform();
+        S.Source = Companion->Source->GetOwner()->GetActorTransform();
+        S.Bag = SaveSubsystemCounts(Companion->Bag->State); S.Resource = SaveSubsystemCounts(Companion->Source->State);
+        S.SourceSafe = Companion->bSourceSafe; S.Phase = Companion->Phase;
+        S.Item = Companion->Command.ItemId; S.Requested = Companion->Command.Requested; S.Delivered = Companion->Command.Delivered;
+        S.CommandActive = Companion->Command.bActive; S.Statement = Companion->Statement; S.BlockReason = Companion->BlockReason;
+        S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
+        S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
+        S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;
+        S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability=Companion->OwnedDurability;S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
+        S.NPCReceipts=Companion->Receipts;
+    }
     return true;
 }
 
@@ -168,7 +202,8 @@ bool UHearthwardSaveSubsystem::WritePoint(bool Manual, bool NewCampaign)
     Point.Created = FDateTime::UtcNow(); Point.Manual = Manual; Point.World = S;
     Point.World.NPCMemory.Campaign=Point.CampaignId;
     if(NewCampaign){Point.World.NPCMemory.Migrate(Point.CampaignId);S=Point.World;}
-    Point.Location = S.Map; Point.Stage = TEXT("PROTOTYPE_ONLY / companion fixture");
+    Point.Location = S.NaturalWorld ? TEXT("新营地") : S.Map;
+    Point.Stage = S.NaturalWorld ? TEXT("自然地图") : TEXT("PROTOTYPE_ONLY / companion fixture");
     Point.Build = FEngineVersion::Current().ToString() + TEXT(" / ") + FApp::GetBuildVersion();
     auto* Candidate = DuplicateObject<UHearthwardSaveGame>(Pool, this);
     if (Slot == Candidate->Points.Num()) Candidate->Points.Add(Point); else Candidate->Points[Slot] = Point;
@@ -187,9 +222,18 @@ bool UHearthwardSaveSubsystem::SavePoint(bool Manual) { return WritePoint(Manual
 
 bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
 {
-    if (S.Map != UGameplayStatics::GetCurrentLevelName(GetWorld(), true)) { Status = TEXT("请先打开存档所属测试地图"); return false; }
-    APawn* Player; AHearthwardCompanionFixture* Companion;
-    if (!Participants(Player, Companion)) { Status = TEXT("恢复参与者缺失，请重新创建测试夹具"); return false; }
+    if (S.Map != UGameplayStatics::GetCurrentLevelName(GetWorld(), true) || S.NaturalWorld != bNaturalWorld)
+    { Status = TEXT("请先打开存档所属地图"); return false; }
+    APawn* Player = nullptr;
+    AHearthwardCompanionFixture* Companion = nullptr;
+    if (bNaturalWorld)
+    {
+        Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+        if (!Player || !Player->FindComponentByClass<UHearthwardInventoryComponent>()
+            || !Player->FindComponentByClass<UHearthwardTimedActionComponent>())
+        { Status = TEXT("自然地图玩家无法恢复"); return false; }
+    }
+    else if (!Participants(Player, Companion)) { Status = TEXT("恢复参与者缺失，请重新创建测试夹具"); return false; }
     TGuardValue<bool> Guard(bRestoring, true);
     if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
@@ -203,37 +247,43 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     }
     auto* Personal = Player->FindComponentByClass<UHearthwardInventoryComponent>();
     Personal->State = Inventory(S.Inventory); Storage->State.Shared = Inventory(S.Storage, true);
-    Companion->Bag->State = Inventory(S.Bag); Companion->Source->State = Inventory(S.Resource);
+    if (Companion) { Companion->Bag->State = Inventory(S.Bag); Companion->Source->State = Inventory(S.Resource); }
     GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.ActivePlaySeconds = S.ActiveSeconds;
     Knowledge = S.Knowledge; KnowledgeRevision = S.KnowledgeRevision; AutoMinutes = S.AutoMinutes; Safety = S.Safety;
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RestoreMemory(S.NPCMemory);
     Player->SetActorTransform(S.Player, false, nullptr, ETeleportType::TeleportPhysics);
     if (auto* Character = Cast<ACharacter>(Player)) Character->GetCharacterMovement()->StopMovementImmediately();
     if (Player->GetController()) Player->GetController()->SetControlRotation(S.View);
-    Companion->StopNavigation();
-    Companion->SetActorTransform(S.Companion, false, nullptr, ETeleportType::TeleportPhysics);
-    Companion->Camp->SetActorTransform(S.Camp); Companion->Source->GetOwner()->SetActorTransform(S.Source);
-    Companion->bSourceSafe = S.SourceSafe; Companion->Phase = S.Phase;
-    Companion->Statement = S.Statement; Companion->BlockReason = S.BlockReason; Companion->RequestSpeaker = Player;
-    Companion->Command = FHearthwardCompanionCommand();
-    Companion->Command.ItemId = S.Item; Companion->Command.Requested = S.Requested; Companion->Command.Delivered = S.Delivered;
-    Companion->Command.bActive = S.CommandActive;
-    Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), 1};
-    Companion->Command.Acquired=S.Acquired;Companion->Command.Carried=S.Carried;Companion->Command.Goal=S.AgentGoal;
-    Companion->OwnedDurability=S.NPCDurability;Companion->Spent=S.NPCSpent;Companion->AppliedOperations=TSet<FGuid>(S.NPCOperations);
-    Companion->Receipts=S.NPCReceipts;
-    Companion->NavigationFailures=0;Companion->LastProgressAt=GetWorld()->GetTimeSeconds();Companion->LastProgressPosition=Companion->GetActorLocation();
+    if (Companion)
+    {
+        Companion->StopNavigation();
+        Companion->SetActorTransform(S.Companion, false, nullptr, ETeleportType::TeleportPhysics);
+        Companion->Camp->SetActorTransform(S.Camp); Companion->Source->GetOwner()->SetActorTransform(S.Source);
+        Companion->bSourceSafe = S.SourceSafe; Companion->Phase = S.Phase;
+        Companion->Statement = S.Statement; Companion->BlockReason = S.BlockReason; Companion->RequestSpeaker = Player;
+        Companion->Command = FHearthwardCompanionCommand();
+        Companion->Command.ItemId = S.Item; Companion->Command.Requested = S.Requested; Companion->Command.Delivered = S.Delivered;
+        Companion->Command.bActive = S.CommandActive;
+        Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), 1};
+        Companion->Command.Acquired=S.Acquired;Companion->Command.Carried=S.Carried;Companion->Command.Goal=S.AgentGoal;
+        Companion->OwnedDurability=S.NPCDurability;Companion->Spent=S.NPCSpent;Companion->AppliedOperations=TSet<FGuid>(S.NPCOperations);
+        Companion->Receipts=S.NPCReceipts;
+        Companion->NavigationFailures=0;Companion->LastProgressAt=GetWorld()->GetTimeSeconds();Companion->LastProgressPosition=Companion->GetActorLocation();
+    }
     auto* PlayerTimer = Player->FindComponentByClass<UHearthwardTimedActionComponent>();
     PlayerTimer->State = TimerState(S.PlayerTimer, S.ActiveSeconds);
     PlayerTimer->SetComponentTickEnabled(S.PlayerTimer.Status == EHearthwardTimedActionStatus::Running);
-    Companion->Action->State = TimerState(S.CompanionTimer, S.ActiveSeconds);
-    Companion->Action->SetComponentTickEnabled(S.CompanionTimer.Status == EHearthwardTimedActionStatus::Running);
-    Companion->RestoreExecutionPlan();
+    if (Companion)
+    {
+        Companion->Action->State = TimerState(S.CompanionTimer, S.ActiveSeconds);
+        Companion->Action->SetComponentTickEnabled(S.CompanionTimer.Status == EHearthwardTimedActionStatus::Running);
+        Companion->RestoreExecutionPlan();
+    }
     NextAutoSeconds = S.ActiveSeconds + AutoMinutes * 60.0;
     // All state is committed before consumers may observe it. No gameplay settlement events replay.
     if (auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>())
     {
-        const bool UpgradeLegacy=S.Gameplay.IsEmpty() && Gameplay->Enabled;
+        const bool UpgradeLegacy=Companion && S.Gameplay.IsEmpty() && Gameplay->Enabled;
         Gameplay->Restore(S.Gameplay);
         if(UpgradeLegacy)
         {
@@ -243,7 +293,8 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
                 Storage->State.Shared.Add(FName(*Item.Key),Item.Value->AsNumber());
         }
     }
-    Personal->OnInventoryChanged.Broadcast(); Companion->Bag->OnInventoryChanged.Broadcast(); Companion->Source->OnInventoryChanged.Broadcast();
+    Personal->OnInventoryChanged.Broadcast();
+    if (Companion) { Companion->Bag->OnInventoryChanged.Broadcast(); Companion->Source->OnInventoryChanged.Broadcast(); }
     OnSnapshotRestored.Broadcast();
     return true;
 }
@@ -264,7 +315,7 @@ bool UHearthwardSaveSubsystem::LoadPoint(FGuid SaveId)
 
 bool UHearthwardSaveSubsystem::DeletePoint(FGuid SaveId)
 {
-    if (!bEnabled || bRestoring || !ReloadPool()) return false;
+    if (bRestoring || !ReloadPool()) return false;
     auto* Candidate = DuplicateObject<UHearthwardSaveGame>(Pool, this);
     if (Candidate->Points.RemoveAll([SaveId](const auto& P) { return P.SaveId == SaveId; }) != 1) { Status = TEXT("节点不存在"); return false; }
     if (!CommitPool(Candidate)) return false;
@@ -272,7 +323,7 @@ bool UHearthwardSaveSubsystem::DeletePoint(FGuid SaveId)
 }
 bool UHearthwardSaveSubsystem::SetPointLocked(FGuid SaveId, bool Locked)
 {
-    if (!bEnabled || bRestoring || !ReloadPool()) return false;
+    if (bRestoring || !ReloadPool()) return false;
     auto* Candidate = DuplicateObject<UHearthwardSaveGame>(Pool, this);
     auto* Point = Candidate->Points.FindByPredicate([SaveId](const auto& P) { return P.SaveId == SaveId; });
     if (!Point) { Status = TEXT("节点不存在"); return false; }

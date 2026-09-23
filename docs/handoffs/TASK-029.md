@@ -1,74 +1,103 @@
-# TASK-029 交接
+# TASK-029 交接｜AI NPC 完整交付
 
-## 2026-09-23 对外总交付口径
+## 当前口径
 
-Owner 指定：AI NPC vNext 最终对外验收统一使用 **TASK-029**。内部 TASK-027～040 继续作为实现分解与可追溯证据，不删除、不改号。最终 PR 应将以下内部工作作为 TASK-029 的完整能力增量说明：authoritative perception/safety、deterministic Goal→Plan→Action executor、contextual suggestions、hold/follow/assist/routine、adaptive recovery、typed Belief、event-driven initiative、grounded Episode、tactical cooperation、coordination prior、camp routine、组件化收口、bounded context/token budget、真实 Qwen guardrail 与 Schema 2→3 migration。
+AI NPC vNext 最终统一使用 **TASK-029**。
 
-当前最终证据汇总见 `docs/qa/evidence/TASK-040/`；该目录保留内部返工编号，仅作为 TASK-029 总交付的底层证据来源。
+早期研发的 027～040 编号只作为内部历史来源；其中历史 “AI TASK-028 executor” 已归档到 `docs/qa/evidence/TASK-029/internal-history/TASK-028-agent-executor/`，因为项目 main 当前 canonical TASK-028 已被用于 3D 资产任务。
 
-## 基线
+当前候选分支：`codex/ai-npc-vnext-rework-01-fix`。
 
-- TASK-027：`25e8f13 feat: add authoritative NPC perception safety layer`。
-- TASK-028 主实现：`d186dc1 feat: add typed NPC action executor`。
-- TASK-028 兼容收尾：`df12965 fix: preserve companion executor compatibility`。
-- 当前分支：`codex/TASK-029-contextual-suggestions`。
-- 目标是保持第四个独立可审查 commit，之后与 027/028 一起统一形成 GitHub PR。
+## 架构
 
-## 已实现
+```text
+Player / Suggestions
+        ↓
+Local Qwen
+        ↓
+ContextProjection + Capability Contract
+        ↓
+Deterministic Guardrail
+        ↓
+Candidate + Confirm
+        ↓
+Goal → Plan → Action
+        ↓
+UE authoritative world systems
+        ↓
+Receipts / Events
+        ↓
+Belief / Episode / Coordination / Initiative
+```
 
-本单完成 GDD 第11章“三条建议、只主动刷新、点选才传给弟弟”的最小闭环：
+核心原则：LLM 做理解与表达；UE 做世界事实、安全、路径、战斗、结算和持久化权威。
 
-- 新增纯 deterministic `HearthwardNPCSuggestions` generator。
-- 建议只存在于 AI subsystem 的 ephemeral cache；不会自动刷新。
-- 显式刷新最多生成3条：
-  - 空闲且安全时的 collect 建议；
-  - 当前营地木材事实；
-  - 能力/状态交流；有活跃委托时优先 progress。
-- 刷新本身不写 memory、clarification、model input、filtered context、candidate 或世界。
-- 每条建议绑定 timeline epoch + memory revision；camp/progress 额外绑定观测数量或 command id。
-- 点击时重新验证 camp count、timeline、safety、active command。
-- 选中的建议才以 `quick_suggestion` 来源进入现有 `SubmitPlayerText` 推理路径；仍必须经过 candidate + 玩家确认才能执行世界写入。
-- Modern Screen 和 `-HearthwardLegacyUI` 共用同一 suggestion cache，没有第二条知识通路。
+## 已完成内容
 
-## 验证
+- authoritative perception / safety
+- typed Goal → Plan → Action executor
+- contextual suggestion cache + stale revalidation
+- hold / follow / assist / routine
+- deterministic combat policy and tactical Assist/Protect/Regroup
+- adaptive recovery
+- typed Belief with provenance + freshness
+- event-driven Initiative
+- grounded Episode + coverage
+- Coordination Prior
+- camp autonomous Routine
+- Navigation / Behavior / Initiative / Local AI Runtime componentization
+- bounded ContextProjection with real template token count
+- capability registry/prompt alignment
+- Chinese numeric quantity handling
+- Schema 2 → 3 real-file migration
 
-详见 [TASK-029 VALIDATION](../qa/evidence/TASK-029/VALIDATION.md)。
+## 本轮返工修复
 
-当前结果：
+1. 修复 Unity build 中匿名 helper `Json` collision，并审计/前缀化其它通用 helper。
+2. 修复 CTX-02 压力下无关 Belief 与配方数量污染 prompt，导致“新采四份木材”被误判缺数量的问题。
+3. 修复 `inventory_report` 只识别阿拉伯数字、无法接受“十份木材”的 guardrail 缺陷。
+4. 验证 full → compact 降档时 unresolved 安全限制不会丢失。
+5. 验证 required-minimal 真正超预算时明确失败且 generation=0。
+6. 新增真实 Schema 2 `.hws` → Schema 3 disk migration automation。
+7. 最终重跑 executor / Initiative / tactical / routine runtime PIE。
 
-- HearthwardEditor build：PASS。
-- full native `Hearthward`：32/32 PASS。
-- Modern suggestion PIE：40/40 PASS。
-- Legacy suggestion PIE：8/8 PASS。
-- TASK-028 executor PIE：49/49 PASS。
-- TASK-025 workshop regression：129/129 PASS。
-- TASK-012 historical companion PIE：45/45 PASS。
-- real-model generation：本隔离 worktree 无 GGUF，NOT_RUN；缺模型路径已验证不会直接执行建议。
+## 同步 main 前证据
 
-## 认知边界
+- Editor Development default Unity build：PASS
+- native：41/41 PASS
+- Schema migration：1/1 PASS
+- real Qwen matrix：32 cases / 32 generations / 32/32 safety PASS
+- core raw M01～M10：20/20 PASS
+- CTX-03：compact 2832 tokens / generation=1 / restriction preserved
+- CTX-04：required-minimal 4020 tokens / generation=0 / no candidate / no world write
+- executor PIE：49/49
+- Initiative PIE：16/16
+- Tactical PIE：16/16
+- Routine PIE：26/26
+- repo validator：0 errors
+- Python：31/31
 
-“全局建议层知道”不等于“弟弟知道”。
+## 真实模型说明
 
-未点击的营地数量：
-- 可以显示在玩家侧建议按钮；
-- 不会出现在 `LastInput`；
-- 不会进入 `LastFilteredContext`；
-- 不增加 memory revision；
-- 不触发模型或 candidate。
+M11/M12/M14/M16 的 raw JSON 在部分 clean/pressure run 中仍可能给出偏宽的 collect/repair intent；deterministic guardrail 均正确拒绝/澄清并阻止世界写。raw model 与 guardrail 成功分开记录，不混为一谈。
 
-只有玩家点击后，该文本才作为一次 `quick_suggestion` 玩家输入传给弟弟。
+## Evidence
 
-## R20 / R21
+统一入口：[FINAL_ACCEPTANCE](../qa/evidence/TASK-029/FINAL_ACCEPTANCE.md)。
 
-本单只解决 suggestion cache 自身的 stale revalidation。
+历史建议层证据仍在 `docs/qa/evidence/TASK-029/VALIDATION.md`。更早内部任务证据由 `internal-history/` 索引；上下文/Qwen/Schema 的原始大文件保留原来源路径并由 FINAL_ACCEPTANCE 链接。
 
-仍未定义：
-- 对话关闭后迟到的模型文本如何呈现；
-- 慢回复是否进入历史；
-- 三日主动闲聊及其计时重置条件。
+## Release
 
-因此 R20/R21 继续保持 OPEN，不将本单描述为“完整主动 NPC”。
+当前正在同步最新 main（已从用户指定的 `73bb10e+` 前进到 `28e7c52`），保留 main 的自然地图/资产更新并合入 TASK-029 AI NPC 栈。
 
-## 下一步
+完成冲突解决后：
 
-TASK-029 完成验证后形成独立本地 commit。下一小步可以进入 TASK-030，但应保持同样分层：优先做 deterministic combat intent/policy boundary，而不是让 LLM 做逐帧战术决策。GitHub 通路恢复后再把 027/028/028-fix/029（以及经验证的下一小单）统一推送为一个可审查 PR，不自动 merge。
+1. repo validator + Python
+2. Editor build
+3. full native
+4. 必要 runtime smoke
+5. commit merge result
+6. push branch
+7. create PR
+8. **do not merge**

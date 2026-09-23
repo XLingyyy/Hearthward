@@ -1,12 +1,20 @@
 # TASK-026 自然世界当前状态
 
+## 2026-09-22 本次接手
+
+当前工作目录 `G:/GameFactory/Hearthward`，分支 `codex/TASK-026-natural-world-rebuild`，基线 `4114556`。用户授权本地重建自然地图；新地图 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds`。最新实现、验证、限制与复现入口见[重建记录](REBUILD.md)。旧地图和原有他人资产锁保留。
+
+## 以下为 PR #25 历史交接
+
+以下路径、测试和授权仅描述上一轮成果，不作为本次实施状态。
+
 更新：2026-09-22。本文记录分支 `codex/TASK-026-natural-world` 上的本地灰盒实现，不代表main已集成、Owner已验收或最终地理设计已批准。
 
 ## 打开与浏览
 
 在 UE 5.8.2 中打开 `Hearthward.uproject`，加载 `/Game/Hearthward/World/Natural/L_NaturalWorld` 后使用PIE浏览。地图级 `BP_NaturalWorldGameMode` 复用现有 `HearthwardCharacter`，但使用空白HUD，不生成020开发场景、伙伴或仓储内容，也不启动本地模型。
 
-现有Bootstrap与默认新游戏入口没有修改；自然世界尚未接到正式游戏流程。
+此页记录早期底座状态。当前 Bootstrap 标题页新游戏、继续游戏及存档已接入新营地；最新状态见[营地接入记录](CAMP_INTEGRATION.md)。
 
 ## 序列化实现
 
@@ -63,3 +71,7 @@
 2. 优先替换悬空基础形体、处理地表拼接和自然过渡；每轮只改026路径内资产。
 3. 补总体图、五类分区和可行走面积说明，再录制主环线/两支路/双浅滩连续实走。
 4. 用Standalone完成流送往返和目标硬件性能采样；最后由Owner做视觉验收。
+
+### 2026-09-22 最终局部复测补充
+
+新图最后修正了水面Nanite兼容、岩石足迹贴地和叶片远距透明采样。最终SM6 PIE连续行走124.98米/35秒，13项局部检查通过；运行林地可见草簇。详细记录与原始截图见 `docs/qa/evidence/TASK-026/rebuild/final-local-walk.json`、`runtime-forest.png`。Landscape Grass原生运行生成状态仍待专项确认；完整路线、Standalone跨区及性能、视觉验收尚未完成。任务维持Active。最新范围校验检查1509条路径，无越界错误；整体FAIL仅缺reviewer及真实Issue URL。29个任务Python脚本语法通过，git diff --check通过。

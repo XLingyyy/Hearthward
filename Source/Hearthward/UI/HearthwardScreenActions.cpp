@@ -12,6 +12,7 @@
 #include "Components/EditableTextBox.h"
 #include "EngineUtils.h"
 #include "Engine/Engine.h"
+#include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -20,6 +21,7 @@
 using namespace HearthwardData;
 namespace
 {
+const FName NaturalMap(TEXT("/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds"));
 AHearthwardCompanionFixture* Companion(UWorld* World)
 { for(TActorIterator<AHearthwardCompanionFixture> It(World);It;++It) return *It; return nullptr; }
 bool NearStorage(UWorld* World,AActor* Player)
@@ -33,6 +35,7 @@ bool UHearthwardScreenWidget::PrepareSession()
 {
     auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
     if(Save->IsPrototypeEnabled()) return true;
+    if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds")) return Save->EnableNaturalWorld();
 #if !UE_BUILD_SHIPPING
     if(!Companion(GetWorld())) UKismetSystemLibrary::ExecuteConsoleCommand(this,TEXT("Hearthward.Companion.CreateTest"),GetOwningPlayer());
     auto* G=Gameplay();
@@ -46,6 +49,20 @@ bool UHearthwardScreenWidget::PrepareSession()
 #else
     return false;
 #endif
+}
+bool UHearthwardScreenWidget::OpenSavePoint(const FHearthwardSavePoint& Point)
+{
+    auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
+    if(Point.World.NaturalWorld)
+    {
+        if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds"))
+            return PrepareSession() && Save->LoadPoint(Point.SaveId);
+        const FString Options=TEXT("game=/Script/Hearthward.HearthwardGameMode?HearthwardLoad=")
+            +Point.SaveId.ToString(EGuidFormats::Digits);
+        UGameplayStatics::OpenLevel(this,NaturalMap,true,Options);
+        return true;
+    }
+    return PrepareSession() && Save->LoadPoint(Point.SaveId);
 }
 bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
 {
@@ -177,7 +194,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action.StartsWith(TEXT("page:")))
     {
         const FName Next(*Action.Mid(5));
-        if(Next==TEXT("save") && !PrepareSession()) { Message=Save->GetStatus(); Refresh(); return false; }
+        if(Next==TEXT("save") && !Save->LoadPointIndex()) { Message=Save->GetStatus(); Refresh(); return false; }
         if(Next==TEXT("storage") && !NearStorage(GetWorld(),GetOwningPlayerPawn())) { Message=TEXT("请靠近营地仓储"); Refresh(); return false; }
         if(Next==TEXT("dialogue") || Next==TEXT("memory"))
         { auto* C=Companion(GetWorld()); if(!C || !C->CanCommunicate(GetOwningPlayerPawn())) { Message=TEXT("请靠近弟弟，交流范围30米"); Refresh(); return false; } }
@@ -186,23 +203,36 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     }
     if(Action==TEXT("new"))
     {
-#if !UE_BUILD_SHIPPING
+        if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)!=TEXT("L_HearthwardWilds"))
+        {
+            UGameplayStatics::OpenLevel(this,NaturalMap,true,TEXT("game=/Script/Hearthward.HearthwardGameMode?HearthwardNewGame=1"));
+            return true;
+        }
         Success=PrepareSession() && Save->StartNewProgress(); Message=Save->GetStatus();
         if(Success) OpenPage(TEXT("hud"));
-#else
-        Success=false; Message=TEXT("此版本未包含正式游戏开场");
-#endif
     }
     else if(Action==TEXT("continue"))
     {
-        if(!PrepareSession()) { Message=Save->GetStatus(); Refresh(); return false; }
+        if(!Save->LoadPointIndex()) { Message=Save->GetStatus(); Refresh(); return false; }
         const auto Points=Save->GetPoints();
         if(Points.IsEmpty()) { Message=TEXT("尚无存档，请先开始新游戏"); Success=false; }
-        else { const auto* Latest=&Points[0]; for(const auto& P:Points) if(P.Created>Latest->Created) Latest=&P; Success=Save->LoadPoint(Latest->SaveId); Message=Save->GetStatus(); }
+        else { const auto* Latest=&Points[0]; for(const auto& P:Points) if(P.Created>Latest->Created) Latest=&P; Success=OpenSavePoint(*Latest); Message=Save->GetStatus(); }
     }
-    else if(Action==TEXT("title")) OpenPage(TEXT("title"));
+    else if(Action==TEXT("title"))
+    {
+        if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds"))
+        { UGameplayStatics::OpenLevel(this,TEXT("/Game/Hearthward/Bootstrap/L_Bootstrap")); return true; }
+        OpenPage(TEXT("title"));
+    }
     else if(Action==TEXT("save")) { Success=Save->SavePoint(true); Message=Save->GetStatus(); }
-    else if(Action.StartsWith(TEXT("load:"))) { FGuid Id; FGuid::Parse(Action.Mid(5),Id); Success=Save->LoadPoint(Id); Message=Save->GetStatus(); }
+    else if(Action.StartsWith(TEXT("load:")))
+    {
+        FGuid Id; if(!FGuid::Parse(Action.Mid(5),Id)) return false;
+        if(!Save->LoadPointIndex()) { Message=Save->GetStatus(); Refresh(); return false; }
+        const auto Points=Save->GetPoints();
+        const auto* Point=Points.FindByPredicate([Id](const auto& P){return P.SaveId==Id;});
+        Success=Point && OpenSavePoint(*Point); Message=Save->GetStatus();
+    }
     else if(Action.StartsWith(TEXT("delete:"))) { FGuid Id; FGuid::Parse(Action.Mid(7),Id); Success=Save->DeletePoint(Id); Message=Save->GetStatus(); }
     else if(Action.StartsWith(TEXT("lock:")))
     { FGuid Id; FGuid::Parse(Action.Mid(5),Id); for(const auto& P:Save->GetPoints()) if(P.SaveId==Id) Save->SetPointLocked(Id,!P.Locked); Message=Save->GetStatus(); }

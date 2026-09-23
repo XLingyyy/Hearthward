@@ -16,6 +16,8 @@ struct FHearthwardUIElement
     bool MapClipped=false;
 };
 
+struct FHearthwardSavePoint;
+
 UCLASS()
 class HEARTHWARD_API UHearthwardScreenWidget : public UUserWidget
 {
@@ -54,6 +56,7 @@ private:
     class UHearthwardInventoryComponent* Inventory() const;
     void LoadTheme();
     bool PrepareSession();
+    bool OpenSavePoint(const FHearthwardSavePoint& Point);
     void LoadElements(const TArray<TSharedPtr<FJsonValue>>& Rows);
     void ComposeInventory(bool Storage);
     void ComposeSkills();

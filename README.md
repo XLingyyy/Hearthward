@@ -1,14 +1,18 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。TASK-025 增强版 v2 已通过 PR #23 合并 main（`851d60e`）；TASK-026 自然世界灰盒已通过 PR #25 合并 main（`4114556`）；main 后续更新至 `e729349`（PR #26–#28 资产提交），形成 4032 m World Partition 地图、独立浏览 GameMode 与局部 PIE 证据，但视觉、长路线、Standalone 流送、性能和 Owner 验收仍未完成。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。当前 main 已更新到 `28e7c52`，包含自然地图与后续资产更新；[TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行的 4032 m World Partition 自然地图与营地入口，但完整路线、流送、性能和 Owner 视觉验收仍未全部闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-AI NPC vNext 当前候选分支为 `codex/ai-npc-vnext-rework-01-fix`。Owner 指定最终对外验收/PR 统一使用 **TASK-029 AI NPC 完整交付**；仓库内部 TASK-027～040 继续保留为可追溯实现记录。该栈已完成 authoritative perception/safety、Goal→Plan→Action executor、contextual suggestions、combat/directives、adaptive recovery、typed Belief、Initiative、Episode、Coordination Prior、Camp Routine、组件化、bounded ContextProjection、真实 Qwen guardrail 与 Save schema 3 migration。当前 UE 5.8.2 default Unity Editor build PASS、native 41/41、真实 Qwen M01～M16 clean/pressure 32/32 safety、CTX-03/04 与 Schema 2→3 real-file migration 均已通过；结果见 [clean-tree review](docs/qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md) 与 [TASK-040 验证记录](docs/qa/evidence/TASK-040/VALIDATION.md)。地图与 AI 两条车道保持隔离；不把 TASK-026 视为已完成视觉验收。
+AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。该交付已覆盖世界事实/安全边界、确定性 Goal→Plan→Action 执行、上下文建议、伙伴高层指令与战术协作、Recovery、Belief/Knowledge、Initiative、Episode、Coordination Prior、Camp Routine、组件化、bounded ContextProjection、真实 Qwen guardrail 与 Save schema 3 migration。同步 main 前已通过 UE 5.8.2 default Unity Editor build、native 41/41、真实 Qwen M01～M16 clean/pressure 32/32 safety、CTX-03/04、Schema 2→3 real-file migration，以及关键 runtime PIE 回归。详细证据保存在 [TASK-029 交接](docs/handoffs/TASK-029.md) 与内部证据目录中。
+
+下一规划任务：[TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md)。该任务是 main 当前 canonical TASK-028，状态为 **Backlog，仅下单，未执行**；执行等待另行授权。
 
 ## 运行
 
-打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`，在标题页选择“新游戏”。020 自动建立现有开发场景所需的伙伴、资源、初始物品和初始存档节点，无需先输入控制台命令。继续游戏与载入存档读取已有的全局50点原型池。
+打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`。标题页“新游戏”进入自然地图的新营地并生成初始存档；营地中按 F6 打开存档页，暂停菜单也可手动保存。返回主菜单后“继续游戏”恢复最新节点；“载入存档”可选择自然地图节点。已有旧开发场景进度仍保留在同一50点档池。
 
-TASK-026自然世界尚未接入标题页。要查看当前分支灰盒，在编辑器中直接打开 `/Game/Hearthward/World/Natural/L_NaturalWorld` 并运行PIE；地图级GameMode只复用第三人称角色，不生成营地、敌人、伙伴或仓储，也不启动本地模型。
+自然地图目前提供移动、视角、背包、暂停与存档；下表的伙伴、战斗、建造、任务等键位对应旧开发场景，尚未接入自然地图。
+
+单独浏览自然地图时，在编辑器中打开 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds` 并运行PIE；地图级浏览GameMode只复用第三人称角色，不生成旧开发场景的敌人、伙伴或测试地标，也不启动本地模型。
 
 | 操作 | 键位 |
 |---|---|
@@ -67,11 +71,23 @@ TASK-026自然世界尚未接入标题页。要查看当前分支灰盒，在编
 
 ## 验证与限制
 
-TASK-026于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
+TASK-026本次重建记录见[REBUILD](docs/world/TASK-026/REBUILD.md)，历史检查不累计为新图验收。旧地图于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
 
 025 v2实现与验证见 [TASK-025交接](docs/handoffs/TASK-025.md)、[设计决定](docs/decisions/ADR-TASK-025-npc-cognition.md)和[rev2证据](docs/qa/evidence/TASK-025/rev2/)。AI NPC 最终对外按 **TASK-029 完整交付** 验收，内部 TASK-027～040 保留历史。当前返工源码已通过 UE 5.8.2 default Unity Editor build、全量 native 41/41、真实 Qwen 32-case clean/pressure matrix（32/32 safety、M01～M10 raw 20/20）、CTX-03 compact 降档、CTX-04 minimal overflow generation=0、Schema 2→3 real-file migration 1/1，以及当前源码 TASK-028/034/036/038 PIE 49/49、16/16、16/16、26/26；详见 [clean-tree review](docs/qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md) 与 [TASK-040 验证](docs/qa/evidence/TASK-040/VALIDATION.md)。历史各内部任务的专项结果继续保留在各自 evidence/handoff 中；TASK-026 地图证据与 AI 验证仍独立记录。构建/测试入口见 [BUILD_AND_TEST](docs/qa/BUILD_AND_TEST.md)。
 
-当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；TASK-026也只使用基础形体表达树木、草、岩石和地标，菜单插画不代表三维城寨、正式森林或角色资产已制作。导航覆盖现有开发场景的可行走表面，支持静态障碍绕行和动态障碍重建；正式大世界伙伴导航、攀爬/跳跃导航连接仍未制作。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004已有77个自然素材源文件入库，026只复用了其中三张地表贴图，004模型适配与整单验收仍未完成，人物和房屋仍缺，见[资源汇总](resourceSummary.md)。020经验曲线、节点、任务与战斗参数为独立内容配置，未替代GDD未决R项。
+当前可运行内容仍基于开发灰盒，伙伴和敌人使用碰撞形体；TASK-026也只使用基础形体表达树木、草、岩石和地标，菜单插画不代表三维城寨或正式森林资产已制作。`Content/Characters/Hero/Tripo` 已导入一套 Tripo 主角原型骨架网格、材质贴图和动作资源，但尚未接入现有玩法角色，也未完成独立展示、重定向、许可台账或运行验收，不能视为正式角色美术。导航覆盖现有开发场景的可行走表面，支持静态障碍绕行和动态障碍重建；正式大世界伙伴导航、攀爬/跳跃导航连接仍未制作。完整十小时剧情、正式动作动画、营地生产/设施升级、重伤救援和Shipping打包尚未完成。TASK-004 自然素材源文件由此前 77 个增至 115 个，其中本批新增冷杉和松树的 38 个源文件。026只复用了其中三张地表贴图，004模型适配与整单验收仍未完成，见[既有资源汇总](resourceSummary.md)与[新增树木来源](art_source/TASK-004/polyhaven/SOURCE.md)。020经验曲线、节点、任务、建筑、制作配方与战斗参数为独立内容配置，未替代GDD未决R项。
+
+四件 Tripo 道具源资产（石骨斧、原始鱼竿、骨肉袋、陶罐）的 FBX、参考图和预览已存入 `art_source/TASK-004/Tripo/妙妙道具`，但尚未导入 UE Content 或完成游戏内验收，不视为已接入玩法。
+
+十五件 Tripo 动物源资产（两只雄鹿、野兔、山羊、雉鸡、猪、狼、黑熊、公羊、赤狐、母鸡、鲤鱼、鲫鱼、鲶鱼、鳗鱼）的参考图、静态 FBX、预览和带蒙皮权重的骨骼 FBX 已存入 `art_source/TASK-004/Tripo/动物`。骨架包含四足、鸟类、水生和蛇形四类；尚未导入 UE Content，也未附加动画或完成游戏内验收，不视为正式动物系统。
+
+已推送的 [PR #33](https://github.com/XLingyyy/Hearthward/pull/33) 在 `art_source/TASK-004/Tripo/敌人` 收录短刀兵、重甲兵两件候选的参考图、静态 FBX、预览和带双足骨骼的 FBX；[逐件索引](art_source/TASK-004/Tripo/敌人/敌人模型与骨骼索引.md)记录任务 ID 与文件。它们尚未导入 UE，武器、盾牌、护甲权重和动作表现未在引擎中验证；现有玩法敌人仍使用碰撞形体，不视为正式敌人美术。
+
+同一 PR 在 `art_source/TASK-004/Tripo/篝火` 收录一件[静态候选模型](art_source/TASK-004/Tripo/篝火/篝火模型索引.md)的参考图、FBX 与预览。石圈、木柴和火焰已形成静态造型，但未接入现有可建篝火；动态火焰、发光/透明材质、照明和碰撞仍待在 UE 中制作或验证。
+
+已通过 [PR #29](https://github.com/XLingyyy/Hearthward/pull/29) 合入 main 的 8 件 [Tripo 房屋建筑部件制作源资产](art_source/TASK-004/Tripo/房屋建筑部件/房屋建筑部件模型索引.md)，每件均有参考图、静态 FBX 和 PNG 预览。模型已完成文件格式核验，尚未导入 UE、统一吸附尺度或完成碰撞及拼接验证；它们是 `TEMP_VISUAL` 候选，不代表正式建筑风格。
+
+当前家具分支新增 5 件 [Tripo 室内家具制作源资产](art_source/TASK-004/Tripo/室内家具/室内家具模型索引.md)：绳网木床、带锁木箱、木桌、木椅和金属提灯，每件均有参考图、静态 FBX 和 PNG 预览。它们尚未导入 UE，尺寸、背面、碰撞及提灯发光表现未验收，也未接入玩法；分支 PR 合并前不视为 main 已集成。
 
 旧界面及此前定向验证可使用 `-HearthwardLegacyUI`。正式流程仍缺Issue归属与独立评审；任务分支成果与main集成状态分别记录。
 

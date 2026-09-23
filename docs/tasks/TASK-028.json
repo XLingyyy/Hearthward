@@ -1,76 +1,90 @@
 {
   "schema_version": 1,
   "id": "TASK-028",
-  "title": "AI NPC通用Goal-Plan-Action执行器",
-  "status": "Blocked",
-  "updated_at": "2026-09-22",
+  "title": "建筑、物品、武器、防具等3D资产导入与游戏应用",
+  "status": "Backlog",
+  "updated_at": "2026-09-23",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": "codex/TASK-028-agent-executor",
+  "branch": "codex/TASK-028-3d-assets-integration",
   "source_refs": [
-    "用户于2026-09-22授权深度继续推进，后续统一交GitHub PR",
-    "TASK-027 authoritative perception/safety local commit 25e8f13",
-    "TASK-025 canonical goal / receipts / workshop execution"
+    "2026-09-23用户：仅下发028任务单并推送main，不执行",
+    "docs/tasks/TASK-028.md",
+    "main 414dc70：自然营地、既有玩法及已入库Tripo素材"
   ],
-  "dependencies": ["TASK-027"],
+  "dependencies": [
+    "TASK-003",
+    "TASK-020",
+    "TASK-022",
+    "TASK-026"
+  ],
   "blocked_by": [],
-  "contracts": [
-    "docs/contracts/CT-002-companion-command.md",
-    "docs/decisions/ADR-TASK-025-npc-cognition.md"
-  ],
+  "contracts": [],
   "allowed_paths": [
-    "Source/Hearthward/AI/HearthwardAgentPlan.h",
-    "Source/Hearthward/AI/HearthwardAgentPlan.cpp",
-    "Source/Hearthward/AI/HearthwardNPCPerception.h",
-    "Source/Hearthward/AI/HearthwardNPCPerception.cpp",
-    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
-    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
-    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
-    "Source/Hearthward/Tests/NPCAgentTests.cpp",
     "README.md",
-    "docs/PROJECT_STATE.md",
-    "docs/START_HERE.md",
     "docs/tasks/TASK-028.json",
     "docs/tasks/TASK-028.md",
     "docs/handoffs/TASK-028.md",
-    "docs/qa/evidence/TASK-028/"
-  ],
-  "forbidden_paths": [
-    "Content/",
-    "Plugins/",
-    "Source/Hearthward/Save/HearthwardSaveGame.h",
-    "Source/Hearthward/Save/HearthwardSaveGame.cpp",
+    "docs/planning/BACKLOG.md",
+    "docs/assets/TASK-028/",
+    "docs/qa/evidence/TASK-028/",
+    "scripts/assets/TASK-028/",
+    "art_source/TASK-028/",
+    "Content/Hearthward/Assets/TASK-028/",
+    "Content/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.umap",
+    "Content/__ExternalActors__/Hearthward/World/Natural/Rebuild/L_HearthwardWilds/",
+    "Content/__ExternalObjects__/Hearthward/World/Natural/Rebuild/L_HearthwardWilds/",
+    "Source/Hearthward/Building/",
+    "Source/Hearthward/Gameplay/",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/HearthwardGameMode.cpp",
+    "Source/Hearthward/HearthwardGameMode.h",
     "Resources/Data/gameplay.json"
   ],
+  "forbidden_paths": [
+    "art_source/TASK-004/",
+    "Content/Characters/Hero/",
+    "Source/Hearthward/Animation/",
+    "Source/Hearthward/Save/",
+    "Plugins/",
+    "Config/",
+    "config/",
+    "docs/design/"
+  ],
   "acceptance": [
-    "新增纯确定性Goal→Plan编译层，collect/craft/repair均编译为typed action序列，LLM不直接生成动作列表",
-    "CompanionFixture执行逻辑按当前action调度，不再以不断扩张的EHearthwardCompanionPhase作为主执行分派",
-    "Perception/Safety在每个可能产生新世界副作用的action前继续复核；安全返营/保留物资不因战斗阻断",
-    "Phase保留为UI/旧存档兼容投影；不修改存档schema，通过Goal+Phase+进度重建运行时plan cursor",
-    "旧存档/中途存档恢复后不会重复采集、制作、维修或入库；receipts/epoch语义保持",
-    "公开当前typed action给UI/诊断/PIE测试，便于后续扩展救援、生活和战斗策略而不继续新增Phase",
-    "全量原生Hearthward自动化与collect/workshop/plan PIE回归通过"
+    "A1：逐件源文件、UE资产、玩法ID、使用位置和缺口清单，核心四类均有实际成果",
+    "A2：UE5.8.2导入并保存重开，材质/碰撞/尺度及依赖正确",
+    "A3：8建筑部件组成可进入建筑，至少一种已有设施完成建造/交互/恢复",
+    "A4：物品实际应用，至少一件武器或工具与装备/动作同步",
+    "A5：至少一件防具可穿脱，动作及读档后外观一致",
+    "A6：自然营地从正常入口可见可用，现有规则与存档格式保持",
+    "A7：记录定向性能对比、操作录像、来源/锁/外部包、版本与Owner视觉验收"
   ],
   "non_goals": [
-    "不让LLM做逐步ReAct或直接生成/执行任意工具调用",
-    "不在本单新增钓鱼、狩猎、烹饪、救援、生活日程或战斗战术",
-    "不修改存档schema、不做大地图/角色/美术、不引入Behavior Tree/EQS",
-    "不删除EHearthwardCompanionPhase；本单将其降级为兼容投影而非立即破坏外部UI/存档接口"
+    "本次不执行，仅下单",
+    "不重做026自然地图或027角色动画",
+    "不新增配方、数值、生态AI、房屋模块建造或修改存档格式",
+    "不自行付费生成、采购资产或安装大型依赖"
   ],
-  "prototype_only": true,
-  "prototype_approval": "用户于2026-09-22明确授权深度继续推进并后续统一提交GitHub PR",
-  "required_tests": ["T-002", "T-008", "T-009", "T-020"],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
   "permissions": {
-    "network": "granted for GitHub coordination when connector becomes available",
+    "network": "granted: reference documentation and fetch/push planning documents only",
     "install_dependencies": "not_granted",
-    "commit": "granted for staged local task commits before unified PR",
-    "push": "deferred until unified GitHub PR handoff",
-    "merge": "not_granted"
+    "commit": "granted: TASK-028 planning documents and README/index only",
+    "push": "granted: TASK-028 planning documents to main only",
+    "merge": "not_granted: no implementation branch or PR merge"
   },
   "notes": [
-    "TASK-027已先独立本地提交25e8f13，TASK-028分支从该提交派生；后续可由最终分支创建一个包含多个清晰commit的统一PR。",
-    "GitHub connector当前受会话环境FORBIDDEN限制，因此Issue/Reviewer仍无法核验，流程状态保持Blocked。",
-    "Phase兼容投影是迁移策略：028应减少新能力对Phase枚举的依赖，而不是一次性破坏现有HUD/Save。"
+    "当前仅下发任务，未授权实施；allowed_paths为未来实施范围，现轮只写规划文档。",
+    "027本地未提交任务不作为不存在的main JSON依赖；挂接前核验最终角色接口。",
+    "004源素材按单件复用，无需整单完成；武器/防具缺口不得宣称完成。",
+    "共享代码、地图和外部包开工前登记实际文件及单一写者；不以目录许可覆盖026/027改动。"
   ]
 }
