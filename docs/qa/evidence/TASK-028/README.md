@@ -27,4 +27,4 @@
 
 运行命令：`python -X utf8 scripts/assets/TASK-028/inventory.py --check`；`python -X utf8 scripts/assets/TASK-028/run_runtime_qa.py`；`python -X utf8 scripts/assets/TASK-028/run_visual_capture.py`。UE操作通过上层GameFactory `UEClient` 执行，测试存档池与用户正常存档隔离。最终构建命令与结果见JSON摘要。录像及真实人类视觉验收均未取得，因此不标PASS。
 
-仓库范围门禁已运行但未通过：TASK-028的main基线JSON未预列两处必须修改的UI实现文件，且缺真实Issue URL和独立Reviewer；全仓还报告既有任务字段错误。用户现已明确批准两处UI文件纳入TASK-028，并记入工作树JSON；路径门禁核对的仍是main旧快照，尚不能通过本地工作树修改识别该批准。最初的运行路径和截图来自合入TASK-027之前的实现快照；含TASK-029/030的新基线已单独重测构建与49项路径，视觉截图仍未重拍。完整错误及后续处理见[单任务交接](../../../handoffs/TASK-028.md)。
+仓库范围门禁已运行但未通过：TASK-028的main基线JSON未预列自然图UI入口文件，且缺真实Issue URL和独立Reviewer；全仓还报告TASK-027缺归属及TASK-029三个日志链接缺失。用户现已明确批准两处UI文件纳入TASK-028，并记入工作树JSON；最新main已覆盖其中一处，当前PR仅余 `HearthwardScreenContent.cpp` 被判OUT_OF_SCOPE。路径门禁核对的仍是main旧快照，尚不能通过本地工作树修改识别该批准。最初的运行路径和截图来自合入TASK-027之前的实现快照；含TASK-029/030的新基线已单独重测构建与49项路径，视觉截图仍未重拍。完整错误及后续处理见[单任务交接](../../../handoffs/TASK-028.md)。
