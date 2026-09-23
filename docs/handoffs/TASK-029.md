@@ -10,13 +10,15 @@ AI NPC vNext 最终统一使用 **TASK-029**。早期 027～040 仅作为内部�
 
 在 checkpoint 上选择性吸收 TASK-041/042 的 UI 返回栈、快捷键与确认框独占、焦点恢复、实景树木采集绑定、左键单一 Enhanced Input 入口、近战空挥与真实命中结算、30 米伙伴指令反馈、疾跑跟随速度和稳定交互目标排序。没有覆盖 TASK-029 的模型、Schema 3 旧档升级，也没有修改 Content 动画或 Config 自动生成项。完整当轮证据见 [integrated-playable/REPORT](../qa/evidence/TASK-029/integrated-playable/REPORT.md)。
 
-该分支明确继承 `main@ba547c0`；远端 main 已在本轮之后前进到 `be9286f`（TASK-030）。这次任务只融合指定的两个工作树，TASK-030 的独立资产和逻辑未并入。真实键鼠、可见武器网格及跳跃手臂动画还需单独验收。
+该分支最初继承 `main@ba547c0`；随后已合入 TASK-030 的 `main@be9286f`，本轮再引入 TASK-028 的 `main@97af300`。这段是分阶段历史，不代表当前仍缺 TASK-030/028。真实键鼠、石骨斧手部动作及跳跃手臂动画还需单独验收。
 
 本轮范围提交 `4b3489aba85eac5dd2960200056a4b4302f36553` 和已验证源码提交 `4dae443094346f7d1ed8e4a62ba11370dc2165d7` 已推送至 GitHub 分支 `codex/integrated-latest-20260923`。本分支没有创建 PR 或合并 main；独立评审与真人验收仍未完成。
 
 ## 2026-09-24 当前 main 组合候选
 
-用户明确要求将本轮分支按最佳结果合入 main。已将 `main@be9286fdc09beac8cf10ec21126472b0ce5bfbcb` 合入专用分支，解决 README 和 NaturalCamp 两处冲突，源码提交为 `1f8e4dd2c9c2e7b921c4aeb36e49ff5419f5ff6a`。新组合源码通过 UE Editor Development 构建、Python 31/31、原生 43/43、TASK-030 Demo 70/70、UI 62/62、自然路线 51/51、跟随 8/8、攻击 10/10、runtime smoke 23/23。原始结果与测试边界见[主干组合报告](../qa/evidence/TASK-029/main-integration-20260924/REPORT.md)。后续需推送组合分支、建立 PR，接受非作者真人审查，再按保护规则合并；合并后的 main SHA 仍需单独记录集成验收。
+用户明确要求将本轮分支按最佳结果合入 main。已将 `main@be9286fdc09beac8cf10ec21126472b0ce5bfbcb` 合入专用分支，解决 README 和 NaturalCamp 两处冲突，源码提交为 `1f8e4dd2c9c2e7b921c4aeb36e49ff5419f5ff6a`。该组合通过构建、Python 31/31、原生 43/43、TASK-030 Demo 70/70、UI 62/62、自然路线 51/51、跟随 8/8、攻击 10/10、runtime smoke 23/23，见[前轮报告](../qa/evidence/TASK-029/main-integration-20260924/REPORT.md)。
+
+2026-09-24 再将 `main@97af300bd801917ece85c21b87d5ce482bf50052` 的 TASK-028 房屋、家具和石骨斧合入该分支。README 冲突按当前主干状态解决；源码自动融合。本轮重新通过 UE Editor Development、Python 31/31、native 43/43、TASK-030 Demo 70/70、无授物自然路线 51/51 与 TASK-028 隔离资产路线 49/49，见[最新主干报告](../qa/evidence/TASK-029/main-task028-integration-20260924/REPORT.md)。新主干新增 TASK-028 reviewer/Issue URL 两项流程错误，仓库 validator 合计 4 项。此前 UI/跟随/攻击/runtime smoke 的 PASS 与本轮源码不同，不作为新源码的重跑结果。下一步推送更新分支、建立 PR、接受非作者真人评审；合并后按 main 的新 SHA 再记集成验收。
 
 GitHub 连接器尝试创建 TASK-029 集成 Issue 返回 `403 Resource not accessible by integration`；未创建 Issue，不编造 URL。canonical TASK-027 reviewer / Issue URL 两项既有 validator 错误仍在。
 

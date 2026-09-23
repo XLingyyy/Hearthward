@@ -1,6 +1,6 @@
 # Hearthward 项目状态
 
-2026-09-23局部更新：远端 main 为 `be9286f`（TASK-030）；`codex/integrated-latest-20260923` 已将该 main 合入本地候选，同时保留此前 TASK-029/041/042 选定代码。组合源码的构建、Python 31/31、原生 43/43、Demo 70/70、UI 62/62、自然路线 51/51、跟随 8/8、攻击 10/10 和 runtime smoke 23/23 已通过；见[组合复验](qa/evidence/TASK-029/main-integration-20260924/REPORT.md)。独立 PR 评审与 main 合并尚未完成。TASK-026 自然地图继续按用户新方向精修新营地，主菜单新游戏、存档和继续游戏已接入；全图质量、长路线、跨区流送、性能与 Owner 视觉验收仍未完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
+2026-09-24局部更新：远端 main 为 `97af300`（TASK-028 房屋和石骨斧资产已合入）；`codex/integrated-latest-20260923` 已将该 main 合入此前 TASK-029/041/042 与 TASK-030 候选。新组合源码的 UE 5.8.2 Editor 构建、Python 31/31、原生 43/43、Demo 70/70、自然路线 51/51、TASK-028 隔离资产路线 49/49 已通过，见[最新主干复验](qa/evidence/TASK-029/main-task028-integration-20260924/REPORT.md)。此前基于 `main@be9286f` 的 UI 62/62、跟随 8/8、攻击 10/10 和 runtime smoke 23/23 见[前轮报告](qa/evidence/TASK-029/main-integration-20260924/REPORT.md)，不得冒充新组合已重跑。独立 PR 评审与 main 合并尚未完成。TASK-026 全图质量、长路线、跨区流送、性能与 Owner 视觉验收仍未完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
 
 AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。集成分支已把 `main@ba547c0` 的角色动画、latest-main AI 核心返工、PR #34 `25d53d8` 的自然营地 AI 与 TASK-041/042 的 UI/交互/攻击/跟随修正收口为同一树。latest-main AI 核心已验证 Python 31/31、Editor build PASS、native 41/41、runtime smoke 23/23、Executor 49/49、Initiative 16/16、Tactical 16/16、Routine 26/26；自然营地线此前验证 native 42/42、自然采集/存档 22/22、工作台闭环 23 项、旧自然档升级 12/12。旧 `main@ba547c0` 的 validator 有 9 项既有 workflow metadata 错误；本轮集成树只剩 canonical TASK-027 的 reviewer 与 Issue URL 两项。两次检查对应不同提交，均不冒充 0 errors。详见 [latest-main finalization](qa/evidence/TASK-029/LATEST_MAIN_FINALIZATION.md)。
 
@@ -12,7 +12,7 @@ AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。集
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；TASK-026 地图工作与 TASK-029 AI NPC 工作保持分支隔离 |
 | 当前分支 | 本轮融合：`codex/integrated-latest-20260923`；对外统一 TASK-029。地图：`codex/TASK-026-natural-world-rebuild` 另行推进 |
-| 游戏实现提交 | 远端 main 当前为 `be9286f`；本轮分支原基于 `ba547c0`，现已在 `1f8e4dd2c9c2e7b921c4aeb36e49ff5419f5ff6a` 合入 `main@be9286f` 并完成组合复验；旧 PR #34 不代表本轮分支；等待 review/Owner 验收，不自动 merge |
+| 游戏实现提交 | 远端 main 当前为 `97af300`；本轮分支已在 `1f8e4dd2c9c2e7b921c4aeb36e49ff5419f5ff6a` 合入先前 `main@be9286f`，本次再引入 TASK-028 主干增量；旧 PR #34 不代表本轮分支；等待新 PR、独立评审与合并 SHA 验收 |
 | Git LFS | 已启用；本次 AI NPC PR 不主动修改地图/资产 LFS 内容，main 资产更新仅作为同步基线继承 |
 | 工具链 | UE 5.8.2、MSVC 19.44.35228.0、SDK 10.0.22621.0 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
@@ -41,7 +41,7 @@ AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 对外验收。集
 | TASK-025 | v2 已通过 PR #23 合并 main `851d60e`；一次确认、规范目标/约束、事件回执、真实制作维修与迁移已进入主干 |
 | TASK-004 | 部分交付：77个自然素材源文件及来源说明已入库，见resourceSummary.md；UE适配/展示验证未完成，人物与房屋缺项，整单尚未验收 |
 | TASK-026 | 实施进度持续，但 workflow 状态为 Blocked：Rebuild 地图保留 4.032 km 底座，营地局部增加树石灌木并接入主菜单新游戏、存档/继续游戏；实机闭环通过，完整验收与正式 Issue/Reviewer 待完成，见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md) |
-| TASK-028 | main canonical：建筑、物品、武器、防具等 3D 资产导入与游戏应用；当前 Backlog，仅规划，未执行 |
+| TASK-028 | main canonical：建筑、物品、武器、防具等 3D 资产导入与游戏应用；PR #38 已合入 `main@97af300`，自然营地房屋和临时石骨斧显示已接入，整单仍 Active，防具与手部动作等未完成 |
 | TASK-029 | **AI NPC 完整交付**：统一包含 authoritative perception/safety、deterministic executor、contextual suggestions、hold/follow/assist/routine、adaptive recovery、typed Belief、event-driven Initiative、grounded Episode、tactical cooperation、Coordination Prior、componentization、bounded context、real Qwen guardrail、Schema 2→3 migration 与自然营地接入。latest-main 核心：Editor build PASS、Python 31/31、native 41/41、runtime smoke 23/23、Executor 49/49、Initiative 16/16、Tactical 16/16、Routine 26/26；真实 Qwen 32/32 safety、M01～M10 raw 20/20。双工作树集成树已完成 Editor build、Python 31/31、native 42/42、runtime smoke 23/23、UI 62/62、自然路线 50/50、疾跑跟随与攻击夹具验证；repository validator 仍有 canonical TASK-027 两项 workflow metadata 错误。 |
 | Issue／评审 | TASK-029 将通过本次统一 PR 进入正式代码评审；Agent 不执行 main merge，Owner/独立 Reviewer 验收仍单列 |
 | 打包／两机验证／完整 M0 | NOT_RUN |
