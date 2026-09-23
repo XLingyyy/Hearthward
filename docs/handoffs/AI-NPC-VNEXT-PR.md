@@ -1,9 +1,9 @@
 # AI NPC vNext 统一 PR 交接
 
-日期：2026-09-22  
-分支：`codex/ai-npc-vnext-stack-pr`  
-Base：`main@4114556`  
-当前 HEAD：`8e26b4c`
+日期：2026-09-23
+分支：`codex/ai-npc-vnext-rework-01`
+目标 main：`e729349`；共同基线：`4114556`
+当前受测源码 HEAD：`6d1ca5e`
 
 ## PR 建议标题
 
@@ -97,6 +97,8 @@ contextual suggestions + event-driven initiative
 
 ## 关键验证
 
+以下各任务计数来自先前的任务工作树验证，不能替代本分支当前受测提交的 clean-tree 结果；当前结果见 [TASK-040 clean-tree review](../qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md)。
+
 | 验证 | 结果 |
 |---|---:|
 | repository Python tests | 31/31 PASS |
@@ -130,15 +132,15 @@ TASK-038 完成后再次重跑 TASK-028 executor：49/49 PASS。
 
 ## 远端状态
 
-当前本地分支已准备完毕，但本机 GitHub CLI 未登录，2026-09-22 push 尝试未完成；远端尚无 `codex/ai-npc-vnext-stack-pr` 分支或 PR。
+当前远端分支 `codex/ai-npc-vnext-rework-01` 已存在。本机 GitHub CLI 返回 HTTP 401，无法查询 PR 和 Reviewer 实时状态；TASK-040 记录显示当前未登记 Issue/Reviewer，也未创建 PR。候选分支当前构建未通过，见上方 clean-tree review。
 
-完成 GitHub 认证后可直接：
+修复当前 Unity 编译错误、同步最新 main 并完成独立评审后，可按 Owner 授权创建 PR：
 
 ```bash
-git push -u origin codex/ai-npc-vnext-stack-pr
-gh pr create --base main --head codex/ai-npc-vnext-stack-pr \
+git push -u origin codex/ai-npc-vnext-rework-01
+gh pr create --base main --head codex/ai-npc-vnext-rework-01 \
   --title "feat: integrate grounded adaptive AI NPC stack" \
   --body-file docs/handoffs/AI-NPC-VNEXT-PR.md
 ```
 
-只创建 PR，不合并。
+PR 与合并需按项目流程另行授权；当前分支构建失败，暂不创建 PR。

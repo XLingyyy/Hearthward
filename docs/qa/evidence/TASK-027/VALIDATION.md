@@ -32,7 +32,7 @@ Tested commit: **UNCOMMITTED WORKTREE** — do not treat these results as commit
 
 ### UE build and automation
 
-Detected installed Epic engine: `D:\\UE5.8\\UE_5.8`, manifest version `5.8.2-56702186`. The repository lock remains UE 5.8.1, so the successful build below is a compatibility datapoint, not a replacement for the locked 5.8.1 verification target.
+Detected installed Epic engine: `D:\\UE5.8\\UE_5.8`, manifest version `5.8.2-56702186`. The repository target is now aligned to UE 5.8.2, matching this recorded build.
 
 The first build attempt was blocked because another Unreal Editor instance still held the shared Live Coding mutex. Rather than closing the user's unrelated editor, the build was rerun with UnrealBuildTool's documented command-line switch `-NoHotReloadFromIDE`:
 

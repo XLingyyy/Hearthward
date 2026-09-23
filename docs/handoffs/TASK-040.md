@@ -85,29 +85,28 @@ PASS：
 
 构建环境说明：
 
-- 仓库锁定：UE 5.8.1
-- 本机实际：UE 5.8.2
-- 因此当前 build/native 结果是强回归信号，但锁定 5.8.1 复验仍为 NOT_RUN。
-- 本轮复核重跑 repo validator 0 errors、Python 31/31；核对原生日志 40 条 Success、0 条失败/崩溃标记。
+- 统一目标与锁定版本：UE 5.8.2 CL 56702186；本机安装版本一致。
+- 在干净提交 `6d1ca5e` 上通过 UEClient 执行默认 Editor Development 构建，失败于 `HearthwardAgentInteraction.cpp` 与 `HearthwardNPCContextProjection.cpp` 的 Unity 编译单元 `Json` 重定义（C2084/C2264）。
+- 本轮 repo validator 0 errors、Python 31/31；当前提交的原生测试因构建失败未运行。此前日志中 40/40 成功属于历史工作树记录。
 
 真实模型当前源码：
 
 - 模型 bundle 存在于 `D:\Dev\Hearthward\Runtime\LocalAI`。
 - GGUF SHA256 与 `config/local-ai.lock.json` 一致。
 - Unreal built-in Python Remote Execution 能发现当前 worktree 的 UE process。
-- 当前工具环境缺少项目约定的 GameFactory `engine_adapters.ue5` UEClient；命令行 `-game` process 的 remote Python 又没有可用 Game WorldContext，无法可靠触发 world-scoped `Hearthward.AI.Say`。
+- 本轮使用 GameFactory `engine_adapters.ue5` UEClient 完成默认 Editor 构建；真实 Qwen e2e 本轮未执行，也未验证当前 Game WorldContext 的触发路径。此前工作树记录的 WorldContext 阻塞属于历史验证状态。
 - 因此当前源码真实 Qwen CTX-01～CTX-04：**BLOCKED / NOT_RUN**。
 - TASK-039 的历史 `CONTEXT_OVERFLOW` 不作为 TASK-040 当前源码结果复用。
 
-详见 [TASK-040 验证](../qa/evidence/TASK-040/VALIDATION.md) 与 [ADR](../decisions/ADR-TASK-040-npc-context-and-cognition.md)。
+详见 [TASK-040 当前验证](../qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md)、[历史工作树验证](../qa/evidence/TASK-040/VALIDATION.md) 与 [ADR](../decisions/ADR-TASK-040-npc-context-and-cognition.md)。
 
 ## 尚未验收完毕
 
 - 当前源码真实 Qwen CTX-01～04 与 16 类样本 × 干净/压力进度至少 32 次请求尚未执行；现有 PIE 脚本只准备了 collect 正常/压力和 routine 局部场景，不能替代整套验收。
 - TASK-028/034/036/038 的本轮相关 runtime PIE 回归尚未逐套重跑。
 - Save 测试读取了更早的真实旧档，但尚无真实 pre-TASK-040 Schema 2 文件或对应旧版序列化路径的迁移证明。
-- 仓库锁定 UE 5.8.1 构建/测试、独立 Reviewer、Owner 体验验收和技术合并条件仍未闭合。
-- 本轮范围核对为 28 个改动文件，全部位于 TASK-040 allowed_paths，Content/ 为零修改。
+- 当前源码默认 Unity 构建失败，原生测试未运行；真实模型 e2e、相关 PIE、Schema 2真实存档迁移、独立 Reviewer、Owner 体验验收和技术合并条件仍未闭合。
+- 原 TASK-040 实现范围为 28 个文件，Content/ 为零修改；Owner 随后明确授权同步仓库 UE 目标版本口径并提交推送验证记录，扩展范围已写入 TASK-040 allowed_paths。
 
 ## 流程状态
 
@@ -120,4 +119,4 @@ TASK-040 保持 `Blocked`：
 - PR：未执行
 - merge：明确未授权，未执行
 
-本地代码已经实现并通过当前可执行回归，但不把本地验证冒充正式集成完成。
+当前代码在 UE 5.8.2 默认 Unity 编译下存在可复现的 C++ 编译错误；repo validator 与 Python 31/31通过，当前干净提交的原生测试未运行。TASK-040 保持 Blocked，见 clean-tree review。

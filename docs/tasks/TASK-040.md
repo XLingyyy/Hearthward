@@ -1,6 +1,6 @@
 # TASK-040｜AI NPC vNext 上下文、认知与契约返工
 
-状态：Blocked（本地实现已完成；Issue / 独立 Reviewer、锁定工具链与真实模型当前源码 e2e 尚未闭合）。
+状态：Blocked（UE 5.8.2 默认 Editor 构建失败；真实模型 e2e、相关 PIE、Issue / 独立 Reviewer 与 Owner 验收尚未闭合）。
 
 基线：`codex/ai-npc-vnext-pr@04239f542ee99c1a735a380a66faa6ec99dc614b`。该基线已包含 TASK-032～039，本任务不从 TASK-029 返工。
 
@@ -59,7 +59,7 @@
 - 不让 LLM 获得坐标、路径、具体敌人、伤害、库存结算或任意世界写权限。
 - 不修改 `Content/`、模型、GGUF、输入映射或地图。
 - 不重写 executor / Recovery / Navigation / Initiative / Runtime。
-- 不授权 commit / push / PR / merge。
+- PR 创建与 main 合并需 Owner 明确授权；commit / push 按 Owner 的显式授权执行。
 
 ## 验证
 
@@ -67,18 +67,24 @@ PASS：
 
 - repo validator：0 errors
 - Python：31/31
-- UE Editor Development build：PASS（实际机器 UE 5.8.2）
-- native `Hearthward.*`：40/40
+
+FAIL：
+
+- UE Editor Development build：UE 5.8.2 CL 56702186；Unity 中 `Json` 重定义，C2084/C2264。
+
+NOT_RUN：
+
+- native `Hearthward.*`：本轮构建失败，无法启动原生自动化测试。
 
 BLOCKED / NOT_RUN：
 
-- 仓库锁定 UE 5.8.1 当前机器复验
 - 当前源码真实 Qwen CTX-01～CTX-04 end-to-end
 - TASK-040 baseline task-scope approval check（本任务不在基线 SHA 中，不能把当前 JSON 冒充基线审批）
 - GitHub Issue / independent Reviewer
-- commit / push / PR / merge
+- current-source native/PIE/model retest after build repair
+- PR / merge
 
-完整证据见 `docs/qa/evidence/TASK-040/VALIDATION.md`。
+完整证据见 [当前 clean-tree review](../qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md) 与 [历史工作树验证记录](../qa/evidence/TASK-040/VALIDATION.md)。
 
 ## 权限
 
@@ -86,4 +92,4 @@ Owner：XLingyyy。
 
 Reviewer：未分配。
 
-远端写入与合并均未授权。
+用户已授权提交、推送当前任务分支；PR 创建与 main 合并仍未授权。

@@ -28,7 +28,7 @@
 - 建立独立 Git、origin、任务分支，防止游戏文件误入上层工具仓库。
 - Git LFS 使用 --local 安装，保留启动包资产规则，启用远端 locksverify。
 - 读取远端仓库及锁列表成功；连接器确认公开仓库与管理权限。
-- 核验 UE 5.8.1、Visual Studio、MSVC、SDK、Git/LFS/Python 安装版本，填写工具链草案。
+- 核验目标 UE 5.8.2、Visual Studio、MSVC、SDK、Git/LFS/Python 安装版本，填写工具链草案。
 - 本机路径写入被忽略的 .agent-local/environment.json；不更改全局环境。
 - 明确上层 activate.ps1 默认指向 GameFactoryUE，后续须显式绑定 Hearthward 工程。
 - 修复启动包 Windows 自测的 LFS 指针夹具换行；两项定向复测通过，其余测试沿用首轮有效结果。
@@ -45,7 +45,7 @@
 1. 首次提交前确认真人 Git 作者；需要 gh 时恢复其网页登录。连接器权限不等于 CLI 登录有效。
 2. 获首次提交／推送授权后建立 main 基线；当前用户只要求连接仓库，文件保留本地。
 3. 分配负责人和独立评审人、采用工作流，创建真实 Issue，运行 repo-policy 后配置保护并演练。
-4. 游戏工程初始化仍独立待办：创建 Hearthward 工程，UE 5.8.1 两个 Target 使用 V7，EngineAssociation=5.8。
+4. 游戏工程初始化仍独立待办：创建 Hearthward 工程，UE 5.8.2 两个 Target 使用 V7，EngineAssociation=5.8。
 5. 执行真实 Editor 构建、启动、打包、双账号 LFS 与两机验收；现阶段全部 NOT_RUN。
 6. 设计阅读与玩法开发等待用户后续指令；不将启动包草案视作已批准设计／契约。
 

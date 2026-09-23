@@ -8,7 +8,7 @@ Owner：XLingyyy；独立评审人、真实 Issue 待分配。机器快照：[TA
 
 用户指定下一顺序任务为 TASK-026：构建一张较大的地图，先完成自然场景，人文场景以后布置。2026-09-21完成任务单后，本地实施工作树形成一版可运行灰盒自然世界；2026-09-22用户要求把当前进度同步到本地文件并以Pull Request交接。该授权覆盖现有任务成果的提交和推送，不包含合并。
 
-目标仍是交付一张可在 UE 5.8.1 实际进入、连续步行探索的自然世界地图，包含地形、水系、森林、草地、岩石、山地及统一环境光照。它是后续营地、故乡与关卡布置的可复用底座。建筑、聚落、人工道路、桥梁、敌人、任务和采集点本单不布置。
+目标仍是交付一张可在 UE 5.8.2 实际进入、连续步行探索的自然世界地图，包含地形、水系、森林、草地、岩石、山地及统一环境光照。它是后续营地、故乡与关卡布置的可复用底座。建筑、聚落、人工道路、桥梁、敌人、任务和采集点本单不布置。
 
 ### 当前进度快照
 
@@ -112,7 +112,7 @@ A6为本单拟定工程门槛，启动时与地图方案一并确认；记录实
 
 ## 8. 技术参考
 
-2026-09-21查阅Epic官方文档；指导工程选型，具体支持以本机UE 5.8.1核验为准。优先复用引擎能力，不自行开发替代流送/地形系统。
+2026-09-21查阅Epic官方文档；指导工程选型，具体支持以当前统一目标 UE 5.8.2 核验为准；本任务旧版PIE记录不替代新版本复验。优先复用引擎能力，不自行开发替代流送/地形系统。
 
 - [World Partition](https://dev.epicgames.com/documentation/unreal-engine/world-partition-in-unreal-engine)：分格与流送源。
 - [Landscape概览](https://dev.epicgames.com/documentation/unreal-engine/landscape-overview)和[技术指南](https://dev.epicgames.com/documentation/unreal-engine/landscape-technical-guide-in-unreal-engine)：地形结构、有效尺寸和组件成本。

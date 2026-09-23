@@ -4,7 +4,7 @@
 
 ## 打开与浏览
 
-在 UE 5.8.1 中打开 `Hearthward.uproject`，加载 `/Game/Hearthward/World/Natural/L_NaturalWorld` 后使用PIE浏览。地图级 `BP_NaturalWorldGameMode` 复用现有 `HearthwardCharacter`，但使用空白HUD，不生成020开发场景、伙伴或仓储内容，也不启动本地模型。
+在 UE 5.8.2 中打开 `Hearthward.uproject`，加载 `/Game/Hearthward/World/Natural/L_NaturalWorld` 后使用PIE浏览。地图级 `BP_NaturalWorldGameMode` 复用现有 `HearthwardCharacter`，但使用空白HUD，不生成020开发场景、伙伴或仓储内容，也不启动本地模型。
 
 现有Bootstrap与默认新游戏入口没有修改；自然世界尚未接到正式游戏流程。
 
@@ -36,7 +36,7 @@
 
 ## 已验证
 
-2026-09-21在本机 UE 5.8.1 中通过脚本执行真实PIE，27项布尔检查全部通过：
+2026-09-21使用当时安装的 UE 编辑器通过脚本执行真实PIE，27项布尔检查全部通过。该结果是历史证据，当前统一目标 UE 5.8.2 尚未重跑：
 
 - 地图和12个保留资产存在，地图可重开；
 - World Partition代理、外部Actor目录/包数和项目依赖闭包符合本任务路径；

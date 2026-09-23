@@ -1,4 +1,6 @@
 # TASK-040 Validation
+> 2026-09-23 clean committed-tree verification supersedes the PASS/NOT_RUN summary below. See [CLEAN_TREE_REVIEW.md](CLEAN_TREE_REVIEW.md); the earlier 40/40 native run is historical worktree evidence.
+
 
 基线：`04239f542ee99c1a735a380a66faa6ec99dc614b`
 
@@ -6,7 +8,7 @@
 
 日期：2026-09-23
 
-## R0 环境与锁
+## R0 原始工作树环境与锁（历史记录）
 
 - HEAD / AI vNext 基线：`04239f542ee99c1a735a380a66faa6ec99dc614b`
 - `config/local-ai.lock.json` SHA256：`9910343014e0159e5e18d6603fdb2303c131b2f53b633488297d3fbe0814c4b2`
@@ -19,7 +21,7 @@
 
 环境偏差：本机可编译 UE 5.8.2，但不是仓库锁定的 5.8.1，因此构建结果是当前机器诊断/回归信号，不替代锁定工具链复验。
 
-## 自动验证
+## 自动验证（历史工作树；当前结果见 CLEAN_TREE_REVIEW.md）
 
 | 项目 | 状态 | 证据 |
 |---|---|---|
@@ -124,4 +126,4 @@ NOT_RUN：
 - merge：NOT_RUN / explicitly not authorized
 - real GitHub Issue / reviewer：BLOCKED / 未登记
 
-因此 TASK-040 保持 `Blocked`，表示流程与最终合并条件未闭合，不代表本地实现或原生回归失败。
+该文件保存此前工作树的详细实现与测试记录。当前分支结论以 [CLEAN_TREE_REVIEW.md](CLEAN_TREE_REVIEW.md) 为准：默认 UE 构建失败，当前干净提交原生测试未运行，TASK-040 保持 `Blocked`。

@@ -109,8 +109,8 @@ LLM 仍不能写世界真值、生成坐标、指定具体敌人或直接执行�
 
 - repository validator：PASS，0 errors
 - repository Python：31/31 PASS
-- UE Editor Development build：PASS（本机实际 UE 5.8.2；仓库锁定版本仍是 5.8.1）
-- native `Hearthward.*`：40/40 PASS
+- UE Editor Development build：FAIL（UE 5.8.2 CL 56702186；Unity 编译单元内 `Json` 重定义，C2084/C2264）
+- native `Hearthward.*`：本轮未运行；干净构建失败后无法启动自动化测试。此前 40/40 为历史工作树结果，不能替代当前干净提交复验。
 - 关键新回归：
   - `Hearthward.NPCAgent.CapabilitiesAndLimits`
   - `Hearthward.NPCAgent.BeliefStateProvenance`
@@ -119,7 +119,7 @@ LLM 仍不能写世界真值、生成坐标、指定具体敌人或直接执行�
   - `Hearthward.Save.FileIntegrityAndSnapshot`
   - `Hearthward.Save.NPCMemoryCompatibility`
 
-当前源码真实 Qwen end-to-end：NOT_RUN / BLOCKED。模型 bundle 与 GGUF hash 已确认可用，但当前工具环境没有项目文档要求的 GameFactory UEClient；命令行 game instance 的 remote Python 能发现进程，却无法取得可用 Game WorldContext 来触发项目的 world-scoped debug command。因此 TASK-039 的历史 `CONTEXT_OVERFLOW` 证据不计作 TASK-040 当前源码结果。
+当前源码真实 Qwen end-to-end：NOT_RUN / BLOCKED。当前默认 Editor 构建失败，修复并重建后才能继续 PIE 模型验证。模型 bundle 与 GGUF hash 曾在此前工作树中确认可用；本轮使用 GameFactory UEClient 执行构建，但未执行 PIE 真实模型 e2e，也未验证当前 Game WorldContext 的触发路径。因此 TASK-039 的历史 `CONTEXT_OVERFLOW` 证据不计作 TASK-040 当前源码结果。
 
 ## 后果
 

@@ -1,6 +1,6 @@
 # Hearthward 项目状态
 
-2026-09-23局部更新：main 当前仍为 `4114556`，已包含 TASK-025 v2（PR #23）、资源汇总（PR #24）与 TASK-026 自然世界灰盒（PR #25）。AI vNext 最新本地集成基线为 `codex/ai-npc-vnext-pr@04239f5`，已包含 TASK-032～039；TASK-040 在该基线上完成 context/cognition/contract rework：三档 bounded ContextProjection、registry-driven capability prompt、Belief `LastEvidenceAt`、Episode coverage 与 Save schema 3 迁移。本轮不修改 TASK-026 资产。TASK-040 本轮获用户授权提交并推送独立任务分支；PR/merge 未执行，验收阻塞仍保留。
+2026-09-23局部更新：remote main 当前为 `e729349`，已含 TASK-026（PR #25）及 PR #26–#28 资产更新；AI NPC 候选分支 `codex/ai-npc-vnext-rework-01` 仍基于 `4114556`，比 main 落后6个提交。该分支包含 TASK-027～040；TASK-040 的当前干净提交验证结果已更新到证据文档。
 
 历史基线：TASK-020 于2026-09-19通过用户验收；021伙伴导航、022自由建造、023即时制作、024维修已进入后续主干。原025经PR #22合并后被用户否决验收；增强版v2随后通过PR #23合并main。TASK-004已有77个自然素材源文件入库，UE适配未完成。
 
@@ -10,9 +10,9 @@
 | 工作流 | v1.0 已导入；根 WORKFLOW.md 为维护入口，团队采用仍为 DRAFT |
 | GitHub | origin 为 XLingyyy/Hearthward，公开仓库；当前按授权推送任务分支 |
 | 当前分支 | `codex/ai-npc-vnext-rework-01`，基于 AI vNext `04239f5`（TASK-032～039）实施 TASK-040；本轮授权 commit / push 到任务分支，PR / merge 未执行 |
-| 游戏实现提交 | main 已含 TASK-025 v2 `851d60e` 与 TASK-026 merge `4114556`；AI vNext 提交链为 perception → executor → suggestions → combat → recovery → belief → initiative → episode → tactical cooperation → coordination prior → routine |
+| 游戏实现提交 | main 当前为 `e729349`，包含 TASK-025 v2、TASK-026 与后续资产提交；AI NPC 代码仍留在候选任务分支 |
 | Git LFS | 已启用；TASK-026 地图/资产由 main 继承，本 PR 不新增或修改其 LFS 资产 |
-| 工具链 | 仓库锁定 UE 5.8.1、MSVC 19.44.35228.0、SDK 10.0.22621.0；本轮机器实际发现 UE 5.8.2，因此 5.8.1 精确复验仍 NOT_RUN |
+| 工具链 | 当前统一锁定 UE 5.8.2 CL 56702186、MSVC 19.44.35228.0、SDK 10.0.22621.0；目标引擎安装与锁定版本一致 |
 | 工程 | 根 Hearthward.uproject；Source、Config、灰盒 Content 和本地框架插件源代码已提交 |
 | 构建／操作 | TASK-013 Editor/Game构建通过，68项AI运行依赖齐全；真实模型Vulkan两轮PIE43项、CPU缺文件/进程退出恢复9项通过；伙伴通路仍为隔离夹具 |
 | 仓库检查 | TASK-016基线范围与当前授权范围分别记录，结果见本单workflow-validation；不将扩展任务JSON冒充基线已审批 |
@@ -58,7 +58,7 @@
 | 本地模型 | 项目已含llama.cpp b10964及Qwen3.5-4B Q4_K_M；真实UE自然语言采集入库、澄清/拒绝与生命周期已验证；台词质量仍有记录限制，见TASK-013交接 |
 | 付费资产生成 | NOT_RUN |
 
-用户已验收TASK-020；TASK-025 v2与TASK-026已进入main。2026-09-23 用户明确要求后续修改必须建立在最新“30 多号任务”进度上，因此 TASK-040 以 `04239f5` 的 TASK-032～039 集成栈为基线，不从 TASK-029 脏工作区继续。TASK-040 本地实现与原生回归已完成，但真实 Issue/Reviewer、锁定 UE 5.8.1、当前源码真实模型 e2e 及远端集成均未闭合。
+用户已验收TASK-020；TASK-025 v2与TASK-026已进入main。AI NPC 候选分支承接 `04239f5` 的 TASK-032～039 集成栈并增加 TASK-040。2026-09-23 干净提交 `6d1ca5e` 的默认 Unity Editor 构建失败，完整结论见 [TASK-040 clean-tree review](qa/evidence/TASK-040/CLEAN_TREE_REVIEW.md)。当前 TASK-040 保持 Blocked，真实模型 e2e、相关 PIE 回归、Schema 2真实存档迁移及独立 Reviewer/Owner 验收仍未闭合。
 [TASK-018交接](handoffs/TASK-018.md)记录当前玩家采集入库、回档、录像及边界。
 [TASK-017交接](handoffs/TASK-017.md)记录存档管理UI、实键录像、受测源码快照和限制。
 [TASK-013交接](handoffs/TASK-013.md)记录本地模型与设计修订的当前结果。

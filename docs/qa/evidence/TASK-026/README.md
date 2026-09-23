@@ -4,7 +4,7 @@
 
 ## 执行方式
 
-本机使用 UE 5.8.1 编辑器打开任务地图并执行：
+当前复现目标使用 UE 5.8.2 编辑器打开任务地图并执行；下列27项结果是历史运行证据，未在当前目标版本重跑：
 
 ```text
 UnrealEditor.exe Hearthward.uproject /Game/Hearthward/World/Natural/L_NaturalWorld \
