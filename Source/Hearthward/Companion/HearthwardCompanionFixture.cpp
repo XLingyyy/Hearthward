@@ -4,8 +4,9 @@
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/StaticMeshComponent.h"
-#include "Engine/StaticMesh.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/SkeletalMesh.h"
+#include "../Animation/HearthwardBrotherAnimInstance.h"
 #include "Engine/World.h"
 #include "UObject/ConstructorHelpers.h"
 #include "AIController.h"
@@ -41,12 +42,16 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture()
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0, 500, 0);
     GetCharacterMovement()->MaxWalkSpeed = 180;
-    auto* MarkerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Marker"));
-    MarkerMesh->SetupAttachment(Capsule);
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> Shape(TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
-    MarkerMesh->SetStaticMesh(Shape.Object);
-    MarkerMesh->SetRelativeScale3D(FVector(0.6, 0.6, 1.6));
-    MarkerMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    bUseControllerRotationYaw = false;
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> BrotherMesh(TEXT("/Game/Characters/Brother/UE5/SK_Brother.SK_Brother"));
+    GetMesh()->SetSkeletalMesh(BrotherMesh.Object);
+    // The imported mesh is 97.864 cm tall; fit the existing 160 cm companion capsule.
+    GetMesh()->SetRelativeScale3D(FVector(160.f / 97.863766f));
+    GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -80.f));
+    GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMesh()->SetCanEverAffectNavigation(false);
+    GetMesh()->SetAnimInstanceClass(UHearthwardBrotherAnimInstance::StaticClass());
     Bag = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("FixtureBag"));
     Action = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("FixtureGatherTimer"));
     Navigation = CreateDefaultSubobject<UHearthwardCompanionNavigationComponent>(TEXT("CompanionNavigation"));

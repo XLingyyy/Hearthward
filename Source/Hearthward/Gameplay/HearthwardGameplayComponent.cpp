@@ -1,5 +1,6 @@
 #include "HearthwardGameplayComponent.h"
 #include "../Animation/HearthwardHeroAnimInstance.h"
+#include "../Animation/HearthwardBrotherAnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardGameData.h"
@@ -473,6 +474,11 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     CompanionRoutineActivity=Result.RoutineActivity;
     if(Result.bAttackCommitted)
     {
+        FVector Facing = OpponentActors[Result.DamageTarget]->GetActorLocation() - Companion->GetActorLocation();
+        Facing.Z = 0.f;
+        if (!Facing.IsNearlyZero()) Companion->SetActorRotation(Facing.Rotation());
+        if (auto* Animation = Cast<UHearthwardBrotherAnimInstance>(Companion->GetMesh()->GetAnimInstance()))
+            Animation->PlayAttack();
         DamageOpponent(Result.DamageTarget,Tune(TEXT("companionAttack")));
         CompanionAttackDelay=Tune(TEXT("companionAttackCooldown"));
         CombatRemaining=3;
