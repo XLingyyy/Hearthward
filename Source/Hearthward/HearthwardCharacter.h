@@ -9,6 +9,7 @@ class UInputMappingContext;
 class UHearthwardTimedActionComponent;
 class UHearthwardInventoryComponent;
 class UHearthwardInteractionComponent;
+class UStaticMeshComponent;
 struct FInputActionValue;
 
 UCLASS()
@@ -26,6 +27,11 @@ public:
 private:
     UFUNCTION()
     void UpdateCarrySpeed();
+    UFUNCTION()
+    void RefreshHeldTool();
+
+    UPROPERTY(VisibleAnywhere, Category="Hearthward|Equipment")
+    TObjectPtr<UStaticMeshComponent> HeldAxe;
 
     UPROPERTY(VisibleAnywhere, Category="Hearthward|Inventory")
     TObjectPtr<UHearthwardInventoryComponent> Inventory;

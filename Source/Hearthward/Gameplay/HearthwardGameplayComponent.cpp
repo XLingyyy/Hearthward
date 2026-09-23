@@ -64,10 +64,13 @@ void UHearthwardGameplayComponent::EnableAdventure()
     if (Enabled) return;
     Enabled = true; Origin = GetOwner()->GetActorLocation();
     Origin.Z = GetOwner()->GetActorLocation().Z - 100;
-    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+    const bool NaturalWorld = UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds");
+    if(NaturalWorld) Origin=FVector(-98000,-75000,16100);
+    else for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
         if(IsValid(It->Camp)) { Origin=It->Camp->GetActorLocation()-FVector(0,0,100); break; }
     Discovered.Add(TEXT("camp")); Activated.Add(TEXT("camp"));
-    CreateLandmarks();
+    // The natural map already owns its terrain and encounters; the old prototype cylinders do not belong there.
+    if(!NaturalWorld) CreateLandmarks();
     OnChanged.Broadcast();
 }
 void UHearthwardGameplayComponent::CreateLandmarks()
@@ -357,17 +360,22 @@ bool UHearthwardGameplayComponent::AttackWith(bool Heavy,bool Ranged)
         const float D=FVector::Dist(GetOwner()->GetActorLocation(),A.Value->GetActorLocation());
         if(D<Distance) { Target=A.Key; Distance=D; }
     }
-    if(Target.IsNone()) return Result(false,TEXT("攻击范围内没有敌人"));
-    FHitResult Obstacle; FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardAttack),false,GetOwner());
-    if(GetWorld()->LineTraceSingleByChannel(Obstacle,GetOwner()->GetActorLocation(),OpponentActors[Target]->GetActorLocation(),ECC_Visibility,Query))
-        return Result(false,TEXT("目标被障碍物遮挡"));
+    if(Ranged && Target.IsNone()) return Result(false,TEXT("射程内没有敌人"));
+    if(!Target.IsNone())
+    {
+        FHitResult Obstacle; FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardAttack),false,GetOwner());
+        if(GetWorld()->LineTraceSingleByChannel(Obstacle,GetOwner()->GetActorLocation(),OpponentActors[Target]->GetActorLocation(),ECC_Visibility,Query))
+            return Result(false,TEXT("目标被障碍物遮挡"));
+    }
     if(!SpendStamina(Tune(Heavy?TEXT("heavyStamina"):Ranged?TEXT("rangedStamina"):TEXT("attackStamina")))) return Result(false,TEXT("耐力不足"));
     if(Ranged) Inventory()->TryRemove(TEXT("arrow"),1);
-    AttackDelay=Tune(TEXT("attackCooldown")); CombatRemaining=3;
+    AttackDelay=Tune(TEXT("attackCooldown"));
+    if(!Target.IsNone()) CombatRemaining=3;
     if (!Ranged)
         if (auto* Character = Cast<ACharacter>(GetOwner()))
             if (auto* Animation = Cast<UHearthwardHeroAnimInstance>(Character->GetMesh()->GetAnimInstance()))
                 Animation->PlayAttack();
+    if(Target.IsNone()) return Result(false,TEXT("挥击未命中：攻击范围内没有敌人"));
     DamageOpponent(Target,Power);
     if(Heavy && FMath::FRand()<HeavySkill->GetArrayField(TEXT("stunChance"))[HeavyRank-1]->AsNumber())
         Stunned.Add(Target,HeavySkill->GetArrayField(TEXT("stunSeconds"))[HeavyRank-1]->AsNumber());
@@ -425,7 +433,10 @@ bool UHearthwardGameplayComponent::OrderCompanion(FName Order)
     const FName Directive=DirectiveForLegacyOrder(Order);
     if(Directive.IsNone()) return false;
     const FString Error=PreviewCompanionDirective(GetOwner(),Directive);
-    if(!Error.IsEmpty()) return Result(false,TEXT("伙伴指令未执行：")+Error);
+    if(!Error.IsEmpty())
+        return Result(false,Error==TEXT("OUT_OF_RANGE")
+            ?TEXT("弟弟距离超过30米，请靠近后再按指令键")
+            :TEXT("伙伴指令未执行：")+Error);
     // A valid direct Z/X/C command is an explicit player override; only then invalidate an in-flight model reply.
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
     AI->CancelPending();
@@ -643,5 +654,13 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     auto Set=[&](const TCHAR* Key,TSet<FName>& Values){ for(const auto& V:J->GetArrayField(Key)) Values.Add(FName(*V->AsString())); };
     Set(TEXT("discovered"),Discovered); Set(TEXT("activated"),Activated); Set(TEXT("claimed"),Claimed);
     for(const auto& V:J->GetArrayField(TEXT("explored"))) Explored.Add(FVector2D(Number(V->AsObject(),TEXT("x")),Number(V->AsObject(),TEXT("y"))));
-    if(Enabled) CreateLandmarks();
+    if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled())
+    {
+        // Legacy natural saves contain a disabled gameplay snapshot. Keep their format and enable
+        // the existing building/equipment state after the player's saved transform has been restored.
+        Origin=FVector(-98000,-75000,16100);
+        Enabled=true;
+        Discovered.Add(TEXT("camp")); Activated.Add(TEXT("camp"));
+    }
+    else if(Enabled) CreateLandmarks();
 }

@@ -9,9 +9,9 @@
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
 
-当前 main 的自然地图工作以 [TASK-026](tasks/TASK-026.md) 为准：UE 5.8.2 下的 4.032 km World Partition 地图已接入 Bootstrap 新游戏/存档/继续游戏，新营地与局部树石实例已落地；完整路线、流送、性能和 Owner 视觉验收仍未完成，详见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
+远端 main 为 `97af300`（TASK-028 已通过 PR #38 合入）；本轮分支 `codex/integrated-latest-20260923` 已引入该主干，并复验 TASK-029/TASK-042 与 TASK-028/030 的组合，见 [最新主干报告](qa/evidence/TASK-029/main-task028-integration-20260924/REPORT.md)。独立 PR 评审和 main 合并尚未完成。自然地图工作以 [TASK-026](tasks/TASK-026.md) 为准：UE 5.8.2 下的 4.032 km World Partition 地图已接入 Bootstrap 新游戏/存档/继续游戏，新营地与局部树石实例已落地；完整路线、流送、性能和 Owner 视觉验收仍未完成，详见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
 
-AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 作为对外任务口径。当前候选已完成 world-authority safety、deterministic executor、suggestions、directives/combat、recovery、belief、initiative、episode、coordination、routine、componentization、bounded context、真实 Qwen guardrail 与 Save migration；同步 main 前 default Unity build、native 41/41、32-case real Qwen、CTX-03/04、Schema 2→3 real-file migration 和关键 PIE 回归均已通过。开发与验收状态优先看 [TASK-029 交接](handoffs/TASK-029.md) 和其证据索引。
+AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 作为对外任务口径。集成分支包含 world-authority safety、deterministic executor、suggestions、directives/combat、recovery、belief、initiative、episode、coordination、routine、componentization、bounded context、真实 Qwen guardrail、Save migration 与自然营地伙伴/有限资源/仓储/制作/兼容旧档。最新 TASK-028 主干组合的构建、Python 31/31、native 43/43、自然 Demo 70/70、无授物路线 51/51 和房屋/石骨斧隔离路线 49/49 已通过；repository validator 仍有 canonical TASK-027 与 TASK-028 各两项 reviewer/Issue URL 流程缺失。开发与验收状态优先看 [TASK-029 交接](handoffs/TASK-029.md) 和 [最新主干报告](qa/evidence/TASK-029/main-task028-integration-20260924/REPORT.md)。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。
@@ -61,4 +61,4 @@ AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 作为对外任务
 
 TASK-021伙伴原生导航已提交推送，见[021交接](handoffs/TASK-021.md)。[TASK-022](tasks/TASK-022.md)自由建造已提交推送，见[022交接](handoffs/TASK-022.md)。[TASK-023](tasks/TASK-023.md)即时制作已提交推送，见[023交接](handoffs/TASK-023.md)。当前[TASK-024](tasks/TASK-024.md)接入工作台装备维修与耐久回档，用户授权自主提交推送，见[024交接](handoffs/TASK-024.md)。
 
-[TASK-025](tasks/TASK-025.md) 增强版 v2 已通过 PR #23 合并 main `851d60e`；[TASK-026](tasks/TASK-026.md) 已通过 PR #25 合并 main `4114556`。AI NPC 内部从 TASK-027 延伸到 [TASK-040](tasks/TASK-040.md)，但 Owner 指定最终对外统一按 **TASK-029** 作为完整交付口径。返工必须在最新 AI 栈上继续，不从旧/脏 TASK-029 工作区回退。当前已授权在独立修复分支 commit、push 和创建 PR；明确不得直接 merge。
+[TASK-025](tasks/TASK-025.md) 增强版 v2 已通过 PR #23 合并 main `851d60e`；[TASK-026](tasks/TASK-026.md) 已通过 PR #25 合并 main `4114556`。AI NPC 研发历史曾使用 027～040 等内部标签，但 canonical TASK-027 现为人物动作、TASK-028 为 3D 资产；Owner 指定 AI 最终只按 **TASK-029** 完整交付。本轮统一分支 `codex/integrated-latest-20260923` 已完成本地复验；旧 PR #34 不代表新分支，Agent 不直接 merge main。

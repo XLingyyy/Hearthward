@@ -2,11 +2,11 @@
 
 Date: 2026-09-23
 Candidate branch: `codex/ai-npc-vnext-rework-01-fix`
-Integrated main: `origin/main@28e7c52`
+Integrated main: `origin/main@ba547c0ee5a1d8dae41e747a5d1d0674d7702899`
 
 ## Result
 
-Latest main was merged into the TASK-029 candidate branch before PR creation. The integration preserved both sides of the only substantive source conflict:
+The TASK-029 AI core was re-integrated on the latest main baseline and then combined with the PR #34 natural-camp line. The integration preserves the relevant save/runtime boundaries:
 
 - main natural-world save support can capture/restore without a companion fixture;
 - TASK-029 keeps NPC schema v3 memory, command state, receipts and execution-plan restoration when a companion is present.
@@ -15,7 +15,7 @@ Latest main was merged into the TASK-029 candidate branch before PR creation. Th
 
 | Check | Result |
 |---|---:|
-| repository validator | PASS, 0 errors |
+| repository validator | **Baseline-blocked** — identical 9 pre-existing main workflow-metadata errors |
 | repository Python tests | PASS, 31/31 |
 | clean/rebuilt UE 5.8.2 HearthwardEditor Development | PASS |
 | full native `Hearthward.*` | **41/41 PASS**, 0 warnings/failures/not-run |
@@ -49,7 +49,16 @@ Verified:
 - final shared storage increases by exactly two units.
 
 Raw local result: `Saved/Task029/post-merge-runtime-smoke.json`.
-Runner: `verify_post_merge_runtime_smoke.py`.
+Latest-main core runner: `docs/qa/evidence/TASK-029/regression/verify_runtime_smoke.py`.
+Latest-main core rerun: **23/23 PASS**.
+
+## Repository validator note
+
+`python -X utf8 scripts/validate_repo.py` reports 9 errors, and a clean `main@ba547c0` worktree reproduces the identical set. They are limited to canonical TASK-026/027/028 workflow metadata, so TASK-029 does not claim a project-wide validator PASS.
+
+The task-scoped validator additionally records the detached verification worktree and missing TASK-029 baseline snapshot rather than bypassing those process constraints.
+
+See [LATEST_MAIN_FINALIZATION](LATEST_MAIN_FINALIZATION.md) for the latest-main and natural-camp merge attribution.
 
 ## Important integration note
 

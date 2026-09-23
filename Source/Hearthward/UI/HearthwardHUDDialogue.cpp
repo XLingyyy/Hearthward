@@ -37,7 +37,6 @@ void AHearthwardHUD::BeginPlay()
     InputComponent->BindKey(EKeys::B,IE_Pressed,this,&AHearthwardHUD::OpenBuilding);
     InputComponent->BindKey(EKeys::LeftShift,IE_Pressed,this,&AHearthwardHUD::SprintStart);
     InputComponent->BindKey(EKeys::LeftShift,IE_Released,this,&AHearthwardHUD::SprintStop);
-    InputComponent->BindKey(EKeys::LeftMouseButton,IE_Pressed,this,&AHearthwardHUD::Attack);
     InputComponent->BindKey(EKeys::RightMouseButton,IE_Pressed,this,&AHearthwardHUD::Shoot);
     InputComponent->BindKey(EKeys::Q,IE_Pressed,this,&AHearthwardHUD::HeavyAttack);
     InputComponent->BindKey(EKeys::Two,IE_Pressed,this,&AHearthwardHUD::Eat);
@@ -67,7 +66,7 @@ void AHearthwardHUD::SnapshotRestored()
 }
 void AHearthwardHUD::ToggleDialogue()
 {
-    if(Screen) { Screen->ExecuteAction(TEXT("page:dialogue")); return; }
+    if(Screen) { Screen->ExecuteAction(Screen->GetPage()==TEXT("dialogue")?TEXT("back"):TEXT("page:dialogue")); return; }
     if (IsSaveMenuOpen() || IsStorageMenuOpen()) return;
     if(DialogueWidget) { CloseDialogue(); return; }
     if(!GetOwningPawn() || bInventoryOpen || GetWorld()->IsPaused()) return;
@@ -96,12 +95,12 @@ void AHearthwardHUD::ToggleDialogue()
 void AHearthwardHUD::OpenPause()
 {
     if(auto* B=GetOwningPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->CancelPlacement(); return; }
-    if(Screen) Screen->OpenPage(TEXT("pause"));
+    if(Screen) Screen->ExecuteAction(TEXT("page:pause"));
 }
 void AHearthwardHUD::OpenBuilding() { if(Screen) Screen->ExecuteAction(TEXT("page:building")); }
-void AHearthwardHUD::OpenMap() { if(Screen) Screen->OpenPage(TEXT("map")); }
-void AHearthwardHUD::OpenSkills() { if(Screen) Screen->OpenPage(TEXT("skills")); }
-void AHearthwardHUD::OpenJournal() { if(Screen) Screen->OpenPage(TEXT("journal")); }
+void AHearthwardHUD::OpenMap() { if(Screen) Screen->ExecuteAction(TEXT("page:map")); }
+void AHearthwardHUD::OpenSkills() { if(Screen) Screen->ExecuteAction(TEXT("page:skills")); }
+void AHearthwardHUD::OpenJournal() { if(Screen) Screen->ExecuteAction(TEXT("page:journal")); }
 void AHearthwardHUD::EditUILayout() { if(Screen) Screen->SetLayoutEditing(true); }
 void AHearthwardHUD::SprintStart() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->SetSprinting(true); }
 void AHearthwardHUD::SprintStop() { if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->SetSprinting(false); }
