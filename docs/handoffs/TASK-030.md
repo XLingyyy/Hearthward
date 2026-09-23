@@ -1,7 +1,17 @@
 # TASK-030 Demo 交互交接
 
-当前基线：3b5e6f7，已合入 origin/main ba547c0 的角色模型/动画，保留 TASK-029 25d53d8 的 AI 自然营地接入。分支 codex/TASK-030-demo-interactions。
+工作目录 `G:/GameFactory/Hearthward-ai-npc-fix`，分支 `codex/TASK-030-demo-interactions`。已合入 origin/main `ba547c0` 的角色模型/动画及已有美术，保留TASK-029 `25d53d8` 的AI自然营地接入。原 `G:/GameFactory/Hearthward` 工作目录的未提交角色工作未覆盖。
 
-用户授权最小可封版体验 demo：树石灌木采集、工作台配方、床休息、篝火烹饪、缺少资产清单。计划与验收见任务单，正在实现，未声明验证通过。
+用户授权的最小demo已实现：真实树石灌木的5秒采集/有限余量、四种工作台配方、床休息、篝火烤肉、背包事务与跨地图存读档。床、木桌、箱子和篝火使用已有Tripo模型，24个新UE包位于 `Content/Hearthward/Assets/Demo/`，锁保留至集成交接。没有改主地图二进制或本地AI模型锁文件。
 
-旧内部 AI TASK-030 战斗交接已归档至 ../qa/evidence/TASK-029/internal-history/combat-handoff.md，原专项证据保留。
+从 `Hearthward.uproject` 打开 `L_Bootstrap` 并Play，标题页新游戏进入自然地图。靠近树木/石头/灌木按E；B建造工作台（8木）、床（6木2绳）及篝火（4木4石）；工作台E打开四种配方，F确认；床E休息；篝火E烤肉；R营地仓储，T伙伴，F6存档，PIE中P暂停。
+
+资源每次2份、每处12木/8石/4草；不自动刷新。四种配方为1木→1绳、1木→4箭、2木3石→1石斧、2草→1药膏。新游戏3鲜肉支持篝火1肉1木→1烤肉。床至少15饱食，完成扣10饱食、恢复30生命/全部耐力。数值为用户授权demo版本。
+
+新增箱子碰撞的实测回归：伙伴带木材站到箱子上，水平导航已到达、三维距离结算未到达。已将导航到达判定统一为独立水平/高度限额，并加入原生回归测试，详情与最终结果见[验证报告](../qa/evidence/TASK-030/demo/REPORT.md)。
+
+主流程PIE70项通过，模型/场景录像已检查；最终构建通过、原生43/43、NPC真实入库复验3/3。工具测试31/31。仓库路径检查无越界，整体剩TASK-027既有Reviewer/Issue两项元数据错误；未擅改其他任务。TASK-030的Blocked是待Issue/独立Reviewer登记的流程状态，不代表玩法实现未完成。
+
+资产缺项/替代：专用工作台缺模型，当前木桌替代；石斧源模型已存在，尚未挂接持握；专用砍树/敲石、躺卧动画和采集音效未接入。火焰、箱盖为静态。伙伴和NPC有限木材点仍为灰盒；NPC采集范围沿用原TASK-029，未扩成任意场景树石搜索。完整键鼠回归、独立Shipping包、全图性能及正式视觉封版未验收。
+
+旧内部AI TASK-030战斗记录见[归档交接](../qa/evidence/TASK-029/internal-history/combat-handoff.md)，原专项证据保留。

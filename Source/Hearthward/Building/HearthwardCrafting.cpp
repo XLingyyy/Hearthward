@@ -1,4 +1,6 @@
 #include "HearthwardBuildingComponent.h"
+#include "../Interaction/HearthwardInteractionComponent.h"
+#include "../Interaction/HearthwardInteractionTargetComponent.h"
 #include "HearthwardWorkshopService.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
@@ -49,6 +51,10 @@ FGuid UHearthwardBuildingComponent::NearbyWorkbench() const
             const double D=FVector::DistSquared(GetOwner()->GetActorLocation(),B.Actor->GetActorLocation());
             if(D<Distance) { Distance=D; Nearest=B.Id; }
         }
+    if(Nearest.IsValid())
+        if(const auto* Interaction=GetOwner()->FindComponentByClass<UHearthwardInteractionComponent>())
+            if(const auto* Target=Interaction->GetNearestTarget(); Target && FVector::DistSquared(GetOwner()->GetActorLocation(),Target->GetComponentLocation())<Distance)
+                return {};
     return Nearest;
 }
 FString UHearthwardBuildingComponent::CraftingStatus(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch) const

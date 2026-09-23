@@ -73,6 +73,7 @@ struct FHearthwardWorldSave
     UPROPERTY() int32 AutoMinutes = 10;
     UPROPERTY() FHearthwardSaveSafety Safety;
     UPROPERTY() FString Gameplay;
+    UPROPERTY() TMap<FString,int32> HarvestedResources;
 };
 
 USTRUCT(BlueprintType)
