@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "id": "TASK-028",
+  "title": "建筑、物品、武器、防具等3D资产导入与游戏应用",
+  "status": "Backlog",
+  "updated_at": "2026-09-23",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-028-3d-assets-integration",
+  "source_refs": [
+    "2026-09-23用户：仅下发028任务单并推送main，不执行",
+    "docs/tasks/TASK-028.md",
+    "main 414dc70：自然营地、既有玩法及已入库Tripo素材"
+  ],
+  "dependencies": [
+    "TASK-003",
+    "TASK-020",
+    "TASK-022",
+    "TASK-026"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-028.json",
+    "docs/tasks/TASK-028.md",
+    "docs/handoffs/TASK-028.md",
+    "docs/planning/BACKLOG.md",
+    "docs/assets/TASK-028/",
+    "docs/qa/evidence/TASK-028/",
+    "scripts/assets/TASK-028/",
+    "art_source/TASK-028/",
+    "Content/Hearthward/Assets/TASK-028/",
+    "Content/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.umap",
+    "Content/__ExternalActors__/Hearthward/World/Natural/Rebuild/L_HearthwardWilds/",
+    "Content/__ExternalObjects__/Hearthward/World/Natural/Rebuild/L_HearthwardWilds/",
+    "Source/Hearthward/Building/",
+    "Source/Hearthward/Gameplay/",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/HearthwardGameMode.cpp",
+    "Source/Hearthward/HearthwardGameMode.h",
+    "Resources/Data/gameplay.json"
+  ],
+  "forbidden_paths": [
+    "art_source/TASK-004/",
+    "Content/Characters/Hero/",
+    "Source/Hearthward/Animation/",
+    "Source/Hearthward/Save/",
+    "Plugins/",
+    "Config/",
+    "config/",
+    "docs/design/"
+  ],
+  "acceptance": [
+    "A1：逐件源文件、UE资产、玩法ID、使用位置和缺口清单，核心四类均有实际成果",
+    "A2：UE5.8.2导入并保存重开，材质/碰撞/尺度及依赖正确",
+    "A3：8建筑部件组成可进入建筑，至少一种已有设施完成建造/交互/恢复",
+    "A4：物品实际应用，至少一件武器或工具与装备/动作同步",
+    "A5：至少一件防具可穿脱，动作及读档后外观一致",
+    "A6：自然营地从正常入口可见可用，现有规则与存档格式保持",
+    "A7：记录定向性能对比、操作录像、来源/锁/外部包、版本与Owner视觉验收"
+  ],
+  "non_goals": [
+    "本次不执行，仅下单",
+    "不重做026自然地图或027角色动画",
+    "不新增配方、数值、生态AI、房屋模块建造或修改存档格式",
+    "不自行付费生成、采购资产或安装大型依赖"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "规划：TASK-028 JSON结构、文档链接及提交范围检查",
+    "实施：保存重开、真实新游戏/继续游戏及A3-A6操作录像",
+    "实施：仅对修改代码运行相关目标构建和定向测试",
+    "实施：营地固定路线同设置性能对比及Owner视觉验收"
+  ],
+  "permissions": {
+    "network": "granted: reference documentation and fetch/push planning documents only",
+    "install_dependencies": "not_granted",
+    "commit": "granted: TASK-028 planning documents and README/index only",
+    "push": "granted: TASK-028 planning documents to main only",
+    "merge": "not_granted: no implementation branch or PR merge"
+  },
+  "notes": [
+    "当前仅下发任务，未授权实施；allowed_paths为未来实施范围，现轮只写规划文档。",
+    "027本地未提交任务不作为不存在的main JSON依赖；挂接前核验最终角色接口。",
+    "004源素材按单件复用，无需整单完成；武器/防具缺口不得宣称完成。",
+    "共享代码、地图和外部包开工前登记实际文件及单一写者；不以目录许可覆盖026/027改动。"
+  ]
+}
