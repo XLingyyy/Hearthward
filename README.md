@@ -1,6 +1,6 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。本任务从已同步 main `86386b7` 的 TASK-030 demo 基线继续，当前分支为 `codex/TASK-031-character-models`，包含 TASK-029 自然营地 AI、TASK-030 交互与 TASK-031 双角色替换成果。自然地图与资产底座中，[TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行的 4032 m World Partition 自然地图与营地入口，但完整路线、流送、性能和 Owner 视觉验收仍未全部闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。本任务已同步远端 TASK-031 更新 `97c4338`（包含 main `4b0da61`），当前分支为 `codex/TASK-031-character-models`，包含 TASK-029 自然营地 AI、TASK-030 交互与 TASK-031 双角色替换成果。自然地图与资产底座中，[TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行的 4032 m World Partition 自然地图与营地入口，但完整路线、流送、性能和 Owner 视觉验收仍未全部闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
 AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。当前合并候选包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与本轮证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)。融合工作树的代码与复验证据见[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)，已与 TASK-030 的 main 内容形成通过本地自动化复验的合并候选；当前尚待 PR 独立评审和 main 合并。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
@@ -112,4 +112,4 @@ TASK-029 自然营地接入基线曾通过 UE 5.8.2 Editor Development 构建、
 025 v2本机GPU复验使用 `-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32`；CPU兼容路径与Vulkan耗时分别记录，默认CPU策略未更改。Development Editor 还支持 `-HearthwardAIBundlePath=<已有Runtime/LocalAI>`，便于隔离 worktree 复用本机模型包；Shipping 不接受该覆盖。本机隔离工作树启动还需 `-HearthwardAIBundlePath=G:/GameFactory/Hearthward/Runtime/LocalAI`，或按锁定版本准备此工作树自己的模型包；直接双击尚未准备模型包的工作树工程只能使用手动任务卡。当前手动入口见上方“运行”。TASK-029 及内部 032—040 的当前回归脚本使用显式夹具初始化；更早的历史脚本需按其记录版本运行，不能用其旧“新游戏创建夹具”假设测试当前入口。
 
 
-TASK-031 主角已换用用户重新导出包内的自身八段动作，双方行走/跑步已去除骨盆前进轨迹，修复模型超前于胶囊和镜头、循环跳回的问题。本轮连续行走/冲刺回归 6/6、主角 PIE 26/26、弟弟自然地图检查 22/22 通过。C++ 未改动，先前 Editor Development 构建、伙伴原生测试 3/3 和 Python 工具测试 31/31 记录仍归属上一轮。保留原有胶囊碰撞，尚无布娃娃、披风布料、工具持握或攀爬玩法。动作与开发灰盒目标仍可穿插。当前证据与边界见 [TASK-031位移修复报告](docs/qa/evidence/TASK-031/inplace-fix/REPORT.md)。
+TASK-031 主角已换用用户重新导出包内的自身八段动作，双方行走/跑步已去除骨盆前进轨迹，修复模型超前于胶囊和镜头、循环跳回的问题。本轮连续行走/冲刺回归 6/6、主角 PIE 26/26、弟弟自然地图检查 22/22 通过。动画修复本身未改动 C++；随后保留远端主干集成更新，重新通过 Editor Development 构建及上述三项 PIE 检查。伙伴原生测试 3/3 和 Python 工具测试 31/31 记录仍归属上一轮。保留原有胶囊碰撞，尚无布娃娃、披风布料或攀爬玩法；石骨斧沿用 TASK-028 临时挂接，未与手部骨骼联动。动作与开发灰盒目标仍可穿插。当前证据与边界见 [TASK-031位移修复报告](docs/qa/evidence/TASK-031/inplace-fix/REPORT.md)。

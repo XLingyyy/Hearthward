@@ -82,10 +82,12 @@ def run():
     check('both_legs_animate',all(report['walk_joint_displacement'][k]>.1 for k in ['foot_l','foot_r']))
     yield from shot('walking',c)
     yield wait(lambda:str(anim.motion_state)=='Dig',30)
+    # The merged camp uses an authored tree beyond the previous camera view.
+    # ACharacter's AlwaysTickPose does not refresh bones while offscreen.
+    yield from shot('gathering',c)
     a=pose(mesh);yield delay(.4);b=pose(mesh)
     report['gather_joint_displacement']={k:(b[k]-a[k]).length() for k in a}
     check('gather_pose_changes',max(report['gather_joint_displacement'][k] for k in ['hand_l','hand_r'])>.1)
-    yield from shot('gathering',c)
     yield wait(lambda:c.get_delivered()==2,40)
     check('delivered_with_mesh',store.get_item_count('wood')==2 and c.source.get_item_count('wood')==14)
     check('wait_after_delivery',g.order_companion('wait'));yield delay(.5)
