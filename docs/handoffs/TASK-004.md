@@ -5,7 +5,7 @@
 ## 分支与授权
 
 - 基线：`origin/main`，`e729349a6dc462e4945351cc2ad6a6cc678656ce`。
-- 分支：`assets/building-parts-trees-20260923`；资产内容提交 `6456373a4d45e2fb5e30f5caf40aae0cb95ba918`，交接入口为 [PR #29](https://github.com/XLingyyy/Hearthward/pull/29)。最终 HEAD 和 PR 状态以 GitHub 记录为准。
+- 资产分支：`assets/building-parts-trees-20260923`；内容提交 `6456373a4d45e2fb5e30f5caf40aae0cb95ba918`，已通过 [PR #29](https://github.com/XLingyyy/Hearthward/pull/29) 合入 main（合并提交 `c30baced644f4fff032e6046db4abf0be445357c`）。README 的 PR 链接和本交接的 LFS 锁结果在合并后另行补充。
 - 用户授权：将本地 `Resource/Tripo/房屋建筑部件` 和 `Resource/polyhaven/树木` 的更新内容提交、推送并创建 PR。未授权合并或 UE 接入。
 
 ## 本次增量
