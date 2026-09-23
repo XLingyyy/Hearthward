@@ -1,14 +1,16 @@
 # Hearthward（归火）
 
-UE 5.8.1 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-当前分支 `codex/TASK-026-natural-world` 已形成 [TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 的可运行灰盒：4032 m World Partition地图、独立浏览GameMode、自然批次和局部PIE验证已落地，人文场景后置。现有视觉仍是基础形体，长路线、Standalone流送、性能与Owner视觉验收尚未完成，不能视为TASK-026验收通过。见[世界状态](docs/world/TASK-026/CURRENT.md)、[验证证据](docs/qa/evidence/TASK-026/README.md)与[026交接](docs/handoffs/TASK-026.md)。
+当前分支 `codex/TASK-026-natural-world-rebuild` 建有4032 m自然世界。2026-09-23起按用户新方向先精修新营地，远区暂缓；已有S1植被、地表、岸石和水面基础，本轮为营地增补树石灌木，并接通主菜单、存档和继续游戏。见[营地接入记录](docs/world/TASK-026/CAMP_INTEGRATION.md)与[026交接](docs/handoffs/TASK-026.md)。完整环线、跨区流送、远区质量、性能和Owner视觉验收仍未完成。
 
 ## 运行
 
-打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`，在标题页选择“新游戏”。020 自动建立现有开发场景所需的伙伴、资源、初始物品和初始存档节点，无需先输入控制台命令。继续游戏与载入存档读取已有的全局50点原型池。
+打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`。标题页“新游戏”进入自然地图的新营地并生成初始存档；营地中按 F6 打开存档页，暂停菜单也可手动保存。返回主菜单后“继续游戏”恢复最新节点；“载入存档”可选择自然地图节点。已有旧开发场景进度仍保留在同一50点档池。
 
-TASK-026自然世界尚未接入标题页。查看当前重建地图，在编辑器中打开 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds` 并运行PIE；地图级GameMode只复用第三人称角色，不生成营地、敌人、伙伴或仓储，也不启动本地模型。
+自然地图目前提供移动、视角、背包、暂停与存档；下表的伙伴、战斗、建造、任务等键位对应旧开发场景，尚未接入自然地图。
+
+单独浏览自然地图时，在编辑器中打开 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds` 并运行PIE；地图级浏览GameMode只复用第三人称角色，不生成旧开发场景的敌人、伙伴或测试地标，也不启动本地模型。
 
 | 操作 | 键位 |
 |---|---|

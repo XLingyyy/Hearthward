@@ -2,6 +2,9 @@
 
 更新：2026-09-22。工作目录 `G:/GameFactory/Hearthward`；分支 `codex/TASK-026-natural-world-rebuild`；基线 `origin/main 4114556`（PR #25 已合并）。当前用户授权接手并允许重构，本轮状态 Active，A1—A8 尚未全部验收。本轮已获用户授权提交并推送任务分支；不包含合并，任务保持Active。
 
+
+当前按v2返工，执行引擎为用户批准的UE 5.8.2。500×500 m S1样段已形成[六机位前后对照](rework-v2/S1-review.html)；当前验证与遗留项统一见[执行计划](rework-v2/PLAN.md)和[样段审阅记录](rework-v2/S1-review.md)。下方实例总数、425m步行和旧草层判断描述返工前底座，不作为v2最终统计或验收结果。
+
 ## 打开
 
 推荐从 GameFactory 根目录运行：
@@ -10,9 +13,9 @@
 .venv/Scripts/python.exe -X utf8 Hearthward/scripts/world/TASK-026/open_rebuild.py
 ```
 
-该入口通过公开 UEClient 启动独立地图，以进程参数启用 DX12/SM6，未修改项目 Config 或其他工程。首次切换 SM6 需要编译着色器。普通 SM5 启动会显示 Nanite 的替代网格，树冠外观失真，不能用作本图视觉验收。加 `--game --medium` 可启动未打包的 Standalone 浏览模式并应用Medium设置。该设置已在独立运行日志中确认，尚未形成正式性能报告。
+该入口通过公开 UEClient 启动独立地图，以进程参数启用 DX12/SM6，未修改项目 Config 或其他工程。首次切换 SM6 需要编译着色器。普通 SM5 启动会显示 Nanite 的替代网格，树冠外观失真，不能用作本图视觉验收。加 `--game --medium` 可启动未打包的 Standalone 浏览模式并应用Medium设置。原生1920×1080已由CSV元数据确认，S1约209秒初测平均67.28FPS、P95 18.61ms；正式R6全图性能验收尚未执行。
 
-地图：`/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds`。编辑器 Play 后 WASD 移动、鼠标转向。地图复用原浏览 GameMode 和现有角色，默认速度350 cm/s。Bootstrap默认入口保持原状；正式游戏流程尚未接入新地图。
+地图：`/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds`。编辑器 Play 后 WASD 移动、鼠标转向，默认速度350 cm/s。Bootstrap仍是默认入口；当前标题页“新游戏”进入 CAMP_A，“继续游戏”与存档节点也已接通自然地图，见[营地接入记录](CAMP_INTEGRATION.md)。
 
 ## 地形与布局
 
@@ -75,6 +78,6 @@ py "G:/GameFactory/Hearthward/scripts/world/TASK-026/verify_rebuild.py"
 
 ## 当前视觉与流程限制
 
-地形比例与自然分区已落地，仍有大尺度山体轮廓偏圆、树种单一、岸线细节和瀑布泡沫简单的问题，未达到参考图的最终美术密度。最终PIE林地截图可见草簇；出生空地草密度较低。原生Grass组件返回实例计数0，尚不能据此确认Landscape Grass运行生成状态，独立运行的草地覆盖仍需专项复核。
+地形比例与自然分区已落地。营地现已使用冷杉、松树与原有树种，林缘局部增补 48 棵针叶树；源资产的树冠仍较疏，尚未达到参考图的密林轮廓。大尺度山体轮廓偏圆、岸线细节和瀑布泡沫简单的问题仍在。最终PIE林地截图可见草簇；出生空地草密度较低。原生Grass组件返回实例计数0，尚不能据此确认Landscape Grass运行生成状态，独立运行的草地覆盖仍需专项复核。
 
 仓库校验检查了本轮1509条变更路径，未发现任务范围越界；整体返回FAIL，原因仅为Active任务缺独立reviewer和真实Issue URL。保留这两项缺口，不填造数据绕过校验。

@@ -29,7 +29,7 @@ def color(mat,rgb):return expr(mat,'Constant3Vector',constant=unreal.LinearColor
 
 def make_water(name,foam=False):
     mat=unreal.load_asset(ASSET+'/Materials/'+name)
-    if mat:ml.delete_all_material_expressions(mat)
+    if mat:return mat
     else:mat=tools.create_asset(name,ASSET+'/Materials',unreal.Material,unreal.MaterialFactoryNew())
     mat.set_editor_property('two_sided',True)
     mat.set_editor_property('shading_model',unreal.MaterialShadingModel.MSM_SINGLE_LAYER_WATER)
@@ -127,6 +127,8 @@ def batch(label,mesh,items,kind,cell):
 
 try:
     assert world.get_path_name().split('.')[0]==MAP,'Open the rebuild map first'
+    if any('TASK026.REBUILD' in a.tags for a in actors.get_all_level_actors()):
+        raise RuntimeError('Initial dressing refused: existing batches require a reviewed ReworkV2 plan.')
     unreal.WorldPartitionBlueprintLibrary.load_actors([d.guid for d in unreal.WorldPartitionBlueprintLibrary.get_actor_descs()])
     existing={a.get_actor_label():a for a in actors.get_all_level_actors() if 'TASK026.REBUILD' in a.tags}
     routes=json.loads((SRC/'routes.json').read_text(encoding='utf-8'))

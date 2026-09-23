@@ -9,7 +9,7 @@
 TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
 [TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
 
-当前实施分支为 `codex/TASK-026-natural-world-rebuild`。TASK-026按当前用户授权重建4.032 km自然地图，入口 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds`，状态Active；实现与真实验收边界见[重建记录](world/TASK-026/REBUILD.md)。原灰盒保留，人文内容后置。
+当前实施分支为 `codex/TASK-026-natural-world-rebuild`。TASK-026 使用 UE 5.8.2 构建4.032 km自然地图，现按用户最新要求先精修新营地，远区暂缓。Bootstrap 主菜单的新游戏、存档和继续游戏已接入新营地；入口、局部树石实例及验证见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。任务仍为 Active，完整路线、流送、性能和Owner视觉验收尚未完成；人文内容后置。
 [TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
 [TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
 [TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。

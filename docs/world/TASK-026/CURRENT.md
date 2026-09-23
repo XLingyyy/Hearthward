@@ -14,7 +14,7 @@
 
 在 UE 5.8.1 中打开 `Hearthward.uproject`，加载 `/Game/Hearthward/World/Natural/L_NaturalWorld` 后使用PIE浏览。地图级 `BP_NaturalWorldGameMode` 复用现有 `HearthwardCharacter`，但使用空白HUD，不生成020开发场景、伙伴或仓储内容，也不启动本地模型。
 
-现有Bootstrap与默认新游戏入口没有修改；自然世界尚未接到正式游戏流程。
+此页记录早期底座状态。当前 Bootstrap 标题页新游戏、继续游戏及存档已接入新营地；最新状态见[营地接入记录](CAMP_INTEGRATION.md)。
 
 ## 序列化实现
 

@@ -30,6 +30,8 @@ def wet(x,y,z):
 
 
 def create_route():
+    if (OUT / 'routes.json').exists():
+        raise RuntimeError('Existing route baseline must be versioned; initial generation cannot replace it.')
     step=4
     hh=h[::step,::step]; ss=slope[::step,::step]
     allowed=ss<.60
@@ -85,6 +87,8 @@ def write_mesh(name,verts,faces):
 
 
 def water_meshes():
+    if (OUT / 'water.json').exists():
+        raise RuntimeError('Existing water topology must use an explicit affected-segment update.')
     manifest=[]
     for j in range(16):
         y0=-2016+j*252; yc=y0+126; xc=float(river_x(yc));zc=float(water_height(yc))
@@ -132,6 +136,8 @@ def water_meshes():
 
 
 def scatter(clearance):
+    if (OUT / 'scatter.json').exists():
+        raise RuntimeError('Existing scatter requires a reviewed whole-batch ReworkV2 plan.')
     rng=np.random.default_rng(260923)
     groups={k:[] for k in ['tree','shrub','rock','stump','grass']}
     for kind,count in [('tree',80000),('shrub',22000),('rock',8500),('stump',300),('grass',140000)]:

@@ -75,7 +75,7 @@ def ground_material():
     target=ASSET+'/Materials/M_Landscape'
     mat=unreal.load_asset(target)
     if mat:
-        ml.delete_all_material_expressions(mat)
+        return mat
     else:
         mat=tools.create_asset('M_Landscape',ASSET+'/Materials',unreal.Material,unreal.MaterialFactoryNew())
     pos=expr(mat,'WorldPosition')
@@ -132,6 +132,8 @@ def ground_material():
 
 
 def main():
+    if unreal.EditorAssetLibrary.does_asset_exist(MAP):
+        raise RuntimeError('Initial terrain creation refused: map exists. Use bounded ReworkV2 updates.')
     try:
         if not unreal.EditorAssetLibrary.does_asset_exist(MAP):
             assert levels.new_level_from_template(MAP,'/Engine/Maps/Templates/OpenWorld')

@@ -31,6 +31,8 @@ def water_height(y):
 
 
 def make_terrain():
+    if (OUT / 'height_m.npy').exists():
+        raise RuntimeError('Existing terrain is immutable input. Use a bounded ReworkV2 height patch.')
     axis = np.linspace(-2016, 2016, SIZE, dtype=np.float32)
     x, y = np.meshgrid(axis, axis)
     rng = np.random.default_rng(260922)
@@ -177,6 +179,8 @@ def fetch_cliff_surface():
 
 
 if __name__ == '__main__':
+    if (OUT / 'height_m.npy').exists():
+        raise SystemExit('Initial generation refused: Rebuild exists. No source files were replaced.')
     make_terrain()
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
         list(pool.map(fetch_asset,['jacaranda_tree','shrub_01','tree_stump_01']))

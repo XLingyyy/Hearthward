@@ -12,19 +12,36 @@ import traceback
 import unreal
 
 ROOT=Path(unreal.Paths.project_dir())
-OUT=ROOT/'Saved/Task026/Rebuild/verification'
-OUT.mkdir(parents=True,exist_ok=True)
 SRC=ROOT/'art_source/TASK-026/Rebuild'
 MAP='/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds'
-levels=unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
-editor=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
 config_path=SRC/'verification_options.json'
 options=json.loads(config_path.read_text()) if config_path.exists() else {'route_seconds':90}
+runtime=options.get('runtime','PIE')
+if runtime not in ['PIE','Standalone']:
+    raise ValueError('Runtime must be PIE or Standalone')
+levels=unreal.get_editor_subsystem(unreal.LevelEditorSubsystem) if runtime=='PIE' else None
+editor=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem) if runtime=='PIE' else None
+mode=options.get('mode','smoke')
+if mode not in ['smoke','route_full','sample_loop']:
+    raise ValueError('Supported modes: smoke, route_full, sample_loop')
+OUT=ROOT/options.get('output','Saved/Task026/ReworkV2/walk-'+time.strftime('%Y%m%d-%H%M%S'))
+OUT.mkdir(parents=True,exist_ok=False)
 routes=json.loads((SRC/'routes.json').read_text())
+if mode=='sample_loop':
+    routes=json.loads((SRC/'ReworkV2/s1-route.json').read_text(encoding='utf-8'))
+    if options.get('direction','forward')=='reverse':
+        routes['loop']=list(reversed(routes['loop']))
+    elif options.get('direction','forward')!='forward':
+        raise ValueError('Sample direction must be forward or reverse')
 report={'passed':False,'map':MAP,'checks':{},'samples':[],'captures':[],
+        'mode':mode,'acceptance_scope':'local movement only' if mode=='smoke' else 'main loop walking only; branches and crossings reported separately',
         'route_complete':False,'input_method':'Existing Enhanced Input, default 350 cm/s, no route teleport',
-        'scope':'PIE; not Standalone or final target-hardware performance acceptance'}
+        'scope':runtime+'; sample movement and initial cost only, not final R6 performance acceptance'}
 state={'forward':False,'route':False,'frames':[]}
+if mode=='sample_loop':
+    report['acceptance_scope']='S1 sample loop only; all checkpoints required'
+    report['direction']=options.get('direction','forward')
+    report['planned_length_m']=routes['length_m']
 unreal.EditorPythonScripting.set_keep_python_script_alive(True)
 
 
@@ -42,16 +59,23 @@ def delay(seconds):
 
 
 def capture(name,width=1280,height=720):
+    if runtime=='Standalone':width,height=1920,1080
     p=OUT/(name+'.png')
     unreal.SystemLibrary.execute_console_command(state['world'],f'HighResShot {width}x{height} filename="{p.as_posix()}"',state['pc'])
     report['captures'].append(name+'.png')
 
 
 def run():
-    check('map_reopens',levels.load_level(MAP))
-    levels.editor_request_begin_play()
-    yield wait_for(levels.is_in_play_in_editor)
-    state['world']=editor.get_game_world()
+    if runtime=='PIE':
+        check('map_reopens',levels.load_level(MAP))
+        levels.editor_request_begin_play()
+        yield wait_for(levels.is_in_play_in_editor)
+        state['world']=editor.get_game_world()
+    else:
+        worlds=[w for w in unreal.ObjectIterator(unreal.World)
+                if w.get_path_name().split('.')[0]==MAP and unreal.GameplayStatics.get_player_controller(w,0)]
+        check('single_standalone_world',len(worlds)==1)
+        state['world']=worlds[0]
     yield wait_for(lambda:bool(unreal.GameplayStatics.get_player_pawn(state['world'],0)))
     world=state['world'];pawn=unreal.GameplayStatics.get_player_pawn(world,0)
     pc=unreal.GameplayStatics.get_player_controller(world,0)
@@ -78,13 +102,22 @@ def run():
     report['runtime_grass_components']=[c.get_instance_count() for c in unreal.ObjectIterator(unreal.GrassInstancedStaticMeshComponent) if c.get_owner() and c.get_owner().get_world()==world]
     capture('spawn')
     yield delay(2)
+    if runtime=='Standalone':
+        report['csv_file']='TASK026-'+OUT.name+'.csv'
+        unreal.SystemLibrary.execute_console_command(world,'CsvProfile STARTFILE='+report['csv_file'],pc)
+        unreal.SystemLibrary.execute_console_command(world,'CsvProfile START',pc)
+        state['csv_active']=True
     state.update(route=True,route_index=1,route_start=time.monotonic(),last_sample=0,last_capture=0,
                  progress_at=time.monotonic(),progress_location=p,walked_cm=0,last_location=p,
                  path=routes['loop'],route_name='main',route_limit=options.get('route_seconds',90),route_done=False)
     yield wait_for(lambda: not state['route'],options.get('route_seconds',90)+90)
     check('walked_at_least_100m',state['walked_cm']>=10000)
+    if mode!='smoke':check('all_main_loop_checkpoints_reached',state['route_done'])
     report['route_walked_m']=state['walked_cm']/100
     report['route_seconds']=time.monotonic()-state['route_start']
+    if state.get('csv_active'):
+        unreal.SystemLibrary.execute_console_command(world,'CsvProfile STOP',pc)
+        state['csv_active']=False
     capture('walk-end')
     yield delay(2)
     # Fixed views are separate from the route validation, and disclose teleport.
@@ -113,19 +146,23 @@ def run():
         capture(name+'-end')
         yield delay(2)
     state.pop('input',None)
-    levels.editor_request_end_play()
-    yield wait_for(lambda:not levels.is_in_play_in_editor())
+    if runtime=='PIE':
+        levels.editor_request_end_play()
+        yield wait_for(lambda:not levels.is_in_play_in_editor())
     report['passed']=True
 
 
 def complete(error=None):
     if error:report['error']=error;report['passed']=False
     if state['frames']:
-        values=sorted(state['frames']);report['PIE_slate_frame_sample']={'count':len(values),'mean_ms':sum(values)/len(values)*1000,'p95_ms':values[int(len(values)*.95)]*1000,
-        'caveat':'Editor slate tick includes editor overhead and screenshot frames; not standalone GPU benchmark'}
+        values=sorted(state['frames']);report[runtime+'_slate_frame_sample']={'count':len(values),'mean_ms':sum(values)/len(values)*1000,'p95_ms':values[int(len(values)*.95)]*1000,
+        'caveat':'Diagnostic slate tick; use native CSV for CPU/GPU performance figures'}
     (OUT/'report.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     state.pop('input',None)
-    if levels.is_in_play_in_editor():levels.editor_request_end_play()
+    if state.get('csv_active'):
+        unreal.SystemLibrary.execute_console_command(state['world'],'CsvProfile STOP',state['pc'])
+        state['csv_active']=False
+    if runtime=='PIE' and levels.is_in_play_in_editor():levels.editor_request_end_play()
     unreal.unregister_slate_post_tick_callback(handle)
 
 
@@ -157,13 +194,18 @@ def tick(delta):
                                          'natural_loaded':len(unreal.GameplayStatics.get_all_actors_with_tag(state['world'],'TASK026.REBUILD'))})
                 state['last_sample']=now
                 (OUT/'progress.json').write_text(json.dumps({'walked_m':state['walked_cm']/100,'seconds':now-state['route_start'],'route_index':state['route_index'],'points':len(path)}),encoding='utf-8')
-            if now-state['last_capture']>5:
-                capture(f'{state["route_name"]}-{int(now-state["route_start"]):05}',640,360);state['last_capture']=now
             if now-state['progress_at']>15:
                 check('route_no_stuck', (p-state['progress_location']).length()>200)
-                check('route_no_fall_through',p.z>-2000)
+                half=pawn.capsule_component.get_scaled_capsule_half_height()
+                ground=unreal.SystemLibrary.line_trace_single(state['world'],p,
+                    p-unreal.Vector(0,0,half+300),unreal.TraceTypeQuery.TRACE_TYPE_QUERY1,
+                    True,[pawn],unreal.DrawDebugTrace.NONE,True).to_tuple()
+                check('route_ground_below_capsule',ground[0] and -10 <= p.z-half-ground[4].z <= 300)
                 state['progress_at']=now;state['progress_location']=p
-            if now-state['route_start']>state['route_limit']:state['route']=False
+            if now-state['route_start']>state['route_limit']:
+                state['route']=False
+                if mode!='smoke' or state['route_name']!='main':
+                    raise TimeoutError('Route deadline reached before all checkpoints')
         if pending:
             predicate,deadline=pending
             if not predicate():
