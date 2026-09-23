@@ -17,7 +17,7 @@ public class Hearthward : ModuleRules
                 "AIModule",
                 "NavigationSystem"
             });
-        PrivateDependencyModuleNames.AddRange(new[] { "HTTP", "Json", "Sockets", "UMG", "Slate", "SlateCore" });
+        PrivateDependencyModuleNames.AddRange(new[] { "HTTP", "Json", "Sockets", "UMG", "Slate", "SlateCore", "AnimGraphRuntime" });
         string Resources = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../Resources"));
         if (Directory.Exists(Resources))
             foreach (string Resource in Directory.GetFiles(Resources, "*", SearchOption.AllDirectories))

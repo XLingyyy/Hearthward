@@ -1,44 +1,24 @@
-# TASK-027 交接
+# TASK-027 人物动作
 
-## 当前目标与实现
+用户于2026-09-23授权实施，并追加授权提交推送027内容到任务分支。基线 origin/main 414dc70。现有工作树改动已保存在 .agent-local/pre-task027-sync 与 pre-task027-tracked-local-changes stash。
 
-TASK-027 建立 AI NPC 的第一层真实世界感知与确定性安全策略，让 TASK-025 的规范目标在候选形成/确认和真实执行时都读取最新 UE 观察，而不是散落读取 `bSourceSafe`。
+## 任务分支交付
 
-当前隔离分支已实现：
+- 分支 `codex/TASK-027-character-animation`；已基于同步后的远端main完成实现；按用户授权提交推送本任务内容，未合并main。
+- 玩家改用现有Tripo骨骼网格、纹理材质与骨架，按180 cm显示。八个独立动画位于 `Content/Characters/Hero/Animation`：Idle、Walk、Sprint、JumpStart、Fall、Land、Attack、Dig。
+- 按用户追加反馈，Idle / Walk / Sprint 已改用UE安装包的 ThirdPersonIdle / ThirdPersonWalk / ThirdPersonRun。`retarget_template.py` 通过原生 IK Retargeter 烘焙到原角色骨架，`author_motion.py` 仅负责其余五段，避免再覆盖模板动作。
+- 原生AnimInstance使用速度混合、同步步态与动作过渡；跳跃遵循真实运动状态，近战动作跟随接受的攻击事件，资源动作跟随真实交互计时与中断。连续有效攻击可重新触发动作。
+- 源骨架根骨带约100倍缩放且朝向与模板相差90度；重定向使用独立归一化代理网格，导出后恢复原骨架单位/朝向。源Tripo网格与Skeleton未修改。原始模板与依赖位于 `Content/Mannequin`，重定向配置位于 `Content/Characters/Hero/Animation/Retarget`。
+- 自然地图：WASD移动、左Shift冲刺、空格跳跃、鼠标左键挥击预览。已有开发采集夹具旁按E执行五秒资源动作。
 
-- 新增 `Source/Hearthward/AI/HearthwardNPCPerception.h/.cpp`。
-- `Capture(companion)` 读取世界/暂停、战斗状态可用性与是否交战、营地/采集点可用性、已知安全点证据、导航重建、距离与执行阶段。
-- `Evaluate(observation, goal)` 为纯安全策略：世界写入 fail-closed；采集需要安全来源+营地；bag 制作/维修不依赖采集点；当前 craft 因产物必须返营入库仍要求营地有效，repair 仅在 source=camp 时要求营地。
-- `CompanionFixture` 的结构化采集与制作/维修共用 `AcceptGoal`，在接受前复核安全；采集、取料、制作/维修执行阶段继续复核。返营/已取得物资仍沿用既有安全恢复语义。
-- `LocalAISubsystem` filtered context 改用同一权威观察快照，向模型暴露观察事实和 collection safety verdict；玩家/模型文本无安全写权。
-- `NPCAgentTests` 新增 `Hearthward.NPCAgent.PerceptionSafety`，覆盖交战、未知安全状态、来源不可信、bag/camp 差异与暂停。
+## 验证与证据
 
-## 基线与隔离
+UE5.8.2 Development Editor构建通过。PIE检查、按键观察、关键帧及录像见 [TASK-027证据](../qa/evidence/TASK-027/README.md)。功能检查覆盖网格与八段动画加载、真实关节变化、移动速度、跳跃各阶段、资源动作暂停/中断/单次结算、近战伤害与动作恢复、自然浏览模式冲刺输入和死亡清理。
 
-- 基线：main `b1f85525697b79e6017455decab9d79a54977834`。
-- 已核对该 main 包含 PR #23 merge `851d60e4dc8a9b2e31cea91e2c0fcce7ee5c326d`，因此旧文档中“025 v2 未合并”已在本分支修正。
-- DevSpace 隔离 worktree 实施；源 checkout `D:\\Dev\\Hearthward` 的用户 `Hearthward.uproject` / `.codex/` 改动未触碰。
-- 分支：`codex/TASK-027-npc-perception`。
+仓库工具自测31项通过；仓库文档校验仍有5项流程元数据错误：TASK-026与TASK-027各缺Issue和reviewer，TASK-026另有未登记的required_tests引用。指定基线路径自检还提示TASK-027在main基线中尚无批准任务快照。未据此宣称正式审查或合并验收通过。
 
-## 验证
+## 明确边界
 
-详见 [VALIDATION](../qa/evidence/TASK-027/VALIDATION.md)。
+移动部分来自UE模板，其他动作仍为基础关键帧版本；没有脚部IK、工具握持、布料模拟或正式采矿系统。Dig接在现有资源交互上，开发夹具产出仍是木材。没有修改地图、生成配置、源Tripo资产或存档格式。关节/衣物穿插与坡地脚部贴合仍需要后续美术精修。
 
-- `git diff --check`：PASS。
-- `python scripts/validate_repo.py`：PASS，0 errors。
-- Python 工具测试：31/31 PASS。
-- 本机 Epic UE 5.8.2 首次构建受另一 UE 实例的 Live Coding mutex 阻止；未关闭用户的其他编辑器，改用 UBT `-NoHotReloadFromIDE` 后完成真实 C++ 编译与链接。第一次编译暴露并修复了一个 const 指针调用导航 API 的错误，随后 Editor build PASS。
-- `Hearthward.NPCAgent` 原生自动化 5/5 PASS；全量 `Hearthward` 原生自动化 30/30 PASS。
-- TASK-027 deterministic PIE：27/27 PASS，覆盖候选形成后安全变化、暂停、真实战斗进入/退出、采集中安全证据撤销、采集中进入战斗以及零副作用阻断。
-- TASK-025 workshop deterministic 回归：129/129 PASS（三轮），确认本次安全分层没有破坏 own-bag/camp 制作维修、存档回执和规则版本行为。
-- 隔离 worktree 不含 Qwen GGUF，因此本轮 real-model regression NOT_RUN；不影响确定性安全层验证。
-
-## 流程状态
-
-正式流程仍为 Blocked：本会话按用户要求再次调用 GitHub connector，但工具返回 `FORBIDDEN: This conversation is restricted to developer MCPs`，因此无法核验或创建 Issue/Reviewer，也未进行 commit/push/PR/merge。不要把本 worktree 成果描述成远端已交付。
-
-## 设计边界与下一步
-
-现有 `bSourceSafe` 只作为开发灰盒“已知安全采集点”的观测输入；本单没有实现完整视觉/听觉感知、EQS、开放世界危险评分或通用 Planner。
-
-TASK-027 的本地实现与确定性验证已完成。下一工程步骤应是把本分支提交/推送并补真实 Issue/Reviewer；该远端流程当前受 GitHub connector 权限限制。远端基线落定后，下一开发单进入 TASK-028：把当前不断膨胀的 `EHearthwardCompanionPhase` 专用状态机收敛为通用 Goal → Plan → Action Executor，同时保持 TASK-027 的 Perception/Safety seam 作为执行前置条件。
+来源记录见 [PROVENANCE](../assets/TASK-027/PROVENANCE.md)。八个动画、引入的模板依赖和重定向资产已取得XLingyyy名下LFS锁，交接时保留；记录见证据目录。同步前的本地修改、树木文件和其他未跟踪文件均已保留；恢复stash前先审查其与当前main的差异，避免直接覆盖同步后的文件。

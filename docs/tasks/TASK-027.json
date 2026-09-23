@@ -1,78 +1,70 @@
 {
   "schema_version": 1,
   "id": "TASK-027",
-  "title": "AI NPC世界感知、安全判定与权威观察快照",
-  "status": "Blocked",
-  "updated_at": "2026-09-22",
+  "title": "已有主角资产接入与基础动作动画",
+  "status": "Active",
+  "updated_at": "2026-09-23",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
-  "branch": "codex/TASK-027-npc-perception",
+  "branch": "codex/TASK-027-character-animation",
   "source_refs": [
-    "用户：前置能力已配置，可以开始推进AI NPC开发",
-    "2026-09-22 AI NPC推进方案：Perception → Reasoning → Planning → Action → Feedback",
-    "DSGN-001 本机模型与轻量检索推理链",
-    "TASK-025 v2 已集成的规范目标、可靠结算与玩家可控记忆"
+    "2026-09-23用户要求同步最新main，导入已有角色并制作行走/冲刺/跳跃/攻击/挖掘动画",
+    "main 414dc70：已有Hero Tripo骨骼网格与动作资产",
+    "2026-09-23用户明确本次任务编号027并要求继续",
+    "2026-09-23 用户要求改用UE自带待机、行走、冲刺模板，修正右手穿身与左脚竖起",
+    "2026-09-23 用户明确授权提交推送027内容"
   ],
-  "dependencies": ["TASK-025"],
+  "dependencies": [
+    "TASK-003"
+  ],
   "blocked_by": [],
-  "contracts": [
-    "docs/contracts/CT-002-companion-command.md",
-    "docs/decisions/ADR-TASK-025-npc-cognition.md"
-  ],
+  "contracts": [],
   "allowed_paths": [
-    "Source/Hearthward/AI/HearthwardNPCPerception.h",
-    "Source/Hearthward/AI/HearthwardNPCPerception.cpp",
-    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
-    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
-    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
-    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "README.md",
     "docs/tasks/TASK-027.json",
     "docs/tasks/TASK-027.md",
     "docs/handoffs/TASK-027.md",
     "docs/qa/evidence/TASK-027/",
-    "README.md",
-    "docs/START_HERE.md",
-    "docs/PROJECT_STATE.md"
+    "docs/assets/TASK-027/",
+    "scripts/characters/TASK-027/",
+    "Source/Hearthward/Animation/",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Interaction/HearthwardInteractionComponent.h",
+    "Content/Characters/Hero/Animation/",
+    "Source/Hearthward/Hearthward.Build.cs",
+    "Content/Mannequin/"
   ],
   "forbidden_paths": [
-    "Content/",
     "Plugins/",
-    "docs/design/archive/"
+    "Config/",
+    "config/",
+    "docs/design/",
+    "Content/Hearthward/World/",
+    "art_source/TASK-004/"
   ],
   "acceptance": [
-    "新增UE权威NPC观察快照，至少包含暂停、战斗、营地/采集点可用性、安全来源、导航重建、距离与当前执行阶段",
-    "世界写入安全判定集中到一个可测试模块；模型文字、玩家声明均不能直接改变安全结果",
-    "安全判定按目标类型区分：采集需要已知安全采集点与营地；仅使用自身背包的制作/维修不错误依赖采集点",
-    "候选确认与执行阶段都重新读取最新观察；战斗/暂停/来源失效会阻止新的采集、取料、制作或维修结算，已取得物资仍可按既有安全返营/保留语义恢复",
-    "本地模型上下文使用同一份权威观察快照，不再直接读取散落的bSourceSafe作为最终安全结论",
-    "原025采集、制作、维修、存档时间线与玩家路径不回归；自动化测试覆盖安全决策的关键正负例"
+    "已有主角网格骨架材质加载，替换玩家灰盒；不改源资产",
+    "行走冲刺跟随真实速度；起跳/下落/落地动画连续",
+    "攻击与挖掘动作接入现有玩法状态，取消/死亡/菜单暂停一致",
+    "UE5.8.2构建和实际操作录像验证，记录动作来源与缺口"
   ],
   "non_goals": [
-    "不制作地图、角色、美术或Content资产",
-    "不在本单实现完整敌人视觉感知、听觉感知、EQS、行为树或开放世界危险评分",
-    "不实现通用Planner、生活日程、战斗策略或救援AI；这些留给后续TASK-028及以后",
-    "不让LLM直接决定安全事实，不引入云端模型、多LLM或Embedding依赖"
+    "新增战斗或采集规则",
+    "新建地图、付费生成或合并main"
   ],
-  "prototype_only": true,
-  "prototype_approval": "用户于2026-09-22明确授权继续推进AI NPC开发",
+  "prototype_only": false,
+  "prototype_approval": null,
   "required_tests": [
-    "T-002",
-    "T-008",
-    "T-009",
-    "T-020"
+    "T-002"
   ],
   "permissions": {
-    "network": "granted for project research and GitHub coordination; GitHub connector unavailable in this run",
+    "network": "granted: fetch main and reference documentation",
     "install_dependencies": "not_granted",
-    "commit": "continuing project authorization exists, but current DevSpace interface does not expose commit mutation",
-    "push": "continuing project authorization exists, but current GitHub connector returned FORBIDDEN",
+    "commit": "granted: TASK-027 contents",
+    "push": "granted: task branch only",
     "merge": "not_granted"
-  },
-  "notes": [
-    "本单与TASK-026自然地图并行，不修改共享地图或二进制资产。",
-    "正式Issue与独立Reviewer当前无法通过本会话GitHub连接器核验，因此流程状态保持Blocked；用户授权的隔离worktree本地研发继续。",
-    "现有bSourceSafe仅保留为PROTOTYPE_ONLY已知安全点观测输入，不再由执行路径散落读取作为最终判定；开放世界危险感知仍未声称完成。",
-    "当前在隔离DevSpace worktree基于main b1f8552实施，原D:\\Dev\\Hearthward存在用户未提交的Hearthward.uproject与.codex改动，未触碰。"
-  ]
+  }
 }
