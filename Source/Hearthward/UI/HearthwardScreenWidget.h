@@ -26,6 +26,7 @@ public:
     UFUNCTION(BlueprintCallable) void OpenPage(FName Name);
     UFUNCTION(BlueprintCallable) bool ExecuteAction(const FString& Action);
     UFUNCTION(BlueprintPure) FName GetPage() const { return Page; }
+    UFUNCTION(BlueprintPure) FString GetCategory() const { return Category; }
     UFUNCTION(BlueprintPure) FString GetMessage() const { return Message; }
     UFUNCTION(BlueprintCallable) void Refresh();
     UFUNCTION(BlueprintCallable) void SetLayoutEditing(bool Editing);
@@ -99,7 +100,8 @@ private:
     TMap<FString,FSlateBrush> Brushes;
     TArray<FHearthwardUIElement> Elements;
     FName Page=TEXT("title");
-    FName ReturnPage=TEXT("title");
+    TArray<FName> ReturnPages;
+    TArray<FString> ReturnCategories;
     FName SelectedItem=TEXT("axe"),SelectedSkill=TEXT("strong"),SelectedQuest=TEXT("ember"),SelectedLocation=TEXT("camp");
     FName SelectedCodex;
     FString Category,Message,ConfirmAction;

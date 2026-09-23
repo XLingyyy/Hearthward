@@ -1,16 +1,16 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。TASK-029 最终候选已基于 `main@ba547c0` 收口，因此同时保留 PR #35 的主角模型/移动动画与 PR #34 的自然营地 AI 接入。自然地图与资产底座中，[TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行的 4032 m World Partition 自然地图与营地入口，但完整路线、流送、性能和 Owner 视觉验收仍未全部闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。当前集成分支 `codex/integrated-latest-20260923` 基于 `main@ba547c0`、PR #34 自然营地 AI 与 TASK-029 核心返工，并吸收 TASK-041/042 的页面返回、交互、战斗及跟随修正。远端 main 随后已前进至 `be9286f`（TASK-030），不属于本分支基线。自然地图与资产底座中，[TASK-026：大地图自然场景底座](docs/tasks/TASK-026.md) 已形成可运行的 4032 m World Partition 自然地图与营地入口，但完整路线、流送、性能和 Owner 视觉验收仍未全部闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。当前 `codex/ai-npc-vnext-rework-01-fix` 工作分支已将现有伙伴玩法接入自然地图：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与本轮证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)。本次提交收录接入实现、测试入口修正与证据，尚未合入 main。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
+AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。当前本地集成分支已将现有伙伴玩法接入自然地图：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与本轮证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)。本轮独立集成分支的改动、测试入口与证据见[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；尚未合入 main。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
-下一规划任务：[TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md)。该任务是 main 当前 canonical TASK-028，状态为 **Backlog，仅下单，未执行**；执行等待另行授权。
+可见斧头网格与跳跃手臂动画仍待资产任务接线及验收；本分支未修改受锁保护的动画资产。
 
 ## 运行
 
 打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`。标题页“新游戏”进入自然地图的新营地并生成初始存档；营地中按 F6 打开存档页，暂停菜单也可手动保存。返回主菜单后“继续游戏”恢复最新节点；“载入存档”可选择自然地图节点。已有旧开发场景进度仍保留在同一50点档池。
 
-自然地图已接通伙伴、仓储、建造、制作/维修和技能页面。靠近弟弟按 T，输入“帮我采集两份木材带回营地。”，检查任务卡并确认。木材点初始 16 份，使用现有有限资源规则；营地仓储附近按 R 取出 8 份木材，再按 B 建造工作台。地图/任务日志及旧开发场景敌人尚未布置到自然地图，M/J 页面继续关闭。
+自然地图已接通伙伴、仓储、建造、制作/维修和技能页面。靠近弟弟按 T，输入“帮我采集两份木材带回营地。”，检查任务卡并确认。木材点初始 16 份，使用现有有限资源规则；营地仓储附近按 R 取出 8 份木材，再按 B 建造工作台。自然地图可打开地图和任务日志；旧开发场景敌人尚未布置到自然地图。
 
 单独浏览自然地图时，在编辑器中打开 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds` 并运行PIE；地图级浏览GameMode只复用第三人称角色，不生成旧开发场景的敌人、伙伴或测试地标，也不启动本地模型。
 
@@ -20,7 +20,7 @@ AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。当前 `codex/ai-npc-
 | 跳跃 | 空格；落地后可再次起跳，起跳中断采集或建造 |
 | 建造 | B 打开目录；移动/转动视角摆放、Q 每次旋转15°、左键确认、右键取消 |
 | 工作台制作 | 靠近已建工作台 E；选择配方、−/+调整批数、F 制作、返回按钮关闭 |
-| 背包、技能 | Tab、K；M 地图、J 任务日志目前仅开发场景开放 |
+| 背包、技能 | Tab、K、M、J；页面内返回回到上一页 |
 | 仓储、伙伴交流、存档 | 营地附近 R、弟弟30米内 T、F6 |
 | 伙伴记忆 | T 对话 → 记忆与约定；填写陈述/偏好/文字约定，或设置指定物品的采集限制；选择已有记录可修改或撤销 |
 | 暂停 | 独立运行 Esc；PIE 使用 P 避免编辑器停止Play快捷键 |
@@ -70,6 +70,8 @@ AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。当前 `codex/ai-npc-
 界面主题、图集UV、静态布局、物品格与快捷栏位于 `Resources/UI/interface.json`；玩法内容和参数位于 `Resources/Data/gameplay.json`。建造目录、材料配方、营地范围、摆放尺寸及灰盒外形部件也位于同一玩法配置。当前工作台8木材、篝火4木材，营地半径12米为 PROTOTYPE_ONLY 参数；现有场景可按E真实采集木材，也可从营地仓储取出。工作台即时配方位于 `craftingRecipes`：原型每1木材制作4箭矢或1绳索，`crafting` 配置260cm访问距离和99批上限。普通配方默认掌握，不预留材料。维修费用位于 `repairRecipes`，使用可采集木材及可制作绳索；当前原型按整件全修收费，未将缺失的装备制作表推导为正式20%费用。耐久仍沿用现有按物品类型保存的模型，不区分同类装备实例；高级蓝图、装备制作、熔炼烹饪、休息和生产暂未接入。新增物品、技能、任务、建筑、制作配方与地点可按稳定ID扩展，存档以ID关联。中文正文为LXGW WenKai、大标题为Noto Serif CJK SC，OFL许可证随资产提供；生成美术的来源记录在 `Resources/UI/art-provenance.json`。
 
 ## 验证与限制
+
+本轮双工作树集成在 `codex/integrated-latest-20260923` 上通过 UE 5.8.2 Editor Development 构建、原生 `Hearthward.*` 42/42、Python 31/31、UI 返回与焦点 62 项、正常新游戏进入自然地图的采集/建造/制作/仓储/存档路线 50 项，以及 8 秒连续疾跑跟随。攻击空挥动画与不误扣耐久已通过隔离 PIE；开发夹具中的真实命中与运行时 smoke 见[本轮证据](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)。自然地图仍无敌人和可见斧头网格，跳跃手臂资产姿态没有修复或真人复测。本轮没有改动受 LFS 锁保护的资源。
 
 TASK-026本次重建记录见[REBUILD](docs/world/TASK-026/REBUILD.md)，历史检查不累计为新图验收。旧地图于2026-09-21完成27项定向PIE检查：地图重开、World Partition外部包、任务路径依赖闭包、浏览隔离、普通移动和一处浅滩通过，并保留5张观察点截图。截图同时显示悬空树冠、倾斜树干、重复形体和地表拼接，因此不构成视觉验收；主环线/两支路/第二浅滩、Standalone流送、目标硬件性能、干净克隆和Owner验收为NOT_RUN。详见[026证据](docs/qa/evidence/TASK-026/README.md)。
 

@@ -420,6 +420,8 @@ void UHearthwardScreenWidget::ComposeDialogue()
     Element(TEXT("choice"),AI->IsBusy()?TEXT("取消回复"):TEXT("发送"),FVector2D(1484,766),FVector2D(105,51),19,AI->IsBusy()?TEXT("cancelReply"):TEXT("send"));
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
     {
+        if(It->CanCommunicate(GetOwningPlayerPawn()))
+            Element(TEXT("text"),TEXT("T 与弟弟交流 / 下达委托"),FVector2D(1310,650),FVector2D(330,40),18);
         if(It->GetRequested()>0)
         {
             const FString Progress=It->GetGoal().Intent==TEXT("repair")?FString::Printf(TEXT("维修%s：完成%d/%d"),*HearthwardAgent::ItemText(It->GetGoal().Item),It->GetDelivered(),It->GetRequested()):FString::Printf(TEXT("%s：取得%d · 携带%d · 完成%d/%d"),*HearthwardAgent::ItemText(It->GetGoal().Item),It->GetAcquired(),It->GetCarried(),It->GetDelivered(),It->GetRequested());
@@ -565,9 +567,14 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("notice"),TEXT("E 使用工作台 · 制作 / 维修"),FVector2D(573,536),FVector2D(540,70),20);
         Elements.Last().Component=TEXT("hud.construction"); Elements.Last().LayoutId=TEXT("hud.workbench.prompt");
     }
+    else if(!Near.IsNone() && !G->Activated.Contains(Near) &&
+        Text(Find(TEXT("locations"),Near.ToString()),TEXT("kind"))!=TEXT("landmark"))
+        Element(TEXT("notice"),TEXT("E 激活路标"),FVector2D(573,536),FVector2D(540,70),20);
     if(const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>())
     {
-        if(const auto* Target=Interaction->GetNearestTarget();Target && !NearWorkbench)
+        if(const auto* Target=Interaction->GetNearestTarget();Target && !NearWorkbench &&
+            (Near.IsNone() || G->Activated.Contains(Near) ||
+             Text(Find(TEXT("locations"),Near.ToString()),TEXT("kind"))==TEXT("landmark")))
             Element(TEXT("notice"),Target->GetInteractionPrompt(GetOwningPlayerPawn()),FVector2D(573,536),FVector2D(540,70),18);
         if(Interaction->GetStatus()==EHearthwardInteractionStatus::Ready)
             Element(TEXT("text"),Interaction->GetCompletionFeedback(),FVector2D(1220,765),FVector2D(410,40),18);

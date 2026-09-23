@@ -15,7 +15,7 @@
 
 void AHearthwardHUD::ToggleInventory()
 {
-    if(Screen) { Screen->OpenPage(Screen->GetPage()==TEXT("inventory")?TEXT("hud"):TEXT("inventory")); return; }
+    if(Screen) { Screen->ExecuteAction(Screen->GetPage()==TEXT("inventory")?TEXT("back"):TEXT("page:inventory")); return; }
     CloseStorageMenu();
     CloseSaveMenu();
     CloseDialogue();

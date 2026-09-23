@@ -2,6 +2,8 @@
 
 状态：Blocked（实现与 latest-main 技术收口已完成；PR #34 仍待独立 Reviewer / Owner 体验验收，Agent 不合并 main）。
 
+2026-09-23 后续集成分支：`codex/integrated-latest-20260923` 从 checkpoint `66d0107` 继续，选择性融合 TASK-041/042 的 UI 返回与输入、自然树采集、攻击和伙伴跟随修正；当前范围与验证见 [集成报告](../qa/evidence/TASK-029/integrated-playable/REPORT.md)。该分支基于 `main@ba547c0`，不把随后前进到 `be9286f` 的独立 TASK-030 资产改动当成本轮已集成。PR #34 仍是旧 AI 分支，不代表此新分支。
+
 ## 统一口径
 
 2026-09-23 Owner 指定：Hearthward AI NPC vNext 的最终任务、PR 与验收统一使用 **TASK-029**。

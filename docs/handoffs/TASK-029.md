@@ -4,7 +4,13 @@
 
 AI NPC vNext 最终统一使用 **TASK-029**。早期 027～040 仅作为内部历史证据标签；项目 canonical TASK-027 为人物动作，canonical TASK-028 为 3D 资产任务。
 
-目标分支：`codex/ai-npc-vnext-rework-01-fix`。GitHub PR：[#34](https://github.com/XLingyyy/Hearthward/pull/34)。**Agent 不直接 merge main。**
+本轮工作分支：`codex/integrated-latest-20260923`，本地 checkpoint `66d0107`。旧 AI 分支的 GitHub PR [#34](https://github.com/XLingyyy/Hearthward/pull/34) 仍指向旧 head `25d53d8`，不是本轮集成分支。**Agent 不直接 merge main。**
+
+## 2026-09-23 双工作树集成
+
+在 checkpoint 上选择性吸收 TASK-041/042 的 UI 返回栈、快捷键与确认框独占、焦点恢复、实景树木采集绑定、左键单一 Enhanced Input 入口、近战空挥与真实命中结算、30 米伙伴指令反馈、疾跑跟随速度和稳定交互目标排序。没有覆盖 TASK-029 的模型、Schema 3 旧档升级，也没有修改 Content 动画或 Config 自动生成项。完整当轮证据见 [integrated-playable/REPORT](../qa/evidence/TASK-029/integrated-playable/REPORT.md)。
+
+该分支明确继承 `main@ba547c0`；远端 main 已在本轮之后前进到 `be9286f`（TASK-030）。这次任务只融合指定的两个工作树，TASK-030 的独立资产和逻辑未并入。真实键鼠、可见武器网格及跳跃手臂动画还需单独验收。
 
 ## 最终集成结构
 
@@ -48,7 +54,7 @@ PR #34 的自然地图接入此前已完成：
 
 ## repository validator 真实状态
 
-全仓 validator **不是 0 errors**。当前 9 项错误全部来自 canonical TASK-026/027/028 的 reviewer / Issue URL / required_tests metadata。纯净 `main@ba547c0` 运行相同命令得到完全相同的 9 项，因此不把它们记为 TASK-029 回归，也不越权修改其他任务元数据。
+全仓 validator **不是 0 errors**。本轮工作树当前只剩 canonical TASK-027 的 reviewer 与 Issue URL 两项；旧 `main@ba547c0` 曾有 TASK-026/027/028 共 9 项。两次结果对应不同提交，均不是 TASK-029 新引入的代码错误，也不越权修改其他任务元数据。
 
 task-scope validator 在隔离验证 worktree 额外记录 detached branch 与 TASK-029 baseline snapshot 两项流程约束。
 
@@ -62,8 +68,7 @@ Qwen M01～M16 clean + pressure 为 32/32 safety PASS；M01～M10 core raw contr
 
 ## 下一步
 
-1. 在最终合并树上重跑 build/native/runtime smoke 与 Python。
-2. 记录 repository validator（预期仍包含 main 基线 9 项，除非对应 canonical tasks 被独立修复）。
-3. commit/push 到 `codex/ai-npc-vnext-rework-01-fix`，更新 PR #34。
-4. 等待独立 Reviewer / Owner 体验验收。
-5. **不由 Agent 合并 main。**
+1. 本轮统一分支的 build/native/Python/runtime/UI/自然路线/跟随/攻击夹具复验已完成，结果见上文集成报告。
+2. 将本轮提交推送到 `codex/integrated-latest-20260923`；旧 PR #34 保持原 head，另行评审新分支。
+3. 等待真实键鼠、可见武器/跳跃动画、独立 Reviewer / Owner 体验验收。
+4. **不由 Agent 合并 main。**

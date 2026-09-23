@@ -10,7 +10,7 @@
 
 void AHearthwardHUD::ToggleStorageMenu()
 {
-    if(Screen) { Screen->ExecuteAction(TEXT("page:storage")); return; }
+    if(Screen) { Screen->ExecuteAction(Screen->GetPage()==TEXT("storage")?TEXT("back"):TEXT("page:storage")); return; }
 #if !UE_BUILD_SHIPPING
     if (StorageWidget) { CloseStorageMenu(); return; }
     auto* Player = GetOwningPlayerController();

@@ -7,7 +7,7 @@
 
 void AHearthwardHUD::ToggleSaveMenu()
 {
-    if(Screen) { Screen->OpenPage(TEXT("save")); return; }
+    if(Screen) { Screen->ExecuteAction(Screen->GetPage()==TEXT("save")?TEXT("back"):TEXT("page:save")); return; }
 #if !UE_BUILD_SHIPPING
     if (SaveWidget) { CloseSaveMenu(); return; }
     auto* Player = GetOwningPlayerController();
