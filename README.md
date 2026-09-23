@@ -1,6 +1,6 @@
 # Hearthward（归火）
 
-本任务分支正在实施 [TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md)，状态为 **Active，部分完成**。已在自然营地接入房屋、篝火、工作台和临时斧头持有外观；防具源模型、斧头与新主角动作的正式挂接及完整验收仍缺。TASK-027主角动画已通过PR #35合入main；TASK-028进展仅属于 `codex/TASK-028-3d-assets-integration`，尚未合入main。见 [TASK-028交接](docs/handoffs/TASK-028.md)。
+本任务分支正在实施 [TASK-028 建筑、物品、武器、防具等3D资产导入与游戏应用](docs/tasks/TASK-028.md)，状态为 **Active，部分完成**。已在自然营地接入房屋、篝火、工作台和临时斧头持有外观；防具源模型、斧头与新主角动作的正式挂接及完整验收仍缺。TASK-027主角动画已通过PR #35合入main；TASK-028进展位于[草稿PR #38](https://github.com/XLingyyy/Hearthward/pull/38)，尚未合入main。见 [TASK-028交接](docs/handoffs/TASK-028.md)。
 
 UE 5.8.2 单人第三人称生存冒险项目。原TASK-025已合并main（d02b5fe），用户未通过验收；增强版v2位于独立任务分支并等待复验。设计依据是GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md)和[025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 

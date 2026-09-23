@@ -2,6 +2,8 @@
 
 状态：**Active，部分实现，未达到整单验收**。工作树 `E:\AiAgent\XLingGame\Hearthward-TASK-028`，分支 `codex/TASK-028-3d-assets-integration`，实施基线 `28e7c52e10e3988a19ca1e4b7e4fcf86ab2f3b93`。用户现已授权将当前进度提交、推送并创建PR；实现快照为 `f4d30df`，随后合入远端main `ba547c0`（PR #35、TASK-027），以便提供无冲突的审查分支。TASK-028仍未合并main；原始004源文件未修改。
 
+远端进度：[草稿PR #38](https://github.com/XLingyyy/Hearthward/pull/38)，首次推送HEAD `c6549dd`；80个LFS对象共118 MB已上传成功。PR建立时main又合入TASK-029/030，新增共享玩法/UI修改；后续须以最新main核对冲突和回归，本次运行PASS绑定到含TASK-027的 `ba547c0` 基线，不能自动沿用到新main。
+
 ## 已完成的接线
 
 - [逐件清单](../assets/TASK-028/asset-manifest.json)盘点35件已有FBX候选与9个缺失装备模型条目。15件静态模型已导入 `Content/Hearthward/Assets/TASK-028/`，每件含网格、材质与三张纹理；另有2个补缝专用纯色材质，共77个 `.uasset`，约111 MB。Color保留sRGB；Normal与Roughness按数据贴图导入，纹理最大尺寸2048。新资产受仓库LFS属性管理。
@@ -26,8 +28,8 @@
 2. 自然地图没有正式的木材获取路径。建造系统可以扣料与恢复，但普通新游戏不能凭当前地图独立获得必需木材。不得把隔离测试材料注入作为正式经济或资源规则。
 3. 20件其余候选（鱼竿/袋/陶罐、两件敌人、15件动物）仍仅为源文件可用；对应玩法、动画或映射没有得到验证。房内陈设也没有新交互。
 4. 尚未做同画质前后性能对比、Standalone长路线、旧档全量兼容、Owner视觉验收。房屋素材为 `TEMP_VISUAL`，源模型结构与UV有局限。A7和整单验收均未通过。
-5. 本轮通过直连复核远端LFS锁，`Content/Hearthward/Assets/TASK-028/` 下锁数为0；未改动任何已有共享 `.uasset`、`.umap` 或外部包。新增77个任务专属资产已作为LFS指针进入提交 `f4d30df`；推送后仍需确认远端LFS接收。
-6. 用户已批准两处UI文件纳入任务范围，但起始基线任务JSON仍是旧版本，仓库范围门禁尚无法识别这次批准。Issue与独立Reviewer尚未分配。不得声称通过仓库范围门禁或可直接合并。
+5. 本轮复核远端LFS锁，`Content/Hearthward/Assets/TASK-028/` 下锁数为0；未改动任何已有共享 `.uasset`、`.umap` 或外部包。新增77个任务专属资产已作为LFS指针进入提交 `f4d30df`，推送报告确认80个LFS对象、118 MB上传完成（含3张截图）。
+6. 用户已批准两处UI文件纳入任务范围，但main任务JSON仍是旧版本，仓库范围门禁尚无法识别这次批准。以 `ba547c0` 为base的定向检查报9项错误：TASK-026/027/028缺Issue和独立Reviewer、TASK-026一个测试ID引用错误、两处TASK-028 UI文件被判OUT_OF_SCOPE。Issue与独立Reviewer尚未分配；草稿PR不能直接合并。
 
 ## 继续执行
 
