@@ -18,3 +18,5 @@
 接口依据：[Epic UGameViewportClient API](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/UGameViewportClient)，bDisableWorldRendering 控制世界绘制。
 
 仓库元数据校验中的 TASK-027/028 Reviewer 与 Issue 缺项为既有问题；用户本地工程关联和 IDE 文件不进入提交。
+
+路径自检以 e5ac3ed 为基线，共报告13项：4项既有TASK-027/028元数据问题、4个未提交的用户工程/IDE文件，以及5个本次UI路径。校验器读取基线任务快照，因此本次按用户明确指令新增到TASK-031的5个allowed_paths仍报越界；当前任务JSON已记录授权与新增范围，未修改校验器或扩大其他任务范围。
