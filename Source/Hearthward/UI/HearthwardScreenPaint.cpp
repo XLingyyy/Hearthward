@@ -17,7 +17,8 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     auto Box=[&](FVector2D P,FVector2D S,FLinearColor C,int32 L){ FSlateDrawElement::MakeBox(Out,L,Geometry(P,S),White,ESlateDrawEffect::None,C); };
     auto Frame=[&](FVector2D P,FVector2D S,FLinearColor C,int32 L)
     { Box(P,FVector2D(S.X,1),C,L); Box(P+FVector2D(0,S.Y-1),FVector2D(S.X,1),C,L); Box(P,FVector2D(1,S.Y),C,L); Box(P+FVector2D(S.X-1,0),FVector2D(1,S.Y),C,L); };
-    if(Page!=TEXT("hud")) Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
+    if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue"))
+        Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
     for(int32 I=0;I<Elements.Num();++I)
     {
         const auto& E=Elements[I]; const bool Focus=I==Hover || I==KeyboardFocus || E.Selected;

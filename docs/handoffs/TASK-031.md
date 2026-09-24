@@ -13,3 +13,5 @@
 用户本地 Hearthward.uproject 的 EngineAssociation 及 IDE 生成文件保留，不提交。仓库既有 TASK-027 元数据错误未修改。独立 Reviewer 和 Issue 未登记，任务流程状态按原约定保持 Blocked；实现和任务分支推送按用户授权完成，不代表已合入 main。
 
 合并后测试完整 SHA 和证据见 `docs/qa/evidence/TASK-031/inplace-fix/merged/`；合并来源已在远端任务分支，不包含 Agent 合并 main 操作。
+
+用户追加 UI 改进已完成：背包/对话取消全屏背景与黑底，隐藏背包装饰人物插画；删除对话关闭世界渲染的旧优化，交互控件保留。背包仍暂停，对话继续运行。Editor Development 构建及自然地图16/16检查通过，真实Slate截图确认场景可见且对话打开时场景可更新。未新增物理键鼠或LLM性能验收。见[场景透显报告](../qa/evidence/TASK-031/scene-overlay/REPORT.md)。仓库自检既有TASK-027/028评审及Issue缺项仍保留。
