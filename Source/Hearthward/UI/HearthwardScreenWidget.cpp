@@ -1,5 +1,4 @@
 #include "HearthwardScreenWidget.h"
-#include "Engine/GameViewportClient.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
@@ -153,15 +152,6 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         else { ReturnPages.Reset(); ReturnCategories.Reset(); }
     }
     if(Page!=Name) Category=RestoringParent?RestoredCategory:FString();
-    // The opaque dialogue illustration covers the scene. Keep simulation running without competing
-    // with local GPU inference for rendering work that the player cannot see.
-    if(Name==TEXT("dialogue") && !DialogueViewport.IsValid())
-    {
-        if(auto* Viewport=GetWorld()->GetGameViewport(); Viewport && !Viewport->bDisableWorldRendering)
-        { DialogueViewport=Viewport; Viewport->bDisableWorldRendering=true; }
-    }
-    else if(Name!=TEXT("dialogue") && DialogueViewport.IsValid())
-    { DialogueViewport->bDisableWorldRendering=false; DialogueViewport.Reset(); }
     Page=Name; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
     const bool Pause=LayoutEditing || (Name!=TEXT("hud") && Name!=TEXT("dialogue"));
@@ -270,12 +260,6 @@ void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
     Super::NativeTick(G,Delta);
     if((RefreshDelay-=Delta)<=0) { RefreshDelay=.2f; Refresh(); }
     if(!Message.IsEmpty() && FPlatformTime::Seconds()>MessageUntil) { Message.Reset(); }
-}
-void UHearthwardScreenWidget::NativeDestruct()
-{
-    if(DialogueViewport.IsValid()) DialogueViewport->bDisableWorldRendering=false;
-    DialogueViewport.Reset();
-    Super::NativeDestruct();
 }
 FVector2D UHearthwardScreenWidget::CanvasPoint(const FGeometry& G,const FVector2D& Screen) const
 {

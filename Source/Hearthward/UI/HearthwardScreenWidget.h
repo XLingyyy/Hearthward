@@ -39,7 +39,6 @@ public:
     UFUNCTION(BlueprintCallable) bool CaptureUI(const FString& Name,int32 Width=1672,int32 Height=941);
     void InitializeScreen(class AHearthwardHUD* HUD);
     virtual void NativeTick(const FGeometry& Geometry,float Delta) override;
-    virtual void NativeDestruct() override;
     virtual int32 NativePaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool Enabled) const override;
     virtual FReply NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event) override;
@@ -50,7 +49,6 @@ public:
     virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual TSharedRef<SWidget> RebuildWidget() override;
 private:
-    TWeakObjectPtr<class UGameViewportClient> DialogueViewport;
     UPROPERTY() TObjectPtr<class AHearthwardHUD> OwnerHUD;
     UPROPERTY() TArray<TObjectPtr<class UTexture2D>> Textures;
     UPROPERTY() TObjectPtr<class UEditableTextBox> Draft;

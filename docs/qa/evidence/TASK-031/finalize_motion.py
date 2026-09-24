@@ -1,7 +1,7 @@
-"""Restore FBX bone units after IK export; derive gameplay action segments."""
+"""Use each character's own source clips; remove authored locomotion travel."""
 import unreal,json,traceback,math
 from pathlib import Path
-out=Path(unreal.Paths.project_saved_dir())/'HeroValidation/motion-final5.json'
+out=Path(unreal.Paths.project_saved_dir())/'HeroValidation/motion-own-inplace.json'
 report={'ok':False};tools=unreal.AssetToolsHelpers.get_asset_tools();fps=24
 
 def mul(a,b):
@@ -30,28 +30,41 @@ def publish(path,skeleton,poses,duration):
 
 def sample(seq,bones,t):return {b:unreal.AnimationLibrary.get_bone_pose_for_time(seq,b,t,False) for b in bones}
 
+def in_place(poses,parents,ref):
+ # Tripo puts forward travel on pelvis, not root. Work in component space so
+ # the FBX root's axis rotation and 100x units do not change the correction.
+ assert parents['pelvis']=='root'
+ start=points(poses[0],parents)['pelvis'];end=points(poses[-1],parents)['pelvis'];rest=points(ref,parents)['pelvis']
+ for i,pose in enumerate(poses):
+  alpha=i/(len(poses)-1)
+  delta=unreal.Quat(start.x-rest.x+(end.x-start.x)*alpha,start.y-rest.y+(end.y-start.y)*alpha,0,0)
+  root=pose['root'];q=root.rotation;s=root.scale3d
+  local=mul(mul(unreal.Quat(-q.x,-q.y,-q.z,q.w),delta),q)
+  hip=pose['pelvis'];v=hip.translation;hip.translation=unreal.Vector(v.x-local.x/s.x,v.y-local.y/s.y,v.z-local.z/s.z);pose['pelvis']=hip
+ return {'horizontal_travel_cm':math.hypot(end.x-start.x,end.y-start.y),
+         'initial_horizontal_offset_cm':math.hypot(start.x-rest.x,start.y-rest.y)}
+
 def run():
  for character in ['Hero','Brother']:
   folder='/Game/Characters/'+character+('/AnimationV2' if character=='Hero' else '/Animation')
   mesh=unreal.load_asset('/Game/Characters/'+character+'/UE5/SK_'+character);skel=mesh.get_editor_property('skeleton');reader=unreal.SkeletonModifier();assert reader.set_skeletal_mesh(mesh)
   bones=[str(x) for x in reader.get_all_bone_names()];parents={b:str(reader.get_parent_name(b)) for b in bones};ref={b:reader.get_bone_transform(b,False) for b in bones}
-  if character=='Hero':
-   for name in ['Idle','Walk','Run','Dig','Chop','Wait','Jump','Climb']:
-    path=folder+'/A_Hero_'+name;seq=unreal.load_asset(folder+'/Retarget/Baked/A_Baked_'+name);length=seq.get_play_length();n=round(length*fps)
-    if unreal.AnimationLibrary.get_bone_pose_for_time(seq,'root',0.,False).scale3d.x<2:
-     poses=[sample(seq,bones,length*i/n) for i in range(n+1)]
-     for pose in poses:
-      for b,t in pose.items():
-       s=reader.get_bone_transform(parents[b],True).scale3d if parents[b]!='None' else unreal.Vector(1,1,1);v=t.translation
-       t.translation=unreal.Vector(v.x/s.x,v.y/s.y,v.z/s.z);t.scale3d=ref[b].scale3d;pose[b]=t
-     publish(path,skel,poses,length)
+  corrections={}
+  for name in (['Idle','Walk','Run','Dig','Chop','Wait','Jump','Climb'] if character=='Hero' else ['Walk','Run']):
+   path=folder+'/A_'+character+'_'+name
+   source=(folder+'/SourceTripo/SK_Hero_SK_Hero_Skeleton_Anim'+name.lower() if character=='Hero'
+           else folder+'/SK_Brother_SK_Brother_Skeleton_Anim'+name.lower())
+   seq=unreal.load_asset(source);assert seq,source
+   length=seq.get_play_length();n=round(length*fps);poses=[sample(seq,bones,length*i/n) for i in range(n+1)]
+   if name in ['Walk','Run']:corrections[name]=in_place(poses,parents,ref)
+   publish(path,skel,poses,length)
   chop=unreal.load_asset(folder+'/A_'+character+'_Chop');length=chop.get_play_length();n=round(length*fps)
   curve=[points(sample(chop,bones,length*i/n),parents)['hand_r'].z for i in range(n+1)]
   peak=max(range(1,n//2),key=lambda i:curve[i]);end=min(range(peak+1,min(n,peak+fps*2)+1),key=lambda i:curve[i]);start=max(0,peak-fps//2)
   count=round(.9*fps)
   attack=[sample(chop,bones,length*(start+(end-start)*i/count)/n) for i in range(count+1)]
   publish(folder+'/A_'+character+'_Attack',skel,attack,.9)
-  report[character]={'attack_source_window':[length*start/n,length*end/n],'hand_z_range':[min(curve),max(curve)]}
+  report[character]={'attack_source_window':[length*start/n,length*end/n],'hand_z_range':[min(curve),max(curve)],'locomotion_corrections':corrections}
   if character=='Hero':
    jump=unreal.load_asset(folder+'/A_Hero_Jump');length=jump.get_play_length();n=round(length*fps);poses=[sample(jump,bones,length*i/n) for i in range(n+1)];hips=[points(p,parents)['pelvis'].z for p in poses]
    apex=max(range(n+1),key=lambda i:hips[i]);rest=points(ref,parents)['pelvis'].z

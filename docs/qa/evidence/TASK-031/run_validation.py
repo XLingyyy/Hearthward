@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[5]))
 from engine_adapters.ue5 import UEClient
 
 parser = argparse.ArgumentParser()
-parser.add_argument('mode', choices=['build', 'native', 'hero', 'brother'])
+parser.add_argument('mode', choices=['build', 'native', 'hero', 'brother', 'inplace', 'overlay'])
 parser.add_argument('--engine', default='G:/UnrealEngine/UE_5.8')
 parser.add_argument('--ai-bundle', default='G:/GameFactory/Hearthward/Runtime/LocalAI')
 args = parser.parse_args()
@@ -23,8 +23,10 @@ elif args.mode == 'native':
         report_dir=str(root/'Saved/Task031/native'), extra_args=['-NullRHI'], timeout=240)
 else:
     script, report = {
-        'hero': ('verify_hero_pie.py', 'Saved/HeroValidation/playtest4/verification.json'),
-        'brother': ('brother/verify_brother_pie.py', 'Saved/BrotherValidation/playtest3/result.json'),
+        'hero': ('verify_hero_pie.py', 'Saved/HeroValidation/playtest5/verification.json'),
+        'brother': ('brother/verify_brother_pie.py', 'Saved/BrotherValidation/playtest4/result.json'),
+        'inplace': ('verify_in_place.py', 'Saved/HeroValidation/inplace-after-final/result.json'),
+        'overlay': ('verify_scene_overlay.py', 'Saved/SceneOverlayValidation/result.json'),
     }[args.mode]
     report = root/report
     assert not report.exists(), f'Archive the previous run first: {report}'

@@ -9,7 +9,8 @@
   "issue_url": null,
   "branch": "codex/TASK-031-character-models",
   "source_refs": [
-    "2026-09-24 用户指定任务编号031：完成弟弟和主角新Tripo模型、骨骼、动作配置，验证后提交推送。"
+    "2026-09-24 用户指定任务编号031：完成弟弟和主角新Tripo模型、骨骼、动作配置，验证后提交推送。",
+    "2026-09-24 用户追加：伙伴对话和背包只保留交互UI，去除全屏背景贴图以显示游戏场景。"
   ],
   "dependencies": [
     "TASK-027",
@@ -35,7 +36,12 @@
     "docs/tasks/TASK-031.md",
     "docs/handoffs/TASK-031.md",
     "docs/qa/evidence/TASK-031/",
-    "docs/qa/evidence/TASK-029/internal-history/"
+    "docs/qa/evidence/TASK-029/internal-history/",
+    "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json"
   ],
   "forbidden_paths": [
     "Runtime/LocalAI/",
@@ -69,6 +75,7 @@
   "notes": [
     "旧AI内部031任务记录归档到TASK-029/internal-history/user-retest-*。",
     "Issue和独立Reviewer未登记，流程状态保持Blocked；按用户明确授权执行实现及推送。",
-    "实现完成：Editor构建、伙伴原生3/3、Python31/31、主角PIE26/26、弟弟自然地图22/22通过。详见031报告；任务分支提交推送，不合并main。"
+    "实现完成：Editor构建、伙伴原生3/3、Python31/31、主角PIE26/26、弟弟自然地图22/22通过。详见031报告；任务分支提交推送，不合并main。",
+    "用户复测位移回归已修复：主角改用自身新导出八段动作，双方Walk/Run去除骨盆前进趋势；连续移动6/6、主角26/26、弟弟22/22复测通过。"
   ]
 }
