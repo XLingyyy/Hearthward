@@ -2,7 +2,7 @@
 
 发行目标：[v0.1.0-demo.20260924](https://github.com/XLingyyy/Hearthward/releases/tag/v0.1.0-demo.20260924)。用户授权构建并公开发布 Windows 可玩 Demo，范围见 [SCOPE.md](SCOPE.md)。
 
-基线 main：`68e68d817c4d5a39bf43eb7f27863fc734d04aef`，分支 `codex/demo-release-20260924`。发行源码完整 SHA 记录于 Release 正文与随包 BUILD-INFO.json；不合并 main。UE 5.8.2 / Win64 Shipping / RTX 4060 Laptop 8 GB / Windows 本机验证。
+基线 main：`68e68d817c4d5a39bf43eb7f27863fc734d04aef`，分支 `codex/demo-release-20260924`。发行构建源码：`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，同时记录于 Release 正文与随包 BUILD-INFO.json；不合并 main。UE 5.8.2 / Win64 Shipping / RTX 4060 Laptop 8 GB / Windows 本机验证。
 
 ## 发行修复
 
@@ -19,7 +19,9 @@
 - 安装器：从完整 exe + 三个 bin 安装到独立目录成功，无需重启。
 - 仓库工具单测：31 项通过。
 - 仓库自检：已有 TASK-027 / TASK-028 缺 reviewer 与实际 Issue URL，共 4 项元数据错误，未改动或跳过这些检查。
-- 最终新用户配置及安装包启动复核：待完成。
+- 最终新用户配置：真实模型返回 10 份木材任务卡，NPC 多次采集交付完成 10/10；取出仓储木材，消耗 8 份建成工作台，再消耗 1 份制作 4 支箭（24 → 28），手动保存通过。
+- 最终安装版本：安装成功后按默认 GPU 入口参数启动（无强制窗口/分辨率参数）；继续游戏恢复工作台、已完成委托 10/10 与 28 支箭。2560×1600 无边框、中等/30 FPS 场景下 GPU 利用率抽样为 59%。
+- 证据：[工作台建造](workbench-built.png)、[箭矢制作](crafted-arrows.png)、[安装版存档恢复](installed-save-restored.png)。
 
 ## 复现
 
