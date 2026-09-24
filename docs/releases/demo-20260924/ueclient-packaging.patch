@@ -1,0 +1,69 @@
+--- a/engine_adapters/ue5/build/client.py
++++ b/engine_adapters/ue5/build/client.py
+@@ -186,3 +186,43 @@
+             ],
+             payload=payload,
+         ).to_dict()
++
++    def package(self, *, archive_dir: str | Path, configuration: str = "Shipping",
++                maps: tuple[str, ...] = (), extra_args: tuple[str, ...] = (),
++                log_path: str | Path, timeout: float | None = None,
++                dry_run: bool = False) -> dict[str, Any]:
++        """Build, cook, stage and archive a Windows distribution through UAT."""
++        project = self._config.project_file
++        engine = self._config.ue_root
++        if os.name != "nt" or engine is None or project is None or not project.is_file():
++            return UEOperationResult.failure("build.package", "Windows, ue_root and an existing project are required").to_dict()
++        uat = engine / "Engine/Build/BatchFiles/RunUAT.bat"
++        if not uat.is_file():
++            return UEOperationResult.failure("build.package", f"UAT not found: {uat}").to_dict()
++        archive = Path(archive_dir).resolve()
++        log = Path(log_path).resolve()
++        command = [str(uat), "BuildCookRun", f"-project={project}", "-noP4",
++                   "-platform=Win64", f"-clientconfig={configuration}", "-build", "-cook",
++                   "-stage", "-pak", "-iostore", "-archive", f"-archivedirectory={archive}",
++                   "-prereqs", "-utf8output", "-unattended", "-NoLiveCoding"]
++        if maps:
++            command.append("-map=" + "+".join(maps))
++        command.extend(extra_args)
++        payload = {"command": command, "archive_dir": str(archive), "log_path": str(log), "dry_run": dry_run}
++        if dry_run:
++            return UEOperationResult.success("build.package", payload=payload).to_dict()
++        archive.mkdir(parents=True, exist_ok=True)
++        log.parent.mkdir(parents=True, exist_ok=True)
++        try:
++            with log.open("w", encoding="utf-8") as output:
++                completed = subprocess.run(command, cwd=project.parent, stdout=output,
++                                           stderr=subprocess.STDOUT, timeout=timeout, check=False)
++            payload["returncode"] = completed.returncode
++            if completed.returncode != 0:
++                return UEOperationResult.failure("build.package", f"UAT failed: {completed.returncode}; see {log}", payload=payload).to_dict()
++            if not any(archive.rglob("*.exe")):
++                return UEOperationResult.failure("build.package", "UAT produced no archived executable", payload=payload).to_dict()
++        except Exception as exc:
++            return UEOperationResult.failure("build.package", f"{type(exc).__name__}: {exc}", payload=payload).to_dict()
++        return UEOperationResult.success("build.package", payload=payload,
++            artifacts=[{"type": "unreal_package", "path": str(archive), "state": "ready"}]).to_dict()
+--- a/engine_adapters/ue5/runtime/client.py
++++ b/engine_adapters/ue5/runtime/client.py
+@@ -150,3 +150,20 @@
+             "runtime.stop_editor",
+             payload={"process_id": process.pid},
+         ).to_dict()
++
++    def launch_packaged(self, executable: str | Path, *, extra_args: Sequence[str] = (),
++                        dry_run: bool = False) -> dict[str, Any]:
++        """Launch an archived game and track ownership for stop_editor."""
++        executable = Path(executable).resolve()
++        if not executable.is_file():
++            return UEOperationResult.failure("runtime.launch_packaged", f"Executable not found: {executable}").to_dict()
++        command = [str(executable), *map(str, extra_args)]
++        payload = {"command": command, "cwd": str(executable.parent), "dry_run": dry_run}
++        if not dry_run:
++            try:
++                process = subprocess.Popen(command, cwd=executable.parent)
++            except Exception as exc:
++                return UEOperationResult.failure("runtime.launch_packaged", f"{type(exc).__name__}: {exc}", payload=payload).to_dict()
++            self._processes[process.pid] = process
++            payload["process_id"] = process.pid
++        return UEOperationResult.success("runtime.launch_packaged", payload=payload).to_dict()
