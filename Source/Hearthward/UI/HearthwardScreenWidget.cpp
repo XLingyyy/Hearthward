@@ -104,7 +104,7 @@ void UHearthwardScreenWidget::LoadTheme()
         }
         Brushes.Add(FString(*Entry.Key),B);
     }
-    checkf(ReloadLayout(),TEXT("Cannot load Hearthward UI layout"));
+    if(!ReloadLayout()) UE_LOG(LogTemp,Fatal,TEXT("Cannot load Hearthward UI layout"));
 }
 FSlateBrush* UHearthwardScreenWidget::Brush(const FString& Name) const
 { return const_cast<FSlateBrush*>(Brushes.Find(Name)); }

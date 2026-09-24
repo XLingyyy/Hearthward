@@ -15,7 +15,8 @@ TSharedPtr<FJsonObject> PolicyData()
     if(!Data)
     {
         FString Text; FFileHelper::LoadFileToString(Text,*(FPaths::ProjectDir()/TEXT("config/npc-agent.policy.json")));
-        checkf(FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text),Data) && Data,TEXT("Missing NPC policy"));
+        if(!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text),Data) || !Data)
+            UE_LOG(LogTemp,Fatal,TEXT("Missing NPC policy"));
     }
     return Data;
 }
