@@ -63,7 +63,7 @@ def context(root: Path, task_id: str) -> tuple[str, int]:
     lines += [
         "", "## Required reads (not automatically considered read)",
         "AGENTS.md -> docs/START_HERE.md -> docs/PROJECT_STATE.md -> task -> task-branch handoff -> contracts/design -> actual code",
-        "Confirm current Issue assignee and approved scope with the coordinator; inspect actual LFS locks using authorized tools.",
+        "Confirm task ownership and approved scope with the coordinator; inspect any linked Issue and actual LFS locks using authorized tools.",
         "Do not display .env, credential files or private raw model conversations in the receipt.",
     ]
     return "\n".join(lines), exit_code

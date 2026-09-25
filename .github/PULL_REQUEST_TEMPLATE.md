@@ -1,6 +1,6 @@
 ## 任务与来源
-Refs（填真实Issue，不自动Closes）：
-内部TASK：
+内部TASK（必填）：
+Refs（可选，填真实Issue，不自动Closes）：
 GDD / Q / R / 已批准决定：
 
 ## 改了什么／明确没改什么
@@ -29,4 +29,4 @@ UE编译、PIE、打包、真实模型分别说明；零测试或无法运行不
 功能审查人：
 涉及设计／技术／共享资产时的Owner：
 
-合并后先记Integrated；在合并SHA验收为Verified后再由负责人关闭Issue并释放锁。
+合并后先记Integrated；在合并SHA验收为Verified后由负责人更新任务交接并释放锁，若有Issue再同步关闭。

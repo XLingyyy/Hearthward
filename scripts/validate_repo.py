@@ -18,6 +18,7 @@ from urllib.parse import unquote, urlsplit
 TASK_ID = re.compile(r"TASK-\d{3,}$")
 STATES = {"Backlog", "Ready", "Active", "Review", "Integrated", "Verified", "Done", "Blocked"}
 ASSIGNED_STATES = {"Ready", "Active", "Review", "Integrated", "Verified", "Done"}
+REVIEW_STATES = {"Review", "Integrated", "Verified", "Done"}
 SKIP_DIRS = {".git", ".venv", "venv", "node_modules", "__pycache__", "Binaries", "Intermediate", "Saved", "DerivedDataCache"}
 REQUIRED = (
     "README.md", "WORKFLOW.md", "AGENTS.md", "CONTRIBUTING.md", ".gitattributes", ".gitignore",
@@ -142,18 +143,21 @@ def validate_task(data: dict, root: Path, task_ids: set[str]) -> list[str]:
             if not isinstance(data["permissions"].get(permission), str) or not data["permissions"][permission]:
                 errors.append(prefix + f"missing permission entry: {permission}")
     if isinstance(data.get("status"), str) and data.get("status") in ASSIGNED_STATES:
-        for key in ("owner", "reviewer", "branch"):
+        for key in ("owner", "branch"):
             if not substantive(data.get(key)):
                 errors.append(prefix + f"{data.get('status')} requires {key}")
-        if data.get("owner") == data.get("reviewer"):
-            errors.append(prefix + "owner and independent reviewer must differ")
-        issue = data.get("issue_url")
-        if not isinstance(issue, str) or not re.match(r"https://[^/]+/[^/]+/[^/]+/issues/\d+$", issue):
-            errors.append(prefix + "assigned task requires an actual issue URL")
+        if data["status"] in REVIEW_STATES:
+            if not substantive(data.get("reviewer")):
+                errors.append(prefix + f"{data['status']} requires reviewer")
+            elif data.get("owner") == data.get("reviewer"):
+                errors.append(prefix + "owner and independent reviewer must differ")
         if isinstance(data.get("branch"), str) and data.get("branch") in {"main", "master"}:
             errors.append(prefix + "task branch cannot be main/master")
         if data.get("prototype_only") and not substantive(data.get("prototype_approval")):
             errors.append(prefix + "prototype task requires explicit approval reference")
+    issue = data.get("issue_url")
+    if issue is not None and (not isinstance(issue, str) or not re.fullmatch(r"https://[^/]+/[^/]+/[^/]+/issues/\d+", issue)):
+        errors.append(prefix + "issue_url must be a real Issue URL when provided")
     return errors
 
 

@@ -71,13 +71,26 @@ class DocumentTests(unittest.TestCase):
         self.assertTrue(any("owner" in e for e in errors))
         self.assertTrue(any("prototype" in e for e in errors))
 
-    def test_valid_assigned_task_has_independent_review(self):
+    def test_active_task_does_not_require_issue_or_reviewer(self):
         task = sample_task()
-        task.update(status="Ready", owner="developer-a", reviewer="reviewer-b",
-                    branch="task/TASK-100", issue_url="https://github.com/example/test/issues/1")
+        task.update(status="Active", owner="developer-a", branch="task/TASK-100")
         self.assertEqual(checks.validate_task(task, self.root, {"TASK-100"}), [])
+
+    def test_review_requires_independent_reviewer(self):
+        task = sample_task()
+        task.update(status="Review", owner="developer-a", branch="task/TASK-100")
+        self.assertTrue(any("requires reviewer" in e for e in checks.validate_task(task, self.root, {"TASK-100"})))
         task["reviewer"] = task["owner"]
         self.assertTrue(any("independent" in e for e in checks.validate_task(task, self.root, {"TASK-100"})))
+        task["reviewer"] = "reviewer-b"
+        self.assertEqual(checks.validate_task(task, self.root, {"TASK-100"}), [])
+
+    def test_issue_url_is_optional_but_validated_when_present(self):
+        task = sample_task()
+        task["issue_url"] = "https://github.com/example/test/issues/1"
+        self.assertEqual(checks.validate_task(task, self.root, {"TASK-100"}), [])
+        task["issue_url"] = "https://github.com/example/test/issues/not-a-number"
+        self.assertTrue(any("issue_url" in e for e in checks.validate_task(task, self.root, {"TASK-100"})))
 
     def test_malformed_fields_are_errors_not_crashes(self):
         task = sample_task()
