@@ -1,64 +1,18 @@
 # 最短上手路径
 
-## 当前本地准备阶段
+核对日期：2026-09-25。当前审计主干：`origin/main@ee3f4c2eede9f856c4589fd4b85b1b05c82a1b6b`。Windows Demo 已发布；其受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，与主干 SHA 分开看。[项目状态](PROJECT_STATE.md)和[TASK-041 账本](planning/TASK-041-baseline-ledger.md)记录实现、集成、验证及待办；[发行报告](releases/demo-20260924/REPORT.md)记录 Shipping 包和本机安装范围。
 
-先看 [TASK-000 交接](handoffs/TASK-000.md)与[首个工程任务 TASK-003](tasks/TASK-003.md)。
-用户已授权阅读 GDD v0.3，并提交推送工作流启动基线；先前暂不读设计的限制已解除。
-根 WORKFLOW.md 是工作流维护入口，docs 下中文工作流保留为交付快照。
-本次按 WORKFLOW 第20.1节为原空仓库建立初始 main；后续改动使用任务分支与PR。
-TASK-003 已完成本地实现和运行验证，见 [工程交接](handoffs/TASK-003.md)；流程因 Issue／独立评审缺项保持 Blocked。
-[TASK-004](tasks/TASK-004.md) 为 UE 基础资产准备，Backlog；已有77个自然素材源文件入库，UE适配和整单验收未完成，见 [资源汇总](../resourceSummary.md)。
+## 先看游戏
 
-远端 main 为 `97af300`（TASK-028 已通过 PR #38 合入）；本轮分支 `codex/integrated-latest-20260923` 已引入该主干，并复验 TASK-029/TASK-042 与 TASK-028/030 的组合，见 [最新主干报告](qa/evidence/TASK-029/main-task028-integration-20260924/REPORT.md)。独立 PR 评审和 main 合并尚未完成。自然地图工作以 [TASK-026](tasks/TASK-026.md) 为准：UE 5.8.2 下的 4.032 km World Partition 地图已接入 Bootstrap 新游戏/存档/继续游戏，新营地与局部树石实例已落地；完整路线、流送、性能和 Owner 视觉验收仍未完成，详见[营地接入记录](world/TASK-026/CAMP_INTEGRATION.md)。
+- [README](../README.md#运行)：从 `L_Bootstrap` 的标题页进入自然营地，采集、委托、仓储、建造、制作和存读档的当前操作入口。
+- 自然图有地图 `M`、日志 `J` 页面入口，尚无正式非营地地点、四区敌人和完整主支线。开发场景内容与自然地图内容分开看。
+- 4032 m World Partition 底座、新营地和局部自然物件已接入；全路线通行、流送、性能与 Owner 视觉仍见 [TASK-026 交接](handoffs/TASK-026.md)。AI NPC 交付口径见 [TASK-029](tasks/TASK-029.md)，Demo 资源与家具见 [TASK-030](tasks/TASK-030.md)。
 
-AI NPC vNext 最终统一按 **TASK-029 AI NPC 完整交付** 作为对外任务口径。集成分支包含 world-authority safety、deterministic executor、suggestions、directives/combat、recovery、belief、initiative、episode、coordination、routine、componentization、bounded context、真实 Qwen guardrail、Save migration 与自然营地伙伴/有限资源/仓储/制作/兼容旧档。最新 TASK-028 主干组合的构建、Python 31/31、native 43/43、自然 Demo 70/70、无授物路线 51/51 和房屋/石骨斧隔离路线 49/49 已通过；repository validator 仍有 canonical TASK-027 与 TASK-028 各两项 reviewer/Issue URL 流程缺失。开发与验收状态优先看 [TASK-029 交接](handoffs/TASK-029.md) 和 [最新主干报告](qa/evidence/TASK-029/main-task028-integration-20260924/REPORT.md)。
-[TASK-005](tasks/TASK-005.md) 正常运行世界时钟已提交推送。
-[TASK-006](tasks/TASK-006.md) 五秒持续动作基础已提交推送。
-[TASK-007](tasks/TASK-007.md) 实时动作HUD已提交推送。
-[TASK-008](tasks/TASK-008.md) 个人背包基础已提交推送。
-[TASK-009](tasks/TASK-009.md) 背包查看界面与默认暂停已提交推送。
-[TASK-010](tasks/TASK-010.md) 共享仓储与真实转移已提交推送。
-[TASK-011](tasks/TASK-011.md) 距离交互与五秒动作已提交推送。
-[TASK-012](tasks/TASK-012.md) 伙伴安全委托与多趟交付已提交推送。
-[TASK-013](tasks/TASK-013.md) 接入本地Qwen3.5 4B，运行库与GGUF放入项目，由UE启动；轻量规则/RAG/可知状态过滤后做一次生成，仍通过世界执行器校验。模型版本见 `config/local-ai.lock.json`，验证状态见 [TASK-013交接](handoffs/TASK-013.md)。
-用户批准当前设计原件同步修订，见 [DSGN-001](design/DSGN-001-local-inference.md)。原013存档范围由TASK-016继续实现；TASK-004继续由用户安排。
+## 开始一项开发任务
 
-## 新成员第一次
+1. 读根 [AGENTS](../AGENTS.md) 和 [WORKFLOW](../WORKFLOW.md)；实际工作区以用户指定目录为准。Hearthward 是独立 Git 仓库，上层 GameFactory 是工具仓库。
+2. 读本页、[PROJECT_STATE](PROJECT_STATE.md)、当前 `docs/tasks/TASK-xxx.json` 和该任务分支的 `docs/handoffs/TASK-xxx.md`；运行 `python scripts/agent_context.py --task TASK-xxx`。
+3. 核对目录、分支、HEAD、未提交改动、真实 Issue／Owner／Reviewer、资产锁、允许路径和证据对应的源码。无法核实的项目标未知，不将旧任务的提交／推送权限转给新任务。
+4. 按任务来源读取最小相关代码、契约与 [CURRENT](design/CURRENT.md)；未定规则在 [OPEN_QUESTIONS](design/OPEN_QUESTIONS.md)。读实现后再修改；定向验证，完成后同步 README 和本任务交接。
 
-读根 [WORKFLOW](../WORKFLOW.md) 的开工、隔离、PR与安全章节；看 [ENVIRONMENT](ENVIRONMENT.md)、
-[OWNERSHIP](OWNERSHIP.md)；由集成人安排 [启动清单](planning/BOOTSTRAP.md)。
-不要将文档存在误读为GitHub设置、UE编译或真实模型已经完成。
-
-## 每个新开发 Agent 会话
-
-1. 根 [AGENTS](../AGENTS.md)。
-2. [PROJECT_STATE](PROJECT_STATE.md)，查看当前基线和已验证状态。
-3. 指定 `docs/tasks/TASK-xxx.json`，从真实Issue核对最新归属。
-4. **该任务分支**的交接 `docs/handoffs/TASK-xxx.md`；不能只在main找未合并任务的最新工作。
-5. 相关契约、设计来源和允许路径内的实际代码；不全量读所有历史。
-6. `python scripts/agent_context.py --task TASK-xxx`，只读回执后再写入。
-
-缺任一步所需信息，先说缺什么，不靠自动记忆填补。
-
-## 原件与检索
-
-[当前设计](design/CURRENT.md)给出摘要和来源；[R项](design/OPEN_QUESTIONS.md)列出所有未定点。
-当前Word位于docs根目录；归档和机械提取文保留历史内容，按章／Q号查阅时同时核对DSGN-001，不能用归档覆盖已批准修订。
-
-[TASK-014](tasks/TASK-014.md)建立独立灰盒验证场，地图 /Game/Hearthward/Tests/Graybox/L_GrayboxValidation；现有玩法复用，测试尺寸不转为正式设计。用户授权实现、提交、推送，验证和克隆结果见[014交接](handoffs/TASK-014.md)。
-
-[TASK-015](tasks/TASK-015.md)提供原生伙伴自由输入、模型思考/台词和真实委托进度；临时T键打开，Enter发送，Esc关闭。仍需开发命令生成独立伙伴夹具；不自动添加到地图。用户授权实现和提交推送，证据见[015交接](handoffs/TASK-015.md)。
-
-[TASK-016](tasks/TASK-016.md)接入现有伙伴夹具的世界/库存/知识快照与全局50点原型档池；开发入口和验证边界见[016交接](handoffs/TASK-016.md)。危险检测、正式初始节点及完整世界模块仍待后续接入。
-
-[TASK-017](tasks/TASK-017.md)由用户授权按设计自行拆解为存档管理/退出确认UI。F6打开，复用016快照；实现与验证已完成，已按授权提交推送任务分支，见[017交接](handoffs/TASK-017.md)。
-
-[TASK-018](tasks/TASK-018.md)：伙伴夹具按E采集木材/营地入库，复用背包、交互和存档；用户授权自行拆解、实现及提交推送，见[018交接](handoffs/TASK-018.md)。
-
-[TASK-019](tasks/TASK-019.md)：营地仓储数量选择及双向存取；用户授权自行实现并提交推送，见[019交接](handoffs/TASK-019.md)。
-
-已验收[TASK-020](tasks/TASK-020.md)：九页参考UI与缺失玩法；新入口为标题页“新游戏”，详细操作和当前限制以根README与[020交接](handoffs/TASK-020.md)为准。
-
-TASK-021伙伴原生导航已提交推送，见[021交接](handoffs/TASK-021.md)。[TASK-022](tasks/TASK-022.md)自由建造已提交推送，见[022交接](handoffs/TASK-022.md)。[TASK-023](tasks/TASK-023.md)即时制作已提交推送，见[023交接](handoffs/TASK-023.md)。当前[TASK-024](tasks/TASK-024.md)接入工作台装备维修与耐久回档，用户授权自主提交推送，见[024交接](handoffs/TASK-024.md)。
-
-[TASK-025](tasks/TASK-025.md) 增强版 v2 已通过 PR #23 合并 main `851d60e`；[TASK-026](tasks/TASK-026.md) 已通过 PR #25 合并 main `4114556`。AI NPC 研发历史曾使用 027～040 等内部标签，但 canonical TASK-027 现为人物动作、TASK-028 为 3D 资产；Owner 指定 AI 最终只按 **TASK-029** 完整交付。本轮统一分支 `codex/integrated-latest-20260923` 已完成本地复验；旧 PR #34 不代表新分支，Agent 不直接 merge main。
+TASK-041 是“当前基线、编号与验收账本”，来源规划稿写为 TASK-043；后续规划编号按减 2 解释。2026-09-23 证据中的 TASK-041/042 是历史集成标签，属于 TASK-029 的来源，不覆盖本次 canonical TASK-041。[映射表](planning/TASK-041-baseline-ledger.md#2-编号映射)保留旧证据位置。任务 JSON、Issue、Reviewer 和主干测试结果仍须各自核实。
