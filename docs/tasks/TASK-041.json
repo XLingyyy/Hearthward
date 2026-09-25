@@ -10,6 +10,7 @@
   "branch": "codex/TASK-041-baseline",
   "source_refs": [
     "2026-09-25 用户指定从实际 TASK-041 开始执行，并明确规划稿 TASK-043 对应实际 TASK-041",
+    "2026-09-25 用户确认 GitHub Issue 不再作为必要流程，并要求处理仓库自检错误",
     "本地输入 docs/Hearthward_TASK-043-076.md 第 94—114 行；原稿为未登记的 Backlog 草案",
     "本地输入 docs/Hearthward_Audit_2026-09-24.md 第七节；审计基线 main@ee3f4c2eede9f856c4589fd4b85b1b05c82a1b6b",
     "docs/releases/demo-20260924/REPORT.md"
@@ -18,14 +19,22 @@
   "blocked_by": [],
   "contracts": [],
   "allowed_paths": [
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    "AGENTS.md",
+    "CONTRIBUTING.md",
     "README.md",
     "WORKFLOW.md",
     "docs/PROJECT_STATE.md",
     "docs/START_HERE.md",
+    "docs/templates/handoff.md",
+    "docs/templates/task.json",
     "docs/planning/TASK-041-baseline-ledger.md",
     "docs/tasks/TASK-041.json",
     "docs/tasks/TASK-041.md",
-    "docs/handoffs/TASK-041.md"
+    "docs/handoffs/TASK-041.md",
+    "scripts/agent_context.py",
+    "scripts/validate_repo.py",
+    "scripts/tests/test_repo_tools.py"
   ],
   "forbidden_paths": [
     "Source/",
@@ -41,7 +50,8 @@
     "建立 canonical 编号、AI 历史标签和规划稿偏移映射，保留旧证据路径",
     "将 TASK-004、026—031 的实现、集成、验证、流程、Owner 体验分栏列明",
     "修正已被新证据覆盖的未合并、未打包及自然地图和陈设口径",
-    "真实 Issue、独立评审、资产锁与当前主干未重跑的测试按实际状态记录"
+    "Issue 可选；独立评审、资产锁与当前主干未重跑的测试按实际状态记录",
+    "仓库自检接受 Ready/Active 阶段未分配 Reviewer 与无 Issue 的任务，但保留 Review 阶段独立评审校验"
   ],
   "non_goals": [
     "不修改玩法、资产、设计规则或历史失败记录",
@@ -62,7 +72,8 @@
     "规划稿 TASK-043 映射到本 canonical TASK-041；原稿后续编号按减 2 解释，尚未逐项登记。",
     "2026-09-23 集成证据中的 TASK-041/042 是历史工作树标签，不是本 canonical TASK-041；其来源归入 TASK-029。",
     "文档在独立工作树完成；Blocked 只表示流程字段未齐，不否定已完成的文档核对。",
-    "2026-09-25 用户指定 Owner 与 Reviewer 均为本人 XLingyyy；该同人指定不构成仓库工作流要求的独立评审，真实 Issue 仍未登记。",
+    "2026-09-25 用户指定 Owner 与 Reviewer 均为本人 XLingyyy；该同人指定不构成仓库工作流要求的独立评审。Issue 现在可选，未登记不构成阻塞。",
+    "TASK-027/028 的 Reviewer 保持未分配；校验器改为正式 Review 阶段才要求独立 Reviewer，不伪造旧任务归属。",
     "2026-09-25 用户要求成果推送后清理本任务多余工作树，并将规则写入 WORKFLOW.md。"
   ]
 }
