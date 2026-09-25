@@ -26,7 +26,7 @@
 1. 先只读：`docs/START_HERE.md`、`docs/PROJECT_STATE.md`、当前 `docs/tasks/TASK-xxx.json`。
 2. 运行 `python scripts/agent_context.py --task TASK-xxx`。
 3. 读取本任务分支的 `docs/handoffs/TASK-xxx.md`、相关契约和R项；不要每次加载整份归档。
-4. 核对真实工作目录、分支、HEAD、未知改动、Issue归属与资产锁；无远端能力明确说明。
+4. 核对真实工作目录、分支、HEAD、未知改动、任务归属、可选Issue与资产锁；无远端能力明确说明。
 5. 返回简短接手回执：目标、来源、允许路径、当前证据、阻塞、下一步。
 6. 无任务、在main、未知改动或写权限未确认时，只读调查，不自动清理或扩权。
 

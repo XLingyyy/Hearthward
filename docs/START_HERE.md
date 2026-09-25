@@ -12,7 +12,7 @@
 
 1. 读根 [AGENTS](../AGENTS.md) 和 [WORKFLOW](../WORKFLOW.md)；实际工作区以用户指定目录为准。Hearthward 是独立 Git 仓库，上层 GameFactory 是工具仓库。
 2. 读本页、[PROJECT_STATE](PROJECT_STATE.md)、当前 `docs/tasks/TASK-xxx.json` 和该任务分支的 `docs/handoffs/TASK-xxx.md`；运行 `python scripts/agent_context.py --task TASK-xxx`。
-3. 核对目录、分支、HEAD、未提交改动、真实 Issue／Owner／Reviewer、资产锁、允许路径和证据对应的源码。无法核实的项目标未知，不将旧任务的提交／推送权限转给新任务。
+3. 核对目录、分支、HEAD、未提交改动、Owner、审查安排、可选 Issue、资产锁、允许路径和证据对应的源码。无法核实的项目标未知，不将旧任务的提交／推送权限转给新任务。
 4. 按任务来源读取最小相关代码、契约与 [CURRENT](design/CURRENT.md)；未定规则在 [OPEN_QUESTIONS](design/OPEN_QUESTIONS.md)。读实现后再修改；定向验证，完成后同步 README 和本任务交接。
 
-TASK-041 是“当前基线、编号与验收账本”，来源规划稿写为 TASK-043；后续规划编号按减 2 解释。2026-09-23 证据中的 TASK-041/042 是历史集成标签，属于 TASK-029 的来源，不覆盖本次 canonical TASK-041。[映射表](planning/TASK-041-baseline-ledger.md#2-编号映射)保留旧证据位置。任务 JSON、Issue、Reviewer 和主干测试结果仍须各自核实。
+TASK-041 是“当前基线、编号与验收账本”，来源规划稿写为 TASK-043；后续规划编号按减 2 解释。2026-09-23 证据中的 TASK-041/042 是历史集成标签，属于 TASK-029 的来源，不覆盖本次 canonical TASK-041。[映射表](planning/TASK-041-baseline-ledger.md#2-编号映射)保留旧证据位置。任务 JSON、审查安排、可选 Issue 和主干测试结果仍须各自核实。

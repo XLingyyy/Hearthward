@@ -1,6 +1,6 @@
 # 成员上手
 
-先阅读 [START_HERE](docs/START_HERE.md) 和 [WORKFLOW](WORKFLOW.md)。确认真实Issue归属，
+先阅读 [START_HERE](docs/START_HERE.md) 和 [WORKFLOW](WORKFLOW.md)。确认任务归属，Issue可选，
 同意不写main、不共用工作目录、不无锁修改UE资产、不把Agent猜测写成设计定案。
 
 环境尚未锁定时参与TASK-000；不要自行安装“最新UE”并重新保存所有资产。
