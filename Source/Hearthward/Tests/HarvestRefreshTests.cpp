@@ -6,6 +6,7 @@
 #include "GameFramework/WorldSettings.h"
 #include "GameFramework/PlayerState.h"
 #include "Engine/World.h"
+#include "Engine/Engine.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -14,6 +15,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHarvestRefreshTest, "Hearthward.Time.HarvestRe
 bool FHarvestRefreshTest::RunTest(const FString& Parameters)
 {
     UWorld* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,false);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
     auto* Harvest=World->GetSubsystem<UHearthwardHarvestSubsystem>();
     auto* Clock=World->GetSubsystem<UHearthwardWorldClockSubsystem>();
     auto* Player=World->SpawnActor<AActor>();
@@ -75,6 +77,7 @@ bool FHarvestRefreshTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Full inventory does not consume fresh resource"),Target->CompleteInteraction(Player).Contains(TEXT("容量不足")));
     TestEqual(TEXT("Failed inventory transaction keeps tree whole"),Harvest->Remaining(Key,12),12);
     TestTrue(TEXT("Failed inventory transaction schedules nothing"),Harvest->RefreshSnapshot().IsEmpty());
+    GEngine->DestroyWorldContext(World);
     World->DestroyWorld(false);
     return true;
 }

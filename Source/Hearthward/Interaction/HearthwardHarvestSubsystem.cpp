@@ -60,15 +60,21 @@ void UHearthwardHarvestSubsystem::RefreshDue(double CalendarMinutes)
 {
     if(Settling || GetWorld()->IsPaused()
         || GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring()) return;
+    TArray<const UBoxComponent*> Footprints;
+    bool IndexedBuildings=false;
     for(auto It=Refreshes.CreateIterator();It;++It)
     {
         if(CalendarMinutes<It.Value().DueAt) continue;
-        bool Occupied=false;
-        for(TActorIterator<AActor> Actor(GetWorld());Actor;++Actor)
+        if(!IndexedBuildings)
         {
-            if(!Actor->ActorHasTag(TEXT("Hearthward.Building.Completed"))) continue;
-            const auto* Box=Cast<UBoxComponent>(Actor->GetRootComponent());
-            if(!Box) continue;
+            for(TActorIterator<AActor> Actor(GetWorld());Actor;++Actor)
+                if(Actor->ActorHasTag(TEXT("Hearthward.Building.Completed")))
+                    if(const auto* Box=Cast<UBoxComponent>(Actor->GetRootComponent())) Footprints.Add(Box);
+            IndexedBuildings=true;
+        }
+        bool Occupied=false;
+        for(const auto* Box:Footprints)
+        {
             const FVector Local=Box->GetComponentTransform().InverseTransformPosition(It.Value().Position);
             const FVector Half=Box->GetUnscaledBoxExtent();
             // Building footprint, including its ground plane; height does not allow trees inside floors.
