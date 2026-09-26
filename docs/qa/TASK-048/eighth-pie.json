@@ -1,0 +1,2192 @@
+{
+  "ok": false,
+  "checks": {
+    "enable saves": true,
+    "new progress": true,
+    "eight wildlife species": true,
+    "twelve finite starter livestock": true,
+    "four finite fishing spots": true,
+    "start harvest": true,
+    "settle harvest": true,
+    "bare hand restart wood": true,
+    "shared source debited": true,
+    "grant seed_greens1": true,
+    "start plant": true,
+    "settle plant": true,
+    "start water": true,
+    "settle water": true,
+    "start fertilize": true,
+    "settle fertilize": true,
+    "shared care flags": true,
+    "grant wild_food30": true,
+    "calendar fixture advances W 0": true,
+    "calendar fixture advances W 1": true,
+    "calendar fixture advances W 2": true,
+    "calendar fixture advances W 3": true,
+    "calendar fixture advances W 4": true,
+    "calendar fixture advances W 5": true,
+    "care harvest six and returns seed": true,
+    "grant fishing_rod1": true,
+    "grant bait5": true,
+    "start fishing UI": true,
+    "save blocked while fishing": true,
+    "sleep blocked while fishing": true,
+    "bait consumed after cast": true,
+    "cancel keeps stock": true,
+    "restart fishing": true,
+    "fishing succeeds with hold release": true,
+    "one fish one source debit": true,
+    "only success wears rod": true,
+    "grant wood8": true,
+    "deposit fixture wood": true,
+    "grant stone8": true,
+    "deposit fixture stone": true,
+    "grant stone2": true,
+    "grant rope8": true,
+    "deposit fixture rope": true,
+    "grant rope4": true,
+    "select fixture workbench": true,
+    "build workbench prerequisite": true,
+    "rescue prerequisite": true,
+    "camp tier two": true,
+    "start build_pen": true,
+    "settle build_pen": true,
+    "pen exact paid ledger": true,
+    "grant feed12": true,
+    "grant rope2": true,
+    "start capture": true,
+    "settle capture": true,
+    "reserved capture paid once 0": true,
+    "animal walked into pen 0": true,
+    "reserved capture paid once 1": true,
+    "animal walked into pen 1": true,
+    "start deposit_feed": true,
+    "settle deposit_feed": true,
+    "feeder deposit independent of rations": false
+  },
+  "method": "Actual PIE/UI/component actions; explicit flat-floor and inventory fixtures; natural terrain tested separately",
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/TASK-048/docs/qa/TASK-048/verify_nature_pie.py\", line 156, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/TASK-048/docs/qa/TASK-048/verify_nature_pie.py\", line 125, in run\n    check('feeder deposit independent of rations',state()['pens'][0]['feed']==10)\n  File \"G:/GameFactory/Hearthward/.agent-local/TASK-048/docs/qa/TASK-048/verify_nature_pie.py\", line 12, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: feeder deposit independent of rations\n",
+  "state": {
+    "version": 1,
+    "seed": -282751181,
+    "calendar": 2958.044993534684,
+    "camps": [
+      "camp"
+    ],
+    "points": [
+      {
+        "id": "6827DAC64BB6FCF3889A0CB561DEADE7",
+        "key": "camp_048_tree0",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": 2900,
+          "y": 200,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "C6F6A8B44550A7C5E22FBE984B380F0B",
+        "key": "camp_048_tree1",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": -2159.5799132762395,
+          "y": 2361.5694837000483,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "07A7458F43E9B438261BAE953AB6CFE7",
+        "key": "camp_048_tree2",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": 523.4734879698854,
+          "y": -3485.832999822509,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "19877E184A67CABCD0F623936C17BA85",
+        "key": "camp_048_tree3",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": 2755.445513252291,
+          "y": 3533.12139424875,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "D915A3CD486A7295E42A128054F958C5",
+        "key": "camp_048_tree4",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": -1966.370019821375,
+          "y": -183.19830012558128,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "6FC0AC4149BB0616777484AEAB47D7EF",
+        "key": "camp_048_tree5",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": 2478.137631417499,
+          "y": -1249.1683588594765,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "C3E91346433144FFB1727D896AA3DD78",
+        "key": "camp_048_tree6",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": -630.7295161174542,
+          "y": 3290.2893830596613,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "7898D8914202F05F49B255A7E7F7B243",
+        "key": "camp_048_tree7",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": -1505.3612717306692,
+          "y": -3083.556445819251,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "73C848D34402BC13D77B3AB4419A3C42",
+        "key": "camp_048_tree8",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": 4145.1520924296,
+          "y": 1640.7549991578535,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "7B8A916C47CD847C24DDF2B4D303B8D6",
+        "key": "camp_048_tree9",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": -1833.5584879409175,
+          "y": 1039.428303146522,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "113A7B0049ABCF21609C7ABA094A4EFA",
+        "key": "camp_048_tree10",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": 1344.378568652246,
+          "y": -2245.4851648720824,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "FE71B45E4DBCFF1BEF27F4B8AEA609B3",
+        "key": "camp_048_tree11",
+        "kind": "resource",
+        "definition": "tree",
+        "position": {
+          "x": 1157.716082019639,
+          "y": 3253.322764831938,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "2C0F9B3E4FF3183AE18666901826A018",
+        "key": "camp_048_stone_outcrop0",
+        "kind": "resource",
+        "definition": "stone_outcrop",
+        "position": {
+          "x": -3001.2865904081377,
+          "y": -1655.199225439964,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "444A3E7043506630A68AAFA5FA5A4C3E",
+        "key": "camp_048_stone_outcrop1",
+        "kind": "resource",
+        "definition": "stone_outcrop",
+        "position": {
+          "x": 4302.035555954643,
+          "y": -701.8338525936371,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "399477FF4EF695D8794834A99840CF2B",
+        "key": "camp_048_stone_outcrop2",
+        "kind": "resource",
+        "definition": "stone_outcrop",
+        "position": {
+          "x": -1065.2789557835706,
+          "y": 1999.741415884859,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "06BF430F47F10B7B5AA2E990BD4A016A",
+        "key": "camp_048_stone_outcrop3",
+        "kind": "resource",
+        "definition": "stone_outcrop",
+        "position": {
+          "x": -146.98808931795685,
+          "y": -2477.6107383022413,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "A19CB4F94C12549C73AF218A8176A702",
+        "key": "camp_048_stone_outcrop4",
+        "kind": "resource",
+        "definition": "stone_outcrop",
+        "position": {
+          "x": 2646.884365497199,
+          "y": 2262.2213513309794,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "5724E8A746BBAF2DDE06B5B636260B8F",
+        "key": "camp_048_stone_outcrop5",
+        "kind": "resource",
+        "definition": "stone_outcrop",
+        "position": {
+          "x": -3496.8398027589624,
+          "y": 352.890394521944,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "D7E207A7403518DA62C2E3B7B2757B27",
+        "key": "camp_048_ore_vein0",
+        "kind": "resource",
+        "definition": "ore_vein",
+        "position": {
+          "x": 11541.223959514384,
+          "y": -11086.125956241003,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "6F5CB5174C93FCC3E4871BB5B129BAE7",
+        "key": "camp_048_ore_vein1",
+        "kind": "resource",
+        "definition": "ore_vein",
+        "position": {
+          "x": -723.7417150905309,
+          "y": 20178.656142088275,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "3EAB29E5410A52C9A60985A49705A55C",
+        "key": "camp_048_ore_vein2",
+        "kind": "resource",
+        "definition": "ore_vein",
+        "position": {
+          "x": -15177.104142284355,
+          "y": -18226.73786098183,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "C0BB7FD64A3D404C8A4244A927B4E380",
+        "key": "camp_048_ore_vein3",
+        "kind": "resource",
+        "definition": "ore_vein",
+        "position": {
+          "x": 27949.96156877644,
+          "y": 3933.581783144792,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "C1A31D514489AD6D685061BBE8D1F6EB",
+        "key": "camp_048_rich_ore_vein0",
+        "kind": "resource",
+        "definition": "rich_ore_vein",
+        "position": {
+          "x": -40842.772521884304,
+          "y": 28756.799955822415,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "4CEF18B649F42F85E3303290C58DAE1C",
+        "key": "camp_048_rich_ore_vein1",
+        "kind": "resource",
+        "definition": "rich_ore_vein",
+        "position": {
+          "x": 14246.477716468595,
+          "y": -62239.542469181746,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "BB49EF89408B861F36BA6B9F80A27E3D",
+        "key": "camp_048_herb_patch0",
+        "kind": "resource",
+        "definition": "herb_patch",
+        "position": {
+          "x": 1293.8084491803224,
+          "y": 2108.8171930548347,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "0DCF43C945B4D8E9E07A1384FE76BF20",
+        "key": "camp_048_herb_patch1",
+        "kind": "resource",
+        "definition": "herb_patch",
+        "position": {
+          "x": -2372.2752114123587,
+          "y": -620.6096738117981,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "18CC3EC84DF4BD8FBAE4FC89E2943D25",
+        "key": "camp_048_herb_patch2",
+        "kind": "resource",
+        "definition": "herb_patch",
+        "position": {
+          "x": 3104.923610817639,
+          "y": -1142.1694435928011,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "3684C4E2426756F12F90BBACB0BA9AB3",
+        "key": "camp_048_herb_patch3",
+        "kind": "resource",
+        "definition": "herb_patch",
+        "position": {
+          "x": -1228.4048334678264,
+          "y": 3613.1597723701348,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "83DE3B30498D588F91268994C4E96337",
+        "key": "camp_048_food_patch0",
+        "kind": "resource",
+        "definition": "food_patch",
+        "position": {
+          "x": -1221.5249954608253,
+          "y": -3752.1217956029773,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "C0A018894FEACD2792B16DBE5AA34CA5",
+        "key": "camp_048_food_patch1",
+        "kind": "resource",
+        "definition": "food_patch",
+        "position": {
+          "x": 2147.4235809859774,
+          "y": 1223.4946976998717,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "8B1F43634CBD0B82F04842A75D2853A2",
+        "key": "camp_048_food_patch2",
+        "kind": "resource",
+        "definition": "food_patch",
+        "position": {
+          "x": -2410.8142710159063,
+          "y": 888.2215066820286,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "9D7C850547CDD2CA055BF0818D094F1A",
+        "key": "camp_048_food_patch3",
+        "kind": "resource",
+        "definition": "food_patch",
+        "position": {
+          "x": 1930.6615941904206,
+          "y": -2491.6185551437766,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "B9B0E77D4DBF2ABFC62C3F8696A8D72B",
+        "key": "camp_048_flower_patch0",
+        "kind": "resource",
+        "definition": "flower_patch",
+        "position": {
+          "x": 826.7186451218994,
+          "y": 3846.535854733444,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "477DB4BA4C43B9BA30CFF49BB1AE3AB1",
+        "key": "camp_048_flower_patch1",
+        "kind": "resource",
+        "definition": "flower_patch",
+        "position": {
+          "x": -3120.636830632089,
+          "y": -2371.6475339847166,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "32AB894041ACCC86FB33A6B13D2D55CF",
+        "key": "camp_048_fallen_branches0",
+        "kind": "resource",
+        "definition": "fallen_branches",
+        "position": {
+          "x": 2392.4870650078065,
+          "y": 18.339685749870625,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "7D5BD8174C5A106F332CCDBE9A7461F8",
+        "key": "camp_048_fallen_branches1",
+        "kind": "resource",
+        "definition": "fallen_branches",
+        "position": {
+          "x": -1633.4982992862888,
+          "y": 2181.989905754892,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "FBC3419D422941AE3E5E91AC20626587",
+        "key": "camp_048_fallen_branches2",
+        "kind": "resource",
+        "definition": "fallen_branches",
+        "position": {
+          "x": 215.58402249657806,
+          "y": -2999.962052625441,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "FF58C9F246C5F77735DD958BBE54CA67",
+        "key": "camp_048_fallen_branches3",
+        "kind": "resource",
+        "definition": "fallen_branches",
+        "position": {
+          "x": 2685.9984110701866,
+          "y": 2940.403601690179,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "2EF4A4FF4F45164E6FF3568237834F7A",
+        "key": "camp_048_fallen_branches4",
+        "kind": "resource",
+        "definition": "fallen_branches",
+        "position": {
+          "x": -3982.0807261198333,
+          "y": -187.5574798878285,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "A63BDAE0480E4506B99E889C28471FEE",
+        "key": "camp_048_fallen_branches5",
+        "kind": "resource",
+        "definition": "fallen_branches",
+        "position": {
+          "x": 1952.4188554513423,
+          "y": -1130.0481777208702,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "9DC72ADD4D2E27D365A7AFACD93B83DC",
+        "key": "camp_048_loose_stones0",
+        "kind": "resource",
+        "definition": "loose_stones",
+        "position": {
+          "x": -283.23126435007435,
+          "y": 2856.40500397711,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "9676B9F34F69251075AB23BD2F0EDC57",
+        "key": "camp_048_loose_stones1",
+        "kind": "resource",
+        "definition": "loose_stones",
+        "position": {
+          "x": -1504.363410413894,
+          "y": -2508.3473494443656,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "C2E29BCD41B964BE1F161CB0619474D5",
+        "key": "camp_048_loose_stones2",
+        "kind": "resource",
+        "definition": "loose_stones",
+        "position": {
+          "x": 3768.4269340655783,
+          "y": 1177.92086399429,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "C90C9EE34CDCE2783456F58C0BF410FB",
+        "key": "camp_048_loose_stones3",
+        "kind": "resource",
+        "definition": "loose_stones",
+        "position": {
+          "x": -3536.6635247748745,
+          "y": 2117.6406604515378,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "B40BC11F42E87AEFCAE3FA9881E04449",
+        "key": "camp_048_wild_seed_greens0",
+        "kind": "resource",
+        "definition": "wild_seed_greens",
+        "position": {
+          "x": 2459.4477166723327,
+          "y": -5894.66127160683,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "EA84EB29457FD89C16C9C1873BA42DDE",
+        "key": "camp_048_wild_seed_greens1",
+        "kind": "resource",
+        "definition": "wild_seed_greens",
+        "position": {
+          "x": 4347.574523038251,
+          "y": 10388.111973071558,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "EDD47BCE4E7C941FB60F6FAF33007606",
+        "key": "camp_048_wild_seed_grain0",
+        "kind": "resource",
+        "definition": "wild_seed_grain",
+        "position": {
+          "x": -5673.792487521915,
+          "y": -2583.6238635151676,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "ECB7B4EA49DE6B15D00309B3A2C2C498",
+        "key": "camp_048_wild_seed_grain1",
+        "kind": "resource",
+        "definition": "wild_seed_grain",
+        "position": {
+          "x": 10711.705328058422,
+          "y": -3040.995386616302,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "B1AA932E4977EF67E2B51981448897B9",
+        "key": "camp_048_wild_seed_herb0",
+        "kind": "resource",
+        "definition": "wild_seed_herb",
+        "position": {
+          "x": -3086.483469942684,
+          "y": 5807.943152510865,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "29025EC9493E92E2DE92C58F53BA9955",
+        "key": "camp_048_wild_seed_herb1",
+        "kind": "resource",
+        "definition": "wild_seed_herb",
+        "position": {
+          "x": -2109.597232779368,
+          "y": -10554.801747235413,
+          "z": -50
+        },
+        "remaining": 0,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "3645A2864AB690DCE2F2CDB99B68AC37",
+        "key": "nature_fishing_0",
+        "kind": "fish",
+        "definition": "carp",
+        "position": {
+          "x": 5200,
+          "y": 6700,
+          "z": -50
+        },
+        "remaining": 23,
+        "successes": 1,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "E39DD7B14DC619CD9AEB8B9593BAE6A9",
+        "key": "nature_fishing_1",
+        "kind": "fish",
+        "definition": "carp",
+        "position": {
+          "x": 9700,
+          "y": 6700,
+          "z": -50
+        },
+        "remaining": 24,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "F617D558406BEDACDEECE7BDFAEB53DA",
+        "key": "nature_fishing_2",
+        "kind": "fish",
+        "definition": "carp",
+        "position": {
+          "x": 14200,
+          "y": 6700,
+          "z": -50
+        },
+        "remaining": 24,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      },
+      {
+        "id": "4970DB48499E19A3ECAC41B17602AFC0",
+        "key": "nature_fishing_3",
+        "kind": "fish",
+        "definition": "carp",
+        "position": {
+          "x": 18700,
+          "y": 6700,
+          "z": -50
+        },
+        "remaining": 24,
+        "successes": 0,
+        "due": -1,
+        "pending": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        }
+      }
+    ],
+    "crops": [],
+    "animals": [
+      {
+        "id": "0E811B774987BC258B010196287137B1",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "pig",
+        "slot": "starter_pig0",
+        "position": {
+          "x": -9179.027332759837,
+          "y": -6100.818692356248,
+          "z": 8.90431187399875
+        },
+        "destination": {
+          "x": -9165.57056170376,
+          "y": -6033.8766115458175,
+          "z": 8.90431187399875
+        },
+        "health": 80,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "192EA3754AD3B57E100BE383A9D1A7D5",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "hare",
+        "slot": "nature_hare0",
+        "position": {
+          "x": 11801.13641917489,
+          "y": 10296.205295244861,
+          "z": -2.932713040567343
+        },
+        "destination": {
+          "x": 11864.279426286337,
+          "y": 10320.372955231249,
+          "z": -50
+        },
+        "health": 20,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "1A7299A148DDE1935FEA3AA6E99F076A",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "pig",
+        "slot": "starter_pig1",
+        "position": {
+          "x": -9024.2558649398,
+          "y": -5030.082205768527,
+          "z": 8.90431187399875
+        },
+        "destination": {
+          "x": -9350.368768611486,
+          "y": -4943.082408379485,
+          "z": 8.90431187399875
+        },
+        "health": 80,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "1C01F860449ABDC0620552970920C365",
+        "pen": "B31FD0A543C6393056C2D0B4FB56FAB2",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "goat",
+        "slot": "starter_goat2",
+        "position": {
+          "x": -2386.849582138082,
+          "y": -2198.373492297836,
+          "z": 35.897266210198
+        },
+        "destination": {
+          "x": -17101.14737033273,
+          "y": 6585.210180328529,
+          "z": 35.897266210198
+        },
+        "health": 60,
+        "domestic": true,
+        "juvenile": false,
+        "captured": true,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 1439.9666665010154,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "1ECBB3FF44EEB3DDF3E6BCBEF31729A3",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "pig",
+        "slot": "starter_pig2",
+        "position": {
+          "x": -16043.041311474743,
+          "y": -10302.389171734352,
+          "z": 8.90431187399875
+        },
+        "destination": {
+          "x": -16244.292967743255,
+          "y": -10484.177795157717,
+          "z": 8.90431187399875
+        },
+        "health": 80,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "25146A72469651BB7F21BFA1E42145B1",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "hen",
+        "slot": "starter_hen3",
+        "position": {
+          "x": -1857.4087612671715,
+          "y": -18692.427388515305,
+          "z": -5.730789350389379
+        },
+        "destination": {
+          "x": -1927.0030704942,
+          "y": -18694.122442171887,
+          "z": -5.730789350389379
+        },
+        "health": 20,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "39E7C6234A5B81326382B789331A306B",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "pheasant",
+        "slot": "nature_pheasant0",
+        "position": {
+          "x": 2184.45133505836,
+          "y": 16912.296375221853,
+          "z": -14.565871825728472
+        },
+        "destination": {
+          "x": 2161.810912929586,
+          "y": 16978.03569892886,
+          "z": -50
+        },
+        "health": 20,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "44FA49B4412F2A4279C9FAB5D32CB5DD",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "pheasant",
+        "slot": "nature_pheasant2",
+        "position": {
+          "x": 3208.067138236373,
+          "y": 16456.7877311879,
+          "z": -14.565871825728472
+        },
+        "destination": {
+          "x": 3262.8272093163046,
+          "y": 16495.599114456203,
+          "z": -50
+        },
+        "health": 20,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "4BA6136945D9BB63418B9E9D0644751D",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "black_bear",
+        "slot": "nature_black_bear0",
+        "position": {
+          "x": -12014.79223692714,
+          "y": -35799.936315007864,
+          "z": 38.947740194031226
+        },
+        "destination": {
+          "x": -12080.84202276966,
+          "y": -35778.639237316325,
+          "z": -50
+        },
+        "health": 240,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "4C18A2D74ABFDFDECD360AB5ECE0CADF",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "deer",
+        "slot": "nature_deer1",
+        "position": {
+          "x": 14467.059688255547,
+          "y": 168.75655307614693,
+          "z": 54.8883485546545
+        },
+        "destination": {
+          "x": 14443.614013671875,
+          "y": 234.53173828125,
+          "z": -50
+        },
+        "health": 75,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "577AC2AA4BCB530B2A9D2DACF6596F8E",
+        "pen": "B31FD0A543C6393056C2D0B4FB56FAB2",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "goat",
+        "slot": "starter_goat1",
+        "position": {
+          "x": -2378.802540041739,
+          "y": -2165.7214747532894,
+          "z": 35.897266210198
+        },
+        "destination": {
+          "x": -9731.360791492869,
+          "y": 3901.4198373511304,
+          "z": 35.897266210198
+        },
+        "health": 60,
+        "domestic": true,
+        "juvenile": false,
+        "captured": true,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 1439.9666665010154,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "6DCC5AEB45E8150FCC6DDE87E5E10EE0",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "pheasant",
+        "slot": "nature_pheasant1",
+        "position": {
+          "x": 2641.3474900212727,
+          "y": 16156.946725816037,
+          "z": -14.565871825728472
+        },
+        "destination": {
+          "x": 2574.436462245992,
+          "y": 16158.461175003078,
+          "z": -50
+        },
+        "health": 20,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "6FDD759C494AA8B5A87DE592CBDDF8A5",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "boar",
+        "slot": "nature_boar0",
+        "position": {
+          "x": -36457.12111132241,
+          "y": 8747.233000385912,
+          "z": 8.90431187399875
+        },
+        "destination": {
+          "x": -36403.3203488038,
+          "y": 8787.456463773195,
+          "z": -50
+        },
+        "health": 120,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "7921DD5C4AEB91C8FAEC85A869DAF523",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "goat",
+        "slot": "starter_goat3",
+        "position": {
+          "x": -17355.7279936775,
+          "y": 6306.231022359408,
+          "z": 35.897266210198
+        },
+        "destination": {
+          "x": -17347.101686135986,
+          "y": 6236.878327382593,
+          "z": 35.897266210198
+        },
+        "health": 60,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "7E9B44804284AB74A1C79FB9B40948DF",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "ram",
+        "slot": "nature_ram0",
+        "position": {
+          "x": -10269.234129256442,
+          "y": 14428.570330782179,
+          "z": 45.82732614197242
+        },
+        "destination": {
+          "x": -10117.092076833054,
+          "y": 14427.687760441671,
+          "z": -50
+        },
+        "health": 90,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "7FA4C60B40157E803C63C4AFCDFC2790",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "goat",
+        "slot": "starter_goat0",
+        "position": {
+          "x": -10498.101874337635,
+          "y": 4369.622633994816,
+          "z": 35.897266210198
+        },
+        "destination": {
+          "x": -10759.41943096684,
+          "y": 4417.596893495581,
+          "z": 35.897266210198
+        },
+        "health": 60,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "81FD80974028489ACA34808CB469817F",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "hare",
+        "slot": "nature_hare1",
+        "position": {
+          "x": 11720.31837295233,
+          "y": 9899.319953885963,
+          "z": -2.932713040567343
+        },
+        "destination": {
+          "x": 11663.727058122275,
+          "y": 9859.665496735155,
+          "z": -50
+        },
+        "health": 20,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "838A5CC64320A3B0BA580F9D469693EF",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "hen",
+        "slot": "starter_hen0",
+        "position": {
+          "x": -2053.3296897731366,
+          "y": -10176.827467367071,
+          "z": -5.730789350389379
+        },
+        "destination": {
+          "x": -2118.7582129624775,
+          "y": -10308.295506603092,
+          "z": -5.730789350389379
+        },
+        "health": 20,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "9999BE154D90207CC677EBAAD3A2ADEE",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "red_fox",
+        "slot": "nature_red_fox0",
+        "position": {
+          "x": 9257.225925834544,
+          "y": -22153.437450061956,
+          "z": 20.066096689207924
+        },
+        "destination": {
+          "x": 9217.576146430973,
+          "y": -22207.323598071263,
+          "z": -50
+        },
+        "health": 40,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "A9285283430EF10812329AB9F21CD370",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "deer",
+        "slot": "nature_deer0",
+        "position": {
+          "x": 13297.288774239181,
+          "y": 628.7210915480237,
+          "z": 54.8883485546545
+        },
+        "destination": {
+          "x": 13231.67822265625,
+          "y": 650.56005859375,
+          "z": -50
+        },
+        "health": 75,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "B285A9CD4FCA466650B64DA7DDC2F4F0",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "wolf",
+        "slot": "nature_wolf1",
+        "position": {
+          "x": -32635.570981947498,
+          "y": -18459.143266051935,
+          "z": 5.475256343641085
+        },
+        "destination": {
+          "x": -32112.205977224017,
+          "y": -18607.212991934153,
+          "z": -50
+        },
+        "health": 100,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "BFCB42514F2F82FA7FCACB8C9A3C33A9",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "boar",
+        "slot": "nature_boar1",
+        "position": {
+          "x": -36004.087786101576,
+          "y": 8661.629903499936,
+          "z": 8.90431187399875
+        },
+        "destination": {
+          "x": -35946.04623991708,
+          "y": 8505.984234769288,
+          "z": -50
+        },
+        "health": 120,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "C40A9A4C4F86FCFA2E75B0BAA35409E7",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "wolf",
+        "slot": "nature_wolf0",
+        "position": {
+          "x": -33300.27175713879,
+          "y": -18403.104647799293,
+          "z": 5.475256343641085
+        },
+        "destination": {
+          "x": -33139.87095525136,
+          "y": -18084.1868383697,
+          "z": -50
+        },
+        "health": 100,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "CA59968B47DE7E33E3F702AFB66D296E",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "hen",
+        "slot": "starter_hen2",
+        "position": {
+          "x": -2232.287896580115,
+          "y": -18997.435896034043,
+          "z": -5.730789350389379
+        },
+        "destination": {
+          "x": -2050.174283959798,
+          "y": -19289.186321932386,
+          "z": -5.730789350389379
+        },
+        "health": 20,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "DBBCAFE449460010A0137891EF0C15E3",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "hen",
+        "slot": "starter_hen1",
+        "position": {
+          "x": -1287.5032723822712,
+          "y": -10326.896082755744,
+          "z": -5.730789350389379
+        },
+        "destination": {
+          "x": -1358.1245680761413,
+          "y": -10701.723722437197,
+          "z": -5.730789350389379
+        },
+        "health": 20,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "E398641E466526AC3592828E2A41B18B",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "pig",
+        "slot": "starter_pig3",
+        "position": {
+          "x": -15257.279447363617,
+          "y": -9742.618904589792,
+          "z": 8.90431187399875
+        },
+        "destination": {
+          "x": -15226.337293413691,
+          "y": -9680.049902549832,
+          "z": 8.90431187399875
+        },
+        "health": 80,
+        "domestic": true,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "ED9174A741048E23734F4B98E1045688",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "hare",
+        "slot": "nature_hare2",
+        "position": {
+          "x": 11946.746324905995,
+          "y": 10337.412944086605,
+          "z": -2.932713040567343
+        },
+        "destination": {
+          "x": 11889.274116227743,
+          "y": 10378.29708853203,
+          "z": -50
+        },
+        "health": 20,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      },
+      {
+        "id": "EDBBDB564A7C22FD6833BEBAEBCD9BCC",
+        "pen": "00000000000000000000000000000000",
+        "reservedPen": "00000000000000000000000000000000",
+        "definition": "ram",
+        "slot": "nature_ram1",
+        "position": {
+          "x": -9564.895775959303,
+          "y": 14483.836135326033,
+          "z": 45.82732614197242
+        },
+        "destination": {
+          "x": -9544.885228688523,
+          "y": 14417.464036076437,
+          "z": -50
+        },
+        "health": 90,
+        "domestic": false,
+        "juvenile": false,
+        "captured": false,
+        "following": false,
+        "rewarded": false,
+        "growth": 0,
+        "fedRemaining": 0,
+        "alertRemaining": 0,
+        "loot": {}
+      }
+    ],
+    "slots": [
+      {
+        "id": "nature_deer0",
+        "definition": "deer",
+        "current": "A9285283430EF10812329AB9F21CD370",
+        "position": {
+          "x": 13700,
+          "y": 200,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_deer1",
+        "definition": "deer",
+        "current": "4C18A2D74ABFDFDECD360AB5ECE0CADF",
+        "position": {
+          "x": 14200,
+          "y": 200,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_hare0",
+        "definition": "hare",
+        "current": "192EA3754AD3B57E100BE383A9D1A7D5",
+        "position": {
+          "x": 11377.616035173056,
+          "y": 10203.044525055468,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_hare1",
+        "definition": "hare",
+        "current": "81FD80974028489ACA34808CB469817F",
+        "position": {
+          "x": 11877.616035173056,
+          "y": 10203.044525055468,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_hare2",
+        "definition": "hare",
+        "current": "ED9174A741048E23734F4B98E1045688",
+        "position": {
+          "x": 12377.616035173056,
+          "y": 10203.044525055468,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_pheasant0",
+        "definition": "pheasant",
+        "current": "39E7C6234A5B81326382B789331A306B",
+        "position": {
+          "x": 2024.4013670311483,
+          "y": 16598.82799629214,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_pheasant1",
+        "definition": "pheasant",
+        "current": "6DCC5AEB45E8150FCC6DDE87E5E10EE0",
+        "position": {
+          "x": 2524.4013670311483,
+          "y": 16598.82799629214,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_pheasant2",
+        "definition": "pheasant",
+        "current": "44FA49B4412F2A4279C9FAB5D32CB5DD",
+        "position": {
+          "x": 3024.4013670311483,
+          "y": 16598.82799629214,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_ram0",
+        "definition": "ram",
+        "current": "7E9B44804284AB74A1C79FB9B40948DF",
+        "position": {
+          "x": -10246.963536793992,
+          "y": 14858.136063664328,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_ram1",
+        "definition": "ram",
+        "current": "EDBBDB564A7C22FD6833BEBAEBCD9BCC",
+        "position": {
+          "x": -9746.963536793992,
+          "y": 14858.136063664328,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_boar0",
+        "definition": "boar",
+        "current": "6FDD759C494AA8B5A87DE592CBDDF8A5",
+        "position": {
+          "x": -36870.84860808114,
+          "y": 8551.777264554445,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_boar1",
+        "definition": "boar",
+        "current": "BFCB42514F2F82FA7FCACB8C9A3C33A9",
+        "position": {
+          "x": -36370.84860808114,
+          "y": 8551.777264554445,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_wolf0",
+        "definition": "wolf",
+        "current": "C40A9A4C4F86FCFA2E75B0BAA35409E7",
+        "position": {
+          "x": -32993.79411198964,
+          "y": -18297.892648916575,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_wolf1",
+        "definition": "wolf",
+        "current": "B285A9CD4FCA466650B64DA7DDC2F4F0",
+        "position": {
+          "x": -32493.794111989642,
+          "y": -18297.892648916575,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_black_bear0",
+        "definition": "black_bear",
+        "current": "4BA6136945D9BB63418B9E9D0644751D",
+        "position": {
+          "x": -12199.482769839973,
+          "y": -35720.0894631464,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      },
+      {
+        "id": "nature_red_fox0",
+        "definition": "red_fox",
+        "current": "9999BE154D90207CC677EBAAD3A2ADEE",
+        "position": {
+          "x": 9493.204076118473,
+          "y": -21927.7282611572,
+          "z": -50
+        },
+        "generation": 1,
+        "due": -1
+      }
+    ],
+    "pens": [
+      {
+        "id": "B31FD0A543C6393056C2D0B4FB56FAB2",
+        "definition": "goat",
+        "position": {
+          "x": -2200,
+          "y": -2200,
+          "z": -50
+        },
+        "level": 1,
+        "feed": 6,
+        "paid": {
+          "wood": 60,
+          "stone": 20,
+          "rope": 10
+        },
+        "pairs": {
+          "1C01F860449ABDC0620552970920C365:577AC2AA4BCB530B2A9D2DACF6596F8E": 0.03333349898457527
+        }
+      }
+    ],
+    "rewards": [],
+    "maps": [],
+    "opened": []
+  },
+  "feedback": "操作完成",
+  "save_status": "自然生产或钓鱼动作尚未结束"
+}

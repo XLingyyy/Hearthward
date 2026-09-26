@@ -1,4 +1,6 @@
 #include "HearthwardGameplayComponent.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
+#include "../Nature/HearthwardNatureActor.h"
 #include "HearthwardProgression.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
@@ -176,6 +178,7 @@ bool UHearthwardGameplayComponent::CommitEquipmentInstance(FGuid Id)
 }
 bool UHearthwardGameplayComponent::UseItem(FName Id)
 {
+    if(Id.ToString().StartsWith(TEXT("treasure_map_")))return GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->ReadMap(Id);
     const auto R=Find(TEXT("items"),Id.ToString());
     const float Food=Number(R,TEXT("food"));
     if(!Text(R,TEXT("blueprint")).IsEmpty())return LearnBlueprint(Id);
@@ -190,6 +193,7 @@ bool UHearthwardGameplayComponent::UseItem(FName Id)
 }
 bool UHearthwardGameplayComponent::Drop(FName Id,int32 Count)
 {
+    if(Id.ToString().StartsWith(TEXT("treasure_map_")))return Result(false,TEXT("藏宝图不可丢弃"));
     const auto R=Find(TEXT("items"),Id.ToString()); bool Key=false;
     if (R) R->TryGetBoolField(TEXT("key"),Key);
     if(Inventory()->FirstInstance(Id).IsValid())return Result(false,TEXT("请在行装管理中选择具体装备，再放到地面"));
@@ -276,6 +280,7 @@ bool UHearthwardGameplayComponent::ActivateNearby()
 }
 bool UHearthwardGameplayComponent::Travel(FName Id)
 {
+    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
     auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(!S->Alive() || UHearthwardSurvivalComponent::HasFailed(GetWorld())) return false;
     const FName From=NearbyLocation();
@@ -332,13 +337,12 @@ bool UHearthwardGameplayComponent::ThrowItem(FName Id)
 { return GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Throw(Id); }
 void UHearthwardGameplayComponent::DamageOpponent(FName Target,float Damage,AActor* Source)
 {
-    const auto* Actor=OpponentActors.Find(Target);
-    if(Actor && Actor->IsValid())
-        if(auto* T=Actor->Get()->FindComponentByClass<UHearthwardCombatTargetComponent>())
-            GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->HitTarget(T,Damage,TEXT("body"),false,FGuid::NewGuid(),Source);
+    auto* Combat=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();
+    for(auto* T:Combat->Targets())if(T->Id==Target){Combat->HitTarget(T,Damage,TEXT("body"),false,FGuid::NewGuid(),Source);break;}
 }
 void UHearthwardGameplayComponent::CommitOpponentHealth(FName Target,float NewHealth,float PreviousHealth)
 {
+    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->DamageAnimal(Target,NewHealth))return;
     const float Previous=PreviousHealth>=0?PreviousHealth:Opponents.FindRef(Target);
     if(Opponents.Contains(Target)) Opponents[Target]=NewHealth;
     if(Previous>0 && NewHealth<=0)
@@ -441,6 +445,12 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
         Context.Threats.Add(Threat);
     }
 
+    // Only an animal already engaged near the player enters the existing escort combat policy.
+    auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+    if(InCombat())for(const auto& Animal:Nature->State.Animals)
+        if(!Animal.Domestic && Animal.Health>0 && Animal.AlertRemaining>0 && FVector::Dist2D(GetOwner()->GetActorLocation(),Animal.Position)<3000)
+            if(auto* Actor=Nature->Actor(Animal.Id);Actor && Actor->Combat->CanAct())
+            {FHearthwardCompanionBehaviorThreat Threat;Threat.Id=Actor->Combat->Id;Threat.Actor=Actor;Threat.RemainingHealth=Animal.Health;Context.Threats.Add(Threat);}
     const auto Result=HearthwardCompanionBehavior::Tick(Context);
     CompanionOrder=Result.EffectiveOrder;
     CompanionTacticalIntent=Result.TacticalIntent;
@@ -449,7 +459,8 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     CompanionRoutineActivity=Result.RoutineActivity;
     if(Result.bAttackCommitted)
     {
-        FVector Facing = OpponentActors[Result.DamageTarget]->GetActorLocation() - Companion->GetActorLocation();
+        const auto* Threat=Context.Threats.FindByPredicate([&](const auto& T){return T.Id==Result.DamageTarget;});
+        FVector Facing = Threat->Actor->GetActorLocation() - Companion->GetActorLocation();
         Facing.Z = 0.f;
         if (!Facing.IsNearlyZero()) Companion->SetActorRotation(Facing.Rotation());
         if (auto* Animation = Cast<UHearthwardBrotherAnimInstance>(Companion->GetMesh()->GetAnimInstance()))

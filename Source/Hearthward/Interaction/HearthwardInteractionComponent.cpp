@@ -1,4 +1,5 @@
 #include "HearthwardInteractionComponent.h"
+#include "../Nature/HearthwardNatureActor.h"
 #include "../Inventory/HearthwardDroppedEquipment.h"
 #include "HearthwardHarvestSubsystem.h"
 #include "HearthwardInteractionTargetComponent.h"
@@ -64,7 +65,7 @@ bool UHearthwardInteractionComponent::BeginInteraction(UHearthwardInteractionTar
 bool UHearthwardInteractionComponent::InteractNearest()
 {
     auto* Target=GetNearestTarget();
-    if(Cast<UHearthwardEquipmentPickup>(Target)){CompletionFeedback=Target->CompleteInteraction(GetOwner());return true;}
+    if(Cast<UHearthwardEquipmentPickup>(Target) || Cast<UHearthwardNatureInteraction>(Target)){CompletionFeedback=Target->CompleteInteraction(GetOwner());return true;}
     return BeginInteraction(Target);
 }
 

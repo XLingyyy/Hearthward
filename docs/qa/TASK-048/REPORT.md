@@ -1,6 +1,6 @@
-# TASK-048 设计验算报告
+# TASK-048 验证报告
 
-2026-09-27，Windows／GameFactory Python环境，UE 5.8.2项目文档阶段。主干`e95fde185dc38d0b69c2de42ce66db0d1fd93294`；范围基线`ed1a69a005eef1e371ae76accaac6b8aecf11a71`。D1—D6待Owner批准。
+2026-09-27，Windows／GameFactory Python环境，UE 5.8.2项目文档阶段。主干`e95fde185dc38d0b69c2de42ce66db0d1fd93294`；范围基线`ed1a69a005eef1e371ae76accaac6b8aecf11a71`。D1—D6及施工已获Owner批准。下方为历史设计证据；运行验证记录将在冻结源码最终回归后更新。
 
 受检候选／脚本提交：`bbbcda9c3eec0decf53368560927b515e1cbe2a6`。后续证据提交不改候选或计算脚本。
 
@@ -21,8 +21,8 @@
 - `python -X utf8 scripts/validate_repo.py --task TASK-048 --base ed1a69a005eef1e371ae76accaac6b8aecf11a71`：PASS，0 errors；[范围日志](scope.txt)。
 - `python -X utf8 -m unittest discover -s scripts/tests -v`：PASS，33/33；[工具日志](tools.txt)。
 
-UE构建、原生、PIE、Shipping、物种视觉／骨骼／动画、实际自然地图布点与完整生活路线：NOT_RUN。源资产只核对版本库中的索引与文件路径，15套源模型不等于15种已实现动物。
+设计阶段UE构建、原生、PIE、Shipping、物种视觉／骨骼／动画、实际自然地图布点与完整生活路线：NOT_RUN；本轮实现已另行通过Editor构建、中间版本原生16/16、PIE84/84和自然地图18/18，最终证据待绑定冻结源码。源资产只核对版本库中的索引与文件路径，15套源模型不等于15种已实现动物。
 
 ## 研究依据与交付
 
-引用Epic数据驱动内容和Random Streams官方文档见[设计末节](../../design/DSGN-R15-nature-production.md#工程参考)，只采用稳定ID、数据与状态分离以及可重复随机序列的工程经验；不把外部资料当作游戏数值出处或批准。当前仅内容提案和验算，不覆盖Resources运行表。
+引用Epic数据驱动内容和Random Streams官方文档见[设计末节](../../design/DSGN-R15-nature-production.md#工程参考)，只采用稳定ID、数据与状态分离以及可重复随机序列的工程经验；不把外部资料当作游戏数值出处或批准。候选保留为设计历史，当前实现的权威数据为Resources运行表。

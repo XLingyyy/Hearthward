@@ -30,6 +30,7 @@ TArray<FName> CampFoods()
 void UHearthwardScreenWidget::ComposeCamp()
 {
     auto* E=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();const auto& State=E->State;
+    Element(TEXT("button"),TEXT("田野与牧场"),{1260,95},{240,44},20,TEXT("page:nature"));
     auto Button=[&](FString Label,FString Action,float X,float Y,float Width=210){Element(TEXT("button"),Label,FVector2D(X,Y),FVector2D(Width,46),19,Action);};
     auto Label=[&](FString Text,float X,float Y,float Width=1100,float Height=40){Element(TEXT("text"),Text,FVector2D(X,Y),FVector2D(Width,Height),20);};
     Label(FString::Printf(TEXT("营地 %d / 8 阶     半径 %.0f 米     族人 %d     公共口粮 %.1f"),State.Tier,State.Radius()/100,State.Population(),State.Rations()),180,95);

@@ -1,4 +1,5 @@
 #include "HearthwardHarvestSubsystem.h"
+#include "../Nature/HearthwardNatureActor.h"
 #include "../Inventory/HearthwardHarvestTools.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
@@ -30,6 +31,7 @@ void UHearthwardHarvestSubsystem::RefreshNearby(AActor* Player)
     const FVector Location=Player->GetActorLocation();
     for(TActorIterator<AActor> It(GetWorld());It;++It)
     {
+        if(It->IsA<AHearthwardNatureActor>())continue;
         TInlineComponentArray<UStaticMeshComponent*> Meshes; It->GetComponents(Meshes);
         for(auto* Mesh:Meshes)
         {
@@ -55,7 +57,7 @@ void UHearthwardHarvestSubsystem::RefreshNearby(AActor* Player)
                 // Authored instance transforms are stable across streaming and save/load; no instance removal.
                 const FString Key=FString::Printf(TEXT("%s|%s|%s|%d|%d,%d,%d"),*It->GetName(),*Mesh->GetName(),*Name,Index,
                     FMath::RoundToInt(Base.X),FMath::RoundToInt(Base.Y),FMath::RoundToInt(Base.Z));
-                GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->RegisterSource(Key,Item,Capacity,FMath::Max(0,Capacity-Used.FindRef(Key)),Base,Item==TEXT("wood")?2880:0);
+                GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->RegisterSource(Key,Item,Capacity,FMath::Max(0,Capacity-Used.FindRef(Key)),Base,2880);
                 if(Targets.FindRef(Key).IsValid()) continue;
                 auto* Target=NewObject<UHearthwardHarvestTargetComponent>(*It);
                 It->AddInstanceComponent(Target); Target->SetupAttachment(It->GetRootComponent());
@@ -73,7 +75,7 @@ FString UHearthwardHarvestTargetComponent::GetInteractionPrompt(AActor* Interact
     const int32 Count=GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Remaining(ResourceKey,Capacity);
     const FString Label=HearthwardData::Text(HearthwardData::Find(TEXT("items"),Item.ToString()),TEXT("name"));
     return Count>0?FString::Printf(TEXT("E 采集%s ×%d · 5秒\n剩余 %d · 移动可中断"),*Label,FMath::Min([&](){FGuid Tool;const auto* Bag=Interactor?Interactor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;return Bag?HearthwardHarvestTools::Yield(Bag,Item,Tool):0;}(),Count),Count)
-        :Label+TEXT("已采尽 · 这处资源不会自动刷新");
+        :Label+TEXT("已采尽 · 两个游戏日后恢复，建筑遮挡时延后");
 }
 FString UHearthwardHarvestTargetComponent::CompleteInteraction(AActor* Player)
 { return GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Harvest(this,Player); }

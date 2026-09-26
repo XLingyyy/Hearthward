@@ -1,6 +1,6 @@
 # 最短上手路径
 
-核对日期：2026-09-27。当前主干`origin/main@e95fde185dc38d0b69c2de42ce66db0d1fd93294`已含043—047，047由PR #49合并。047的Editor构建、原生32/32与PIE64/64仍绑定其报告中的源码，不声称在本次main重跑。当前canonical048对应原稿050，范围为自然资源／动物／垂钓／种养内容设计，D1—D6待Owner确认，见[048任务单](tasks/TASK-048.md)。Windows Demo受测源码仍为`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，详见[发行报告](releases/demo-20260924/REPORT.md)。
+核对日期：2026-09-27。当前主干`origin/main@e95fde185dc38d0b69c2de42ce66db0d1fd93294`已含043—047，047由PR #49合并。047的Editor构建、原生32/32与PIE64/64仍绑定其报告中的源码，不声称在本次main重跑。当前canonical048对应原稿050，D1—D6与施工已获Owner确认，048分支实现自然资源／动物／垂钓／种养和schema7；模型允许临时表现，尚未合入main，见[048任务单](tasks/TASK-048.md)。Windows Demo受测源码仍为`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，详见[发行报告](releases/demo-20260924/REPORT.md)。
 
 ## 先看游戏
 

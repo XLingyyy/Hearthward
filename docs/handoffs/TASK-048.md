@@ -1,19 +1,19 @@
 # TASK-048 交接
 
-2026-09-27，Owner／Reviewer XLingyyy；Issue可选。用户“继续048”，延续顺序任务设计→Owner确认→沿原编号施工的方式。canonical048对应原稿050；不自动把047设计批准扩展到048。
+2026-09-27；Owner／Reviewer XLingyyy；Issue可选。用户已确认D1—D6，允许临时动物模型，并明确施工后提交推送。canonical048对应原稿050。
 
 ## 基线与范围
 
-主干`e95fde185dc38d0b69c2de42ce66db0d1fd93294`已含047／PR49。范围登记基线`ed1a69a005eef1e371ae76accaac6b8aecf11a71`。分支codex/TASK-048-nature-content，独立目录G:/GameFactory/Hearthward/.agent-local/TASK-048；原TASK027及其他工作树保持原状。仅docs候选／设计与README，未下载LFS资产实体、未修改Source／Resources／Content／Config／Runtime。
+main基线e95fde185dc38d0b69c2de42ce66db0d1fd93294；施工批准登记提交2617b7f。分支codex/TASK-048-nature-content；专用目录G:/GameFactory/Hearthward/.agent-local/TASK-048。原TASK-027和其他工作树保持原状。授权Source/Hearthward、Resources/Data、Resources/UI、Content/Hearthward/Nature及任务文档；未改Config／Runtime／art_source／主地图。
 
-## 交付
+## 实现
 
-D1资源白名单及无工具起步；D2八野生三家畜四鱼与资产缺项；D3张力、饵料、2%随机与唯一奖励；D4三作物、照料及返种；D5喂养、两日繁殖、容量与断粮；D6持久化和权限边界。详见[设计](../design/DSGN-R15-nature-production.md)及[表册](../planning/TASK-048/TABLES.md)。所有新增规则待Owner确认，状态Blocked。
+有限自然来源与营地后台生产共用库存；12类资源与15类动物、钓鱼张力、宝图／奖励去重和待领取物品、种植照料、捕捉实际牵引、栏舍喂养繁殖、schema7同档状态。所有耗时结算复用五秒动作与时间线校验；击晕等效杀死，野生动物不参与人类清敌。新网格14件，野猪复用猪，默认材质与静态姿态获准保留。
 
-38项候选关系通过：20日有限采食，4人3点产320份、5人4点产400份；5人3点只有351份且断料。裸手来源可支付72木工作台与两件石工具。2%在连续理想成功下期望6—9事件/小时，无保底；一次清空4钓点96鱼期望1.92事件。两雄鹿外形只计一物种，野猪专用模型缺项；已有所有动物都未完成UE行为动画验收。
+自然地图发现旧采集识别器会给新资源外形重复生成草药／石头入口，已按自然Actor类型排除；家畜不再被营地安全检查当作敌人。动物地面高度使用模型实际包围盒，跟随动物不阻挡牵引者。地图点生成按稳定键补全，无有效地形时在同一批准距离环寻找可用位置。
 
-首次模拟按固定ID反复切源，与046实际优先余量最少点不一致；检查HearthwardCampState.cpp后修正模型，保留失败记录。没有修改游戏代码以迁就验算。结果与受检SHA见[报告](../qa/TASK-048/REPORT.md)。
+## 验证与交付
 
-## 下一步
+最终源码、命令、结果见[报告](../qa/TASK-048/REPORT.md)。设计38项验算仅作历史设计证据；实际运行单独检查。尚未进行完整4032米路线／流送／长期生态性能、最终美术、Shipping与完整剧情验证。
 
-请Owner确认或修改D1—D6。批准后扩展048实现范围，复用043／046／047接口，先做真实自然点与循环，再验证动物／钓鱼／种养／保存；不以本轮38项纸面检查代替UE验收。提交推送后核对远端并清理本单工作树；无需保留空闲目录等待审批。再次施工时从该分支恢复新工作树。
+代码与文档交付完成后推送任务分支，核对远端；停止本单UE进程后清理本单工作树。14件资产LFS锁保留到集成交接，不解除其他任务锁。用户未授权合并main；Owner与Reviewer同人仍不构成独立PR审查。

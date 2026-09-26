@@ -1,3 +1,4 @@
+#include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
@@ -481,6 +482,12 @@ void UHearthwardScreenWidget::ComposeMemory()
 }
 void UHearthwardScreenWidget::ComposeHUD()
 {
+    const auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+    if(N->Busy())
+    {
+        Element(TEXT("text"),N->FishingStatus(),{380,650},{1100,60},20);
+        if(N->IsFishing()){Element(TEXT("bar"),TEXT("张力"),{500,715},{650,18});Elements.Last().Value=N->FishingTension();Elements.Last().Color=N->FishingTension()>=.15 && N->FishingTension()<=.85?FLinearColor(.2f,.7f,.3f):FLinearColor(.8f,.2f,.1f);}
+    }
     if(const auto* C=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardCombatComponent>())
     {
         Element(TEXT("text"),C->Describe(),FVector2D(550,605),FVector2D(700,40),20);

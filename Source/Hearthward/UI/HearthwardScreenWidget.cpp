@@ -187,6 +187,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         if(Name==TEXT("memory") && !RestoringMemoryDraft) Draft->SetText(FText::GetEmpty());
     }
     if(Name==TEXT("memory") && !RestoringMemoryDraft) { MemoryEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(); MemoryRevision=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemoryRevision(); SelectedMemory.Invalidate(); MemoryKind=TEXT("claim"); }
+    if(Name==TEXT("nature")) NatureEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     if (Name==TEXT("storage")) StorageEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     Refresh();
 }
@@ -253,6 +254,7 @@ void UHearthwardScreenWidget::Refresh()
     }
     if(Page==TEXT("inventory")){ComposeInventory(false);Element(TEXT("button"),TEXT("逐件装备 · 行装管理"),FVector2D(260,810),FVector2D(280,45),18,TEXT("page:equipment"));}
     if(Page==TEXT("equipment"))ComposeEquipment();
+    if(Page==TEXT("nature"))ComposeNature();
     if(Page==TEXT("storage")) ComposeInventory(true);
     if(Page==TEXT("skills")) ComposeSkills();
     if(Page==TEXT("map")) ComposeMap();
