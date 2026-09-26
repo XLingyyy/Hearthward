@@ -1,6 +1,6 @@
 # 最短上手路径
 
-核对日期：2026-09-26。当前核对主干：`origin/main@dbba6d052b7e08e612d858ca07fc87e90dae5840`，已含043规则、044生存、045战斗及046营地经济（PR #46／47／48）。当前canonical047（原稿049）交付成长／装备／维修候选表，等待Owner确认D1—D6，未修改运行代码；见[047任务单](tasks/TASK-047.md)。046原生25/25与PIE65/65证据仍绑定其报告所列源码。Windows Demo 已发布；其受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，与主干 SHA 分开看。[项目状态](PROJECT_STATE.md)和[TASK-041 账本](planning/TASK-041-baseline-ledger.md)记录实现、集成、验证及待办；[发行报告](releases/demo-20260924/REPORT.md)记录 Shipping 包和本机安装范围。
+核对日期：2026-09-27。当前核对主干：`origin/main@dbba6d052b7e08e612d858ca07fc87e90dae5840`，已含043规则、044生存、045战斗及046营地经济（PR #46／47／48）。当前canonical047（原稿049）D1—D6已获Owner批准，正在本任务分支实现与验证成长／逐件装备／制作维修及schema6；见[047任务单](tasks/TASK-047.md)。046原生25/25与PIE65/65证据仍绑定其报告所列源码。Windows Demo 已发布；其受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，与主干 SHA 分开看。[项目状态](PROJECT_STATE.md)和[TASK-041 账本](planning/TASK-041-baseline-ledger.md)记录实现、集成、验证及待办；[发行报告](releases/demo-20260924/REPORT.md)记录 Shipping 包和本机安装范围。
 
 ## 先看游戏
 

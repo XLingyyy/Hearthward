@@ -35,6 +35,7 @@ public:
     UFUNCTION(BlueprintCallable) bool ReclaimHometown(FName Victory,FVector Position);
     bool Restore(const FString& Json,int32 LegacyTier,FVector Camp,double Calendar);
     bool BrotherWorking() const;
+    void RefreshQuartermasters();
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type Type) const override;
 private:

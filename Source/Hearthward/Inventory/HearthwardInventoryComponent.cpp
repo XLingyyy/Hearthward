@@ -1,4 +1,5 @@
 #include "HearthwardInventoryComponent.h"
+#include "JsonObjectConverter.h"
 
 EHearthwardInventoryResult UHearthwardInventoryComponent::CheckExchange(const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,int32 Batches) const
 {
@@ -89,4 +90,52 @@ bool UHearthwardInventoryComponent::CommitMaterials(bool Notify)
     auto After=State;
     for(const auto& M:ReservedMaterials) if(After.Remove(M.Key,M.Value)!=EHearthwardInventoryResult::Success) return false;
     State=MoveTemp(After);ReservedMaterials.Reset();if(Notify)OnInventoryChanged.Broadcast();return true;
+}
+
+bool UHearthwardInventoryComponent::RestoreInventory(const FHearthwardInventorySnapshot& Data,bool Notify)
+{
+    if(!State.Restore(Data))return false;
+    ReleaseReservation();ReleaseMaterials();if(Notify)OnInventoryChanged.Broadcast();return true;
+}
+bool UHearthwardInventoryComponent::EquipInstance(FGuid Id)
+{ if(!State.Equip(Id))return false;OnInventoryChanged.Broadcast();return true; }
+bool UHearthwardInventoryComponent::WearInstance(FGuid Id,double Amount)
+{ if(!State.Wear(Id,Amount))return false;OnInventoryChanged.Broadcast();return true; }
+bool UHearthwardInventoryComponent::RepairInstance(FGuid Id,double Amount,const TMap<FName,int32>& Materials,bool Notify)
+{
+    auto After=State;
+    for(const auto& M:Materials)
+        if(M.Value>Available(M.Key) || After.Remove(M.Key,M.Value)!=EHearthwardInventoryResult::Success)return false;
+    if(!After.RestoreDurability(Id,Amount))return false;
+    State=MoveTemp(After);if(Notify)OnInventoryChanged.Broadcast();return true;
+}
+EHearthwardInventoryResult UHearthwardInventoryComponent::TransferInstanceTo(UHearthwardInventoryComponent* Target,FGuid Id)
+{
+    if(!IsValid(Target) || Target->GetWorld()!=GetWorld())return EHearthwardInventoryResult::InvalidArgument;
+    const auto* I=FindInstance(Id);if(!I || Available(I->Definition)<1)return EHearthwardInventoryResult::InsufficientItems;
+    const auto R=State.TransferInstanceTo(Target->State,Id);
+    if(R==EHearthwardInventoryResult::Success){OnInventoryChanged.Broadcast();Target->OnInventoryChanged.Broadcast();}return R;
+}
+EHearthwardInventoryResult UHearthwardInventoryComponent::InsertInstance(const FHearthwardItemInstance& Instance,bool Notify)
+{ const auto R=State.InsertInstance(Instance);if(Notify && R==EHearthwardInventoryResult::Success)OnInventoryChanged.Broadcast();return R; }
+bool UHearthwardInventoryComponent::RemoveInstance(FGuid Id,bool Notify)
+{
+    const auto* I=FindInstance(Id);if(!I || Available(I->Definition)<1 || !State.RemoveInstance(Id))return false;
+    if(Notify)OnInventoryChanged.Broadcast();return true;
+}
+bool UHearthwardInventoryComponent::UpgradeBackpack(bool Notify)
+{ if(!State.UpgradeBackpack())return false;if(Notify)OnInventoryChanged.Broadcast();return true; }
+
+FString UHearthwardInventoryComponent::DescribeInventory() const
+{FString Json;FJsonObjectConverter::UStructToJsonObjectString(State.Snapshot(),Json);return Json;}
+
+EHearthwardInventoryResult UHearthwardInventoryComponent::GatherFrom(UHearthwardInventoryComponent* Source,FName Item,int32 Count,FGuid Tool,double Wear)
+{
+    if(!IsValid(Source) || Source==this || Source->GetWorld()!=GetWorld() || Source->Available(Item)<Count)return EHearthwardInventoryResult::InvalidArgument;
+    auto SourceAfter=Source->State,PersonalAfter=State;
+    const auto Result=SourceAfter.TransferTo(PersonalAfter,Item,Count);
+    if(Result!=EHearthwardInventoryResult::Success)return Result;
+    if(!PersonalAfter.Wear(Tool,Wear))return EHearthwardInventoryResult::InvalidArgument;
+    Source->State=MoveTemp(SourceAfter);State=MoveTemp(PersonalAfter);
+    Source->OnInventoryChanged.Broadcast();OnInventoryChanged.Broadcast();return Result;
 }

@@ -247,7 +247,7 @@ FString UHearthwardLocalAISubsystem::GetCandidateText() const
         S+=TEXT("\n实际消耗：");for(const auto& C:HearthwardWorkshop::Materials(Candidate.Intent,Candidate.Item,Candidate.Quantity))
         {const auto* I=HearthwardBasicItems().FindByPredicate([&](const auto& X){return X.Id==C.Key;});S+=FString::Printf(TEXT("%s%d "),*I->DisplayName.ToString(),C.Value);}
         if(Candidate.Intent==TEXT("craft")){S+=TEXT("\n实际产量：");for(const auto& C:HearthwardWorkshop::Outputs(Candidate.Item,Candidate.Quantity))S+=FString::Printf(TEXT("%s %d "),*HearthwardAgent::ItemText(C.Key),C.Value);}
-        if(Candidate.Intent==TEXT("repair") && PendingCompanion.IsValid())S+=FString::Printf(TEXT("\n当前耐久：%.0f；修好后仍由弟弟持有"),PendingCompanion->OwnedDurability.FindRef(Candidate.Item));
+        if(Candidate.Intent==TEXT("repair") && PendingCompanion.IsValid())S+=FString::Printf(TEXT("\n当前耐久：%.0f；修好后仍由弟弟持有"),PendingCompanion->EquipmentDurability(Candidate.Item));
     }
     if(PendingCompanion.IsValid() && PendingCompanion->GetRequested()>PendingCompanion->GetDelivered())S+=FString::Printf(TEXT("\n将替换任务 %s（已交付%d）"),*PendingCompanion->GetCommandId().ToString().Left(8),PendingCompanion->GetDelivered());
     return S;

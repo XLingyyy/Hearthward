@@ -15,6 +15,7 @@ struct FHearthwardCombatSave
     UPROPERTY() bool RangedSelected=false;
     UPROPERTY(BlueprintReadOnly) double SenseRemaining=0;
     UPROPERTY(BlueprintReadOnly) double SenseCooldown=0;
+    UPROPERTY() double SenseRadius=1500;
     UPROPERTY() double OutsideSeconds=0;
     UPROPERTY() int32 Infiltration=0;
     UPROPERTY() TMap<FName,double> Alarms;
@@ -42,6 +43,7 @@ public:
     UFUNCTION(BlueprintCallable) bool Shoot(bool Release=false);
     UFUNCTION(BlueprintCallable) bool Throw(FName Item);
     UFUNCTION(BlueprintCallable) bool SwitchEquipment(FName Item);
+    bool SwitchEquipmentInstance(FGuid Instance);
     UFUNCTION(BlueprintPure) bool Busy() const { return Action!=NAME_None; }
     UFUNCTION(BlueprintPure) bool Executing() const { return Action==TEXT("execution"); }
     UFUNCTION(BlueprintPure) bool MovementLocked() const;
@@ -91,7 +93,9 @@ private:
     TWeakObjectPtr<AActor> Locked;
     FVector StartPosition,DodgeDirection;
     TSet<FName> HitIds;
-    FGuid ActionEpoch,ActionId;
+    FGuid ActionEpoch,ActionId,ActionInstance,PendingInstance;
+    float ActionPower=0;
+    bool ChargedWear=false;
     TSet<FGuid> DamageIds;
     FName ActionWeapon,PendingItem,BufferedAttack;
     double BufferedUntil=0,LostLock=0,StartedAt=0;

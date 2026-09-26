@@ -32,7 +32,7 @@ public:
         if (!OperationId.IsValid() || !PersonalId.IsValid()) return Reply;
         if (const auto* Prior = Completed.Find(OperationId))
         {
-            if (Prior->PersonalId != PersonalId || Prior->ToCamp != ToCamp || Prior->ItemId != ItemId || Prior->Count != Count)
+            if (Prior->Instance.IsValid() || Prior->PersonalId != PersonalId || Prior->ToCamp != ToCamp || Prior->ItemId != ItemId || Prior->Count != Count)
                 Reply.Result = EHearthwardInventoryResult::OperationConflict;
             else { Reply.Result = Prior->Result; Reply.Replayed = true; }
             return Reply;
@@ -53,6 +53,7 @@ private:
         FName ItemId;
         int32 Count;
         EHearthwardInventoryResult Result;
+        FGuid Instance;
     };
     FHearthwardInventoryState Shared{true};
     FGuid Epoch = FGuid::NewGuid();

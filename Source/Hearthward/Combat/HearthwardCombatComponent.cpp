@@ -62,6 +62,7 @@ bool UHearthwardCombatComponent::Start(FName Name,double Seconds)
     if(auto* T=GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>()) T->InterruptAction();
     Action=Name; Duration=Seconds; Elapsed=0; StartedAt=Now(); ActionEpoch=Epoch(); ActionId=FGuid::NewGuid();
     StartPosition=GetOwner()->GetActorLocation(); ActionWeapon=G()->Equipment.FindRef(TEXT("weapon"));
+    ActionInstance=Bag()->EquippedInstance(Name==TEXT("draw") || Name==TEXT("crossbow") || Name==TEXT("reload")?FName(TEXT("ranged")):FName(TEXT("weapon"))); ActionPower=G()->AttackPower(); ChargedWear=false;
     HitIds.Reset(); Guard.Release(); G()->SetSprinting(false); return true;
 }
 bool UHearthwardCombatComponent::Attack(bool Heavy)
@@ -139,7 +140,7 @@ bool UHearthwardCombatComponent::SetGuard(bool Value)
     if(!Value) { Guard.Release(); return true; }
     const FName Kind=WeaponKind(),Shield=G()->Equipment.FindRef(TEXT("offhand"));
     if(!Available() || Busy() || Body.IsValid() || (Kind!=TEXT("shortblade") && Kind!=TEXT("blunt"))
-        || Shield!=TEXT("shield") || G()->Durability.FindRef(Shield)<=0) return false;
+        || Text(Find(TEXT("items"),Shield.ToString()),TEXT("equipmentKind"))!=TEXT("shield") || G()->EquippedDurability(TEXT("offhand"))<=0) return false;
     G()->SetSprinting(false); return Guard.Raise(Now(),G()->Stamina,G()->MaxStamina());
 }
 bool UHearthwardCombatComponent::Damage(float Raw,FName Part,FVector Source,bool Heavy,bool Projectile,FGuid Event)
@@ -149,18 +150,19 @@ bool UHearthwardCombatComponent::Damage(float Raw,FName Part,FVector Source,bool
     if(!Event.IsValid()) Event=FGuid::NewGuid(); DamageIds.Add(Event);
     G()->NotifyCombat();
     if(Action==TEXT("dodge") && Now()-StartedAt<.3) return false;
-    if((WeaponKind()==TEXT("shortblade") || WeaponKind()==TEXT("blunt")) && G()->Durability.FindRef(G()->Equipment.FindRef(TEXT("offhand")))>0
+    if((WeaponKind()==TEXT("shortblade") || WeaponKind()==TEXT("blunt")) && G()->EquippedDurability(TEXT("offhand"))>0
         && HearthwardCombat::InFront(GetOwner()->GetActorForwardVector(),Source-GetOwner()->GetActorLocation()))
     {
         const float Cost=(Heavy?40:20)*Bag()->GetStaminaCostMultiplier()*FMath::Max(.1f,1-G()->Effect(TEXT("cost")));
         if(Guard.Hit(Now(),Cost,G()->Stamina))
-        { GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.RecoveryDelay=.5; return true; }
+        { GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.RecoveryDelay=.5; G()->WearEquipment(TEXT("offhand"),Heavy?2:1); if(G()->EquippedDurability(TEXT("offhand"))<=0)Guard.Release(); return true; }
     }
     const FName Item=G()->Equipment.FindRef(Part==TEXT("body")?FName(TEXT("chest")):Part); const auto R=Find(TEXT("items"),Item.ToString());
-    const float Armor=G()->Durability.FindRef(Item)>0?Number(R,TEXT("defense"))/100:0;
+    const FName Slot=Part==TEXT("body")?FName(TEXT("chest")):Part;
+    const float Armor=G()->EquippedDurability(Slot)>0?Number(R,TEXT("defense"))/100+G()->Effect(TEXT("local_armor_bonus")):0;
     const float Actual=HearthwardCombat::ArmorDamage(Raw*(Projectile && Part==TEXT("head")?3:1),Armor,G()->Effect(TEXT("defense")));
     Cancel(); DropBody(); Guard.Release();
-    if(Armor>0) G()->Durability[Item]=FMath::Max(0.f,G()->Durability[Item]-1/(1+G()->Effect(TEXT("durability"))));
+    if(Armor>0) G()->WearEquipment(Slot,1,true);
     auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
     S->ReceiveDamage(Actual,Event,Epoch());
     if(S->Alive()) { Action=TEXT("hit"); Duration=.25; StartedAt=Now(); Elapsed=0; ActionEpoch=Epoch(); }
@@ -207,16 +209,11 @@ void UHearthwardCombatComponent::Sweep(double From,double To)
             {
                 HitIds.Add(T->Id); const FName Part=T->HitPart(Hit);
                 if(Part.IsNone()) { Feedback=TEXT("目标缺少命中部位配置"); continue; }
-                float SkillScale=1; bool Stun=false;
-                const auto Skill=Find(TEXT("skills"),TEXT("strong")); const int32 Rank=G()->Skills.FindRef(TEXT("strong"));
-                if(HeavyAttack && Skill && Rank>0)
-                {
-                    const auto& Multipliers=Skill->GetArrayField(TEXT("multipliers")); const auto& Chance=Skill->GetArrayField(TEXT("stunChance"));
-                    if(Multipliers.IsValidIndex(Rank-1)) SkillScale=Multipliers[Rank-1]->AsNumber();
-                    if(Chance.IsValidIndex(Rank-1)) Stun=FMath::FRand()<Chance[Rank-1]->AsNumber();
-                }
-                HitTarget(T,G()->AttackPower()*Move.Multiplier*SkillScale,Part,false,ActionId);
-                if(Stun && T->Alive()) { const float Before=T->Health; T->Health=0; G()->CommitOpponentHealth(T->Id,0,Before); T->SetCorpse(); }
+                if(!T->Alive())continue;
+                const float SkillScale=HeavyAttack?1+G()->Effect(TEXT("heavy_damage")):1;
+                const float KindScale=Move.Multiplier/HearthwardCombat::Move(WeaponKind(),false).Multiplier;
+                HitTarget(T,ActionPower*KindScale*SkillScale,Part,false,ActionId);
+                if(!ChargedWear){G()->WearEquipment(TEXT("weapon"),HeavyAttack?2:1);ChargedWear=true;}
                 if(WeaponKind()!=TEXT("longblade")) return;
             }
         }
@@ -230,11 +227,11 @@ void UHearthwardCombatComponent::Finish()
         auto* T=Captive.Get();
         if(!Eligible(T)) { Cancel(); return; }
         TGuardValue<bool> Commit(Committing,true);
-        const float Before=T->Health; T->Health=0; G()->CommitOpponentHealth(T->Id,0,Before); T->SetCorpse();
+        const float Before=T->Health; T->Health=0; G()->CommitOpponentHealth(T->Id,0,Before); T->SetCorpse(); G()->WearEquipment(TEXT("weapon"),5);
     }
     else if(Completed==TEXT("pickup")) Action=NAME_None;
     else if(Completed==TEXT("reload")) CrossbowLoaded=true;
-    else if(Completed==TEXT("switch")) G()->CommitEquipment(PendingItem);
+    else if(Completed==TEXT("switch")) G()->CommitEquipmentInstance(PendingInstance);
     Cancel();
 }
 bool UHearthwardCombatComponent::MovementLocked() const
@@ -281,13 +278,14 @@ void UHearthwardCombatComponent::TickComponent(float Delta,ELevelTick Tick,FActo
     {
         const bool Thrown=Action==TEXT("throw"); const FName Item=Thrown?PendingItem:G()->Equipment.FindRef(TEXT("ranged"));
         const auto R=Find(TEXT("items"),Item.ToString()); const float Cost=Thrown?(Number(R,TEXT("bait"))>0?5:10):8;
+        if(!Thrown && (G()->EquippedDurability(TEXT("ranged"))<=0 || Bag()->EquippedInstance(TEXT("ranged"))!=ActionInstance)){Cancel();return;}
         const FName Ammo=Thrown?Item:FName(TEXT("arrow"));
         if(Bag()->Available(Ammo)<=0 || !G()->SpendStamina(Cost)) { Cancel(); return; }
         Bag()->TryRemove(Ammo,1); LaunchProjectile(Item,1,Thrown); if(!Thrown) CrossbowLoaded=false;
     }
     if(Action==TEXT("attack"))
     {
-        if(G()->Equipment.FindRef(TEXT("weapon"))!=ActionWeapon) { Cancel(); return; }
+        if(Bag()->EquippedInstance(TEXT("weapon"))!=ActionInstance) { Cancel(); return; }
         if(WeaponKind()==TEXT("longblade") || HitIds.IsEmpty()) Sweep(Previous,Elapsed);
     }
     if(Action==TEXT("dodge"))
@@ -304,12 +302,14 @@ void UHearthwardCombatComponent::TickComponent(float Delta,ELevelTick Tick,FActo
 bool UHearthwardCombatComponent::Sense()
 {
     if(!Available() || State.SenseCooldown>0 || !G()->SpendStamina(20)) return false;
-    State.SenseRemaining=5; State.SenseCooldown=20; return true;
+    State.SenseRemaining=G()->Effect(TEXT("sense_duration_seconds"))>0?G()->Effect(TEXT("sense_duration_seconds")):5;
+    State.SenseCooldown=G()->Effect(TEXT("sense_cooldown_seconds"))>0?G()->Effect(TEXT("sense_cooldown_seconds")):20;
+    State.SenseRadius=G()->Effect(TEXT("sense_radius_m"))>0?100*G()->Effect(TEXT("sense_radius_m")):1500; return true;
 }
 TArray<AActor*> UHearthwardCombatComponent::SensedTargets() const
 {
     TArray<AActor*> Out; if(State.SenseRemaining<=0) return Out;
-    for(auto* T:Targets()) if(T->Alive() && HearthwardCombat::SenseVisible(GetOwner()->GetActorLocation(),T->GetOwner()->GetActorLocation())) Out.Add(T->GetOwner());
+    for(auto* T:Targets()) if(T->Alive() && FVector::DistSquared(GetOwner()->GetActorLocation(),T->GetOwner()->GetActorLocation())<=FMath::Square(State.SenseRadius) && FMath::Abs(GetOwner()->GetActorLocation().Z-T->GetOwner()->GetActorLocation().Z)<=400) Out.Add(T->GetOwner());
     return Out;
 }
 bool UHearthwardCombatComponent::ToggleLock()
@@ -346,7 +346,7 @@ void UHearthwardCombatComponent::Perception(double Delta)
             for(auto* R:Regions) if(R->Lighting>=0 && R->Contains(Brother.Value->GetActorLocation())) { Light=FMath::Clamp(R->Lighting,0.f,1.f); break; }
             const bool Seeing=Offset.Size()<=(12+13*Light)*100 && HearthwardCombat::InFront(Observer->GetOwner()->GetActorForwardVector(),Offset) && Visible(Observer->GetOwner(),Brother.Value);
             auto& P=Observer->Memory.Detection.FindOrAdd(Brother.Key);
-            P=HearthwardCombat::Detection(P,Delta,Offset.Size()/100,Seeing);
+            P=HearthwardCombat::Detection(P,Delta*(Seeing && Brother.Key==TEXT("player")?1-G()->Effect(TEXT("detection_growth_reduction")):1),Offset.Size()/100,Seeing);
             if(Seeing) Observer->Memory.LastKnown.Add(Brother.Key,Brother.Value->GetActorLocation());
             if(Seeing && P>=1) { Observer->Memory.Seen.Add(Brother.Key); Engaged=true; }
             if(Brother.Key==TEXT("player")) Discovery=FMath::Max(Discovery,P);
@@ -430,9 +430,13 @@ void UHearthwardCombatComponent::UpdateCarry(double Delta)
     Body->GetOwner()->SetActorLocation(Dest);
 }
 bool UHearthwardCombatComponent::SwitchEquipment(FName Item)
+{ return SwitchEquipmentInstance(Bag()->FirstInstance(Item)); }
+bool UHearthwardCombatComponent::SwitchEquipmentInstance(FGuid Instance)
 {
-    if(!Find(TEXT("items"),Item.ToString()) || Bag()->Available(Item)<=0 || !Start(TEXT("switch"),.4)) return false;
-    PendingItem=Item; return true;
+    const auto* I=Bag()->FindInstance(Instance);if(!I)return false;
+    const auto R=Find(TEXT("items"),I->Definition.ToString());
+    if(Text(R,TEXT("slot")).IsEmpty() || !Start(TEXT("switch"),.4))return false;
+    PendingInstance=Instance; return true;
 }
 void UHearthwardCombatComponent::Aim(bool Value)
 {
@@ -447,13 +451,13 @@ bool UHearthwardCombatComponent::Reload()
 bool UHearthwardCombatComponent::Shoot(bool Release)
 {
     const FName Weapon=G()->Equipment.FindRef(TEXT("ranged")); const auto R=Find(TEXT("items"),Weapon.ToString());
-    if(!Available() || !Aiming || G()->Durability.FindRef(Weapon)<=0 || Bag()->Available(TEXT("arrow"))<=0) return false;
+    if(!Available() || !Aiming || G()->EquippedDurability(TEXT("ranged"))<=0 || Bag()->Available(TEXT("arrow"))<=0) return false;
     // Ballistics are a content prerequisite, not an invented weapon tuning default.
     if(Number(R,TEXT("projectileSpeed"))<=0 || Number(R,TEXT("projectileGravity"))<=0) { Feedback=TEXT("该远程武器尚未配置弹道参数"); return false; }
     const bool Crossbow=Text(R,TEXT("combatClass"))==TEXT("crossbow");
     if(Crossbow) return !Release && CrossbowLoaded && Start(TEXT("crossbow"),.5);
     if(!Release) return Start(TEXT("draw"),3600);
-    if(Action!=TEXT("draw") || Now()-StartedAt<.2) { Cancel(); return false; }
+    if(Action!=TEXT("draw") || Bag()->EquippedInstance(TEXT("ranged"))!=ActionInstance || Now()-StartedAt<.2) { Cancel(); return false; }
     const float Charge=FMath::Lerp(.5f,1.f,FMath::Clamp(float(Now()-StartedAt),0.f,1.f));
     if(!G()->SpendStamina(8)) { Cancel(); return false; }
     if(Bag()->TryRemove(TEXT("arrow"),1)!=EHearthwardInventoryResult::Success) { Cancel(); return false; }
@@ -473,7 +477,9 @@ void UHearthwardCombatComponent::LaunchProjectile(FName Item,float Scale,bool Th
     const FVector Origin=GetOwner()->GetActorLocation()+FVector(0,0,30)+Dir*45;
     auto* P=GetWorld()->SpawnActor<AHearthwardProjectile>(Origin,Dir.Rotation());
     P->Shooter=this; P->Epoch=Epoch(); P->Event=FGuid::NewGuid(); P->Velocity=Dir*Number(R,TEXT("projectileSpeed"));
-    P->Gravity=Number(R,TEXT("projectileGravity")); P->Item=Thrown?NAME_None:FName(TEXT("arrow"));
+    P->Lifetime=Number(R,TEXT("projectileLifetime"),3);
+    if(!Thrown)G()->WearEquipment(TEXT("ranged"),1);
+    P->Gravity=Number(R,TEXT("projectileGravity"))*FMath::Abs(GetWorld()->GetGravityZ()); P->Item=Thrown?NAME_None:FName(TEXT("arrow"));
     P->Power=(Thrown?Number(R,TEXT("throwDamage")):Number(R,TEXT("attack")))*Scale*(1+G()->Effect(TEXT("attack")))*(GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.Severe()?.75f:1.f);
     P->Bait=Number(R,TEXT("bait"))>0; P->RemainingRange=Thrown?1500:Number(R,TEXT("range"),MAX_flt);
 }
@@ -492,7 +498,8 @@ bool UHearthwardCombatComponent::ValidateSnapshot(const FString& Json)
     FHearthwardCombatSave S;
     TSharedPtr<FJsonObject> Root;
     if(!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Root) || !Root || !Root->HasTypedField<EJson::Number>(TEXT("version"))) return false;
-    if(!FJsonObjectConverter::JsonObjectToUStruct(Root.ToSharedRef(),&S) || S.Version!=1 || !FMath::IsFinite(S.SenseRemaining) || S.SenseRemaining<0 || S.SenseRemaining>5
+    if(!FJsonObjectConverter::JsonObjectToUStruct(Root.ToSharedRef(),&S) || S.Version!=1 || !FMath::IsFinite(S.SenseRemaining) || S.SenseRemaining<0 || S.SenseRemaining>8
+        || !FMath::IsFinite(S.SenseRadius) || S.SenseRadius<1500 || S.SenseRadius>2400
         || !FMath::IsFinite(S.SenseCooldown) || S.SenseCooldown<0 || S.SenseCooldown>20 || !FMath::IsFinite(S.OutsideSeconds) || S.OutsideSeconds<0 || S.OutsideSeconds>30) return false;
     TSet<FName> Ids;
     for(const auto& T:S.Targets)

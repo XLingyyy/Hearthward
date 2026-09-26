@@ -41,8 +41,14 @@
       "weight": 100,
       "category": "材料",
       "icon": "wood",
-      "description": "在营地与旅途中使用的物资。",
-      "displayOrder": 13
+      "description": "材料。",
+      "displayOrder": 0,
+      "rarity": "common",
+      "stage": 1,
+      "source": "world:wood",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "stone",
@@ -50,8 +56,14 @@
       "weight": 100,
       "category": "材料",
       "icon": "ore",
-      "description": "在营地与旅途中使用的物资。",
-      "displayOrder": 21
+      "description": "材料。",
+      "displayOrder": 1,
+      "rarity": "common",
+      "stage": 1,
+      "source": "world:stone",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "ore",
@@ -59,8 +71,14 @@
       "weight": 200,
       "category": "材料",
       "icon": "ore",
-      "description": "在营地与旅途中使用的物资。",
-      "displayOrder": 11
+      "description": "材料。",
+      "displayOrder": 2,
+      "rarity": "common",
+      "stage": 1,
+      "source": "world:ore",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "meat",
@@ -68,9 +86,15 @@
       "weight": 50,
       "category": "食物",
       "icon": "meat",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "食物。",
       "food": 20,
-      "displayOrder": 9
+      "displayOrder": 3,
+      "rarity": "common",
+      "stage": 1,
+      "source": "world:meat",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "arrow",
@@ -78,59 +102,90 @@
       "weight": 5,
       "category": "工具",
       "icon": "arrow",
-      "description": "在营地与旅途中使用的物资。",
-      "displayOrder": 2,
-      "quickIcon": "arrowQuick"
+      "description": "工具。",
+      "displayOrder": 4,
+      "quickIcon": "arrowQuick",
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:arrows",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "axe",
-      "name": "荒原石斧",
+      "name": "石制战斧",
       "weight": 320,
       "category": "装备",
       "icon": "axe",
-      "description": "以山岩与兽骨制成的粗砺战斧。\n陪伴你走过无数寒夜。\n或许并不精致，但是够可靠。",
+      "description": "可击退敌人的战斧，也可用于伐木。",
+      "displayOrder": 5,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:stone_axe",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "weapon",
-      "attack": 20,
-      "durability": 100,
-      "displayOrder": 0,
-      "combatClass": "blunt"
+      "durability": 80,
+      "attack": 30.0,
+      "combatClass": "blunt",
+      "toolGrade": 1,
+      "toolKind": "axe"
     },
     {
       "id": "bow",
-      "name": "猎弓",
+      "name": "石制猎弓",
       "weight": 180,
       "category": "装备",
       "icon": "bow",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "蓄力射击，使用箭矢。",
+      "displayOrder": 6,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_bow",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "ranged",
-      "attack": 18,
-      "durability": 100,
-      "displayOrder": 1,
-      "combatClass": "bow"
+      "durability": 80,
+      "attack": 25.0,
+      "combatClass": "bow",
+      "projectileSpeed": 6000,
+      "projectileGravity": 0.2,
+      "projectileLifetime": 3
     },
     {
       "id": "hood",
-      "name": "猎人兜帽",
+      "name": "皮制兜帽",
       "weight": 80,
       "category": "装备",
       "icon": "hood",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "displayOrder": 7,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_hood",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "head",
-      "defense": 3,
       "durability": 100,
-      "displayOrder": 3
+      "defense": 3.0
     },
     {
       "id": "armor",
-      "name": "兽皮胸甲",
+      "name": "皮制胸甲",
       "weight": 400,
       "category": "装备",
       "icon": "armor",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "displayOrder": 8,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_armor",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "chest",
-      "defense": 5,
       "durability": 100,
-      "displayOrder": 4
+      "defense": 5.0
     },
     {
       "id": "gloves",
@@ -138,23 +193,32 @@
       "weight": 70,
       "category": "装备",
       "icon": "gloves",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "装饰配件，不提供减伤／容量／免弹药。",
+      "displayOrder": 9,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_gloves",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "hands",
-      "defense": 2,
-      "durability": 100,
-      "displayOrder": 6
+      "durability": 0
     },
     {
       "id": "boots",
-      "name": "行路皮靴",
+      "name": "皮制靴",
       "weight": 120,
       "category": "装备",
       "icon": "boots",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "displayOrder": 10,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_boots",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "feet",
-      "defense": 3,
       "durability": 100,
-      "displayOrder": 7
+      "defense": 3.0
     },
     {
       "id": "belt",
@@ -162,23 +226,32 @@
       "weight": 60,
       "category": "装备",
       "icon": "belt",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "装饰配件，不提供减伤／容量／免弹药。",
+      "displayOrder": 11,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_belt",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "waist",
-      "defense": 2,
-      "durability": 100,
-      "displayOrder": 5
+      "durability": 0
     },
     {
       "id": "shield",
-      "name": "木盾",
+      "name": "皮制盾",
       "weight": 280,
       "category": "装备",
       "icon": "shield",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "shield。",
+      "displayOrder": 12,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_shield",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "offhand",
-      "defense": 8,
-      "durability": 100,
-      "displayOrder": 16
+      "durability": 80,
+      "equipmentKind": "shield"
     },
     {
       "id": "quiver",
@@ -186,11 +259,15 @@
       "weight": 50,
       "category": "装备",
       "icon": "quiver",
-      "description": "在营地与旅途中使用的物资。",
+      "description": "装饰配件，不提供减伤／容量／免弹药。",
+      "displayOrder": 13,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_quiver",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
       "slot": "quiver",
-      "defense": 0,
-      "durability": 100,
-      "displayOrder": 17
+      "durability": 0
     },
     {
       "id": "amulet",
@@ -198,10 +275,17 @@
       "weight": 0,
       "category": "任务",
       "icon": "amulet",
-      "description": "故乡留下的印记。\n火不曾熄灭，只是等待归来的人。",
-      "slot": "charm",
+      "description": "零重关键任务物，不可丢弃／销毁，无战斗加成。",
       "key": true,
-      "displayOrder": 18
+      "displayOrder": 14,
+      "rarity": "unique",
+      "stage": 1,
+      "source": "claim:campaign_start_amulet",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0,
+      "uniqueClaim": "campaign_start_amulet",
+      "protected": true
     },
     {
       "id": "roast",
@@ -209,10 +293,16 @@
       "weight": 50,
       "category": "食物",
       "icon": "meat",
-      "description": "在篝火旁烤熟的肉。\n食用恢复40点饱食度。",
+      "description": "食物。",
       "food": 40,
-      "displayOrder": 10,
-      "quickIcon": "roastQuick"
+      "displayOrder": 15,
+      "quickIcon": "roastQuick",
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:roast",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "herb",
@@ -220,8 +310,14 @@
       "weight": 20,
       "category": "材料",
       "icon": "herb",
-      "description": "在营地与旅途中使用的物资。",
-      "displayOrder": 8
+      "description": "材料。",
+      "displayOrder": 16,
+      "rarity": "common",
+      "stage": 1,
+      "source": "world:herb",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "hide",
@@ -229,8 +325,14 @@
       "weight": 60,
       "category": "材料",
       "icon": "hide",
-      "description": "在营地与旅途中使用的物资。",
-      "displayOrder": 12
+      "description": "防具与背包原料。",
+      "displayOrder": 17,
+      "rarity": "common",
+      "stage": 1,
+      "source": "world:hide",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "rope",
@@ -238,8 +340,14 @@
       "weight": 30,
       "category": "工具",
       "icon": "rope",
-      "description": "在营地与旅途中使用的物资。",
-      "displayOrder": 15
+      "description": "工具。",
+      "displayOrder": 18,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:rope",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "flower",
@@ -247,8 +355,14 @@
       "weight": 10,
       "category": "材料",
       "icon": "flower",
-      "description": "在营地与旅途中使用的物资。",
-      "displayOrder": 14
+      "description": "资源见闻／收集，无首版生产消耗。",
+      "displayOrder": 19,
+      "rarity": "common",
+      "stage": 1,
+      "source": "world:flower",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "medicine",
@@ -257,24 +371,40 @@
       "weight": 50,
       "healing": 30,
       "icon": "medicineQuick",
-      "description": "站定用药3秒，恢复最大生命的30%。受伤中断损失半份，移动取消不消耗。",
-      "displayOrder": 19,
+      "description": "食物。",
+      "displayOrder": 20,
       "quickIcon": "medicineQuick",
-      "halfDose": "medicine_half"
+      "halfDose": "medicine_half",
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:medicine",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "firepot",
       "name": "投掷火罐",
       "category": "工具",
       "weight": 100,
-      "throwDamage": 30,
+      "throwDamage": 60,
       "range": 800,
-      "stamina": 8,
+      "stamina": 10,
       "cooldown": 1.2,
       "icon": "firepotQuick",
-      "description": "以陶罐装填的投掷物。\n命中造成30点伤害。\n每次投掷消耗一罐。",
-      "displayOrder": 20,
-      "quickIcon": "firepotQuick"
+      "description": "一次性伤害投掷，基伤60（普通守卫H100的60%），护甲／难度后结算；无分解回收。",
+      "displayOrder": 21,
+      "quickIcon": "firepotQuick",
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:firepot",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0,
+      "attack": 60,
+      "projectileSpeed": 1200,
+      "projectileGravity": 1,
+      "projectileLifetime": 3
     },
     {
       "id": "medicine_half",
@@ -283,10 +413,16 @@
       "weight": 25,
       "healing": 15,
       "icon": "medicineQuick",
-      "description": "半份药草膏。站定用药3秒，恢复最大生命的15%；受伤中断后耗尽。",
-      "displayOrder": 19,
+      "description": "044受伤中断产生半份，不能直接制作或拼回整份。",
+      "displayOrder": 22,
       "quickIcon": "medicineQuick",
-      "medicineBase": "medicine"
+      "medicineBase": "medicine",
+      "rarity": "common",
+      "stage": 1,
+      "source": "event:interrupted_medicine",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "wild_food",
@@ -294,10 +430,16 @@
       "weight": 50,
       "category": "食物",
       "icon": "meat",
-      "description": "可食植物，用于营地生产与生活。",
+      "description": "食物。",
       "food": 20,
-      "displayOrder": 10,
-      "quickIcon": "roastQuick"
+      "displayOrder": 23,
+      "quickIcon": "roastQuick",
+      "rarity": "common",
+      "stage": 1,
+      "source": "world:wild_food",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "cooked_food",
@@ -305,10 +447,16 @@
       "weight": 50,
       "category": "食物",
       "icon": "meat",
-      "description": "熟食，用于营地生产与生活。",
+      "description": "食物。",
       "food": 40,
-      "displayOrder": 10,
-      "quickIcon": "roastQuick"
+      "displayOrder": 24,
+      "quickIcon": "roastQuick",
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:cooked_food",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "full_meal",
@@ -316,10 +464,16 @@
       "weight": 50,
       "category": "食物",
       "icon": "meat",
-      "description": "大餐，用于营地生产与生活。",
+      "description": "食物。",
       "food": 60,
-      "displayOrder": 10,
-      "quickIcon": "roastQuick"
+      "displayOrder": 25,
+      "quickIcon": "roastQuick",
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:full_meal",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
     },
     {
       "id": "metal_ingot",
@@ -327,40 +481,671 @@
       "weight": 200,
       "category": "材料",
       "icon": "ore",
-      "description": "金属锭，用于营地生产与生活。",
-      "displayOrder": 11
+      "description": "材料。",
+      "displayOrder": 26,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:metal_ingot",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "durability": 0
+    },
+    {
+      "id": "refined_ore",
+      "name": "精矿",
+      "weight": 200,
+      "rarity": "common",
+      "stage": 2,
+      "source": "world:rich_ore",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 27,
+      "icon": "ore",
+      "category": "材料",
+      "description": "高级金属原料；金属镐采集。",
+      "durability": 0
+    },
+    {
+      "id": "steel_ingot",
+      "name": "精炼金属锭",
+      "weight": 200,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:steel_ingot",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 28,
+      "icon": "ore",
+      "category": "材料",
+      "description": "高级装备原料。",
+      "durability": 0
+    },
+    {
+      "id": "shortblade",
+      "name": "石制短刀",
+      "weight": 180,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_shortblade",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 29,
+      "icon": "axe",
+      "category": "装备",
+      "description": "单手短刃，可搭配盾牌。",
+      "slot": "weapon",
+      "durability": 100,
+      "attack": 20.0,
+      "combatClass": "shortblade"
+    },
+    {
+      "id": "longblade",
+      "name": "石制长刀",
+      "weight": 350,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_longblade",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 30,
+      "icon": "axe",
+      "category": "装备",
+      "description": "双手长刃，挥击可命中多个敌人。",
+      "slot": "weapon",
+      "durability": 80,
+      "attack": 27.0,
+      "combatClass": "longblade"
+    },
+    {
+      "id": "spear",
+      "name": "石制长枪",
+      "weight": 300,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_spear",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 31,
+      "icon": "axe",
+      "category": "装备",
+      "description": "长柄刺击武器。",
+      "slot": "weapon",
+      "durability": 100,
+      "attack": 23.0,
+      "combatClass": "spear"
+    },
+    {
+      "id": "leggings",
+      "name": "皮制护腿",
+      "weight": 200,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_leggings",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 32,
+      "icon": "armor",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "legs",
+      "durability": 100,
+      "defense": 4.0
+    },
+    {
+      "id": "pickaxe",
+      "name": "皮制镐",
+      "weight": 350,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_pickaxe",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 33,
+      "icon": "axe",
+      "category": "装备",
+      "description": "pickaxe。",
+      "slot": "tool",
+      "durability": 60,
+      "toolGrade": 1,
+      "toolKind": "pickaxe"
+    },
+    {
+      "id": "shortblade_2",
+      "name": "金属短刀",
+      "weight": 280,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_shortblade_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 34,
+      "icon": "axe",
+      "category": "装备",
+      "description": "单手短刃，可搭配盾牌。",
+      "slot": "weapon",
+      "durability": 100,
+      "attack": 30.0,
+      "combatClass": "shortblade"
+    },
+    {
+      "id": "longblade_2",
+      "name": "金属长刀",
+      "weight": 450,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_longblade_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 35,
+      "icon": "axe",
+      "category": "装备",
+      "description": "双手长刃，挥击可命中多个敌人。",
+      "slot": "weapon",
+      "durability": 80,
+      "attack": 40.5,
+      "combatClass": "longblade"
+    },
+    {
+      "id": "spear_2",
+      "name": "金属长枪",
+      "weight": 400,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_spear_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 36,
+      "icon": "axe",
+      "category": "装备",
+      "description": "长柄刺击武器。",
+      "slot": "weapon",
+      "durability": 100,
+      "attack": 34.5,
+      "combatClass": "spear"
+    },
+    {
+      "id": "blunt_2",
+      "name": "金属战斧",
+      "weight": 420,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_blunt_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 37,
+      "icon": "axe",
+      "category": "装备",
+      "description": "可击退敌人的战斧，也可用于伐木。",
+      "slot": "weapon",
+      "durability": 80,
+      "attack": 45.0,
+      "combatClass": "blunt",
+      "toolGrade": 2,
+      "toolKind": "axe"
+    },
+    {
+      "id": "bow_2",
+      "name": "金属猎弓",
+      "weight": 280,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_bow_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 38,
+      "icon": "bow",
+      "category": "装备",
+      "description": "蓄力射击，使用箭矢。",
+      "slot": "ranged",
+      "durability": 80,
+      "attack": 37.5,
+      "combatClass": "bow",
+      "projectileSpeed": 6000,
+      "projectileGravity": 0.2,
+      "projectileLifetime": 3
+    },
+    {
+      "id": "crossbow_2",
+      "name": "金属弩",
+      "weight": 500,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_crossbow_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 39,
+      "icon": "bow",
+      "category": "装备",
+      "description": "需要装填的弩，使用箭矢。",
+      "slot": "ranged",
+      "durability": 60,
+      "attack": 60.0,
+      "combatClass": "crossbow",
+      "projectileSpeed": 8000,
+      "projectileGravity": 0.2,
+      "projectileLifetime": 3
+    },
+    {
+      "id": "head_2",
+      "name": "金属兜帽",
+      "weight": 130,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_head_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 40,
+      "icon": "hood",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "head",
+      "durability": 100,
+      "defense": 15.0
+    },
+    {
+      "id": "chest_2",
+      "name": "金属胸甲",
+      "weight": 450,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_chest_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 41,
+      "icon": "armor",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "chest",
+      "durability": 100,
+      "defense": 15.0
+    },
+    {
+      "id": "legs_2",
+      "name": "金属护腿",
+      "weight": 250,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_legs_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 42,
+      "icon": "armor",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "legs",
+      "durability": 100,
+      "defense": 15.0
+    },
+    {
+      "id": "feet_2",
+      "name": "金属靴",
+      "weight": 170,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_feet_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 43,
+      "icon": "boots",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "feet",
+      "durability": 100,
+      "defense": 15.0
+    },
+    {
+      "id": "shield_2",
+      "name": "金属盾",
+      "weight": 380,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_shield_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 44,
+      "icon": "shield",
+      "category": "装备",
+      "description": "shield。",
+      "slot": "offhand",
+      "durability": 80,
+      "equipmentKind": "shield"
+    },
+    {
+      "id": "pickaxe_2",
+      "name": "金属镐",
+      "weight": 450,
+      "rarity": "common",
+      "stage": 2,
+      "source": "craft:craft_pickaxe_2",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 45,
+      "icon": "axe",
+      "category": "装备",
+      "description": "pickaxe。",
+      "slot": "tool",
+      "durability": 60,
+      "toolGrade": 2,
+      "toolKind": "pickaxe"
+    },
+    {
+      "id": "shortblade_3",
+      "name": "高级金属短刀",
+      "weight": 380,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_shortblade_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 46,
+      "icon": "axe",
+      "category": "装备",
+      "description": "单手短刃，可搭配盾牌。",
+      "slot": "weapon",
+      "durability": 100,
+      "attack": 45.0,
+      "combatClass": "shortblade"
+    },
+    {
+      "id": "longblade_3",
+      "name": "高级金属长刀",
+      "weight": 550,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_longblade_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 47,
+      "icon": "axe",
+      "category": "装备",
+      "description": "双手长刃，挥击可命中多个敌人。",
+      "slot": "weapon",
+      "durability": 80,
+      "attack": 60.75000000000001,
+      "combatClass": "longblade"
+    },
+    {
+      "id": "spear_3",
+      "name": "高级金属长枪",
+      "weight": 500,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_spear_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 48,
+      "icon": "axe",
+      "category": "装备",
+      "description": "长柄刺击武器。",
+      "slot": "weapon",
+      "durability": 100,
+      "attack": 51.74999999999999,
+      "combatClass": "spear"
+    },
+    {
+      "id": "blunt_3",
+      "name": "高级金属战斧",
+      "weight": 520,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_blunt_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 49,
+      "icon": "axe",
+      "category": "装备",
+      "description": "可击退敌人的战斧，也可用于伐木。",
+      "slot": "weapon",
+      "durability": 80,
+      "attack": 67.5,
+      "combatClass": "blunt",
+      "toolGrade": 3,
+      "toolKind": "axe"
+    },
+    {
+      "id": "bow_3",
+      "name": "高级金属猎弓",
+      "weight": 380,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_bow_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 50,
+      "icon": "bow",
+      "category": "装备",
+      "description": "蓄力射击，使用箭矢。",
+      "slot": "ranged",
+      "durability": 80,
+      "attack": 56.25,
+      "combatClass": "bow",
+      "projectileSpeed": 6000,
+      "projectileGravity": 0.2,
+      "projectileLifetime": 3
+    },
+    {
+      "id": "crossbow_3",
+      "name": "高级金属弩",
+      "weight": 600,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_crossbow_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 51,
+      "icon": "bow",
+      "category": "装备",
+      "description": "需要装填的弩，使用箭矢。",
+      "slot": "ranged",
+      "durability": 60,
+      "attack": 90.0,
+      "combatClass": "crossbow",
+      "projectileSpeed": 8000,
+      "projectileGravity": 0.2,
+      "projectileLifetime": 3
+    },
+    {
+      "id": "head_3",
+      "name": "高级金属兜帽",
+      "weight": 180,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_head_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 52,
+      "icon": "hood",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "head",
+      "durability": 100,
+      "defense": 25.0
+    },
+    {
+      "id": "chest_3",
+      "name": "高级金属胸甲",
+      "weight": 500,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_chest_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 53,
+      "icon": "armor",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "chest",
+      "durability": 100,
+      "defense": 25.0
+    },
+    {
+      "id": "legs_3",
+      "name": "高级金属护腿",
+      "weight": 300,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_legs_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 54,
+      "icon": "armor",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "legs",
+      "durability": 100,
+      "defense": 25.0
+    },
+    {
+      "id": "feet_3",
+      "name": "高级金属靴",
+      "weight": 220,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_feet_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 55,
+      "icon": "boots",
+      "category": "装备",
+      "description": "命中此护甲部位时生效；耐久为零后失效，可维修。",
+      "slot": "feet",
+      "durability": 100,
+      "defense": 25.0
+    },
+    {
+      "id": "shield_3",
+      "name": "高级金属盾",
+      "weight": 480,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_shield_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 56,
+      "icon": "shield",
+      "category": "装备",
+      "description": "shield。",
+      "slot": "offhand",
+      "durability": 80,
+      "equipmentKind": "shield"
+    },
+    {
+      "id": "pickaxe_3",
+      "name": "高级金属镐",
+      "weight": 550,
+      "rarity": "common",
+      "stage": 3,
+      "source": "craft:craft_pickaxe_3",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 57,
+      "icon": "axe",
+      "category": "装备",
+      "description": "pickaxe。",
+      "slot": "tool",
+      "durability": 60,
+      "toolGrade": 3,
+      "toolKind": "pickaxe"
+    },
+    {
+      "id": "fishing_rod",
+      "name": "钓竿",
+      "weight": 150,
+      "rarity": "common",
+      "stage": 1,
+      "source": "craft:craft_fishing_rod",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 58,
+      "icon": "rope",
+      "category": "装备",
+      "description": "钓鱼，仅成功获得鱼磨损1；鱼种／鱼饵由048配表。",
+      "slot": "tool",
+      "durability": 40,
+      "toolGrade": 1,
+      "toolKind": "fishing_rod"
+    },
+    {
+      "id": "bow_rare",
+      "name": "猎手长弓",
+      "weight": 280,
+      "rarity": "rare",
+      "stage": 2,
+      "source": "reward:rescue_05",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 59,
+      "icon": "bow",
+      "category": "装备",
+      "description": "蓄力射击，使用箭矢。",
+      "slot": "ranged",
+      "durability": 160,
+      "attack": 41.25,
+      "combatClass": "bow",
+      "projectileSpeed": 6000,
+      "projectileGravity": 0.2,
+      "projectileLifetime": 3
+    },
+    {
+      "id": "blueprint_hunter_bow",
+      "name": "猎手长弓图纸",
+      "weight": 0,
+      "rarity": "rare",
+      "stage": 2,
+      "source": "claim:side_hunter_blueprint",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 60,
+      "icon": "rope",
+      "category": "图纸",
+      "description": "阅读永久解锁对应配方；不能从实物逆向学会。",
+      "durability": 0,
+      "blueprint": "craft_bow_rare",
+      "protected": true
+    },
+    {
+      "id": "hearth_blade",
+      "name": "归火短刀",
+      "weight": 380,
+      "rarity": "unique",
+      "stage": 3,
+      "source": "claim:hometown_hearth_blade",
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "displayOrder": 61,
+      "icon": "axe",
+      "category": "装备",
+      "description": "单手短刃，可搭配盾牌。",
+      "slot": "weapon",
+      "durability": 400,
+      "attack": 49.50000000000001,
+      "combatClass": "shortblade",
+      "uniqueClaim": "hometown_hearth_blade",
+      "protected": true
     }
   ],
   "skills": [
     {
       "id": "strong",
-      "name": "强力挥击",
+      "name": "重击精通",
       "branch": "body",
       "branchName": "肉体",
       "maxRank": 3,
       "cost": 1,
       "requires": "",
-      "effect": "heavyAttack",
+      "effect": "heavy_damage",
       "amount": 0,
-      "description": "凝聚全身力量，进行一次强力重击。\n对敌人造成大量伤害，并有几率使其失衡。",
+      "description": "重击伤害提高5 / 10 / 15%。",
       "x": 377,
       "y": 282,
-      "activation": "主动 · 近战",
-      "multipliers": [
-        1.5,
-        1.8,
-        2.2
+      "activation": "被动",
+      "rankValues": [
+        0.05,
+        0.1,
+        0.15
       ],
-      "stunChance": [
-        0.2,
-        0.3,
-        0.4
-      ],
-      "stunSeconds": [
-        2,
-        2.5,
-        3
-      ]
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
       "id": "vigor",
@@ -372,9 +1157,17 @@
       "requires": "strong",
       "effect": "health",
       "amount": 8,
-      "description": "生命上限提高。\n每级增加 8点，最多 3 级。\n学习后立即生效。",
+      "description": "生命上限增加8 / 16 / 24点。",
       "x": 308,
-      "y": 388
+      "y": 388,
+      "rankValues": [
+        8,
+        16,
+        24
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "guard",
@@ -386,9 +1179,17 @@
       "requires": "strong",
       "effect": "defense",
       "amount": 0.03,
-      "description": "受到的伤害降低。\n每级增加 3%，最多 3 级。\n学习后立即生效。",
+      "description": "全身伤害减免增加3 / 6 / 9%。",
       "x": 427,
-      "y": 388
+      "y": 388,
+      "rankValues": [
+        0.03,
+        0.06,
+        0.09
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "recovery",
@@ -400,9 +1201,17 @@
       "requires": "vigor",
       "effect": "recovery",
       "amount": 0.15,
-      "description": "自然生命恢复速率提高。\n每级增加 15%，最多 3 级。\n学习后立即生效。",
+      "description": "生命自然恢复速度提高15 / 30 / 45%。",
       "x": 266,
-      "y": 504
+      "y": 504,
+      "rankValues": [
+        0.15,
+        0.3,
+        0.45
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "resolve",
@@ -413,10 +1222,18 @@
       "cost": 1,
       "effect": "health",
       "amount": 5,
-      "description": "生命上限提高。\n每级增加 5点，最多 3 级。\n学习后立即生效。",
+      "description": "生命上限增加5 / 10 / 15点。",
       "x": 359,
       "y": 480,
-      "requires": "vigor"
+      "requires": "vigor",
+      "rankValues": [
+        5,
+        10,
+        15
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "bravery",
@@ -427,11 +1244,19 @@
       "cost": 1,
       "effect": "attack",
       "amount": 0.03,
-      "description": "武器造成的伤害提高。\n每级增加 3%，最多 3 级。\n学习后立即生效。",
+      "description": "武器伤害提高3 / 6 / 9%。",
       "x": 442,
       "y": 501,
       "requires": "guard",
-      "learnedIcon": "bodyIcon"
+      "learnedIcon": "bodyIcon",
+      "rankValues": [
+        0.03,
+        0.06,
+        0.09
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "resilience",
@@ -442,11 +1267,19 @@
       "cost": 1,
       "effect": "defense",
       "amount": 0.02,
-      "description": "受到的伤害降低。\n每级增加 2%，最多 3 级。\n学习后立即生效。",
+      "description": "全身伤害减免增加2 / 4 / 6%。",
       "x": 316,
       "y": 580,
       "requires": "recovery",
-      "learnedIcon": "bodyIcon"
+      "learnedIcon": "bodyIcon",
+      "rankValues": [
+        0.02,
+        0.04,
+        0.06
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "secondwind",
@@ -457,11 +1290,19 @@
       "cost": 1,
       "effect": "recovery",
       "amount": 0.1,
-      "description": "自然生命恢复速率提高。\n每级增加 10%，最多 3 级。\n学习后立即生效。",
+      "description": "生命自然恢复速度提高10 / 20 / 30%。",
       "x": 402,
       "y": 579,
       "requires": "resolve",
-      "learnedIcon": "bodyIcon"
+      "learnedIcon": "bodyIcon",
+      "rankValues": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "trail",
@@ -473,9 +1314,17 @@
       "requires": "",
       "effect": "discover",
       "amount": 0.2,
-      "description": "地点发现范围扩大。\n每级增加 20%，最多 3 级。\n学习后立即生效。",
+      "description": "探索发现范围扩大20 / 40 / 60%。",
       "x": 627,
-      "y": 281
+      "y": 281,
+      "rankValues": [
+        0.2,
+        0.4,
+        0.6
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "insight",
@@ -485,11 +1334,19 @@
       "maxRank": 3,
       "cost": 1,
       "requires": "trail",
-      "effect": "xp",
-      "amount": 0.1,
-      "description": "获取经验提高。\n每级增加 10%，最多 3 级。\n学习后立即生效。",
+      "effect": "sense_duration_seconds",
+      "amount": 0,
+      "description": "感官模式持续6 / 7 / 8秒。",
       "x": 580,
-      "y": 388
+      "y": 388,
+      "rankValues": [
+        6,
+        7,
+        8
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "sustain",
@@ -501,9 +1358,17 @@
       "requires": "trail",
       "effect": "hunger",
       "amount": 0.08,
-      "description": "饱食消耗降低。\n每级增加 8%，最多 3 级。\n学习后立即生效。",
+      "description": "饱食消耗降低8 / 16 / 24%。",
       "x": 676,
-      "y": 388
+      "y": 388,
+      "rankValues": [
+        0.08,
+        0.16,
+        0.24
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "scout",
@@ -513,11 +1378,19 @@
       "maxRank": 3,
       "cost": 1,
       "requires": "insight",
-      "effect": "discover",
-      "amount": 0.25,
-      "description": "地点发现范围扩大。\n每级增加 25%，最多 3 级。\n学习后立即生效。",
+      "effect": "sense_radius_m",
+      "amount": 0,
+      "description": "感官模式范围18 / 21 / 24米。",
       "x": 561,
-      "y": 499
+      "y": 499,
+      "rankValues": [
+        18,
+        21,
+        24
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "forager",
@@ -528,10 +1401,18 @@
       "cost": 1,
       "effect": "discover",
       "amount": 0.1,
-      "description": "地点发现范围扩大。\n每级增加 10%，最多 3 级。\n学习后立即生效。",
+      "description": "探索发现范围扩大10 / 20 / 30%。",
       "x": 681,
       "y": 488,
-      "requires": "sustain"
+      "requires": "sustain",
+      "rankValues": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "wisdom",
@@ -540,13 +1421,21 @@
       "branchName": "感知",
       "maxRank": 3,
       "cost": 1,
-      "effect": "xp",
-      "amount": 0.05,
-      "description": "获取经验提高。\n每级增加 5%，最多 3 级。\n学习后立即生效。",
+      "effect": "sense_cooldown_seconds",
+      "amount": 0,
+      "description": "感官模式冷却18 / 16 / 14秒。",
       "x": 609,
       "y": 556,
       "requires": "scout",
-      "learnedIcon": "senseIcon"
+      "learnedIcon": "senseIcon",
+      "rankValues": [
+        18,
+        16,
+        14
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "ration",
@@ -557,11 +1446,19 @@
       "cost": 1,
       "effect": "hunger",
       "amount": 0.04,
-      "description": "饱食消耗降低。\n每级增加 4%，最多 3 级。\n学习后立即生效。",
+      "description": "饱食消耗降低4 / 8 / 12%。",
       "x": 683,
       "y": 564,
       "requires": "forager",
-      "learnedIcon": "senseIcon"
+      "learnedIcon": "senseIcon",
+      "rankValues": [
+        0.04,
+        0.08,
+        0.12
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "runner",
@@ -573,9 +1470,17 @@
       "requires": "",
       "effect": "sprint",
       "amount": 0.04,
-      "description": "冲刺速度提高。\n每级增加 4%，最多 3 级。\n学习后立即生效。",
+      "description": "奔跑速度提高4 / 8 / 12%。",
       "x": 864,
-      "y": 281
+      "y": 281,
+      "rankValues": [
+        0.04,
+        0.08,
+        0.12
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "breath",
@@ -587,9 +1492,17 @@
       "requires": "runner",
       "effect": "stamina",
       "amount": 5,
-      "description": "耐力上限提高。\n每级增加 5点，最多 3 级。\n学习后立即生效。",
+      "description": "耐力上限增加5 / 10 / 15点。",
       "x": 815,
-      "y": 387
+      "y": 387,
+      "rankValues": [
+        5,
+        10,
+        15
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "endure",
@@ -601,9 +1514,17 @@
       "requires": "runner",
       "effect": "cost",
       "amount": 0.06,
-      "description": "耐力消耗降低。\n每级增加 6%，最多 3 级。\n学习后立即生效。",
+      "description": "耐力消耗降低6 / 12 / 18%。",
       "x": 911,
-      "y": 390
+      "y": 390,
+      "rankValues": [
+        0.06,
+        0.12,
+        0.18
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "rest",
@@ -615,9 +1536,17 @@
       "requires": "breath",
       "effect": "staminaRecovery",
       "amount": 0.08,
-      "description": "耐力恢复速率提高。\n每级增加 8%，最多 3 级。\n学习后立即生效。",
+      "description": "耐力恢复速度提高8 / 16 / 24%。",
       "x": 805,
-      "y": 498
+      "y": 498,
+      "rankValues": [
+        0.08,
+        0.16,
+        0.24
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "lightstep",
@@ -626,13 +1555,21 @@
       "branchName": "敏捷",
       "maxRank": 3,
       "cost": 1,
-      "effect": "cost",
-      "amount": 0.03,
-      "description": "耐力消耗降低。\n每级增加 3%，最多 3 级。\n学习后立即生效。",
+      "effect": "detection_growth_reduction",
+      "amount": 0,
+      "description": "被发现速度降低8 / 16 / 24%。",
       "x": 875,
       "y": 488,
       "requires": "endure",
-      "learnedIcon": "agilityIcon"
+      "learnedIcon": "agilityIcon",
+      "rankValues": [
+        0.08,
+        0.16,
+        0.24
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "longstride",
@@ -643,11 +1580,19 @@
       "cost": 1,
       "effect": "sprint",
       "amount": 0.02,
-      "description": "冲刺速度提高。\n每级增加 2%，最多 3 级。\n学习后立即生效。",
+      "description": "奔跑速度提高2 / 4 / 6%。",
       "x": 937,
       "y": 488,
       "requires": "endure",
-      "learnedIcon": "agilityIcon"
+      "learnedIcon": "agilityIcon",
+      "rankValues": [
+        0.02,
+        0.04,
+        0.06
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "composure",
@@ -658,11 +1603,19 @@
       "cost": 1,
       "effect": "staminaRecovery",
       "amount": 0.04,
-      "description": "耐力恢复速率提高。\n每级增加 4%，最多 3 级。\n学习后立即生效。",
+      "description": "耐力恢复速度提高4 / 8 / 12%。",
       "x": 807,
       "y": 580,
       "requires": "rest",
-      "learnedIcon": "agilityIcon"
+      "learnedIcon": "agilityIcon",
+      "rankValues": [
+        0.04,
+        0.08,
+        0.12
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "reserve",
@@ -673,11 +1626,19 @@
       "cost": 1,
       "effect": "stamina",
       "amount": 3,
-      "description": "耐力上限提高。\n每级增加 3点，最多 3 级。\n学习后立即生效。",
+      "description": "耐力上限增加3 / 6 / 9点。",
       "x": 909,
       "y": 576,
       "requires": "longstride",
-      "learnedIcon": "agilityIcon"
+      "learnedIcon": "agilityIcon",
+      "rankValues": [
+        3,
+        6,
+        9
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "edge",
@@ -689,9 +1650,17 @@
       "requires": "",
       "effect": "attack",
       "amount": 0.06,
-      "description": "武器造成的伤害提高。\n每级增加 6%，最多 3 级。\n学习后立即生效。",
+      "description": "武器伤害提高6 / 12 / 18%。",
       "x": 1105,
-      "y": 283
+      "y": 283,
+      "rankValues": [
+        0.06,
+        0.12,
+        0.18
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "mend",
@@ -701,11 +1670,19 @@
       "maxRank": 3,
       "cost": 1,
       "requires": "edge",
-      "effect": "defense",
-      "amount": 0.025,
-      "description": "受到的伤害降低。\n每级增加 2.5%，最多 3 级。\n学习后立即生效。",
+      "effect": "armor_wear_reduction",
+      "amount": 0,
+      "description": "护甲耐久消耗降低10 / 20 / 30%。",
       "x": 1058,
-      "y": 390
+      "y": 390,
+      "rankValues": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "cook",
@@ -717,9 +1694,17 @@
       "requires": "edge",
       "effect": "food",
       "amount": 0.08,
-      "description": "食物恢复的饱食值提高。\n每级增加 8%，最多 3 级。\n学习后立即生效。",
+      "description": "食物恢复饱食量提高8 / 16 / 24%。",
       "x": 1155,
-      "y": 390
+      "y": 390,
+      "rankValues": [
+        0.08,
+        0.16,
+        0.24
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "durable",
@@ -731,9 +1716,17 @@
       "requires": "mend",
       "effect": "durability",
       "amount": 0.1,
-      "description": "装备耐用系数提高。\n每级增加 10%，最多 3 级。\n学习后立即生效。",
+      "description": "装备有效耐久提高10 / 20 / 30%。",
       "x": 1058,
-      "y": 500
+      "y": 500,
+      "rankValues": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "seasoning",
@@ -744,11 +1737,19 @@
       "cost": 1,
       "effect": "food",
       "amount": 0.05,
-      "description": "食物恢复的饱食值提高。\n每级增加 5%，最多 3 级。\n学习后立即生效。",
+      "description": "食物恢复饱食量提高5 / 10 / 15%。",
       "x": 1171,
       "y": 499,
       "requires": "cook",
-      "learnedIcon": "craftIcon"
+      "learnedIcon": "craftIcon",
+      "rankValues": [
+        0.05,
+        0.1,
+        0.15
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     },
     {
       "id": "reinforce",
@@ -757,13 +1758,21 @@
       "branchName": "巧匠",
       "maxRank": 3,
       "cost": 1,
-      "effect": "defense",
-      "amount": 0.02,
-      "description": "受到的伤害降低。\n每级增加 2%，最多 3 级。\n学习后立即生效。",
+      "effect": "local_armor_bonus",
+      "amount": 0,
+      "description": "完好护甲命中部位减伤提高1 / 2 / 3%。",
       "x": 1117,
       "y": 565,
       "requires": "durable",
-      "learnedIcon": "craftIcon"
+      "learnedIcon": "craftIcon",
+      "rankValues": [
+        0.01,
+        0.02,
+        0.03
+      ],
+      "status": "APPROVED_TASK_047",
+      "version": 1,
+      "activation": "被动"
     }
   ],
   "locations": [
@@ -995,17 +2004,13 @@
     "bow": 1,
     "hood": 1,
     "armor": 1,
-    "gloves": 1,
+    "leggings": 1,
     "boots": 1,
-    "belt": 1,
     "shield": 1,
-    "quiver": 1,
-    "amulet": 1,
-    "roast": 4,
     "arrow": 24,
+    "roast": 4,
     "medicine": 3,
-    "firepot": 3,
-    "meat": 3
+    "amulet": 1
   },
   "encounters": [
     {
@@ -1017,8 +2022,8 @@
         100
       ],
       "health": 100,
-      "attack": 21,
-      "xp": 60
+      "attack": 21.05263157894737,
+      "xp": 100
     },
     {
       "id": "guard_2",
@@ -1029,8 +2034,8 @@
         100
       ],
       "health": 100,
-      "attack": 21,
-      "xp": 60
+      "attack": 21.05263157894737,
+      "xp": 100
     },
     {
       "id": "guard_3",
@@ -1041,8 +2046,8 @@
         100
       ],
       "health": 100,
-      "attack": 21,
-      "xp": 60
+      "attack": 21.05263157894737,
+      "xp": 100
     }
   ],
   "codex": [
@@ -1356,122 +2361,1515 @@
     }
   ],
   "crafting": {
-    "status": "PROTOTYPE_ONLY: R13配方与范围未定，非正式经济",
+    "status": "APPROVED_TASK_047",
     "reach": 260,
     "maxBatches": 99
   },
   "craftingRecipes": [
     {
-      "id": "arrows",
-      "name": "箭矢",
-      "icon": "arrow",
-      "description": "削制箭杆，补充猎弓弹药。\n每批获得 4 支箭矢。",
-      "materials": {
-        "wood": 1
-      },
-      "outputs": {
-        "arrow": 4
-      }
-    },
-    {
       "id": "rope",
       "name": "绳索",
       "icon": "rope",
-      "description": "木材2，制作绳索1。",
+      "description": "在对应设施即时制作。",
       "materials": {
         "wood": 2
       },
       "outputs": {
         "rope": 1
-      }
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
-      "id": "stone_axe",
-      "name": "荒原石斧",
-      "icon": "axe",
-      "description": "木柄与石刃，供demo使用的基础工具。",
+      "id": "metal_ingot",
+      "name": "金属锭",
+      "icon": "ore",
+      "description": "在对应设施即时制作。",
       "materials": {
-        "wood": 2,
-        "stone": 3
+        "ore": 2,
+        "wood": 1
       },
       "outputs": {
-        "axe": 1
-      }
+        "metal_ingot": 1
+      },
+      "facility": "smelter",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "steel_ingot",
+      "name": "精炼金属锭",
+      "icon": "ore",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "metal_ingot": 2,
+        "refined_ore": 1,
+        "wood": 2
+      },
+      "outputs": {
+        "steel_ingot": 1
+      },
+      "facility": "smelter",
+      "facilityLevel": 2,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "cooked_food",
+      "name": "熟食",
+      "icon": "meat",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wild_food": 2,
+        "wood": 1
+      },
+      "outputs": {
+        "cooked_food": 1
+      },
+      "facility": "cooking",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "full_meal",
+      "name": "大餐",
+      "icon": "meat",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wild_food": 3,
+        "wood": 1
+      },
+      "outputs": {
+        "full_meal": 1
+      },
+      "facility": "cooking",
+      "facilityLevel": 2,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "arrows",
+      "name": "箭矢",
+      "icon": "arrow",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 1
+      },
+      "outputs": {
+        "arrow": 4
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
       "id": "medicine",
       "name": "药草膏",
       "icon": "medicineQuick",
-      "description": "两份草药调制一份药膏，站立使用3秒恢复30%最大生命。",
+      "description": "在对应设施即时制作。",
       "materials": {
         "herb": 2
       },
       "outputs": {
         "medicine": 1
-      }
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "roast",
+      "name": "烤肉",
+      "icon": "meat",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "meat": 1,
+        "wood": 1
+      },
+      "outputs": {
+        "roast": 1
+      },
+      "facility": "campfire",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "firepot",
+      "name": "投掷火罐",
+      "icon": "firepotQuick",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "stone": 2,
+        "wood": 2,
+        "rope": 1
+      },
+      "outputs": {
+        "firepot": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_shortblade",
+      "name": "石／皮短刀",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "stone": 15
+      },
+      "outputs": {
+        "shortblade": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_longblade",
+      "name": "石／皮长刀",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "stone": 15
+      },
+      "outputs": {
+        "longblade": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_spear",
+      "name": "石／皮长枪",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "stone": 15
+      },
+      "outputs": {
+        "spear": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "stone_axe",
+      "name": "石／皮战斧",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "stone": 15
+      },
+      "outputs": {
+        "axe": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_bow",
+      "name": "石／皮猎弓",
+      "icon": "bow",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "rope": 10
+      },
+      "outputs": {
+        "bow": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_hood",
+      "name": "石／皮兜帽",
+      "icon": "hood",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5
+      },
+      "outputs": {
+        "hood": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_armor",
+      "name": "石／皮胸甲",
+      "icon": "armor",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 15,
+        "rope": 5
+      },
+      "outputs": {
+        "armor": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_leggings",
+      "name": "石／皮护腿",
+      "icon": "armor",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 10,
+        "rope": 5
+      },
+      "outputs": {
+        "leggings": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_boots",
+      "name": "石／皮靴",
+      "icon": "boots",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5
+      },
+      "outputs": {
+        "boots": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_shield",
+      "name": "石／皮盾",
+      "icon": "shield",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 15,
+        "rope": 5
+      },
+      "outputs": {
+        "shield": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_pickaxe",
+      "name": "石／皮镐",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "stone": 15
+      },
+      "outputs": {
+        "pickaxe": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_shortblade_2",
+      "name": "金属短刀",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "outputs": {
+        "shortblade_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_longblade_2",
+      "name": "金属长刀",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "outputs": {
+        "longblade_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_spear_2",
+      "name": "金属长枪",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "outputs": {
+        "spear_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_blunt_2",
+      "name": "金属战斧",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "outputs": {
+        "blunt_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_bow_2",
+      "name": "金属猎弓",
+      "icon": "bow",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "rope": 10,
+        "metal_ingot": 5
+      },
+      "outputs": {
+        "bow_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_crossbow_2",
+      "name": "金属弩",
+      "icon": "bow",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "rope": 10,
+        "metal_ingot": 10
+      },
+      "outputs": {
+        "crossbow_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_head_2",
+      "name": "金属兜帽",
+      "icon": "hood",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "outputs": {
+        "head_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_chest_2",
+      "name": "金属胸甲",
+      "icon": "armor",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 15,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "outputs": {
+        "chest_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_legs_2",
+      "name": "金属护腿",
+      "icon": "armor",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 10,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "outputs": {
+        "legs_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_feet_2",
+      "name": "金属靴",
+      "icon": "boots",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "outputs": {
+        "feet_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_shield_2",
+      "name": "金属盾",
+      "icon": "shield",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 15,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "outputs": {
+        "shield_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_pickaxe_2",
+      "name": "金属镐",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "outputs": {
+        "pickaxe_2": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_shortblade_3",
+      "name": "高级金属短刀",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "outputs": {
+        "shortblade_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_longblade_3",
+      "name": "高级金属长刀",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "outputs": {
+        "longblade_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_spear_3",
+      "name": "高级金属长枪",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "outputs": {
+        "spear_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_blunt_3",
+      "name": "高级金属战斧",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "outputs": {
+        "blunt_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_bow_3",
+      "name": "高级金属猎弓",
+      "icon": "bow",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "rope": 10,
+        "steel_ingot": 5
+      },
+      "outputs": {
+        "bow_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_crossbow_3",
+      "name": "高级金属弩",
+      "icon": "bow",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "rope": 10,
+        "steel_ingot": 10
+      },
+      "outputs": {
+        "crossbow_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_head_3",
+      "name": "高级金属兜帽",
+      "icon": "hood",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "outputs": {
+        "head_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_chest_3",
+      "name": "高级金属胸甲",
+      "icon": "armor",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 15,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "outputs": {
+        "chest_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_legs_3",
+      "name": "高级金属护腿",
+      "icon": "armor",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 10,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "outputs": {
+        "legs_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_feet_3",
+      "name": "高级金属靴",
+      "icon": "boots",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "outputs": {
+        "feet_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_shield_3",
+      "name": "高级金属盾",
+      "icon": "shield",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 15,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "outputs": {
+        "shield_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_pickaxe_3",
+      "name": "高级金属镐",
+      "icon": "axe",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "outputs": {
+        "pickaxe_3": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_gloves",
+      "name": "皮护腕",
+      "icon": "gloves",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5
+      },
+      "outputs": {
+        "gloves": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_belt",
+      "name": "兽皮腰带",
+      "icon": "belt",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5
+      },
+      "outputs": {
+        "belt": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_quiver",
+      "name": "箭袋",
+      "icon": "quiver",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "hide": 5,
+        "rope": 5
+      },
+      "outputs": {
+        "quiver": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_fishing_rod",
+      "name": "钓竿",
+      "icon": "rope",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 10,
+        "rope": 5
+      },
+      "outputs": {
+        "fishing_rod": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "knowledge": "known",
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "craft_bow_rare",
+      "name": "猎手长弓",
+      "icon": "bow",
+      "description": "在对应设施即时制作。",
+      "materials": {
+        "wood": 15,
+        "rope": 15,
+        "metal_ingot": 10
+      },
+      "outputs": {
+        "bow_rare": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 2,
+      "knowledge": "blueprint_hunter_bow",
+      "status": "APPROVED_TASK_047",
+      "version": 1
     }
   ],
   "repair": {
-    "status": "PROTOTYPE_ONLY: 全修费用独立配置，非正式20%制作成本；R13/R14未定",
-    "facility": "workbench"
+    "status": "APPROVED_TASK_047",
+    "facility": "workbench",
+    "rounding": "ceil(0.2 * basis * restored / maximum)"
   },
   "repairRecipes": [
     {
       "id": "axe",
+      "basis": {
+        "wood": 10,
+        "stone": 15
+      },
       "materials": {
         "wood": 2,
-        "rope": 1
-      }
+        "stone": 3
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
       "id": "bow",
+      "basis": {
+        "wood": 10,
+        "rope": 10
+      },
       "materials": {
-        "wood": 1,
+        "wood": 2,
         "rope": 2
-      }
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
       "id": "hood",
+      "basis": {
+        "hide": 5,
+        "rope": 5
+      },
       "materials": {
+        "hide": 1,
         "rope": 1
-      }
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
       "id": "armor",
+      "basis": {
+        "hide": 15,
+        "rope": 5
+      },
       "materials": {
-        "rope": 3
-      }
-    },
-    {
-      "id": "gloves",
-      "materials": {
+        "hide": 3,
         "rope": 1
-      }
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
       "id": "boots",
+      "basis": {
+        "hide": 5,
+        "rope": 5
+      },
       "materials": {
-        "rope": 2
-      }
-    },
-    {
-      "id": "belt",
-      "materials": {
+        "hide": 1,
         "rope": 1
-      }
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
       "id": "shield",
+      "basis": {
+        "wood": 15,
+        "rope": 5
+      },
       "materials": {
         "wood": 3,
         "rope": 1
-      }
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
     },
     {
-      "id": "quiver",
+      "id": "shortblade",
+      "basis": {
+        "wood": 10,
+        "stone": 15
+      },
       "materials": {
+        "wood": 2,
+        "stone": 3
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "longblade",
+      "basis": {
+        "wood": 10,
+        "stone": 15
+      },
+      "materials": {
+        "wood": 2,
+        "stone": 3
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "spear",
+      "basis": {
+        "wood": 10,
+        "stone": 15
+      },
+      "materials": {
+        "wood": 2,
+        "stone": 3
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "leggings",
+      "basis": {
+        "hide": 10,
+        "rope": 5
+      },
+      "materials": {
+        "hide": 2,
         "rope": 1
-      }
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "pickaxe",
+      "basis": {
+        "wood": 10,
+        "stone": 15
+      },
+      "materials": {
+        "wood": 2,
+        "stone": 3
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "shortblade_2",
+      "basis": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "metal_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "longblade_2",
+      "basis": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "metal_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "spear_2",
+      "basis": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "metal_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "blunt_2",
+      "basis": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "metal_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "bow_2",
+      "basis": {
+        "wood": 10,
+        "rope": 10,
+        "metal_ingot": 5
+      },
+      "materials": {
+        "wood": 2,
+        "rope": 2,
+        "metal_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "crossbow_2",
+      "basis": {
+        "wood": 10,
+        "rope": 10,
+        "metal_ingot": 10
+      },
+      "materials": {
+        "wood": 2,
+        "rope": 2,
+        "metal_ingot": 2
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "head_2",
+      "basis": {
+        "hide": 5,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "materials": {
+        "hide": 1,
+        "rope": 1,
+        "metal_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "chest_2",
+      "basis": {
+        "hide": 15,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "materials": {
+        "hide": 3,
+        "rope": 1,
+        "metal_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "legs_2",
+      "basis": {
+        "hide": 10,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "materials": {
+        "hide": 2,
+        "rope": 1,
+        "metal_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "feet_2",
+      "basis": {
+        "hide": 5,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "materials": {
+        "hide": 1,
+        "rope": 1,
+        "metal_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "shield_2",
+      "basis": {
+        "wood": 15,
+        "rope": 5,
+        "metal_ingot": 5
+      },
+      "materials": {
+        "wood": 3,
+        "rope": 1,
+        "metal_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "pickaxe_2",
+      "basis": {
+        "wood": 10,
+        "metal_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "metal_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "shortblade_3",
+      "basis": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "steel_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "longblade_3",
+      "basis": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "steel_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "spear_3",
+      "basis": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "steel_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "blunt_3",
+      "basis": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "steel_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "bow_3",
+      "basis": {
+        "wood": 10,
+        "rope": 10,
+        "steel_ingot": 5
+      },
+      "materials": {
+        "wood": 2,
+        "rope": 2,
+        "steel_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "crossbow_3",
+      "basis": {
+        "wood": 10,
+        "rope": 10,
+        "steel_ingot": 10
+      },
+      "materials": {
+        "wood": 2,
+        "rope": 2,
+        "steel_ingot": 2
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "head_3",
+      "basis": {
+        "hide": 5,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "materials": {
+        "hide": 1,
+        "rope": 1,
+        "steel_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "chest_3",
+      "basis": {
+        "hide": 15,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "materials": {
+        "hide": 3,
+        "rope": 1,
+        "steel_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "legs_3",
+      "basis": {
+        "hide": 10,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "materials": {
+        "hide": 2,
+        "rope": 1,
+        "steel_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "feet_3",
+      "basis": {
+        "hide": 5,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "materials": {
+        "hide": 1,
+        "rope": 1,
+        "steel_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "shield_3",
+      "basis": {
+        "wood": 15,
+        "rope": 5,
+        "steel_ingot": 5
+      },
+      "materials": {
+        "wood": 3,
+        "rope": 1,
+        "steel_ingot": 1
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "pickaxe_3",
+      "basis": {
+        "wood": 10,
+        "steel_ingot": 15
+      },
+      "materials": {
+        "wood": 2,
+        "steel_ingot": 3
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "fishing_rod",
+      "basis": {
+        "wood": 10,
+        "rope": 5
+      },
+      "materials": {
+        "wood": 2,
+        "rope": 1
+      },
+      "facility": "workbench",
+      "facilityLevel": 1,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "bow_rare",
+      "basis": {
+        "wood": 15,
+        "rope": 15,
+        "metal_ingot": 10
+      },
+      "materials": {
+        "wood": 3,
+        "rope": 3,
+        "metal_ingot": 2
+      },
+      "facility": "forge",
+      "facilityLevel": 2,
+      "status": "APPROVED_TASK_047",
+      "version": 1
+    },
+    {
+      "id": "hearth_blade",
+      "basis": {
+        "wood": 10,
+        "rope": 10,
+        "steel_ingot": 20
+      },
+      "materials": {
+        "wood": 2,
+        "rope": 2,
+        "steel_ingot": 4
+      },
+      "facility": "forge",
+      "facilityLevel": 3,
+      "status": "APPROVED_TASK_047",
+      "version": 1
     }
   ],
   "campEconomy": {
@@ -1527,7 +3925,8 @@
         },
         "outputs": {
           "rope": 1
-        }
+        },
+        "knowledge": "known"
       },
       {
         "id": "metal_ingot",
@@ -1539,7 +3938,22 @@
         },
         "outputs": {
           "metal_ingot": 1
-        }
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "steel_ingot",
+        "facility": "smelter",
+        "level": 2,
+        "inputs": {
+          "metal_ingot": 2,
+          "refined_ore": 1,
+          "wood": 2
+        },
+        "outputs": {
+          "steel_ingot": 1
+        },
+        "knowledge": "known"
       },
       {
         "id": "cooked_food",
@@ -1551,7 +3965,8 @@
         },
         "outputs": {
           "cooked_food": 1
-        }
+        },
+        "knowledge": "known"
       },
       {
         "id": "full_meal",
@@ -1563,7 +3978,581 @@
         },
         "outputs": {
           "full_meal": 1
-        }
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "arrows",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 1
+        },
+        "outputs": {
+          "arrow": 4
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "medicine",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "herb": 2
+        },
+        "outputs": {
+          "medicine": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "firepot",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "stone": 2,
+          "wood": 2,
+          "rope": 1
+        },
+        "outputs": {
+          "firepot": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_shortblade",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "stone": 15
+        },
+        "outputs": {
+          "shortblade": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_longblade",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "stone": 15
+        },
+        "outputs": {
+          "longblade": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_spear",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "stone": 15
+        },
+        "outputs": {
+          "spear": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "stone_axe",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "stone": 15
+        },
+        "outputs": {
+          "axe": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_bow",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "rope": 10
+        },
+        "outputs": {
+          "bow": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_hood",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "hide": 5,
+          "rope": 5
+        },
+        "outputs": {
+          "hood": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_armor",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "hide": 15,
+          "rope": 5
+        },
+        "outputs": {
+          "armor": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_leggings",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "hide": 10,
+          "rope": 5
+        },
+        "outputs": {
+          "leggings": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_boots",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "hide": 5,
+          "rope": 5
+        },
+        "outputs": {
+          "boots": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_shield",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 15,
+          "rope": 5
+        },
+        "outputs": {
+          "shield": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_pickaxe",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "stone": 15
+        },
+        "outputs": {
+          "pickaxe": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_shortblade_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "metal_ingot": 15
+        },
+        "outputs": {
+          "shortblade_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_longblade_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "metal_ingot": 15
+        },
+        "outputs": {
+          "longblade_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_spear_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "metal_ingot": 15
+        },
+        "outputs": {
+          "spear_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_blunt_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "metal_ingot": 15
+        },
+        "outputs": {
+          "blunt_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_bow_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "rope": 10,
+          "metal_ingot": 5
+        },
+        "outputs": {
+          "bow_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_crossbow_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "rope": 10,
+          "metal_ingot": 10
+        },
+        "outputs": {
+          "crossbow_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_head_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "hide": 5,
+          "rope": 5,
+          "metal_ingot": 5
+        },
+        "outputs": {
+          "head_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_chest_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "hide": 15,
+          "rope": 5,
+          "metal_ingot": 5
+        },
+        "outputs": {
+          "chest_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_legs_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "hide": 10,
+          "rope": 5,
+          "metal_ingot": 5
+        },
+        "outputs": {
+          "legs_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_feet_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "hide": 5,
+          "rope": 5,
+          "metal_ingot": 5
+        },
+        "outputs": {
+          "feet_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_shield_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "wood": 15,
+          "rope": 5,
+          "metal_ingot": 5
+        },
+        "outputs": {
+          "shield_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_pickaxe_2",
+        "facility": "forge",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "metal_ingot": 15
+        },
+        "outputs": {
+          "pickaxe_2": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_shortblade_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "wood": 10,
+          "steel_ingot": 15
+        },
+        "outputs": {
+          "shortblade_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_longblade_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "wood": 10,
+          "steel_ingot": 15
+        },
+        "outputs": {
+          "longblade_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_spear_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "wood": 10,
+          "steel_ingot": 15
+        },
+        "outputs": {
+          "spear_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_blunt_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "wood": 10,
+          "steel_ingot": 15
+        },
+        "outputs": {
+          "blunt_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_bow_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "wood": 10,
+          "rope": 10,
+          "steel_ingot": 5
+        },
+        "outputs": {
+          "bow_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_crossbow_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "wood": 10,
+          "rope": 10,
+          "steel_ingot": 10
+        },
+        "outputs": {
+          "crossbow_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_head_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "hide": 5,
+          "rope": 5,
+          "steel_ingot": 5
+        },
+        "outputs": {
+          "head_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_chest_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "hide": 15,
+          "rope": 5,
+          "steel_ingot": 5
+        },
+        "outputs": {
+          "chest_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_legs_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "hide": 10,
+          "rope": 5,
+          "steel_ingot": 5
+        },
+        "outputs": {
+          "legs_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_feet_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "hide": 5,
+          "rope": 5,
+          "steel_ingot": 5
+        },
+        "outputs": {
+          "feet_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_shield_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "wood": 15,
+          "rope": 5,
+          "steel_ingot": 5
+        },
+        "outputs": {
+          "shield_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_pickaxe_3",
+        "facility": "forge",
+        "level": 3,
+        "inputs": {
+          "wood": 10,
+          "steel_ingot": 15
+        },
+        "outputs": {
+          "pickaxe_3": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_gloves",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "hide": 5,
+          "rope": 5
+        },
+        "outputs": {
+          "gloves": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_belt",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "hide": 5,
+          "rope": 5
+        },
+        "outputs": {
+          "belt": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_quiver",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "hide": 5,
+          "rope": 5
+        },
+        "outputs": {
+          "quiver": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_fishing_rod",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 10,
+          "rope": 5
+        },
+        "outputs": {
+          "fishing_rod": 1
+        },
+        "knowledge": "known"
+      },
+      {
+        "id": "craft_bow_rare",
+        "facility": "forge",
+        "level": 2,
+        "inputs": {
+          "wood": 15,
+          "rope": 15,
+          "metal_ingot": 10
+        },
+        "outputs": {
+          "bow_rare": 1
+        },
+        "knowledge": "blueprint_hunter_bow"
       }
     ],
     "camp_tiers": [
@@ -1980,5 +4969,657 @@
       }
     ],
     "processing_worker_W_per_batch": 360
+  },
+  "levels": [
+    {
+      "id": "1",
+      "level": 1,
+      "total_xp": 0,
+      "next_xp": 100,
+      "hp_bonus": 0.0,
+      "stamina_bonus": 0.0,
+      "skill_budget": 2
+    },
+    {
+      "id": "2",
+      "level": 2,
+      "total_xp": 100,
+      "next_xp": 135,
+      "hp_bonus": 1.694915,
+      "stamina_bonus": 0.847458,
+      "skill_budget": 2
+    },
+    {
+      "id": "3",
+      "level": 3,
+      "total_xp": 235,
+      "next_xp": 170,
+      "hp_bonus": 3.389831,
+      "stamina_bonus": 1.694915,
+      "skill_budget": 3
+    },
+    {
+      "id": "4",
+      "level": 4,
+      "total_xp": 405,
+      "next_xp": 205,
+      "hp_bonus": 5.084746,
+      "stamina_bonus": 2.542373,
+      "skill_budget": 4
+    },
+    {
+      "id": "5",
+      "level": 5,
+      "total_xp": 610,
+      "next_xp": 240,
+      "hp_bonus": 6.779661,
+      "stamina_bonus": 3.389831,
+      "skill_budget": 5
+    },
+    {
+      "id": "6",
+      "level": 6,
+      "total_xp": 850,
+      "next_xp": 275,
+      "hp_bonus": 8.474576,
+      "stamina_bonus": 4.237288,
+      "skill_budget": 6
+    },
+    {
+      "id": "7",
+      "level": 7,
+      "total_xp": 1125,
+      "next_xp": 310,
+      "hp_bonus": 10.169492,
+      "stamina_bonus": 5.084746,
+      "skill_budget": 7
+    },
+    {
+      "id": "8",
+      "level": 8,
+      "total_xp": 1435,
+      "next_xp": 345,
+      "hp_bonus": 11.864407,
+      "stamina_bonus": 5.932203,
+      "skill_budget": 7
+    },
+    {
+      "id": "9",
+      "level": 9,
+      "total_xp": 1780,
+      "next_xp": 380,
+      "hp_bonus": 13.559322,
+      "stamina_bonus": 6.779661,
+      "skill_budget": 8
+    },
+    {
+      "id": "10",
+      "level": 10,
+      "total_xp": 2160,
+      "next_xp": 415,
+      "hp_bonus": 15.254237,
+      "stamina_bonus": 7.627119,
+      "skill_budget": 9
+    },
+    {
+      "id": "11",
+      "level": 11,
+      "total_xp": 2575,
+      "next_xp": 450,
+      "hp_bonus": 16.949153,
+      "stamina_bonus": 8.474576,
+      "skill_budget": 10
+    },
+    {
+      "id": "12",
+      "level": 12,
+      "total_xp": 3025,
+      "next_xp": 485,
+      "hp_bonus": 18.644068,
+      "stamina_bonus": 9.322034,
+      "skill_budget": 11
+    },
+    {
+      "id": "13",
+      "level": 13,
+      "total_xp": 3510,
+      "next_xp": 520,
+      "hp_bonus": 20.338983,
+      "stamina_bonus": 10.169492,
+      "skill_budget": 12
+    },
+    {
+      "id": "14",
+      "level": 14,
+      "total_xp": 4030,
+      "next_xp": 555,
+      "hp_bonus": 22.033898,
+      "stamina_bonus": 11.016949,
+      "skill_budget": 13
+    },
+    {
+      "id": "15",
+      "level": 15,
+      "total_xp": 4585,
+      "next_xp": 590,
+      "hp_bonus": 23.728814,
+      "stamina_bonus": 11.864407,
+      "skill_budget": 13
+    },
+    {
+      "id": "16",
+      "level": 16,
+      "total_xp": 5175,
+      "next_xp": 625,
+      "hp_bonus": 25.423729,
+      "stamina_bonus": 12.711864,
+      "skill_budget": 14
+    },
+    {
+      "id": "17",
+      "level": 17,
+      "total_xp": 5800,
+      "next_xp": 660,
+      "hp_bonus": 27.118644,
+      "stamina_bonus": 13.559322,
+      "skill_budget": 15
+    },
+    {
+      "id": "18",
+      "level": 18,
+      "total_xp": 6460,
+      "next_xp": 695,
+      "hp_bonus": 28.813559,
+      "stamina_bonus": 14.40678,
+      "skill_budget": 16
+    },
+    {
+      "id": "19",
+      "level": 19,
+      "total_xp": 7155,
+      "next_xp": 730,
+      "hp_bonus": 30.508475,
+      "stamina_bonus": 15.254237,
+      "skill_budget": 17
+    },
+    {
+      "id": "20",
+      "level": 20,
+      "total_xp": 7885,
+      "next_xp": 765,
+      "hp_bonus": 32.20339,
+      "stamina_bonus": 16.101695,
+      "skill_budget": 18
+    },
+    {
+      "id": "21",
+      "level": 21,
+      "total_xp": 8650,
+      "next_xp": 800,
+      "hp_bonus": 33.898305,
+      "stamina_bonus": 16.949153,
+      "skill_budget": 18
+    },
+    {
+      "id": "22",
+      "level": 22,
+      "total_xp": 9450,
+      "next_xp": 835,
+      "hp_bonus": 35.59322,
+      "stamina_bonus": 17.79661,
+      "skill_budget": 19
+    },
+    {
+      "id": "23",
+      "level": 23,
+      "total_xp": 10285,
+      "next_xp": 870,
+      "hp_bonus": 37.288136,
+      "stamina_bonus": 18.644068,
+      "skill_budget": 20
+    },
+    {
+      "id": "24",
+      "level": 24,
+      "total_xp": 11155,
+      "next_xp": 905,
+      "hp_bonus": 38.983051,
+      "stamina_bonus": 19.491525,
+      "skill_budget": 21
+    },
+    {
+      "id": "25",
+      "level": 25,
+      "total_xp": 12060,
+      "next_xp": 940,
+      "hp_bonus": 40.677966,
+      "stamina_bonus": 20.338983,
+      "skill_budget": 22
+    },
+    {
+      "id": "26",
+      "level": 26,
+      "total_xp": 13000,
+      "next_xp": 975,
+      "hp_bonus": 42.372881,
+      "stamina_bonus": 21.186441,
+      "skill_budget": 23
+    },
+    {
+      "id": "27",
+      "level": 27,
+      "total_xp": 13975,
+      "next_xp": 1010,
+      "hp_bonus": 44.067797,
+      "stamina_bonus": 22.033898,
+      "skill_budget": 24
+    },
+    {
+      "id": "28",
+      "level": 28,
+      "total_xp": 14985,
+      "next_xp": 1045,
+      "hp_bonus": 45.762712,
+      "stamina_bonus": 22.881356,
+      "skill_budget": 24
+    },
+    {
+      "id": "29",
+      "level": 29,
+      "total_xp": 16030,
+      "next_xp": 1080,
+      "hp_bonus": 47.457627,
+      "stamina_bonus": 23.728814,
+      "skill_budget": 25
+    },
+    {
+      "id": "30",
+      "level": 30,
+      "total_xp": 17110,
+      "next_xp": 1115,
+      "hp_bonus": 49.152542,
+      "stamina_bonus": 24.576271,
+      "skill_budget": 26
+    },
+    {
+      "id": "31",
+      "level": 31,
+      "total_xp": 18225,
+      "next_xp": 1150,
+      "hp_bonus": 50.847458,
+      "stamina_bonus": 25.423729,
+      "skill_budget": 27
+    },
+    {
+      "id": "32",
+      "level": 32,
+      "total_xp": 19375,
+      "next_xp": 1185,
+      "hp_bonus": 52.542373,
+      "stamina_bonus": 26.271186,
+      "skill_budget": 28
+    },
+    {
+      "id": "33",
+      "level": 33,
+      "total_xp": 20560,
+      "next_xp": 1220,
+      "hp_bonus": 54.237288,
+      "stamina_bonus": 27.118644,
+      "skill_budget": 29
+    },
+    {
+      "id": "34",
+      "level": 34,
+      "total_xp": 21780,
+      "next_xp": 1255,
+      "hp_bonus": 55.932203,
+      "stamina_bonus": 27.966102,
+      "skill_budget": 29
+    },
+    {
+      "id": "35",
+      "level": 35,
+      "total_xp": 23035,
+      "next_xp": 1290,
+      "hp_bonus": 57.627119,
+      "stamina_bonus": 28.813559,
+      "skill_budget": 30
+    },
+    {
+      "id": "36",
+      "level": 36,
+      "total_xp": 24325,
+      "next_xp": 1325,
+      "hp_bonus": 59.322034,
+      "stamina_bonus": 29.661017,
+      "skill_budget": 31
+    },
+    {
+      "id": "37",
+      "level": 37,
+      "total_xp": 25650,
+      "next_xp": 1360,
+      "hp_bonus": 61.016949,
+      "stamina_bonus": 30.508475,
+      "skill_budget": 32
+    },
+    {
+      "id": "38",
+      "level": 38,
+      "total_xp": 27010,
+      "next_xp": 1395,
+      "hp_bonus": 62.711864,
+      "stamina_bonus": 31.355932,
+      "skill_budget": 33
+    },
+    {
+      "id": "39",
+      "level": 39,
+      "total_xp": 28405,
+      "next_xp": 1430,
+      "hp_bonus": 64.40678,
+      "stamina_bonus": 32.20339,
+      "skill_budget": 34
+    },
+    {
+      "id": "40",
+      "level": 40,
+      "total_xp": 29835,
+      "next_xp": 1465,
+      "hp_bonus": 66.101695,
+      "stamina_bonus": 33.050847,
+      "skill_budget": 35
+    },
+    {
+      "id": "41",
+      "level": 41,
+      "total_xp": 31300,
+      "next_xp": 1500,
+      "hp_bonus": 67.79661,
+      "stamina_bonus": 33.898305,
+      "skill_budget": 35
+    },
+    {
+      "id": "42",
+      "level": 42,
+      "total_xp": 32800,
+      "next_xp": 1535,
+      "hp_bonus": 69.491525,
+      "stamina_bonus": 34.745763,
+      "skill_budget": 36
+    },
+    {
+      "id": "43",
+      "level": 43,
+      "total_xp": 34335,
+      "next_xp": 1570,
+      "hp_bonus": 71.186441,
+      "stamina_bonus": 35.59322,
+      "skill_budget": 37
+    },
+    {
+      "id": "44",
+      "level": 44,
+      "total_xp": 35905,
+      "next_xp": 1605,
+      "hp_bonus": 72.881356,
+      "stamina_bonus": 36.440678,
+      "skill_budget": 38
+    },
+    {
+      "id": "45",
+      "level": 45,
+      "total_xp": 37510,
+      "next_xp": 1640,
+      "hp_bonus": 74.576271,
+      "stamina_bonus": 37.288136,
+      "skill_budget": 39
+    },
+    {
+      "id": "46",
+      "level": 46,
+      "total_xp": 39150,
+      "next_xp": 1675,
+      "hp_bonus": 76.271186,
+      "stamina_bonus": 38.135593,
+      "skill_budget": 40
+    },
+    {
+      "id": "47",
+      "level": 47,
+      "total_xp": 40825,
+      "next_xp": 1710,
+      "hp_bonus": 77.966102,
+      "stamina_bonus": 38.983051,
+      "skill_budget": 40
+    },
+    {
+      "id": "48",
+      "level": 48,
+      "total_xp": 42535,
+      "next_xp": 1745,
+      "hp_bonus": 79.661017,
+      "stamina_bonus": 39.830508,
+      "skill_budget": 41
+    },
+    {
+      "id": "49",
+      "level": 49,
+      "total_xp": 44280,
+      "next_xp": 1780,
+      "hp_bonus": 81.355932,
+      "stamina_bonus": 40.677966,
+      "skill_budget": 42
+    },
+    {
+      "id": "50",
+      "level": 50,
+      "total_xp": 46060,
+      "next_xp": 1815,
+      "hp_bonus": 83.050847,
+      "stamina_bonus": 41.525424,
+      "skill_budget": 43
+    },
+    {
+      "id": "51",
+      "level": 51,
+      "total_xp": 47875,
+      "next_xp": 1850,
+      "hp_bonus": 84.745763,
+      "stamina_bonus": 42.372881,
+      "skill_budget": 44
+    },
+    {
+      "id": "52",
+      "level": 52,
+      "total_xp": 49725,
+      "next_xp": 1885,
+      "hp_bonus": 86.440678,
+      "stamina_bonus": 43.220339,
+      "skill_budget": 45
+    },
+    {
+      "id": "53",
+      "level": 53,
+      "total_xp": 51610,
+      "next_xp": 1920,
+      "hp_bonus": 88.135593,
+      "stamina_bonus": 44.067797,
+      "skill_budget": 46
+    },
+    {
+      "id": "54",
+      "level": 54,
+      "total_xp": 53530,
+      "next_xp": 1955,
+      "hp_bonus": 89.830508,
+      "stamina_bonus": 44.915254,
+      "skill_budget": 46
+    },
+    {
+      "id": "55",
+      "level": 55,
+      "total_xp": 55485,
+      "next_xp": 1990,
+      "hp_bonus": 91.525424,
+      "stamina_bonus": 45.762712,
+      "skill_budget": 47
+    },
+    {
+      "id": "56",
+      "level": 56,
+      "total_xp": 57475,
+      "next_xp": 2025,
+      "hp_bonus": 93.220339,
+      "stamina_bonus": 46.610169,
+      "skill_budget": 48
+    },
+    {
+      "id": "57",
+      "level": 57,
+      "total_xp": 59500,
+      "next_xp": 2060,
+      "hp_bonus": 94.915254,
+      "stamina_bonus": 47.457627,
+      "skill_budget": 49
+    },
+    {
+      "id": "58",
+      "level": 58,
+      "total_xp": 61560,
+      "next_xp": 2095,
+      "hp_bonus": 96.610169,
+      "stamina_bonus": 48.305085,
+      "skill_budget": 50
+    },
+    {
+      "id": "59",
+      "level": 59,
+      "total_xp": 63655,
+      "next_xp": 2130,
+      "hp_bonus": 98.305085,
+      "stamina_bonus": 49.152542,
+      "skill_budget": 51
+    },
+    {
+      "id": "60",
+      "level": 60,
+      "total_xp": 65785,
+      "next_xp": 0,
+      "hp_bonus": 100.0,
+      "stamina_bonus": 50.0,
+      "skill_budget": 52
+    }
+  ],
+  "backpacks": [
+    {
+      "id": "1",
+      "rank": 1,
+      "capacity": 100,
+      "minimum_camp_tier": 1,
+      "incremental_cost": {}
+    },
+    {
+      "id": "2",
+      "rank": 2,
+      "capacity": 150,
+      "minimum_camp_tier": 2,
+      "incremental_cost": {
+        "hide": 10,
+        "rope": 10
+      }
+    },
+    {
+      "id": "3",
+      "rank": 3,
+      "capacity": 200,
+      "minimum_camp_tier": 4,
+      "incremental_cost": {
+        "hide": 20,
+        "rope": 20,
+        "metal_ingot": 5
+      }
+    },
+    {
+      "id": "4",
+      "rank": 4,
+      "capacity": 250,
+      "minimum_camp_tier": 6,
+      "incremental_cost": {
+        "hide": 30,
+        "rope": 30,
+        "metal_ingot": 10
+      }
+    },
+    {
+      "id": "5",
+      "rank": 5,
+      "capacity": 300,
+      "minimum_camp_tier": 8,
+      "incremental_cost": {
+        "hide": 40,
+        "rope": 40,
+        "steel_ingot": 10
+      }
+    }
+  ],
+  "progression": {
+    "status": "APPROVED_TASK_047",
+    "version": 1,
+    "maxExperience": 65785,
+    "experienceRewards": {
+      "guard": 100,
+      "archer": 120,
+      "heavy": 200,
+      "main_milestone": 2000,
+      "side_quest": 600,
+      "first_discovery": 150,
+      "first_rescue": 600,
+      "hunt": 30
+    },
+    "enemyCalibration": [
+      {
+        "stage": 1,
+        "H": 100,
+        "shortblade_base": 20,
+        "guard_attack": 21.05263158,
+        "archer_hp_multiplier": 0.8,
+        "heavy_hp_multiplier": 2,
+        "archer_attack_multiplier": 1.5,
+        "heavy_attack_multiplier": 2.5
+      },
+      {
+        "stage": 2,
+        "H": 150,
+        "shortblade_base": 30,
+        "guard_attack": 30,
+        "archer_hp_multiplier": 0.8,
+        "heavy_hp_multiplier": 2,
+        "archer_attack_multiplier": 1.5,
+        "heavy_attack_multiplier": 2.5
+      },
+      {
+        "stage": 3,
+        "H": 225,
+        "shortblade_base": 45,
+        "guard_attack": 40,
+        "archer_hp_multiplier": 0.8,
+        "heavy_hp_multiplier": 2,
+        "archer_attack_multiplier": 1.5,
+        "heavy_attack_multiplier": 2.5
+      }
+    ],
+    "wear": {
+      "melee_successful_action": 1,
+      "heavy_successful_action": 2,
+      "execution_success": 5,
+      "shot_released": 1,
+      "shield_normal_block": 1,
+      "shield_heavy_block": 2,
+      "armor_hit": 1,
+      "manual_harvest_completed": 1,
+      "fishing_success": 1
+    }
   }
 }

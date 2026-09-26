@@ -18,7 +18,7 @@ public:
     virtual void Tick(float Delta) override;
     TWeakObjectPtr<class UHearthwardCombatComponent> Shooter;
     FVector Velocity;
-    double Gravity=0,RemainingRange=0;
+    double Gravity=0,RemainingRange=0,Lifetime=3;
     float Power=0;
     FName Item;
     FGuid Epoch,Event;

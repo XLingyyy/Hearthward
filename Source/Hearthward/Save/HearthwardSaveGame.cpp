@@ -1,4 +1,5 @@
 #include "HearthwardSaveGame.h"
+#include "../Gameplay/HearthwardProgression.h"
 #include "../Camp/HearthwardCampState.h"
 #include "Serialization/JsonSerializer.h"
 #include "../Interaction/HearthwardHarvestSubsystem.h"
@@ -50,16 +51,18 @@ bool ValidSurvival(const FHearthwardSurvivalState& State,const TMap<FName,int32>
 }
 bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Error)
 {
-    constexpr uint32 LegacyMagic = 0x48575331, PreviousMagic = 0x48575332, Magic = 0x48575335;
+    constexpr uint32 LegacyMagic = 0x48575331, PreviousMagic = 0x48575332, Schema5Magic = 0x48575335, Magic = 0x48575336;
     uint32 Header[3] = {};
     if (Bytes.Num() < sizeof(Header) || Bytes.Num() > 64 * 1024 * 1024) { Error = TEXT("存档大小无效"); return false; }
     FMemory::Memcpy(Header, Bytes.GetData(), sizeof(Header));
     const int32 Length = Bytes.Num() - sizeof(Header);
-    if ((Header[0] != Magic && Header[0]!=LegacyMagic && Header[0]!=PreviousMagic) || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
+    if ((Header[0] != Magic && Header[0]!=Schema5Magic && Header[0]!=LegacyMagic && Header[0]!=PreviousMagic) || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
     { Error = TEXT("存档完整性校验失败"); return false; }
     TArray<uint8> Payload;
     Payload.Append(Bytes.GetData() + sizeof(Header), Length);
     Out = Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
+
+    if(Out && Header[0]==Schema5Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=5;
 
     // Historical files may omit a property that matched the class default of that build.
     // Only the legacy envelope may use this fallback; current-format damaged files never enter it.
@@ -119,9 +122,10 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
             if(G && HearthwardData::Number(G,TEXT("hunger"))==0 && HearthwardData::Number(G,TEXT("health"))<=10)
                 S.PlayerSurvival.SevereDue=S.CalendarMinutes+4320;
         }
-        Out->Schema=HearthwardSave::CurrentSchema;
+        Out->Schema=5;
     }
 
+    if(Out && Header[0]!=Magic && Out->Schema==5 && !HearthwardSave::MigrateInventory(*Out,Error)){Out=nullptr;return false;}
     if (!Out || !HearthwardSave::Validate(*Out)) { Error = TEXT("存档版本或快照状态无效"); Out = nullptr; return false; }
     return true;
 }
@@ -141,15 +145,16 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
         const int32 Tier=Gameplay?int32(HearthwardData::Number(Gameplay,TEXT("campTier"),1)):1;
         const auto Growth=HearthwardCamp::Tier(Tier);
         if(!Growth)return false;
-        const double BrotherMaxHealth=100+HearthwardData::Number(Growth,TEXT("cumulative_hp_bonus"));
-        const double BrotherMaxStamina=100+HearthwardData::Number(Growth,TEXT("cumulative_stamina_bonus"));
+        const int32 Level=HearthwardProgression::Level(Gameplay?HearthwardData::Number(Gameplay,TEXT("experience")):0);
+        const double BrotherMaxHealth=100+HearthwardProgression::Attribute(Level,TEXT("hp_bonus"))+HearthwardData::Number(Growth,TEXT("cumulative_hp_bonus"));
+        const double BrotherMaxStamina=100+HearthwardProgression::Attribute(Level,TEXT("stamina_bonus"))+HearthwardData::Number(Growth,TEXT("cumulative_stamina_bonus"));
         if(S.SurvivalVersion!=1 || !FMath::IsFinite(S.CalendarMinutes) || S.CalendarMinutes<S.ActiveSeconds
-            || !ValidSurvival(S.PlayerSurvival,S.Inventory,S.CalendarMinutes) || !ValidSurvival(S.BrotherSurvival,S.Bag,S.CalendarMinutes)
+            || !ValidSurvival(S.PlayerSurvival,S.PlayerItems.Stacks,S.CalendarMinutes) || !ValidSurvival(S.BrotherSurvival,S.BrotherItems.Stacks,S.CalendarMinutes)
             || !FMath::IsFinite(S.BrotherHealth) || S.BrotherHealth<=0 || S.BrotherHealth>BrotherMaxHealth
             || !FMath::IsFinite(S.BrotherHunger) || S.BrotherHunger<0 || S.BrotherHunger>100
             || !FMath::IsFinite(S.BrotherStamina) || S.BrotherStamina<0 || S.BrotherStamina>BrotherMaxStamina) return false;
         if(S.NPCStateVersion!=NPCStateVersion || S.Acquired<0 || S.Carried<0 || S.Acquired<S.Delivered || S.Acquired>S.Requested || S.Carried!=S.Acquired-S.Delivered
-            || S.Carried>S.Bag.FindRef(S.Item) || S.NPCOperations.Num()>512 || S.NPCMemory.Campaign!=P.CampaignId) return false;
+            || S.Carried>S.BrotherItems.Stacks.FindRef(S.Item)+S.BrotherItems.Instances.FilterByPredicate([&](const auto& I){return I.Definition==S.Item;}).Num() || S.NPCOperations.Num()>512 || S.NPCMemory.Campaign!=P.CampaignId) return false;
         if(S.CommandActive && (S.AgentGoal.Intent.IsNone() || !S.CommandId.IsValid()))return false;
         if(!S.AgentGoal.Intent.IsNone() && !HearthwardAgent::Validate(S.AgentGoal).IsEmpty())return false;
         if(!ValidCounts(S.NPCSpent,true))return false;
@@ -158,10 +163,24 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
         Operations.Reset();if(S.NPCReceipts.Num()>512)return false;
         for(const auto& R:S.NPCReceipts)
         {if(!R.Id.IsValid() || R.Command!=S.CommandId || R.Payload.IsEmpty() || R.Payload.Len()>200 || Operations.Contains(R.Id))return false;Operations.Add(R.Id);}
-        for(const auto& D:S.NPCDurability)
+        if(!S.Inventory.IsEmpty() || !S.Storage.IsEmpty() || !S.Bag.IsEmpty() || !S.NPCDurability.IsEmpty())return false;
+        TSet<FGuid> InstanceIds;TSet<FName> UniqueClaims;
+        for(const auto* Inventory:{&S.PlayerItems,&S.BrotherItems,&S.StorageItems})
         {
-            auto Item=HearthwardData::Find(TEXT("items"),D.Key.ToString());
-            if(!Item || !FMath::IsFinite(D.Value) || D.Value<0 || D.Value>HearthwardData::Number(Item,TEXT("durability")))return false;
+            if(!FHearthwardInventoryState::Validate(*Inventory,Inventory==&S.StorageItems))return false;
+            for(const auto& I:Inventory->Instances)
+            {
+                if(InstanceIds.Contains(I.Id) || (!I.UniqueClaim.IsNone() && UniqueClaims.Contains(I.UniqueClaim)))return false;
+                InstanceIds.Add(I.Id);if(!I.UniqueClaim.IsNone())UniqueClaims.Add(I.UniqueClaim);
+            }
+        }
+        for(const auto& Ground:S.GroundEquipment)
+        {
+            FHearthwardInventorySnapshot Single;Single.Instances.Add(Ground.Item);
+            const auto& I=Ground.Item;
+            if(!Ground.Transform.IsValid() || !FHearthwardInventoryState::Validate(Single,true) || InstanceIds.Contains(I.Id)
+                || (!I.UniqueClaim.IsNone() && UniqueClaims.Contains(I.UniqueClaim)))return false;
+            InstanceIds.Add(I.Id);if(!I.UniqueClaim.IsNone())UniqueClaims.Add(I.UniqueClaim);
         }
         if (!S.NPCMemory.IsValid(S.ActiveSeconds)) return false;
         if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay) || !UHearthwardHarvestSubsystem::Validate(S.HarvestedResources)) return false;
@@ -169,7 +188,7 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
             || !FMath::IsFinite(S.ActiveSeconds) || S.ActiveSeconds < 0 || S.KnowledgeRevision != S.Knowledge.Num()
             || S.AutoMinutes < 1 || S.AutoMinutes > 60 || !S.Safety.CanSave()
             || !S.Player.IsValid() || !S.Companion.IsValid() || !S.Source.IsValid() || !S.Camp.IsValid() || S.View.ContainsNaN()
-            || !ValidCounts(S.Inventory, false) || !ValidCounts(S.Storage, true) || !ValidCounts(S.Bag, false) || !ValidCounts(S.Resource, false)
+            || !ValidCounts(S.Resource, false)
             || !ValidTimer(S.PlayerTimer) || !ValidTimer(S.CompanionTimer)
             || uint8(S.Phase) > uint8(EHearthwardCompanionPhase::HoldingSafely)
             || S.Requested < 0 || S.Delivered < 0 || S.Delivered > S.Requested) return false;
@@ -191,7 +210,7 @@ bool HearthwardSave::Read(const FString& Path, UHearthwardSaveGame*& Out, FStrin
 {
     TArray<uint8> Bytes;
     if (!FFileHelper::LoadFileToArray(Bytes, *Path)) { Error = TEXT("无法读取存档池"); return false; }
-    return Decode(Bytes, Out, Error);
+    return Decode(Bytes,Out,Error);
 }
 
 bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FString& Error)
@@ -199,7 +218,7 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
     if (!Pool || !Validate(*Pool)) { Error = TEXT("拒绝写入无效快照"); return false; }
     TArray<uint8> Payload, Bytes;
     if (!UGameplayStatics::SaveGameToMemory(Pool, Payload)) { Error = TEXT("快照序列化失败"); return false; }
-    const uint32 Header[] = {0x48575335, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
+    const uint32 Header[] = {0x48575336, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
     Bytes.Append(reinterpret_cast<const uint8*>(Header), sizeof(Header));
     Bytes.Append(Payload);
     IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true);
@@ -207,6 +226,13 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
     if (!FFileHelper::SaveArrayToFile(Bytes, *Temp)) { Error = TEXT("临时存档写入失败，原档未替换"); return false; }
     UHearthwardSaveGame* Verified = nullptr;
     if (!Read(Temp, Verified, Error)) return false;
+    if(IFileManager::Get().FileExists(*Path) && !IFileManager::Get().FileExists(*(Path+TEXT(".pre-schema6"))))
+    {
+        TArray<uint8> Original;if(!FFileHelper::LoadFileToArray(Original,*Path))return false;
+        uint32 Previous=0;if(Original.Num()>=4)FMemory::Memcpy(&Previous,Original.GetData(),4);
+        if(Previous!=0x48575336 && !FFileHelper::SaveArrayToFile(Original,*(Path+TEXT(".pre-schema6"))))
+        {Error=TEXT("无法保留旧存档备份，原档未替换");return false;}
+    }
 #if PLATFORM_WINDOWS
     const FString From = FPaths::ConvertRelativePathToFull(Temp), To = FPaths::ConvertRelativePathToFull(Path);
     if (MoveFileExW(*From, *To, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) return true;

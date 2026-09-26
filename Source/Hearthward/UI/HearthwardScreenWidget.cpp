@@ -129,6 +129,8 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         CampEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
         if(!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->CanManage(CampEpoch)) {Message=TEXT("请在安全营地打开管理面板");MessageUntil=FPlatformTime::Seconds()+4;Refresh();return;}
     }
+    if(Name==TEXT("repairing"))Name=TEXT("equipment");
+    if(Name==TEXT("equipment"))EquipmentEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     const FName PreviousPage=Page;
     const bool RestoringMemoryDraft=Name==TEXT("memory") && !ReturnPages.IsEmpty() && ReturnPages.Last()==Name;
     if(Page==TEXT("dialogue") && Name!=Page) GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
@@ -249,7 +251,8 @@ void UHearthwardScreenWidget::Refresh()
             Element(TEXT("button"),TEXT("放弃救援并回档"),FVector2D(1100,640),FVector2D(280,55),20,TEXT("giveUp"));
         if(S && S->Busy()) Element(TEXT("button"),TEXT("取消当前动作"),FVector2D(1100,705),FVector2D(280,55),20,TEXT("cancelSurvival"));
     }
-    if(Page==TEXT("inventory")) ComposeInventory(false);
+    if(Page==TEXT("inventory")){ComposeInventory(false);Element(TEXT("button"),TEXT("逐件装备 · 行装管理"),FVector2D(260,810),FVector2D(280,45),18,TEXT("page:equipment"));}
+    if(Page==TEXT("equipment"))ComposeEquipment();
     if(Page==TEXT("storage")) ComposeInventory(true);
     if(Page==TEXT("skills")) ComposeSkills();
     if(Page==TEXT("map")) ComposeMap();
@@ -267,7 +270,7 @@ void UHearthwardScreenWidget::Refresh()
     {
         Element(TEXT("panel"),TEXT(""),FVector2D(490,310),FVector2D(690,290));
         Element(TEXT("text"),TEXT("确认操作"),FVector2D(550,342),FVector2D(580,45),28);
-        Element(TEXT("text"),(ConfirmAction.StartsWith(TEXT("camp."))?ConfirmMessage:TEXT("未保存的进度可能丢失。是否继续？")),FVector2D(550,410),FVector2D(580,50),20);
+        Element(TEXT("text"),(ConfirmAction==TEXT("gear.dropConfirmed")?TEXT("这是唯一装备，放下后仅能在原地拾回。确认放到地面？"):ConfirmAction.StartsWith(TEXT("camp."))?ConfirmMessage:TEXT("未保存的进度可能丢失。是否继续？")),FVector2D(550,410),FVector2D(580,50),20);
         Element(TEXT("button"),TEXT("确认"),FVector2D(550,510),FVector2D(240,55),22,TEXT("confirm"));
         Element(TEXT("button"),TEXT("返回"),FVector2D(850,510),FVector2D(240,55),22,TEXT("cancel"));
     }

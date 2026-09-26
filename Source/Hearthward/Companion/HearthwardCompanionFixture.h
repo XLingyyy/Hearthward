@@ -51,7 +51,7 @@ public:
     UFUNCTION(BlueprintCallable) bool ResumeBlocked(AActor* Speaker);
     EHearthwardProposalResult SubmitGoal(AActor* Speaker,FHearthwardCommandTicket Ticket,const FHearthwardAgentGoal& Goal);
     FString PreviewGoal(const FHearthwardAgentGoal& Goal) const;
-    UPROPERTY(BlueprintReadWrite) TMap<FName,float> OwnedDurability;
+    UFUNCTION(BlueprintPure) float EquipmentDurability(FName Item) const;
     UPROPERTY(BlueprintReadOnly) TMap<FName,int32> Spent;
     FName GetItem() const { return Command.GetItem(); }
     bool IsAtCamp() const;
@@ -62,6 +62,7 @@ public:
     bool IsProposalCurrent(AActor* Speaker, const FHearthwardCommandTicket& Ticket) const;
     void DiscardProposal(const FHearthwardCommandTicket& Ticket) { Command.DiscardPending(Ticket); }
 
+    bool EquipmentBusy() const { return bSettling || Command.IsCurrent(Command.GetActive().Epoch); }
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardInventoryComponent> Bag;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardTimedActionComponent> Action;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardCompanionNavigationComponent> Navigation;

@@ -35,6 +35,10 @@ public:
     UFUNCTION(BlueprintCallable) bool Craft(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch);
     UFUNCTION(BlueprintPure) FString RepairStatus(FGuid Station,FName Item,FGuid Epoch) const;
     UFUNCTION(BlueprintCallable) bool RepairEquipment(FGuid Station,FName Item,FGuid Epoch);
+    FString RepairInstanceStatus(FGuid Station,FGuid Instance,double Fraction,FGuid Epoch) const;
+    bool RepairInstance(FGuid Station,FGuid Instance,double Fraction,FGuid Epoch);
+    bool MatchesFacility(FGuid Station,FName Kind,int32 Level) const;
+
     UPROPERTY(BlueprintReadOnly) FString Feedback;
     UPROPERTY(BlueprintReadOnly) bool ValidPlacement = false;
     UPROPERTY(BlueprintReadOnly) FVector Placement = FVector::ZeroVector;

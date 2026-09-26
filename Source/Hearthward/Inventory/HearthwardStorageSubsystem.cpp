@@ -59,3 +59,56 @@ bool UHearthwardStorageSubsystem::Adjust(const TMap<FName,int32>& Consumed,const
     if(Reservation.IsValid()) Reservations.Remove(Reservation);
     return true;
 }
+
+FHearthwardTransferResult UHearthwardStorageSubsystem::TransferInstance(UHearthwardInventoryComponent* Personal,bool ToCamp,FGuid Instance,FGuid Operation,FGuid Epoch)
+{
+    FHearthwardTransferResult Reply;
+    if(Epoch!=State.Epoch){Reply.Result=EHearthwardInventoryResult::StaleTimeline;return Reply;}
+    if(!IsValid(Personal) || Personal->GetWorld()!=GetWorld() || !Instance.IsValid() || !Operation.IsValid())return Reply;
+    const FGuid PersonalId=Personal->GetContainerId();
+    if(const auto* Previous=State.Completed.Find(Operation))
+    {
+        if(Previous->PersonalId!=PersonalId || Previous->ToCamp!=ToCamp || Previous->Instance!=Instance)Reply.Result=EHearthwardInventoryResult::OperationConflict;
+        else {Reply.Result=Previous->Result;Reply.Replayed=true;}return Reply;
+    }
+    const auto* I=ToCamp?Personal->FindInstance(Instance):State.Shared.FindInstance(Instance);
+    if(!I)return Reply;
+    const FName Item=I->Definition;
+    if((ToCamp?Personal->Available(Item):Available(Item))<1)return Reply;
+    Reply.Result=ToCamp?Personal->State.TransferInstanceTo(State.Shared,Instance):State.Shared.TransferInstanceTo(Personal->State,Instance);
+    State.Completed.Add(Operation,{PersonalId,ToCamp,Item,1,Reply.Result,Instance});
+    if(Reply.Result==EHearthwardInventoryResult::Success)
+    {
+        Reply.MovedCount=1;Personal->OnInventoryChanged.Broadcast();OnTransferred.Broadcast(Operation,ToCamp,Item,1);
+    }
+    return Reply;
+}
+bool UHearthwardStorageSubsystem::PrepareWorkshop(UHearthwardInventoryComponent* Personal,const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,bool UseStorage,FGuid Repair,double Restore,bool Upgrade,FHearthwardInventoryState& BagAfter,FHearthwardInventoryState& CampAfter) const
+{
+    if(!IsValid(Personal) || Personal->GetWorld()!=GetWorld() || Materials.IsEmpty())return false;
+    BagAfter=Personal->State;CampAfter=State.Shared;
+    for(const auto& M:Materials)
+    {
+        if(M.Value<=0)return false;
+        const int32 Own=FMath::Min(M.Value,Personal->Available(M.Key)),Camp=M.Value-Own;
+        if(Camp>0 && (!UseStorage || Camp>Available(M.Key)))return false;
+        if(Own>0 && BagAfter.Remove(M.Key,Own)!=EHearthwardInventoryResult::Success)return false;
+        if(Camp>0 && CampAfter.Remove(M.Key,Camp)!=EHearthwardInventoryResult::Success)return false;
+    }
+    for(const auto& O:Outputs)if(BagAfter.Add(O.Key,O.Value)!=EHearthwardInventoryResult::Success)return false;
+    if(Repair.IsValid() && !BagAfter.RestoreDurability(Repair,Restore))return false;
+    if(Upgrade && !BagAfter.UpgradeBackpack())return false;
+    return true;
+}
+bool UHearthwardStorageSubsystem::CanWorkshop(UHearthwardInventoryComponent* Personal,const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,bool UseStorage,FGuid Repair,double Restore,bool Upgrade) const
+{
+    FHearthwardInventoryState BagAfter,CampAfter(true);
+    return PrepareWorkshop(Personal,Materials,Outputs,UseStorage,Repair,Restore,Upgrade,BagAfter,CampAfter);
+}
+bool UHearthwardStorageSubsystem::Workshop(UHearthwardInventoryComponent* Personal,const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,bool UseStorage,FGuid Repair,double Restore,bool Upgrade)
+{
+    FHearthwardInventoryState BagAfter,CampAfter(true);
+    if(!PrepareWorkshop(Personal,Materials,Outputs,UseStorage,Repair,Restore,Upgrade,BagAfter,CampAfter))return false;
+    Personal->State=MoveTemp(BagAfter);State.Shared=MoveTemp(CampAfter);
+    Personal->OnInventoryChanged.Broadcast();return true;
+}

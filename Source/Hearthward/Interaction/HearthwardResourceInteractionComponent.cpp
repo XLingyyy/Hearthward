@@ -1,4 +1,6 @@
 #include "HearthwardResourceInteractionComponent.h"
+#include "../Inventory/HearthwardHarvestTools.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "Engine/World.h"
@@ -35,7 +37,8 @@ FString UHearthwardResourceInteractionComponent::GetInteractionPrompt(AActor* In
             Bag->GetItemCount(TEXT("wood")), Storage->GetItemCount(TEXT("wood")));
     }
     const auto* Source = GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>();
-    return FString::Printf(TEXT("E 采集木材 ×1\n剩余 %d   单重 1   背包余量 %.2f"),
+    FGuid Tool;const int32 Yield=HearthwardHarvestTools::Yield(Bag,TEXT("wood"),Tool);
+    return FString::Printf(TEXT("E 采集木材 ×%d · 5秒\n剩余 %d   单重 1   背包余量 %.2f"),Yield,
         Source ? Source->GetItemCount(TEXT("wood")) : 0, Bag->GetCapacity() - Bag->GetWeight());
 }
 
@@ -48,7 +51,7 @@ FString UHearthwardResourceInteractionComponent::CompleteInteraction(AActor* Int
     auto* Bag = Interactor->FindComponentByClass<UHearthwardInventoryComponent>();
     if (!Bag) return TEXT("背包不可用，未转移物资");
     EHearthwardInventoryResult Result;
-    int32 Count = 1; // PROTOTYPE_ONLY yield; the final resource/tool economy is OPEN.
+    int32 Count=0;FGuid Tool;
     if (bDeposit)
     {
         Count = Bag->GetItemCount(TEXT("wood"));
@@ -60,7 +63,12 @@ FString UHearthwardResourceInteractionComponent::CompleteInteraction(AActor* Int
     {
         auto* Source = GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>();
         if (!Source) return TEXT("资源点不可用");
-        Result = Source->TransferTo(Bag, TEXT("wood"), Count);
+        const int32 Yield=HearthwardHarvestTools::Yield(Bag,TEXT("wood"),Tool);
+        if(Yield==0)return TEXT("需要一把耐久大于零的斧头");
+        Count=FMath::Min(Yield,Source->GetItemCount(TEXT("wood")));
+        if(Count==0)return TEXT("资源已耗尽，未采集");
+        const auto* G=Interactor->FindComponentByClass<UHearthwardGameplayComponent>();
+        Result=Bag->GatherFrom(Source,TEXT("wood"),Count,Tool,1/(1+(G?G->Effect(TEXT("durability")):0)));
     }
     if (Result == EHearthwardInventoryResult::Success)
         return bDeposit ? FString::Printf(TEXT("木材 ×%d 已入库"), Count)

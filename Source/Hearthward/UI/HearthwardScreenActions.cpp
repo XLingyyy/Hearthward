@@ -44,8 +44,7 @@ bool UHearthwardScreenWidget::PrepareSession()
     if(!G->Enabled)
     {
         G->EnableAdventure();
-        for(const auto& V:Catalog()->GetObjectField(TEXT("loadout"))->Values)
-            Inventory()->TryAdd(FName(*V.Key),V.Value->AsNumber());
+        G->GrantInitialEquipment();
     }
     return Save->EnablePrototype();
 #else
@@ -73,6 +72,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")) return false;
     MessageUntil=FPlatformTime::Seconds()+4;
     if(Action.StartsWith(TEXT("camp.")))return ExecuteCampAction(Action);
+    if(Action.StartsWith(TEXT("gear.")))return ExecuteEquipmentAction(Action);
     if(Action==TEXT("buildPrev")){Scroll-=4;Refresh();return true;}
     if(Action==TEXT("buildNext")){Scroll+=4;Refresh();return true;}
     auto* G=Gameplay(); auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
@@ -288,7 +288,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action==TEXT("repair"))
     {
         SelectedRepair=SelectedItem;
-        OpenPage(TEXT("repairing")); Success=Page==TEXT("repairing");
+        OpenPage(TEXT("repairing")); Success=Page==TEXT("equipment");
     }
     else if(Action.StartsWith(TEXT("quick:")))
     {

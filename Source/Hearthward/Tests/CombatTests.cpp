@@ -80,9 +80,9 @@ bool FCombatActionsTest::RunTest(const FString&)
     T->Health=100; Enemy->SetActorRotation(FRotator::ZeroRotator); G->Opponents[T->Id]=100;
     TestTrue(TEXT("Next live target execution starts"),C->Execute(Enemy));
     C->Cancel(); TestTrue(TEXT("Cancel releases target without damage"),T->CanAct() && T->Health==100);
-    T->Heavy=true; T->Health=60;
+    T->Heavy=true; T->Health=90;
     TestTrue(TEXT("Heavy current-health equality allows execution"),C->Execute(Enemy)); C->Cancel();
-    T->Health=60.1f; TestFalse(TEXT("Heavy current-health above threshold refuses"),C->Execute(Enemy)); T->Heavy=false;
+    T->Health=90.1f; TestFalse(TEXT("Heavy current-health above threshold refuses"),C->Execute(Enemy)); T->Heavy=false;
     G->Stamina=100;
     TestTrue(TEXT("Heavy attack needs no strong skill unlock"),C->Attack(true));
     TestFalse(TEXT("Windup cannot dodge"),C->Dodge(FVector::ForwardVector));

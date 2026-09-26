@@ -21,6 +21,8 @@ void AHearthwardProjectile::Tick(float Delta)
     if(Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()) { Destroy(); return; }
     if(GetActorLocation().Z<GetWorld()->GetWorldSettings()->KillZ) { Destroy(); return; }
     if(Landed || GetWorld()->IsPaused() || !Shooter.IsValid()) return;
+    Delta=FMath::Min(double(Delta),Lifetime); Lifetime-=Delta;
+    if(Delta<=0){Destroy();return;}
     const int32 Steps=FMath::Max(1,FMath::CeilToInt(Delta/.016)); const double Dt=Delta/Steps;
     for(int32 I=0;I<Steps && !Landed;++I)
     {

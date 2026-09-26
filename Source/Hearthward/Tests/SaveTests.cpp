@@ -61,7 +61,7 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     auto* Pool = NewObject<UHearthwardSaveGame>();
     Pool->Points.Add(Point());
     auto& S = Pool->Points[0].World;
-    S.Inventory.Add(TEXT("wood"), 5); S.Storage.Add(TEXT("stone"), 120); S.Resource.Add(TEXT("wood"), 16);
+    S.PlayerItems.Stacks.Add(TEXT("wood"), 5); S.StorageItems.Stacks.Add(TEXT("stone"), 120); S.Resource.Add(TEXT("wood"), 16);
     S.Knowledge.Add(TEXT("玩家原话（未核实）: 营地约定")); S.KnowledgeRevision = 1;
     S.ActiveSeconds = 123; S.CalendarMinutes=123; S.Player.SetLocation(FVector(10,20,30));
     FString Error;
@@ -71,8 +71,8 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     if (Loaded)
     {
         const auto& R = Loaded->Points[0].World;
-        TestEqual(TEXT("Personal inventory"), R.Inventory.FindRef(TEXT("wood")), 5);
-        TestEqual(TEXT("Unlimited shared storage"), R.Storage.FindRef(TEXT("stone")), 120);
+        TestEqual(TEXT("Personal inventory"), R.PlayerItems.Stacks.FindRef(TEXT("wood")), 5);
+        TestEqual(TEXT("Unlimited shared storage"), R.StorageItems.Stacks.FindRef(TEXT("stone")), 120);
         TestTrue(TEXT("Knowledge and time at same boundary"), R.Knowledge == S.Knowledge && R.ActiveSeconds == S.ActiveSeconds);
         TestTrue(TEXT("World transform"), R.Player.Equals(S.Player));
     }
@@ -92,9 +92,9 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     TestFalse(TEXT("Intact old-schema file rejected at load"), HearthwardSave::Read(Path, Loaded, Error));
     FFileHelper::SaveArrayToFile(Original, *Path);
     Pool->Schema = HearthwardSave::CurrentSchema;
-    S.Inventory[TEXT("wood")] = 101;
+    S.PlayerItems.Stacks[TEXT("wood")] = 101;
     TestFalse(TEXT("Invalid capacity rejected before mutation"), HearthwardSave::Write(Path, Pool, Error));
-    S.Inventory[TEXT("wood")] = 5;
+    S.PlayerItems.Stacks[TEXT("wood")] = 5;
     S.Knowledge.Add(TEXT("future exchange")); S.KnowledgeRevision = 2;
     TestTrue(TEXT("Atomic replacement of existing committed pool"), HearthwardSave::Write(Path, Pool, Error));
     TestTrue(TEXT("Read replaced pool"), HearthwardSave::Read(Path, Loaded, Error));
@@ -139,8 +139,8 @@ bool FSaveNaturalLegacyFixtureTest::RunTest(const FString& Parameters)
     Legacy.World.NaturalWorld=true;
     Legacy.World.Map=TEXT("L_HearthwardWilds");
     Legacy.World.Player.SetLocation(FVector(-97600,-75200,16195));
-    Legacy.World.Inventory.Add(TEXT("wood"),3);
-    Legacy.World.Storage.Add(TEXT("wood"),5);
+    Legacy.World.PlayerItems.Stacks.Add(TEXT("wood"),3);
+    Legacy.World.StorageItems.Stacks.Add(TEXT("wood"),5);
     Pool->Points.Add(Legacy);
     FString Error;
     const FString Path=FPaths::ProjectSavedDir()/TEXT("NaturalCampValidation/legacy-natural.hws");
