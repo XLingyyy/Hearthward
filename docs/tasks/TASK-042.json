@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "TASK-042",
+  "title": "冻结首版交付范围与第一完整体验切片",
+  "status": "Blocked",
+  "updated_at": "2026-09-26",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-042-first-slice",
+  "source_refs": [
+    "2026-09-26 用户要求继续下一个顺序的任务单；规划稿 TASK-044 对应 canonical TASK-042",
+    "本地规划稿 docs/Hearthward_TASK-043-076.md 第 116—136 行；该稿为 Backlog 草案",
+    "本地审计 docs/Hearthward_Audit_2026-09-24.md 第 174—180 行",
+    "docs/design/CURRENT.md 指向的 GDD v0.3；docs/design/OPEN_QUESTIONS.md 的 R17、R25",
+    "origin/main@a4998b10da54f162def767fa8bb7e308594bd490"
+  ],
+  "dependencies": ["TASK-041"],
+  "blocked_by": ["R17", "R25"],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/design/CURRENT.md",
+    "docs/design/DSGN-003-first-release-slice.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/tasks/TASK-042.json",
+    "docs/tasks/TASK-042.md",
+    "docs/handoffs/TASK-042.md"
+  ],
+  "forbidden_paths": [
+    "Source/",
+    "Content/",
+    "Config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "docs/design/archive/",
+    "docs/qa/evidence/"
+  ],
+  "acceptance": [
+    "首版范围明确必须交付、后续扩展与候选项，不将首版内容误写成已实现",
+    "第一切片有玩家目标、兄弟分工、外出风险、回营收益和第一次真实成长，30—60 分钟仅为待实测内容预算",
+    "列出空间、角色、设施、敌人、任务、资产的最小清单及当前可复用与缺口",
+    "退出条件包含正常入口、真实结算、保存恢复和 Owner 体验签收",
+    "取得 Owner 对设计方案的明确决定，仅按批准子范围更新 CURRENT 与 R17／R25"
+  ],
+  "non_goals": [
+    "不实现新玩法、修改地图／资产或打包",
+    "不批准 R17／R25 全量关卡与平衡，也不预填未定数值",
+    "不把反击敌方腹地、战斗小队、最终投降或候选占卜纳入首版"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": ["T-002"],
+  "permissions": {
+    "network": "granted: source research, Git remote checks and authorized task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user explicitly requested commit and push on 2026-09-26",
+    "push": "granted: user explicitly requested commit and push on 2026-09-26",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "规划稿 044 依用户指定的编号偏移减 2 映射为本 canonical TASK-042。",
+    "DSGN-003 当前为 PROPOSED；用户下达工作不等于已审阅并批准具体切片。",
+    "沿用用户此前指定的 Owner／Reviewer 均为 XLingyyy；同人登记不构成独立 PR 审查，Issue 可选。",
+    "本单设计仅提议第一处救援和一次营地成长的类型，R17／R25 及其他跨领域数值仍按原设计流程逐段批准。"
+  ]
+}

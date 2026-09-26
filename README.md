@@ -1,6 +1,8 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-25，审计主干为 `main@ee3f4c2eede9f856c4589fd4b85b1b05c82a1b6b`。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复已通过 PR #43 合入当前主干。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-26，审计主干为 `main@a4998b10da54f162def767fa8bb7e308594bd490`，其中 PR #44 合入了 TASK-041 的文档与仓库校验规则，没有新增玩法。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复经 PR #43 合入。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。有效设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+
+[TASK-042 首版范围与第一体验切片](docs/tasks/TASK-042.md)已形成 [DSGN-003 待审查提案](docs/design/DSGN-003-first-release-slice.md)：拟从营地准备、兄弟分工和近郊救援走到回营成长。该路线、具体奖励及时长尚未获 Owner 批准或游戏内验证，不属于当前可玩能力。
 
 AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与分支证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)和[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；所选集成修正随 PR #40 合入 main，PR #41/#42 属于 TASK-031。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
@@ -103,7 +105,7 @@ TASK-029 自然营地接入基线曾通过 UE 5.8.2 Editor Development 构建、
 
 资产库已有5件 [Tripo 室内家具制作源资产](art_source/TASK-004/Tripo/室内家具/室内家具模型索引.md)：绳网木床、带锁木箱、木桌、木椅和金属提灯，每件均有参考图、静态 FBX 和 PNG 预览。TASK-030将床、箱子和木桌接入休息、营地仓储和工作台；TASK-028将木椅及提灯作为房屋陈设生成，门口提灯有点光源，尚无坐椅或携灯交互。专用工作台模型暂缺，持握工具挂接、专用采集音效和躺卧动画未实现。
 
-旧界面及此前定向验证可使用 `-HearthwardLegacyUI`。本分支的工作流将 GitHub Issue 设为可选；正式 PR 审查仍按独立评审规则执行，任务分支成果与 main 集成状态分别记录。
+旧界面及此前定向验证可使用 `-HearthwardLegacyUI`。当前工作流将 GitHub Issue 设为可选；正式 PR 审查仍按独立评审规则执行，任务分支成果与 main 集成状态分别记录。
 
 025记忆由玩家显式维护，每条最多120字、64条活跃记录、4条文字约定；撤销回收容量，单次相关检索最多3条。本人真实事件视图最多128条，与副作用去重回执独立。四类可执行约束为禁采、已知来源、禁用材料和累计耗料上限，长期规则需确认；普通文字约定仅供交流参考。澄清保留原话与限制，容量耗尽明确反馈。真实token预算为3328输入+256输出+512预留。语言理解及词项召回仍可能失败，任意表达可靠性、角色自然度和第二机器尚未验收；Shipping 已完成发行报告所列的本机限定路线。R18/R20/R21其他内容未闭合。
 
