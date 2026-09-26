@@ -35,3 +35,7 @@
 当前：[DSGN-001 本机模型与轻量检索推理链](DSGN-001-local-inference.md)，由用户于2026-09-18明确批准；当前DOCX已同步技术架构口径。
 历史archive保持不变；本决定没有关闭R14/R18/R20等未定玩法。
 实现代码与需求不一致时记录差异，不把任何一方自动解释成另一方已获批准。
+
+## 待 Owner 审查的提案
+
+[DSGN-003 首版范围与第一完整体验切片](DSGN-003-first-release-slice.md)由 TASK-042 于 2026-09-26 提出，状态为 `PROPOSED`。它尚未改变本页有效基线；R17／R25 和相关数值仍按 [OPEN_QUESTIONS](OPEN_QUESTIONS.md) 保持未定。批准后仅将明确通过的子范围写回本页。
