@@ -48,4 +48,4 @@ Owner明确批准D1—D6并要求沿046施工、提交推送。分支`codex/TASK
 
 ## TASK-047 实施与验证
 
-Owner已批准D1—D6。独立分支codex/TASK-047-equipment-recipes基于main dbba6d0，实现60级成长、29技能、62物品、49配方、38件耐久装备、双方容量升级及schema6。运行配置已替换旧原型语义，候选JSON保留批准时记录。当前进行最终PIE／磁盘恢复与交付验证，结果见[047报告](qa/TASK-047/REPORT.md)。自然资源点与正式任务奖励仍归048／049，main尚未合并047。
+Owner已批准D1—D6。独立分支codex/TASK-047-equipment-recipes基于main dbba6d0，实现60级成长、29技能、62物品、49配方、38件耐久装备、双方容量升级及schema6。运行配置已替换旧原型语义，候选JSON保留批准时记录。Editor构建、原生32/32、真实PIE64/64与工具33/33已通过；实现交付后待正式PR审查及集成，结果见[047报告](qa/TASK-047/REPORT.md)。自然资源点与正式任务奖励仍归048／049，main尚未合并047。
