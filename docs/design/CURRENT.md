@@ -53,3 +53,7 @@ R04／R08／R09／R18／R22登记获准子范围；044半份药与schema5已实�
 ## TASK-045 已批准规则范围
 
 Owner已批准[DSGN-R06](DSGN-R06-combat-stealth.md)D1—D6，明确暗杀与击晕完全相同：从有效按键起3秒，播放处决动作，目标不能反抗，不耗耐力且静音。045沿用原编号实施，公共接口见[CT-TASK-045](../contracts/CT-TASK-045-combat-alert.md)。R06／R07／R10记录获准规则；正式装备表、专用动画和自然关卡配置仍未完成。当前分支实现及运行覆盖见[报告](../qa/TASK-045/REPORT.md)。
+
+## TASK-046 待批准候选
+
+[DSGN-R11 营地经济](DSGN-R11-camp-economy.md)交付D1—D6及可复算数据，状态PROPOSED：八阶与三级设施、岗位／口粮、双营地、拆迁和取消规则。尚未获Owner批准，不属于上述有效基线；R03／R11／R12／R13保持OPEN，既有已批准子范围不变。
