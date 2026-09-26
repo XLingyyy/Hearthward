@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "id": "TASK-046",
+  "title": "完成营地八阶、设施和劳动力经济表",
+  "status": "Active",
+  "updated_at": "2026-09-26",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-046-camp-economy",
+  "source_refs": [
+    "用户：继续046；延续按序交付与任务分支提交推送工作方式",
+    "原稿TASK-048映射canonical TASK-046；2026-09-24审计R03/R11/R12/R13",
+    "GDD v0.3 Q031—050、Q201—220；042切片及043/044已批准规则",
+    "父分支origin/codex/TASK-045-combat-stealth@3b17c4e9623b87464e4c172d11c4cae6e3439abc；main仍为7ce8262bd8721dc59fb0703d365dab2e10340f89"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-043",
+    "TASK-044"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/tasks/TASK-046.json",
+    "docs/tasks/TASK-046.md",
+    "docs/handoffs/TASK-046.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/design/DSGN-R11-camp-economy.md",
+    "docs/planning/TASK-046/",
+    "docs/qa/TASK-046/"
+  ],
+  "forbidden_paths": [
+    "Source/",
+    "Resources/",
+    "Content/",
+    "Config/",
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "八阶费用、条件、半份成长与四类三级设施可计算，区分已批准规则与候选",
+    "核算首次设施约3分钟、后续核心设施约15分钟采集及首轮成长切片预算",
+    "有限来源、真实投入、四人日常生计和高活动缺口均可复算",
+    "明确同一劳动力池、兄弟三人等效、口粮和两营地范围、取消与拆迁取整",
+    "同步README和交接；提交推送候选，不把待批准数值写入游戏"
+  ],
+  "non_goals": [
+    "不更改运行时代码、正式物品配方、资产或存档格式",
+    "不把候选规则登记为批准，不关闭整个R11/R12/R13",
+    "不合并main、不执行047或后续任务"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested sequential task continuation under existing commit/push delivery workflow",
+    "push": "granted: existing sequential task branch delivery workflow; no main merge",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner／Reviewer XLingyyy；Issue可选。",
+    "本单为原稿设计/内容任务；新增经济值形成具体候选，等待Owner批准后才可实施。",
+    "沿用045已推送成果；没有将045视为已合并main。"
+  ]
+}
