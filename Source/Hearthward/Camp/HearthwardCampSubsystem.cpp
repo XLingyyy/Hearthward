@@ -56,7 +56,7 @@ bool UHearthwardCampSubsystem::SetProduction(FName Region,bool Enabled,bool ToRa
 {
     auto* R=State.Regions.FindByPredicate([&](const auto& Entry){return Entry.Id==Region;});
     if(!CanManage(Epoch) || !R)return false;
-    R->Enabled=Enabled;R->ToRations=ToRations;Feedback=Enabled?TEXT("队列已开启，按真实劳动力和投入生产"):TEXT("队列已暂停，保留已投入进度");return true;
+    R->Enabled=Enabled;R->ToRations=ToRations;R->Status.Reset();Feedback=Enabled?TEXT("队列已开启，按真实劳动力和投入生产"):TEXT("队列已暂停，保留已投入进度");return true;
 }
 bool UHearthwardCampSubsystem::SelectProduction(FName Region,FGuid Facility,FName Recipe,FGuid Epoch)
 {
