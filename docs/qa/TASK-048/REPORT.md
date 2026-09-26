@@ -2,7 +2,7 @@
 
 2026-09-27，Windows／GameFactory Python环境，UE 5.8.2项目文档阶段。主干`e95fde185dc38d0b69c2de42ce66db0d1fd93294`；范围基线`ed1a69a005eef1e371ae76accaac6b8aecf11a71`。D1—D6待Owner批准。
 
-受检候选／脚本提交：待最终绑定。后续证据提交不改候选或计算脚本。
+受检候选／脚本提交：`bbbcda9c3eec0decf53368560927b515e1cbe2a6`。后续证据提交不改候选或计算脚本。
 
 ## 检查边界
 
@@ -16,10 +16,10 @@
 
 ## 命令与证据
 
-- `python -X utf8 docs/planning/TASK-048/audit.py`：[结果](calculation.json)。
-- `python -X utf8 scripts/validate_repo.py`：[日志](repo.txt)。
-- `python -X utf8 scripts/validate_repo.py --task TASK-048 --base ed1a69a005eef1e371ae76accaac6b8aecf11a71`：[范围日志](scope.txt)。
-- `python -X utf8 -m unittest discover -s scripts/tests -v`：[工具日志](tools.txt)。
+- `python -X utf8 docs/planning/TASK-048/audit.py`：PASS，38/38；[结果](calculation.json)。
+- `python -X utf8 scripts/validate_repo.py`：PASS，0 errors；[日志](repo.txt)。
+- `python -X utf8 scripts/validate_repo.py --task TASK-048 --base ed1a69a005eef1e371ae76accaac6b8aecf11a71`：PASS，0 errors；[范围日志](scope.txt)。
+- `python -X utf8 -m unittest discover -s scripts/tests -v`：PASS，33/33；[工具日志](tools.txt)。
 
 UE构建、原生、PIE、Shipping、物种视觉／骨骼／动画、实际自然地图布点与完整生活路线：NOT_RUN。源资产只核对版本库中的索引与文件路径，15套源模型不等于15种已实现动物。
 
