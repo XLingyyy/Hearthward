@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "id": "TASK-043",
+  "title": "定案世界时间、生产资源、刷新与传送规则",
+  "status": "Blocked",
+  "updated_at": "2026-09-26",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-043-world-time",
+  "source_refs": [
+    "2026-09-26 用户要求继续下一任务，做完提交推送；沿用编号偏移减 2",
+    "本地 docs/Hearthward_TASK-043-076.md 的 TASK-045；实际 canonical TASK-043",
+    "本地 docs/Hearthward_Audit_2026-09-24.md 的时间、生产、刷新与传送缺口",
+    "GDD v0.3 第 4、6、9、13、17 章；R01/R02/R03/R05/R19/R22",
+    "父分支 codex/TASK-042-first-slice@ab5596e0045ebc9ac49836023cdfa59f3ca6cdd5；main@a4998b10da54f162def767fa8bb7e308594bd490",
+    "2026-09-26 Owner批准042；授权同步DSGN-003、CURRENT、R17/R25子范围及042任务／交接，043规则仍待确认",
+    "2026-09-26 Owner要求睡眠推进8游戏小时、击晕计入清敌、树木2游戏日刷新，其他方案确认；两项衔接已发起澄清",
+    "2026-09-26 Owner明确：按实际时刻显示昼夜，以后游戏规则改成击晕等效于杀死",
+    "2026-09-26 用户纠正跳号，明确按043、044顺序执行并自行提交推送"
+  ],
+  "dependencies": [
+    "TASK-042"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md",
+    "docs/contracts/CT-TASK-043-world-time-persistence.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/design/CURRENT.md",
+    "docs/design/DSGN-R01-world-time-persistence.md",
+    "docs/contracts/CT-TASK-043-world-time-persistence.md",
+    "docs/contracts/README.md",
+    "docs/tasks/TASK-043.json",
+    "docs/tasks/TASK-043.md",
+    "docs/handoffs/TASK-043.md",
+    "docs/design/DSGN-003-first-release-slice.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/tasks/TASK-042.json",
+    "docs/tasks/TASK-042.md",
+    "docs/handoffs/TASK-042.md"
+  ],
+  "forbidden_paths": [
+    "Source/",
+    "Content/",
+    "Config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "docs/design/archive/",
+    "docs/qa/evidence/"
+  ],
+  "acceptance": [
+    "逐系统时间矩阵覆盖正常、暂停、睡眠、篝火跳时、传送与回档",
+    "一次性资源有投入、产出、耗尽及长期补给定义；睡眠不凭空产出",
+    "状态表覆盖死亡、击晕、增援、已控区、永久夺回、首次与多周期刷新",
+    "传送血量、弟弟随行、危险保存和恢复顺序有可审查规则及边界用例",
+    "既定要求、候选决定和未决配置可追溯；获得 Owner 明确设计决定后才能定案"
+  ],
+  "non_goals": [
+    "不实现周期系统或更改保存格式",
+    "不新增睡眠冷却或隐藏生产封顶",
+    "不把 Demo 行为当作正式规则，不替 Owner 批准设计",
+    "不合并 main 或发布游戏"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested next task completion and commit on 2026-09-26",
+    "push": "granted: user requested task branch push on 2026-09-26",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "D1—D6产品规则已批准且本设计单交付范围完成；Blocked仅保留未完成的独立PR审查，不把后续配表和运行验证当作本单设计阻塞。",
+    "Owner与Reviewer均为XLingyyy；不伪造独立审查或合并。Issue可选。",
+    "接续顺序为canonical 044（原稿046），不跳到052。052误开工分支独立保留，未合并且不作为044基线。"
+  ]
+}

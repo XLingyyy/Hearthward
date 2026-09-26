@@ -12,7 +12,7 @@ TASK-026 自然地图底座和营地、TASK-027 的早期主角动作、TASK-028
 
 | 范围 | 已确认结果 | 仍未证明 |
 |---|---|---|
-| `origin/main@a4998b10da54f162def767fa8bb7e308594bd490` | 主干含上述玩法合并与 PR #44 的文档／校验规则；相对 `ee3f4c2` 无新玩法 | TASK-042 未在该 SHA 重跑 UE 构建、PIE、Shipping 或完整试玩，均 `NOT_RUN` |
+| `origin/main@a4998b10da54f162def767fa8bb7e308594bd490` | 主干含上述玩法合并与 PR #44 的文档／校验规则；相对 `ee3f4c2` 无新玩法 | TASK-042／043 未在该 SHA 重跑 UE 构建、PIE、Shipping 或完整试玩，均 `NOT_RUN` |
 | TASK-029 与 TASK-028/030 的开发组合 | [组合报告](qa/evidence/TASK-029/main-task028-integration-20260924/REPORT.md)记录 UE Editor Development、Python 31/31、原生 43/43、Demo 70/70、自然路线 51/51 和隔离资产路线 49/49 | 受测源码为当时集成分支；旧 UI／跟随／战斗用例不视作该组合已重跑；不冒充当前 main 验证 |
 | TASK-031 分支 | [角色交接](handoffs/TASK-031.md)记录移动、双角色动作和场景透显的定向验证 | 完整动作质量、正式敌人遭遇、Owner 视觉签收 |
 | Windows Demo 0.1.0 | 受测源码 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`；[报告](releases/demo-20260924/REPORT.md)记录 UE 5.8.2 Win64 Shipping、本机独立安装、随包模型和真实键鼠小闭环通过 | 第二台无开发环境机器、不同显卡／驱动、全剧情／全图／长时性能仍 `NOT_RUN` |
@@ -22,7 +22,16 @@ Demo 的构建基线为 `main@68e68d817c4d5a39bf43eb7f27863fc734d04aef`，发行
 ## 设计和流程
 
 - 当前设计入口为 [CURRENT](design/CURRENT.md)；R01—R25 的正式未决项见 [OPEN_QUESTIONS](design/OPEN_QUESTIONS.md)。已有局部 Demo 实现和设计定案分别登记。
-- TASK-042 的 [DSGN-003](design/DSGN-003-first-release-slice.md)是本分支待 Owner 审批的首版范围与救援切片提案；未修改主干玩法或 R17／R25 状态。
+- TASK-042 的 [DSGN-003](design/DSGN-003-first-release-slice.md)首版范围与救援切片方向已于本轮获Owner批准；此前草案经PR #45合入main@35ac870。本轮批准增量随043分支交付，R17／R25仅登记获准子范围，玩法与实测仍未完成。
+- TASK-043 以 TASK-042 为父分支，交付 [DSGN-R01](design/DSGN-R01-world-time-persistence.md) 的 D1—D6 世界时间／生产／刷新／旅行／保存候选规则，以及 [CT-TASK-043](contracts/CT-TASK-043-world-time-persistence.md) 工程草案。Owner本轮修改确认睡眠8小时、击晕计入清敌、树木2日刷新及其余方案；昼夜按实际时刻显示、击晕等效击杀已获明确确认，不再苏醒；清敌、胜利、奖励和刷新同规则；044已将现有击晕接入击杀结算，完整刷新世界系统仍未实现。R01／R02／R03／R05／R19／R22记录获准子范围，整条仍OPEN。床的短时恢复、资源不刷新和现有传送不作为正式规则答案。
 - TASK-004、026—031 的实现、集成、验证、流程与 Owner 体验分栏见[账本](planning/TASK-041-baseline-ledger.md#3-旧任务五栏账本)。选定路线、斧头握持、防具、双角色动作、真实自然遭遇、正式经济、长程伙伴体验和 Owner 验收仍需各任务收尾。
 - 任务 JSON 中多个旧任务仍为 `Blocked` 或 `Active`，这些状态不表示相关实现不存在。Issue 可选；TASK-027/028 保持 `Active` 且 Reviewer 未指定，正式审查前仍需独立评审。TASK-041 的 Owner 与 Reviewer 均由用户指定为 `XLingyyy`，同人指定不构成独立审查，状态仍为 `Blocked`。[TASK-041 交接](handoffs/TASK-041.md)记录本次验证边界。
-- Git LFS 锁、共享地图和公共配置仍按 [WORKFLOW](../WORKFLOW.md) 核对；本次 TASK-042 无二进制、玩法或游戏配置改动。
+- Git LFS 锁、共享地图和公共配置仍按 [WORKFLOW](../WORKFLOW.md) 核对；本次 TASK-043 只改文档，无二进制、玩法或游戏配置改动。
+
+## 2026-09-26 顺序纠正
+
+043设计交付已收尾，D1—D6产品规则批准保持有效，流程Blocked仅表示尚无独立PR审查；后续数值配表不再列作043本单的阻塞。下一单为canonical TASK-044（原稿046）生存／倒地救援／环境伤害设计。052代码分支误提前开启，单独保留、未合并，不进入043／044基线。当前origin/main核对为35ac8706e50fe8b7cf099b3b73e803572d5a3ff0。
+
+## TASK-044 本轮实施
+
+Owner已批准D1—D6并明确“沿用044，开始实现游戏代码”。分支codex/TASK-044-survival-rules从043的b7d4df35763bca5dd0bb97ed9ab78eea4f68098a继续，范围协调提交0ef6b18a0f13436784c88ab9505a3f4e270a4dc3，未引入052。当前已实现共享生存状态、药品预留／半份、互救、失败入口和schema5生存快照；受测源码8f512a7dc4cf46e33d70c67c9294b6a2f3d8da77已通过Editor构建、原生18/18和PIE 23/23，详见本单验证报告。main未合并本轮改动。

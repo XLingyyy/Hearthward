@@ -1,5 +1,11 @@
 # TASK-042 交接｜首版边界与第一体验切片提案
 
+## 最新补充：2026-09-26 Owner批准042
+
+Owner明确回复“批准042”。DSGN-003首版范围及切片方向已生效，CURRENT与R17／R25子范围同步；详细数值和实测未批准。远端main已通过PR #45集成此前草案（35ac8706e50fe8b7cf099b3b73e803572d5a3ff0）。TASK-043的D1—D6仍待决定。本补充及关联文档随TASK-043分支提交推送，未合并main。原记录中的待审批／父分支未合并描述仅反映当时状态。
+
+## 原交付记录
+
 日期：2026-09-26。工作树：`G:/GameFactory/Hearthward/.agent-local/TASK-042`；分支：`codex/TASK-042-first-slice`；基线：`origin/main@a4998b10da54f162def767fa8bb7e308594bd490`（PR #44 已合入）。原主工作区 `G:/GameFactory/Hearthward` 在 TASK-027 分支上的未提交及未跟踪文件未修改。本地原规划稿 044 按用户指定偏移映射为本单 canonical 042；原规划稿及审计保持在主工作区，未纳入任务分支。
 
 ## 本轮产物

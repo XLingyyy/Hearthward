@@ -16,6 +16,7 @@ FHearthwardSavePoint Point(bool Manual = false)
     FHearthwardSavePoint P;
     P.SaveId = FGuid::NewGuid(); P.CampaignId = FGuid::NewGuid(); P.Created = FDateTime::UtcNow(); P.Manual = Manual;
     P.World.Map = TEXT("PROTOTYPE_ONLY");
+    P.World.SurvivalVersion=1;
     P.World.NPCStateVersion=HearthwardSave::NPCStateVersion;
     P.World.NPCMemory.Campaign=P.CampaignId;
     return P;
@@ -62,7 +63,7 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     auto& S = Pool->Points[0].World;
     S.Inventory.Add(TEXT("wood"), 5); S.Storage.Add(TEXT("stone"), 120); S.Resource.Add(TEXT("wood"), 16);
     S.Knowledge.Add(TEXT("玩家原话（未核实）: 营地约定")); S.KnowledgeRevision = 1;
-    S.ActiveSeconds = 123; S.Player.SetLocation(FVector(10,20,30));
+    S.ActiveSeconds = 123; S.CalendarMinutes=123; S.Player.SetLocation(FVector(10,20,30));
     FString Error;
     TestTrue(TEXT("Write initial pool"), HearthwardSave::Write(Path, Pool, Error));
     UHearthwardSaveGame* Loaded = nullptr;
@@ -223,7 +224,7 @@ bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
         for(const auto& P:Legacy->Points)TestEqual(TEXT("Memory bound to original campaign"),P.World.NPCMemory.Campaign,P.CampaignId);
     }
     auto* Pool=NewObject<UHearthwardSaveGame>(); Pool->Points.Add(Point());
-    auto& S=Pool->Points[0].World; S.ActiveSeconds=20;
+    auto& S=Pool->Points[0].World; S.ActiveSeconds=20; S.CalendarMinutes=20;
     S.NPCMemory.Put({},TEXT("claim"),TEXT("原话不能变成库存"),3);
     S.NPCMemory.Put({},TEXT("collection_ban"),TEXT("不采木材"),3,TEXT("wood"));
     S.NPCMemory.AddClarification(TEXT("采木材，限制未解除"),TEXT("需要多少？"));

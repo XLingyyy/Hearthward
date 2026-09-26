@@ -36,6 +36,10 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Hearthward|Time")
     FHearthwardClockSnapshot GetSnapshot() const;
+    double AdvanceCalendar(double Minutes);
+private:
+    double AdvanceSurvival(double Active,double Calendar);
+public:
 
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;

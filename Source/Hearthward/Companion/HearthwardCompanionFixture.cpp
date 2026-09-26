@@ -1,4 +1,5 @@
 #include "HearthwardCompanionFixture.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardCompanionNavigationComponent.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -29,6 +30,7 @@ UHearthwardBuildingComponent* WorkshopRegistry(UWorld* World);
 
 AHearthwardCompanionFixture::AHearthwardCompanionFixture()
 {
+    CreateDefaultSubobject<UHearthwardSurvivalComponent>(TEXT("Survival"));
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = false;
     auto* Capsule = GetCapsuleComponent();
@@ -83,6 +85,8 @@ void AHearthwardCompanionFixture::InitializeCompanion(UHearthwardInventoryCompon
 
 bool AHearthwardCompanionFixture::CanCommunicate(AActor* Speaker) const
 {
+    const auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(Survival->Enabled() && !Survival->Alive()) return false;
     return bFixtureEnabled && IsValid(Speaker) && !Speaker->IsActorBeingDestroyed() && Speaker != this
         && Speaker->GetWorld() == GetWorld() && FVector::DistSquared(Speaker->GetActorLocation(), GetActorLocation()) <= FMath::Square(3000.0);
 }
@@ -524,6 +528,7 @@ void AHearthwardCompanionFixture::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);
     using P = EHearthwardCompanionPhase;
     if (!bFixtureEnabled || GetWorld()->IsPaused() || bSettling) return;
+    if(FindComponentByClass<UHearthwardSurvivalComponent>()->AutomaticBehavior(DeltaSeconds)) return;
     if (Phase == P::Idle || Phase == P::Cancelled || Phase == P::Completed || Phase == P::WaitingAtCamp || Phase==P::HoldingSafely) return;
 
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
@@ -833,4 +838,24 @@ void AHearthwardCompanionFixture::WorkshopTick()
             AdvanceExecution();
             return true;
         }))HandleExecutionFailure(TEXT("SETTLEMENT_FAILED"));
+}
+
+void AHearthwardCompanionFixture::StopForSurvival()
+{
+    if(bSettling) return;
+    Command.Cancel(); Execution.Reset(); StopNavigation(); Action->InterruptAction();
+    Phase=EHearthwardCompanionPhase::Cancelled;
+}
+
+void AHearthwardCompanionFixture::FellOutOfWorld(const UDamageType& DamageType)
+{
+    auto* S=FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(!S || !S->Enabled()) { Super::FellOutOfWorld(DamageType); return; }
+    S->FatalEnvironment();
+}
+void AHearthwardCompanionFixture::Landed(const FHitResult& Hit)
+{
+    const float Speed=FMath::Max(0.f,-GetVelocity().Z);
+    Super::Landed(Hit);
+    if(auto* S=FindComponentByClass<UHearthwardSurvivalComponent>()) S->FallImpact(Speed);
 }

@@ -1,4 +1,6 @@
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
+#include "Misc/ConfigCacheIni.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
 #include "../Gameplay/HearthwardGameData.h"
@@ -257,7 +259,23 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
             Message=Success?TEXT("物品已转移"):R.Result==EHearthwardInventoryResult::CapacityExceeded?TEXT("背包容量不足"):TEXT("物品数量不足，转移未执行");
         }
     }
-    else if(Action==TEXT("use")) { Success=G->UseItem(SelectedItem); Message=G->Feedback; }
+    else if(Action==TEXT("menuPause"))
+    {
+        MenuPause=!MenuPause;
+        GConfig->SetBool(TEXT("Hearthward.Survival"),TEXT("MenuPause"),MenuPause,GGameUserSettingsIni);
+        GConfig->Flush(false,GGameUserSettingsIni);
+    }
+    else if(Action==TEXT("giveUp")) { GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>()->GiveUp(); OpenPage(TEXT("save")); }
+    else if(Action==TEXT("cancelSurvival")) { GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction(); }
+    else if(Action==TEXT("autoPermission"))
+    {
+        if(auto* C=Companion(GetWorld()))
+        {
+            auto* S=C->FindComponentByClass<UHearthwardSurvivalComponent>();
+            S->SetAutoPermission(SelectedItem,!S->Permitted(SelectedItem));
+        }
+    }
+    else if(Action==TEXT("use")) { Success=G->UseItem(SelectedItem); Message=G->Feedback; if(Success && Number(Find(TEXT("items"),SelectedItem.ToString()),TEXT("healing"))>0) OpenPage(TEXT("hud")); }
     else if(Action==TEXT("repair"))
     {
         SelectedRepair=SelectedItem;

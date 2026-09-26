@@ -19,7 +19,7 @@ public:
     EHearthwardInventoryResult TryAdd(FName ItemId, int32 Count);
 
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
-    EHearthwardInventoryResult TryRemove(FName ItemId, int32 Count);
+    EHearthwardInventoryResult TryRemove(FName ItemId, int32 Count, bool Notify=true);
 
     // Atomically consumes an entire recipe; observers never see partial material removal.
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
@@ -46,7 +46,12 @@ public:
     UPROPERTY(BlueprintAssignable, Category="Hearthward|Inventory")
     FHearthwardInventoryChanged OnInventoryChanged;
 
+    bool Reserve(FName Item);
+    void ReleaseReservation() { Reserved=NAME_None; }
+    bool CommitReservation(FName Remainder=NAME_None,bool Notify=true);
+    int32 Available(FName Item) const { return GetItemCount(Item)-(Reserved==Item?1:0); }
 private:
+    FName Reserved;
     friend class UHearthwardSaveSubsystem;
     friend class UHearthwardStorageSubsystem;
     FGuid ContainerId;

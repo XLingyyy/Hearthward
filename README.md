@@ -1,8 +1,14 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-26，审计主干为 `main@a4998b10da54f162def767fa8bb7e308594bd490`，其中 PR #44 合入了 TASK-041 的文档与仓库校验规则，没有新增玩法。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复经 PR #43 合入。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。有效设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-26，审计主干为 `main@35ac8706e50fe8b7cf099b3b73e803572d5a3ff0`，其中 PR #44 合入TASK-041文档与校验规则、PR #45合入TASK-042范围草案，没有新增玩法。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复经 PR #43 合入。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。有效设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-[TASK-042 首版范围与第一体验切片](docs/tasks/TASK-042.md)已形成 [DSGN-003 待审查提案](docs/design/DSGN-003-first-release-slice.md)：拟从营地准备、兄弟分工和近郊救援走到回营成长。该路线、具体奖励及时长尚未获 Owner 批准或游戏内验证，不属于当前可玩能力。
+[TASK-042 首版范围与第一体验切片](docs/tasks/TASK-042.md)已形成 [DSGN-003 已批准范围](docs/design/DSGN-003-first-release-slice.md)：拟从营地准备、兄弟分工和近郊救援走到回营成长。Owner于2026-09-26批准首版范围与切片方向，30—60分钟为设计预算；具体奖励与配表仍未定，尚无游戏内验证。
+
+[TASK-043 世界时间与持久状态](docs/tasks/TASK-043.md)已完成规则定案：睡眠推进8游戏小时、昼夜按实际时刻显示、敌人击晕等效击杀、树木2游戏日刷新，同代次清敌与奖励仅结算一次。043设计提交尚待集成main，世界生产／刷新完整实现不在044中重复展开。此前误开的052分支保持独立，未引入当前分支。
+
+[TASK-044 生存与救援](docs/tasks/TASK-044.md)按Owner批准沿用044编号实施。当前任务分支已接入兄弟生存状态、3秒用药与半份药、120秒倒地／5秒扶起、严重饥饿期限、存档恢复和失败回档。靠近倒地弟弟2米内按E扶起；倒地时Esc菜单可立即放弃。背包用药会回到HUD继续计时，移动／攻击／跳跃可取消；暂停菜单可设置普通页面是否暂停。
+
+044任务分支已通过Editor构建、相关原生18/18和真实PIE 23/23检查，证据见[验证报告](docs/qa/TASK-044/REPORT.md)。尚未合并main。坠落曲线、游泳耗耐力数值、新药配方、治疗区内容与视觉强度尚未配表；代码接口不等于这些内容已配置。当前床提供就座恢复，完整睡眠／生产／刷新闭环仍需后续集成。新存档为schema5，旧存档采用明确迁移；请勿用旧版本覆盖新档。
 
 AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与分支证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)和[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；所选集成修正随 PR #40 合入 main，PR #41/#42 属于 TASK-031。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
@@ -75,7 +81,7 @@ AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然�
 
 纸张、插画、格子、分隔线与按钮已拆成独立组件，15页共62个组件组。`Resources/UI/layout.json` 保存位置、大小、显示状态和单独图层覆盖；编辑时子控件及点击区域跟随父组件。操作与扩展说明见 [布局编辑](Resources/UI/LAYOUT.md)。
 
-界面主题、图集UV、静态布局、物品格与快捷栏位于 `Resources/UI/interface.json`；玩法内容和参数位于 `Resources/Data/gameplay.json`。建造目录、材料配方、营地范围、摆放尺寸及模型外形部件也位于同一玩法配置。当前工作台8木材、篝火4木材4石材、床6木材2绳索，营地半径12米为demo参数；现有场景可按E真实采集木材，也可从营地仓储取出。工作台即时配方位于 `craftingRecipes`：demo每1木材制作4箭矢或1绳索，2木材3石材制作1石斧，2草药制作1药膏，`crafting` 配置260cm访问距离和99批上限。普通配方默认掌握，不预留材料。维修费用位于 `repairRecipes`，使用可采集木材及可制作绳索；当前原型按整件全修收费，未将缺失的装备制作表推导为正式20%费用。耐久仍沿用现有按物品类型保存的模型，不区分同类装备实例；床靠近按E休息5秒，需至少15饱食，完成消耗10饱食、恢复30生命和全部耐力；满状态不消耗。篝火靠近按E，5秒消耗1鲜肉1木材得到1烤肉；新游戏补给含3鲜肉，烤肉可用快捷键2食用。高级蓝图、其他装备配方、熔炼和自动生产未接入。新增物品、技能、任务、建筑、制作配方与地点可按稳定ID扩展，存档以ID关联。中文正文为LXGW WenKai、大标题为Noto Serif CJK SC，OFL许可证随资产提供；生成美术的来源记录在 `Resources/UI/art-provenance.json`。
+界面主题、图集UV、静态布局、物品格与快捷栏位于 `Resources/UI/interface.json`；玩法内容和参数位于 `Resources/Data/gameplay.json`。建造目录、材料配方、营地范围、摆放尺寸及模型外形部件也位于同一玩法配置。当前工作台8木材、篝火4木材4石材、床6木材2绳索，营地半径12米为demo参数；现有场景可按E真实采集木材，也可从营地仓储取出。工作台即时配方位于 `craftingRecipes`：demo每1木材制作4箭矢或1绳索，2木材3石材制作1石斧，2草药制作1药膏，`crafting` 配置260cm访问距离和99批上限。普通配方默认掌握，不预留材料。维修费用位于 `repairRecipes`，使用可采集木材及可制作绳索；当前原型按整件全修收费，未将缺失的装备制作表推导为正式20%费用。耐久仍沿用现有按物品类型保存的模型，不区分同类装备实例；床靠近按E完成5秒就座动作后持续休息，饱食大于0时每实玩秒恢复2%最大生命；移动结束休息，不额外扣除饱食或瞬间补满耐力。篝火靠近按E，5秒消耗1鲜肉1木材得到1烤肉；新游戏补给含3鲜肉，烤肉可用快捷键2食用。高级蓝图、其他装备配方、熔炼和自动生产未接入。新增物品、技能、任务、建筑、制作配方与地点可按稳定ID扩展，存档以ID关联。中文正文为LXGW WenKai、大标题为Noto Serif CJK SC，OFL许可证随资产提供；生成美术的来源记录在 `Resources/UI/art-provenance.json`。
 
 ## 验证与限制
 

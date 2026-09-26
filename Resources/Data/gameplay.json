@@ -255,9 +255,10 @@
       "weight": 50,
       "healing": 30,
       "icon": "medicineQuick",
-      "description": "用草药调制的药膏。\n恢复30点生命，\n无法救起已经倒下的人。",
+      "description": "站定用药3秒，恢复最大生命的30%。受伤中断损失半份，移动取消不消耗。",
       "displayOrder": 19,
-      "quickIcon": "medicineQuick"
+      "quickIcon": "medicineQuick",
+      "halfDose": "medicine_half"
     },
     {
       "id": "firepot",
@@ -272,6 +273,18 @@
       "description": "以陶罐装填的投掷物。\n命中造成30点伤害。\n每次投掷消耗一罐。",
       "displayOrder": 20,
       "quickIcon": "firepotQuick"
+    },
+    {
+      "id": "medicine_half",
+      "name": "半份药草膏",
+      "category": "食物",
+      "weight": 25,
+      "healing": 15,
+      "icon": "medicineQuick",
+      "description": "半份药草膏。站定用药3秒，恢复最大生命的15%；受伤中断后耗尽。",
+      "displayOrder": 19,
+      "quickIcon": "medicineQuick",
+      "medicineBase": "medicine"
     }
   ],
   "skills": [
@@ -1118,7 +1131,7 @@
     {
       "id": "bed",
       "name": "绳网木床",
-      "description": "营地内建造 · E休息：饱食-10，生命+30，耐力恢复",
+      "description": "营地内建造 · E就座休息：饱食大于0时每秒恢复2%最大生命",
       "wilderness": false,
       "extent": [
         105,
@@ -1193,7 +1206,7 @@
       "id": "medicine",
       "name": "药草膏",
       "icon": "medicineQuick",
-      "description": "两份草药调制一份药膏，使用恢复30生命。",
+      "description": "两份草药调制一份药膏，站立使用3秒恢复30%最大生命。",
       "materials": {
         "herb": 2
       },
