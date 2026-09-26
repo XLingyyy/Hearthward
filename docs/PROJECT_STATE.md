@@ -27,3 +27,7 @@ Demo 的构建基线为 `main@68e68d817c4d5a39bf43eb7f27863fc734d04aef`，发行
 - TASK-004、026—031 的实现、集成、验证、流程与 Owner 体验分栏见[账本](planning/TASK-041-baseline-ledger.md#3-旧任务五栏账本)。选定路线、斧头握持、防具、双角色动作、真实自然遭遇、正式经济、长程伙伴体验和 Owner 验收仍需各任务收尾。
 - 任务 JSON 中多个旧任务仍为 `Blocked` 或 `Active`，这些状态不表示相关实现不存在。Issue 可选；TASK-027/028 保持 `Active` 且 Reviewer 未指定，正式审查前仍需独立评审。TASK-041 的 Owner 与 Reviewer 均由用户指定为 `XLingyyy`，同人指定不构成独立审查，状态仍为 `Blocked`。[TASK-041 交接](handoffs/TASK-041.md)记录本次验证边界。
 - Git LFS 锁、共享地图和公共配置仍按 [WORKFLOW](../WORKFLOW.md) 核对；本次 TASK-043 只改文档，无二进制、玩法或游戏配置改动。
+
+## 2026-09-26 顺序纠正
+
+043设计交付已收尾，D1—D6产品规则批准保持有效，流程Blocked仅表示尚无独立PR审查；后续数值配表不再列作043本单的阻塞。下一单为canonical TASK-044（原稿046）生存／倒地救援／环境伤害设计。052代码分支误提前开启，单独保留、未合并，不进入043／044基线。当前origin/main核对为35ac8706e50fe8b7cf099b3b73e803572d5a3ff0。
