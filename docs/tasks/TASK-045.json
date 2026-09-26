@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "id": "TASK-045",
-  "title": "定案玩家战斗、潜入和动作判定",
-  "status": "Blocked",
+  "title": "实现玩家战斗、潜入和统一处决",
+  "status": "Active",
   "updated_at": "2026-09-26",
   "owner": "XLingyyy",
   "reviewer": "XLingyyy",
@@ -13,18 +13,15 @@
     "原稿TASK-047映射canonical TASK-045",
     "GDD v0.3 Q071—090/Q173—208；R06/R07/R10",
     "Hearthward_Audit_2026-09-24动作武器潜入缺口",
-    "基线origin/main@7ce8262bd8721dc59fb0703d365dab2e10340f89，含PR #46和044实现；击晕等效击杀沿用已批准规则"
+    "基线origin/main@7ce8262bd8721dc59fb0703d365dab2e10340f89，含PR #46和044实现；击晕等效击杀沿用已批准规则",
+    "用户批准D1—D6并要求沿用045施工、完成后提交推送；D4两种入口完全相同，按键起3秒处决动画、目标不可反抗、零耐力、静音。"
   ],
   "dependencies": [
     "TASK-042",
     "TASK-043",
     "TASK-044"
   ],
-  "blocked_by": [
-    "R06",
-    "R07",
-    "R10"
-  ],
+  "blocked_by": [],
   "contracts": [
     "docs/contracts/CT-TASK-045-combat-alert.md"
   ],
@@ -40,13 +37,13 @@
     "docs/design/DSGN-R06-combat-stealth.md",
     "docs/contracts/README.md",
     "docs/contracts/CT-TASK-045-combat-alert.md",
-    "docs/qa/TASK-045/"
+    "docs/qa/TASK-045/",
+    "Source/Hearthward/",
+    "Resources/Data/"
   ],
   "forbidden_paths": [
-    "Source/",
     "Content/",
     "Config/",
-    "Resources/",
     "Runtime/",
     "docs/design/archive/"
   ],
@@ -58,9 +55,9 @@
     "未获本单设计批准保持PROPOSED，运行验证标NOT_RUN"
   ],
   "non_goals": [
-    "不改游戏代码或配表；未获批准的规则不投入运行",
-    "不新增多人战斗、长期自适应布防或无限增援",
-    "不合并main或自动推进046"
+    "不新增多人战斗、长期布防或无限增援",
+    "不擅定047正式装备绝对配表",
+    "不合并main或跳号"
   ],
   "prototype_only": false,
   "prototype_approval": null,
@@ -75,7 +72,7 @@
     "merge": "not_granted"
   },
   "notes": [
-    "Owner和Reviewer按用户指定均为XLingyyy，Issue可选。",
-    "提交推送延续用户按顺序推进并自行交付的授权；设计审批仍独立。"
+    "Owner／Reviewer XLingyyy，Issue可选。",
+    "批准覆盖本单相关公共接口、输入、游戏数据和保存协调；只复用现有资产，不改共享地图。"
   ]
 }
