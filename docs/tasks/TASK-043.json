@@ -13,11 +13,24 @@
     "本地 docs/Hearthward_TASK-043-076.md 的 TASK-045；实际 canonical TASK-043",
     "本地 docs/Hearthward_Audit_2026-09-24.md 的时间、生产、刷新与传送缺口",
     "GDD v0.3 第 4、6、9、13、17 章；R01/R02/R03/R05/R19/R22",
-    "父分支 codex/TASK-042-first-slice@ab5596e0045ebc9ac49836023cdfa59f3ca6cdd5；main@a4998b10da54f162def767fa8bb7e308594bd490"
+    "父分支 codex/TASK-042-first-slice@ab5596e0045ebc9ac49836023cdfa59f3ca6cdd5；main@a4998b10da54f162def767fa8bb7e308594bd490",
+    "2026-09-26 Owner批准042；授权同步DSGN-003、CURRENT、R17/R25子范围及042任务／交接，043规则仍待确认"
   ],
-  "dependencies": ["TASK-042"],
-  "blocked_by": ["R01", "R02", "R03", "R05", "R19", "R22"],
-  "contracts": ["docs/contracts/CT-003-save-load.md", "docs/contracts/CT-TASK-043-world-time-persistence.md"],
+  "dependencies": [
+    "TASK-042"
+  ],
+  "blocked_by": [
+    "R01",
+    "R02",
+    "R03",
+    "R05",
+    "R19",
+    "R22"
+  ],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md",
+    "docs/contracts/CT-TASK-043-world-time-persistence.md"
+  ],
   "allowed_paths": [
     "README.md",
     "docs/PROJECT_STATE.md",
@@ -27,9 +40,23 @@
     "docs/contracts/README.md",
     "docs/tasks/TASK-043.json",
     "docs/tasks/TASK-043.md",
-    "docs/handoffs/TASK-043.md"
+    "docs/handoffs/TASK-043.md",
+    "docs/design/DSGN-003-first-release-slice.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/tasks/TASK-042.json",
+    "docs/tasks/TASK-042.md",
+    "docs/handoffs/TASK-042.md"
   ],
-  "forbidden_paths": ["Source/", "Content/", "Config/", "Resources/", "Runtime/", "art_source/", "docs/design/archive/", "docs/design/OPEN_QUESTIONS.md", "docs/qa/evidence/"],
+  "forbidden_paths": [
+    "Source/",
+    "Content/",
+    "Config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "docs/design/archive/",
+    "docs/qa/evidence/"
+  ],
   "acceptance": [
     "逐系统时间矩阵覆盖正常、暂停、睡眠、篝火跳时、传送与回档",
     "一次性资源有投入、产出、耗尽及长期补给定义；睡眠不凭空产出",
@@ -37,10 +64,17 @@
     "传送血量、弟弟随行、危险保存和恢复顺序有可审查规则及边界用例",
     "既定要求、候选决定和未决配置可追溯；获得 Owner 明确设计决定后才能定案"
   ],
-  "non_goals": ["不实现周期系统或更改保存格式", "不新增睡眠冷却或隐藏生产封顶", "不把 Demo 行为当作正式规则，不替 Owner 批准设计", "不合并 main 或发布游戏"],
+  "non_goals": [
+    "不实现周期系统或更改保存格式",
+    "不新增睡眠冷却或隐藏生产封顶",
+    "不把 Demo 行为当作正式规则，不替 Owner 批准设计",
+    "不合并 main 或发布游戏"
+  ],
   "prototype_only": false,
   "prototype_approval": null,
-  "required_tests": ["T-002"],
+  "required_tests": [
+    "T-002"
+  ],
   "permissions": {
     "network": "granted: primary source research, Git checks and task branch push",
     "install_dependencies": "not_granted",
@@ -49,9 +83,9 @@
     "merge": "not_granted"
   },
   "notes": [
-    "TASK-042 已推送但未合入 main，设计仍 PROPOSED；本分支以其提交为父基线，按堆叠分支交付，不先于父分支合并。",
+    "TASK-042草案已通过PR #45合入main，Owner本轮批准范围；本分支记录审批增量。043最初父基线保留作历史来源。",
     "本单可完成设计提案和工程契约草案；Blocked 表示定案仍需 Owner 决定，不表示文档未交付。",
     "Owner 与 Reviewer 沿用用户指定的 XLingyyy；同人登记不构成独立 PR 审查，Issue 可选。",
-    "只写本单文档范围；未批准前不修改 OPEN_QUESTIONS，不接入运行时。推送核对后清理本任务闲置工作树。"
+    "本次扩展文档范围仅用于用户明确批准的042记录；不得因此关闭043相关R项或接入运行时。推送后清理本任务工作树。"
   ]
 }

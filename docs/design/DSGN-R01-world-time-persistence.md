@@ -2,7 +2,7 @@
 
 状态：**PROPOSED / APPROVAL_REQUIRED**。日期：2026-09-26。任务：[TASK-043](../tasks/TASK-043.md)，对应规划稿 TASK-045。Owner：XLingyyy；设计批准记录：**尚无**。下文 D1—D6 均为待决定的方案；既定要求来自 GDD v0.3，不能用本提案覆盖。R01／R02／R03／R05／R19／R22 保持 OPEN。
 
-前置 [TASK-042](../tasks/TASK-042.md) 与 DSGN-003 仍待设计审批。本方案可以独立审阅时间和持久化边界；它不批准第一切片的关卡、敌人数或奖励表。工程配套见 [CT-TASK-043](../contracts/CT-TASK-043-world-time-persistence.md)。
+前置 [TASK-042](../tasks/TASK-042.md) 的 DSGN-003范围与切片方向已由Owner于2026-09-26批准。本方案可以独立审阅时间和持久化边界；它不批准第一切片的关卡、敌人数或奖励表。工程配套见 [CT-TASK-043](../contracts/CT-TASK-043-world-time-persistence.md)。
 
 ## 1. 依据与当前实现
 
@@ -152,6 +152,6 @@
 | D5 / R05 | 参战活敌回血范围、交战倒地弟弟随行且不复活、其他弟弟不瞬移 | R18远距离跟随受阻策略、R22环境伤害交叉 |
 | D6 / R22 | 危险延后一次保存、整套周期状态同档恢复、无离线补算 | 残留伤害／溺水／坠落优先细则、初始节点、难度作用对象 |
 
-Owner 可按 D1—D6 逐项批准或修改；即使批准本表，也不把整条R22或未配表经济标为关闭。批准后再更新 CURRENT 和 OPEN_QUESTIONS 对应子范围；随后单独发实现任务，更改公共时钟／保存格式前先批准契约与迁移策略。TASK-042 的切片审批仍独立保留。
+Owner 可按 D1—D6 逐项批准或修改；即使批准本表，也不把整条R22或未配表经济标为关闭。批准后再更新 CURRENT 和 OPEN_QUESTIONS 对应子范围；随后单独发实现任务，更改公共时钟／保存格式前先批准契约与迁移策略。TASK-042已获批的切片方向不替代本单D1—D6的审批。
 
 工程参考：Epic 的 [Saving and Loading Your Game](https://dev.epicgames.com/documentation/en-us/unreal-engine/saving-and-loading-your-game-in-unreal-engine)说明通过自定义 SaveGame 数据保存所需状态。本方案据此明确快照所含领域状态；生产、刷新和传送选择均来自本项目约束分析，外部文档不提供或批准这些玩法规则。核对日期：2026-09-26。

@@ -1,6 +1,6 @@
 # 当前游戏设计入口
 
-**有效基线：GDD v0.3 + DSGN-001本地推理架构修订，2026-09-18。** 以下只提供检索摘要，不替代原文。
+**有效基线：GDD v0.3 + DSGN-001本地推理架构修订 + DSGN-003首版范围与切片方向，2026-09-26。** 以下只提供检索摘要，不替代原文。
 当前原件：[归火 Hearthward 游戏设计文档 v0.3](../归火Hearthward游戏设计文档_v0.3.docx)。
 启动包历史归档：[gdd-v0.3.docx](archive/gdd-v0.3.docx)；[历史版完整机械提取](archive/gdd-v0.3-source.md)；
 [启动包来源校验](archive/MANIFEST.json)；[未定项](OPEN_QUESTIONS.md)。
@@ -36,8 +36,8 @@
 历史archive保持不变；本决定没有关闭R14/R18/R20等未定玩法。
 实现代码与需求不一致时记录差异，不把任何一方自动解释成另一方已获批准。
 
-## 待 Owner 审查的提案
+[DSGN-003 首版范围与第一完整体验切片](DSGN-003-first-release-slice.md)由 Owner XLingyyy 于2026-09-26明确批准：首版边界、营地准备→兄弟分工→近郊救援→回营成长→保存继续；人口20→21及一次营地升阶。第一切片从夜袭后营地阶段进入，最终首版保留可操作夜袭开场。30—60分钟为设计预算。具体任务、数值、配表和试玩阈值仍待后续决定；R17／R25保持OPEN并登记获准子范围。
 
-[DSGN-003 首版范围与第一完整体验切片](DSGN-003-first-release-slice.md)由 TASK-042 于 2026-09-26 提出，状态为 `PROPOSED`。它尚未改变本页有效基线；R17／R25 和相关数值仍按 [OPEN_QUESTIONS](OPEN_QUESTIONS.md) 保持未定。批准后仅将明确通过的子范围写回本页。
+## 待 Owner 审查的提案
 
 [DSGN-R01 世界时间、生产资源、刷新与传送](DSGN-R01-world-time-persistence.md)由 TASK-043 于 2026-09-26 提出，状态为 `PROPOSED`，配套 [CT-TASK-043](../contracts/CT-TASK-043-world-time-persistence.md) 为工程草案。D1—D6 分别提出时间结算、投入生产、敌人／自然物刷新、旅行及保存方案；R01／R02／R03／R05／R19／R22 均保持 OPEN，未修改当前游戏规则或代码。

@@ -1,5 +1,13 @@
 # TASK-043 交接｜世界时间与持久状态
 
+## 最新补充：2026-09-26 Owner批准042
+
+Owner明确回复“批准042”。DSGN-003首版范围及切片方向已生效，CURRENT与R17／R25子范围同步；详细数值和实测未批准。远端main已通过PR #45集成此前草案（35ac8706e50fe8b7cf099b3b73e803572d5a3ff0）。TASK-043的D1—D6仍待决定。本补充及关联文档随TASK-043分支提交推送，未合并main。原记录中的待审批／父分支未合并描述仅反映当时状态。
+
+本轮批准记录检查：`python -X utf8 scripts/validate_repo.py`检查44份任务快照、0错误；`git diff --check`通过。12条文档改动在扩展后的任务范围内。未运行UE或玩法测试。
+
+## 原交付记录
+
 日期：2026-09-26。分支：`codex/TASK-043-world-time`。本轮工作树：`G:/GameFactory/Hearthward/.agent-local/TASK-043`；用户要求成果推送核对后清理本任务闲置工作树。
 
 ## 基线、权限与范围
