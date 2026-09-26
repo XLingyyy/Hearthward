@@ -1,20 +1,12 @@
 #pragma once
-
 #include "CoreMinimal.h"
 #include "HearthwardInventoryState.generated.h"
 
 UENUM(BlueprintType)
 enum class EHearthwardInventoryResult : uint8
 {
-    Success,
-    InvalidCount,
-    UnknownItem,
-    CapacityExceeded,
-    InsufficientItems,
-    InvalidArgument,
-    StaleTimeline,
-    OperationConflict,
-    QuantityOverflow
+    Success, InvalidCount, UnknownItem, CapacityExceeded, InsufficientItems,
+    InvalidArgument, StaleTimeline, OperationConflict, QuantityOverflow
 };
 
 struct FHearthwardItemDefinition
@@ -22,98 +14,66 @@ struct FHearthwardItemDefinition
     FName Id;
     int32 WeightHundredths;
     FText DisplayName;
+    FName Slot;
+    double MaximumDurability = 0;
+    FName UniqueClaim;
+    bool IsInstance() const { return !Slot.IsNone() || MaximumDurability>0; }
 };
-
 HEARTHWARD_API const TArray<FHearthwardItemDefinition>& HearthwardBasicItems();
 
-class FHearthwardInventoryState
+USTRUCT(BlueprintType)
+struct FHearthwardItemInstance
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly) FGuid Id;
+    UPROPERTY(BlueprintReadOnly) FName Definition;
+    UPROPERTY(BlueprintReadOnly) double Durability = 0;
+    UPROPERTY(BlueprintReadOnly) FName UniqueClaim;
+};
+
+USTRUCT()
+struct FHearthwardInventorySnapshot
+{
+    GENERATED_BODY()
+    UPROPERTY() int32 Version = 1;
+    UPROPERTY() int32 BackpackRank = 1;
+    UPROPERTY() TMap<FName,int32> Stacks;
+    UPROPERTY() TArray<FHearthwardItemInstance> Instances;
+    UPROPERTY() TMap<FName,FGuid> Equipped;
+};
+
+class HEARTHWARD_API FHearthwardInventoryState
 {
 public:
-    static constexpr int32 CapacityHundredths = 10000;
-    explicit FHearthwardInventoryState(bool bInUnlimited = false) : bUnlimited(bInUnlimited) {}
-
-    int32 GetCount(FName ItemId) const { return Counts.FindRef(ItemId); }
-    int64 GetWeightHundredths() const
-    {
-        int64 Weight = 0;
-        for (const auto& Item : HearthwardBasicItems()) Weight += int64(GetCount(Item.Id)) * Item.WeightHundredths;
-        return Weight;
-    }
-
-    EHearthwardInventoryResult Add(FName ItemId, int32 Count)
-    {
-        if (Count <= 0) return EHearthwardInventoryResult::InvalidCount;
-        const auto* Item = FindItem(ItemId);
-        if (!Item) return EHearthwardInventoryResult::UnknownItem;
-        const int64 Free = CapacityHundredths - GetWeightHundredths();
-        // Divide before multiplying so even an INT_MAX request cannot overflow.
-        if (!bUnlimited && Item->WeightHundredths > 0 && Count > Free / Item->WeightHundredths) return EHearthwardInventoryResult::CapacityExceeded;
-        if (Count > MAX_int32 - GetCount(ItemId)) return EHearthwardInventoryResult::QuantityOverflow;
-        Counts.FindOrAdd(ItemId) += Count;
-        return EHearthwardInventoryResult::Success;
-    }
-
-    EHearthwardInventoryResult Remove(FName ItemId, int32 Count)
-    {
-        if (Count <= 0) return EHearthwardInventoryResult::InvalidCount;
-        if (!FindItem(ItemId)) return EHearthwardInventoryResult::UnknownItem;
-        const int32 Available = GetCount(ItemId);
-        if (Count > Available) return EHearthwardInventoryResult::InsufficientItems;
-        if (Count == Available) Counts.Remove(ItemId);
-        else Counts[ItemId] -= Count;
-        return EHearthwardInventoryResult::Success;
-    }
-
-    EHearthwardInventoryResult Exchange(const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,int32 Batches)
-    {
-        if(Batches<=0) return EHearthwardInventoryResult::InvalidCount;
-        if(Materials.IsEmpty() || Outputs.IsEmpty()) return EHearthwardInventoryResult::InvalidArgument;
-        auto After=*this;
-        for(const auto* Entries:{&Materials,&Outputs})
-            for(const auto& Entry:*Entries)
-            {
-                if(Entry.Value<=0) return EHearthwardInventoryResult::InvalidCount;
-                if(int64(Entry.Value)*Batches>MAX_int32) return EHearthwardInventoryResult::QuantityOverflow;
-            }
-        for(const auto& M:Materials)
-        {
-            const auto R=After.Remove(M.Key,M.Value*Batches);
-            if(R!=EHearthwardInventoryResult::Success) return R;
-        }
-        // Check capacity after all ingredients are removed; publish no partial result on failure.
-        for(const auto& O:Outputs)
-        {
-            const auto R=After.Add(O.Key,O.Value*Batches);
-            if(R!=EHearthwardInventoryResult::Success) return R;
-        }
-        *this=MoveTemp(After);
-        return EHearthwardInventoryResult::Success;
-    }
-
-    float GetLoadRatio() const { return static_cast<float>(GetWeightHundredths()) / CapacityHundredths; }
-    float GetMoveSpeedMultiplier() const { return 1.0f - 0.1f * GetLoadRatio(); }
-    float GetStaminaCostMultiplier() const { return 1.0f + 0.1f * GetLoadRatio(); }
-
-    EHearthwardInventoryResult TransferTo(FHearthwardInventoryState& Target, FName ItemId, int32 Count)
-    {
-        if (this == &Target) return EHearthwardInventoryResult::InvalidArgument;
-        // Validate against copies before committing either end. No event can observe a half-transfer.
-        auto SourceAfter = *this;
-        auto TargetAfter = Target;
-        auto Result = SourceAfter.Remove(ItemId, Count);
-        if (Result != EHearthwardInventoryResult::Success) return Result;
-        Result = TargetAfter.Add(ItemId, Count);
-        if (Result != EHearthwardInventoryResult::Success) return Result;
-        *this = MoveTemp(SourceAfter);
-        Target = MoveTemp(TargetAfter);
-        return Result;
-    }
-
+    explicit FHearthwardInventoryState(bool InUnlimited=false) : Unlimited(InUnlimited) {}
+    int32 GetCount(FName Item) const;
+    int64 GetWeightHundredths() const;
+    int32 GetCapacityHundredths() const { return (100+50*(Data.BackpackRank-1))*100; }
+    int32 GetBackpackRank() const { return Data.BackpackRank; }
+    bool UpgradeBackpack();
+    float GetLoadRatio() const { return float(GetWeightHundredths())/GetCapacityHundredths(); }
+    float GetMoveSpeedMultiplier() const { return 1.f-.1f*GetLoadRatio(); }
+    float GetStaminaCostMultiplier() const { return 1.f+.1f*GetLoadRatio(); }
+    EHearthwardInventoryResult Add(FName Item,int32 Count);
+    EHearthwardInventoryResult Remove(FName Item,int32 Count);
+    EHearthwardInventoryResult Exchange(const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,int32 Batches);
+    EHearthwardInventoryResult TransferTo(FHearthwardInventoryState& Target,FName Item,int32 Count);
+    EHearthwardInventoryResult TransferInstanceTo(FHearthwardInventoryState& Target,FGuid Id);
+    EHearthwardInventoryResult InsertInstance(const FHearthwardItemInstance& Instance);
+    bool RemoveInstance(FGuid Id);
+    const FHearthwardItemInstance* FindInstance(FGuid Id) const;
+    FGuid FirstInstance(FName Item,bool PreferUnequipped=false) const;
+    FGuid EquippedInstance(FName Slot) const { return Data.Equipped.FindRef(Slot); }
+    FName EquippedItem(FName Slot) const;
+    bool Equip(FGuid Id);
+    bool IsEquipped(FGuid Id) const;
+    bool Wear(FGuid Id,double Amount);
+    bool RestoreDurability(FGuid Id,double Amount);
+    const FHearthwardInventorySnapshot& Snapshot() const { return Data; }
+    bool Restore(const FHearthwardInventorySnapshot& Snapshot);
+    static bool Validate(const FHearthwardInventorySnapshot& Snapshot,bool Unlimited=false);
+    static const FHearthwardItemDefinition* FindItem(FName Item);
 private:
-    static const FHearthwardItemDefinition* FindItem(FName ItemId)
-    {
-        return HearthwardBasicItems().FindByPredicate([ItemId](const auto& Item) { return Item.Id == ItemId; });
-    }
-    TMap<FName, int32> Counts;
-    bool bUnlimited = false;
+    FHearthwardInventorySnapshot Data;
+    bool Unlimited=false;
 };

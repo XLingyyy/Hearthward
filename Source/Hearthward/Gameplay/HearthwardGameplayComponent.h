@@ -23,6 +23,8 @@ public:
     UPROPERTY(BlueprintReadOnly) TSet<FName> Discovered;
     UPROPERTY(BlueprintReadOnly) TSet<FName> Activated;
     UPROPERTY(BlueprintReadOnly) TSet<FName> Claimed;
+    UPROPERTY(BlueprintReadOnly) TSet<FName> RewardFacts;
+    UPROPERTY(BlueprintReadOnly) TSet<FName> KnownRecipes;
     UPROPERTY(BlueprintReadOnly) TMap<FName, int32> Events;
     UPROPERTY(BlueprintReadOnly) TMap<FName, float> Opponents;
     UPROPERTY(BlueprintReadOnly) TMap<FName, float> Durability;
@@ -77,6 +79,24 @@ public:
     void Record(FName Kind, FName Target, int32 Count = 1);
     void CommitOpponentHealth(FName Target,float Health,float PreviousHealth=-1);
     bool CommitEquipment(FName Id);
+    bool CommitEquipmentInstance(FGuid Id);
+    UFUNCTION(BlueprintCallable) bool EquipInstance(FGuid Id);
+    bool CanChangeSkills() const;
+    UFUNCTION(BlueprintCallable) bool GrantExperience(FName Kind,FName Fact,FGuid Epoch);
+    bool LearnBlueprint(FName Item);
+    bool KnowsRecipe(FName Recipe) const;
+    UFUNCTION(BlueprintCallable) bool UpgradeBackpack(bool Brother,FGuid Epoch);
+    UFUNCTION(BlueprintCallable) bool TransferInventory(FName From,FName To,FName Item,int32 Count,FGuid Instance,FGuid Epoch);
+    UFUNCTION(BlueprintCallable) bool EquipBrother(FGuid Instance,FGuid Epoch);
+    UFUNCTION(BlueprintCallable) bool DropEquipment(FGuid Instance,FGuid Epoch,bool ConfirmUnique=false);
+    UFUNCTION(BlueprintCallable) void GrantInitialEquipment();
+    bool NearQuartermaster() const;
+    bool NearStorage() const;
+    UFUNCTION(BlueprintCallable) bool GrantItemReward(FName Fact,FName Item,int32 Count,FGuid Epoch);
+
+    float EquippedDurability(FName Slot) const;
+    void WearEquipment(FName Slot,double Amount,bool Armor=false);
+
     void NotifyCombat() { CombatRemaining=3; }
     FString SaveSnapshot() const;
     static bool ValidateSnapshot(const FString& Json);

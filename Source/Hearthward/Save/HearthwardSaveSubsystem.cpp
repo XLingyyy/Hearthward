@@ -140,9 +140,7 @@ bool UHearthwardSaveSubsystem::EnableNaturalWorld()
     if (Gameplay && !Gameplay->Enabled)
     {
         Gameplay->EnableAdventure();
-        auto* Inventory=Player->FindComponentByClass<UHearthwardInventoryComponent>();
-        for (const auto& Item:HearthwardData::Catalog()->GetObjectField(TEXT("loadout"))->Values)
-            Inventory->TryAdd(FName(*Item.Key),Item.Value->AsNumber());
+        Gameplay->GrantInitialEquipment();
     }
     bNaturalWorld = true;
     if (!ReloadPool() || !Capture(InitialWorld)) { bNaturalWorld = false; return false; }
@@ -153,6 +151,9 @@ bool UHearthwardSaveSubsystem::EnableNaturalWorld()
 
 bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
+    S.GroundEquipment.Reset();
+    for(TActorIterator<AHearthwardDroppedEquipment> It(GetWorld());It;++It)
+        if(!It->IsActorBeingDestroyed()){FHearthwardGroundEquipment Entry;Entry.Item=It->Item;Entry.Transform=It->GetActorTransform();S.GroundEquipment.Add(Entry);}
     APawn* Player = nullptr;
     AHearthwardCompanionFixture* Companion = nullptr;
     if (!Participants(Player, Companion)) { Status = TEXT("快照参与者缺失或正在结算"); return false; }
@@ -194,9 +195,9 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     S.ActiveSeconds = GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.GetActivePlaySeconds();
     S.Player = Player->GetActorTransform();
     S.View = Player->GetControlRotation();
-    S.Inventory = SaveSubsystemCounts(Player->FindComponentByClass<UHearthwardInventoryComponent>()->State);
+    S.PlayerItems = Player->FindComponentByClass<UHearthwardInventoryComponent>()->Snapshot();
     if (const auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>()) S.Gameplay=Gameplay->SaveSnapshot();
-    S.Storage = SaveSubsystemCounts(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->State.Shared);
+    S.StorageItems = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->State.Shared.Snapshot();
     S.PlayerTimer = TimerSnapshot(Player->FindComponentByClass<UHearthwardTimedActionComponent>()->State, S.ActiveSeconds);
     S.Knowledge = Knowledge; S.KnowledgeRevision = KnowledgeRevision; S.AutoMinutes = AutoMinutes; S.Safety = Safety;
     S.NPCStateVersion = HearthwardSave::NPCStateVersion;
@@ -204,14 +205,14 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     {
         S.Companion = Companion->GetActorTransform(); S.Camp = Companion->Camp->GetActorTransform();
         S.Source = Companion->Source->GetOwner()->GetActorTransform();
-        S.Bag = SaveSubsystemCounts(Companion->Bag->State); S.Resource = SaveSubsystemCounts(Companion->Source->State);
+        S.BrotherItems = Companion->Bag->Snapshot(); S.Resource = SaveSubsystemCounts(Companion->Source->State);
         S.SourceSafe = Companion->bSourceSafe; S.Phase = Companion->Phase;
         S.Item = Companion->Command.ItemId; S.Requested = Companion->Command.Requested; S.Delivered = Companion->Command.Delivered;
         S.CommandActive = Companion->Command.bActive; S.Statement = Companion->Statement; S.BlockReason = Companion->BlockReason;
         S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
         S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
         S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;
-        S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability=Companion->OwnedDurability;S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
+        S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability.Reset();S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
         S.NPCReceipts=Companion->Receipts;
     }
     return true;
@@ -258,7 +259,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     {
         // Old natural saves contain no NPC. Seed only that missing part from the new-session state.
         FHearthwardWorldSave Upgraded=InitialWorld;
-        Upgraded.Player=S.Player; Upgraded.View=S.View; Upgraded.Inventory=S.Inventory; Upgraded.Storage=S.Storage;
+        Upgraded.Player=S.Player; Upgraded.View=S.View; Upgraded.PlayerItems=S.PlayerItems; Upgraded.StorageItems=S.StorageItems;
         Upgraded.SurvivalVersion=S.SurvivalVersion; Upgraded.CalendarMinutes=S.CalendarMinutes; Upgraded.PlayerSurvival=S.PlayerSurvival;
         Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
@@ -286,8 +287,8 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         Interaction->SetComponentTickEnabled(false); Interaction->SetStatus(EHearthwardInteractionStatus::Idle);
     }
     auto* Personal = Player->FindComponentByClass<UHearthwardInventoryComponent>();
-    Personal->State = Inventory(S.Inventory); Storage->State.Shared = Inventory(S.Storage, true);
-    if (Companion) { Companion->Bag->State = Inventory(S.Bag); Companion->Source->State = Inventory(S.Resource); }
+    Personal->RestoreInventory(S.PlayerItems,false); Storage->State.Shared.Restore(S.StorageItems);
+    if (Companion) { Companion->Bag->RestoreInventory(S.BrotherItems,false); Companion->Source->State = Inventory(S.Resource); }
     GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.ActivePlaySeconds = S.ActiveSeconds;
     GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.CalendarMinutes = S.CalendarMinutes;
     Knowledge = S.Knowledge; KnowledgeRevision = S.KnowledgeRevision; AutoMinutes = S.AutoMinutes; Safety = S.Safety;
@@ -307,7 +308,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         Companion->Command.bActive = S.CommandActive;
         Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), 1};
         Companion->Command.Acquired=S.Acquired;Companion->Command.Carried=S.Carried;Companion->Command.Goal=S.AgentGoal;
-        Companion->OwnedDurability=S.NPCDurability;Companion->Spent=S.NPCSpent;Companion->AppliedOperations=TSet<FGuid>(S.NPCOperations);
+        Companion->Spent=S.NPCSpent;Companion->AppliedOperations=TSet<FGuid>(S.NPCOperations);
         Companion->Receipts=S.NPCReceipts;
         Companion->NavigationFailures=0;Companion->LastProgressAt=GetWorld()->GetTimeSeconds();Companion->LastProgressPosition=Companion->GetActorLocation();
     }
@@ -327,19 +328,20 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     FVector CampPosition=S.Player.GetLocation();
     if(LegacyGameplay) {CampPosition.InitFromString(HearthwardData::Text(LegacyGameplay,TEXT("origin")));CampPosition+=HearthwardData::Position(HearthwardData::Find(TEXT("locations"),TEXT("camp")));}
     GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->Restore(S.CampEconomy,LegacyGameplay?int32(HearthwardData::Number(LegacyGameplay,TEXT("campTier"),1)):1,CampPosition,S.CalendarMinutes);
+    GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->RefreshQuartermasters();
+    for(TActorIterator<AHearthwardDroppedEquipment> It(GetWorld());It;++It)It->Destroy();
+    for(const auto& Entry:S.GroundEquipment)
+    {
+        auto* Ground=GetWorld()->SpawnActor<AHearthwardDroppedEquipment>(AHearthwardDroppedEquipment::StaticClass(),Entry.Transform);
+        if(Ground)Ground->Item=Entry.Item;
+    }
     // All state is committed before consumers may observe it. No gameplay settlement events replay.
     if (auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>())
     {
         const bool UpgradeLegacy=Companion && S.Gameplay.IsEmpty() && Gameplay->Enabled;
         Gameplay->Restore(S.Gameplay);
         if (bNaturalWorld && !Gameplay->Enabled) Gameplay->EnableAdventure();
-        if(UpgradeLegacy)
-        {
-            Gameplay->EnableAdventure();
-            // Old saves predate equipment. Put the initial kit in unlimited storage so a full bag stays intact.
-            for(const auto& Item:HearthwardData::Catalog()->GetObjectField(TEXT("loadout"))->Values)
-                Storage->State.Shared.Add(FName(*Item.Key),Item.Value->AsNumber());
-        }
+        if(UpgradeLegacy) Gameplay->EnableAdventure();
     }
     if(auto* Survival=Player->FindComponentByClass<UHearthwardSurvivalComponent>())
     { Survival->State=S.PlayerSurvival; Survival->ResetTransient(); }

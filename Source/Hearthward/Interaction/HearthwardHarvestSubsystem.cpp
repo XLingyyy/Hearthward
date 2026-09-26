@@ -1,4 +1,5 @@
 #include "HearthwardHarvestSubsystem.h"
+#include "../Inventory/HearthwardHarvestTools.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
@@ -71,7 +72,7 @@ FString UHearthwardHarvestTargetComponent::GetInteractionPrompt(AActor* Interact
 {
     const int32 Count=GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Remaining(ResourceKey,Capacity);
     const FString Label=HearthwardData::Text(HearthwardData::Find(TEXT("items"),Item.ToString()),TEXT("name"));
-    return Count>0?FString::Printf(TEXT("E 采集%s ×%d · 5秒\n剩余 %d · 移动可中断"),*Label,FMath::Min(Yield,Count),Count)
+    return Count>0?FString::Printf(TEXT("E 采集%s ×%d · 5秒\n剩余 %d · 移动可中断"),*Label,FMath::Min([&](){FGuid Tool;const auto* Bag=Interactor?Interactor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;return Bag?HearthwardHarvestTools::Yield(Bag,Item,Tool):0;}(),Count),Count)
         :Label+TEXT("已采尽 · 这处资源不会自动刷新");
 }
 FString UHearthwardHarvestTargetComponent::CompleteInteraction(AActor* Player)
@@ -84,7 +85,9 @@ FString UHearthwardHarvestSubsystem::Harvest(UHearthwardHarvestTargetComponent* 
     auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();
     auto* Bag=Player->FindComponentByClass<UHearthwardInventoryComponent>();
     if(!G || !G->Enabled || G->Health<=0 || G->InCombat() || !Bag) return TEXT("请在安全处采集");
-    const int32 Count=FMath::Min(Target->Yield,Remaining(Target->ResourceKey,Target->Capacity));
+    FGuid Tool;const int32 ToolYield=HearthwardHarvestTools::Yield(Bag,Target->Item,Tool);
+    if(!ToolYield)return TEXT("需要耐久大于零且等级足够的采集工具");
+    const int32 Count=FMath::Min(ToolYield,Remaining(Target->ResourceKey,Target->Capacity));
     if(Count<=0) return TEXT("资源已耗尽，未采集");
     TGuardValue<bool> Guard(Settling,true);
     // Publish depletion before inventory callbacks; failed additions restore the original resource count.
@@ -96,6 +99,7 @@ FString UHearthwardHarvestSubsystem::Harvest(UHearthwardHarvestTargetComponent* 
     else Used.Add(Target->ResourceKey,Before+Count);
     if(Bag->TryAdd(Target->Item,Count)!=EHearthwardInventoryResult::Success)
     { if(Source){Source->Remaining+=Count;Source->Due=OldDue;}else if(Before) Used.Add(Target->ResourceKey,Before); else Used.Remove(Target->ResourceKey); return TEXT("背包容量不足，资源未消耗"); }
+    if(Tool.IsValid())Bag->WearInstance(Tool,1/(1+G->Effect(TEXT("durability"))));
     G->Record(TEXT("harvest"),Target->Item,Count);
     return FString::Printf(TEXT("已采集%s ×%d"),*HearthwardData::Text(HearthwardData::Find(TEXT("items"),Target->Item.ToString()),TEXT("name")),Count);
 }

@@ -1,4 +1,5 @@
 #include "HearthwardCompanionFixture.h"
+#include "../Inventory/HearthwardHarvestTools.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardCompanionNavigationComponent.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
@@ -475,14 +476,31 @@ void AHearthwardCompanionFixture::Deposit()
         }
         int32 Count = Bag->GetItemCount(Item.Id);
         const int32 Owned=Item.Id==Command.GetItem()?FMath::Min(Count,Command.Carried):0;
-        if(OwnedDurability.Contains(Item.Id))continue;
+        if(Item.IsInstance() && Item.Id!=Command.GetItem())continue;
         if(Command.Goal.Intent!=TEXT("collect") || Item.Id==Command.GetItem())Count=Owned;
         if (Count == 0) continue;
         const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xDE01^FCrc::StrCrc32(*Item.Id.ToString()),Ticket.Id.D^uint32(Command.Acquired));
         const bool Settled=HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
             FString::Printf(TEXT("deposit:%s:%d:owned%d:r%lld"),*Item.Id.ToString(),Count,Owned,Ticket.Revision),[&]
             {
-                const auto Result=Storage->Transfer(Bag,true,Item.Id,Count,Op,Ticket.Epoch);
+                FHearthwardTransferResult Result;
+                if(Item.IsInstance())
+                {
+                    TArray<FGuid> Outputs;
+                    const auto& Instances=Bag->Snapshot().Instances;
+                    for(int32 I=Instances.Num()-1;I>=0 && Outputs.Num()<Count;--I)
+                        if(Instances[I].Definition==Item.Id && !Bag->IsEquipped(Instances[I].Id))Outputs.Add(Instances[I].Id);
+                    if(Outputs.Num()!=Count)return false;
+                    Result.Result=EHearthwardInventoryResult::Success;
+                    for(int32 I=0;I<Outputs.Num();++I)
+                    {
+                        const FGuid Part(Op.A,Op.B,Op.C,Op.D^uint32(I+1));
+                        const auto Moved=Storage->TransferInstance(Bag,true,Outputs[I],Part,Ticket.Epoch);
+                        if(Moved.Result!=EHearthwardInventoryResult::Success)return false;
+                        Result.MovedCount+=Moved.MovedCount;
+                    }
+                }
+                else Result=Storage->Transfer(Bag,true,Item.Id,Count,Op,Ticket.Epoch);
                 if(Result.Result!=EHearthwardInventoryResult::Success)return false;
                 if(Result.MovedCount>0)
                     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RecordCampStockReceipt(Item.Id,Storage->GetItemCount(Item.Id));
@@ -648,9 +666,10 @@ void AHearthwardCompanionFixture::TickExecution(float DeltaSeconds)
         const auto* Item=HearthwardBasicItems().FindByPredicate([this](const auto& Def){return Def.Id==Command.GetItem();});
         if(!Item){HandleExecutionFailure(TEXT("ITEM_UNAVAILABLE"));return;}
         int32 CargoWeight=0;
-        for(const auto& D:HearthwardBasicItems())if(!OwnedDurability.Contains(D.Id))CargoWeight+=Bag->GetItemCount(D.Id)*D.WeightHundredths;
+        for(const auto& D:HearthwardBasicItems())if(!D.IsInstance())CargoWeight+=Bag->GetItemCount(D.Id)*D.WeightHundredths;
         const int32 Free=FMath::Max(0,FMath::Min(400-CargoWeight,FMath::RoundToInt((Bag->GetCapacity()-Bag->GetWeight())*100)));
-        const int32 Count=FMath::Min3(Free/Item->WeightHundredths,Source->GetItemCount(Item->Id),Command.GetRequested()-Command.GetAcquired());
+        FGuid Tool;const int32 ToolYield=HearthwardHarvestTools::Yield(Bag,Item->Id,Tool);
+        const int32 Count=FMath::Min(ToolYield,FMath::Min3(Free/Item->WeightHundredths,Source->GetItemCount(Item->Id),Command.GetRequested()-Command.GetAcquired()));
         if(Count<=0){HandleExecutionFailure(TEXT("本趟无法携带目标物品"));return;}
 
         auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
@@ -660,6 +679,7 @@ void AHearthwardCompanionFixture::TickExecution(float DeltaSeconds)
             FString::Printf(TEXT("acquire:%s:%d:%d"),*Item->Id.ToString(),Count,Command.Acquired),[&]
             {
                 if(Source->TransferTo(Bag,Item->Id,Count)!=EHearthwardInventoryResult::Success)return false;
+                if(Tool.IsValid())Bag->WearInstance(Tool,1);
                 Command.RecordAcquisition(Count);
                 Execution.AdaptiveRecoveryAttempts=0;
                 Execution.LastRecoveryReason.Reset();
@@ -700,8 +720,8 @@ FString AHearthwardCompanionFixture::PreviewGoal(const FHearthwardAgentGoal& Goa
     auto* Registry=WorkshopRegistry(GetWorld());if(!Registry || !Registry->ResolveWorkbench(Goal.Station))return TEXT("STATION_UNAVAILABLE");
     if(Goal.Intent==TEXT("repair"))
     {
-        if(Bag->GetItemCount(Goal.Item)!=1 || !OwnedDurability.Contains(Goal.Item))return TEXT("AMBIGUOUS_TARGET");
-        if(OwnedDurability[Goal.Item]>=HearthwardData::Number(HearthwardData::Find(TEXT("items"),Goal.Item.ToString()),TEXT("durability")))return TEXT("ALREADY_REPAIRED");
+        if(Bag->GetItemCount(Goal.Item)!=1 || !Bag->FirstInstance(Goal.Item).IsValid())return TEXT("AMBIGUOUS_TARGET");
+        if(EquipmentDurability(Goal.Item)>=HearthwardData::Number(HearthwardData::Find(TEXT("items"),Goal.Item.ToString()),TEXT("durability")))return TEXT("ALREADY_REPAIRED");
     }
     if(!HearthwardAgent::AllowsCost(Goal.Limits,HearthwardWorkshop::Materials(Goal.Intent,Goal.Item,Goal.Quantity),{}))return TEXT("POLICY_CONFLICT");
     return {};
@@ -768,7 +788,7 @@ void AHearthwardCompanionFixture::WorkshopTick()
     const auto& G=Command.Goal;
     auto* Registry=WorkshopRegistry(GetWorld());AActor* Station=Registry?Registry->ResolveWorkbench(G.Station):nullptr;
     if(!IsValid(Station)){HandleExecutionFailure(TEXT("STATION_UNAVAILABLE"));return;}
-    const auto Cost=HearthwardWorkshop::Materials(G.Intent,G.Item,G.Quantity);
+    auto Cost=HearthwardWorkshop::Materials(G.Intent,G.Item,G.Quantity);
     if(!HearthwardAgent::AllowsCost(G.Limits,Cost,Spent)){HandleExecutionFailure(TEXT("POLICY_CONFLICT"));return;}
 
     if(Current->Type==EHearthwardAgentActionType::TakeMaterials)
@@ -788,7 +808,7 @@ void AHearthwardCompanionFixture::WorkshopTick()
             if(!D){HandleExecutionFailure(TEXT("ITEM_UNAVAILABLE"));return;}
             AddedWeight+=int64(Missing)*D->WeightHundredths;
         }
-        if(Bag->GetWeight()*100+AddedWeight>10000){HandleExecutionFailure(TEXT("CAPACITY_EXCEEDED"));return;}
+        if(Bag->GetWeight()*100+AddedWeight>Bag->GetCapacity()*100){HandleExecutionFailure(TEXT("CAPACITY_EXCEEDED"));return;}
 
         TGuardValue<bool> Guard(bSettling,true);
         for(const auto& C:Cost)
@@ -810,7 +830,7 @@ void AHearthwardCompanionFixture::WorkshopTick()
     }
 
     if(Current->Type!=EHearthwardAgentActionType::CommitWorkshop)return;
-    const FString Error=HearthwardWorkshop::Check(this,Station,Bag,&OwnedDurability,G.Intent,G.Item,G.Quantity);
+    const FString Error=HearthwardWorkshop::Check(this,Station,Bag,G.Intent,G.Item,G.Quantity);
     if(Error==TEXT("OUT_OF_RANGE") || Error==TEXT("PATH_BLOCKED"))
     {
         if(!MoveTowards(Station,0,160))HandleExecutionFailure(TEXT("PATH_BLOCKED"));
@@ -819,16 +839,17 @@ void AHearthwardCompanionFixture::WorkshopTick()
     if(!Error.IsEmpty()){HandleExecutionFailure(Error);return;}
 
     StopNavigation();TGuardValue<bool> Guard(bSettling,true);
-    const float Before=OwnedDurability.FindRef(G.Item);
+    if(G.Intent==TEXT("repair")){double Restored;HearthwardWorkshop::RepairQuote(Bag,Bag->FirstInstance(G.Item),1,Cost,Restored);}
+    const float Before=EquipmentDurability(G.Item);
     const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCFA1,Ticket.Id.D);
     if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(),
         FString::Printf(TEXT("%s:%s:%d:r%lld"),*G.Intent.ToString(),*G.Item.ToString(),G.Quantity,Ticket.Revision),[&]
         {
-            if(!HearthwardWorkshop::Commit(Bag,&OwnedDurability,G.Intent,G.Item,G.Quantity))return false;
+            if(!HearthwardWorkshop::Commit(Bag,G.Intent,G.Item,G.Quantity))return false;
             for(const auto& C:Cost)Spent.FindOrAdd(C.Key)+=C.Value;
             Execution.AdaptiveRecoveryAttempts=0;
             Execution.LastRecoveryReason.Reset();
-            Event(G.Intent,G.Item,G.Quantity,G.Intent==TEXT("repair")?FString::Printf(TEXT("耐久 %.0f → %.0f"),Before,OwnedDurability.FindRef(G.Item)):TEXT("实际扣料并产生物品"),Op);
+            Event(G.Intent,G.Item,G.Quantity,G.Intent==TEXT("repair")?FString::Printf(TEXT("耐久 %.0f → %.0f"),Before,EquipmentDurability(G.Item)):TEXT("实际扣料并产生物品"),Op);
             Command.RecordAcquisition(Command.GetRequested());
             if(G.Intent==TEXT("repair"))
             {
@@ -859,3 +880,6 @@ void AHearthwardCompanionFixture::Landed(const FHitResult& Hit)
     Super::Landed(Hit);
     if(auto* S=FindComponentByClass<UHearthwardSurvivalComponent>()) S->FallImpact(Speed);
 }
+
+float AHearthwardCompanionFixture::EquipmentDurability(FName Item) const
+{const auto* I=Bag->FindInstance(Bag->FirstInstance(Item));return I?I->Durability:0;}

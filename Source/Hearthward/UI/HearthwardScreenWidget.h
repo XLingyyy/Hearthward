@@ -60,6 +60,11 @@ private:
     bool OpenSavePoint(const FHearthwardSavePoint& Point);
     void LoadElements(const TArray<TSharedPtr<FJsonValue>>& Rows);
     void ComposeInventory(bool Storage);
+    void ComposeEquipment();
+    bool ExecuteEquipmentAction(const FString& Action);
+    FName EquipmentOwner=TEXT("player");
+    FGuid EquipmentSelection,EquipmentEpoch;
+    FName EquipmentStack;
     void ComposeSkills();
     void ComposeMap();
     void ComposeJournal();

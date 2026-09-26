@@ -34,6 +34,7 @@ public:
     UPROPERTY(EditAnywhere,BlueprintReadWrite) float MaximumHealth=0;
     UPROPERTY(EditAnywhere,BlueprintReadWrite) float Health=0;
     UPROPERTY(EditAnywhere,BlueprintReadWrite) bool Heavy=false;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite) FName RewardKind=TEXT("guard");
     UPROPERTY(EditAnywhere,BlueprintReadWrite) bool Protected=false;
     UPROPERTY(EditAnywhere,BlueprintReadWrite) TMap<FName,float> Armor;
     UPROPERTY(EditAnywhere,BlueprintReadWrite) TMap<FName,float> ArmorDurability;

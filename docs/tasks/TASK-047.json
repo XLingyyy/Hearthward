@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "TASK-047",
+  "title": "实现六十级成长、装备实例与制作维修",
+  "status": "Blocked",
+  "updated_at": "2026-09-27",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-047-equipment-recipes",
+  "source_refs": [
+    "用户：继续047；延续按序交付与任务分支提交推送工作方式",
+    "原稿TASK-049映射canonical TASK-047；审计R11/R13/R14",
+    "origin/main@dbba6d052b7e08e612d858ca07fc87e90dae5840，已含046/PR48",
+    "Owner明确确认047设计，授权沿047施工、完成后提交推送；本次批准协调库存／保存公共接口、Source与Resources范围。"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-045",
+    "TASK-046"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-047-progression-inventory.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/tasks/TASK-047.json",
+    "docs/tasks/TASK-047.md",
+    "docs/handoffs/TASK-047.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/design/DSGN-R14-progression-equipment.md",
+    "docs/planning/TASK-047/",
+    "docs/qa/TASK-047/",
+    "Source/Hearthward/",
+    "Resources/Data/",
+    "Resources/UI/",
+    "docs/contracts/CT-TASK-047-progression-inventory.md",
+    "docs/contracts/README.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "批准的60级经验、29节点、52点与免费洗点接入",
+    "62物品及49配方、设施与图纸、局部维修、双方独立容量接入实际UI",
+    "装备实例跨转移／仓储／穿戴／损耗保持身份，旧档迁移schema6",
+    "Editor构建、相关原生和真实PIE操作与存读档通过，证据绑定源码",
+    "提交推送，核对远端后清理本单工作树"
+  ],
+  "non_goals": [
+    "未经Owner批准不实施新玩法或覆盖运行数据",
+    "不合并main，不跳号，不导入资产"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user explicitly approved TASK-047 implementation, commit and push",
+    "push": "granted: user explicitly approved TASK-047 implementation, commit and push",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner/Reviewer XLingyyy；Issue可选。",
+    "D1—D6已获Owner批准；正式自然源点／任务布置继续遵循048／049边界，复用现有模型。",
+    "前轮设计计算32/32及工具33/33为设计阶段证据，不能代替本轮实现验证。",
+    "实现和定向验证完成：冻结源码fa8df934f7ccc0912810812b74e186ff9cd3721e通过Editor构建、原生32/32、真实PIE64/64；工具33/33通过。",
+    "Blocked仅表示仓库正式独立PR审查尚未完成；Owner/Reviewer同为XLingyyy，Agent不自批或合并。"
+  ]
+}

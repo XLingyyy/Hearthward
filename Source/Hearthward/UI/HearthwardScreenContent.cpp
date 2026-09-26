@@ -131,9 +131,8 @@ void UHearthwardScreenWidget::ComposeInventory(bool Storage)
             Element(TEXT("bar"),TEXT(""),FVector2D(1380,Y+28),FVector2D(239,7)); Elements.Last().Value=Values[I]/Max[I]; Elements.Last().Color=Color(Colors[I]);
         }
         float Defense=G->Effect(TEXT("defense"))*100;
-        for(const auto& Gear:G->Equipment) if(G->Durability.FindRef(Gear.Value)>0) Defense+=Number(Find(TEXT("items"),Gear.Value.ToString()),TEXT("defense"));
-        Element(TEXT("text"),TEXT("攻击力\n伤害减免\n经验加成\n耐力消耗"),FVector2D(1381,528),FVector2D(230,140),18);
-        Element(TEXT("text"),FString::Printf(TEXT("%.0f\n%.0f%%\n+%.0f%%\n−%.0f%%"),G->AttackPower(),FMath::Min(85.f,Defense),G->Effect(TEXT("xp"))*100,G->Effect(TEXT("cost"))*100),FVector2D(1519,528),FVector2D(100,140),18); Elements.Last().Align=TEXT("right");
+        Element(TEXT("text"),TEXT("攻击力\n全身减伤\n重击增伤\n耐力消耗"),FVector2D(1381,528),FVector2D(230,140),18);
+        Element(TEXT("text"),FString::Printf(TEXT("%.0f\n%.0f%%\n+%.0f%%\n−%.0f%%"),G->AttackPower(),FMath::Min(85.f,Defense),G->Effect(TEXT("heavy_damage"))*100,G->Effect(TEXT("cost"))*100),FVector2D(1519,528),FVector2D(100,140),18); Elements.Last().Align=TEXT("right");
         Element(TEXT("text"),TEXT("负重"),FVector2D(1381,706),FVector2D(110,30),16);
         Element(TEXT("text"),FString::Printf(TEXT("%.1f / %.0f"),Bag->GetWeight(),Bag->GetCapacity()),FVector2D(1480,705),FVector2D(139,30),18); Elements.Last().Align=TEXT("right");
         Element(TEXT("bar"),TEXT(""),FVector2D(1380,730),FVector2D(239,6)); Elements.Last().Value=Bag->GetWeight()/Bag->GetCapacity(); Elements.Last().Color=Color(TEXT("gold"));

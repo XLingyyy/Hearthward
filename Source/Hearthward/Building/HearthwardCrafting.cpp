@@ -1,4 +1,5 @@
 #include "HearthwardBuildingComponent.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
 #include "../Interaction/HearthwardInteractionTargetComponent.h"
 #include "HearthwardWorkshopService.h"
@@ -57,28 +58,34 @@ FGuid UHearthwardBuildingComponent::NearbyWorkbench() const
                 return {};
     return Nearest;
 }
+bool UHearthwardBuildingComponent::MatchesFacility(FGuid Station,FName Kind,int32 Level) const
+{
+    const auto& Facilities=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Facilities;
+    const auto* F=Facilities.FindByPredicate([&](const auto& Row){return Row.Id==Station;});
+    return F && !F->Paused && F->Kind==Kind && F->Level>=Level && CanUseFacility(Station);
+}
 FString UHearthwardBuildingComponent::CraftingStatus(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch) const
 {
-    if(Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()) return TEXT("存档时间线已变化，请重新打开工作台");
-    if(!CanUseWorkbench(Station)) return TEXT("工作台不可用，请在安全处靠近工作台");
+    auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    if(Epoch!=Store->GetTimelineEpoch())return TEXT("存档时间线已变化，请重新打开设施");
     const auto R=Find(TEXT("craftingRecipes"),Recipe.ToString());
-    if(!R) return TEXT("配方不存在");
-    if(Batches<=0 || Batches>Number(Catalog()->GetObjectField(TEXT("crafting")),TEXT("maxBatches"))) return TEXT("制作批数超出范围");
-    const auto Result=GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>()->CheckExchange(RecipeItems(R,TEXT("materials")),RecipeItems(R,TEXT("outputs")),Batches);
-    if(Result==EHearthwardInventoryResult::Success) return FString();
-    if(Result==EHearthwardInventoryResult::InsufficientItems) return TEXT("背包材料不足，请先采集或取出材料");
-    if(Result==EHearthwardInventoryResult::CapacityExceeded) return TEXT("背包容量不足，制作未执行");
-    return TEXT("配方或物品数量无效，制作未执行");
+    auto* G=GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>();
+    if(!R || !G || !G->CanChangeSkills())return TEXT("当前无法加工，请结束动作并脱战");
+    if(!MatchesFacility(Station,FName(*Text(R,TEXT("facility"))),Number(R,TEXT("facilityLevel"))))return TEXT("请靠近对应种类和等级的设施");
+    if(!G->KnowsRecipe(Recipe))return TEXT("尚未学会图纸配方");
+    if(Batches<1 || Batches>99)return TEXT("制作批数超出范围");
+    auto* Bag=GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>();
+    const bool Camp=!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(GetOwner()->GetActorLocation()).IsNone();
+    return Store->CanWorkshop(Bag,HearthwardWorkshop::Materials(TEXT("craft"),Recipe,Batches),HearthwardWorkshop::Outputs(Recipe,Batches),Camp)?FString():TEXT("材料不足或产出超重，制作未执行");
 }
 bool UHearthwardBuildingComponent::Craft(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch)
 {
-    Feedback=CraftingStatus(Station,Recipe,Batches,Epoch);
-    if(!Feedback.IsEmpty()) return false;
-    // Prevent reentrant crafting or saving from observing inventory before its craft event.
+    Feedback=CraftingStatus(Station,Recipe,Batches,Epoch);if(!Feedback.IsEmpty())return false;
     TGuardValue<bool> Guard(Settling,true);
-    const auto R=Find(TEXT("craftingRecipes"),Recipe.ToString());
-    if(!HearthwardWorkshop::Commit(GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>(),nullptr,TEXT("craft"),Recipe,Batches)) { Feedback=TEXT("物品状态已变化，制作未执行"); return false; }
+    auto* Bag=GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>();
+    const bool Camp=!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(GetOwner()->GetActorLocation()).IsNone();
+    if(!GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->Workshop(Bag,HearthwardWorkshop::Materials(TEXT("craft"),Recipe,Batches),HearthwardWorkshop::Outputs(Recipe,Batches),Camp))
+    {Feedback=TEXT("库存已变化，制作未执行");return false;}
     GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>()->Record(TEXT("craft"),Recipe,Batches);
-    Feedback=FString::Printf(TEXT("制作完成：%s × %d 批"),*Text(R,TEXT("name")),Batches);
-    return true;
+    Feedback=TEXT("制作完成，产物已放入背包");return true;
 }

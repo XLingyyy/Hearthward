@@ -1,4 +1,5 @@
 #include "HearthwardGameplayComponent.h"
+#include "HearthwardProgression.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
@@ -113,28 +114,12 @@ void UHearthwardGameplayComponent::CreateLandmarks()
     }
 }
 int32 UHearthwardGameplayComponent::Level() const
-{
-    int32 Remaining = Experience, L = 1;
-    while (L < Tune(TEXT("maxLevel")))
-    {
-        const int32 Cost = Tune(TEXT("xpBase")) + (L-1)*Tune(TEXT("xpGrowth"));
-        if (Remaining < Cost) break;
-        Remaining -= Cost; ++L;
-    }
-    return L;
-}
+{ return HearthwardProgression::Level(Experience); }
 int32 UHearthwardGameplayComponent::SkillPoints() const
 {
-    int32 Spent = 0, Total = 0;
-    for (const auto& V : Rows(TEXT("skills")))
-    {
-        const auto R = V->AsObject();
-        const int32 Cost = Number(R,TEXT("cost"));
-        Total += Number(R,TEXT("maxRank"))*Cost;
-        Spent += Skills.FindRef(FName(*Text(R,TEXT("id"))))*Cost;
-    }
-    return FMath::Max(0,FMath::Min(int32(Tune(TEXT("initialSkillPoints"))) + Level()-1,
-        FMath::FloorToInt(Total*Tune(TEXT("maxSkillCoverage")))) - Spent);
+    int32 Spent=0;
+    for(const auto& S:Skills)Spent+=S.Value*Number(Find(TEXT("skills"),S.Key.ToString()),TEXT("cost"));
+    return FMath::Max(0,HearthwardProgression::Budget(Level())-Spent);
 }
 float UHearthwardGameplayComponent::Effect(FName Name) const
 {
@@ -142,20 +127,24 @@ float UHearthwardGameplayComponent::Effect(FName Name) const
     for (const auto& S : Skills)
     {
         const auto R=Find(TEXT("skills"),S.Key.ToString());
-        if (Text(R,TEXT("effect"))==Name.ToString()) Value += S.Value*Number(R,TEXT("amount"));
+        if(Text(R,TEXT("effect"))==Name.ToString())
+        {
+            const TArray<TSharedPtr<FJsonValue>>* Values;
+            if(R->TryGetArrayField(TEXT("rankValues"),Values) && Values->IsValidIndex(S.Value-1))Value+=(*Values)[S.Value-1]->AsNumber();
+        }
     }
     return Value;
 }
 float UHearthwardGameplayComponent::MaxHealth() const
-{ return 100 + 100.f*(Level()-1)/59 + Number(HearthwardCamp::Tier(CampTier),TEXT("cumulative_hp_bonus")) + Effect(TEXT("health")); }
+{ return 100 + HearthwardProgression::Attribute(Level(),TEXT("hp_bonus")) + Number(HearthwardCamp::Tier(CampTier),TEXT("cumulative_hp_bonus")) + Effect(TEXT("health")); }
 float UHearthwardGameplayComponent::MaxStamina() const
-{ return 100 + 50.f*(Level()-1)/59 + Number(HearthwardCamp::Tier(CampTier),TEXT("cumulative_stamina_bonus")) + Effect(TEXT("stamina")); }
+{ return 100 + HearthwardProgression::Attribute(Level(),TEXT("stamina_bonus")) + Number(HearthwardCamp::Tier(CampTier),TEXT("cumulative_stamina_bonus")) + Effect(TEXT("stamina")); }
 bool UHearthwardGameplayComponent::Result(bool Success,const FString& Message)
 { Feedback=Message; OnChanged.Broadcast(); return Success; }
 bool UHearthwardGameplayComponent::Learn(FName Id)
 {
     const auto R=Find(TEXT("skills"),Id.ToString());
-    if (!R || !Enabled) return Result(false,TEXT("技能不可用"));
+    if (!R || !CanChangeSkills()) return Result(false,TEXT("脱战且没有进行中动作时才能学习技能"));
     if (Skills.FindRef(Id)>=Number(R,TEXT("maxRank"))) return Result(false,TEXT("已达到最高等级"));
     const FName Parent(*Text(R,TEXT("requires")));
     if (!Parent.IsNone() && Skills.FindRef(Parent)==0) return Result(false,TEXT("请先学习前置技能"));
@@ -165,25 +154,31 @@ bool UHearthwardGameplayComponent::Learn(FName Id)
 }
 void UHearthwardGameplayComponent::ResetSkills()
 {
+    if(!CanChangeSkills()) {Result(false,TEXT("脱战且没有进行中动作时才能洗点"));return;}
     Skills.Reset(); Health=FMath::Min(Health,MaxHealth()); Stamina=FMath::Min(Stamina,MaxStamina());
     Result(true,TEXT("技能点已全部返还，已发生的奖励保留"));
 }
 bool UHearthwardGameplayComponent::Equip(FName Id)
 { return GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->SwitchEquipment(Id); }
 bool UHearthwardGameplayComponent::CommitEquipment(FName Id)
+{ return CommitEquipmentInstance(Inventory()->FirstInstance(Id)); }
+bool UHearthwardGameplayComponent::CommitEquipmentInstance(FGuid Id)
 {
-    const auto R=Find(TEXT("items"),Id.ToString());
-    const FName Slot(*Text(R,TEXT("slot")));
-    if (!Enabled || Slot.IsNone() || Inventory()->GetItemCount(Id)<1) return Result(false,TEXT("没有可装备的物品"));
-    if (Equipment.FindRef(Slot)==Id) Equipment.Remove(Slot);
-    else { Equipment.Add(Slot,Id); if(!Durability.Contains(Id)) Durability.Add(Id,Number(R,TEXT("durability"),100)); Record(TEXT("equip"),Slot); }
-    if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();C && (Slot==TEXT("weapon") || Slot==TEXT("ranged"))) C->SelectRanged(Slot==TEXT("ranged") && Equipment.Contains(Slot));
+    if(!Enabled)return false;
+    const auto* I=Inventory()->FindInstance(Id);if(!I)return false;
+    const FName Item=I->Definition;
+    const FName Slot(*Text(Find(TEXT("items"),Item.ToString()),TEXT("slot")));
+    if(!Inventory()->EquipInstance(Id))return false;
+    InventoryChanged();
+    Record(TEXT("equip"),Slot);
+    if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();C && (Slot==TEXT("weapon") || Slot==TEXT("ranged")))C->SelectRanged(Slot==TEXT("ranged") && Equipment.Contains(Slot));
     return Result(true,TEXT("装备已更新"));
 }
 bool UHearthwardGameplayComponent::UseItem(FName Id)
 {
     const auto R=Find(TEXT("items"),Id.ToString());
     const float Food=Number(R,TEXT("food"));
+    if(!Text(R,TEXT("blueprint")).IsEmpty())return LearnBlueprint(Id);
     const float Healing=Number(R,TEXT("healing"));
     auto* Survival=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(Healing>0) return Result(Survival && Survival->BeginMedicine(Id),TEXT("药品需站定使用3秒"));
@@ -197,13 +192,18 @@ bool UHearthwardGameplayComponent::Drop(FName Id,int32 Count)
 {
     const auto R=Find(TEXT("items"),Id.ToString()); bool Key=false;
     if (R) R->TryGetBoolField(TEXT("key"),Key);
+    if(Inventory()->FirstInstance(Id).IsValid())return Result(false,TEXT("请在行装管理中选择具体装备，再放到地面"));
     if (Key) return Result(false,TEXT("关键物品不能丢弃"));
     return Result(Inventory()->TryRemove(Id,Count)==EHearthwardInventoryResult::Success,TEXT("丢弃操作已处理"));
 }
 void UHearthwardGameplayComponent::InventoryChanged()
 {
-    for (auto It=Equipment.CreateIterator();It;++It)
-        if (Inventory()->GetItemCount(It.Value())==0) It.RemoveCurrent();
+    Equipment.Reset();Durability.Reset();
+    for(const auto& I:Inventory()->Snapshot().Instances)
+        if(!Durability.Contains(I.Definition))Durability.Add(I.Definition,I.Durability);
+    for(const auto& E:Inventory()->Snapshot().Equipped)
+        if(const auto* I=Inventory()->FindInstance(E.Value))
+        {Equipment.Add(E.Key,I->Definition);Durability.Add(I->Definition,I->Durability);}
     if(Enabled)
         for(const auto& Item:Rows(TEXT("items")))
         {
@@ -245,7 +245,7 @@ bool UHearthwardGameplayComponent::Claim(FName Id)
     const TArray<TSharedPtr<FJsonValue>>* HomePosition;
     if(R->TryGetArrayField(TEXT("reclaimedCamp"),HomePosition) && HomePosition->Num()==3)
         Economy->ReclaimHometown(Id,FVector((*HomePosition)[0]->AsNumber(),(*HomePosition)[1]->AsNumber(),(*HomePosition)[2]->AsNumber()));
-    Experience += FMath::RoundToInt(Number(R,TEXT("xp"))*(1+Effect(TEXT("xp"))));
+    GrantExperience(Text(R,TEXT("category"))==TEXT("main")?FName(TEXT("main_milestone")):FName(TEXT("side_quest")),EventKey(TEXT("quest"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
     for (const auto& Q : Rows(TEXT("quests")))
         if (Text(Q->AsObject(),TEXT("requires"))==Id.ToString()) { TrackedQuest=FName(*Text(Q->AsObject(),TEXT("id"))); break; }
     return Result(true,TEXT("任务完成，已获得成长经验"));
@@ -313,7 +313,7 @@ void UHearthwardGameplayComponent::ApplyDamage(float Damage)
 float UHearthwardGameplayComponent::AttackPower() const
 {
     const FName Weapon=Equipment.FindRef(TEXT("weapon"));
-    if(Weapon.IsNone() || Durability.FindRef(Weapon)<=0) return 0;
+    if(Weapon.IsNone() || EquippedDurability(TEXT("weapon"))<=0) return 0;
     return Number(Find(TEXT("items"),Weapon.ToString()),TEXT("attack"))*(1+Effect(TEXT("attack")))*(GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.Severe()?.75f:1.f);
 }
 bool UHearthwardGameplayComponent::Attack()
@@ -339,11 +339,15 @@ void UHearthwardGameplayComponent::DamageOpponent(FName Target,float Damage,AAct
 }
 void UHearthwardGameplayComponent::CommitOpponentHealth(FName Target,float NewHealth,float PreviousHealth)
 {
-    const float Previous=Opponents.Contains(Target)?Opponents[Target]:PreviousHealth;
+    const float Previous=PreviousHealth>=0?PreviousHealth:Opponents.FindRef(Target);
     if(Opponents.Contains(Target)) Opponents[Target]=NewHealth;
     if(Previous>0 && NewHealth<=0)
     {
-        Experience+=Number(Find(TEXT("encounters"),Target.ToString()),TEXT("xp"))*(1+Effect(TEXT("xp")));
+        for(auto* T:GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Targets())if(T->Id==Target)
+        {
+            const FName Fact(*FString::Printf(TEXT("defeat:%s:%d"),*Target.ToString(),T->Memory.Generation));
+            GrantExperience(T->Heavy?FName(TEXT("heavy")):T->RewardKind,Fact,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());break;
+        }
         Record(TEXT("defeat"),Target);
     }
 }
@@ -422,7 +426,8 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     Context.bRoutineEnabled=CompanionRoutineEnabled;
     Context.bPlayerInCombat=InCombat();
     Context.bPlayerDown=Health<=0;
-    Context.bCanAttack=CompanionAttackDelay<=0;
+    const auto* Weapon=Companion->Bag->FindInstance(Companion->Bag->EquippedInstance(TEXT("weapon")));
+    Context.bCanAttack=CompanionAttackDelay<=0 && Weapon && Weapon->Durability>0;
     Context.PlayerHealthRatio=MaxHealth()>0?Health/MaxHealth():0;
     Context.GameSeconds=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
     for(const auto& Enemy:OpponentActors)
@@ -449,7 +454,8 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
         if (!Facing.IsNearlyZero()) Companion->SetActorRotation(Facing.Rotation());
         if (auto* Animation = Cast<UHearthwardBrotherAnimInstance>(Companion->GetMesh()->GetAnimInstance()))
             Animation->PlayAttack();
-        DamageOpponent(Result.DamageTarget,Tune(TEXT("companionAttack"))*(Survival->State.Severe()?.75f:1.f),Companion);
+        DamageOpponent(Result.DamageTarget,Number(Find(TEXT("items"),Weapon->Definition.ToString()),TEXT("attack"))*(Survival->State.Severe()?.75f:1.f),Companion);
+        Companion->Bag->WearInstance(Weapon->Id,1);
         CompanionAttackDelay=Tune(TEXT("companionAttackCooldown"));
         CombatRemaining=3;
     }
@@ -488,7 +494,14 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
             {
                 const float Damage=Number(Find(TEXT("encounters"),A.Key.ToString()),TEXT("attack"));
                 if(Victim==GetOwner()) GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Damage(Damage,TEXT("body"),A.Value->GetActorLocation());
-                else Victim->FindComponentByClass<UHearthwardSurvivalComponent>()->ReceiveDamage(Damage,FGuid::NewGuid(),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
+                else
+                {
+                    auto* Bag=Victim->FindComponentByClass<UHearthwardInventoryComponent>();
+                    const auto* Armor=Bag->FindInstance(Bag->EquippedInstance(TEXT("chest")));
+                    const float Reduction=Armor && Armor->Durability>0?Number(Find(TEXT("items"),Armor->Definition.ToString()),TEXT("defense"))/100:0;
+                    Victim->FindComponentByClass<UHearthwardSurvivalComponent>()->ReceiveDamage(Damage*(1-Reduction),FGuid::NewGuid(),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
+                    if(Reduction>0)Bag->WearInstance(Armor->Id,1);
+                }
             }
         }
     }
@@ -501,7 +514,7 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     auto* Survival=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
     auto& Delay=Survival->State.RecoveryDelay;
     const bool Swimming=Character->GetCharacterMovement()->IsSwimming();
-    const float Regen=MaxStamina()/(Combat && Combat->Guarding()?20.f:12.f);
+    const float Regen=MaxStamina()/(Combat && Combat->Guarding()?20.f:12.f)*(1+Effect(TEXT("staminaRecovery")));
     if(Running) { if(!SpendStamina(Delta*MaxStamina()/12*.8f)) { Stamina=0; Sprinting=false; Delay=.5; } }
     else if(!Swimming)
     {
@@ -521,7 +534,7 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
         const FName Id(*Text(L->AsObject(),TEXT("id")));
         if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp")) continue;
         if (!Discovered.Contains(Id) && FVector::Dist2D(P,LocationPosition(Id))<=Tune(TEXT("discoverRadius"))*(1+Effect(TEXT("discover"))))
-        { Discovered.Add(Id); Record(TEXT("discover"),Id); Feedback=TEXT("发现：")+Text(L->AsObject(),TEXT("name")); }
+        { Discovered.Add(Id); GrantExperience(TEXT("first_discovery"),EventKey(TEXT("discover"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()); Record(TEXT("discover"),Id); Feedback=TEXT("发现：")+Text(L->AsObject(),TEXT("name")); }
     }
     OnChanged.Broadcast();
 }
@@ -540,10 +553,10 @@ FString UHearthwardGameplayComponent::SaveSnapshot() const
     auto Map=[&](const TCHAR* Key,const TMap<FName,int32>& Values){ auto M=MakeShared<FJsonObject>(); for(const auto& V:Values) M->SetNumberField(V.Key.ToString(),V.Value); J->SetObjectField(Key,M); };
     Map(TEXT("skills"),Skills); Map(TEXT("events"),Events);
     auto Floats=[&](const TCHAR* Key,const TMap<FName,float>& Values){ auto M=MakeShared<FJsonObject>(); for(const auto& V:Values) M->SetNumberField(V.Key.ToString(),V.Value); J->SetObjectField(Key,M); };
-    Floats(TEXT("opponents"),Opponents); Floats(TEXT("durability"),Durability);
-    auto E=MakeShared<FJsonObject>(); for(const auto& V:Equipment) E->SetStringField(V.Key.ToString(),V.Value.ToString()); J->SetObjectField(TEXT("equipment"),E);
+    Floats(TEXT("opponents"),Opponents); Floats(TEXT("durability"),{});
+    auto E=MakeShared<FJsonObject>(); J->SetObjectField(TEXT("equipment"),E);
     auto Set=[&](const TCHAR* Key,const TSet<FName>& Values){ TArray<TSharedPtr<FJsonValue>> A; for(FName V:Values) A.Add(MakeShared<FJsonValueString>(V.ToString())); J->SetArrayField(Key,A); };
-    Set(TEXT("discovered"),Discovered); Set(TEXT("activated"),Activated); Set(TEXT("claimed"),Claimed);
+    Set(TEXT("discovered"),Discovered); Set(TEXT("activated"),Activated); Set(TEXT("claimed"),Claimed); Set(TEXT("rewardFacts"),RewardFacts); Set(TEXT("knownRecipes"),KnownRecipes);
     TArray<TSharedPtr<FJsonValue>> A; for(const auto& V:Explored) { auto P=MakeShared<FJsonObject>(); P->SetNumberField(TEXT("x"),V.X); P->SetNumberField(TEXT("y"),V.Y); A.Add(MakeShared<FJsonValueObject>(P)); } J->SetArrayField(TEXT("explored"),A);
     J->SetStringField(TEXT("origin"),Origin.ToString());
     FString Out; FJsonSerializer::Serialize(J,TJsonWriterFactory<>::Create(&Out)); return Out;
@@ -576,9 +589,24 @@ bool UHearthwardGameplayComponent::ValidateSnapshot(const FString& Json)
     for (const auto Key : {TEXT("discovered"),TEXT("activated"),TEXT("claimed"),TEXT("explored")}) if (!J->HasTypedField<EJson::Array>(Key)) return false;
     for(const auto& S:J->GetObjectField(TEXT("skills"))->Values)
     { const auto R=Find(TEXT("skills"),FString(*S.Key)); double V; if (!R || !S.Value->TryGetNumber(V) || V<0 || V>Number(R,TEXT("maxRank")) || V!=FMath::FloorToDouble(V)) return false; }
+    int32 Spent=0;
+    for(const auto& S:J->GetObjectField(TEXT("skills"))->Values)
+    {
+        Spent+=int32(S.Value->AsNumber());const FString Parent=Text(Find(TEXT("skills"),FString(*S.Key)),TEXT("requires"));
+        if(S.Value->AsNumber()>0 && !Parent.IsEmpty() && Number(J->GetObjectField(TEXT("skills")),Parent)<=0)return false;
+    }
+    if(Spent>HearthwardProgression::Budget(HearthwardProgression::Level(Number(J,TEXT("experience")))))return false;
+    for(const auto Key:{TEXT("rewardFacts"),TEXT("knownRecipes")})
+    {
+        const TArray<TSharedPtr<FJsonValue>>* Values;
+        if(!J->TryGetArrayField(Key,Values))return false;
+        TSet<FString> Seen;
+        for(const auto& V:*Values){FString Id;if(!V->TryGetString(Id) || Id.IsEmpty() || Seen.Contains(Id))return false;Seen.Add(Id);
+            if(FString(Key)==TEXT("knownRecipes") && !Find(TEXT("craftingRecipes"),Id))return false;}
+    }
     if(Number(J,TEXT("hunger"))>100 || Number(J,TEXT("campTier"))<1 || Number(J,TEXT("campTier"))>8 ||
         Number(J,TEXT("campTier"))!=FMath::FloorToDouble(Number(J,TEXT("campTier"))) ||
-        Number(J,TEXT("experience"))>MAX_int32 || Number(J,TEXT("experience"))!=FMath::FloorToDouble(Number(J,TEXT("experience")))) return false;
+        Number(J,TEXT("experience"))>HearthwardProgression::MaximumExperience() || Number(J,TEXT("experience"))!=FMath::FloorToDouble(Number(J,TEXT("experience")))) return false;
     for(const auto& V:J->GetObjectField(TEXT("events"))->Values)
     { double N; if(!V.Value->TryGetNumber(N) || !FMath::IsFinite(N) || N<0 || N>MAX_int32 || N!=FMath::FloorToDouble(N)) return false; }
     for(const auto Key:{TEXT("opponents"),TEXT("durability")})
@@ -617,7 +645,7 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     for(auto& A:LandmarkActors) if(A.IsValid()) A->Destroy();
     for(auto& A:OpponentActors) if(A.Value.IsValid()) A.Value->Destroy();
     LandmarkActors.Reset(); OpponentActors.Reset(); Stunned.Reset();
-    Skills.Reset(); Equipment.Reset(); Discovered.Reset(); Activated.Reset(); Claimed.Reset(); Events.Reset(); Explored.Reset(); Opponents.Reset(); Durability.Reset();
+    Skills.Reset(); RewardFacts.Reset(); KnownRecipes.Reset(); Equipment.Reset(); Discovered.Reset(); Activated.Reset(); Claimed.Reset(); Events.Reset(); Explored.Reset(); Opponents.Reset(); Durability.Reset();
     Sprinting=false; RecoveryDelay=0; ExploreDelay=0; AttackDelay=EnemyAttackDelay=CombatRemaining=CompanionAttackDelay=0; Feedback.Reset();
     CompanionOrder=TEXT("wait"); CompanionRoutineEnabled=false; CompanionRoutineActivity=NAME_None;
     CompanionTacticalIntent=TEXT("hold"); CompanionCombatTarget=NAME_None; CompanionCombatReason=TEXT("EXPLICIT_HOLD");
@@ -635,7 +663,7 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     for(const auto& V:J->GetObjectField(TEXT("durability"))->Values) Durability.Add(FName(*V.Key),V.Value->AsNumber());
     for(const auto& V:J->GetObjectField(TEXT("equipment"))->Values) Equipment.Add(FName(*V.Key),FName(*V.Value->AsString()));
     auto Set=[&](const TCHAR* Key,TSet<FName>& Values){ for(const auto& V:J->GetArrayField(Key)) Values.Add(FName(*V->AsString())); };
-    Set(TEXT("discovered"),Discovered); Set(TEXT("activated"),Activated); Set(TEXT("claimed"),Claimed);
+    Set(TEXT("discovered"),Discovered); Set(TEXT("activated"),Activated); Set(TEXT("claimed"),Claimed); if(J->HasField(TEXT("rewardFacts")))Set(TEXT("rewardFacts"),RewardFacts); if(J->HasField(TEXT("knownRecipes")))Set(TEXT("knownRecipes"),KnownRecipes);
     for(const auto& V:J->GetArrayField(TEXT("explored"))) Explored.Add(FVector2D(Number(V->AsObject(),TEXT("x")),Number(V->AsObject(),TEXT("y"))));
     if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled())
     {

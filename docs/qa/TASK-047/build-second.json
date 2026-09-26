@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "operation": "build.project",
+  "artifacts": [
+    {
+      "type": "unreal_build",
+      "path": "G:\\GameFactory\\Hearthward\\.agent-local\\TASK-047",
+      "state": "ready"
+    }
+  ],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [],
+  "payload": {
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=G:\\GameFactory\\Hearthward\\.agent-local\\TASK-047\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "G:\\GameFactory\\Hearthward\\.agent-local\\TASK-047",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 0,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=G:\\GameFactory\\Hearthward\\.agent-local\\TASK-047\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\n  Requested 1.5 GB memory per action, 15.63 GB available: limiting max parallel actions to 10\nUsing 'git status' to determine working set for adaptive non-unity build (G:\\GameFactory\\Hearthward\\.agent-local\\TASK-047).\nUbaServer - Listening on 0.0.0.0:1345\nInvalidating makefile for HearthwardEditor (source file added)\nUHT compiled-in object format Default\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (G:\\UnrealEngine\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35228 toolchain (E:\\VSC++\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.22621.0 SDK (C:\\Program Files (x86)\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardAgentInteraction.cpp, HearthwardBuildingComponent.cpp, HearthwardBuildingEconomy.cpp, HearthwardBuildingTests.cpp, HearthwardCrafting.cpp, HearthwardCraftingTests.cpp, HearthwardRepair.cpp, HearthwardWorkshopService.cpp, HearthwardCampSubsystem.cpp, HearthwardQuartermaster.cpp, HearthwardCombatComponent.cpp, HearthwardCombatTargetComponent.cpp, HearthwardProjectile.cpp, HearthwardCompanionDebug.cpp, HearthwardCompanionFixture.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, HearthwardProgression.cpp, HearthwardHarvestSubsystem.cpp, HearthwardInteractionComponent.cpp, HearthwardDroppedEquipment.cpp, HearthwardInventoryComponent.cpp, HearthwardInventoryDebug.cpp, HearthwardInventoryState.cpp, HearthwardStorageSubsystem.cpp, HearthwardInventoryMigration.cpp, HearthwardSaveGame.cpp, HearthwardSaveSubsystem.cpp, HearthwardSurvivalComponent.cpp, CombatTests.cpp, EquipmentProgressionTests.cpp, GameplayTests.cpp, InventoryTests.cpp, SaveTests.cpp, StorageTests.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenWidget.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 45 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 15.63 GB physical, 23.56 GB/33.32 GB committed\n  UBA Storage capacity 40 GB\n[1/45] Compile [x64] CombatTests.cpp\n[2/45] Compile [x64] EquipmentProgressionTests.cpp\n[3/45] Compile [x64] GameplayTests.cpp\n[4/45] Compile [x64] HearthwardAgentInteraction.cpp\n[5/45] Compile [x64] HearthwardBuildingComponent.cpp\n[6/45] Compile [x64] HearthwardBuildingEconomy.cpp\n[7/45] Compile [x64] HearthwardBuildingTests.cpp\n[8/45] Compile [x64] HearthwardCampSubsystem.cpp\n[9/45] Compile [x64] HearthwardCombatComponent.cpp\n[10/45] Compile [x64] HearthwardCompanionDebug.cpp\n[11/45] Compile [x64] HearthwardCompanionFixture.cpp\n[12/45] Compile [x64] HearthwardCrafting.cpp\n[13/45] Compile [x64] HearthwardDroppedEquipment.cpp\n[14/45] Compile [x64] HearthwardEquipment.cpp\n[15/45] Compile [x64] HearthwardGameplayComponent.cpp\n[16/45] Compile [x64] HearthwardHarvestSubsystem.cpp\n[17/45] Compile [x64] HearthwardInteractionComponent.cpp\n[18/45] Compile [x64] HearthwardInventoryComponent.cpp\n[19/45] Compile [x64] HearthwardInventoryDebug.cpp\n[20/45] Compile [x64] HearthwardInventoryMigration.cpp\n[21/45] Compile [x64] HearthwardInventoryState.cpp\n[22/45] Compile [x64] HearthwardProgression.cpp\n[23/45] Compile [x64] HearthwardProjectile.cpp\n[24/45] Compile [x64] HearthwardQuartermaster.cpp\n[25/45] Compile [x64] HearthwardRepair.cpp\n[26/45] Compile [x64] HearthwardSaveGame.cpp\n[27/45] Compile [x64] HearthwardSaveSubsystem.cpp\n[28/45] Compile [x64] HearthwardScreenActions.cpp\n[29/45] Compile [x64] HearthwardScreenCamp.cpp\n[30/45] Compile [x64] HearthwardScreenContent.cpp\n[31/45] Compile [x64] HearthwardScreenCrafting.cpp\n[32/45] Compile [x64] HearthwardScreenEquipment.cpp\n[33/45] Compile [x64] HearthwardScreenRepair.cpp\n[34/45] Compile [x64] HearthwardScreenWidget.cpp\n[35/45] Compile [x64] HearthwardStorageSubsystem.cpp\n[36/45] Compile [x64] HearthwardSurvivalComponent.cpp\n[37/45] Compile [x64] HearthwardWorkshopService.cpp\n[38/45] Compile [x64] Module.Hearthward.1.cpp\n[39/45] Compile [x64] Module.Hearthward.2.cpp\n[40/45] Compile [x64] Module.Hearthward.3.cpp\n[41/45] Compile [x64] SaveTests.cpp\n[42/45] Compile [x64] StorageTests.cpp\n[43/45] Link [x64] UnrealEditor-Hearthward.lib\n  正在创建库 G:/GameFactory/Hearthward/.agent-local/TASK-047/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.lib 和对象 G:/GameFactory/Hearthward/.agent-local/TASK-047/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.exp\n[44/45] Link [x64] UnrealEditor-Hearthward.dll\n[45/45] WriteMetadata HearthwardEditor.target [NoUba]\n\nTotal time in Unreal Build Accelerator local executor: 136.87 seconds\nOutput binary: G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\n\nResult: Succeeded\nTotal execution time: 141.03 seconds\nTrace written to file C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 29.8kb\n",
+    "stderr": ""
+  }
+}

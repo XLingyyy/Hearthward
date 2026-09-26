@@ -35,11 +35,17 @@ public:
     FHearthwardTransferResult Transfer(UHearthwardInventoryComponent* Personal, bool ToCamp,
         FName ItemId, int32 Count, FGuid OperationId, FGuid TimelineEpoch);
 
+    const FHearthwardInventorySnapshot& InventorySnapshot() const { return State.Shared.Snapshot(); }
+    FHearthwardTransferResult TransferInstance(UHearthwardInventoryComponent* Personal,bool ToCamp,FGuid Instance,FGuid Operation,FGuid Epoch);
+    bool CanWorkshop(UHearthwardInventoryComponent* Personal,const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,bool UseStorage,FGuid Repair=FGuid(),double Restore=0,bool Upgrade=false) const;
+    bool Workshop(UHearthwardInventoryComponent* Personal,const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,bool UseStorage,FGuid Repair=FGuid(),double Restore=0,bool Upgrade=false);
+
     UPROPERTY(BlueprintAssignable, Category="Hearthward|Inventory")
     FHearthwardStorageTransferred OnTransferred;
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 private:
+    bool PrepareWorkshop(UHearthwardInventoryComponent* Personal,const TMap<FName,int32>& Materials,const TMap<FName,int32>& Outputs,bool UseStorage,FGuid Repair,double Restore,bool Upgrade,FHearthwardInventoryState& BagAfter,FHearthwardInventoryState& CampAfter) const;
     friend class UHearthwardSaveSubsystem;
     FHearthwardStorageState State;
     TMap<FGuid,TMap<FName,int32>> Reservations;

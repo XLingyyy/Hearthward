@@ -6,6 +6,7 @@
 #include "../Actions/HearthwardTimedActionState.h"
 #include "../AI/HearthwardNPCMemory.h"
 #include "../Survival/HearthwardSurvivalState.h"
+#include "../Inventory/HearthwardDroppedEquipment.h"
 #include "HearthwardSaveGame.generated.h"
 
 USTRUCT(BlueprintType)
@@ -48,6 +49,11 @@ struct FHearthwardWorldSave
     UPROPERTY() float BrotherStamina = 100;
     UPROPERTY() FTransform Player = FTransform::Identity;
     UPROPERTY() FRotator View = FRotator::ZeroRotator;
+    UPROPERTY() TArray<FHearthwardGroundEquipment> GroundEquipment;
+    UPROPERTY() FHearthwardInventorySnapshot PlayerItems;
+    UPROPERTY() FHearthwardInventorySnapshot BrotherItems;
+    UPROPERTY() FHearthwardInventorySnapshot StorageItems;
+    // Read only for schema5 migration; schema6 writes authoritative containers above.
     UPROPERTY() TMap<FName, int32> Inventory;
     UPROPERTY() TMap<FName, int32> Storage;
     UPROPERTY() FHearthwardSavedTimer PlayerTimer;
@@ -106,18 +112,19 @@ class HEARTHWARD_API UHearthwardSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Schema = 5;
+    UPROPERTY() int32 Schema = 6;
     UPROPERTY() TArray<FHearthwardSavePoint> Points;
 };
 
 namespace HearthwardSave
 {
-    constexpr int32 CurrentSchema = 5;
+    constexpr int32 CurrentSchema = 6;
     constexpr int32 NPCStateVersion = 3;
     constexpr int32 MaxPoints = 50;
     // INDEX_NONE means no capacity. An index equal to Num means append.
     int32 SelectSlot(const TArray<FHearthwardSavePoint>& Points);
     bool Validate(const UHearthwardSaveGame& Pool);
+    bool MigrateInventory(UHearthwardSaveGame& Pool,FString& Error);
     bool Read(const FString& Path, UHearthwardSaveGame*& Out, FString& Error);
     bool Write(const FString& Path, UHearthwardSaveGame* Pool, FString& Error);
 }

@@ -38,7 +38,7 @@ bool FCraftingCatalogTest::RunTest(const FString& Parameters)
 {
     using namespace HearthwardData;
     const auto Config=Catalog()->GetObjectField(TEXT("crafting"));
-    TestTrue(TEXT("Prototype tuning identified"),Text(Config,TEXT("status")).StartsWith(TEXT("PROTOTYPE_ONLY")));
+    TestTrue(TEXT("Approved 047 crafting status"),Text(Config,TEXT("status"))==TEXT("APPROVED_TASK_047"));
     TestTrue(TEXT("Usable reach"),Number(Config,TEXT("reach"))>0);
     const double Max=Number(Config,TEXT("maxBatches"));
     TestTrue(TEXT("Finite positive integer batch limit"),FMath::IsFinite(Max) && Max>=1 && Max<=MAX_int32 && Max==FMath::FloorToDouble(Max));

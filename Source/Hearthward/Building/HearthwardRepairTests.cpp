@@ -8,7 +8,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRepairCatalogTest,"Hearthward.Gameplay.Repair.
 bool FRepairCatalogTest::RunTest(const FString& Parameters)
 {
     using namespace HearthwardData;
-    TestTrue(TEXT("Prototype repair economy identified"),Text(Catalog()->GetObjectField(TEXT("repair")),TEXT("status")).StartsWith(TEXT("PROTOTYPE_ONLY")));
+    TestTrue(TEXT("Approved 047 repair status"),Text(Catalog()->GetObjectField(TEXT("repair")),TEXT("status"))==TEXT("APPROVED_TASK_047"));
     TSet<FString> Seen;
     for(const auto& V:Rows(TEXT("repairRecipes")))
     {

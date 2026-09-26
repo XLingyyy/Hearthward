@@ -1,4 +1,5 @@
 #include "HearthwardSurvivalComponent.h"
+#include "../Gameplay/HearthwardProgression.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "GameFramework/PainCausingVolume.h"
@@ -36,8 +37,8 @@ FGuid UHearthwardSurvivalComponent::Epoch() const { return GetWorld()->GetSubsys
 float& UHearthwardSurvivalComponent::Health() { if(auto* G=Gameplay()) return G->Health; return BrotherHealth; }
 float& UHearthwardSurvivalComponent::Hunger() { if(auto* G=Gameplay()) return G->Hunger; return BrotherHunger; }
 float& UHearthwardSurvivalComponent::Stamina() { if(auto* G=Gameplay()) return G->Stamina; return BrotherStamina; }
-float UHearthwardSurvivalComponent::MaxHealth() const { if(auto* G=Gameplay()) return G->MaxHealth(); return 100+GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Bonus(TEXT("cumulative_hp_bonus")); }
-float UHearthwardSurvivalComponent::MaxStamina() const { if(auto* G=Gameplay()) return G->MaxStamina(); return 100+GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Bonus(TEXT("cumulative_stamina_bonus")); }
+float UHearthwardSurvivalComponent::MaxHealth() const { if(auto* G=Gameplay()) return G->MaxHealth(); const auto* P=UGameplayStatics::GetPlayerPawn(GetWorld(),0); const auto* G=P?P->FindComponentByClass<UHearthwardGameplayComponent>():nullptr; return 100+HearthwardProgression::Attribute(G?G->Level():1,TEXT("hp_bonus"))+GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Bonus(TEXT("cumulative_hp_bonus")); }
+float UHearthwardSurvivalComponent::MaxStamina() const { if(auto* G=Gameplay()) return G->MaxStamina(); const auto* P=UGameplayStatics::GetPlayerPawn(GetWorld(),0); const auto* G=P?P->FindComponentByClass<UHearthwardGameplayComponent>():nullptr; return 100+HearthwardProgression::Attribute(G?G->Level():1,TEXT("stamina_bonus"))+GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Bonus(TEXT("cumulative_stamina_bonus")); }
 bool UHearthwardSurvivalComponent::Enabled() const
 {
     const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
@@ -228,8 +229,8 @@ void UHearthwardSurvivalComponent::AdvanceContinuous(double Delta,double Calenda
     if((Resting || Treatment) && (GetOwner()->GetVelocity().Size()>5 || Swimming)) CancelAction();
     const bool Combat=InCombat();
     const bool Running=Gameplay() && Gameplay()->IsRunning();
-    const double Recovery=Combat?.001:(Treatment?.03:(Resting?.02:.005));
-    State.Advance(Health(),Hunger(),MaxHealth(),Delta,Calendar,StartW,(Delta>0 && (Running || Swimming || Combat))?2:1,Recovery);
+    const double Recovery=(Combat?.001:(Treatment?.03:(Resting?.02:.005)))*(1+(Gameplay()?Gameplay()->Effect(TEXT("recovery")):0));
+    State.Advance(Health(),Hunger(),MaxHealth(),Delta,Calendar,StartW,((Delta>0 && (Running || Swimming || Combat))?2:1)*(1-(Gameplay()?Gameplay()->Effect(TEXT("hunger")):0)),Recovery);
     State.SafeSeconds=Combat?0:State.SafeSeconds+Delta;
     if(!Gameplay() && Alive() && !Swimming)
     {

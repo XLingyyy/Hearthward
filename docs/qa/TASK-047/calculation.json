@@ -1,0 +1,267 @@
+{
+  "status": "PASS",
+  "scope": "design arithmetic only; no runtime or natural-map validation",
+  "counts": {
+    "levels": 60,
+    "skills": 29,
+    "items": 62,
+    "durable_items": 38,
+    "recipes": 49,
+    "checks": 32
+  },
+  "checks": [
+    {
+      "name": "unique definition and recipe IDs",
+      "passed": true
+    },
+    {
+      "name": "all 27 live item IDs preserved",
+      "passed": true
+    },
+    {
+      "name": "all 29 skill IDs preserved",
+      "passed": true
+    },
+    {
+      "name": "integer nonnegative weights",
+      "passed": true
+    },
+    {
+      "name": "exact accepted basic weights",
+      "passed": true
+    },
+    {
+      "name": "60 contiguous level rows",
+      "passed": true
+    },
+    {
+      "name": "strictly increasing cumulative XP",
+      "passed": true
+    },
+    {
+      "name": "XP curve and level boundaries",
+      "passed": true
+    },
+    {
+      "name": "half growth contribution endpoint",
+      "passed": true
+    },
+    {
+      "name": "every level attribute increment",
+      "passed": true
+    },
+    {
+      "name": "87 points denominator, cap floor60%=52 at level60",
+      "passed": true
+    },
+    {
+      "name": "point budget at every level",
+      "passed": true
+    },
+    {
+      "name": "all skill prerequisites acyclic and reachable",
+      "passed": true
+    },
+    {
+      "name": "no XP or random stun skill remains",
+      "passed": true
+    },
+    {
+      "name": "recipe references and positive counts",
+      "passed": true
+    },
+    {
+      "name": "blueprint references",
+      "passed": true
+    },
+    {
+      "name": "uses actual facility levels",
+      "passed": true
+    },
+    {
+      "name": "all acquisition chains reachable including tool/blueprint gates",
+      "passed": true
+    },
+    {
+      "name": "every advertised source exists",
+      "passed": true
+    },
+    {
+      "name": "046 recipes unchanged",
+      "passed": true
+    },
+    {
+      "name": "every durable item has accessible repair basis",
+      "passed": true
+    },
+    {
+      "name": "normal equipment repair basis equals craft input",
+      "passed": true
+    },
+    {
+      "name": "unique claims never craftable",
+      "passed": true
+    },
+    {
+      "name": "four armor locations supplied",
+      "passed": true
+    },
+    {
+      "name": "legacy accessories cannot provide ghost armor",
+      "passed": true
+    },
+    {
+      "name": "all common weapons meet 20 unarmored body kills calibration",
+      "passed": true
+    },
+    {
+      "name": "three stages satisfy P/H=.2",
+      "passed": true
+    },
+    {
+      "name": "initial armored player 5 hits calibration",
+      "passed": true
+    },
+    {
+      "name": "no free repair or cheaper split repair",
+      "passed": true
+    },
+    {
+      "name": "backpack per-person endpoints and valid upgrade costs",
+      "passed": true
+    },
+    {
+      "name": "starter loadout fits each 100-capacity bag",
+      "passed": true
+    },
+    {
+      "name": "normal ending below cap",
+      "passed": true
+    }
+  ],
+  "budgets": [
+    {
+      "id": "slice",
+      "experience": 1500,
+      "level": 8,
+      "skill_budget": 7
+    },
+    {
+      "id": "mid",
+      "experience": 18260,
+      "level": 31,
+      "skill_budget": 27
+    },
+    {
+      "id": "ending",
+      "experience": 37720,
+      "level": 45,
+      "skill_budget": 39
+    }
+  ],
+  "starter_weight": 20.5,
+  "starter_free_capacity": 79.5,
+  "weapons": [
+    {
+      "id": "axe",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "bow",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "shortblade",
+      "hits_per_enemy": 5,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "longblade",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "spear",
+      "hits_per_enemy": 5,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "shortblade_2",
+      "hits_per_enemy": 5,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "longblade_2",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "spear_2",
+      "hits_per_enemy": 5,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "blunt_2",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "bow_2",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "crossbow_2",
+      "hits_per_enemy": 3,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "shortblade_3",
+      "hits_per_enemy": 5,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "longblade_3",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "spear_3",
+      "hits_per_enemy": 5,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "blunt_3",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "bow_3",
+      "hits_per_enemy": 4,
+      "enemies_before_break": 20.0
+    },
+    {
+      "id": "crossbow_3",
+      "hits_per_enemy": 3,
+      "enemies_before_break": 20.0
+    }
+  ],
+  "placement_pending": [
+    "world:wood",
+    "world:stone",
+    "world:ore",
+    "world:meat",
+    "world:herb",
+    "world:hide",
+    "world:flower",
+    "world:wild_food",
+    "world:rich_ore",
+    "claim:campaign_start_amulet",
+    "reward:rescue_05",
+    "claim:side_hunter_blueprint",
+    "claim:hometown_hearth_blade"
+  ],
+  "tested_commit": "b250b3b544e3e4da08740251aeee56b118259b1a"
+}

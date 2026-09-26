@@ -1,0 +1,158 @@
+{
+  "ok": false,
+  "checks": {
+    "starter kits both brothers": true,
+    "kit claim idempotent": true,
+    "enable isolated saves": true,
+    "new progress": true,
+    "select workbench": true,
+    "start workbench": true,
+    "five second construction workbench": true,
+    "craft second axe": true,
+    "two independent axes": true,
+    "select instance 535EC9744E77CAABFE1398A9A0E1846A": true,
+    "repair quarter via actual UI": true,
+    "repair only selected copy": true,
+    "transfer chosen copy to brother": true,
+    "identity and durability after transfer": true,
+    "select brother bag": true,
+    "select brother exact instance": true,
+    "explicit brother equip": true,
+    "brother uses selected GUID": true,
+    "return selected equipment": true,
+    "select own bag": true,
+    "defeat XP awarded once": true,
+    "exact guard XP": true,
+    "learn approved node": true,
+    "free reset without refill": true,
+    "rescue once": true,
+    "camp tier two": true,
+    "upgrade my backpack UI": true,
+    "my rank2": true,
+    "pay separately for brother backpack": true,
+    "brother rank2": true,
+    "drop selected item": true,
+    "ground item actually exists": true,
+    "save equipment and ground": true,
+    "load current node": true,
+    "reject stale UI mutation": true,
+    "inventory exact restore": false
+  },
+  "method": "Actual PIE components and UI actions; fixture resources and victory; no natural-map or physical-input claim",
+  "placement_workbench": "可以建造：左键确认，Q旋转，右键取消",
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/TASK-047/docs/qa/TASK-047/verify_equipment_pie.py\", line 158, in tick\n    pending=next(iterator)\n            ^^^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/TASK-047/docs/qa/TASK-047/verify_equipment_pie.py\", line 132, in run\n    check('inventory exact restore',items()==snapshot and items(brother_bag)==brother_snapshot)\n  File \"G:/GameFactory/Hearthward/.agent-local/TASK-047/docs/qa/TASK-047/verify_equipment_pie.py\", line 14, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: inventory exact restore\n",
+  "final_state": {
+    "version": 1,
+    "tier": 1,
+    "rationHalfPoints": 200,
+    "rationDrainMinutes": 0.9054019041359425,
+    "donatedPoints": 0,
+    "calendar": 0.9875842034816742,
+    "hometown": false,
+    "rescued": [],
+    "camps": [
+      {
+        "id": "camp",
+        "position": {
+          "x": 200,
+          "y": 200,
+          "z": 93.1500039100647
+        }
+      }
+    ],
+    "facilities": [],
+    "regions": [
+      {
+        "id": "camp_forage",
+        "camp": "camp",
+        "job": "forage",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 0,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_wood",
+        "camp": "camp",
+        "job": "wood",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 1,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_stone",
+        "camp": "camp",
+        "job": "stone",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 2,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_ore",
+        "camp": "camp",
+        "job": "ore",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 3,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      }
+    ],
+    "sources": []
+  },
+  "save_status": "世界与知识已恢复；旧时间线请求已废止",
+  "clock_calendar": 0.9875842034816742
+}

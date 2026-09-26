@@ -35,7 +35,7 @@ public:
     double GetWeight() const { return State.GetWeightHundredths() / 100.0; }
 
     UFUNCTION(BlueprintPure, Category="Hearthward|Inventory")
-    double GetCapacity() const { return State.CapacityHundredths / 100.0; }
+    double GetCapacity() const { return State.GetCapacityHundredths() / 100.0; }
 
     UFUNCTION(BlueprintPure, Category="Hearthward|Inventory")
     float GetMoveSpeedMultiplier() const { return State.GetMoveSpeedMultiplier(); }
@@ -46,6 +46,23 @@ public:
     UPROPERTY(BlueprintAssignable, Category="Hearthward|Inventory")
     FHearthwardInventoryChanged OnInventoryChanged;
 
+    UFUNCTION(BlueprintPure) FString DescribeInventory() const;
+    const FHearthwardInventorySnapshot& Snapshot() const { return State.Snapshot(); }
+    bool RestoreInventory(const FHearthwardInventorySnapshot& Data,bool Notify=true);
+    const FHearthwardItemInstance* FindInstance(FGuid Id) const { return State.FindInstance(Id); }
+    UFUNCTION(BlueprintCallable) FGuid FirstInstance(FName Item,bool PreferUnequipped=false) const { return State.FirstInstance(Item,PreferUnequipped); }
+    UFUNCTION(BlueprintCallable) FGuid EquippedInstance(FName Slot) const { return State.EquippedInstance(Slot); }
+    FName EquippedItem(FName Slot) const { return State.EquippedItem(Slot); }
+    bool IsEquipped(FGuid Id) const { return State.IsEquipped(Id); }
+    UFUNCTION(BlueprintCallable) bool EquipInstance(FGuid Id);
+    UFUNCTION(BlueprintCallable) bool WearInstance(FGuid Id,double Amount);
+    bool RepairInstance(FGuid Id,double Amount,const TMap<FName,int32>& Materials,bool Notify=true);
+    EHearthwardInventoryResult GatherFrom(UHearthwardInventoryComponent* Source,FName Item,int32 Count,FGuid Tool,double Wear);
+    EHearthwardInventoryResult TransferInstanceTo(UHearthwardInventoryComponent* Target,FGuid Id);
+    EHearthwardInventoryResult InsertInstance(const FHearthwardItemInstance& Instance,bool Notify=true);
+    bool RemoveInstance(FGuid Id,bool Notify=true);
+    UFUNCTION(BlueprintCallable) bool UpgradeBackpack(bool Notify=true);
+    int32 BackpackRank() const { return State.GetBackpackRank(); }
     bool Reserve(FName Item);
     void ReleaseReservation() { Reserved=NAME_None; }
     bool CommitReservation(FName Remainder=NAME_None,bool Notify=true);

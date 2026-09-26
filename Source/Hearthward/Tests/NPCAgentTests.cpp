@@ -671,13 +671,16 @@ bool FNPCAgentWorkshopTest::RunTest(const FString&)
 {
     auto* NPC=NewObject<UHearthwardInventoryComponent>();auto* Player=NewObject<UHearthwardInventoryComponent>();
     Player->TryAdd(TEXT("wood"),10);NPC->TryAdd(TEXT("wood"),3);
-    TestTrue(TEXT("NPC craft debits own bag"),HearthwardWorkshop::Commit(NPC,nullptr,TEXT("craft"),TEXT("arrows"),2));
+    TestTrue(TEXT("NPC craft debits own bag"),HearthwardWorkshop::Commit(NPC,TEXT("craft"),TEXT("arrows"),2));
     TestEqual(TEXT("Actual NPC arrows"),NPC->GetItemCount(TEXT("arrow")),8);TestEqual(TEXT("Player wood unchanged"),Player->GetItemCount(TEXT("wood")),10);
-    TestFalse(TEXT("Material disappearance rejects craft"),HearthwardWorkshop::Commit(NPC,nullptr,TEXT("craft"),TEXT("arrows"),2));TestEqual(TEXT("No partial output"),NPC->GetItemCount(TEXT("arrow")),8);
-    NPC->TryAdd(TEXT("axe"),1);NPC->TryAdd(TEXT("wood"),1);TMap<FName,float> Dur={{TEXT("axe"),20}};
-    TestFalse(TEXT("Missing rope rolls back durability and wood"),HearthwardWorkshop::Commit(NPC,&Dur,TEXT("repair"),TEXT("axe"),1));TestEqual(TEXT("Original durability"),Dur[TEXT("axe")],20.f);TestEqual(TEXT("No partial repair cost"),NPC->GetItemCount(TEXT("wood")),2);
-    NPC->TryAdd(TEXT("rope"),1);TestTrue(TEXT("Own equipment repaired"),HearthwardWorkshop::Commit(NPC,&Dur,TEXT("repair"),TEXT("axe"),1));TestEqual(TEXT("Repair wood cost"),NPC->GetItemCount(TEXT("wood")),0);
-    TestFalse(TEXT("Completed repair cannot settle again"),HearthwardWorkshop::Commit(NPC,&Dur,TEXT("repair"),TEXT("axe"),1));
+    TestFalse(TEXT("Material disappearance rejects craft"),HearthwardWorkshop::Commit(NPC,TEXT("craft"),TEXT("arrows"),2));TestEqual(TEXT("No partial output"),NPC->GetItemCount(TEXT("arrow")),8);
+    NPC->TryAdd(TEXT("axe"),1);NPC->TryAdd(TEXT("wood"),1);
+    const FGuid Axe=NPC->FirstInstance(TEXT("axe"));NPC->WearInstance(Axe,60);
+    TestFalse(TEXT("Missing stone leaves durability and wood intact"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
+    TestEqual(TEXT("Original instance durability"),NPC->FindInstance(Axe)->Durability,20.);TestEqual(TEXT("No partial repair cost"),NPC->GetItemCount(TEXT("wood")),2);
+    NPC->TryAdd(TEXT("stone"),3);TestTrue(TEXT("Own selected equipment repaired"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
+    TestEqual(TEXT("Repair wood cost"),NPC->GetItemCount(TEXT("wood")),0);TestEqual(TEXT("Maximum restored"),NPC->FindInstance(Axe)->Durability,80.);
+    TestFalse(TEXT("Completed repair cannot settle again"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
     TestEqual(TEXT("Still no player debit"),Player->GetItemCount(TEXT("wood")),10);return true;
 }
 #endif
