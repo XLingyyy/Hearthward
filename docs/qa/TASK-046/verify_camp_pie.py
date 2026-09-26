@@ -59,9 +59,12 @@ def build(kind,x,y):
 def finish(error=None):
     if error:report['error']=error
     report['ok']=not error and all(report['checks'].values())
-    if st.get('camp'):report['final_state']=state()
-    if st.get('save'):report['save_status']=st['save'].get_status()
-    if st.get('clock'):report['clock_calendar']=st['clock'].get_snapshot().elapsed_calendar_minutes
+    try:
+        if st.get('camp'):report['final_state']=state()
+        if st.get('save'):report['save_status']=st['save'].get_status()
+        if st.get('clock'):report['clock_calendar']=st['clock'].get_snapshot().elapsed_calendar_minutes
+    except Exception:
+        report['observer_error']=traceback.format_exc();report['ok']=False
     (out/'frame-times.json').write_text(json.dumps(frames),encoding='utf-8')
     (out/'results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     unreal.unregister_slate_post_tick_callback(handle)
@@ -166,7 +169,7 @@ def run():
     check('save two camps',st['save'].save_point(True))
     saved=state();report['saved_state']=saved
     shot('world');yield delay(.6)
-    levels.editor_request_end_play();yield wait(lambda:not levels.is_in_play_in_editor());yield delay(.6)
+    levels.editor_request_end_play();st.clear();yield wait(lambda:not levels.is_in_play_in_editor());yield delay(.6)
     levels.editor_request_begin_play();yield wait(levels.is_in_play_in_editor);yield delay(1)
     locate();check('new PIE continue from disk',st['ui'].execute_action('continue'));yield delay(.2)
     check('two camps and facilities survive disk',state()['facilities']==saved['facilities'] and len(state()['camps'])==2)

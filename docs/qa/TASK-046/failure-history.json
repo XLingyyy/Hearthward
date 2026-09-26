@@ -1,0 +1,8 @@
+{
+  "source_patch_selection": "Initial native 23/24: always selecting the first refreshed patch interrupted partial patches and reduced long-run supply. Finish the lowest-remaining usable patch first. Camp retest 6/6 passed.",
+  "save_growth": "PIE reached 53 successful checks before save rejected an invalid snapshot. Brother save validation still capped HP/stamina at 100 after tier bonuses. Validate against the saved tier and add GrowthSaveLimits.",
+  "unity_build": "Post-commit unity compilation exposed a Bed parameter/global name collision (C4459). Rename BedId; final Editor build succeeded.",
+  "fixture_access": "Bootstrap companion camp has no storage access component and Actor.add_component_by_class is not exposed to Python. Use the existing development-only Hearthward.Storage.CreateTestAccess command.",
+  "recording_restart": "Recording callback held the first PIE world during the second PIE startup. Clear observation state before ending first PIE; always export observer errors.",
+  "ui_status": "Visual review found enabled production still showing a cached paused status. Clear cached status on production toggle."
+}

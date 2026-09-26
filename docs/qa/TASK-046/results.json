@@ -1,0 +1,774 @@
+{
+  "ok": true,
+  "checks": {
+    "enable isolated saves": true,
+    "new progress": true,
+    "initial twenty people and one camp": true,
+    "reserve build": true,
+    "no upfront visible debit": true,
+    "save blocks construction reservation": true,
+    "movement interruption releases without cost": true,
+    "select workbench": true,
+    "start workbench": true,
+    "five second construction workbench": true,
+    "workbench exact 72 wood": true,
+    "rescue fact accepted once": true,
+    "growth tab action": true,
+    "tier 2 through real UI": true,
+    "select cooking": true,
+    "start cooking": true,
+    "five second construction cooking": true,
+    "select bed": true,
+    "start bed": true,
+    "five second construction bed": true,
+    "donate real shared food": true,
+    "tier 3 conditions and cost": true,
+    "manual craft instantaneous": true,
+    "manual exact exchange": true,
+    "configure processing": true,
+    "assign processing person": true,
+    "enable processing": true,
+    "in-flight real batch": true,
+    "upgrade begins": true,
+    "upgrade suspends batch": true,
+    "facility II retains batch": true,
+    "source 0": true,
+    "source 1": true,
+    "source 2": true,
+    "forage worker 0": true,
+    "forage worker 1": true,
+    "forage worker 2": true,
+    "forage worker 3": true,
+    "explicit food destination": true,
+    "sleep actual eight hours": true,
+    "sleep W plus 480 and A unchanged": true,
+    "sleep ordinary forage completes five": true,
+    "sleep processing completes at II speed": true,
+    "sleep hunger advances without automatic meal": true,
+    "public meal real consumption": true,
+    "move actual facility starts": true,
+    "move valid placement": true,
+    "move preserves ledger and active input": true,
+    "active batch cancellation requires consent": true,
+    "confirmed cancellation loses input only": true,
+    "resume after cancellation": true,
+    "actual demolition": true,
+    "paid demolition floors per material": true,
+    "save live economy": true,
+    "mutate then reload": true,
+    "stale epoch rejected": true,
+    "paid ledger and sources restored": true,
+    "batch and rations restore exactly": true,
+    "actual victory callback fixture": true,
+    "hometown has four zero-paid gifts": true,
+    "one shared tier and rescued population": true,
+    "save two camps": true,
+    "new PIE continue from disk": true,
+    "two camps and facilities survive disk": true,
+    "rescue and shared tier survive disk": true
+  },
+  "method": "Actual PIE components and UI actions; fixture resources and victory; no natural-map or physical-input claim",
+  "placement_workbench": "可以建造：左键确认，Q旋转，右键取消",
+  "placement_cooking": "可以建造：左键确认，Q旋转，右键取消",
+  "placement_bed": "可以建造：左键确认，Q旋转，右键取消",
+  "saved_state": {
+    "version": 1,
+    "tier": 3,
+    "rationHalfPoints": 278,
+    "rationDrainMinutes": 9.823155283927917,
+    "donatedPoints": 52.5,
+    "calendar": 520.1898221746087,
+    "hometown": true,
+    "rescued": [
+      "fixture_rescue"
+    ],
+    "camps": [
+      {
+        "id": "camp",
+        "position": {
+          "x": 200,
+          "y": 200,
+          "z": 93.1500039100647
+        }
+      },
+      {
+        "id": "hometown",
+        "position": {
+          "x": 10000,
+          "y": 0,
+          "z": 0
+        }
+      }
+    ],
+    "facilities": [
+      {
+        "id": "7B55527942AF8A5E71836F876FDDA04A",
+        "kind": "workbench",
+        "camp": "camp",
+        "level": 2,
+        "paid": {
+          "wood": 152,
+          "stone": 40,
+          "rope": 10
+        },
+        "paused": false
+      },
+      {
+        "id": "00B4AE374AF7D18B1FBD3FABED2532AE",
+        "kind": "bed",
+        "camp": "camp",
+        "level": 1,
+        "paid": {
+          "wood": 6,
+          "rope": 2
+        },
+        "paused": false
+      },
+      {
+        "id": "5593827E45ED8C30BA40A3B75B123978",
+        "kind": "warehouse_access",
+        "camp": "hometown",
+        "level": 1,
+        "paid": {},
+        "paused": false
+      },
+      {
+        "id": "784E30374763BF890B349EA2086C7361",
+        "kind": "bed",
+        "camp": "hometown",
+        "level": 1,
+        "paid": {},
+        "paused": false
+      },
+      {
+        "id": "F432C8C94008195429142BA5D7C62990",
+        "kind": "bed",
+        "camp": "hometown",
+        "level": 1,
+        "paid": {},
+        "paused": false
+      },
+      {
+        "id": "DECC1B4146353CC8F4A7F7A83CAD3EBF",
+        "kind": "campfire",
+        "camp": "hometown",
+        "level": 1,
+        "paid": {},
+        "paused": false
+      }
+    ],
+    "regions": [
+      {
+        "id": "camp_forage",
+        "camp": "camp",
+        "job": "forage",
+        "facility": "00000000000000000000000000000000",
+        "workers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "player": false,
+        "brother": false,
+        "enabled": true,
+        "safe": true,
+        "toRations": true,
+        "priority": 0,
+        "batch": {
+          "active": true,
+          "work": 152.7321617603302,
+          "required": 360,
+          "inputs": {
+            "wild_food": 1
+          },
+          "outputs": {
+            "wild_food": 1
+          },
+          "toRations": true
+        },
+        "completed": 5
+      },
+      {
+        "id": "camp_wood",
+        "camp": "camp",
+        "job": "wood",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 1,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_stone",
+        "camp": "camp",
+        "job": "stone",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 2,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_ore",
+        "camp": "camp",
+        "job": "ore",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 3,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "facility_7B55527942AF8A5E71836F876FDDA04A",
+        "camp": "camp",
+        "job": "rope",
+        "facility": "7B55527942AF8A5E71836F876FDDA04A",
+        "workers": [
+          4
+        ],
+        "player": false,
+        "brother": false,
+        "enabled": true,
+        "safe": true,
+        "toRations": false,
+        "priority": 3,
+        "batch": {
+          "active": true,
+          "work": 1.2869084998965263,
+          "required": 360,
+          "inputs": {
+            "wood": 2
+          },
+          "outputs": {
+            "rope": 1
+          },
+          "toRations": false
+        },
+        "completed": 1
+      },
+      {
+        "id": "hometown_forage",
+        "camp": "hometown",
+        "job": "forage",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 0,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "hometown_wood",
+        "camp": "hometown",
+        "job": "wood",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 1,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "hometown_stone",
+        "camp": "hometown",
+        "job": "stone",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 2,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "hometown_ore",
+        "camp": "hometown",
+        "job": "ore",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 3,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      }
+    ],
+    "sources": [
+      {
+        "id": "fixture_food_0",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": 1400,
+          "y": 200,
+          "z": 93.1500039100647
+        },
+        "capacity": 16,
+        "remaining": 10,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "fixture_food_1",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": 1400,
+          "y": 400,
+          "z": 93.1500039100647
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "fixture_food_2",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": 1400,
+          "y": 600,
+          "z": 93.1500039100647
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      }
+    ]
+  },
+  "final_state": {
+    "version": 1,
+    "tier": 3,
+    "rationHalfPoints": 278,
+    "rationDrainMinutes": 10.489822268486023,
+    "donatedPoints": 52.5,
+    "calendar": 520.8564891591668,
+    "hometown": true,
+    "rescued": [
+      "fixture_rescue"
+    ],
+    "camps": [
+      {
+        "id": "camp",
+        "position": {
+          "x": 200,
+          "y": 200,
+          "z": 93.1500039100647
+        }
+      },
+      {
+        "id": "hometown",
+        "position": {
+          "x": 10000,
+          "y": 0,
+          "z": 0
+        }
+      }
+    ],
+    "facilities": [
+      {
+        "id": "7B55527942AF8A5E71836F876FDDA04A",
+        "kind": "workbench",
+        "camp": "camp",
+        "level": 2,
+        "paid": {
+          "wood": 152,
+          "stone": 40,
+          "rope": 10
+        },
+        "paused": false
+      },
+      {
+        "id": "00B4AE374AF7D18B1FBD3FABED2532AE",
+        "kind": "bed",
+        "camp": "camp",
+        "level": 1,
+        "paid": {
+          "wood": 6,
+          "rope": 2
+        },
+        "paused": false
+      },
+      {
+        "id": "5593827E45ED8C30BA40A3B75B123978",
+        "kind": "warehouse_access",
+        "camp": "hometown",
+        "level": 1,
+        "paid": {},
+        "paused": false
+      },
+      {
+        "id": "784E30374763BF890B349EA2086C7361",
+        "kind": "bed",
+        "camp": "hometown",
+        "level": 1,
+        "paid": {},
+        "paused": false
+      },
+      {
+        "id": "F432C8C94008195429142BA5D7C62990",
+        "kind": "bed",
+        "camp": "hometown",
+        "level": 1,
+        "paid": {},
+        "paused": false
+      },
+      {
+        "id": "DECC1B4146353CC8F4A7F7A83CAD3EBF",
+        "kind": "campfire",
+        "camp": "hometown",
+        "level": 1,
+        "paid": {},
+        "paused": false
+      }
+    ],
+    "regions": [
+      {
+        "id": "camp_forage",
+        "camp": "camp",
+        "job": "forage",
+        "facility": "00000000000000000000000000000000",
+        "workers": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "player": false,
+        "brother": false,
+        "enabled": true,
+        "safe": true,
+        "toRations": true,
+        "priority": 0,
+        "batch": {
+          "active": true,
+          "work": 155.39882969856262,
+          "required": 360,
+          "inputs": {
+            "wild_food": 1
+          },
+          "outputs": {
+            "wild_food": 1
+          },
+          "toRations": true
+        },
+        "completed": 5
+      },
+      {
+        "id": "camp_wood",
+        "camp": "camp",
+        "job": "wood",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 1,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_stone",
+        "camp": "camp",
+        "job": "stone",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 2,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_ore",
+        "camp": "camp",
+        "job": "ore",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 3,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "facility_7B55527942AF8A5E71836F876FDDA04A",
+        "camp": "camp",
+        "job": "rope",
+        "facility": "7B55527942AF8A5E71836F876FDDA04A",
+        "workers": [
+          4
+        ],
+        "player": false,
+        "brother": false,
+        "enabled": true,
+        "safe": true,
+        "toRations": false,
+        "priority": 3,
+        "batch": {
+          "active": true,
+          "work": 2.120242230594158,
+          "required": 360,
+          "inputs": {
+            "wood": 2
+          },
+          "outputs": {
+            "rope": 1
+          },
+          "toRations": false
+        },
+        "completed": 1
+      },
+      {
+        "id": "hometown_forage",
+        "camp": "hometown",
+        "job": "forage",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 0,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "hometown_wood",
+        "camp": "hometown",
+        "job": "wood",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 1,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "hometown_stone",
+        "camp": "hometown",
+        "job": "stone",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 2,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "hometown_ore",
+        "camp": "hometown",
+        "job": "ore",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 3,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      }
+    ],
+    "sources": [
+      {
+        "id": "fixture_food_0",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": 1400,
+          "y": 200,
+          "z": 93.1500039100647
+        },
+        "capacity": 16,
+        "remaining": 10,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "fixture_food_1",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": 1400,
+          "y": 400,
+          "z": 93.1500039100647
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "fixture_food_2",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": 1400,
+          "y": 600,
+          "z": 93.1500039100647
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      }
+    ]
+  },
+  "save_status": "世界与知识已恢复；旧时间线请求已废止",
+  "clock_calendar": 520.8564891591668
+}

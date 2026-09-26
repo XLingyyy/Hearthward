@@ -1,47 +1,77 @@
-# TASK-046 验算与验证
+# TASK-046 营地经济实施验证
 
-2026-09-26，Windows／Python标准库；设计任务，D1—D6均PROPOSED。父基线：`3b17c4e9623b87464e4c172d11c4cae6e3439abc`；范围基线：`0ae89b9fef8c7777bac7fa9d03bcaa9c0210150e`。受测设计与计算器提交：`1652933d0f448335e930c145d2d4203defbb99b6`；其后仅补充结果与交接，不修改候选数据或计算器。
+2026-09-26，Windows 11、UE 5.8.2、Win64 Development Editor、RTX 4060 Laptop。Owner已批准D1—D6；沿canonical046实现，原稿编号048。任务分支已同步main@2dab1f86223bd71890e20f6ed45eef644d0729ca，未合并main。
 
-## 可复算经济模型
+## 受测版本与结果
 
-命令：`python -X utf8 docs/qa/TASK-046/calculate.py`。读取[候选表](../../planning/TASK-046/economy-candidate.json)，逐层展开建材配方，检查营地／设施前置可达、净采集预算、有限源点投入／产出守恒、整餐口粮和拆除取整。输出保存在`calculations.json`，该文件是设计模型结果。
+- 最终运行源码：`d9ba86d44007783ad7d74069695fd79f55d1c9e8`。Editor构建通过；实际PIE **65/65通过**。后续只更新测试录像观察器、文档和证据，无玩法源码或数据变化。
+- 原生相关 **25/25通过**，0失败、0测试警告，受测源码`d3441673b5025911fb13c4f700da03051947874f`。随后d9ba86d仅清空启停队列后的缓存显示文字，不改变这些测试覆盖的状态、库存、保存或时间逻辑，因此未重复运行原生套件。
+- 仓库工具 **33/33通过**；源码与工具未因后续文档整理改变。仓库结构和允许路径自检通过，详见`repo-validation.txt`。范围批准基线`482cc48681ce7f309eb36eb8421a379d5c8f2229`。
+- 测试存档全部使用独立随机`HearthwardSaveTestPool`；没有使用或覆盖用户档。夹具不保存Content资产。
 
-| 项目 | 计算结果 |
-|---|---|
-| 首工作台 | 木72，5秒／2份，180A秒＝3分钟 |
-| 2阶第一次成长 | 另木48石24；两笔合计木120石24，净采集6分钟，建造另5秒 |
-| 三类其他首级核心设施 | 冶炼、锻造、烹饪各360份原料等价，900A秒＝15分钟 |
-| 四类设施各一座I级 | 合计净采集48分钟；不要求在第一切片全部完成 |
-| 8阶＋四类设施各一座III | 木4360石3324矿1000，含中间料和燃料，净采集约361.83分钟；不含战斗／路线／其他建筑，无折扣／后台劳动力 |
-| 4普通人、3组各16份植物、普通活动、60游戏日 | 真实采960份、吃150餐；口粮100→310，最低约88.52，无缺餐 |
-| 5普通人、4组各16份植物、高活动、60游戏日 | 真实采1200份、吃300餐；口粮100→160，最低约88.82，无缺餐 |
-| 4普通人承担全天高活动 | 平均每日缺9点；W=14401第一次不足整餐5点，模拟当即停止，不把之后的缺粮当可持续 |
-| 5普通人仍只有3组植物 | 60日只采1053份，小于理论1200；缺源时等待，不能用人手绕过两日冷却 |
-| 4普通人连续睡眠8小时、不自动吃饭 | 5份完成，另1份已投入尚差240工人·W；公共池100−8＋12.5＝104.5 |
-| 工作台III拆除 | 实付木272石120绳10锭20→返木217石96绳8锭16；逐材料累计投入后向下取80% |
+证据：[构建](build.json)、[原生命令](native-final-command.json)、[25项报告](automation.json)、[PIE启动](pie-launch.json)、[65项结果](results.json)、[PIE脚本](verify_camp_pie.py)。
 
-长期整餐模型从兄弟各25饱食开始，以低于25时各明确吃一餐为假设；每次整扣5，不用平均餐费掩盖库存的短时缺口。此假设代表玩家及时提供营地饭食，**没有给弟弟增加远程食用公共口粮的自动权限**。睡眠场景只验算生产与公共池；兄弟睡眠饥饿沿044另结算，不把模型误认为完整生存模拟。
+## 实际验证范围
 
-木石矿净采集预算采用5A秒2份，矿石为新候选假设。生产区伐木／采石／采矿普通工人15W出2份，兄弟等效3后与手动速度相符；192份／工人日只是输入充分时的能力上限。真实地图木石矿数量、安全区域、两日刷新白名单与吞吐仍未实测。设施1.25／1.5后台倍率只减少工时，不提高每批产物或减输入。
+原生覆盖有限来源60游戏日收支、整餐扣点、无源停产、分帧与八小时结算等价、耗尽刷新／占地暂停、批次恢复、人物跨营地唯一分配、五身体岗位、兄弟实际工效与睡眠停止、II级速度、真实投入和缺料等待、救援去重、累计退款、畸形快照、个人／共享建造预留；新增成长存档回归验证三阶弟弟120生命／110耐力合法、超上限拒绝。现有库存、存档、时钟、生存、建造／加工逻辑回归一并通过。
 
-6小时左右的“全部建设独自净采集”是成本展开结果，并非要求玩家花6小时手动收集。其余普通族人和实际安全源点可以承担材料劳动；在自然地图配置和十小时路线测试前，不能据此声称整体节奏已通过。首轮救援／返回在40—55分钟成长、55—60分钟保存，是042切片下的内容预算。
+PIE使用真实角色、建造组件、仓储、营地系统、时钟、保存和UI命令：
 
-## 尚未验证
+- 工作台72木材、五秒建造、移动中断释放预留、施工中禁止保存；通过真实仓储转移提供明确测试材料。
+- 救援事实去重、面板提交材料升二阶、烹饪设施和累计40点捐粮解锁三阶；材料按实际表扣除。
+- 即时木2→绳1、独立工作台队列、投入只扣一次、工作台II升级期间暂停并保留批次。
+- 配置三组有限食物点并分配4人；床睡眠一次推进480W且A不变，完成5份采食和II级加工，兄弟饥饿推进、不自动吃饭；公共餐实际扣5点。
+- 实际搬迁保留账本和投入；取消活动批次须确认，已投入不退；拆烹饪设施返木192／石96，即实付材料各80%向下取整。
+- 保存后修改再回档，拒绝旧epoch，准确恢复设施实付、源点、批次与口粮；故乡胜利回调夹具生成仓储1、床2、篝火1，赠送账本为零。
+- 结束第一轮PIE、重开世界、从磁盘继续，恢复两营地设施、同一阶位与获救人口。
 
-UE Editor构建、原生／PIE／Shipping、本轮实际路线和完整经济玩法均`NOT_RUN`：本单未改UE源码或运行数据，运行时暂无正式营地经济系统。有限来源计算器不是UE生产、保存、UI或分帧正确性的测试。
+本轮通过游戏UI处理函数和组件公开接口驱动，不声称物理键鼠操作或正式自然地图路线验收。65项检查列表以results.json为准。
 
-源点白名单与布置（048）、装备／高级配方（047等内容任务）、正式稳定ID、现有Demo档迁移、劳动／建设UI、多人手动与后台争料的事务实现待批准施工。R11／R12／R13整项保持OPEN。
+## 画面与录像
 
-## 仓库验证
+已目视检查[发展](growth.png)、[分工](workers.png)、[设施](facilities.png)、[口粮](food.png)及[世界画面](world.png)，营地四页文字与操作项在当前视口可见，无相互遮挡。沿用已有皮革面板、家具和角色资源，没有新增专用设施模型或劳动动画。
 
-| 命令 | 结果／证据 |
-|---|---|
-| `python -X utf8 docs/qa/TASK-046/calculate.py` | PASS；[calculations.json](calculations.json)，计算器与候选绑定上述受测提交 |
-| `python -X utf8 -m unittest discover -s scripts/tests -v` | 33／33 PASS；[tool-tests.txt](tool-tests.txt) |
-| `python -X utf8 scripts/validate_repo.py` | PASS，0错误；[repo-check.txt](repo-check.txt) |
-| `python -X utf8 scripts/validate_repo.py --task TASK-046 --base 0ae89b9fef8c7777bac7fa9d03bcaa9c0210150e` | PASS，检查17个变动路径、0错误；[scope-check.txt](scope-check.txt) |
-| `git diff --check` | PASS，无空白错误 |
+[实际PIE录像](camp-pie.mp4)采用引擎Shot SHOWUI约每0.5秒以上采一帧，并按采样时刻生成可变帧率视频；包含编辑器窗口，非高帧率动作质量或性能证据。采样数、时长和编码命令见[录像记录](video.json)。
 
-首次仓库自检报11个缺失相对链接，证据保留在[首次日志](repo-check-initial-sparse.txt)。逐项对应稀疏检出排除的`art_source`和`Runtime`已有文档；通过`git sparse-checkout add art_source Runtime`恢复本地检出范围，无仓库文件修改、不下载LFS大对象，随后重跑检查。没有删除链接或跳过校验。
+## 修复与失败历史
 
-无需重复045的UE测试，其既有证据保持原SHA和覆盖范围。
+1. 首轮原生23/24：资源选择总返回刚刷新的首个点，中断其他点采收，破坏长期轮换。改为优先采完存量较少的可用点，随后6/6营地复测、最终25/25通过。
+2. PIE首次推进到存档后被拒绝：兄弟保存上限仍固定100，与营地成长冲突。按存档阶位校验，新增实际完整SaveGame池的上限回归；最终存读档和跨PIE通过。
+3. 提交后的unity构建发现Bed参数与其他源文件全局名冲突；改为BedId，最终Editor构建通过。
+4. 视觉检查发现启用生产时仍显示旧“已暂停”；启停后清空缓存提示。
+5. Python夹具尝试访问Bootstrap营地不存在的仓储组件、调用未暴露的Actor方法；改用仓库既有Development测试入口。录像观察器跨PIE保留失效世界指针，已在结束世界前清空，并保证观察器错误写入报告。
+
+简要记录见[failure-history](failure-history.json)。最终通过统计不包含失败尝试。
+
+## 可复现命令
+
+从GameFactory使用其现有Python环境、公开UEClient，显式指定本任务Hearthward.uproject和`G:/UnrealEngine/UE_5.8`：
+
+```python
+u.build.project(target="HearthwardEditor", configuration="Development", timeout=1200)
+u.testing.run_automation_tests(
+    "Hearthward.Camp+Hearthward.Inventory+Hearthward.Save+Hearthward.Time+Hearthward.Survival+Hearthward.Gameplay",
+    report_dir="<task>/Saved/Task046/native-final",
+    extra_args=["-NullRHI", "-culture=en",
+      "-ini:Engine:[/Script/EngineSettings.GameMapsSettings]:EditorStartupMap=/Engine/Maps/Entry"],
+    timeout=300)
+u.runtime.launch_editor(map_path="/Game/Hearthward/Bootstrap/L_Bootstrap", extra_args=[
+    "-NoSound", "-HearthwardSaveTestPool=<unique UUID>",
+    "-HearthwardAIBundlePath=G:/GameFactory/Hearthward/Runtime/LocalAI",
+    "-ExecutePythonScript=<task>/docs/qa/TASK-046/verify_camp_pie.py"])
+# 等待Saved/Task046/pie/results.json，检查ok及每项checks，再由同一UEClient停止本次PID。
+```
+
+仓库内执行`python -X utf8 scripts/validate_repo.py --task TASK-046 --base 482cc48681ce7f309eb36eb8421a379d5c8f2229`及`python -X utf8 -m unittest discover -s scripts/tests -v`。
+
+## 内容和验收边界
+
+- 正式食物物种、自然地图安全源点／容量／路线仍由048配表。046实现有限点位接口；本次三组各16份为显式测试夹具，不在自然地图凭空补来源。四人基本生活尚未构成自然图实玩循环。
+- 正式营救、故乡夺回关卡未新增。系统接可信完成回调；不会把Demo击杀或模型文本当正式胜利。
+- 普通族人是人口／岗位状态，未新增20个个体模型或日常动画。兄弟需要实际到达岗位且停止其他活动；未新增劳动动作片段。
+- 锻造等高级装备和菜单由047等内容单定义；046可建造／升级相应设施，没有发明未批准配方。专用设施美术继续复用现有模型。
+- 营地内已登记树木使用两日耗尽刷新；石头／矿物／其他自然点没有擅加刷新白名单。营地外世界完整刷新及旅行不在本单。
+- 原生、PIE和录像不等于完整十小时经济平衡、全图流送、独立Shipping安装、第二机器、正式自然地图全流程或Owner体验验收；这些均未运行。
+- Owner／Reviewer均XLingyyy；Issue可选。按仓库规则，正式独立PR审查待完成，不自批或合并main。
+
+批准前的成本展开、3分钟／15分钟净采集预算及历史验证保留于[设计阶段报告](DESIGN_REPORT.md)与[原计算器](calculate.py)，不将纸面预算计入运行通过项。

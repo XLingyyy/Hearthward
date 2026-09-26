@@ -1,0 +1,26 @@
+{
+  "method": "Actual Shot SHOWUI screenshots requested at >=0.5s intervals; no physical input; variable frame duration from capture request timestamps; 1280x720 letterbox encode",
+  "frames": 69,
+  "duration_seconds": 50.828999999997905,
+  "command": [
+    "G:\\GameFactory\\.venv\\Lib\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
+    "-y",
+    "-f",
+    "concat",
+    "-safe",
+    "0",
+    "-i",
+    "G:\\GameFactory\\Hearthward\\.agent-local\\TASK-046\\Saved\\Task046\\pie\\frames.ffconcat",
+    "-vf",
+    "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2",
+    "-c:v",
+    "libx264",
+    "-pix_fmt",
+    "yuv420p",
+    "-crf",
+    "23",
+    "-fps_mode",
+    "vfr",
+    "G:\\GameFactory\\Hearthward\\.agent-local\\TASK-046\\docs\\qa\\TASK-046\\camp-pie.mp4"
+  ]
+}
