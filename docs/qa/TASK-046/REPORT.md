@@ -1,6 +1,6 @@
 # TASK-046 验算与验证
 
-2026-09-26，Windows／Python标准库；设计任务，D1—D6均PROPOSED。父基线：`3b17c4e9623b87464e4c172d11c4cae6e3439abc`；范围基线：`0ae89b9fef8c7777bac7fa9d03bcaa9c0210150e`。本文件在正式验证后补充受测完整提交号和命令结果。
+2026-09-26，Windows／Python标准库；设计任务，D1—D6均PROPOSED。父基线：`3b17c4e9623b87464e4c172d11c4cae6e3439abc`；范围基线：`0ae89b9fef8c7777bac7fa9d03bcaa9c0210150e`。受测设计与计算器提交：`1652933d0f448335e930c145d2d4203defbb99b6`；其后仅补充结果与交接，不修改候选数据或计算器。
 
 ## 可复算经济模型
 
@@ -34,4 +34,14 @@ UE Editor构建、原生／PIE／Shipping、本轮实际路线和完整经济玩
 
 ## 仓库验证
 
-待绑定设计提交后执行：仓库自检、T-002工具测试、相对范围基线的路径检查。无需重复045的UE测试，其既有证据保持原SHA和覆盖范围。
+| 命令 | 结果／证据 |
+|---|---|
+| `python -X utf8 docs/qa/TASK-046/calculate.py` | PASS；[calculations.json](calculations.json)，计算器与候选绑定上述受测提交 |
+| `python -X utf8 -m unittest discover -s scripts/tests -v` | 33／33 PASS；[tool-tests.txt](tool-tests.txt) |
+| `python -X utf8 scripts/validate_repo.py` | PASS，0错误；[repo-check.txt](repo-check.txt) |
+| `python -X utf8 scripts/validate_repo.py --task TASK-046 --base 0ae89b9fef8c7777bac7fa9d03bcaa9c0210150e` | PASS，检查17个变动路径、0错误；[scope-check.txt](scope-check.txt) |
+| `git diff --check` | PASS，无空白错误 |
+
+首次仓库自检报11个缺失相对链接，证据保留在[首次日志](repo-check-initial-sparse.txt)。逐项对应稀疏检出排除的`art_source`和`Runtime`已有文档；通过`git sparse-checkout add art_source Runtime`恢复本地检出范围，无仓库文件修改、不下载LFS大对象，随后重跑检查。没有删除链接或跳过校验。
+
+无需重复045的UE测试，其既有证据保持原SHA和覆盖范围。
