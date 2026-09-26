@@ -1,4 +1,7 @@
 #include "HearthwardCharacter.h"
+#include "Interaction/HearthwardResourceInteractionComponent.h"
+#include "Combat/HearthwardCombatComponent.h"
+#include "Combat/HearthwardProjectile.h"
 #include "Survival/HearthwardSurvivalComponent.h"
 #include "Companion/HearthwardCompanionFixture.h"
 #include "Animation/HearthwardHeroAnimInstance.h"
@@ -33,6 +36,7 @@
 
 AHearthwardCharacter::AHearthwardCharacter()
 {
+    CreateDefaultSubobject<UHearthwardCombatComponent>(TEXT("Combat"));
     CreateDefaultSubobject<UHearthwardSurvivalComponent>(TEXT("Survival"));
     Gameplay = CreateDefaultSubobject<UHearthwardGameplayComponent>(TEXT("Gameplay"));
     CreateDefaultSubobject<UHearthwardBuildingComponent>(TEXT("Building"));
@@ -179,6 +183,20 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     Input->BindAction(SprintAction, ETriggerEvent::Completed, this, &AHearthwardCharacter::StopSprint);
     Input->BindAction(SprintAction, ETriggerEvent::Canceled, this, &AHearthwardCharacter::StopSprint);
     Input->BindAction(AttackPreviewAction, ETriggerEvent::Started, this, &AHearthwardCharacter::PreviewAttack);
+    auto Bind=[&](const TCHAR* Name,FKey Key,void (AHearthwardCharacter::*Pressed)(),void (AHearthwardCharacter::*Released)()=nullptr)
+    {
+        auto* A=NewObject<UInputAction>(this,Name); A->ValueType=EInputActionValueType::Boolean;
+        InputMapping->MapKey(A,Key); Input->BindAction(A,ETriggerEvent::Started,this,Pressed);
+        if(Released) { Input->BindAction(A,ETriggerEvent::Completed,this,Released); Input->BindAction(A,ETriggerEvent::Canceled,this,Released); }
+    };
+    Bind(TEXT("CombatExecute"),EKeys::F,&AHearthwardCharacter::Execution);
+    Bind(TEXT("CombatContextR"),EKeys::R,&AHearthwardCharacter::ContextR);
+    Bind(TEXT("CombatGuard"),EKeys::RightMouseButton,&AHearthwardCharacter::GuardStart,&AHearthwardCharacter::GuardEnd);
+    Bind(TEXT("CombatDodge"),EKeys::LeftAlt,&AHearthwardCharacter::CombatDodge);
+    Bind(TEXT("CombatLock"),EKeys::MiddleMouseButton,&AHearthwardCharacter::CombatLock);
+    Bind(TEXT("CombatSense"),EKeys::V,&AHearthwardCharacter::CombatSense);
+    Bind(TEXT("CombatThrow"),EKeys::G,&AHearthwardCharacter::CombatThrow);
+    Input->BindAction(AttackPreviewAction,ETriggerEvent::Completed,this,&AHearthwardCharacter::ReleaseAttack);
     Subsystem->AddMappingContext(InputMapping, 0);
     Player->SetInputMode(FInputModeGameOnly());
     Player->bShowMouseCursor = false;
@@ -203,7 +221,10 @@ void AHearthwardCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AHearthwardCharacter::Move(const FInputActionValue& Value)
 {
     if(Gameplay->Enabled && Gameplay->Health<=0) return;
+    auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
     const FVector2D Axis = Value.Get<FVector2D>();
+    if(!Axis.IsNearlyZero() && Combat->Executing()) Combat->Cancel();
+    if(Combat->MovementLocked()) return;
     if (!Axis.IsNearlyZero()) { TimedAction->InterruptAction(); FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction(); }
     const FRotator Yaw(0.0f, GetControlRotation().Yaw, 0.0f);
     AddMovementInput(FRotationMatrix(Yaw).GetUnitAxis(EAxis::X), Axis.Y);
@@ -220,6 +241,10 @@ void AHearthwardCharacter::Look(const FInputActionValue& Value)
 void AHearthwardCharacter::StartJump()
 {
     if ((Gameplay->Enabled && Gameplay->Health <= 0) || !CanJump()) return;
+    auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
+    if(Combat->Executing()) Combat->Cancel();
+    if(Combat->Busy() || Combat->MovementMultiplier()<1) return;
+    if(Gameplay->Enabled && !Gameplay->SpendStamina(5)) return;
     TimedAction->InterruptAction();
     FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction();
     Jump();
@@ -230,19 +255,18 @@ void AHearthwardCharacter::StopSprint() { Gameplay->SetSprinting(false); }
 
 void AHearthwardCharacter::PreviewAttack()
 {
+    if(auto* B=FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->ConfirmPlacement(); return; }
     if (!Gameplay->Enabled)
     {
         if (auto* Animation = Cast<UHearthwardHeroAnimInstance>(GetMesh()->GetAnimInstance()))
             Animation->PlayAttack();
         return;
     }
-    if (auto* Player = Cast<APlayerController>(GetController()))
-        if (auto* HUD = Cast<AHearthwardHUD>(Player->GetHUD()))
-        {
-            HUD->Attack();
-            return;
-        }
-    Gameplay->Attack();
+    auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
+    if(Combat->Executing()) { Combat->Cancel(); return; }
+    if(Combat->Aiming) { Combat->Shoot(false); return; }
+    const auto* PC=Cast<APlayerController>(GetController());
+    Combat->Attack(PC && PC->IsInputKeyDown(EKeys::LeftShift));
 }
 
 void AHearthwardCharacter::ToggleInventory()
@@ -259,6 +283,11 @@ void AHearthwardCharacter::Interact()
     if(!Survival->Alive()) return;
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
         if(Survival->BeginRescue(It->FindComponentByClass<UHearthwardSurvivalComponent>())) return;
+    auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
+    if(Combat->Busy()) return;
+    const auto* CarryController=Cast<APlayerController>(GetController());
+    if(Combat->Carry(CarryController && CarryController->IsInputKeyDown(EKeys::LeftShift))) return;
+    for(TActorIterator<AHearthwardProjectile> It(GetWorld());It;++It) if(It->Recover(this)) return;
     Survival->CancelAction();
     if(FindComponentByClass<UHearthwardBuildingComponent>()->IsPlacing()) return;
     if(FindComponentByClass<UHearthwardBuildingComponent>()->NearbyWorkbench().IsValid())
@@ -283,3 +312,29 @@ void AHearthwardCharacter::Landed(const FHitResult& Hit)
     Super::Landed(Hit);
     if(auto* S=FindComponentByClass<UHearthwardSurvivalComponent>()) S->FallImpact(Speed);
 }
+
+void AHearthwardCharacter::Execution() { FindComponentByClass<UHearthwardCombatComponent>()->Execute(); }
+void AHearthwardCharacter::ContextR()
+{
+    auto* C=FindComponentByClass<UHearthwardCombatComponent>();
+    if(C->Execute()) return;
+    for(TActorIterator<AActor> It(GetWorld());It;++It)
+        if(const auto* Resource=It->FindComponentByClass<UHearthwardResourceInteractionComponent>();Resource && Resource->CanAccessStorage(this))
+        {
+            if(auto* PC=Cast<APlayerController>(GetController())) if(auto* HUD=Cast<AHearthwardHUD>(PC->GetHUD());HUD && HUD->Screen) HUD->Screen->ExecuteAction(TEXT("page:storage"));
+            return;
+        }
+    C->Reload();
+}
+void AHearthwardCharacter::GuardStart()
+{
+    if(auto* B=FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->CancelPlacement(); return; }
+    auto* C=FindComponentByClass<UHearthwardCombatComponent>();
+    if(C->RangedSelected()) C->Aim(true); else C->SetGuard(true);
+}
+void AHearthwardCharacter::GuardEnd() { auto* C=FindComponentByClass<UHearthwardCombatComponent>(); C->Aim(false); C->SetGuard(false); }
+void AHearthwardCharacter::ReleaseAttack() { auto* C=FindComponentByClass<UHearthwardCombatComponent>(); if(C->Aiming) C->Shoot(true); }
+void AHearthwardCharacter::CombatDodge() { FindComponentByClass<UHearthwardCombatComponent>()->Dodge(GetLastMovementInputVector()); }
+void AHearthwardCharacter::CombatLock() { FindComponentByClass<UHearthwardCombatComponent>()->ToggleLock(); }
+void AHearthwardCharacter::CombatSense() { FindComponentByClass<UHearthwardCombatComponent>()->Sense(); }
+void AHearthwardCharacter::CombatThrow() { FindComponentByClass<UHearthwardCombatComponent>()->Throw(TEXT("firepot")); }

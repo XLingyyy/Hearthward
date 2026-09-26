@@ -1,6 +1,6 @@
 # 最短上手路径
 
-核对日期：2026-09-25。当前审计主干：`origin/main@ee3f4c2eede9f856c4589fd4b85b1b05c82a1b6b`。Windows Demo 已发布；其受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，与主干 SHA 分开看。[项目状态](PROJECT_STATE.md)和[TASK-041 账本](planning/TASK-041-baseline-ledger.md)记录实现、集成、验证及待办；[发行报告](releases/demo-20260924/REPORT.md)记录 Shipping 包和本机安装范围。
+核对日期：2026-09-26。当前主干：`origin/main@7ce8262bd8721dc59fb0703d365dab2e10340f89`，PR #46已合入044生存实现。本轮045已获批准并实现战斗／潜入运行模块，见[任务单](tasks/TASK-045.md)。Windows Demo 已发布；其受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，与主干 SHA 分开看。[项目状态](PROJECT_STATE.md)和[TASK-041 账本](planning/TASK-041-baseline-ledger.md)记录实现、集成、验证及待办；[发行报告](releases/demo-20260924/REPORT.md)记录 Shipping 包和本机安装范围。
 
 ## 先看游戏
 

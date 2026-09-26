@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "TASK-045",
+  "title": "实现玩家战斗、潜入和统一处决",
+  "status": "Blocked",
+  "updated_at": "2026-09-26",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-045-combat-stealth",
+  "source_refs": [
+    "用户：继续往后推进，任务045；延续按序交付与提交推送工作方式",
+    "原稿TASK-047映射canonical TASK-045",
+    "GDD v0.3 Q071—090/Q173—208；R06/R07/R10",
+    "Hearthward_Audit_2026-09-24动作武器潜入缺口",
+    "基线origin/main@7ce8262bd8721dc59fb0703d365dab2e10340f89，含PR #46和044实现；击晕等效击杀沿用已批准规则",
+    "用户批准D1—D6并要求沿用045施工、完成后提交推送；D4两种入口完全相同，按键起3秒处决动画、目标不可反抗、零耐力、静音。"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-043",
+    "TASK-044"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-045-combat-alert.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/tasks/TASK-045.json",
+    "docs/tasks/TASK-045.md",
+    "docs/handoffs/TASK-045.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/design/DSGN-R06-combat-stealth.md",
+    "docs/contracts/README.md",
+    "docs/contracts/CT-TASK-045-combat-alert.md",
+    "docs/qa/TASK-045/",
+    "Source/Hearthward/",
+    "Resources/Data/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "暗杀和击晕共用按键起3秒动作，目标不可反抗、零耐力、静音、同代次一次清敌",
+    "实现盾牌、动作窗口、部位伤害、独立感知、尸体报警和感应，并接入角色输入",
+    "保存动作稳定性和战斗快照，兼容缺combat字段旧档，拒绝旧时间线命中",
+    "完成Editor构建、相关原生测试、真实PIE操作；证据区分实际覆盖与未配置内容",
+    "同步README和交接，提交推送任务分支并清理本单闲置工作树"
+  ],
+  "non_goals": [
+    "不新增多人战斗、长期布防或无限增援",
+    "不擅定047正式装备绝对配表",
+    "不合并main或跳号"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested next task completion and commit on 2026-09-26",
+    "push": "granted: user requested task branch push on 2026-09-26",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner／Reviewer XLingyyy，Issue可选。",
+    "批准覆盖本单相关公共接口、输入、游戏数据和保存协调；只复用现有资产，不改共享地图。",
+    "实现与证据交付后等待独立PR审查；Owner／Reviewer按用户指定保持XLingyyy，未合并main。",
+    "专用处决资产、自然敌人和区域内容、正式装备弹道及未加载世界状态集成仍未配置；详见交接。"
+  ]
+}

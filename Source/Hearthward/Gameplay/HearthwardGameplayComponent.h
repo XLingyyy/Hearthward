@@ -75,14 +75,17 @@ public:
     float IncomingDamage(const AActor* Target,float Seconds) const;
     bool IsRunning() const { return Sprinting && Stamina>0 && GetOwner()->GetVelocity().Size2D()>5; }
     void Record(FName Kind, FName Target, int32 Count = 1);
+    void CommitOpponentHealth(FName Target,float Health,float PreviousHealth=-1);
+    bool CommitEquipment(FName Id);
+    void NotifyCombat() { CombatRemaining=3; }
     FString SaveSnapshot() const;
     static bool ValidateSnapshot(const FString& Json);
     void Restore(const FString& Json);
     FVector LocationPosition(FName Id) const;
     UFUNCTION() void InventoryChanged();
 private:
-    bool AttackWith(bool Heavy,bool Ranged);
-    void DamageOpponent(FName Target,float Damage);
+
+    void DamageOpponent(FName Target,float Damage,AActor* Source);
     void TickCompanion(float Delta);
     TMap<FName,float> Stunned;
     void CreateLandmarks();

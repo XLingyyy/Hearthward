@@ -1,4 +1,6 @@
 #include "HearthwardHUD.h"
+#include "../Combat/HearthwardCombatComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "HearthwardScreenWidget.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -74,6 +76,29 @@ void AHearthwardHUD::DrawInventory(const UHearthwardInventoryComponent& Inventor
 void AHearthwardHUD::DrawHUD()
 {
     Super::DrawHUD();
+    if(Canvas && Screen && Screen->GetPage()==TEXT("hud") && GetOwningPawn())
+        if(const auto* C=GetOwningPawn()->FindComponentByClass<UHearthwardCombatComponent>())
+            for(auto* Target:C->SensedTargets())
+            {
+                // Screen-space bone contours remain visible behind walls without modifying shared materials.
+                if(const auto* Mesh=Target->FindComponentByClass<USkeletalMeshComponent>())
+                {
+                    for(int32 I=1;I<Mesh->GetNumBones();++I)
+                    {
+                        const FName Bone=Mesh->GetBoneName(I),Parent=Mesh->GetParentBone(Bone);
+                        FVector2D A,B;
+                        if(GetOwningPlayerController()->ProjectWorldLocationToScreen(Mesh->GetSocketLocation(Bone),A)
+                            && GetOwningPlayerController()->ProjectWorldLocationToScreen(Mesh->GetSocketLocation(Parent),B)) DrawLine(A.X,A.Y,B.X,B.Y,FLinearColor(.9f,.65f,.2f),2);
+                    }
+                }
+                else
+                {
+                    FVector2D Top,Bottom; const auto P=Target->GetActorLocation();
+                    if(GetOwningPlayerController()->ProjectWorldLocationToScreen(P+FVector(0,0,85),Top)
+                        && GetOwningPlayerController()->ProjectWorldLocationToScreen(P-FVector(0,0,85),Bottom))
+                    { const float W=FMath::Abs(Bottom.Y-Top.Y)*.2; DrawLine(Top.X-W,Top.Y,Bottom.X-W,Bottom.Y,FLinearColor(.9f,.65f,.2f),2); DrawLine(Top.X+W,Top.Y,Bottom.X+W,Bottom.Y,FLinearColor(.9f,.65f,.2f),2); }
+                }
+            }
     if(Screen) return;
     if (IsSaveMenuOpen() || IsStorageMenuOpen()) return;
     APawn* Pawn = GetOwningPawn();
