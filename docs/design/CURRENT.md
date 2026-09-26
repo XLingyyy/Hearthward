@@ -46,6 +46,10 @@
 
 ## TASK-044 已批准规则范围
 
-Owner于2026-09-26明确“044的设计我已经确认可以采纳”。[DSGN-R04](DSGN-R04-survival-recovery.md)D1—D6全部生效：恢复上限和零饱食、药品量／时长／中断损耗、耐力时钟／对话暂停例外、倒地残伤／救援环境、自动食药权限，以及同时间结算顺序。原GDD冲突以获批正文为准；22项纸面案例成为后续验收输入，尚未运行。
+Owner于2026-09-26明确“044的设计我已经确认可以采纳”。[DSGN-R04](DSGN-R04-survival-recovery.md)D1—D6全部生效：恢复上限和零饱食、药品量／时长／中断损耗、耐力时钟／对话暂停例外、倒地残伤／救援环境、自动食药权限，以及同时间结算顺序。原GDD冲突以获批正文为准；实现及定向运行证据见[044报告](../qa/TASK-044/REPORT.md)，其18项原生／23项PIE不等于全场景验收。
 
-R04／R08／R09／R18／R22登记获准子范围，未配表、半份药技术表示、环境伤害配置等继续保留。[CT-TASK-044](../contracts/CT-TASK-044-survival-transitions.md)公共字段与存档迁移保持DRAFT；设计批准不等于运行验证或合并。
+R04／R08／R09／R18／R22登记获准子范围；044半份药与schema5已实施，并经PR #46合入main。环境伤害正式配表等限制见报告与[CT-TASK-044](../contracts/CT-TASK-044-survival-transitions.md)。
+
+## TASK-045 待确认设计
+
+[DSGN-R06 战斗与潜入](DSGN-R06-combat-stealth.md)提出D1—D6和C01—C20验收输入；状态PROPOSED，不替代已批准规则。R06／R07／R10保持OPEN，新数值未写入游戏；[CT-TASK-045](../contracts/CT-TASK-045-combat-alert.md)是工程草案。

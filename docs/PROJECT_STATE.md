@@ -1,6 +1,6 @@
 # Hearthward 项目状态
 
-核对日期：2026-09-26。审计主干为 `origin/main@a4998b10da54f162def767fa8bb7e308594bd490`，已包含 PR #37、#38、#40—#44；PR #44 仅合入 TASK-041 的文档和仓库校验规则。这里记录该主干可确认的实现和各版本已有证据；当前任务归属以任务分支快照、交接和调度者确认核对，GitHub Issue 可选。逐项来源与待办见 [TASK-041 基线与验收账本](planning/TASK-041-baseline-ledger.md)。
+核对日期：2026-09-26。当前核对主干为 `origin/main@7ce8262bd8721dc59fb0703d365dab2e10340f89`，PR #46已合入043批准文档和044生存实现；以下旧审计与发行证据保留各自SHA。这里记录该主干可确认的实现和各版本已有证据；当前任务归属以任务分支快照、交接和调度者确认核对，GitHub Issue 可选。逐项来源与待办见 [TASK-041 基线与验收账本](planning/TASK-041-baseline-ledger.md)。
 
 ## 当前可运行范围
 
@@ -34,4 +34,8 @@ Demo 的构建基线为 `main@68e68d817c4d5a39bf43eb7f27863fc734d04aef`，发行
 
 ## TASK-044 本轮实施
 
-Owner已批准D1—D6并明确“沿用044，开始实现游戏代码”。分支codex/TASK-044-survival-rules从043的b7d4df35763bca5dd0bb97ed9ab78eea4f68098a继续，范围协调提交0ef6b18a0f13436784c88ab9505a3f4e270a4dc3，未引入052。当前已实现共享生存状态、药品预留／半份、互救、失败入口和schema5生存快照；受测源码8f512a7dc4cf46e33d70c67c9294b6a2f3d8da77已通过Editor构建、原生18/18和PIE 23/23，详见本单验证报告。main未合并本轮改动。
+Owner已批准D1—D6并明确“沿用044，开始实现游戏代码”。分支codex/TASK-044-survival-rules从043的b7d4df35763bca5dd0bb97ed9ab78eea4f68098a继续，范围协调提交0ef6b18a0f13436784c88ab9505a3f4e270a4dc3，未引入052。当前已实现共享生存状态、药品预留／半份、互救、失败入口和schema5生存快照；受测源码8f512a7dc4cf46e33d70c67c9294b6a2f3d8da77已通过Editor构建、原生18/18和PIE 23/23，详见本单验证报告。该实现已由PR #46合入main@7ce8262；运行证据仍绑定8f512a7，不声称重跑合并提交。
+
+## TASK-045 当前工作
+
+由主干7ce8262开始codex/TASK-045-combat-stealth，按原稿047处理设计。D1—D6与动作／警戒契约已形成PROPOSED草案，R06／R07／R10待Owner确认；当前无玩法代码／配表／资产变更，UE验证NOT_RUN。
