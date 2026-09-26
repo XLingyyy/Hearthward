@@ -4,7 +4,7 @@
 
 ## 基线与范围
 
-main基线e95fde185dc38d0b69c2de42ce66db0d1fd93294；施工批准登记提交2617b7f。分支codex/TASK-048-nature-content；专用目录G:/GameFactory/Hearthward/.agent-local/TASK-048。原TASK-027和其他工作树保持原状。授权Source/Hearthward、Resources/Data、Resources/UI、Content/Hearthward/Nature及任务文档；未改Config／Runtime／art_source／主地图。
+main基线e95fde185dc38d0b69c2de42ce66db0d1fd93294；施工批准登记提交2617b7fccc0bd0173905b039437b3bcf69f73e7e。分支codex/TASK-048-nature-content；专用目录G:/GameFactory/Hearthward/.agent-local/TASK-048。原TASK-027和其他工作树保持原状。授权Source/Hearthward、Resources/Data、Resources/UI、Content/Hearthward/Nature及任务文档；未改Config／Runtime／art_source／主地图。
 
 ## 实现
 
@@ -14,6 +14,10 @@ main基线e95fde185dc38d0b69c2de42ce66db0d1fd93294；施工批准登记提交261
 
 ## 验证与交付
 
-最终源码、命令、结果见[报告](../qa/TASK-048/REPORT.md)。设计38项验算仅作历史设计证据；实际运行单独检查。尚未进行完整4032米路线／流送／长期生态性能、最终美术、Shipping与完整剧情验证。
+最终源码48a0b8a4a6de4c778a1ff1eb8cd2fa22a809888f通过Editor构建、原生40/40、PIE91/91、自然地图19/19；工具33/33、仓库与范围检查0错误。命令、结果见[报告](../qa/TASK-048/REPORT.md)。设计38项验算仅作历史设计证据；实际运行单独检查。尚未进行完整4032米路线／流送／长期生态性能、最终美术、Shipping与完整剧情验证。
 
-代码与文档交付完成后推送任务分支，核对远端；停止本单UE进程后清理本单工作树。14件资产LFS锁保留到集成交接，不解除其他任务锁。用户未授权合并main；Owner与Reviewer同人仍不构成独立PR审查。
+全部本单编辑器已由各自所属UEClient停止。代码与证据交付提交推送到任务分支；推送成功且远端SHA相等后即清理本单工作树，最后的推送／清理结果以交付回执为准。14件资产LFS锁保留到集成交接，不解除其他任务锁。用户未授权合并main；Owner与Reviewer同人仍不构成独立PR审查。
+
+## 回退
+
+本单未合并main。需要回退分支成果时用新的revert提交；不要强推或覆盖他人工作树。schema7不可由旧版本读取；回到047前使用升级时保留的.pre-schema7原档，勿让旧程序覆盖新档。运行状态未写入制作源资产或主地图。
