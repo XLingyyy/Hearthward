@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "id": "TASK-044",
-  "title": "定案生存恢复、倒地救援与环境伤害边界",
-  "status": "Blocked",
+  "title": "实现生存恢复、倒地救援与环境伤害边界",
+  "status": "Active",
   "updated_at": "2026-09-26",
   "owner": "XLingyyy",
   "reviewer": "XLingyyy",
@@ -12,19 +12,15 @@
     "2026-09-26 用户明确按043、044顺序执行并自行提交推送",
     "原稿TASK-046映射canonical TASK-044；GDD v0.3 Q061—063/Q131—145/Q161—178/Q251/Q259—265",
     "Hearthward_Audit_2026-09-24生存、失败、即时药品与环境伤害缺口",
-    "父分支codex/TASK-043-world-time@b7d4df35763bca5dd0bb97ed9ab78eea4f68098a；未引入052代码"
+    "父分支codex/TASK-043-world-time@b7d4df35763bca5dd0bb97ed9ab78eea4f68098a；未引入052代码",
+    "2026-09-26 Owner明确：044的设计我已经确认可以采纳，开始施工044任务",
+    "2026-09-26 Owner明确答复：沿用044，开始实现游戏代码；授权本单相关公共接口、库存表示与保存迁移实施协调。"
   ],
   "dependencies": [
     "TASK-042",
     "TASK-043"
   ],
-  "blocked_by": [
-    "R04",
-    "R08",
-    "R09",
-    "R18",
-    "R22"
-  ],
+  "blocked_by": [],
   "contracts": [
     "docs/contracts/CT-003-save-load.md",
     "docs/contracts/CT-TASK-043-world-time-persistence.md",
@@ -40,13 +36,14 @@
     "docs/contracts/CT-TASK-044-survival-transitions.md",
     "docs/tasks/TASK-044.json",
     "docs/tasks/TASK-044.md",
-    "docs/handoffs/TASK-044.md"
+    "docs/handoffs/TASK-044.md",
+    "Source/Hearthward/",
+    "Resources/Data/",
+    "docs/qa/TASK-044/"
   ],
   "forbidden_paths": [
-    "Source/",
     "Content/",
     "Config/",
-    "Resources/",
     "Runtime/",
     "art_source/",
     "docs/design/archive/"
@@ -57,10 +54,10 @@
     "明确用药3秒、费用结算、移动/受伤/取消、时间尺度及设施恢复候选",
     "覆盖救援可达性、优先级、自动用药和稀有物权限",
     "列出倒地残伤、溺水/坠落、跳时/传送/存读档优先级和边界案例",
-    "得到Owner具体设计确认后才把候选标为批准；提交推送授权不替代设计审批"
+    "得到Owner具体设计确认后才把候选标为批准；提交推送授权不替代设计审批",
+    "D1—D6接入玩家、弟弟、库存、HUD与存档，提供定向自动化和真实运行证据；未配置的环境数值不自行定案"
   ],
   "non_goals": [
-    "不实现生存、用药或救援代码，不改变存档格式",
     "不恢复疗养、好感门槛或普通族人死亡",
     "不引入052分支代码，不跳过044继续后续任务",
     "不合并main或自批PR"
@@ -78,8 +75,7 @@
     "merge": "not_granted"
   },
   "notes": [
-    "Owner/Reviewer均为XLingyyy；Issue可选，独立审查未完成",
-    "本轮提交完整设计候选和工程草案；新增数值/冲突决策均待Owner确认，不能因执行授权改成APPROVED",
-    "设计候选与工程草案已提交；Blocked表示等待Owner对D1—D6明确裁定及独立审查，不表示草案工作未做"
+    "D1—D6已获Owner批准；沿用044实施，不开054。",
+    "Owner与Reviewer均为XLingyyy；Issue可选；不自批或合并main。"
   ]
 }

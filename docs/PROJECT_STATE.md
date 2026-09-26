@@ -34,4 +34,4 @@ Demo 的构建基线为 `main@68e68d817c4d5a39bf43eb7f27863fc734d04aef`，发行
 
 ## TASK-044 本轮交付
 
-按顺序从043收尾提交b7d4df35763bca5dd0bb97ed9ab78eea4f68098a派生codex/TASK-044-survival-rules，未合入main。已形成[生存设计候选](design/DSGN-R04-survival-recovery.md)及[契约草案](contracts/CT-TASK-044-survival-transitions.md)，共六组推荐决定和22项纸面边界用例。新增玩法待Owner确认，状态Blocked；旧GDD与043已批准规则仍为权威，本轮未改运行时代码、资产或存档。
+按顺序从043收尾提交b7d4df35763bca5dd0bb97ed9ab78eea4f68098a派生codex/TASK-044-survival-rules，未合入main。已形成[生存设计候选](design/DSGN-R04-survival-recovery.md)及[契约草案](contracts/CT-TASK-044-survival-transitions.md)，共六组推荐决定和22项纸面边界用例。Owner已于2026-09-26明确采纳044的D1—D6；旧GDD冲突以获批正文覆盖，043规则继续有效。Blocked仅保留独立审查／工程协调；本次批准登记未改代码、资产或存档。
