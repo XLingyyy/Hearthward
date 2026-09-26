@@ -1,3 +1,4 @@
+#include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
 #include "../Building/HearthwardBuildingComponent.h"
@@ -480,6 +481,12 @@ void UHearthwardScreenWidget::ComposeMemory()
 }
 void UHearthwardScreenWidget::ComposeHUD()
 {
+    if(const auto* C=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardCombatComponent>())
+    {
+        Element(TEXT("text"),C->Describe(),FVector2D(550,605),FVector2D(700,40),20);
+        if(C->Discovery>0) { Element(TEXT("bar"),TEXT("发现程度"),FVector2D(680,105),FVector2D(300,8)); Elements.Last().Value=C->Discovery; Elements.Last().Color=Color(TEXT("gold")); }
+        Element(TEXT("text"),TEXT("F / R 处决 · Alt 闪避 · 中键锁定 · V 感应"),FVector2D(680,790),FVector2D(820,32),16);
+    }
     const bool Natural=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled();
     if(Natural)
     {

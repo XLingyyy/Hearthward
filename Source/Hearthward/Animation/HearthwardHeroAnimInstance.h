@@ -14,6 +14,10 @@ public:
     virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override;
     virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* Proxy) override;
     void PlayAttack();
+    void PlayCombat(float Duration,bool Execution);
+    void StopCombat();
+    float CombatRate=1;
+    bool IsExecution=false;
 
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") float GroundSpeed = 0;
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") FName MotionState = TEXT("Idle");

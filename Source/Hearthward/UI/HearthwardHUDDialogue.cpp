@@ -24,7 +24,7 @@ void AHearthwardHUD::BeginPlay()
     GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this, &AHearthwardHUD::SnapshotRestored);
     EnableInput(GetOwningPlayerController());
     InputComponent->BindKey(EKeys::T,IE_Pressed,this,&AHearthwardHUD::ToggleDialogue);
-    InputComponent->BindKey(EKeys::R,IE_Pressed,this,&AHearthwardHUD::ToggleStorageMenu).bExecuteWhenPaused = true;
+
     InputComponent->BindKey(EKeys::F6,IE_Pressed,this,&AHearthwardHUD::ToggleSaveMenu).bExecuteWhenPaused = true;
 #if !UE_BUILD_SHIPPING
     InputComponent->BindKey(EKeys::F10,IE_Pressed,this,&AHearthwardHUD::EditUILayout).bExecuteWhenPaused = true;
@@ -35,10 +35,11 @@ void AHearthwardHUD::BeginPlay()
     InputComponent->BindKey(EKeys::K,IE_Pressed,this,&AHearthwardHUD::OpenSkills).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::J,IE_Pressed,this,&AHearthwardHUD::OpenJournal).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::B,IE_Pressed,this,&AHearthwardHUD::OpenBuilding);
+    InputComponent->BindKey(EKeys::Q,IE_Pressed,this,&AHearthwardHUD::HeavyAttack);
     InputComponent->BindKey(EKeys::LeftShift,IE_Pressed,this,&AHearthwardHUD::SprintStart);
     InputComponent->BindKey(EKeys::LeftShift,IE_Released,this,&AHearthwardHUD::SprintStop);
-    InputComponent->BindKey(EKeys::RightMouseButton,IE_Pressed,this,&AHearthwardHUD::Shoot);
-    InputComponent->BindKey(EKeys::Q,IE_Pressed,this,&AHearthwardHUD::HeavyAttack);
+
+
     InputComponent->BindKey(EKeys::Two,IE_Pressed,this,&AHearthwardHUD::Eat);
     InputComponent->BindKey(EKeys::One,IE_Pressed,this,&AHearthwardHUD::Heal);
     InputComponent->BindKey(EKeys::Four,IE_Pressed,this,&AHearthwardHUD::Throw);
@@ -112,7 +113,7 @@ void AHearthwardHUD::Attack()
 void AHearthwardHUD::HeavyAttack()
 {
     if(auto* B=GetOwningPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->RotatePreview(); return; }
-    if(auto* G=GetOwningPawn()->FindComponentByClass<UHearthwardGameplayComponent>()) G->HeavyAttack();
+
 }
 void AHearthwardHUD::Shoot()
 {

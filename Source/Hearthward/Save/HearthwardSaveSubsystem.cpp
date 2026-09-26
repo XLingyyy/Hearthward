@@ -1,4 +1,6 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Combat/HearthwardCombatComponent.h"
+#include "../Combat/HearthwardProjectile.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Interaction/HearthwardHarvestSubsystem.h"
 #include "../Companion/HearthwardNaturalCamp.h"
@@ -170,6 +172,10 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
         if(const auto* Survival=Actor?Actor->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
             Survival && Survival->Enabled() && !Survival->SafeToSave())
         { Status=TEXT("兄弟状态不安全或动作正在结算，无法保存"); return false; }
+    if(const auto* C=Player->FindComponentByClass<UHearthwardCombatComponent>();C && !C->CanSave())
+    { Status=TEXT("战斗动作或搬运尚未完成，保存延后"); return false; }
+    for(TActorIterator<AHearthwardProjectile> It(GetWorld());It;++It)
+        if(!It->Landed) { Status=TEXT("请等待投射物落地后保存"); return false; }
     S.SurvivalVersion=1;
     S.CalendarMinutes=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
     if(auto* Survival=Player->FindComponentByClass<UHearthwardSurvivalComponent>()) S.PlayerSurvival=Survival->State;

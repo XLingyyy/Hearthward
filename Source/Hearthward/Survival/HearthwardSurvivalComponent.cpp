@@ -1,4 +1,5 @@
 #include "HearthwardSurvivalComponent.h"
+#include "../Combat/HearthwardCombatComponent.h"
 #include "GameFramework/PainCausingVolume.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
@@ -77,6 +78,7 @@ void UHearthwardSurvivalComponent::SetAutoPermission(FName Item,bool Allowed)
 }
 bool UHearthwardSurvivalComponent::BeginMedicine(FName Item,bool Automatic)
 {
+    if(const auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();C && (C->Busy() || C->Guarding() || C->MovementMultiplier()<1)) return false;
     const auto R=Find(TEXT("items"),Item.ToString());
     const double Fraction=Number(R,TEXT("healing"))/100.;
     const double Duration=Number(R,TEXT("medicineDuration"));
@@ -157,6 +159,7 @@ bool UHearthwardSurvivalComponent::CanRescue(const UHearthwardSurvivalComponent*
 bool UHearthwardSurvivalComponent::BeginRescue(UHearthwardSurvivalComponent* Target)
 {
     if(!Enabled() || Busy() || Settling || !CanRescue(Target)) return false;
+    if(const auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();C && (C->Busy() || C->Guarding() || C->MovementMultiplier()<1)) return false;
     if(auto* C=Cast<AHearthwardCompanionFixture>(GetOwner())) C->StopForSurvival();
     if(auto* T=GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>()) T->InterruptAction();
     Rescue=Target; RescueRemaining=5; ActionEpoch=Epoch(); ActionOrigin=GetOwner()->GetActorLocation();

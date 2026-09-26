@@ -8,7 +8,7 @@
 
 namespace
 {
-constexpr TCHAR Floor[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/SM_wood_floor_panel.SM_wood_floor_panel");
+constexpr TCHAR CampFloorAsset[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/SM_wood_floor_panel.SM_wood_floor_panel");
 constexpr TCHAR Stairs[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/wood_stairs/SM_wood_stairs.SM_wood_stairs");
 constexpr TCHAR Solid[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/SM_wood_wall_solid.SM_wood_wall_solid");
 constexpr TCHAR Doorway[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/wood_wall_doorway/SM_wood_wall_doorway.SM_wood_wall_doorway");
@@ -20,7 +20,7 @@ constexpr TCHAR FloorMaterial[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/b
 constexpr TCHAR WallMaterial[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/tripo_mat_5ab09d9b.tripo_mat_5ab09d9b");
 constexpr TCHAR RoofMaterial[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/backing/M_RoofBacking.M_RoofBacking");
 constexpr TCHAR Bed[] = TEXT("/Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/SM_rope_wood_bed.SM_rope_wood_bed");
-constexpr TCHAR Chest[] = TEXT("/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/SM_wood_chest.SM_wood_chest");
+constexpr TCHAR CampChestAsset[] = TEXT("/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/SM_wood_chest.SM_wood_chest");
 constexpr TCHAR Chair[] = TEXT("/Game/Hearthward/Assets/TASK-028/furniture/wood_chair/SM_wood_chair.SM_wood_chair");
 constexpr TCHAR Lantern[] = TEXT("/Game/Hearthward/Assets/TASK-028/furniture/metal_lantern/SM_metal_lantern.SM_metal_lantern");
 constexpr TCHAR Cube[] = TEXT("/Engine/BasicShapes/Cube.Cube");
@@ -73,7 +73,7 @@ void AHearthwardTask028CampHouse::BeginPlay()
     for(const float X:{-136.f,136.f}) for(const float Y:{-136.f,136.f})
     {
         const FString Name=FString::Printf(TEXT("Floor_%d"),Index++);
-        AddVisual(*Name,Floor,FVector(X,Y,35),FVector(2.4,2.4,2.1));
+        AddVisual(*Name,CampFloorAsset,FVector(X,Y,35),FVector(2.4,2.4,2.1));
     }
     AddBlockingBox(TEXT("WalkableFloor"),FVector(0,0,45),FVector(272,272,8));
 
@@ -131,7 +131,7 @@ void AHearthwardTask028CampHouse::BeginPlay()
         if(RoofMat) Liner->SetMaterial(0,RoofMat);
     }
     AddVisual(TEXT("Bed"),Bed,FVector(-130,-170,61),FVector(1.4));
-    AddVisual(TEXT("Chest"),Chest,FVector(-155,140,80),FVector(.85));
+    AddVisual(TEXT("CampChestAsset"),CampChestAsset,FVector(-155,140,80),FVector(.85));
     AddVisual(TEXT("Chair"),Chair,FVector(120,150,90),FVector(.7));
     AddVisual(TEXT("DoorLantern"),Lantern,FVector(225,-45,210),FVector(.35));
     auto* Light=NewObject<UPointLightComponent>(this,TEXT("DoorLanternLight"));

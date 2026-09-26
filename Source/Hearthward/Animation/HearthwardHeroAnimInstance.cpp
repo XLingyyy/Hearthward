@@ -71,6 +71,7 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         Players[2].SetPlayRate(FMath::Clamp(Hero->GroundSpeed / 600.f, 0.4f, 1.8f));
         for (int32 Index = 0; Index < 5; ++Index)
             Layers[Index].bAlphaBoolEnabled = Hero->ActionState == Index + 1;
+        Players[6].SetPlayRate(Hero->CombatRate);
         if (SeenAttack != Hero->AttackRevision)
         {
             Players[6].SetAccumulatedTime(0.f);
@@ -130,7 +131,7 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         ActionState = 5;
         MotionState = TEXT("Dig");
     }
-    if (AttackRemaining > 0.f) { ActionState = 4; MotionState = TEXT("Attack"); }
+    if (AttackRemaining > 0.f) { ActionState = 4; MotionState = IsExecution?TEXT("Execution"):TEXT("Attack"); }
     if (LandRemaining > 0.f) { ActionState = 3; MotionState = TEXT("Land"); }
     if (Falling)
     {
@@ -142,3 +143,10 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 FAnimInstanceProxy* UHearthwardHeroAnimInstance::CreateAnimInstanceProxy() { return new FHeroAnimProxy(this); }
 void UHearthwardHeroAnimInstance::DestroyAnimInstanceProxy(FAnimInstanceProxy* Proxy) { delete Proxy; }
+
+void UHearthwardHeroAnimInstance::PlayCombat(float Duration,bool Execution)
+{
+    if(Duration<=0 || !Clips.IsValidIndex(6) || !Clips[6]) return;
+    AttackRemaining=Duration; CombatRate=Clips[6]->GetPlayLength()/Duration; IsExecution=Execution; ++AttackRevision;
+}
+void UHearthwardHeroAnimInstance::StopCombat() { AttackRemaining=0; CombatRate=1; IsExecution=false; }

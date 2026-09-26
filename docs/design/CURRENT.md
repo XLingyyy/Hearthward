@@ -50,6 +50,6 @@ Owner于2026-09-26明确“044的设计我已经确认可以采纳”。[DSGN-R0
 
 R04／R08／R09／R18／R22登记获准子范围；044半份药与schema5已实施，并经PR #46合入main。环境伤害正式配表等限制见报告与[CT-TASK-044](../contracts/CT-TASK-044-survival-transitions.md)。
 
-## TASK-045 待确认设计
+## TASK-045 已批准规则范围
 
-[DSGN-R06 战斗与潜入](DSGN-R06-combat-stealth.md)提出D1—D6和C01—C20验收输入；状态PROPOSED，不替代已批准规则。R06／R07／R10保持OPEN，新数值未写入游戏；[CT-TASK-045](../contracts/CT-TASK-045-combat-alert.md)是工程草案。
+Owner已批准[DSGN-R06](DSGN-R06-combat-stealth.md)D1—D6，明确暗杀与击晕完全相同：从有效按键起3秒，播放处决动作，目标不能反抗，不耗耐力且静音。045沿用原编号实施，公共接口见[CT-TASK-045](../contracts/CT-TASK-045-combat-alert.md)。R06／R07／R10记录获准规则；正式装备表、专用动画和自然关卡配置仍未完成。当前分支实现及运行覆盖见[报告](../qa/TASK-045/REPORT.md)。

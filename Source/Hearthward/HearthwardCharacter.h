@@ -49,6 +49,8 @@ private:
     void StartSprint();
     void StopSprint();
     void PreviewAttack();
+    void Execution(); void ContextR(); void GuardStart(); void GuardEnd(); void ReleaseAttack();
+    void CombatDodge(); void CombatLock(); void CombatSense(); void CombatThrow();
 
     UPROPERTY() TObjectPtr<UInputAction> SprintAction;
     UPROPERTY() TObjectPtr<UInputAction> AttackPreviewAction;

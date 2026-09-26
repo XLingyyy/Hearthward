@@ -275,7 +275,13 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
             S->SetAutoPermission(SelectedItem,!S->Permitted(SelectedItem));
         }
     }
-    else if(Action==TEXT("use")) { Success=G->UseItem(SelectedItem); Message=G->Feedback; if(Success && Number(Find(TEXT("items"),SelectedItem.ToString()),TEXT("healing"))>0) OpenPage(TEXT("hud")); }
+    else if(Action==TEXT("use"))
+    {
+        const FName UsedItem=SelectedItem;
+        const auto Item=Find(TEXT("items"),UsedItem.ToString());
+        if(Number(Item,TEXT("healing"))>0 || !Text(Item,TEXT("slot")).IsEmpty() || Number(Item,TEXT("throwDamage"))>0) OpenPage(TEXT("hud"));
+        Success=G->UseItem(UsedItem); Message=G->Feedback;
+    }
     else if(Action==TEXT("repair"))
     {
         SelectedRepair=SelectedItem;

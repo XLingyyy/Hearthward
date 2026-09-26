@@ -17,7 +17,7 @@ public class Hearthward : ModuleRules
                 "AIModule",
                 "NavigationSystem"
             });
-        PrivateDependencyModuleNames.AddRange(new[] { "HTTP", "Json", "Sockets", "UMG", "Slate", "SlateCore", "AnimGraphRuntime" });
+        PrivateDependencyModuleNames.AddRange(new[] { "HTTP", "Json", "JsonUtilities", "Sockets", "UMG", "Slate", "SlateCore", "AnimGraphRuntime" });
         RuntimeDependencies.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "../../Config/npc-agent.policy.json")), StagedFileType.NonUFS);
         string Resources = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../Resources"));
         if (Directory.Exists(Resources))

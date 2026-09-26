@@ -1,4 +1,5 @@
 #include "HearthwardGameplayComponent.h"
+#include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Animation/HearthwardHeroAnimInstance.h"
 #include "../Animation/HearthwardBrotherAnimInstance.h"
@@ -98,12 +99,15 @@ void UHearthwardGameplayComponent::CreateLandmarks()
     {
         const auto R=V->AsObject(); const FName Id(*Text(R,TEXT("id")));
         if(!Opponents.Contains(Id)) Opponents.Add(Id,Number(R,TEXT("health")));
-        if(Opponents[Id]<=0) continue;
+
         auto* A=GetWorld()->SpawnActor<AActor>(); auto* Mesh=NewObject<UStaticMeshComponent>(A);
         A->AddInstanceComponent(Mesh); A->SetRootComponent(Mesh);
         Mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cylinder.Cylinder")));
         Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); Mesh->RegisterComponent();
         A->SetActorScale3D(FVector(.7,.7,1.7)); A->SetActorLocation(Origin+Position(R)); OpponentActors.Add(Id,A);
+        auto* Target=NewObject<UHearthwardCombatTargetComponent>(A); A->AddInstanceComponent(Target);
+        Target->Id=Id; Target->PrototypeEncounter=true; Target->Health=Opponents[Id]; Target->MaximumHealth=Number(R,TEXT("health")); Target->RegisterComponent(); Target->CreateBodyCollision();
+        if(Target->Health<=0) Target->SetCorpse();
     }
 }
 int32 UHearthwardGameplayComponent::Level() const
@@ -163,12 +167,15 @@ void UHearthwardGameplayComponent::ResetSkills()
     Result(true,TEXT("技能点已全部返还，已发生的奖励保留"));
 }
 bool UHearthwardGameplayComponent::Equip(FName Id)
+{ return GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->SwitchEquipment(Id); }
+bool UHearthwardGameplayComponent::CommitEquipment(FName Id)
 {
     const auto R=Find(TEXT("items"),Id.ToString());
     const FName Slot(*Text(R,TEXT("slot")));
     if (!Enabled || Slot.IsNone() || Inventory()->GetItemCount(Id)<1) return Result(false,TEXT("没有可装备的物品"));
     if (Equipment.FindRef(Slot)==Id) Equipment.Remove(Slot);
     else { Equipment.Add(Slot,Id); if(!Durability.Contains(Id)) Durability.Add(Id,Number(R,TEXT("durability"),100)); Record(TEXT("equip"),Slot); }
+    if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();C && (Slot==TEXT("weapon") || Slot==TEXT("ranged"))) C->SelectRanged(Slot==TEXT("ranged") && Equipment.Contains(Slot));
     return Result(true,TEXT("装备已更新"));
 }
 bool UHearthwardGameplayComponent::UseItem(FName Id)
@@ -270,6 +277,7 @@ bool UHearthwardGameplayComponent::Travel(FName Id)
     if (!Character || !Character->TeleportTo(LocationPosition(Id),Character->GetActorRotation()))
         return Result(false,TEXT("目标落点无法通行"));
     Character->GetCharacterMovement()->StopMovementImmediately();
+    if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()) C->InterruptTravel();
     S->CancelAction();
     Record(TEXT("travel"),Id); return Result(true,TEXT("已抵达目的地"));
 }
@@ -288,21 +296,10 @@ bool UHearthwardGameplayComponent::SpendStamina(float Cost)
 }
 void UHearthwardGameplayComponent::ApplyDamage(float Damage)
 {
-    if(Damage<=0) return;
-    if(auto* Timer=GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>()) Timer->InterruptAction();
-    float Armor=0;
-    for (const auto& E : Equipment)
-    {
-        if(Durability.FindRef(E.Value)<=0) continue;
-        const float Defense=Number(Find(TEXT("items"),E.Value.ToString()),TEXT("defense"));
-        if(Defense<=0) continue;
-        Armor+=Defense/100;
-        Durability.FindOrAdd(E.Value)=FMath::Max(0.f,Durability.FindRef(E.Value)-1/(1+Effect(TEXT("durability"))));
-    }
-    const float Actual=Damage*(1-FMath::Clamp(Armor+Effect(TEXT("defense")),0.f,.85f));
-    if(auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>())
-        S->ReceiveDamage(Actual,FGuid::NewGuid(),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
-    OnChanged.Broadcast();
+    if(auto* Combat=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>())
+        Combat->Damage(Damage,TEXT("body"),GetOwner()->GetActorLocation()-GetOwner()->GetActorForwardVector()*100);
+    else if(auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>())
+        S->ReceiveDamage(Damage,FGuid::NewGuid(),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
 }
 float UHearthwardGameplayComponent::AttackPower() const
 {
@@ -311,11 +308,11 @@ float UHearthwardGameplayComponent::AttackPower() const
     return Number(Find(TEXT("items"),Weapon.ToString()),TEXT("attack"))*(1+Effect(TEXT("attack")))*(GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.Severe()?.75f:1.f);
 }
 bool UHearthwardGameplayComponent::Attack()
-{ return AttackWith(false,false); }
+{ return GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Attack(false); }
 bool UHearthwardGameplayComponent::HeavyAttack()
-{ return AttackWith(true,false); }
+{ return GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Attack(true); }
 bool UHearthwardGameplayComponent::Shoot()
-{ return AttackWith(false,true); }
+{ return GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Shoot(false); }
 bool UHearthwardGameplayComponent::Repair(FName Id)
 {
     auto* B=GetOwner()->FindComponentByClass<UHearthwardBuildingComponent>();
@@ -323,75 +320,20 @@ bool UHearthwardGameplayComponent::Repair(FName Id)
     return Result(Success,B->Feedback);
 }
 bool UHearthwardGameplayComponent::ThrowItem(FName Id)
+{ return GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Throw(Id); }
+void UHearthwardGameplayComponent::DamageOpponent(FName Target,float Damage,AActor* Source)
 {
-    GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction();
-    if(!Enabled || GetWorld()->IsPaused() || Health<=0 || AttackDelay>0) return false;
-    const auto Item=Find(TEXT("items"),Id.ToString());
-    if(Number(Item,TEXT("throwDamage"))<=0 || Inventory()->GetItemCount(Id)<1) return Result(false,TEXT("投掷物不足"));
-    FName Target; float Distance=Number(Item,TEXT("range"));
-    for(const auto& Enemy:OpponentActors)
-    {
-        if(!Enemy.Value.IsValid() || Opponents.FindRef(Enemy.Key)<=0) continue;
-        const float D=FVector::Dist(GetOwner()->GetActorLocation(),Enemy.Value->GetActorLocation());
-        if(D<Distance) { Target=Enemy.Key; Distance=D; }
-    }
-    if(Target.IsNone()) return Result(false,TEXT("投掷范围内没有敌人"));
-    FHitResult Hit; FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardThrow),false,GetOwner());
-    if(GetWorld()->LineTraceSingleByChannel(Hit,GetOwner()->GetActorLocation(),OpponentActors[Target]->GetActorLocation(),ECC_Visibility,Query)) return Result(false,TEXT("目标被障碍物遮挡"));
-    if(!SpendStamina(Number(Item,TEXT("stamina")))) return Result(false,TEXT("耐力不足"));
-    Inventory()->TryRemove(Id,1); DamageOpponent(Target,Number(Item,TEXT("throwDamage"))*(GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.Severe()?.75f:1.f));
-    AttackDelay=Number(Item,TEXT("cooldown")); CombatRemaining=3;
-    return Result(true,TEXT("投掷命中：")+Text(Item,TEXT("name")));
+    const auto* Actor=OpponentActors.Find(Target);
+    if(Actor && Actor->IsValid())
+        if(auto* T=Actor->Get()->FindComponentByClass<UHearthwardCombatTargetComponent>())
+            GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->HitTarget(T,Damage,TEXT("body"),false,FGuid::NewGuid(),Source);
 }
-bool UHearthwardGameplayComponent::AttackWith(bool Heavy,bool Ranged)
+void UHearthwardGameplayComponent::CommitOpponentHealth(FName Target,float NewHealth,float PreviousHealth)
 {
-    GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction();
-    if(!Enabled || GetWorld()->IsPaused() || Health<=0 || AttackDelay>0) return false;
-    const FName Weapon=Equipment.FindRef(Ranged?TEXT("ranged"):TEXT("weapon"));
-    const int32 HeavyRank=Skills.FindRef(TEXT("strong"));
-    if(Heavy && HeavyRank==0) return Result(false,TEXT("请先学习强力挥击"));
-    if(Ranged && Inventory()->GetItemCount(TEXT("arrow"))<1) return Result(false,TEXT("箭矢不足"));
-    const auto HeavySkill=Find(TEXT("skills"),TEXT("strong"));
-    float Power=Ranged?Number(Find(TEXT("items"),Weapon.ToString()),TEXT("attack"))*(1+Effect(TEXT("attack"))):AttackPower();
-    if(Ranged && GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.Severe()) Power*=.75f;
-    if(Weapon.IsNone() || Durability.FindRef(Weapon)<=0 || Power<=0) return Result(false,TEXT("请装备可用的武器"));
-    if(Heavy) Power*=HeavySkill->GetArrayField(TEXT("multipliers"))[HeavyRank-1]->AsNumber();
-    FName Target; float Distance=Tune(Ranged?TEXT("rangedRange"):TEXT("attackRange"));
-    for(const auto& A:OpponentActors)
+    const float Previous=Opponents.Contains(Target)?Opponents[Target]:PreviousHealth;
+    if(Opponents.Contains(Target)) Opponents[Target]=NewHealth;
+    if(Previous>0 && NewHealth<=0)
     {
-        if(!A.Value.IsValid() || Opponents.FindRef(A.Key)<=0) continue;
-        const float D=FVector::Dist(GetOwner()->GetActorLocation(),A.Value->GetActorLocation());
-        if(D<Distance) { Target=A.Key; Distance=D; }
-    }
-    if(Ranged && Target.IsNone()) return Result(false,TEXT("射程内没有敌人"));
-    if(!Target.IsNone())
-    {
-        FHitResult Obstacle; FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardAttack),false,GetOwner());
-        if(GetWorld()->LineTraceSingleByChannel(Obstacle,GetOwner()->GetActorLocation(),OpponentActors[Target]->GetActorLocation(),ECC_Visibility,Query))
-            return Result(false,TEXT("目标被障碍物遮挡"));
-    }
-    if(!SpendStamina(Tune(Heavy?TEXT("heavyStamina"):Ranged?TEXT("rangedStamina"):TEXT("attackStamina")))) return Result(false,TEXT("耐力不足"));
-    if(Ranged) Inventory()->TryRemove(TEXT("arrow"),1);
-    AttackDelay=Tune(TEXT("attackCooldown"));
-    if(!Target.IsNone()) CombatRemaining=3;
-    if (!Ranged)
-        if (auto* Character = Cast<ACharacter>(GetOwner()))
-            if (auto* Animation = Cast<UHearthwardHeroAnimInstance>(Character->GetMesh()->GetAnimInstance()))
-                Animation->PlayAttack();
-    if(Target.IsNone()) return Result(false,TEXT("挥击未命中：攻击范围内没有敌人"));
-    DamageOpponent(Target,Power);
-    if(Heavy && FMath::FRand()<HeavySkill->GetArrayField(TEXT("stunChance"))[HeavyRank-1]->AsNumber())
-        DamageOpponent(Target,Opponents.FindRef(Target)); // Approved rule: stun resolves the same life as a kill.
-    Durability[Weapon]=FMath::Max(0.f,Durability[Weapon]-1/(1+Effect(TEXT("durability"))));
-    return Result(true,FString::Printf(TEXT("命中敌人 −%.0f"),Power));
-}
-void UHearthwardGameplayComponent::DamageOpponent(FName Target,float Damage)
-{
-    if(Opponents.FindRef(Target)<=0) return;
-    Opponents[Target]=FMath::Max(0.f,Opponents[Target]-Damage);
-    if(Opponents[Target]<=0)
-    {
-        OpponentActors[Target]->Destroy();
         Experience+=Number(Find(TEXT("encounters"),Target.ToString()),TEXT("xp"))*(1+Effect(TEXT("xp")));
         Record(TEXT("defeat"),Target);
     }
@@ -475,6 +417,7 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     for(const auto& Enemy:OpponentActors)
     {
         if(!Enemy.Value.IsValid())continue;
+        if(auto* T=Enemy.Value->FindComponentByClass<UHearthwardCombatTargetComponent>();T && !T->CanAct()) continue;
         FHearthwardCompanionBehaviorThreat Threat;
         Threat.Id=Enemy.Key;
         Threat.Actor=Enemy.Value;
@@ -495,7 +438,7 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
         if (!Facing.IsNearlyZero()) Companion->SetActorRotation(Facing.Rotation());
         if (auto* Animation = Cast<UHearthwardBrotherAnimInstance>(Companion->GetMesh()->GetAnimInstance()))
             Animation->PlayAttack();
-        DamageOpponent(Result.DamageTarget,Tune(TEXT("companionAttack"))*(Survival->State.Severe()?.75f:1.f));
+        DamageOpponent(Result.DamageTarget,Tune(TEXT("companionAttack"))*(Survival->State.Severe()?.75f:1.f),Companion);
         CompanionAttackDelay=Tune(TEXT("companionAttackCooldown"));
         CombatRemaining=3;
     }
@@ -517,13 +460,15 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     for(const auto& A:OpponentActors)
     {
         if(!A.Value.IsValid() || Opponents.FindRef(A.Key)<=0) continue;
-        AActor* Victim=Health>0?GetOwner():nullptr;
+        auto* TargetState=A.Value->FindComponentByClass<UHearthwardCombatTargetComponent>();
+        if(TargetState && (!TargetState->CanAct() || TargetState->Memory.Seen.IsEmpty())) continue;
+        AActor* Victim=Health>0 && (!TargetState || TargetState->Memory.Seen.Contains(TEXT("player")))?GetOwner():nullptr;
         float Distance=Victim?FVector::Dist(Victim->GetActorLocation(),A.Value->GetActorLocation()):MAX_flt;
         for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
         {
             auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();
             const float D=FVector::Dist(It->GetActorLocation(),A.Value->GetActorLocation());
-            if(S->Alive() && D<Distance) { Victim=*It; Distance=D; }
+            if(S->Alive() && D<Distance && (!TargetState || TargetState->Memory.Seen.Contains(TEXT("brother")))) { Victim=*It; Distance=D; }
         }
         if(Victim && Distance<Tune(TEXT("attackRange")))
         {
@@ -531,7 +476,7 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
             if(EnemyAttackDelay<=0 && Stunned.FindRef(A.Key)<=0)
             {
                 const float Damage=Number(Find(TEXT("encounters"),A.Key.ToString()),TEXT("attack"));
-                if(Victim==GetOwner()) ApplyDamage(Damage);
+                if(Victim==GetOwner()) GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Damage(Damage,TEXT("body"),A.Value->GetActorLocation());
                 else Victim->FindComponentByClass<UHearthwardSurvivalComponent>()->ReceiveDamage(Damage,FGuid::NewGuid(),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
             }
         }
@@ -540,11 +485,12 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     if(Health<=0) return;
     auto* Character=Cast<ACharacter>(GetOwner()); if (!Character) return;
     const bool Moving=Character->GetVelocity().Size2D()>5;
-    const bool Running=Sprinting && Moving && Stamina>0;
+    const auto* Combat=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();
+    const bool Running=Sprinting && Moving && Stamina>0 && (!Combat || (!Combat->Busy() && !Combat->Guarding()));
     auto* Survival=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
     auto& Delay=Survival->State.RecoveryDelay;
     const bool Swimming=Character->GetCharacterMovement()->IsSwimming();
-    const float Regen=MaxStamina()/(Equipment.FindRef(TEXT("offhand"))==TEXT("shield")?20.f:12.f);
+    const float Regen=MaxStamina()/(Combat && Combat->Guarding()?20.f:12.f);
     if(Running) { if(!SpendStamina(Delta*MaxStamina()/12*.8f)) { Stamina=0; Sprinting=false; Delay=.5; } }
     else if(!Swimming)
     {
@@ -553,7 +499,7 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
         Stamina=FMath::Min(MaxStamina(),Stamina+float(Recover*Regen));
     }
     Character->GetCharacterMovement()->MaxWalkSpeed=(Running?Tune(TEXT("sprintSpeed"))*(1+Effect(TEXT("sprint"))):Tune(TEXT("walkSpeed")))
-        *Inventory()->GetMoveSpeedMultiplier()*(Survival->State.Severe()?.8f:1.f);
+        *Inventory()->GetMoveSpeedMultiplier()*(Survival->State.Severe()?.8f:1.f)*(Combat?Combat->MovementMultiplier():1.f);
     if ((ExploreDelay-=Delta)>0) return;
     ExploreDelay=.25;
     const FVector P=GetOwner()->GetActorLocation();
@@ -572,6 +518,7 @@ FString UHearthwardGameplayComponent::SaveSnapshot() const
 {
     auto J=MakeShared<FJsonObject>();
     J->SetNumberField(TEXT("version"),1);
+    if(const auto* C=GetOwner()?GetOwner()->FindComponentByClass<UHearthwardCombatComponent>():nullptr) J->SetStringField(TEXT("combat"),C->Snapshot());
     if(const auto* B=GetOwner()?GetOwner()->FindComponentByClass<UHearthwardBuildingComponent>():nullptr) J->SetArrayField(TEXT("buildings"),B->Snapshot());
     J->SetNumberField(TEXT("health"),Health); J->SetNumberField(TEXT("hunger"),Hunger); J->SetNumberField(TEXT("stamina"),Stamina);
     J->SetNumberField(TEXT("experience"),Experience); J->SetNumberField(TEXT("campTier"),CampTier); J->SetBoolField(TEXT("enabled"),Enabled);
@@ -594,6 +541,7 @@ bool UHearthwardGameplayComponent::ValidateSnapshot(const FString& Json)
 {
     if (Json.IsEmpty()) return true;
     const auto J=Parse(Json); if (!J) return false;
+    if(J->HasField(TEXT("combat")) && (!J->HasTypedField<EJson::String>(TEXT("combat")) || !UHearthwardCombatComponent::ValidateSnapshot(Text(J,TEXT("combat"))))) return false;
     if(Number(J,TEXT("version"))!=1) return false;
     if(J->HasField(TEXT("buildings")))
     {
@@ -663,7 +611,7 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     CompanionOrder=TEXT("wait"); CompanionRoutineEnabled=false; CompanionRoutineActivity=NAME_None;
     CompanionTacticalIntent=TEXT("hold"); CompanionCombatTarget=NAME_None; CompanionCombatReason=TEXT("EXPLICIT_HOLD");
     HasWaypoint=false; Waypoint=FVector::ZeroVector;
-    if (Json.IsEmpty()) { Health=Hunger=Stamina=100; Experience=0; CampTier=1; Enabled=false; TrackedQuest=TEXT("ember"); return; }
+    if (Json.IsEmpty()) { if(GetOwner()) if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()) C->Restore(TEXT("")); Health=Hunger=Stamina=100; Experience=0; CampTier=1; Enabled=false; TrackedQuest=TEXT("ember"); return; }
     const auto J=Parse(Json);
     if(J->HasField(TEXT("companionOrder"))) CompanionOrder=FName(*Text(J,TEXT("companionOrder")));
     if(J->HasField(TEXT("companionRoutine"))) CompanionRoutineEnabled=J->GetBoolField(TEXT("companionRoutine"));
@@ -687,6 +635,7 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
         Discovered.Add(TEXT("camp")); Activated.Add(TEXT("camp"));
     }
     else if(Enabled) CreateLandmarks();
+    if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()) C->Restore(Text(J,TEXT("combat")));
 }
 
 float UHearthwardGameplayComponent::IncomingDamage(const AActor* Target,float Seconds) const
@@ -695,6 +644,9 @@ float UHearthwardGameplayComponent::IncomingDamage(const AActor* Target,float Se
     for(const auto& E:OpponentActors)
     {
         if(!E.Value.IsValid() || Opponents.FindRef(E.Key)<=0 || Stunned.FindRef(E.Key)>0) continue;
+        const auto* T=E.Value->FindComponentByClass<UHearthwardCombatTargetComponent>();
+        const FName Who=Target==GetOwner()?TEXT("player"):TEXT("brother");
+        if(T && (!T->CanAct() || !T->Memory.Seen.Contains(Who))) continue;
         if(FVector::Dist(Target->GetActorLocation(),E.Value->GetActorLocation())>Tune(TEXT("attackRange"))) continue;
         FCollisionQueryParams Q(SCENE_QUERY_STAT(SurvivalThreat),false,Target); Q.AddIgnoredActor(E.Value.Get());
         if(GetWorld()->LineTraceTestByChannel(Target->GetActorLocation(),E.Value->GetActorLocation(),ECC_Visibility,Q)) continue;
