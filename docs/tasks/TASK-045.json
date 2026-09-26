@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "id": "TASK-045",
+  "title": "定案玩家战斗、潜入和动作判定",
+  "status": "Blocked",
+  "updated_at": "2026-09-26",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-045-combat-stealth",
+  "source_refs": [
+    "用户：继续往后推进，任务045；延续按序交付与提交推送工作方式",
+    "原稿TASK-047映射canonical TASK-045",
+    "GDD v0.3 Q071—090/Q173—208；R06/R07/R10",
+    "Hearthward_Audit_2026-09-24动作武器潜入缺口",
+    "基线origin/main@7ce8262bd8721dc59fb0703d365dab2e10340f89，含PR #46和044实现；击晕等效击杀沿用已批准规则"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-043",
+    "TASK-044"
+  ],
+  "blocked_by": [
+    "R06",
+    "R07",
+    "R10"
+  ],
+  "contracts": [
+    "docs/contracts/CT-TASK-045-combat-alert.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/tasks/TASK-045.json",
+    "docs/tasks/TASK-045.md",
+    "docs/handoffs/TASK-045.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/design/DSGN-R06-combat-stealth.md",
+    "docs/contracts/README.md",
+    "docs/contracts/CT-TASK-045-combat-alert.md",
+    "docs/qa/TASK-045/"
+  ],
+  "forbidden_paths": [
+    "Source/",
+    "Content/",
+    "Config/",
+    "Resources/",
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "盾牌权限、格挡耗耐和再举盾条件有明确候选",
+    "动作输入、前后摇、命中与取消规则可直接形成验收案例",
+    "四部位减伤、武器相对标尺与装备绝对配表分离",
+    "潜入探测、击晕等效击杀、尸体传播、持续目击和感应边界完整",
+    "未获本单设计批准保持PROPOSED，运行验证标NOT_RUN"
+  ],
+  "non_goals": [
+    "不改游戏代码或配表；未获批准的规则不投入运行",
+    "不新增多人战斗、长期自适应布防或无限增援",
+    "不合并main或自动推进046"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested next task completion and commit on 2026-09-26",
+    "push": "granted: user requested task branch push on 2026-09-26",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner和Reviewer按用户指定均为XLingyyy，Issue可选。",
+    "提交推送延续用户按顺序推进并自行交付的授权；设计审批仍独立。"
+  ]
+}
