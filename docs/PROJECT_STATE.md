@@ -23,7 +23,7 @@ Demo 的构建基线为 `main@68e68d817c4d5a39bf43eb7f27863fc734d04aef`，发行
 
 - 当前设计入口为 [CURRENT](design/CURRENT.md)；R01—R25 的正式未决项见 [OPEN_QUESTIONS](design/OPEN_QUESTIONS.md)。已有局部 Demo 实现和设计定案分别登记。
 - TASK-042 的 [DSGN-003](design/DSGN-003-first-release-slice.md)首版范围与救援切片方向已于本轮获Owner批准；此前草案经PR #45合入main@35ac870。本轮批准增量随043分支交付，R17／R25仅登记获准子范围，玩法与实测仍未完成。
-- TASK-043 以 TASK-042 为父分支，交付 [DSGN-R01](design/DSGN-R01-world-time-persistence.md) 的 D1—D6 世界时间／生产／刷新／旅行／保存候选规则，以及 [CT-TASK-043](contracts/CT-TASK-043-world-time-persistence.md) 工程草案。未获设计批准；R01／R02／R03／R05／R19／R22 保持 OPEN。床的短时恢复、资源不刷新和现有传送不作为正式规则答案。
+- TASK-043 以 TASK-042 为父分支，交付 [DSGN-R01](design/DSGN-R01-world-time-persistence.md) 的 D1—D6 世界时间／生产／刷新／旅行／保存候选规则，以及 [CT-TASK-043](contracts/CT-TASK-043-world-time-persistence.md) 工程草案。Owner本轮修改确认睡眠8小时、击晕计入清敌、树木2日刷新及其余方案；昼夜切换与击晕苏醒／胜利衔接待明确。R01／R02／R03／R05／R19／R22记录获准子范围，整条仍OPEN。床的短时恢复、资源不刷新和现有传送不作为正式规则答案。
 - TASK-004、026—031 的实现、集成、验证、流程与 Owner 体验分栏见[账本](planning/TASK-041-baseline-ledger.md#3-旧任务五栏账本)。选定路线、斧头握持、防具、双角色动作、真实自然遭遇、正式经济、长程伙伴体验和 Owner 验收仍需各任务收尾。
 - 任务 JSON 中多个旧任务仍为 `Blocked` 或 `Active`，这些状态不表示相关实现不存在。Issue 可选；TASK-027/028 保持 `Active` 且 Reviewer 未指定，正式审查前仍需独立评审。TASK-041 的 Owner 与 Reviewer 均由用户指定为 `XLingyyy`，同人指定不构成独立审查，状态仍为 `Blocked`。[TASK-041 交接](handoffs/TASK-041.md)记录本次验证边界。
 - Git LFS 锁、共享地图和公共配置仍按 [WORKFLOW](../WORKFLOW.md) 核对；本次 TASK-043 只改文档，无二进制、玩法或游戏配置改动。

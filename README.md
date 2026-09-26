@@ -2,9 +2,9 @@
 
 UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-26，审计主干为 `main@a4998b10da54f162def767fa8bb7e308594bd490`，其中 PR #44 合入了 TASK-041 的文档与仓库校验规则，没有新增玩法。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复经 PR #43 合入。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。有效设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-[TASK-042 首版范围与第一体验切片](docs/tasks/TASK-042.md)已形成 [DSGN-003 待审查提案](docs/design/DSGN-003-first-release-slice.md)：拟从营地准备、兄弟分工和近郊救援走到回营成长。Owner于2026-09-26批准首版范围与切片方向，30—60分钟为设计预算；具体奖励与配表仍未定，尚无游戏内验证。
+[TASK-042 首版范围与第一体验切片](docs/tasks/TASK-042.md)已形成 [DSGN-003 已批准范围](docs/design/DSGN-003-first-release-slice.md)：拟从营地准备、兄弟分工和近郊救援走到回营成长。Owner于2026-09-26批准首版范围与切片方向，30—60分钟为设计预算；具体奖励与配表仍未定，尚无游戏内验证。
 
-[TASK-043 世界时间与持久状态](docs/tasks/TASK-043.md)接在已推送的 TASK-042 提交 `ab5596e` 上，形成[规则提案](docs/design/DSGN-R01-world-time-persistence.md)和[契约草案](docs/contracts/CT-TASK-043-world-time-persistence.md)：包含逐系统结算矩阵、投入与产出、敌人／自然物刷新、传送与保存边界。TASK-042此前草案已由PR #45合入main，本轮批准记录随043分支交付；TASK-043的D1—D6仍待Owner审批，尚未合入main；当前床仍为短时恢复、自然采集点仍不周期再生，本轮无玩法实现或运行验证。
+[TASK-043 世界时间与持久状态](docs/tasks/TASK-043.md)接在已推送的 TASK-042 提交 `ab5596e` 上，形成[规则提案](docs/design/DSGN-R01-world-time-persistence.md)和[契约草案](docs/contracts/CT-TASK-043-world-time-persistence.md)：包含逐系统结算矩阵、投入与产出、敌人／自然物刷新、传送与保存边界。TASK-042此前草案已由PR #45合入main，本轮批准记录随043分支交付；TASK-043规则已获修改确认：睡眠8游戏小时、击晕计清敌、树木2日刷新，其他方案按确认生效；昼夜切换及击晕苏醒／胜利衔接待明确，批准增量尚未合入main；当前床仍为短时恢复、自然采集点仍不周期再生，本轮无玩法实现或运行验证。
 
 AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与分支证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)和[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；所选集成修正随 PR #40 合入 main，PR #41/#42 属于 TASK-031。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
