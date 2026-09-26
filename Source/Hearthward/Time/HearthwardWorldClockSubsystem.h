@@ -37,6 +37,13 @@ public:
     UFUNCTION(BlueprintPure, Category="Hearthward|Time")
     FHearthwardClockSnapshot GetSnapshot() const;
 
+    // Skipping must not bypass the pending survival/production event consumers.
+    UFUNCTION(BlueprintCallable, Category="Hearthward|Time")
+    FString RequestSleep();
+
+    UFUNCTION(BlueprintCallable, Category="Hearthward|Time")
+    FString RequestCampfireAdvance(double Minutes);
+
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 

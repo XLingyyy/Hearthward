@@ -3,6 +3,9 @@
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Save/HearthwardSaveSubsystem.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
+#include "Components/BoxComponent.h"
+#include "String/LexFromString.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
@@ -16,8 +19,68 @@ bool UHearthwardHarvestSubsystem::Validate(const TMap<FString,int32>& Snapshot)
         if(Entry.Key.IsEmpty() || Entry.Key.Len()>512 || Entry.Value<0 || Entry.Value>12) return false;
     return true;
 }
-void UHearthwardHarvestSubsystem::Restore(const TMap<FString,int32>& Snapshot)
-{ Used=Snapshot; NextRefresh=0; }
+void UHearthwardHarvestSubsystem::Restore(const TMap<FString,int32>& Snapshot,
+    const TMap<FString,FHearthwardResourceRefresh>& Due)
+{ Used=Snapshot; Refreshes=Due; NextRefresh=0; }
+
+bool UHearthwardHarvestSubsystem::TreePosition(const FString& Key, FVector& Position)
+{
+    TArray<FString> Parts, Coordinates;
+    Key.ParseIntoArray(Parts,TEXT("|"),false);
+    if(Parts.Num()!=5) return false;
+    const auto& Name=Parts[2];
+    if(Name!=TEXT("SM_Tree") && Name!=TEXT("SM_S1_IslandTree")
+        && !Name.StartsWith(TEXT("SM_CampFir")) && !Name.StartsWith(TEXT("SM_CampPine"))) return false;
+    Parts[4].ParseIntoArray(Coordinates,TEXT(","),false);
+    int32 X,Y,Z;
+    if(Coordinates.Num()!=3 || !LexTryParseString(X,*Coordinates[0])
+        || !LexTryParseString(Y,*Coordinates[1]) || !LexTryParseString(Z,*Coordinates[2])) return false;
+    Position=FVector(X,Y,Z);
+    return true;
+}
+
+bool UHearthwardHarvestSubsystem::ValidateRefreshes(const TMap<FString,int32>& UsedSnapshot,
+    const TMap<FString,FHearthwardResourceRefresh>& Due, double CalendarMinutes)
+{
+    for(const auto& Entry:Due)
+    {
+        FVector Position;
+        if(UsedSnapshot.FindRef(Entry.Key)!=12 || !TreePosition(Entry.Key,Position)
+            || !Entry.Value.IsValid(CalendarMinutes) || !Entry.Value.Position.Equals(Position,1)) return false;
+    }
+    for(const auto& Entry:UsedSnapshot)
+    {
+        FVector Position;
+        if(Entry.Value==12 && TreePosition(Entry.Key,Position) && !Due.Contains(Entry.Key)) return false;
+    }
+    return true;
+}
+
+void UHearthwardHarvestSubsystem::RefreshDue(double CalendarMinutes)
+{
+    if(Settling || GetWorld()->IsPaused()
+        || GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring()) return;
+    for(auto It=Refreshes.CreateIterator();It;++It)
+    {
+        if(CalendarMinutes<It.Value().DueAt) continue;
+        bool Occupied=false;
+        for(TActorIterator<AActor> Actor(GetWorld());Actor;++Actor)
+        {
+            if(!Actor->ActorHasTag(TEXT("Hearthward.Building.Completed"))) continue;
+            const auto* Box=Cast<UBoxComponent>(Actor->GetRootComponent());
+            if(!Box) continue;
+            const FVector Local=Box->GetComponentTransform().InverseTransformPosition(It.Value().Position);
+            const FVector Half=Box->GetUnscaledBoxExtent();
+            // Building footprint, including its ground plane; height does not allow trees inside floors.
+            if(FMath::Abs(Local.X)<=Half.X && FMath::Abs(Local.Y)<=Half.Y) { Occupied=true; break; }
+        }
+        if(It.Value().CanRefresh(CalendarMinutes,Occupied))
+        {
+            Used.Remove(It.Key());
+            It.RemoveCurrent();
+        }
+    }
+}
 
 void UHearthwardHarvestSubsystem::RefreshNearby(AActor* Player)
 {
@@ -70,7 +133,7 @@ FString UHearthwardHarvestTargetComponent::GetInteractionPrompt(AActor* Interact
     const int32 Count=GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Remaining(ResourceKey,Capacity);
     const FString Label=HearthwardData::Text(HearthwardData::Find(TEXT("items"),Item.ToString()),TEXT("name"));
     return Count>0?FString::Printf(TEXT("E 采集%s ×%d · 5秒\n剩余 %d · 移动可中断"),*Label,FMath::Min(Yield,Count),Count)
-        :Label+TEXT("已采尽 · 这处资源不会自动刷新");
+        :Label+(Item==TEXT("wood")?TEXT("已采尽 · 两个游戏日后再生，占地时顺延"):TEXT("已采尽 · 这处资源不会自动刷新"));
 }
 FString UHearthwardHarvestTargetComponent::CompleteInteraction(AActor* Player)
 { return GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Harvest(this,Player); }
@@ -90,6 +153,13 @@ FString UHearthwardHarvestSubsystem::Harvest(UHearthwardHarvestTargetComponent* 
     Used.Add(Target->ResourceKey,Before+Count);
     if(Bag->TryAdd(Target->Item,Count)!=EHearthwardInventoryResult::Success)
     { if(Before) Used.Add(Target->ResourceKey,Before); else Used.Remove(Target->ResourceKey); return TEXT("背包容量不足，资源未消耗"); }
+    if(Target->Item==TEXT("wood") && Before+Count==Target->Capacity)
+    {
+        FVector Position;
+        if(TreePosition(Target->ResourceKey,Position))
+            Refreshes.Add(Target->ResourceKey,FHearthwardResourceRefresh::DepletedTree(
+                GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes,Position));
+    }
     G->Record(TEXT("harvest"),Target->Item,Count);
     return FString::Printf(TEXT("已采集%s ×%d"),*HearthwardData::Text(HearthwardData::Find(TEXT("items"),Target->Item.ToString()),TEXT("name")),Count);
 }

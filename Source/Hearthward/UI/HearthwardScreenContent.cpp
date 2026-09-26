@@ -555,8 +555,9 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("text"),FString::Printf(TEXT("猎弓   %d\n右键 射击"),Inventory()->GetItemCount(TEXT("arrow"))),FVector2D(805,835),FVector2D(225,60),22);
     }
     if(G->Skills.FindRef(TEXT("strong"))>0) Element(TEXT("text"),TEXT("Q 强力挥击"),FVector2D(720,744),FVector2D(260,35),19);
-    const int32 Time=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
-    Element(TEXT("text"),FString::Printf(TEXT("第 %d 天  %02d:%02d  晴"),Time/1440+1,(Time/60)%24,Time%60),FVector2D(1380,31),FVector2D(290,35),16);
+    const auto Calendar=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot();
+    const int32 Minute=FMath::FloorToInt(Calendar.MinuteOfDay);
+    Element(TEXT("text"),FString::Printf(TEXT("第 %lld 天  %02d:%02d  晴"),Calendar.ElapsedDays+1,Minute/60,Minute%60),FVector2D(1380,31),FVector2D(290,35),16);
     if(G->Health<=0)
     {
         Element(TEXT("panel"),TEXT(""),FVector2D(530,320),FVector2D(610,230));

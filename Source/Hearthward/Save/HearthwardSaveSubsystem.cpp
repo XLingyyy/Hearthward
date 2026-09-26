@@ -166,10 +166,13 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     if(GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->IsSettling())
     { Status=TEXT("资源正在结算，请稍后保存"); return false; }
     S.HarvestedResources = GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Snapshot();
+    S.ResourceRefreshes = GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->RefreshSnapshot();
     S.NaturalWorld = bNaturalWorld;
     S.NaturalCompanion = bNaturalWorld;
     S.Map = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
     S.ActiveSeconds = GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.GetActivePlaySeconds();
+    S.CalendarMinutes = GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.GetElapsedCalendarMinutes();
+    S.ClockStateVersion = HearthwardSave::ClockStateVersion;
     S.Player = Player->GetActorTransform();
     S.View = Player->GetControlRotation();
     S.Inventory = SaveSubsystemCounts(Player->FindComponentByClass<UHearthwardInventoryComponent>()->State);
@@ -230,6 +233,8 @@ bool UHearthwardSaveSubsystem::SavePoint(bool Manual) { return WritePoint(Manual
 
 bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
 {
+    if(bRestoring || GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->IsSettling())
+    { Status=TEXT("结算中不能恢复快照"); return false; }
     if (S.Map != UGameplayStatics::GetCurrentLevelName(GetWorld(), true) || S.NaturalWorld != bNaturalWorld)
     { Status = TEXT("请先打开存档所属地图"); return false; }
     if (bNaturalWorld && !S.NaturalCompanion)
@@ -238,6 +243,8 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         FHearthwardWorldSave Upgraded=InitialWorld;
         Upgraded.Player=S.Player; Upgraded.View=S.View; Upgraded.Inventory=S.Inventory; Upgraded.Storage=S.Storage;
         Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
+        Upgraded.CalendarMinutes=S.CalendarMinutes; Upgraded.ClockStateVersion=S.ClockStateVersion;
+        Upgraded.HarvestedResources=S.HarvestedResources; Upgraded.ResourceRefreshes=S.ResourceRefreshes;
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
         return Restore(Upgraded);
@@ -249,7 +256,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     Storage->AdvanceTimeline();
-    GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Restore(S.HarvestedResources);
+    GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Restore(S.HarvestedResources,S.ResourceRefreshes);
     if(auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>()) B->CancelPlacement();
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->ResetForSnapshot();
     if (auto* Interaction = Player->FindComponentByClass<UHearthwardInteractionComponent>())
@@ -260,7 +267,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     auto* Personal = Player->FindComponentByClass<UHearthwardInventoryComponent>();
     Personal->State = Inventory(S.Inventory); Storage->State.Shared = Inventory(S.Storage, true);
     if (Companion) { Companion->Bag->State = Inventory(S.Bag); Companion->Source->State = Inventory(S.Resource); }
-    GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.ActivePlaySeconds = S.ActiveSeconds;
+    GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.Restore(S.ActiveSeconds,S.CalendarMinutes);
     Knowledge = S.Knowledge; KnowledgeRevision = S.KnowledgeRevision; AutoMinutes = S.AutoMinutes; Safety = S.Safety;
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RestoreMemory(S.NPCMemory);
     Player->SetActorTransform(S.Player, false, nullptr, ETeleportType::TeleportPhysics);

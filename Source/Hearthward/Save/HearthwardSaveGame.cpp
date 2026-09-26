@@ -2,6 +2,7 @@
 #include "../Interaction/HearthwardHarvestSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
+#include "../Time/HearthwardClockState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/Crc.h"
 #include "Misc/FileHelper.h"
@@ -36,22 +37,27 @@ bool ValidTimer(const FHearthwardSavedTimer& Timer)
 }
 bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Error)
 {
-    constexpr uint32 LegacyMagic = 0x48575331, Magic = 0x48575332;
+    constexpr uint32 LegacyMagic = 0x48575331, PreviousMagic = 0x48575332, Magic = 0x48575334;
     uint32 Header[3] = {};
     if (Bytes.Num() < sizeof(Header) || Bytes.Num() > 64 * 1024 * 1024) { Error = TEXT("存档大小无效"); return false; }
     FMemory::Memcpy(Header, Bytes.GetData(), sizeof(Header));
     const int32 Length = Bytes.Num() - sizeof(Header);
-    if ((Header[0] != Magic && Header[0]!=LegacyMagic) || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
+    if ((Header[0] != Magic && Header[0]!=PreviousMagic && Header[0]!=LegacyMagic) || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
     { Error = TEXT("存档完整性校验失败"); return false; }
     TArray<uint8> Payload;
     Payload.Append(Bytes.GetData() + sizeof(Header), Length);
     Out = Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
+    if(Out && Header[0]==Magic && Out->Schema!=HearthwardSave::CurrentSchema)
+    { Error=TEXT("当前信封的存档版本无效"); Out=nullptr; return false; }
 
     // Historical files may omit a property that matched the class default of that build.
     // Only the legacy envelope may use this fallback; current-format damaged files never enter it.
     if(Out && Header[0]==LegacyMagic && Out->Schema==HearthwardSave::CurrentSchema
         && Out->Points.ContainsByPredicate([](const auto& P){return P.World.NPCStateVersion==0;}))
         Out->Schema=1;
+
+    if(Out && Header[0]!=Magic && Out->Schema==HearthwardSave::CurrentSchema)
+        Out->Schema=Out->Points.ContainsByPredicate([](const auto& P){return P.World.NPCStateVersion==2;})?2:3;
 
     if(Out && Header[0]==LegacyMagic && Out->Schema==1)
     {
@@ -83,6 +89,24 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
             S.NPCMemory.Migrate(P.CampaignId,true,S.CommandActive?S.CommandId:FGuid());
             S.NPCStateVersion=HearthwardSave::NPCStateVersion;
         }
+        Out->Schema=3;
+    }
+
+    if(Out && Header[0]!=Magic && Out->Schema==3)
+    {
+        for(auto& P:Out->Points)
+        {
+            auto& S=P.World;
+            S.CalendarMinutes=S.ActiveSeconds;
+            S.ClockStateVersion=HearthwardSave::ClockStateVersion;
+            S.ResourceRefreshes.Reset();
+            for(const auto& Entry:S.HarvestedResources)
+            {
+                FVector Position;
+                if(Entry.Value==12 && UHearthwardHarvestSubsystem::TreePosition(Entry.Key,Position))
+                    S.ResourceRefreshes.Add(Entry.Key,FHearthwardResourceRefresh::DepletedTree(S.CalendarMinutes,Position));
+            }
+        }
         Out->Schema=HearthwardSave::CurrentSchema;
     }
 
@@ -98,6 +122,8 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
     for (const auto& P : Pool.Points)
     {
         const auto& S = P.World;
+        if(S.ClockStateVersion!=ClockStateVersion || !FHearthwardClockState::IsValid(S.ActiveSeconds,S.CalendarMinutes)
+            || !UHearthwardHarvestSubsystem::ValidateRefreshes(S.HarvestedResources,S.ResourceRefreshes,S.CalendarMinutes)) return false;
         if(S.NPCStateVersion!=NPCStateVersion || S.Acquired<0 || S.Carried<0 || S.Acquired<S.Delivered || S.Acquired>S.Requested || S.Carried!=S.Acquired-S.Delivered
             || S.Carried>S.Bag.FindRef(S.Item) || S.NPCOperations.Num()>512 || S.NPCMemory.Campaign!=P.CampaignId) return false;
         if(S.CommandActive && (S.AgentGoal.Intent.IsNone() || !S.CommandId.IsValid()))return false;
@@ -149,7 +175,7 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
     if (!Pool || !Validate(*Pool)) { Error = TEXT("拒绝写入无效快照"); return false; }
     TArray<uint8> Payload, Bytes;
     if (!UGameplayStatics::SaveGameToMemory(Pool, Payload)) { Error = TEXT("快照序列化失败"); return false; }
-    const uint32 Header[] = {0x48575332, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
+    const uint32 Header[] = {0x48575334, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
     Bytes.Append(reinterpret_cast<const uint8*>(Header), sizeof(Header));
     Bytes.Append(Payload);
     IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true);

@@ -41,4 +41,30 @@ bool FClockPartitionTest::RunTest(const FString& Parameters)
     TestEqual(TEXT("World states are independent"), Clock.GetActivePlaySeconds(), Before);
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FClockSkipRestoreTest, "Hearthward.Time.SleepCalendarAndRollback",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FClockSkipRestoreTest::RunTest(const FString& Parameters)
+{
+    FHearthwardClockState Clock;
+    Clock.Advance(1200);
+    TestTrue(TEXT("Eight hour sleep accepted by calendar state"),Clock.Sleep());
+    TestEqual(TEXT("Sleep does not run action timers"),Clock.GetActivePlaySeconds(),1200.0);
+    TestEqual(TEXT("Sleep crosses midnight by actual clock"),Clock.GetElapsedDays(),int64(1));
+    TestEqual(TEXT("20:00 plus eight hours is 04:00"),Clock.GetMinuteOfDay(),240.0);
+    Clock.Sleep();
+    TestEqual(TEXT("A second sleep stays on the same date"),Clock.GetElapsedDays(),int64(1));
+    TestEqual(TEXT("04:00 plus eight hours is noon"),Clock.GetMinuteOfDay(),720.0);
+    Clock.AdvanceCalendar(1440*5);
+    TestEqual(TEXT("Multiple periods retained"),Clock.GetElapsedDays(),int64(6));
+    TestTrue(TEXT("Restore earlier independent A/W"),Clock.Restore(20,500));
+    TestEqual(TEXT("No future calendar carried across rollback"),Clock.GetElapsedCalendarMinutes(),500.0);
+    TestFalse(TEXT("Negative advancement rejected"),Clock.Advance(-1));
+    TestFalse(TEXT("Invalid snapshot rejected"),Clock.Restore(501,500));
+    TestEqual(TEXT("Rejected mutation leaves state intact"),Clock.GetActivePlaySeconds(),20.0);
+    FHearthwardClockState Partitioned,Single;
+    for(int32 I=0;I<9;++I) Partitioned.Sleep();
+    Single.AdvanceCalendar(4320);
+    TestEqual(TEXT("Partitioned calendar jumps match"),Partitioned.GetElapsedCalendarMinutes(),Single.GetElapsedCalendarMinutes());
+    return true;
+}
 #endif

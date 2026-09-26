@@ -17,6 +17,7 @@ FHearthwardSavePoint Point(bool Manual = false)
     P.SaveId = FGuid::NewGuid(); P.CampaignId = FGuid::NewGuid(); P.Created = FDateTime::UtcNow(); P.Manual = Manual;
     P.World.Map = TEXT("PROTOTYPE_ONLY");
     P.World.NPCStateVersion=HearthwardSave::NPCStateVersion;
+    P.World.ClockStateVersion=HearthwardSave::ClockStateVersion;
     P.World.NPCMemory.Campaign=P.CampaignId;
     return P;
 }
@@ -62,7 +63,7 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
     auto& S = Pool->Points[0].World;
     S.Inventory.Add(TEXT("wood"), 5); S.Storage.Add(TEXT("stone"), 120); S.Resource.Add(TEXT("wood"), 16);
     S.Knowledge.Add(TEXT("玩家原话（未核实）: 营地约定")); S.KnowledgeRevision = 1;
-    S.ActiveSeconds = 123; S.Player.SetLocation(FVector(10,20,30));
+    S.ActiveSeconds = 123; S.CalendarMinutes = 603; S.Player.SetLocation(FVector(10,20,30));
     FString Error;
     TestTrue(TEXT("Write initial pool"), HearthwardSave::Write(Path, Pool, Error));
     UHearthwardSaveGame* Loaded = nullptr;
@@ -73,6 +74,7 @@ bool FSaveFileTest::RunTest(const FString& Parameters)
         TestEqual(TEXT("Personal inventory"), R.Inventory.FindRef(TEXT("wood")), 5);
         TestEqual(TEXT("Unlimited shared storage"), R.Storage.FindRef(TEXT("stone")), 120);
         TestTrue(TEXT("Knowledge and time at same boundary"), R.Knowledge == S.Knowledge && R.ActiveSeconds == S.ActiveSeconds);
+        TestEqual(TEXT("Calendar includes skipped minutes independently of action time"),R.CalendarMinutes,603.0);
         TestTrue(TEXT("World transform"), R.Player.Equals(S.Player));
     }
     TArray<uint8> Original;
@@ -223,7 +225,7 @@ bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
         for(const auto& P:Legacy->Points)TestEqual(TEXT("Memory bound to original campaign"),P.World.NPCMemory.Campaign,P.CampaignId);
     }
     auto* Pool=NewObject<UHearthwardSaveGame>(); Pool->Points.Add(Point());
-    auto& S=Pool->Points[0].World; S.ActiveSeconds=20;
+    auto& S=Pool->Points[0].World; S.ActiveSeconds=20; S.CalendarMinutes=20;
     S.NPCMemory.Put({},TEXT("claim"),TEXT("原话不能变成库存"),3);
     S.NPCMemory.Put({},TEXT("collection_ban"),TEXT("不采木材"),3,TEXT("wood"));
     S.NPCMemory.AddClarification(TEXT("采木材，限制未解除"),TEXT("需要多少？"));
@@ -252,6 +254,59 @@ bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
     }
     S.NPCStateVersion=0;
     TestFalse(TEXT("Missing version in new snapshot not silently defaulted"),HearthwardSave::Validate(*Pool));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveCalendarMigrationTest, "Hearthward.Save.CalendarAndRefreshMigration",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSaveCalendarMigrationTest::RunTest(const FString& Parameters)
+{
+    const FString Path=FPaths::ProjectSavedDir()/TEXT("Task052")/(FGuid::NewGuid().ToString()+TEXT(".hws"));
+    IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path),true);
+    auto* Pool=NewObject<UHearthwardSaveGame>(); Pool->Points.Add(Point());
+    auto& S=Pool->Points[0].World;
+    const FString Tree=TEXT("A|Mesh|SM_CampFir01|4|20,30,40");
+    const FString Partial=TEXT("B|Mesh|SM_Tree|-1|0,0,0");
+    S.ActiveSeconds=100;
+    S.HarvestedResources.Add(Tree,12); S.HarvestedResources.Add(Partial,6);
+    // Simulates the actual omitted default-schema property of old UE save payloads.
+    // The old envelope, not missing new fields, selects migration.
+    S.ClockStateVersion=0;
+    TArray<uint8> Payload,Bytes;
+    UGameplayStatics::SaveGameToMemory(Pool,Payload);
+    const uint32 Header[]={0x48575332,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
+    Bytes.Append(reinterpret_cast<const uint8*>(Header),sizeof(Header)); Bytes.Append(Payload);
+    FFileHelper::SaveArrayToFile(Bytes,*Path);
+    UHearthwardSaveGame* Migrated=nullptr; FString Error;
+    TestTrue(TEXT("Previous envelope migrates omitted schema default"),HearthwardSave::Read(Path,Migrated,Error));
+    if(Migrated)
+    {
+        auto& M=Migrated->Points[0].World;
+        TestEqual(TEXT("Legacy A remains unchanged"),M.ActiveSeconds,100.0);
+        TestEqual(TEXT("Legacy calendar has no historical skips"),M.CalendarMinutes,100.0);
+        TestEqual(TEXT("Only exhausted recognized trees get due records"),M.ResourceRefreshes.Num(),1);
+        TestEqual(TEXT("Missing historical depletion starts at saved calendar"),M.ResourceRefreshes.FindRef(Tree).DueAt,2980.0);
+        M.CalendarMinutes=2000;
+        TestTrue(TEXT("Write migrated state as new format"),HearthwardSave::Write(Path,Migrated,Error));
+        UHearthwardSaveGame* Reloaded=nullptr;
+        TestTrue(TEXT("Reload current format"),HearthwardSave::Read(Path,Reloaded,Error));
+        if(Reloaded)
+        {
+            TestEqual(TEXT("New format retains independent W"),Reloaded->Points[0].World.CalendarMinutes,2000.0);
+            TestEqual(TEXT("Reload does not restart refresh waiting"),Reloaded->Points[0].World.ResourceRefreshes.FindRef(Tree).DueAt,2980.0);
+        }
+        M.ResourceRefreshes[Tree].DueAt=3000;
+        TestFalse(TEXT("Invalid refresh deadline rejected before replacing file"),HearthwardSave::Write(Path,Migrated,Error));
+        TestTrue(TEXT("Rejected write preserves prior committed file"),HearthwardSave::Read(Path,Reloaded,Error));
+        M.ResourceRefreshes[Tree].DueAt=2980;
+        M.ClockStateVersion=0;
+        Payload.Reset(); Bytes.Reset();
+        UGameplayStatics::SaveGameToMemory(Migrated,Payload);
+        const uint32 CurrentHeader[]={0x48575334,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
+        Bytes.Append(reinterpret_cast<const uint8*>(CurrentHeader),sizeof(CurrentHeader)); Bytes.Append(Payload);
+        FFileHelper::SaveArrayToFile(Bytes,*Path);
+        TestFalse(TEXT("Current envelope cannot migrate away corrupt clock metadata"),HearthwardSave::Read(Path,Reloaded,Error));
+    }
+    IFileManager::Get().Delete(*Path);
     return true;
 }
 #endif

@@ -27,3 +27,9 @@ Demo 的构建基线为 `main@68e68d817c4d5a39bf43eb7f27863fc734d04aef`，发行
 - TASK-004、026—031 的实现、集成、验证、流程与 Owner 体验分栏见[账本](planning/TASK-041-baseline-ledger.md#3-旧任务五栏账本)。选定路线、斧头握持、防具、双角色动作、真实自然遭遇、正式经济、长程伙伴体验和 Owner 验收仍需各任务收尾。
 - 任务 JSON 中多个旧任务仍为 `Blocked` 或 `Active`，这些状态不表示相关实现不存在。Issue 可选；TASK-027/028 保持 `Active` 且 Reviewer 未指定，正式审查前仍需独立评审。TASK-041 的 Owner 与 Reviewer 均由用户指定为 `XLingyyy`，同人指定不构成独立审查，状态仍为 `Blocked`。[TASK-041 交接](handoffs/TASK-041.md)记录本次验证边界。
 - Git LFS 锁、共享地图和公共配置仍按 [WORKFLOW](../WORKFLOW.md) 核对；本次 TASK-043 只改文档，无二进制、玩法或游戏配置改动。
+
+## TASK-052 施工分支
+
+2026-09-26 Owner确认开始施工，按原稿TASK-054执行canonical TASK-052。分支codex/TASK-052-world-time堆叠于TASK-043@3ec59d3da49d1d187f39b86ca0c7c232d50017ee，当前origin/main为35ac8706e50fe8b7cf099b3b73e803572d5a3ff0。
+
+本分支实现独立A/W、树木耗尽两日再生、建筑占地待刷新、存档schema4和旧Demo档迁移。世界跳时入口因正式生存事件未接入而明确拒绝；现有床、光照及其他领域未宣称完成。详见[交接](handoffs/TASK-052.md)。

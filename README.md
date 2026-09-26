@@ -1,10 +1,12 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-26，审计主干为 `main@a4998b10da54f162def767fa8bb7e308594bd490`，其中 PR #44 合入了 TASK-041 的文档与仓库校验规则，没有新增玩法。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复经 PR #43 合入。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。有效设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-26，审计主干为 `main@35ac8706e50fe8b7cf099b3b73e803572d5a3ff0`，其中 PR #44 合入 TASK-041 文档与仓库校验规则，PR #45 合入 TASK-042 设计草案，没有新增玩法。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复经 PR #43 合入。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。有效设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
 [TASK-042 首版范围与第一体验切片](docs/tasks/TASK-042.md)已形成 [DSGN-003 已批准范围](docs/design/DSGN-003-first-release-slice.md)：拟从营地准备、兄弟分工和近郊救援走到回营成长。Owner于2026-09-26批准首版范围与切片方向，30—60分钟为设计预算；具体奖励与配表仍未定，尚无游戏内验证。
 
-[TASK-043 世界时间与持久状态](docs/tasks/TASK-043.md)接在已推送的 TASK-042 提交 `ab5596e` 上，形成[规则提案](docs/design/DSGN-R01-world-time-persistence.md)和[契约草案](docs/contracts/CT-TASK-043-world-time-persistence.md)：包含逐系统结算矩阵、投入与产出、敌人／自然物刷新、传送与保存边界。TASK-042此前草案已由PR #45合入main，本轮批准记录随043分支交付；TASK-043规则已获修改确认：睡眠8游戏小时并按实际时刻显示昼夜、敌人击晕等效击杀且不再苏醒、树木2日刷新，其他方案按确认生效；同代次清敌和奖励只结算一次，批准增量尚未合入main；当前床仍为短时恢复、自然采集点仍不周期再生，本轮无玩法实现或运行验证。
+[TASK-043 世界时间与持久状态](docs/tasks/TASK-043.md)规则已获 Owner 批准：睡眠推进8游戏小时，光照按实际时刻；敌人击晕等效击杀；树木耗尽后2游戏日再生。批准范围见[设计定案](docs/design/DSGN-R01-world-time-persistence.md)。
+
+当前 **TASK-052 施工分支**基于 TASK-043，已分离有效实玩秒与日历分钟，接入树木两日再生、建筑占地延后、同档恢复及旧档迁移。HUD日期与时刻读取游戏日历。石头、草药等待再生白名单。世界层睡眠／篝火请求在生存事件结算接入前明确拒绝，现有床仍是 Demo 短时恢复；正式昼夜光照、生产／动物／敌人周期和旅行联动未接入。实现与验证见[TASK-052交接](docs/handoffs/TASK-052.md)，本分支成果尚未合入 main。
 
 AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与分支证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)和[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；所选集成修正随 PR #40 合入 main，PR #41/#42 属于 TASK-031。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
@@ -18,7 +20,7 @@ AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然�
 
 打开 `Hearthward.uproject`，运行 `/Game/Hearthward/Bootstrap/L_Bootstrap`。标题页“新游戏”进入自然地图的新营地并生成初始存档；营地中按 F6 打开存档页，暂停菜单也可手动保存。返回主菜单后“继续游戏”恢复最新节点；“载入存档”可选择自然地图节点。已有旧开发场景进度仍保留在同一50点档池。
 
-自然地图已接通伙伴、仓储、建造、制作/维修和技能页面。靠近弟弟按 T，输入“帮我采集两份木材带回营地。”，检查任务卡并确认。伙伴原有木材点初始 16 份；玩家也可以靠近场景树木、石头和灌木按 E 采集木材、石材、草药，每次5秒获得2份。每处上限分别为12/8/4份，余量随存档保存，不自动刷新。营地仓储附近按 R 存取物资，按 B 建造工作台、床或篝火。地图和任务日志页面可从自然地图打开；旧开发场景敌人尚未布置到自然地图。
+自然地图已接通伙伴、仓储、建造、制作/维修和技能页面。靠近弟弟按 T，输入“帮我采集两份木材带回营地。”，检查任务卡并确认。伙伴原有木材点初始 16 份；玩家也可以靠近场景树木、石头和灌木按 E 采集木材、石材、草药，每次5秒获得2份。每处上限分别为12/8/4份，余量随存档保存。本施工分支的树木耗尽后等待两个游戏日再生；已建建筑占地时延后，腾空后只恢复一次容量。石头和草药仍不自动刷新。营地仓储附近按 R 存取物资，按 B 建造工作台、床或篝火。地图和任务日志页面可从自然地图打开；旧开发场景敌人尚未布置到自然地图。
 
 单独浏览自然地图时，在编辑器中打开 `/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds` 并运行PIE；地图级浏览GameMode只复用第三人称角色，不生成旧开发场景的敌人、伙伴或测试地标，也不启动本地模型。
 

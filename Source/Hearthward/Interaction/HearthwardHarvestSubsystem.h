@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "HearthwardInteractionTargetComponent.h"
+#include "../Time/HearthwardResourceRefresh.h"
 #include "HearthwardHarvestSubsystem.generated.h"
 
 UCLASS()
@@ -27,11 +28,17 @@ public:
     UFUNCTION(BlueprintPure) int32 Remaining(const FString& Key, int32 Capacity) const;
     bool IsSettling() const { return Settling; }
     const TMap<FString,int32>& Snapshot() const { return Used; }
-    void Restore(const TMap<FString,int32>& Snapshot);
+    const TMap<FString,FHearthwardResourceRefresh>& RefreshSnapshot() const { return Refreshes; }
+    void Restore(const TMap<FString,int32>& Snapshot, const TMap<FString,FHearthwardResourceRefresh>& Due = {});
+    void RefreshDue(double CalendarMinutes);
     FString Harvest(UHearthwardHarvestTargetComponent* Target, AActor* Player);
     static bool Validate(const TMap<FString,int32>& Snapshot);
+    static bool TreePosition(const FString& Key, FVector& Position);
+    static bool ValidateRefreshes(const TMap<FString,int32>& UsedSnapshot,
+        const TMap<FString,FHearthwardResourceRefresh>& Due, double CalendarMinutes);
 private:
     TMap<FString,int32> Used;
+    TMap<FString,FHearthwardResourceRefresh> Refreshes;
     TMap<FString,TWeakObjectPtr<UHearthwardHarvestTargetComponent>> Targets;
     double NextRefresh = 0;
     bool Settling = false;
