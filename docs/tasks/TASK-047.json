@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "id": "TASK-047",
-  "title": "六十级成长、装备与制作维修表",
-  "status": "Blocked",
+  "title": "实现六十级成长、装备实例与制作维修",
+  "status": "Active",
   "updated_at": "2026-09-26",
   "owner": "XLingyyy",
   "reviewer": "XLingyyy",
@@ -11,19 +11,18 @@
   "source_refs": [
     "用户：继续047；延续按序交付与任务分支提交推送工作方式",
     "原稿TASK-049映射canonical TASK-047；审计R11/R13/R14",
-    "origin/main@dbba6d052b7e08e612d858ca07fc87e90dae5840，已含046/PR48"
+    "origin/main@dbba6d052b7e08e612d858ca07fc87e90dae5840，已含046/PR48",
+    "Owner明确确认047设计，授权沿047施工、完成后提交推送；本次批准协调库存／保存公共接口、Source与Resources范围。"
   ],
   "dependencies": [
     "TASK-042",
     "TASK-045",
     "TASK-046"
   ],
-  "blocked_by": [
-    "R11",
-    "R13",
-    "R14"
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-047-progression-inventory.md"
   ],
-  "contracts": [],
   "allowed_paths": [
     "README.md",
     "docs/START_HERE.md",
@@ -35,21 +34,25 @@
     "docs/design/OPEN_QUESTIONS.md",
     "docs/design/DSGN-R14-progression-equipment.md",
     "docs/planning/TASK-047/",
-    "docs/qa/TASK-047/"
+    "docs/qa/TASK-047/",
+    "Source/Hearthward/",
+    "Resources/Data/",
+    "Resources/UI/",
+    "docs/contracts/CT-TASK-047-progression-inventory.md",
+    "docs/contracts/README.md"
   ],
   "forbidden_paths": [
-    "Source/",
-    "Resources/",
     "Content/",
     "Config/",
     "Runtime/",
     "docs/design/archive/"
   ],
   "acceptance": [
-    "逐级经验属性技能预算可计算，29节点逐一追溯",
-    "装备具有来源、重量、制作与维修链，普通/稀有/唯一规则明确",
-    "实例耐久、旧档迁移、弟弟容量与权限形成可审阅决定",
-    "候选设计与批准规则分开，仓库与路径自检通过"
+    "批准的60级经验、29节点、52点与免费洗点接入",
+    "62物品及49配方、设施与图纸、局部维修、双方独立容量接入实际UI",
+    "装备实例跨转移／仓储／穿戴／损耗保持身份，旧档迁移schema6",
+    "Editor构建、相关原生和真实PIE操作与存读档通过，证据绑定源码",
+    "提交推送，核对远端后清理本单工作树"
   ],
   "non_goals": [
     "未经Owner批准不实施新玩法或覆盖运行数据",
@@ -63,14 +66,13 @@
   "permissions": {
     "network": "granted: primary source research, Git checks and task branch push",
     "install_dependencies": "not_granted",
-    "commit": "granted: sequential task delivery workflow requested by user",
-    "push": "granted: sequential task branch delivery workflow requested by user",
+    "commit": "granted: user explicitly approved TASK-047 implementation, commit and push",
+    "push": "granted: user explicitly approved TASK-047 implementation, commit and push",
     "merge": "not_granted"
   },
   "notes": [
-    "Owner/Reviewer均为XLingyyy，Issue可选。",
-    "本单先交付设计候选与计算表；用户继续047未被解释为批准新数值。",
-    "D1—D6候选与计算表已完成，等待Owner批准后沿047协调代码／数据／存档范围；独立PR审查未由Agent自批。",
-    "设计计算32/32、工具33/33、仓库与范围检查0 errors；受检提交b250b3b544e3e4da08740251aeee56b118259b1a。UE/PIE/Shipping均NOT_RUN。"
+    "Owner/Reviewer XLingyyy；Issue可选。",
+    "D1—D6已获Owner批准；正式自然源点／任务布置继续遵循048／049边界，复用现有模型。",
+    "前轮设计计算32/32及工具33/33为设计阶段证据，不能代替本轮实现验证。"
   ]
 }
