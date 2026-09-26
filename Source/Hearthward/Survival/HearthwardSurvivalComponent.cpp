@@ -1,4 +1,5 @@
 #include "HearthwardSurvivalComponent.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "GameFramework/PainCausingVolume.h"
 #include "NavigationSystem.h"
@@ -35,8 +36,8 @@ FGuid UHearthwardSurvivalComponent::Epoch() const { return GetWorld()->GetSubsys
 float& UHearthwardSurvivalComponent::Health() { if(auto* G=Gameplay()) return G->Health; return BrotherHealth; }
 float& UHearthwardSurvivalComponent::Hunger() { if(auto* G=Gameplay()) return G->Hunger; return BrotherHunger; }
 float& UHearthwardSurvivalComponent::Stamina() { if(auto* G=Gameplay()) return G->Stamina; return BrotherStamina; }
-float UHearthwardSurvivalComponent::MaxHealth() const { if(auto* G=Gameplay()) return G->MaxHealth(); return 100; }
-float UHearthwardSurvivalComponent::MaxStamina() const { if(auto* G=Gameplay()) return G->MaxStamina(); return 100; }
+float UHearthwardSurvivalComponent::MaxHealth() const { if(auto* G=Gameplay()) return G->MaxHealth(); return 100+GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Bonus(TEXT("cumulative_hp_bonus")); }
+float UHearthwardSurvivalComponent::MaxStamina() const { if(auto* G=Gameplay()) return G->MaxStamina(); return 100+GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Bonus(TEXT("cumulative_stamina_bonus")); }
 bool UHearthwardSurvivalComponent::Enabled() const
 {
     const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);

@@ -64,7 +64,7 @@ EHearthwardInventoryResult UHearthwardInventoryComponent::TryConsume(const TMap<
 
 bool UHearthwardInventoryComponent::Reserve(FName Item)
 {
-    if(!Reserved.IsNone() || GetItemCount(Item)<1) return false;
+    if(!Reserved.IsNone() || Available(Item)<1) return false;
     Reserved=Item; return true;
 }
 bool UHearthwardInventoryComponent::CommitReservation(FName Remainder,bool Notify)
@@ -76,4 +76,17 @@ bool UHearthwardInventoryComponent::CommitReservation(FName Remainder,bool Notif
     if(Result!=EHearthwardInventoryResult::Success) return false;
     Reserved=NAME_None;
     if(Notify) OnInventoryChanged.Broadcast(); return true;
+}
+
+bool UHearthwardInventoryComponent::ReserveMaterials(const TMap<FName,int32>& Materials)
+{
+    if(!ReservedMaterials.IsEmpty()) return false;
+    for(const auto& M:Materials) if(M.Value<=0 || Available(M.Key)<M.Value) return false;
+    ReservedMaterials=Materials;return true;
+}
+bool UHearthwardInventoryComponent::CommitMaterials(bool Notify)
+{
+    auto After=State;
+    for(const auto& M:ReservedMaterials) if(After.Remove(M.Key,M.Value)!=EHearthwardInventoryResult::Success) return false;
+    State=MoveTemp(After);ReservedMaterials.Reset();if(Notify)OnInventoryChanged.Broadcast();return true;
 }

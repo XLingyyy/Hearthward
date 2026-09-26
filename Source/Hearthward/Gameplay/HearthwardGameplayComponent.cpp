@@ -1,4 +1,5 @@
 #include "HearthwardGameplayComponent.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Animation/HearthwardHeroAnimInstance.h"
@@ -71,6 +72,7 @@ void UHearthwardGameplayComponent::EnableAdventure()
     else for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
         if(IsValid(It->Camp)) { Origin=It->Camp->GetActorLocation()-FVector(0,0,100); break; }
     Discovered.Add(TEXT("camp")); Activated.Add(TEXT("camp"));
+    GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->EnsureCamp(LocationPosition(TEXT("camp")));
     // The natural map already owns its terrain and encounters; the old prototype cylinders do not belong there.
     if(!NaturalWorld) CreateLandmarks();
     OnChanged.Broadcast();
@@ -145,9 +147,9 @@ float UHearthwardGameplayComponent::Effect(FName Name) const
     return Value;
 }
 float UHearthwardGameplayComponent::MaxHealth() const
-{ return 100 + 100.f*(Level()-1)/59 + 100.f*(CampTier-1)/7 + Effect(TEXT("health")); }
+{ return 100 + 100.f*(Level()-1)/59 + Number(HearthwardCamp::Tier(CampTier),TEXT("cumulative_hp_bonus")) + Effect(TEXT("health")); }
 float UHearthwardGameplayComponent::MaxStamina() const
-{ return 100 + 50.f*(Level()-1)/59 + 50.f*(CampTier-1)/7 + Effect(TEXT("stamina")); }
+{ return 100 + 50.f*(Level()-1)/59 + Number(HearthwardCamp::Tier(CampTier),TEXT("cumulative_stamina_bonus")) + Effect(TEXT("stamina")); }
 bool UHearthwardGameplayComponent::Result(bool Success,const FString& Message)
 { Feedback=Message; OnChanged.Broadcast(); return Success; }
 bool UHearthwardGameplayComponent::Learn(FName Id)
@@ -236,7 +238,14 @@ bool UHearthwardGameplayComponent::Claim(FName Id)
     const auto R=Find(TEXT("quests"),Id.ToString());
     if (!QuestAvailable(Id) || Claimed.Contains(Id) || QuestProgress(Id)<Number(R,TEXT("required")))
         return Result(false,TEXT("尚未完成目标或奖励已领取"));
-    Claimed.Add(Id); Experience += FMath::RoundToInt(Number(R,TEXT("xp"))*(1+Effect(TEXT("xp"))));
+    Claimed.Add(Id);
+    auto* Economy=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+    const FString Rescued=Text(R,TEXT("rescuedPerson"));
+    if(!Rescued.IsEmpty()) Economy->RecordRescue(FName(*Rescued));
+    const TArray<TSharedPtr<FJsonValue>>* HomePosition;
+    if(R->TryGetArrayField(TEXT("reclaimedCamp"),HomePosition) && HomePosition->Num()==3)
+        Economy->ReclaimHometown(Id,FVector((*HomePosition)[0]->AsNumber(),(*HomePosition)[1]->AsNumber(),(*HomePosition)[2]->AsNumber()));
+    Experience += FMath::RoundToInt(Number(R,TEXT("xp"))*(1+Effect(TEXT("xp"))));
     for (const auto& Q : Rows(TEXT("quests")))
         if (Text(Q->AsObject(),TEXT("requires"))==Id.ToString()) { TrackedQuest=FName(*Text(Q->AsObject(),TEXT("id"))); break; }
     return Result(true,TEXT("任务完成，已获得成长经验"));
@@ -401,6 +410,8 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     AHearthwardCompanionFixture* Companion=nullptr;
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Companion=*It;break;}
     if(!Companion)return;
+    if(GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->BrotherWorking())
+    {Companion->StopNavigation();CompanionRoutineActivity=TEXT("camp_production");return;}
     auto* Survival=Companion->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(!Survival->Alive() || Survival->Busy() || Health<=0) return;
 
@@ -633,6 +644,7 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
         Origin=FVector(-98000,-75000,16100);
         Enabled=true;
         Discovered.Add(TEXT("camp")); Activated.Add(TEXT("camp"));
+    GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->EnsureCamp(LocationPosition(TEXT("camp")));
     }
     else if(Enabled) CreateLandmarks();
     if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()) C->Restore(Text(J,TEXT("combat")));

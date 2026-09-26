@@ -24,7 +24,13 @@ public:
 
     // Invalidates outstanding operations; save coordination supplies restored container contents separately.
     UFUNCTION(BlueprintCallable, Category="Hearthward|Inventory")
-    void AdvanceTimeline() { State.AdvanceTimeline(); }
+    void AdvanceTimeline() { State.AdvanceTimeline(); Reservations.Reset(); }
+
+    int32 Available(FName Item) const;
+    bool Reserve(FGuid Operation,const TMap<FName,int32>& Materials);
+    void Release(FGuid Operation) { Reservations.Remove(Operation); }
+    bool Adjust(const TMap<FName,int32>& Consumed,const TMap<FName,int32>& Produced,FGuid Reservation=FGuid());
+    bool CanAdjust(const TMap<FName,int32>& Consumed,const TMap<FName,int32>& Produced,FGuid Reservation=FGuid()) const;
 
     FHearthwardTransferResult Transfer(UHearthwardInventoryComponent* Personal, bool ToCamp,
         FName ItemId, int32 Count, FGuid OperationId, FGuid TimelineEpoch);
@@ -36,4 +42,5 @@ protected:
 private:
     friend class UHearthwardSaveSubsystem;
     FHearthwardStorageState State;
+    TMap<FGuid,TMap<FName,int32>> Reservations;
 };

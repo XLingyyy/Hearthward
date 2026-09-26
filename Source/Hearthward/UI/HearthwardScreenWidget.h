@@ -68,6 +68,8 @@ private:
     void ComposeMemory();
     void ComposeHUD();
     void ComposeBuilding();
+    void ComposeCamp();
+    bool ExecuteCampAction(const FString& Action);
     void ComposeCrafting();
     void ComposeRepair();
     void ComposeSave();
@@ -102,7 +104,7 @@ private:
     TArray<FString> ReturnCategories;
     FName SelectedItem=TEXT("axe"),SelectedSkill=TEXT("strong"),SelectedQuest=TEXT("ember"),SelectedLocation=TEXT("camp");
     FName SelectedCodex;
-    FString Category,Message,ConfirmAction;
+    FString Category,Message,ConfirmAction,ConfirmMessage;
     int32 Quantity=1,Scroll=0,Hover=INDEX_NONE,KeyboardFocus=INDEX_NONE;
     float RefreshDelay=0,MapZoom=1;
     double MessageUntil=0;
@@ -119,5 +121,8 @@ private:
     FName SelectedRecipe;
     FName SelectedRepair;
     int32 CraftingBatches=1;
+    FGuid CampEpoch,CampFacility;
+    FName CampRegion,CampRecipe;
+    int32 CampPerson=0,CampFood=0;
     FVector2D DesignSize=FVector2D(1672,941);
 };

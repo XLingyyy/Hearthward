@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "id": "TASK-046",
+  "title": "实现营地八阶、设施、劳动力与公共口粮",
+  "status": "Blocked",
+  "updated_at": "2026-09-26",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-046-camp-economy",
+  "source_refs": [
+    "用户：继续046；延续按序交付与任务分支提交推送工作方式",
+    "原稿TASK-048映射canonical TASK-046；2026-09-24审计R03/R11/R12/R13",
+    "GDD v0.3 Q031—050、Q201—220；042切片及043/044已批准规则",
+    "用户明确批准046设计并要求沿用046施工，完成后提交推送；origin/main@2dab1f86223bd71890e20f6ed45eef644d0729ca已含045/PR47，任务分支以merge同步。"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-043",
+    "TASK-044"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-046-camp-economy.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/tasks/TASK-046.json",
+    "docs/tasks/TASK-046.md",
+    "docs/handoffs/TASK-046.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/design/DSGN-R11-camp-economy.md",
+    "docs/planning/TASK-046/",
+    "docs/qa/TASK-046/",
+    "Source/Hearthward/",
+    "Resources/Data/",
+    "Resources/UI/",
+    "docs/contracts/README.md",
+    "docs/contracts/CT-TASK-046-camp-economy.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "实现获准八阶及各设施三级、按实际材料升级与全局属性",
+    "同一人口池、区域5身体岗位、兄弟真实劳动3工效、有限输入后台生产及共享口粮",
+    "建造预留、移动、拆除累计实付退款和有损取消通过真实路径",
+    "营地UI操作与同档恢复接入，旧档迁移不创造高价拆除材料",
+    "Editor构建、定向原生与PIE通过，提交推送及清理工作树"
+  ],
+  "non_goals": [
+    "不合并main、不跳号",
+    "不擅定047高级装备全配方、048物种和自然源点白名单",
+    "不修改共享地图或导入新资产"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user explicitly requested TASK-046 implementation, commit and push",
+    "push": "granted: user explicitly requested TASK-046 implementation, commit and push",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner／Reviewer XLingyyy；Issue可选。",
+    "用户批准D1—D6并授权施工；本单所需公共接口、输入、数据及可选存档字段在本次范围协调。",
+    "沿用现有资产完成真实可操作系统；缺少后续物种／关卡配表的内容明确标注，不写入臆造正式表。",
+    "Editor构建、原生25/25、PIE65/65及工具33/33通过；各证据SHA和内容边界见docs/qa/TASK-046/REPORT.md。",
+    "实现与定向验证已完成；按仓库工作流尚待正式独立PR审查，Owner/Reviewer均为XLingyyy，不由Agent自批或合并。"
+  ]
+}

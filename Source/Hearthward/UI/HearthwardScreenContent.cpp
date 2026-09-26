@@ -1,6 +1,7 @@
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
@@ -627,19 +628,25 @@ void UHearthwardScreenWidget::ComposeHUD()
 
 void UHearthwardScreenWidget::ComposeBuilding()
 {
+    const auto& Buildings=Rows(TEXT("buildings"));
+    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Buildings.Num()-4));
     int32 Index=0;
-    for(const auto& V:Rows(TEXT("buildings")))
+    for(const auto& V:Buildings)
     {
-        const auto R=V->AsObject(); const float Y=245+Index++*175;
+        if(Index++<Scroll)continue;if(Index>Scroll+4)break;
+        const auto R=V->AsObject(); const float Y=230+(Index-Scroll-1)*115;
         const FString Id=Text(R,TEXT("id"));
         FString Cost;
         for(const auto& M:R->GetObjectField(TEXT("materials"))->Values)
-            Cost+=Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name"))+FString::Printf(TEXT(" %d / %.0f  "),Inventory()->GetItemCount(FName(*M.Key)),M.Value->AsNumber());
+            Cost+=Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name"))+FString::Printf(TEXT(" %d / %.0f  "),Inventory()->Available(FName(*M.Key))+GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->Available(FName(*M.Key)),M.Value->AsNumber());
         Element(TEXT("button"),Text(R,TEXT("name")),FVector2D(510,Y),FVector2D(650,55),26,TEXT("build:")+Id);
         Elements.Last().Component=TEXT("building.sheet"); Elements.Last().LayoutId=TEXT("building.")+Id+TEXT(".select");
-        Element(TEXT("text"),Cost+TEXT("\n")+Text(R,TEXT("description")),FVector2D(528,Y+64),FVector2D(660,86),18);
+        Elements.Last().Enabled=HearthwardCamp::RequiredTier(FName(*Id),1)<=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Tier;
+        Element(TEXT("text"),Cost+TEXT("\n")+Text(R,TEXT("description")),FVector2D(528,Y+55),FVector2D(660,54),16);
         Elements.Last().Component=TEXT("building.sheet"); Elements.Last().LayoutId=TEXT("building.")+Id+TEXT(".description");
     }
+    Element(TEXT("button"),TEXT("上一组"),FVector2D(530,700),FVector2D(270,45),20,TEXT("buildPrev"));
+    Element(TEXT("button"),TEXT("下一组"),FVector2D(860,700),FVector2D(280,45),20,TEXT("buildNext"));
 }
 void UHearthwardScreenWidget::ComposeSave()
 {

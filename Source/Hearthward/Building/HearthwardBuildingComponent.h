@@ -21,6 +21,12 @@ public:
     UFUNCTION(BlueprintPure) bool IsBuilding() const { return Pending || Settling; }
     UFUNCTION(BlueprintPure) int32 BuildingCount() const { return Built.Num(); }
     UFUNCTION(BlueprintPure) TArray<AActor*> GetBuildings() const;
+    AActor* ResolveFacility(FGuid Id) const;
+    bool CanUseFacility(FGuid Id) const;
+    UFUNCTION(BlueprintCallable) bool UpgradeFacility(FGuid Id,FGuid Epoch);
+    UFUNCTION(BlueprintCallable) bool MoveFacility(FGuid Id,FGuid Epoch);
+    UFUNCTION(BlueprintCallable) bool DemolishFacility(FGuid Id,bool ConfirmLoss,FGuid Epoch);
+    bool AddGift(FName Kind,FVector Position);
     AActor* ResolveWorkbench(FGuid Id) const;
     FGuid KnownWorkbench(AActor* Observer) const;
     UFUNCTION(BlueprintPure) FGuid NearbyWorkbench() const;
@@ -42,6 +48,9 @@ private:
     UFUNCTION() void Interrupted();
     bool CheckPlacement(FString& Reason) const;
     bool HasMaterials() const;
+    bool ReserveMaterials();
+    void ReleaseMaterials();
+    bool CommitMaterials();
     TMap<FName,int32> Materials() const;
     AActor* SpawnBuilding(FName Id, FVector Position, float Rotation, bool PreviewOnly);
     void ClearPreview();
@@ -50,4 +59,7 @@ private:
     TWeakObjectPtr<AActor> Preview;
     bool Pending = false, Settling = false;
     FVector StartedAt = FVector::ZeroVector;
+    FGuid Editing,MaterialTicket;
+    bool Upgrading=false;
+    TMap<FName,int32> PersonalMaterials,SharedMaterials;
 };
