@@ -39,3 +39,5 @@
 ## 待 Owner 审查的提案
 
 [DSGN-003 首版范围与第一完整体验切片](DSGN-003-first-release-slice.md)由 TASK-042 于 2026-09-26 提出，状态为 `PROPOSED`。它尚未改变本页有效基线；R17／R25 和相关数值仍按 [OPEN_QUESTIONS](OPEN_QUESTIONS.md) 保持未定。批准后仅将明确通过的子范围写回本页。
+
+[DSGN-R01 世界时间、生产资源、刷新与传送](DSGN-R01-world-time-persistence.md)由 TASK-043 于 2026-09-26 提出，状态为 `PROPOSED`，配套 [CT-TASK-043](../contracts/CT-TASK-043-world-time-persistence.md) 为工程草案。D1—D6 分别提出时间结算、投入生产、敌人／自然物刷新、旅行及保存方案；R01／R02／R03／R05／R19／R22 均保持 OPEN，未修改当前游戏规则或代码。

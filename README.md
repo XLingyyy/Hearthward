@@ -4,6 +4,8 @@ UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-26，审计主干
 
 [TASK-042 首版范围与第一体验切片](docs/tasks/TASK-042.md)已形成 [DSGN-003 待审查提案](docs/design/DSGN-003-first-release-slice.md)：拟从营地准备、兄弟分工和近郊救援走到回营成长。该路线、具体奖励及时长尚未获 Owner 批准或游戏内验证，不属于当前可玩能力。
 
+[TASK-043 世界时间与持久状态](docs/tasks/TASK-043.md)接在已推送的 TASK-042 提交 `ab5596e` 上，形成[规则提案](docs/design/DSGN-R01-world-time-persistence.md)和[契约草案](docs/contracts/CT-TASK-043-world-time-persistence.md)：包含逐系统结算矩阵、投入与产出、敌人／自然物刷新、传送与保存边界。两单均尚未合入 main，设计待 Owner 审批；当前床仍为短时恢复、自然采集点仍不周期再生，本轮无玩法实现或运行验证。
+
 AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与分支证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)和[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；所选集成修正随 PR #40 合入 main，PR #41/#42 属于 TASK-031。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
 [TASK-030 Demo 采集与营地交互](docs/tasks/TASK-030.md) 将自然场景采集、四种工作台配方、床休息、篝火烤肉接成一个小型营地循环，复用角色、木桌、床、箱子和篝火模型。
