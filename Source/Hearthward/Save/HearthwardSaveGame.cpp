@@ -134,11 +134,20 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
     for (const auto& P : Pool.Points)
     {
         const auto& S = P.World;
+        FHearthwardCampState Camp;
+        if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,Camp) || FMath::Abs(Camp.Calendar-S.CalendarMinutes)>1.e-4 || !Camp.ValidateBuildings(S.Gameplay))) return false;
+        TSharedPtr<FJsonObject> Gameplay;
+        if(!S.Gameplay.IsEmpty()) FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(S.Gameplay),Gameplay);
+        const int32 Tier=Gameplay?int32(HearthwardData::Number(Gameplay,TEXT("campTier"),1)):1;
+        const auto Growth=HearthwardCamp::Tier(Tier);
+        if(!Growth)return false;
+        const double BrotherMaxHealth=100+HearthwardData::Number(Growth,TEXT("cumulative_hp_bonus"));
+        const double BrotherMaxStamina=100+HearthwardData::Number(Growth,TEXT("cumulative_stamina_bonus"));
         if(S.SurvivalVersion!=1 || !FMath::IsFinite(S.CalendarMinutes) || S.CalendarMinutes<S.ActiveSeconds
             || !ValidSurvival(S.PlayerSurvival,S.Inventory,S.CalendarMinutes) || !ValidSurvival(S.BrotherSurvival,S.Bag,S.CalendarMinutes)
-            || !FMath::IsFinite(S.BrotherHealth) || S.BrotherHealth<=0 || S.BrotherHealth>100
+            || !FMath::IsFinite(S.BrotherHealth) || S.BrotherHealth<=0 || S.BrotherHealth>BrotherMaxHealth
             || !FMath::IsFinite(S.BrotherHunger) || S.BrotherHunger<0 || S.BrotherHunger>100
-            || !FMath::IsFinite(S.BrotherStamina) || S.BrotherStamina<0 || S.BrotherStamina>100) return false;
+            || !FMath::IsFinite(S.BrotherStamina) || S.BrotherStamina<0 || S.BrotherStamina>BrotherMaxStamina) return false;
         if(S.NPCStateVersion!=NPCStateVersion || S.Acquired<0 || S.Carried<0 || S.Acquired<S.Delivered || S.Acquired>S.Requested || S.Carried!=S.Acquired-S.Delivered
             || S.Carried>S.Bag.FindRef(S.Item) || S.NPCOperations.Num()>512 || S.NPCMemory.Campaign!=P.CampaignId) return false;
         if(S.CommandActive && (S.AgentGoal.Intent.IsNone() || !S.CommandId.IsValid()))return false;
@@ -155,8 +164,6 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
             if(!Item || !FMath::IsFinite(D.Value) || D.Value<0 || D.Value>HearthwardData::Number(Item,TEXT("durability")))return false;
         }
         if (!S.NPCMemory.IsValid(S.ActiveSeconds)) return false;
-        FHearthwardCampState Camp;
-        if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,Camp) || FMath::Abs(Camp.Calendar-S.CalendarMinutes)>1.e-4 || !Camp.ValidateBuildings(S.Gameplay))) return false;
         if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay) || !UHearthwardHarvestSubsystem::Validate(S.HarvestedResources)) return false;
         if (!P.SaveId.IsValid() || !P.CampaignId.IsValid() || Ids.Contains(P.SaveId) || S.Map.IsEmpty()
             || !FMath::IsFinite(S.ActiveSeconds) || S.ActiveSeconds < 0 || S.KnowledgeRevision != S.Knowledge.Num()

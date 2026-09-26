@@ -60,6 +60,8 @@ def finish(error=None):
     if error:report['error']=error
     report['ok']=not error and all(report['checks'].values())
     if st.get('camp'):report['final_state']=state()
+    if st.get('save'):report['save_status']=st['save'].get_status()
+    if st.get('clock'):report['clock_calendar']=st['clock'].get_snapshot().elapsed_calendar_minutes
     (out/'frame-times.json').write_text(json.dumps(frames),encoding='utf-8')
     (out/'results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     unreal.unregister_slate_post_tick_callback(handle)

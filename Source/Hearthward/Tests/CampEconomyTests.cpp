@@ -5,6 +5,8 @@
 #include "Misc/AutomationTest.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
+#include "../Save/HearthwardSaveGame.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 namespace
@@ -129,5 +131,20 @@ bool FCampReservationTest::RunTest(const FString&)
     TestFalse(TEXT("Another recipe cannot steal personal materials"),Bag->TryConsume({{TEXT("wood"),3}})==EHearthwardInventoryResult::Success);
     Bag->ReleaseMaterials();TestEqual(TEXT("Personal cancellation preserves inventory"),Bag->Available(TEXT("wood")),10);
     W->DestroyWorld(false);GEngine->DestroyWorldContext(W);return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampGrowthSaveTest,"Hearthward.Camp.GrowthSaveLimits",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FCampGrowthSaveTest::RunTest(const FString&)
+{
+    auto* Pool=NewObject<UHearthwardSaveGame>();auto& Point=Pool->Points.AddDefaulted_GetRef();
+    Point.SaveId=FGuid::NewGuid();Point.CampaignId=FGuid::NewGuid();auto& S=Point.World;
+    S.Map=TEXT("PROTOTYPE_ONLY");S.SurvivalVersion=1;S.NPCStateVersion=HearthwardSave::NPCStateVersion;S.NPCMemory.Campaign=Point.CampaignId;
+    auto* Gameplay=NewObject<UHearthwardGameplayComponent>();Gameplay->CampTier=3;S.Gameplay=Gameplay->SaveSnapshot();
+    FHearthwardCampState Camp;Camp.Tier=3;Camp.AddCamp(TEXT("camp"),FVector::ZeroVector);S.CampEconomy=Camp.Snapshot();
+    S.BrotherHealth=120;S.BrotherStamina=110;
+    TestTrue(TEXT("Tier three brother maxima are valid in the full save pool"),HearthwardSave::Validate(*Pool));
+    S.BrotherHealth=121;TestFalse(TEXT("Reject health above tier maximum"),HearthwardSave::Validate(*Pool));
+    S.BrotherHealth=120;S.BrotherStamina=111;TestFalse(TEXT("Reject stamina above tier maximum"),HearthwardSave::Validate(*Pool));
+    S.BrotherStamina=110;S.CampEconomy.Reset();TestTrue(TEXT("Legacy tier bonus migrates with the same maxima"),HearthwardSave::Validate(*Pool));
+    return true;
 }
 #endif
