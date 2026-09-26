@@ -1,6 +1,6 @@
 # 最短上手路径
 
-核对日期：2026-09-27。当前核对主干：`origin/main@dbba6d052b7e08e612d858ca07fc87e90dae5840`，已含043规则、044生存、045战斗及046营地经济（PR #46／47／48）。当前canonical047（原稿049）D1—D6已获Owner批准，本任务分支已实现成长／逐件装备／制作维修及schema6，Editor构建、原生32/32与真实PIE64/64通过，待正式PR审查和集成；见[047任务单](tasks/TASK-047.md)。046原生25/25与PIE65/65证据仍绑定其报告所列源码。Windows Demo 已发布；其受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，与主干 SHA 分开看。[项目状态](PROJECT_STATE.md)和[TASK-041 账本](planning/TASK-041-baseline-ledger.md)记录实现、集成、验证及待办；[发行报告](releases/demo-20260924/REPORT.md)记录 Shipping 包和本机安装范围。
+核对日期：2026-09-27。当前主干`origin/main@e95fde185dc38d0b69c2de42ce66db0d1fd93294`已含043—047，047由PR #49合并。047的Editor构建、原生32/32与PIE64/64仍绑定其报告中的源码，不声称在本次main重跑。当前canonical048对应原稿050，范围为自然资源／动物／垂钓／种养内容设计，D1—D6待Owner确认，见[048任务单](tasks/TASK-048.md)。Windows Demo受测源码仍为`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，详见[发行报告](releases/demo-20260924/REPORT.md)。
 
 ## 先看游戏
 
