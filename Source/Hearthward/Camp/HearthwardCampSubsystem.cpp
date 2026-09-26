@@ -108,11 +108,11 @@ bool UHearthwardCampSubsystem::Craft(FGuid Facility,FName Recipe,int32 Batches,F
     if(!GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->Adjust(Inputs,Outputs)) {Feedback=TEXT("共享仓储材料不足");return false;}
     Feedback=TEXT("加工完成，产物已入共享仓储");return true;
 }
-bool UHearthwardCampSubsystem::Sleep(FGuid Bed,FGuid Epoch)
+bool UHearthwardCampSubsystem::Sleep(FGuid BedId,FGuid Epoch)
 {
     auto* P=CampPlayer(GetWorld());auto* Builder=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
-    const auto* B=State.Facilities.FindByPredicate([&](const auto& F){return F.Id==Bed;});
-    if(!CanManage(Epoch) || !Builder || !Builder->CanUseFacility(Bed) || !B || B->Kind!=TEXT("bed"))return false;
+    const auto* B=State.Facilities.FindByPredicate([&](const auto& F){return F.Id==BedId;});
+    if(!CanManage(Epoch) || !Builder || !Builder->CanUseFacility(BedId) || !B || B->Kind!=TEXT("bed"))return false;
     for(TActorIterator<AActor> It(GetWorld());It;++It)
         if(const auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();S && S->Enabled() && !S->SafeToSave())return false;
     const double Advanced=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->AdvanceCalendar(480);

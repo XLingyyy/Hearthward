@@ -23,7 +23,7 @@ public:
     UFUNCTION(BlueprintCallable) bool DonateFood(FName Item,int32 Count,FGuid Epoch);
     UFUNCTION(BlueprintCallable) bool EatMeal(bool Brother,FGuid Epoch);
     UFUNCTION(BlueprintCallable) bool Craft(FGuid Facility,FName Recipe,int32 Batches,FGuid Epoch);
-    UFUNCTION(BlueprintCallable) bool Sleep(FGuid Bed,FGuid Epoch);
+    UFUNCTION(BlueprintCallable) bool Sleep(FGuid BedId,FGuid Epoch);
     UFUNCTION(BlueprintPure) FString Describe() const;
     bool CanManage(FGuid Epoch) const;
     UFUNCTION(BlueprintCallable) bool RegisterSource(FString Id,FName Item,int32 Capacity,int32 Remaining,FVector Position,double RefreshMinutes);
