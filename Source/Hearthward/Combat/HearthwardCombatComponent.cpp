@@ -122,7 +122,7 @@ void UHearthwardCombatComponent::Cancel()
         if(auto* C=Cast<ACharacter>(T->GetOwner());C && T->Alive()) C->GetCharacterMovement()->SetMovementMode(EMovementMode(CaptiveMovementMode));
     }
     if(Action==TEXT("pickup")) DropBody();
-    Captive.Reset(); Action=NAME_None; Elapsed=Duration=0; PendingItem=NAME_None; BufferedAttack=NAME_None;
+    Captive.Reset(); Feedback.Reset(); Action=NAME_None; Elapsed=Duration=0; PendingItem=NAME_None; BufferedAttack=NAME_None;
     if(auto* C=Cast<ACharacter>(GetOwner())) if(auto* A=Cast<UHearthwardHeroAnimInstance>(C->GetMesh()->GetAnimInstance())) A->StopCombat();
 }
 bool UHearthwardCombatComponent::Dodge(FVector Direction)

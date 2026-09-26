@@ -29,10 +29,17 @@ void UHearthwardCombatTargetComponent::SetCorpse()
     Health=0; ExecutionOwner.Reset(); Memory.Seen.Reset(); Awareness=TEXT("已清除");
     if(auto* C=Cast<ACharacter>(GetOwner()))
     {
-        C->GetCharacterMovement()->StopMovementImmediately();
+        C->GetCharacterMovement()->StopMovementImmediately(); C->GetCharacterMovement()->DisableMovement();
         if(auto* AI=Cast<AAIController>(C->GetController())) AI->StopMovement();
     }
     GetOwner()->SetActorRotation(FRotator(0,GetOwner()->GetActorRotation().Yaw,90));
+    FCollisionQueryParams Query(SCENE_QUERY_STAT(CorpseGround),false,GetOwner()); FHitResult Ground;
+    const FVector Position=GetOwner()->GetActorLocation();
+    if(GetWorld()->LineTraceSingleByChannel(Ground,Position+FVector(0,0,50),Position-FVector(0,0,500),ECC_Visibility,Query))
+    {
+        const float Height=GetOwner()->GetComponentsBoundingBox(true).GetExtent().Z;
+        GetOwner()->SetActorLocation(Ground.ImpactPoint+FVector(0,0,Height));
+    }
 }
 FHearthwardCombatTargetSave UHearthwardCombatTargetComponent::Snapshot() const
 {
@@ -44,4 +51,5 @@ void UHearthwardCombatTargetComponent::Restore(const FHearthwardCombatTargetSave
     Memory=S; ArmorDurability=S.ArmorDurability; Health=S.Health; Region=S.Region; ExecutionOwner.Reset(); Carrier.Reset();
     GetOwner()->SetActorLocationAndRotation(S.Position,S.Rotation,false,nullptr,ETeleportType::TeleportPhysics);
     if(Health<=0) SetCorpse();
+    else if(auto* C=Cast<ACharacter>(GetOwner())) C->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 }
