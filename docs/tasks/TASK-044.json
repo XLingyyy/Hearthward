@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "TASK-044",
+  "title": "定案生存恢复、倒地救援与环境伤害边界",
+  "status": "Active",
+  "updated_at": "2026-09-26",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-044-survival-rules",
+  "source_refs": [
+    "2026-09-26 用户明确按043、044顺序执行并自行提交推送",
+    "原稿TASK-046映射canonical TASK-044；GDD v0.3 Q061—063/Q131—145/Q161—178/Q251/Q259—265",
+    "Hearthward_Audit_2026-09-24生存、失败、即时药品与环境伤害缺口",
+    "父分支codex/TASK-043-world-time@b7d4df35763bca5dd0bb97ed9ab78eea4f68098a；未引入052代码"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-043"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md",
+    "docs/contracts/CT-TASK-043-world-time-persistence.md",
+    "docs/contracts/CT-TASK-044-survival-transitions.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/design/DSGN-R04-survival-recovery.md",
+    "docs/contracts/README.md",
+    "docs/contracts/CT-TASK-044-survival-transitions.md",
+    "docs/tasks/TASK-044.json",
+    "docs/tasks/TASK-044.md",
+    "docs/handoffs/TASK-044.md"
+  ],
+  "forbidden_paths": [
+    "Source/",
+    "Content/",
+    "Config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "统一饱食、恢复、药品上限、严重饥饿与死亡期限，已定/候选严格分开",
+    "状态图保留120秒倒地、5秒扶起10%生命、双方倒地失败及真死亡回档",
+    "明确用药3秒、费用结算、移动/受伤/取消、时间尺度及设施恢复候选",
+    "覆盖救援可达性、优先级、自动用药和稀有物权限",
+    "列出倒地残伤、溺水/坠落、跳时/传送/存读档优先级和边界案例",
+    "得到Owner具体设计确认后才把候选标为批准；提交推送授权不替代设计审批"
+  ],
+  "non_goals": [
+    "不实现生存、用药或救援代码，不改变存档格式",
+    "不恢复疗养、好感门槛或普通族人死亡",
+    "不引入052分支代码，不跳过044继续后续任务",
+    "不合并main或自批PR"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested next task completion and commit on 2026-09-26",
+    "push": "granted: user requested task branch push on 2026-09-26",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner/Reviewer均为XLingyyy；Issue可选，独立审查未完成",
+    "本轮提交完整设计候选和工程草案；新增数值/冲突决策均待Owner确认，不能因执行授权改成APPROVED"
+  ]
+}
