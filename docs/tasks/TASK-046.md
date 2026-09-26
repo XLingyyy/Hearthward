@@ -7,3 +7,7 @@
 允许路径与验收以同名JSON为准；不修改运行时代码、数据、资产或存档。
 
 交付：[D1—D6候选](../design/DSGN-R11-camp-economy.md)、[经济机器表](../planning/TASK-046/economy-candidate.json)、[验算与仓库验证](../qa/TASK-046/REPORT.md)。候选待Owner批准后再沿046实施；不将原稿设计任务暗中改成已获准的运行时施工。
+
+## 本轮施工授权
+
+Owner已批准D1—D6并明确要求沿046实现、提交推送。新增源码／数据／UI及存档协调范围以更新JSON和CT-TASK-046为准。主干已至2dab1f8（含045），已合并同步到本任务分支。
