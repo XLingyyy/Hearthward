@@ -18,6 +18,8 @@ class HEARTHWARD_API AHearthwardCharacter : public ACharacter
     GENERATED_BODY()
 
 public:
+    virtual void FellOutOfWorld(const class UDamageType& DamageType) override;
+    virtual void Landed(const FHitResult& Hit) override;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<class UHearthwardGameplayComponent> Gameplay;
     AHearthwardCharacter();
     virtual void BeginPlay() override;

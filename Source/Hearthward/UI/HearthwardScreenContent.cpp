@@ -1,3 +1,4 @@
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
@@ -140,6 +141,18 @@ void UHearthwardScreenWidget::ComposeInventory(bool Storage)
         Element(TEXT("bar"),TEXT(""),FVector2D(64,795),FVector2D(310,8)); Elements.Last().Value=Bag->GetWeight()/Bag->GetCapacity(); Elements.Last().Color=Color(TEXT("gold"));
     }
     const auto R=Find(TEXT("items"),SelectedItem.ToString()); if(!R) return;
+    bool Rare=false,KeyItem=false; R->TryGetBoolField(TEXT("rare"),Rare); R->TryGetBoolField(TEXT("key"),KeyItem);
+    if(const auto Base=Find(TEXT("items"),Text(R,TEXT("medicineBase"))))
+    {
+        bool BaseRare=false,BaseKey=false; Base->TryGetBoolField(TEXT("rare"),BaseRare); Base->TryGetBoolField(TEXT("key"),BaseKey);
+        Rare|=BaseRare; KeyItem|=BaseKey;
+    }
+    if(!Storage && (Rare || KeyItem) && (Number(R,TEXT("healing"))>0 || Number(R,TEXT("food"))>0))
+        for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+        {
+            const auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();
+            Element(TEXT("button"),S->Permitted(SelectedItem)?TEXT("撤销弟弟自动使用授权"):TEXT("允许弟弟自动使用此物"),FVector2D(430,740),FVector2D(270,46),16,TEXT("autoPermission")); break;
+        }
     const FVector2D P=Storage?FVector2D(645,366):FVector2D(439,411);
     Element(TEXT("text"),Text(R,TEXT("name")),P,FVector2D(280,45),Storage?27:23); Elements.Last().Color=Color(TEXT("gold"));
     Element(TEXT("text"),Text(R,TEXT("category")),P+FVector2D(0,33),FVector2D(240,32),16);
@@ -555,12 +568,21 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("text"),FString::Printf(TEXT("猎弓   %d\n右键 射击"),Inventory()->GetItemCount(TEXT("arrow"))),FVector2D(805,835),FVector2D(225,60),22);
     }
     if(G->Skills.FindRef(TEXT("strong"))>0) Element(TEXT("text"),TEXT("Q 强力挥击"),FVector2D(720,744),FVector2D(260,35),19);
-    const int32 Time=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
+    const int32 Time=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
     Element(TEXT("text"),FString::Printf(TEXT("第 %d 天  %02d:%02d  晴"),Time/1440+1,(Time/60)%24,Time%60),FVector2D(1380,31),FVector2D(290,35),16);
-    if(G->Health<=0)
+    if(const auto* S=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>())
     {
-        Element(TEXT("panel"),TEXT(""),FVector2D(530,320),FVector2D(610,230));
-        Element(TEXT("text"),TEXT("你已倒下\n按 Esc 打开菜单，载入保存节点"),FVector2D(590,362),FVector2D(540,130),26);
+        Element(TEXT("notice"),S->Describe(),FVector2D(560,660),FVector2D(570,50),20);
+        if(S->State.Life==EHearthwardLife::Downed)
+            Element(TEXT("text"),TEXT("等待弟弟救援 · Esc 菜单可立即放弃"),FVector2D(560,710),FVector2D(570,45),20);
+    }
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+    {
+        auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();
+        Element(TEXT("text"),FString::Printf(TEXT("弟弟  生命 %.0f  饱食 %.0f\n%s"),S->Health(),S->Hunger(),*S->Describe()),FVector2D(80,450),FVector2D(460,90),17);
+        if(S->State.Life==EHearthwardLife::Downed)
+            Element(TEXT("notice"),TEXT("靠近弟弟2米内，按 E 扶起（5秒）"),FVector2D(560,590),FVector2D(570,50),20);
+        break;
     }
     if(Natural)
     {
@@ -615,6 +637,12 @@ void UHearthwardScreenWidget::ComposeBuilding()
 void UHearthwardScreenWidget::ComposeSave()
 {
     auto* S=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>(); const auto Points=S->GetPoints();
+    if(UHearthwardSurvivalComponent::HasFailed(GetWorld()))
+    {
+        Element(TEXT("notice"),TEXT("兄弟已无法继续，世界已暂停。请选择保存节点回档。"),FVector2D(440,230),FVector2D(800,60),20);
+        for(auto& E:Elements) if(E.Action==TEXT("save")) E.Enabled=false;
+    }
+    else Element(TEXT("text"),S->GetSafetyDescription(),FVector2D(440,235),FVector2D(800,50),17);
     for(int32 I=Scroll;I<FMath::Min(Points.Num(),Scroll+7);++I)
     {
         const auto& P=Points[Points.Num()-1-I]; const FString Id=P.SaveId.ToString(); const float Y=302+(I-Scroll)*71;

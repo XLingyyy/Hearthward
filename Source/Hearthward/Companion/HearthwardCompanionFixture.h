@@ -23,6 +23,8 @@ class HEARTHWARD_API AHearthwardCompanionFixture : public ACharacter
 {
     GENERATED_BODY()
 public:
+    virtual void FellOutOfWorld(const class UDamageType& DamageType) override;
+    virtual void Landed(const FHitResult& Hit) override;
     AHearthwardCompanionFixture();
     virtual void Tick(float DeltaSeconds) override;
     void InitializeFixture(UHearthwardInventoryComponent* Resource, AActor* CampActor);
@@ -73,6 +75,7 @@ public:
     bool NavigateTo(AActor* Target, float Speed, float AcceptanceRadius);
     bool NavigateToLocation(const FVector& Location, float Speed, float AcceptanceRadius);
     void StopNavigation();
+    void StopForSurvival();
 
 private:
     friend class UHearthwardSaveSubsystem;

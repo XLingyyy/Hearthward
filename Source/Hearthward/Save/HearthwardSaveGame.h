@@ -5,6 +5,7 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Actions/HearthwardTimedActionState.h"
 #include "../AI/HearthwardNPCMemory.h"
+#include "../Survival/HearthwardSurvivalState.h"
 #include "HearthwardSaveGame.generated.h"
 
 USTRUCT(BlueprintType)
@@ -38,6 +39,13 @@ struct FHearthwardWorldSave
     UPROPERTY() bool NaturalCompanion = false;
     UPROPERTY() FString Map;
     UPROPERTY() double ActiveSeconds = 0;
+    UPROPERTY() int32 SurvivalVersion = 0;
+    UPROPERTY() double CalendarMinutes = 0;
+    UPROPERTY() FHearthwardSurvivalState PlayerSurvival;
+    UPROPERTY() FHearthwardSurvivalState BrotherSurvival;
+    UPROPERTY() float BrotherHealth = 100;
+    UPROPERTY() float BrotherHunger = 100;
+    UPROPERTY() float BrotherStamina = 100;
     UPROPERTY() FTransform Player = FTransform::Identity;
     UPROPERTY() FRotator View = FRotator::ZeroRotator;
     UPROPERTY() TMap<FName, int32> Inventory;
@@ -97,13 +105,13 @@ class HEARTHWARD_API UHearthwardSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Schema = 3;
+    UPROPERTY() int32 Schema = 5;
     UPROPERTY() TArray<FHearthwardSavePoint> Points;
 };
 
 namespace HearthwardSave
 {
-    constexpr int32 CurrentSchema = 3;
+    constexpr int32 CurrentSchema = 5;
     constexpr int32 NPCStateVersion = 3;
     constexpr int32 MaxPoints = 50;
     // INDEX_NONE means no capacity. An index equal to Num means append.

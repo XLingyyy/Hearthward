@@ -32,6 +32,6 @@ Demo 的构建基线为 `main@68e68d817c4d5a39bf43eb7f27863fc734d04aef`，发行
 
 043设计交付已收尾，D1—D6产品规则批准保持有效，流程Blocked仅表示尚无独立PR审查；后续数值配表不再列作043本单的阻塞。下一单为canonical TASK-044（原稿046）生存／倒地救援／环境伤害设计。052代码分支误提前开启，单独保留、未合并，不进入043／044基线。当前origin/main核对为35ac8706e50fe8b7cf099b3b73e803572d5a3ff0。
 
-## TASK-044 本轮交付
+## TASK-044 本轮实施
 
-按顺序从043收尾提交b7d4df35763bca5dd0bb97ed9ab78eea4f68098a派生codex/TASK-044-survival-rules，未合入main。已形成[生存设计候选](design/DSGN-R04-survival-recovery.md)及[契约草案](contracts/CT-TASK-044-survival-transitions.md)，共六组推荐决定和22项纸面边界用例。Owner已于2026-09-26明确采纳044的D1—D6；旧GDD冲突以获批正文覆盖，043规则继续有效。Blocked仅保留独立审查／工程协调；本次批准登记未改代码、资产或存档。
+Owner已批准D1—D6并明确“沿用044，开始实现游戏代码”。分支codex/TASK-044-survival-rules从043的b7d4df35763bca5dd0bb97ed9ab78eea4f68098a继续，范围协调提交0ef6b18a0f13436784c88ab9505a3f4e270a4dc3，未引入052。当前已实现共享生存状态、药品预留／半份、互救、失败入口和schema5生存快照；运行验证进行中，详见本单交接。main未合并本轮改动。

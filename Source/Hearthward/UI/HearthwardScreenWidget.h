@@ -108,6 +108,7 @@ private:
     double MessageUntil=0;
     FVector2D MapPan=FVector2D::ZeroVector;
     bool OwnPause=false,StorageToCamp=true;
+    bool MenuPause=true;
     FGuid StorageEpoch;
     FGuid MemoryEpoch, SelectedMemory;
     int64 MemoryRevision = 0;

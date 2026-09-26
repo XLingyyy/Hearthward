@@ -1,11 +1,12 @@
 #include "HearthwardFurnitureInteractionComponent.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "Engine/World.h"
 
 FString UHearthwardFurnitureInteractionComponent::GetInteractionPrompt(AActor* Interactor) const
 {
-    return Kind==TEXT("bed")?TEXT("E 休息5秒 · 饱食-10，生命+30，耐力恢复\n至少需要15饱食 · 移动可中断")
+    return Kind==TEXT("bed")?TEXT("E 就座休息 · 就座后每秒恢复2%最大生命\n普通饱食消耗 · 移动离开")
         :TEXT("E 烤肉5秒 · 鲜肉1 + 木材1 → 烤肉1\n移动可中断，完成时消耗材料");
 }
 FString UHearthwardFurnitureInteractionComponent::CompleteInteraction(AActor* Interactor)
@@ -16,11 +17,10 @@ FString UHearthwardFurnitureInteractionComponent::CompleteInteraction(AActor* In
     if(!G || !G->Enabled || G->Health<=0 || G->InCombat()) return TEXT("请在安全处使用设施");
     if(Kind==TEXT("bed"))
     {
-        if(G->Hunger<15) return TEXT("饱食不足15，请先吃些食物");
-        if(G->Health>=G->MaxHealth() && G->Stamina>=G->MaxStamina()) return TEXT("状态已满，无需休息");
-        G->Hunger-=10; G->Health=FMath::Min(G->MaxHealth(),G->Health+30); G->Stamina=G->MaxStamina();
+        auto* S=Interactor->FindComponentByClass<UHearthwardSurvivalComponent>();
+        S->CancelAction(); S->Resting=true;
         G->Record(TEXT("rest"),TEXT("bed"));
-        return TEXT("休息完成：生命+30，耐力恢复，饱食-10");
+        return TEXT("正在休息；移动离开，零饱食时停止自然恢复");
     }
     if(Kind==TEXT("campfire"))
     {

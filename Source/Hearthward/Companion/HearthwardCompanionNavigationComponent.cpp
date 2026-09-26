@@ -1,4 +1,5 @@
 #include "HearthwardCompanionNavigationComponent.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 
 #include "../Gameplay/HearthwardGameData.h"
 #include "AIController.h"
@@ -56,7 +57,9 @@ bool UHearthwardCompanionNavigationComponent::MoveToActor(AActor* Other,float Sp
         return false;
     }
 
-    Character->GetCharacterMovement()->MaxWalkSpeed=Speed;
+    const auto* Survival=Character->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(Survival && Survival->Enabled() && !Survival->Alive()) { Stop(); return false; }
+    Character->GetCharacterMovement()->MaxWalkSpeed=Speed*(Survival && Survival->State.Severe()?.8f:1.f);
     if(bToLocation || Target!=Other || !FMath::IsNearlyEqual(Acceptance,AcceptanceRadius))
     {
         Stop();
@@ -106,7 +109,9 @@ bool UHearthwardCompanionNavigationComponent::MoveToLocation(const FVector& Dest
         return false;
     }
 
-    Character->GetCharacterMovement()->MaxWalkSpeed=Speed;
+    const auto* Survival=Character->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(Survival && Survival->Enabled() && !Survival->Alive()) { Stop(); return false; }
+    Character->GetCharacterMovement()->MaxWalkSpeed=Speed*(Survival && Survival->State.Severe()?.8f:1.f);
     if(!bToLocation || !Location.Equals(Destination,5.0f) || !FMath::IsNearlyEqual(Acceptance,AcceptanceRadius))
     {
         Stop();

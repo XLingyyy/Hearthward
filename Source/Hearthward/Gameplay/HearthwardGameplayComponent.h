@@ -72,6 +72,8 @@ public:
     UFUNCTION(BlueprintPure) float AttackPower() const;
     UFUNCTION(BlueprintPure) bool InCombat() const { return CombatRemaining>0; }
     UFUNCTION(BlueprintCallable) void EnableAdventure();
+    float IncomingDamage(const AActor* Target,float Seconds) const;
+    bool IsRunning() const { return Sprinting && Stamina>0 && GetOwner()->GetVelocity().Size2D()>5; }
     void Record(FName Kind, FName Target, int32 Count = 1);
     FString SaveSnapshot() const;
     static bool ValidateSnapshot(const FString& Json);

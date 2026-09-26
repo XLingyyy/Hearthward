@@ -11,6 +11,7 @@ FHearthwardTransferResult UHearthwardStorageSubsystem::Transfer(UHearthwardInven
     bool ToCamp, FName ItemId, int32 Count, FGuid OperationId, FGuid TimelineEpoch)
 {
     if (!IsValid(Personal) || Personal->GetWorld() != GetWorld()) return {};
+    if(ToCamp && Count>Personal->Available(ItemId)) return {};
     const auto Reply = State.Transfer(Personal->State, Personal->GetContainerId(), ToCamp, ItemId, Count, OperationId, TimelineEpoch);
     if (Reply.MovedCount > 0)
     {

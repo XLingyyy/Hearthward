@@ -1,4 +1,6 @@
 #include "HearthwardCharacter.h"
+#include "Survival/HearthwardSurvivalComponent.h"
+#include "Companion/HearthwardCompanionFixture.h"
 #include "Animation/HearthwardHeroAnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
@@ -31,6 +33,7 @@
 
 AHearthwardCharacter::AHearthwardCharacter()
 {
+    CreateDefaultSubobject<UHearthwardSurvivalComponent>(TEXT("Survival"));
     Gameplay = CreateDefaultSubobject<UHearthwardGameplayComponent>(TEXT("Gameplay"));
     CreateDefaultSubobject<UHearthwardBuildingComponent>(TEXT("Building"));
     TimedAction = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("TimedAction"));
@@ -201,7 +204,7 @@ void AHearthwardCharacter::Move(const FInputActionValue& Value)
 {
     if(Gameplay->Enabled && Gameplay->Health<=0) return;
     const FVector2D Axis = Value.Get<FVector2D>();
-    if (!Axis.IsNearlyZero()) TimedAction->InterruptAction();
+    if (!Axis.IsNearlyZero()) { TimedAction->InterruptAction(); FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction(); }
     const FRotator Yaw(0.0f, GetControlRotation().Yaw, 0.0f);
     AddMovementInput(FRotationMatrix(Yaw).GetUnitAxis(EAxis::X), Axis.Y);
     AddMovementInput(FRotationMatrix(Yaw).GetUnitAxis(EAxis::Y), Axis.X);
@@ -218,6 +221,7 @@ void AHearthwardCharacter::StartJump()
 {
     if ((Gameplay->Enabled && Gameplay->Health <= 0) || !CanJump()) return;
     TimedAction->InterruptAction();
+    FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction();
     Jump();
 }
 
@@ -251,6 +255,11 @@ void AHearthwardCharacter::ToggleInventory()
 
 void AHearthwardCharacter::Interact()
 {
+    auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(!Survival->Alive()) return;
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+        if(Survival->BeginRescue(It->FindComponentByClass<UHearthwardSurvivalComponent>())) return;
+    Survival->CancelAction();
     if(FindComponentByClass<UHearthwardBuildingComponent>()->IsPlacing()) return;
     if(FindComponentByClass<UHearthwardBuildingComponent>()->NearbyWorkbench().IsValid())
     {
@@ -260,4 +269,17 @@ void AHearthwardCharacter::Interact()
     }
     if (Gameplay->Enabled && Gameplay->ActivateNearby()) return;
     Interaction->InteractNearest();
+}
+
+void AHearthwardCharacter::FellOutOfWorld(const UDamageType& DamageType)
+{
+    auto* S=FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(!S || !S->Enabled()) { Super::FellOutOfWorld(DamageType); return; }
+    S->FatalEnvironment();
+}
+void AHearthwardCharacter::Landed(const FHitResult& Hit)
+{
+    const float Speed=FMath::Max(0.f,-GetVelocity().Z);
+    Super::Landed(Hit);
+    if(auto* S=FindComponentByClass<UHearthwardSurvivalComponent>()) S->FallImpact(Speed);
 }

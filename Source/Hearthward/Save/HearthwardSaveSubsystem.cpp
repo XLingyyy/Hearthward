@@ -1,4 +1,5 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Interaction/HearthwardHarvestSubsystem.h"
 #include "../Companion/HearthwardNaturalCamp.h"
 #include "../Building/HearthwardBuildingComponent.h"
@@ -165,6 +166,18 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
         { Status = TEXT("场景存在未接入快照的容器"); return false; }
     if(GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->IsSettling())
     { Status=TEXT("资源正在结算，请稍后保存"); return false; }
+    for(auto* Actor : TArray<AActor*>{Player,Companion})
+        if(const auto* Survival=Actor?Actor->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
+            Survival && Survival->Enabled() && !Survival->SafeToSave())
+        { Status=TEXT("兄弟状态不安全或动作正在结算，无法保存"); return false; }
+    S.SurvivalVersion=1;
+    S.CalendarMinutes=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
+    if(auto* Survival=Player->FindComponentByClass<UHearthwardSurvivalComponent>()) S.PlayerSurvival=Survival->State;
+    if(auto* Survival=Companion?Companion->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr)
+    {
+        S.BrotherSurvival=Survival->State; S.BrotherHealth=Survival->Health();
+        S.BrotherHunger=Survival->Hunger(); S.BrotherStamina=Survival->Stamina();
+    }
     S.HarvestedResources = GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Snapshot();
     S.NaturalWorld = bNaturalWorld;
     S.NaturalCompanion = bNaturalWorld;
@@ -237,6 +250,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         // Old natural saves contain no NPC. Seed only that missing part from the new-session state.
         FHearthwardWorldSave Upgraded=InitialWorld;
         Upgraded.Player=S.Player; Upgraded.View=S.View; Upgraded.Inventory=S.Inventory; Upgraded.Storage=S.Storage;
+        Upgraded.SurvivalVersion=S.SurvivalVersion; Upgraded.CalendarMinutes=S.CalendarMinutes; Upgraded.PlayerSurvival=S.PlayerSurvival;
         Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
@@ -245,6 +259,8 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     APawn* Player = nullptr;
     AHearthwardCompanionFixture* Companion = nullptr;
     if (!Participants(Player, Companion)) { Status = TEXT("恢复参与者缺失"); return false; }
+    for(auto* Actor:TArray<AActor*>{Player,Companion})
+        if(auto* Survival=Actor->FindComponentByClass<UHearthwardSurvivalComponent>(); Survival && Survival->Settling) return false;
     TGuardValue<bool> Guard(bRestoring, true);
     if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
@@ -261,6 +277,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     Personal->State = Inventory(S.Inventory); Storage->State.Shared = Inventory(S.Storage, true);
     if (Companion) { Companion->Bag->State = Inventory(S.Bag); Companion->Source->State = Inventory(S.Resource); }
     GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.ActivePlaySeconds = S.ActiveSeconds;
+    GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.CalendarMinutes = S.CalendarMinutes;
     Knowledge = S.Knowledge; KnowledgeRevision = S.KnowledgeRevision; AutoMinutes = S.AutoMinutes; Safety = S.Safety;
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RestoreMemory(S.NPCMemory);
     Player->SetActorTransform(S.Player, false, nullptr, ETeleportType::TeleportPhysics);
@@ -305,6 +322,13 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
             for(const auto& Item:HearthwardData::Catalog()->GetObjectField(TEXT("loadout"))->Values)
                 Storage->State.Shared.Add(FName(*Item.Key),Item.Value->AsNumber());
         }
+    }
+    if(auto* Survival=Player->FindComponentByClass<UHearthwardSurvivalComponent>())
+    { Survival->State=S.PlayerSurvival; Survival->ResetTransient(); }
+    if(auto* Survival=Companion?Companion->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr)
+    {
+        Survival->State=S.BrotherSurvival; Survival->BrotherHealth=S.BrotherHealth;
+        Survival->BrotherHunger=S.BrotherHunger; Survival->BrotherStamina=S.BrotherStamina; Survival->ResetTransient();
     }
     Personal->OnInventoryChanged.Broadcast();
     if (Companion) { Companion->Bag->OnInventoryChanged.Broadcast(); Companion->Source->OnInventoryChanged.Broadcast(); }
@@ -364,6 +388,12 @@ void UHearthwardSaveSubsystem::Tick(float DeltaTime)
 FString UHearthwardSaveSubsystem::GetSafetyDescription() const
 {
     TArray<FString> Reasons;
+    for(TActorIterator<AActor> It(GetWorld());It;++It)
+        if(const auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>(); S && S->Enabled())
+        {
+            if(!S->SafeToSave()) Reasons.Add(S->Describe());
+            else if(S->State.Severe()) Reasons.Add(TEXT("允许保存；")+S->Describe());
+        }
     if(const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0))
         if(const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();G && G->Enabled)
         { if(G->InCombat()) Reasons.Add(TEXT("正在战斗")); if(G->Health<=0) Reasons.Add(TEXT("玩家倒地")); }

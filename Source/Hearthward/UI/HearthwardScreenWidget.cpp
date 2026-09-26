@@ -1,4 +1,6 @@
 #include "HearthwardScreenWidget.h"
+#include "Misc/ConfigCacheIni.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
@@ -114,6 +116,7 @@ FLinearColor UHearthwardScreenWidget::Color(const FString& Name) const
 }
 void UHearthwardScreenWidget::OpenPage(FName Name)
 {
+    if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) && Name!=TEXT("save") && Name!=TEXT("title")) Name=TEXT("save");
     if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled() && !Gameplay()->Enabled
         && Name!=TEXT("hud") && Name!=TEXT("title") && Name!=TEXT("pause")
         && Name!=TEXT("save") && Name!=TEXT("settings") && Name!=TEXT("inventory")
@@ -154,7 +157,9 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if(Page!=Name) Category=RestoringParent?RestoredCategory:FString();
     Page=Name; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
-    const bool Pause=LayoutEditing || (Name!=TEXT("hud") && Name!=TEXT("dialogue"));
+    GConfig->GetBool(TEXT("Hearthward.Survival"),TEXT("MenuPause"),MenuPause,GGameUserSettingsIni);
+    const bool Pause=LayoutEditing || Name==TEXT("title") || Name==TEXT("pause") || Name==TEXT("save")
+        || (MenuPause && Name!=TEXT("hud") && Name!=TEXT("dialogue"));
     if (Pause && !GetWorld()->IsPaused()) OwnPause=UGameplayStatics::SetGamePaused(this,true);
     else if (!Pause && OwnPause) { UGameplayStatics::SetGamePaused(this,false); OwnPause=false; }
     auto* Player=GetOwningPlayer(); Player->FlushPressedKeys();
@@ -230,6 +235,14 @@ void UHearthwardScreenWidget::Refresh()
         const FVector Camp(-98000,-75000,0),Here=GetOwningPlayerPawn()->GetActorLocation();
         Element(TEXT("text"),FString::Printf(TEXT("距新营地 %.0f 米"),FVector::Dist2D(Camp,Here)/100),FVector2D(1152,510),FVector2D(245,40),19);
     }
+    if(Page==TEXT("pause"))
+    {
+        Element(TEXT("button"),MenuPause?TEXT("普通菜单暂停：开"):TEXT("普通菜单暂停：关"),FVector2D(1100,765),FVector2D(280,48),18,TEXT("menuPause"));
+        auto* S=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
+        if(S && S->State.Life==EHearthwardLife::Downed)
+            Element(TEXT("button"),TEXT("放弃救援并回档"),FVector2D(1100,640),FVector2D(280,55),20,TEXT("giveUp"));
+        if(S && S->Busy()) Element(TEXT("button"),TEXT("取消当前动作"),FVector2D(1100,705),FVector2D(280,55),20,TEXT("cancelSurvival"));
+    }
     if(Page==TEXT("inventory")) ComposeInventory(false);
     if(Page==TEXT("storage")) ComposeInventory(true);
     if(Page==TEXT("skills")) ComposeSkills();
@@ -258,6 +271,11 @@ void UHearthwardScreenWidget::Refresh()
 void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
 {
     Super::NativeTick(G,Delta);
+    if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) && Page!=TEXT("save") && Page!=TEXT("title"))
+    {
+        GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->LoadPointIndex();
+        OpenPage(TEXT("save"));
+    }
     if((RefreshDelay-=Delta)<=0) { RefreshDelay=.2f; Refresh(); }
     if(!Message.IsEmpty() && FPlatformTime::Seconds()>MessageUntil) { Message.Reset(); }
 }
