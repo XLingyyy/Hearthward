@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "id": "TASK-052",
+  "title": "实现统一时间推进和持久刷新基础",
+  "status": "Active",
+  "updated_at": "2026-09-26",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-052-world-time",
+  "source_refs": [
+    "2026-09-26 Owner在确认TASK-043规则后授权开始施工；沿用完成后提交推送授权",
+    "原稿TASK-054对应canonical TASK-052；堆叠于codex/TASK-043-world-time@3ec59d3da49d1d187f39b86ca0c7c232d50017ee"
+  ],
+  "dependencies": [
+    "TASK-043"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-052-clock-refresh.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/tasks/TASK-052.json",
+    "docs/tasks/TASK-052.md",
+    "docs/handoffs/TASK-052.md",
+    "docs/contracts/CT-TASK-052-clock-refresh.md",
+    "docs/qa/evidence/TASK-052/",
+    "Source/Hearthward/Time/",
+    "Source/Hearthward/Save/",
+    "Source/Hearthward/Interaction/HearthwardHarvestSubsystem.h",
+    "Source/Hearthward/Interaction/HearthwardHarvestSubsystem.cpp",
+    "Source/Hearthward/Tests/WorldClockTests.cpp",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "Source/Hearthward/Tests/HarvestRefreshTests.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/"
+  ],
+  "acceptance": [
+    "有效实玩秒与日历分钟分离；暂停冻结、恢复不重放、480分钟睡眠语义",
+    "树木耗尽后2880游戏分钟到期；建筑阻塞保留待刷新且不累计产出",
+    "保存独立日历和刷新状态；旧Demo档有显式迁移",
+    "定向UE构建与时间/刷新/存档测试；未接入领域明确拒绝跳时"
+  ],
+  "non_goals": [
+    "本单不填入未定生产、动物、生存失败规则",
+    "不把现有床的恢复动作当作正式睡眠",
+    "不合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user requested next task completion and commit on 2026-09-26",
+    "push": "granted: user requested task branch push on 2026-09-26",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner与Reviewer为XLingyyy；无需Issue，不等于独立审查",
+    "用户施工授权覆盖本单列明的时间、采集及存档工程接线；本单契约记录具体字段和迁移，供提交审查",
+    "旧043工程草案未实现领域不冒充本单完成，正式睡眠入口待生存结算接入"
+  ]
+}
