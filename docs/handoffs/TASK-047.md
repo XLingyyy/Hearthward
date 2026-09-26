@@ -1,7 +1,21 @@
 # TASK-047 交接
 
-2026-09-26；Owner/Reviewer XLingyyy。原稿049映射canonical047。
+2026-09-26；Owner／Reviewer XLingyyy；Issue可选。原稿049映射canonical047。分支codex/TASK-047-equipment-recipes。
 
-基线origin/main@dbba6d052b7e08e612d858ca07fc87e90dae5840（046/PR48）。独立分支codex/TASK-047-equipment-recipes；只写任务JSON列明的文档、候选表与设计验证产物。保护原TASK-027工作区。
+## 基线与范围
 
-当前进行设计与数据调查；未批准数值不写入Source/Resources，不声明运行实现完成。
+主干dbba6d052b7e08e612d858ca07fc87e90dae5840（046／PR #48）；范围记录61e2b6fa7e7c2982143bf49e69519604c470c928。工作目录G:/GameFactory/Hearthward/.agent-local/TASK-047；保护原TASK-027工作区及其他工作树。只改本任务JSON允许的文档、候选表与计算产物，没有修改运行数据或游戏代码。
+
+## 设计成果
+
+[DSGN-R14](../design/DSGN-R14-progression-equipment.md)列明待批准D1—D6；[表册](../planning/TASK-047/TABLES.md)与JSON包含60级、29技能、62物品、49配方、38件耐久装备及双方容量升级。原27物品和29节点稳定ID全部追溯；随机击晕、缺腿甲、按类型共享耐久及背包固定容量均列为拟修正差距。
+
+候选成长预算：切片8级／中期31级／首版45级；60级65,785经验、52/87技能点。逐件耐久与schema6是待批方案，没有伪称存档迁移已实施。自然来源与任务奖励仍有048／049布置合同。
+
+## 验证与待确认
+
+计算32项通过；仓库、范围及工具检查结果见[报告](../qa/TASK-047/REPORT.md)。UE未运行。任务Blocked登记R11／R13／R14待Owner批准；不把本次“继续047”解释为批准这些新玩法。确认后沿047扩展经批准的代码／数据／保存接口范围施工，不跳号。没有Agent合并main或自批PR权限。
+
+## 交付与清理
+
+延续用户顺序任务的提交推送工作方式，仅推本任务分支。完成后核对远端与工作树状态，移除本单无进程占用的独立工作树；其他工作树保持原状。最终提交／推送结果由对话交付记录。

@@ -57,3 +57,7 @@ Owner已批准[DSGN-R06](DSGN-R06-combat-stealth.md)D1—D6，明确暗杀与击
 ## TASK-046 已批准规则
 
 Owner明确“确认046的设计，可以开始施工046，完成后提交并推送”。[DSGN-R11](DSGN-R11-camp-economy.md)D1—D6全部生效，沿046实施，范围协调见[CT-TASK-046](../contracts/CT-TASK-046-camp-economy.md)。R03／R11／R12／R13仅关闭本单获准子范围；人物等级、正式装备和自然源点内容仍待对应任务。
+
+## TASK-047 待批准候选（不属于有效设计增量）
+
+[DSGN-R14 成长、装备与维修](DSGN-R14-progression-equipment.md)提供D1—D6及完整候选表。60级／29节点／62物品／49配方、独立耐久、schema6迁移和弟弟容量仍待Owner确认；当前运行继续使用既有数据。046实现已通过PR #48合入main，047没有更改该批准范围。
