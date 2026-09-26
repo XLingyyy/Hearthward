@@ -287,6 +287,48 @@
       "displayOrder": 19,
       "quickIcon": "medicineQuick",
       "medicineBase": "medicine"
+    },
+    {
+      "id": "wild_food",
+      "name": "可食植物",
+      "weight": 50,
+      "category": "食物",
+      "icon": "meat",
+      "description": "可食植物，用于营地生产与生活。",
+      "food": 20,
+      "displayOrder": 10,
+      "quickIcon": "roastQuick"
+    },
+    {
+      "id": "cooked_food",
+      "name": "熟食",
+      "weight": 50,
+      "category": "食物",
+      "icon": "meat",
+      "description": "熟食，用于营地生产与生活。",
+      "food": 40,
+      "displayOrder": 10,
+      "quickIcon": "roastQuick"
+    },
+    {
+      "id": "full_meal",
+      "name": "大餐",
+      "weight": 50,
+      "category": "食物",
+      "icon": "meat",
+      "description": "大餐，用于营地生产与生活。",
+      "food": 60,
+      "displayOrder": 10,
+      "quickIcon": "roastQuick"
+    },
+    {
+      "id": "metal_ingot",
+      "name": "金属锭",
+      "weight": 200,
+      "category": "材料",
+      "icon": "ore",
+      "description": "金属锭，用于营地生产与生活。",
+      "displayOrder": 11
     }
   ],
   "skills": [
@@ -1062,8 +1104,8 @@
     }
   ],
   "construction": {
-    "status": "PROTOTYPE_ONLY: R11/R13未定参数，非正式经济",
-    "campRadius": 1200,
+    "status": "APPROVED_TASK_046: radius from shared camp tier",
+    "campRadius": 5000,
     "previewDistance": 240,
     "reach": 400,
     "rotationStep": 15,
@@ -1074,7 +1116,7 @@
     {
       "id": "workbench",
       "name": "工作台",
-      "description": "营地内建造 · 五秒完成 · 从背包消耗材料",
+      "description": "五秒建造；优先使用背包，差额从共享仓储预留。",
       "wilderness": false,
       "extent": [
         70,
@@ -1082,7 +1124,7 @@
         36
       ],
       "materials": {
-        "wood": 8
+        "wood": 72
       },
       "parts": [
         {
@@ -1103,7 +1145,7 @@
     {
       "id": "campfire",
       "name": "篝火",
-      "description": "可在野外建造 · 五秒完成 · 从背包消耗材料",
+      "description": "五秒建造；优先使用背包，差额从共享仓储预留。",
       "wilderness": true,
       "extent": [
         54,
@@ -1133,7 +1175,7 @@
     {
       "id": "bed",
       "name": "绳网木床",
-      "description": "营地内建造 · E就座休息：饱食大于0时每秒恢复2%最大生命",
+      "description": "五秒建造；优先使用背包，差额从共享仓储预留。",
       "wilderness": false,
       "extent": [
         105,
@@ -1143,6 +1185,158 @@
       "materials": {
         "wood": 6,
         "rope": 2
+      },
+      "parts": [
+        {
+          "mesh": "/Game/Hearthward/Assets/Demo/bed/rope_wood_bed_model.rope_wood_bed_model",
+          "position": [
+            0,
+            0,
+            -0.855894
+          ],
+          "scale": [
+            2.1,
+            2.1,
+            2.1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smelter",
+      "name": "冶炼炉",
+      "description": "营地设施；靠近后在营地管理中操作。",
+      "wilderness": false,
+      "extent": [
+        54,
+        56,
+        27
+      ],
+      "materials": {
+        "wood": 120,
+        "stone": 240
+      },
+      "parts": [
+        {
+          "mesh": "/Game/Hearthward/Assets/Demo/campfire/campfire_model.campfire_model",
+          "position": [
+            0,
+            0,
+            0.0355888
+          ],
+          "scale": [
+            1.1,
+            1.1,
+            1.1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "forge",
+      "name": "锻造设施",
+      "description": "营地设施；靠近后在营地管理中操作。",
+      "wilderness": false,
+      "extent": [
+        70,
+        76,
+        36
+      ],
+      "materials": {
+        "wood": 160,
+        "stone": 140,
+        "metal_ingot": 20
+      },
+      "parts": [
+        {
+          "mesh": "/Game/Hearthward/Assets/Demo/table/wood_table_model.wood_table_model",
+          "position": [
+            0,
+            0,
+            -0.3814092
+          ],
+          "scale": [
+            1.3,
+            1.3,
+            1.3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cooking",
+      "name": "烹饪设施",
+      "description": "营地设施；靠近后在营地管理中操作。",
+      "wilderness": false,
+      "extent": [
+        54,
+        56,
+        27
+      ],
+      "materials": {
+        "wood": 240,
+        "stone": 120
+      },
+      "parts": [
+        {
+          "mesh": "/Game/Hearthward/Assets/Demo/campfire/campfire_model.campfire_model",
+          "position": [
+            0,
+            0,
+            0.0355888
+          ],
+          "scale": [
+            1.1,
+            1.1,
+            1.1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "warehouse_access",
+      "name": "仓储入口",
+      "description": "营地设施；靠近后在营地管理中操作。",
+      "wilderness": false,
+      "extent": [
+        70,
+        76,
+        36
+      ],
+      "materials": {
+        "wood": 12,
+        "stone": 4
+      },
+      "parts": [
+        {
+          "mesh": "/Game/Hearthward/Assets/Demo/table/wood_table_model.wood_table_model",
+          "position": [
+            0,
+            0,
+            -0.3814092
+          ],
+          "scale": [
+            1.3,
+            1.3,
+            1.3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "medical_area",
+      "name": "治疗区",
+      "description": "营地设施；靠近后在营地管理中操作。",
+      "wilderness": false,
+      "extent": [
+        105,
+        57,
+        18
+      ],
+      "materials": {
+        "wood": 120,
+        "stone": 80,
+        "rope": 10
       },
       "parts": [
         {
@@ -1183,9 +1377,9 @@
       "id": "rope",
       "name": "绳索",
       "icon": "rope",
-      "description": "从木材剥取纤维，搓合为绳。\n每批获得 1 捆绳索。",
+      "description": "木材2，制作绳索1。",
       "materials": {
-        "wood": 1
+        "wood": 2
       },
       "outputs": {
         "rope": 1
@@ -1279,5 +1473,512 @@
         "rope": 1
       }
     }
-  ]
+  ],
+  "campEconomy": {
+    "status": "APPROVED_TASK_046",
+    "version": 1,
+    "units": {
+      "day_W": 1440,
+      "normal_A_seconds_per_W": 1,
+      "manual_gather_A_seconds": 5,
+      "manual_gather_units": 2
+    },
+    "resources": {
+      "wood": {
+        "label": "木材",
+        "kind": "existing_raw"
+      },
+      "stone": {
+        "label": "石材",
+        "kind": "existing_raw"
+      },
+      "ore": {
+        "label": "矿石",
+        "kind": "existing_raw"
+      },
+      "rope": {
+        "label": "绳索",
+        "kind": "existing_intermediate"
+      },
+      "metal_ingot": {
+        "label": "金属锭",
+        "kind": "candidate_intermediate"
+      },
+      "wild_food": {
+        "label": "野生可食植物",
+        "kind": "candidate_food"
+      },
+      "cooked_food": {
+        "label": "普通熟食",
+        "kind": "candidate_food"
+      },
+      "full_meal": {
+        "label": "大餐",
+        "kind": "candidate_food"
+      }
+    },
+    "recipes": [
+      {
+        "id": "rope",
+        "facility": "workbench",
+        "level": 1,
+        "inputs": {
+          "wood": 2
+        },
+        "outputs": {
+          "rope": 1
+        }
+      },
+      {
+        "id": "metal_ingot",
+        "facility": "smelter",
+        "level": 1,
+        "inputs": {
+          "ore": 2,
+          "wood": 1
+        },
+        "outputs": {
+          "metal_ingot": 1
+        }
+      },
+      {
+        "id": "cooked_food",
+        "facility": "cooking",
+        "level": 1,
+        "inputs": {
+          "wild_food": 2,
+          "wood": 1
+        },
+        "outputs": {
+          "cooked_food": 1
+        }
+      },
+      {
+        "id": "full_meal",
+        "facility": "cooking",
+        "level": 2,
+        "inputs": {
+          "wild_food": 3,
+          "wood": 1
+        },
+        "outputs": {
+          "full_meal": 1
+        }
+      }
+    ],
+    "camp_tiers": [
+      {
+        "tier": 1,
+        "radius_m": 50,
+        "cumulative_hp_bonus": 0,
+        "cumulative_stamina_bonus": 0,
+        "cost": {},
+        "conditions": [],
+        "unlocks": [
+          "工作台I",
+          "烹饪I",
+          "安全采食区",
+          "仓储／床／篝火"
+        ]
+      },
+      {
+        "tier": 2,
+        "radius_m": 60,
+        "cumulative_hp_bonus": 10,
+        "cumulative_stamina_bonus": 5,
+        "cost": {
+          "wood": 48,
+          "stone": 24
+        },
+        "conditions": [
+          "workbench:1",
+          "rescued_population:1"
+        ],
+        "unlocks": [
+          "冶炼I",
+          "锻造I",
+          "治疗区"
+        ]
+      },
+      {
+        "tier": 3,
+        "radius_m": 70,
+        "cumulative_hp_bonus": 20,
+        "cumulative_stamina_bonus": 10,
+        "cost": {
+          "wood": 120,
+          "stone": 80,
+          "rope": 10
+        },
+        "conditions": [
+          "cooking:1",
+          "public_food_deposited_points:40"
+        ],
+        "unlocks": [
+          "工作台II",
+          "烹饪II"
+        ]
+      },
+      {
+        "tier": 4,
+        "radius_m": 80,
+        "cumulative_hp_bonus": 35,
+        "cumulative_stamina_bonus": 15,
+        "cost": {
+          "wood": 180,
+          "stone": 160,
+          "metal_ingot": 20
+        },
+        "conditions": [
+          "smelter:1",
+          "forge:1"
+        ],
+        "unlocks": [
+          "冶炼II",
+          "锻造II"
+        ]
+      },
+      {
+        "tier": 5,
+        "radius_m": 90,
+        "cumulative_hp_bonus": 50,
+        "cumulative_stamina_bonus": 25,
+        "cost": {
+          "wood": 240,
+          "stone": 240,
+          "rope": 30,
+          "metal_ingot": 40
+        },
+        "conditions": [
+          "workbench:2",
+          "cooking:2",
+          "smelter:2",
+          "forge:2"
+        ],
+        "unlocks": [
+          "全局属性与扩圈"
+        ]
+      },
+      {
+        "tier": 6,
+        "radius_m": 100,
+        "cumulative_hp_bonus": 65,
+        "cumulative_stamina_bonus": 30,
+        "cost": {
+          "wood": 320,
+          "stone": 320,
+          "rope": 40,
+          "metal_ingot": 60
+        },
+        "conditions": [
+          "completed_distinct_production_regions:2"
+        ],
+        "unlocks": [
+          "四类设施III"
+        ]
+      },
+      {
+        "tier": 7,
+        "radius_m": 110,
+        "cumulative_hp_bonus": 80,
+        "cumulative_stamina_bonus": 40,
+        "cost": {
+          "wood": 400,
+          "stone": 400,
+          "rope": 50,
+          "metal_ingot": 80
+        },
+        "conditions": [
+          "workbench:3",
+          "cooking:3",
+          "smelter:3",
+          "forge:3"
+        ],
+        "unlocks": [
+          "全局属性与扩圈"
+        ]
+      },
+      {
+        "tier": 8,
+        "radius_m": 120,
+        "cumulative_hp_bonus": 100,
+        "cumulative_stamina_bonus": 50,
+        "cost": {
+          "wood": 480,
+          "stone": 480,
+          "rope": 60,
+          "metal_ingot": 100
+        },
+        "conditions": [
+          "hometown_reclaimed:1"
+        ],
+        "unlocks": [
+          "满阶属性与扩圈"
+        ]
+      }
+    ],
+    "facilities": [
+      {
+        "id": "workbench",
+        "level": 1,
+        "minimum_camp_tier": 1,
+        "incremental_cost": {
+          "wood": 72
+        },
+        "recipe_grade": 1,
+        "labor_speed_percent": 100
+      },
+      {
+        "id": "workbench",
+        "level": 2,
+        "minimum_camp_tier": 3,
+        "incremental_cost": {
+          "wood": 80,
+          "stone": 40,
+          "rope": 10
+        },
+        "recipe_grade": 2,
+        "labor_speed_percent": 125
+      },
+      {
+        "id": "workbench",
+        "level": 3,
+        "minimum_camp_tier": 6,
+        "incremental_cost": {
+          "wood": 120,
+          "stone": 80,
+          "metal_ingot": 20
+        },
+        "recipe_grade": 3,
+        "labor_speed_percent": 150
+      },
+      {
+        "id": "smelter",
+        "level": 1,
+        "minimum_camp_tier": 2,
+        "incremental_cost": {
+          "wood": 120,
+          "stone": 240
+        },
+        "recipe_grade": 1,
+        "labor_speed_percent": 100
+      },
+      {
+        "id": "smelter",
+        "level": 2,
+        "minimum_camp_tier": 4,
+        "incremental_cost": {
+          "wood": 120,
+          "stone": 180,
+          "metal_ingot": 20
+        },
+        "recipe_grade": 2,
+        "labor_speed_percent": 125
+      },
+      {
+        "id": "smelter",
+        "level": 3,
+        "minimum_camp_tier": 6,
+        "incremental_cost": {
+          "wood": 180,
+          "stone": 240,
+          "metal_ingot": 40
+        },
+        "recipe_grade": 3,
+        "labor_speed_percent": 150
+      },
+      {
+        "id": "forge",
+        "level": 1,
+        "minimum_camp_tier": 2,
+        "incremental_cost": {
+          "wood": 160,
+          "stone": 140,
+          "metal_ingot": 20
+        },
+        "recipe_grade": 1,
+        "labor_speed_percent": 100
+      },
+      {
+        "id": "forge",
+        "level": 2,
+        "minimum_camp_tier": 4,
+        "incremental_cost": {
+          "wood": 120,
+          "stone": 160,
+          "metal_ingot": 30
+        },
+        "recipe_grade": 2,
+        "labor_speed_percent": 125
+      },
+      {
+        "id": "forge",
+        "level": 3,
+        "minimum_camp_tier": 6,
+        "incremental_cost": {
+          "wood": 180,
+          "stone": 220,
+          "metal_ingot": 50
+        },
+        "recipe_grade": 3,
+        "labor_speed_percent": 150
+      },
+      {
+        "id": "cooking",
+        "level": 1,
+        "minimum_camp_tier": 1,
+        "incremental_cost": {
+          "wood": 240,
+          "stone": 120
+        },
+        "recipe_grade": 1,
+        "labor_speed_percent": 100
+      },
+      {
+        "id": "cooking",
+        "level": 2,
+        "minimum_camp_tier": 3,
+        "incremental_cost": {
+          "wood": 100,
+          "stone": 80,
+          "rope": 10
+        },
+        "recipe_grade": 2,
+        "labor_speed_percent": 125
+      },
+      {
+        "id": "cooking",
+        "level": 3,
+        "minimum_camp_tier": 6,
+        "incremental_cost": {
+          "wood": 160,
+          "stone": 120,
+          "metal_ingot": 20
+        },
+        "recipe_grade": 3,
+        "labor_speed_percent": 150
+      }
+    ],
+    "labor": {
+      "ordinary_population_initial": 20,
+      "ordinary_population_max": 30,
+      "physical_slots_per_region": 5,
+      "brother_equivalent_workers": 3,
+      "forage_worker_W_per_unit": 360,
+      "safe_source_patches": 3,
+      "safe_source_units_per_patch": 16,
+      "source_refresh_W_after_empty": 2880
+    },
+    "rations": {
+      "initial_points": 100,
+      "daily_base_points": 24,
+      "points_per_meal": 5,
+      "hunger_per_meal": 40,
+      "hunger_per_normal_day_per_brother": 50,
+      "high_activity_multiplier": 2,
+      "point_subunits": 2,
+      "food_points": {
+        "wild_food": 2.5,
+        "cooked_food": 5,
+        "full_meal": 7.5,
+        "roast": 5
+      }
+    },
+    "demolition": {
+      "return_numerator": 4,
+      "return_denominator": 5,
+      "rounding": "floor_per_material_per_building_lifetime_paid_cost"
+    },
+    "slice": {
+      "initial_workbench": {
+        "wood": 72
+      },
+      "first_upgrade": {
+        "wood": 48,
+        "stone": 24
+      },
+      "growth_window_active_minutes": [
+        40,
+        60
+      ]
+    },
+    "other_buildings": [
+      {
+        "id": "warehouse_access",
+        "minimum_camp_tier": 1,
+        "cost": {
+          "wood": 12,
+          "stone": 4
+        }
+      },
+      {
+        "id": "bed",
+        "minimum_camp_tier": 1,
+        "cost": {
+          "wood": 6,
+          "rope": 2
+        }
+      },
+      {
+        "id": "campfire",
+        "minimum_camp_tier": 1,
+        "cost": {
+          "wood": 4,
+          "stone": 4
+        }
+      },
+      {
+        "id": "medical_area",
+        "minimum_camp_tier": 2,
+        "cost": {
+          "wood": 120,
+          "stone": 80,
+          "rope": 10
+        }
+      }
+    ],
+    "jobs": [
+      {
+        "id": "safe_forage",
+        "inputs": {
+          "wild_food_source_stock": 1
+        },
+        "outputs": {
+          "wild_food": 1
+        },
+        "worker_W": 360
+      },
+      {
+        "id": "gather_wood",
+        "inputs": {
+          "wood_source_stock": 2
+        },
+        "outputs": {
+          "wood": 2
+        },
+        "worker_W": 15
+      },
+      {
+        "id": "gather_stone",
+        "inputs": {
+          "stone_source_stock": 2
+        },
+        "outputs": {
+          "stone": 2
+        },
+        "worker_W": 15
+      },
+      {
+        "id": "gather_ore",
+        "inputs": {
+          "ore_source_stock": 2
+        },
+        "outputs": {
+          "ore": 2
+        },
+        "worker_W": 15
+      }
+    ],
+    "processing_worker_W_per_batch": 360
+  }
 }

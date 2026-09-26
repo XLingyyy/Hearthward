@@ -6,6 +6,7 @@
 
 FString UHearthwardFurnitureInteractionComponent::GetInteractionPrompt(AActor* Interactor) const
 {
+    if(Kind==TEXT("medical_area"))return TEXT("E 进入治疗区 · 每秒恢复3%最大生命，移动离开");
     return Kind==TEXT("bed")?TEXT("E 就座休息 · 就座后每秒恢复2%最大生命\n普通饱食消耗 · 移动离开")
         :TEXT("E 烤肉5秒 · 鲜肉1 + 木材1 → 烤肉1\n移动可中断，完成时消耗材料");
 }
@@ -15,10 +16,10 @@ FString UHearthwardFurnitureInteractionComponent::CompleteInteraction(AActor* In
         || FVector::Dist(Interactor->GetActorLocation(),GetComponentLocation())>MaxDistance) return TEXT("设施不可用");
     auto* G=Interactor->FindComponentByClass<UHearthwardGameplayComponent>();
     if(!G || !G->Enabled || G->Health<=0 || G->InCombat()) return TEXT("请在安全处使用设施");
-    if(Kind==TEXT("bed"))
+    if(Kind==TEXT("bed") || Kind==TEXT("medical_area"))
     {
         auto* S=Interactor->FindComponentByClass<UHearthwardSurvivalComponent>();
-        S->CancelAction(); S->Resting=true;
+        S->CancelAction(); S->Resting=true;S->Treatment=Kind==TEXT("medical_area");
         G->Record(TEXT("rest"),TEXT("bed"));
         return TEXT("正在休息；移动离开，零饱食时停止自然恢复");
     }

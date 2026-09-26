@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "Misc/ConfigCacheIni.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
@@ -123,6 +124,11 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         && Name!=TEXT("dialogue") && Name!=TEXT("memory") && Name!=TEXT("storage")
         && Name!=TEXT("building") && Name!=TEXT("crafting") && Name!=TEXT("repairing") && Name!=TEXT("skills"))
     { Message=TEXT("该功能尚未接入自然地图"); MessageUntil=FPlatformTime::Seconds()+4; Refresh(); return; }
+    if(Name==TEXT("camp"))
+    {
+        CampEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+        if(!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->CanManage(CampEpoch)) {Message=TEXT("请在安全营地打开管理面板");MessageUntil=FPlatformTime::Seconds()+4;Refresh();return;}
+    }
     const FName PreviousPage=Page;
     const bool RestoringMemoryDraft=Name==TEXT("memory") && !ReturnPages.IsEmpty() && ReturnPages.Last()==Name;
     if(Page==TEXT("dialogue") && Name!=Page) GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
@@ -252,6 +258,7 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("memory")) ComposeMemory();
     if(Page==TEXT("hud")) ComposeHUD();
     if(Page==TEXT("building")) ComposeBuilding();
+    if(Page==TEXT("camp")) ComposeCamp();
     if(Page==TEXT("crafting")) ComposeCrafting();
     if(Page==TEXT("repairing")) ComposeRepair();
     if(Page==TEXT("save")) ComposeSave();
@@ -260,7 +267,7 @@ void UHearthwardScreenWidget::Refresh()
     {
         Element(TEXT("panel"),TEXT(""),FVector2D(490,310),FVector2D(690,290));
         Element(TEXT("text"),TEXT("确认操作"),FVector2D(550,342),FVector2D(580,45),28);
-        Element(TEXT("text"),TEXT("未保存的进度可能丢失。是否继续？"),FVector2D(550,410),FVector2D(580,50),20);
+        Element(TEXT("text"),(ConfirmAction.StartsWith(TEXT("camp."))?ConfirmMessage:TEXT("未保存的进度可能丢失。是否继续？")),FVector2D(550,410),FVector2D(580,50),20);
         Element(TEXT("button"),TEXT("确认"),FVector2D(550,510),FVector2D(240,55),22,TEXT("confirm"));
         Element(TEXT("button"),TEXT("返回"),FVector2D(850,510),FVector2D(240,55),22,TEXT("cancel"));
     }

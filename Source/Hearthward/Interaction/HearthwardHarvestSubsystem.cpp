@@ -1,4 +1,5 @@
 #include "HearthwardHarvestSubsystem.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -9,7 +10,7 @@
 #include "EngineUtils.h"
 
 int32 UHearthwardHarvestSubsystem::Remaining(const FString& Key,int32 Capacity) const
-{ return FMath::Max(0,Capacity-Used.FindRef(Key)); }
+{ if(const auto* S=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->Source(Key))return S->Remaining;return FMath::Max(0,Capacity-Used.FindRef(Key)); }
 bool UHearthwardHarvestSubsystem::Validate(const TMap<FString,int32>& Snapshot)
 {
     for(const auto& Entry:Snapshot)
@@ -53,6 +54,7 @@ void UHearthwardHarvestSubsystem::RefreshNearby(AActor* Player)
                 // Authored instance transforms are stable across streaming and save/load; no instance removal.
                 const FString Key=FString::Printf(TEXT("%s|%s|%s|%d|%d,%d,%d"),*It->GetName(),*Mesh->GetName(),*Name,Index,
                     FMath::RoundToInt(Base.X),FMath::RoundToInt(Base.Y),FMath::RoundToInt(Base.Z));
+                GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->RegisterSource(Key,Item,Capacity,FMath::Max(0,Capacity-Used.FindRef(Key)),Base,Item==TEXT("wood")?2880:0);
                 if(Targets.FindRef(Key).IsValid()) continue;
                 auto* Target=NewObject<UHearthwardHarvestTargetComponent>(*It);
                 It->AddInstanceComponent(Target); Target->SetupAttachment(It->GetRootComponent());
@@ -87,9 +89,13 @@ FString UHearthwardHarvestSubsystem::Harvest(UHearthwardHarvestTargetComponent* 
     TGuardValue<bool> Guard(Settling,true);
     // Publish depletion before inventory callbacks; failed additions restore the original resource count.
     const int32 Before=Used.FindRef(Target->ResourceKey);
-    Used.Add(Target->ResourceKey,Before+Count);
+    auto* Economy=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+    auto* Source=Economy->Source(Target->ResourceKey);
+    const double OldDue=Source?Source->Due:-1;
+    if(Source){Source->Remaining-=Count;if(Source->Remaining==0 && Source->RefreshMinutes>0)Source->Due=Economy->State.Calendar+Source->RefreshMinutes;}
+    else Used.Add(Target->ResourceKey,Before+Count);
     if(Bag->TryAdd(Target->Item,Count)!=EHearthwardInventoryResult::Success)
-    { if(Before) Used.Add(Target->ResourceKey,Before); else Used.Remove(Target->ResourceKey); return TEXT("背包容量不足，资源未消耗"); }
+    { if(Source){Source->Remaining+=Count;Source->Due=OldDue;}else if(Before) Used.Add(Target->ResourceKey,Before); else Used.Remove(Target->ResourceKey); return TEXT("背包容量不足，资源未消耗"); }
     G->Record(TEXT("harvest"),Target->Item,Count);
     return FString::Printf(TEXT("已采集%s ×%d"),*HearthwardData::Text(HearthwardData::Find(TEXT("items"),Target->Item.ToString()),TEXT("name")),Count);
 }

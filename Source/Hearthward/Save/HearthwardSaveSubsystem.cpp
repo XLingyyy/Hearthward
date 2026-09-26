@@ -1,4 +1,5 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Combat/HearthwardProjectile.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
@@ -155,7 +156,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     APawn* Player = nullptr;
     AHearthwardCompanionFixture* Companion = nullptr;
     if (!Participants(Player, Companion)) { Status = TEXT("快照参与者缺失或正在结算"); return false; }
-    if(const auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>(); B && B->IsBuilding())
+    if(const auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>(); B && (B->IsBuilding() || B->IsPlacing()))
     { Status=TEXT("建造中，保存将在完成后可用"); return false; }
     if(const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>(); G && G->Enabled && (G->InCombat() || G->Health<=0))
     { Status=TEXT("战斗或倒地期间无法保存"); return false; }
@@ -176,6 +177,8 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     { Status=TEXT("战斗动作或搬运尚未完成，保存延后"); return false; }
     for(TActorIterator<AHearthwardProjectile> It(GetWorld());It;++It)
         if(!It->Landed) { Status=TEXT("请等待投射物落地后保存"); return false; }
+    if(GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->Settling) {Status=TEXT("营地正在结算");return false;}
+    S.CampEconomy=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Camps.IsEmpty()?FString():GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Snapshot();
     S.SurvivalVersion=1;
     S.CalendarMinutes=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
     if(auto* Survival=Player->FindComponentByClass<UHearthwardSurvivalComponent>()) S.PlayerSurvival=Survival->State;
@@ -259,6 +262,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         Upgraded.SurvivalVersion=S.SurvivalVersion; Upgraded.CalendarMinutes=S.CalendarMinutes; Upgraded.PlayerSurvival=S.PlayerSurvival;
         Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
+        Upgraded.CampEconomy=S.CampEconomy;
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
         return Restore(Upgraded);
     }
@@ -269,6 +273,8 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         if(auto* Survival=Actor->FindComponentByClass<UHearthwardSurvivalComponent>(); Survival && Survival->Settling) return false;
     TGuardValue<bool> Guard(bRestoring, true);
     if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
+    FHearthwardCampState CampCheck;
+    if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,CampCheck) || FMath::Abs(CampCheck.Calendar-S.CalendarMinutes)>1.e-4 || !CampCheck.ValidateBuildings(S.Gameplay))) {Status=TEXT("营地快照无效");return false;}
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     Storage->AdvanceTimeline();
     GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Restore(S.HarvestedResources);
@@ -315,6 +321,12 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         Companion->RestoreExecutionPlan();
     }
     NextAutoSeconds = S.ActiveSeconds + AutoMinutes * 60.0;
+    // Restore the authoritative economy before recreating building actors. Legacy actors receive zero paid cost.
+    TSharedPtr<FJsonObject> LegacyGameplay;
+    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(S.Gameplay),LegacyGameplay);
+    FVector CampPosition=S.Player.GetLocation();
+    if(LegacyGameplay) {CampPosition.InitFromString(HearthwardData::Text(LegacyGameplay,TEXT("origin")));CampPosition+=HearthwardData::Position(HearthwardData::Find(TEXT("locations"),TEXT("camp")));}
+    GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->Restore(S.CampEconomy,LegacyGameplay?int32(HearthwardData::Number(LegacyGameplay,TEXT("campTier"),1)):1,CampPosition,S.CalendarMinutes);
     // All state is committed before consumers may observe it. No gameplay settlement events replay.
     if (auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>())
     {

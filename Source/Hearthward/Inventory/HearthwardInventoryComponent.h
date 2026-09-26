@@ -49,8 +49,12 @@ public:
     bool Reserve(FName Item);
     void ReleaseReservation() { Reserved=NAME_None; }
     bool CommitReservation(FName Remainder=NAME_None,bool Notify=true);
-    int32 Available(FName Item) const { return GetItemCount(Item)-(Reserved==Item?1:0); }
+    int32 Available(FName Item) const { return GetItemCount(Item)-(Reserved==Item?1:0)-ReservedMaterials.FindRef(Item); }
+    bool ReserveMaterials(const TMap<FName,int32>& Materials);
+    void ReleaseMaterials() { ReservedMaterials.Reset(); }
+    bool CommitMaterials(bool Notify=true);
 private:
+    TMap<FName,int32> ReservedMaterials;
     FName Reserved;
     friend class UHearthwardSaveSubsystem;
     friend class UHearthwardStorageSubsystem;

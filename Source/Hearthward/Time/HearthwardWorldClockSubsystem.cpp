@@ -1,4 +1,5 @@
 #include "HearthwardWorldClockSubsystem.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "EngineUtils.h"
 #include "Engine/World.h"
@@ -50,6 +51,7 @@ double UHearthwardWorldClockSubsystem::AdvanceSurvival(double Active,double Cale
             }
         }
     for(auto* S:Participants) S->AdvanceContinuous(Active*Fraction,Calendar*Fraction,Clock.CalendarMinutes);
+    GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->Advance(Calendar*Fraction,Active==0);
     Clock.ActivePlaySeconds+=Active*Fraction; Clock.CalendarMinutes+=Calendar*Fraction;
     if(!UHearthwardSurvivalComponent::HasFailed(GetWorld()))
         for(auto* S:Participants) S->CompleteBoundary(Active*Fraction);

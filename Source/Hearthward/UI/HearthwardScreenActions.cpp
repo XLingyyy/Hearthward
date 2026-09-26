@@ -72,6 +72,9 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     // A confirmation owns input until the player confirms or cancels it.
     if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")) return false;
     MessageUntil=FPlatformTime::Seconds()+4;
+    if(Action.StartsWith(TEXT("camp.")))return ExecuteCampAction(Action);
+    if(Action==TEXT("buildPrev")){Scroll-=4;Refresh();return true;}
+    if(Action==TEXT("buildNext")){Scroll+=4;Refresh();return true;}
     auto* G=Gameplay(); auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
     auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
