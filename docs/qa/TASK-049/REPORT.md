@@ -63,3 +63,5 @@ G:/GameFactory/.venv/Scripts/python.exe -X utf8 docs/qa/TASK-049/run_engine.py -
 原生／构建入口：`run_engine.py --label repro-native --build --native 'Hearthward.Save+Hearthward.Campaign' --script ''`。静态入口：`docs/planning/TASK-049/audit.py`、`docs/qa/TASK-049/check_terrain.py`、`scripts/validate_repo.py --task TASK-049 --base e2f3834efb29bd0d3a3339d92a934033cfaa8876`。路线脚本读取`Saved/Task049/natural/results.json`中的明确营地存档ID，并将本次自动存档间隔设为60分钟，避免途中自动节点改变后续测试起点；脚本不手动保存路线进度；开发时可用未提交的`.agent-local/route-resume.json`提供分段起点（index/x/y/z），报告会明确标记此定位夹具，完整复跑应移走该文件；尾声会保存完成状态；复跑全套前需重新从正常新游戏开始。
 
 证据绑定说明：final-epilogue2构建与PIE、final-natural3运行上述完整源码。final-fixed原生用例所覆盖的存档、成长及Campaign状态／任务规则此后未改；后续UI入口与未接触人物落位修改分别由final-continue、final-epilogue2和final-natural3实际运行覆盖。早期失败报告保留其历史结论；路线最终结论以route-full-follow2为准。本轮仅调整路线运行数据、生成器、QA与文档，未重新构建未改动的C++。首次route-full-follow因此前分段测试自动保存了途中节点，在行走前的回营准备阶段失败；脚本改为明确加载正常序章营地节点后完成复测，见其原始报告。
+
+路线修正及完整连续复测绑定提交：`4e74200419a90e88aa278201de60b75fd5bb2e3e`。后续证据绑定提交仅更新文档，不改变受测路线与脚本。
