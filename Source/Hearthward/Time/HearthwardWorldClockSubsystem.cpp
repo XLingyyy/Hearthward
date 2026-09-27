@@ -1,4 +1,5 @@
 #include "HearthwardWorldClockSubsystem.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "EngineUtils.h"
@@ -52,6 +53,7 @@ double UHearthwardWorldClockSubsystem::AdvanceSurvival(double Active,double Cale
         }
     for(auto* S:Participants) S->AdvanceContinuous(Active*Fraction,Calendar*Fraction,Clock.CalendarMinutes);
     GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->Advance(Calendar*Fraction,Active==0);
+    GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Advance(Calendar*Fraction);
     Clock.ActivePlaySeconds+=Active*Fraction; Clock.CalendarMinutes+=Calendar*Fraction;
     if(!UHearthwardSurvivalComponent::HasFailed(GetWorld()))
         for(auto* S:Participants) S->CompleteBoundary(Active*Fraction);
@@ -59,6 +61,6 @@ double UHearthwardWorldClockSubsystem::AdvanceSurvival(double Active,double Cale
 }
 double UHearthwardWorldClockSubsystem::AdvanceCalendar(double Minutes)
 {
-    if(!FMath::IsFinite(Minutes) || Minutes<=0 || GetWorld()->IsPaused()) return 0;
+    if(!FMath::IsFinite(Minutes) || Minutes<=0 || GetWorld()->IsPaused() || GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy()) return 0;
     return AdvanceSurvival(0,Minutes);
 }

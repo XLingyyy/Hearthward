@@ -24,6 +24,7 @@ class HEARTHWARD_API UHearthwardScreenWidget : public UUserWidget
     GENERATED_BODY()
 public:
     UFUNCTION(BlueprintCallable) void OpenPage(FName Name);
+    UFUNCTION(BlueprintCallable) void OpenNature(FGuid Target);
     UFUNCTION(BlueprintCallable) bool ExecuteAction(const FString& Action);
     UFUNCTION(BlueprintPure) FName GetPage() const { return Page; }
     UFUNCTION(BlueprintPure) FString GetCategory() const { return Category; }
@@ -61,6 +62,9 @@ private:
     void LoadElements(const TArray<TSharedPtr<FJsonValue>>& Rows);
     void ComposeInventory(bool Storage);
     void ComposeEquipment();
+    void ComposeNature();
+    bool ExecuteNatureAction(const FString& Action);
+    FGuid NatureSelection,NatureEpoch;
     bool ExecuteEquipmentAction(const FString& Action);
     FName EquipmentOwner=TEXT("player");
     FGuid EquipmentSelection,EquipmentEpoch;

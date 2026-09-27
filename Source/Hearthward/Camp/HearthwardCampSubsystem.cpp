@@ -1,4 +1,5 @@
 #include "HearthwardCampSubsystem.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
@@ -31,6 +32,7 @@ void UHearthwardCampSubsystem::SyncTier()
 {if(auto* P=CampPlayer(GetWorld()))if(auto* G=P->FindComponentByClass<UHearthwardGameplayComponent>())G->CampTier=State.Tier;}
 bool UHearthwardCampSubsystem::CanManage(FGuid Epoch) const
 {
+    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
     const auto* P=CampPlayer(GetWorld());const auto* G=P?P->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
     const auto* S=P?P->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
     const auto* B=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
@@ -154,7 +156,16 @@ void UHearthwardCampSubsystem::Advance(double Minutes,bool Sleeping)
         const auto* Site=State.Camps.FindByPredicate([&](const auto& C){return C.Id==R.Camp;});
         for(TActorIterator<AActor> It(GetWorld());Site && It;++It)
             if(const auto* Target=It->FindComponentByClass<UHearthwardCombatTargetComponent>();Target && Target->Alive()
-                && FVector::Dist2D(It->GetActorLocation(),Site->Position)<=State.Radius()) {R.Safe=false;break;}
+                && FVector::Dist2D(It->GetActorLocation(),Site->Position)<=State.Radius())
+            {
+                if(Target->NaturalTarget)
+                {
+                    const auto& Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->State;
+                    const auto* Animal=Nature.Animals.FindByPredicate([&](const auto& A){return FName(A.Id.ToString())==Target->Id;});
+                    if(!Animal || Animal->Domestic || Animal->AlertRemaining<=0)continue;
+                }
+                R.Safe=false;break;
+            }
         R.PlayerEfficiency=Efficiency(P,R);R.BrotherEfficiency=Efficiency(Brother,R);
     }
     if(P) if(auto* Builder=P->FindComponentByClass<UHearthwardBuildingComponent>())
@@ -163,6 +174,8 @@ void UHearthwardCampSubsystem::Advance(double Minutes,bool Sleeping)
             Source.Blocked=false;
             for(auto* Building:Builder->GetBuildings())
             {FVector Origin,Extent;Building->GetActorBounds(true,Origin,Extent);if(FMath::Abs(Source.Position.X-Origin.X)<Extent.X && FMath::Abs(Source.Position.Y-Origin.Y)<Extent.Y){Source.Blocked=true;break;}}
+            for(const auto& Pen:GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->State.Pens)
+                if(FMath::Abs(Source.Position.X-Pen.Position.X)<200 && FMath::Abs(Source.Position.Y-Pen.Position.Y)<200)Source.Blocked=true;
         }
     TGuardValue<bool> Guard(Settling,true);auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     State.Advance(Minutes,Sleeping,[&](const auto& In,const auto& Out){return Store->Adjust(In,Out);});
@@ -171,8 +184,12 @@ FHearthwardCampSource* UHearthwardCampSubsystem::Source(const FString& Id)
 {return State.Sources.FindByPredicate([&](const auto& S){return S.Id==Id;});}
 bool UHearthwardCampSubsystem::RegisterSource(FString Id,FName Item,int32 Capacity,int32 Remaining,FVector Position,double RefreshMinutes)
 {
-    if(Source(Id))return true;
-    const FName Camp=State.CampAt(Position);if(Id.IsEmpty() || Camp.IsNone() || Capacity<=0 || Remaining<0 || Remaining>Capacity || RefreshMinutes<0)return false;
+    if(auto* Existing=Source(Id))
+    {
+        if(Existing->RefreshMinutes==0 && RefreshMinutes>0){Existing->RefreshMinutes=RefreshMinutes;if(Existing->Remaining==0)Existing->Due=State.Calendar+RefreshMinutes;}
+        return true;
+    }
+    const FName Camp=State.CampAt(Position);if(Id.IsEmpty() || Capacity<=0 || Remaining<0 || Remaining>Capacity || RefreshMinutes<0)return false;
     FHearthwardCampSource S;S.Id=Id;S.Camp=Camp;S.Item=Item;S.Capacity=Capacity;S.Remaining=Remaining;S.Position=Position;S.RefreshMinutes=RefreshMinutes;
     if(Remaining==0 && RefreshMinutes>0)S.Due=State.Calendar+RefreshMinutes;State.Sources.Add(S);return true;
 }

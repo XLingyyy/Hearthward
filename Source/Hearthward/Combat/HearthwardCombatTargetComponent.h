@@ -41,6 +41,7 @@ public:
     UPROPERTY(EditAnywhere) TMap<FName,FName> BoneParts;
     UPROPERTY(EditAnywhere) float Exposure=-1;
     UPROPERTY() bool PrototypeEncounter=false;
+    UPROPERTY() bool NaturalTarget=false;
     UPROPERTY(BlueprintReadOnly) FString Awareness=TEXT("巡逻");
     UPROPERTY() FHearthwardCombatTargetSave Memory;
     TWeakObjectPtr<AActor> ExecutionOwner;

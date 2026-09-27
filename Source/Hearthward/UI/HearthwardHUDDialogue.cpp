@@ -1,3 +1,4 @@
+#include "../Nature/HearthwardNatureSubsystem.h"
 #include "HearthwardHUD.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardScreenWidget.h"
@@ -95,6 +96,7 @@ void AHearthwardHUD::ToggleDialogue()
 
 void AHearthwardHUD::OpenPause()
 {
+    if(auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();N->Busy()){N->Cancel();return;}
     if(auto* B=GetOwningPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->CancelPlacement(); return; }
     if(Screen) Screen->ExecuteAction(TEXT("page:pause"));
 }

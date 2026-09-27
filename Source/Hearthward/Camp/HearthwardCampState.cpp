@@ -221,7 +221,7 @@ bool FHearthwardCampState::Validate() const
     }
     for(const auto& S:Sources)
     {
-        if(S.Id.IsEmpty() || Points.Contains(S.Id) || !CampsSeen.Contains(S.Camp) || S.Position.ContainsNaN() || S.Capacity<=0 || S.Remaining<0 || S.Remaining>S.Capacity
+        if(S.Id.IsEmpty() || Points.Contains(S.Id) || (!S.Camp.IsNone() && !CampsSeen.Contains(S.Camp)) || S.Position.ContainsNaN() || S.Capacity<=0 || S.Remaining<0 || S.Remaining>S.Capacity
             || !FMath::IsFinite(S.RefreshMinutes) || S.RefreshMinutes<0 || !FMath::IsFinite(S.Due) || S.Due< -1 || (S.Remaining>0 && S.Due!=-1)
             || !HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==S.Item;})) return false;
         Points.Add(S.Id);

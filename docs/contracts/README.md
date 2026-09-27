@@ -19,3 +19,5 @@
 [CT-TASK-046 营地经济、库存与保存](CT-TASK-046-camp-economy.md)：产品D1—D6及施工已获Owner批准，任务分支实现共享经济权威、施工预留、每设施独立批次、实付拆返与可选营地存档；正式PR审查尚未完成。
 
 [CT-TASK-047 成长、逐件装备与库存保存](CT-TASK-047-progression-inventory.md)：Owner已批准D1—D6与施工，047分支接入三类容器、装备GUID、奖励去重、局部维修与schema6；正式PR审查另记。
+
+[CT-TASK-048 自然内容与保存](CT-TASK-048-nature.md)：Owner已批准D1—D6与施工，048分支接通有限源点、个体动物／作物／栏舍、钓鱼与唯一奖励、schema7迁移和时间线失效；正式PR审查另记。

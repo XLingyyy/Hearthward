@@ -128,7 +128,7 @@ bool FEquipmentMigrationFile047Test::RunTest(const FString&)
         FHearthwardGroundEquipment Ground;Ground.Transform=FTransform::Identity;Ground.Item=World.PlayerItems.Instances[0];World.GroundEquipment.Add(Ground);
         TestFalse(TEXT("Ground duplicate rejected"),HearthwardSave::Validate(*Migrated));World.GroundEquipment.Reset();
         Migrated->Schema=4;TestFalse(TEXT("Unknown schema4 rejected"),HearthwardSave::Validate(*Migrated));
-        Migrated->Schema=7;TestFalse(TEXT("Future schema rejected"),HearthwardSave::Validate(*Migrated));
+        Migrated->Schema=8;TestFalse(TEXT("Future schema rejected"),HearthwardSave::Validate(*Migrated));
     }
     IFileManager::Get().Delete(*Path);IFileManager::Get().Delete(*(Path+TEXT(".pre-schema6")));return true;
 }

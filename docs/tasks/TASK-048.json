@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "TASK-048",
+  "title": "实现自然资源、动物、钓鱼与种养",
+  "status": "Blocked",
+  "updated_at": "2026-09-27",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-048-nature-content",
+  "source_refs": [
+    "用户：继续048；沿用按序任务设计、确认后施工的工作方式",
+    "原稿TASK-050映射canonical TASK-048；审计R15/R16/R19",
+    "origin/main@e95fde185dc38d0b69c2de42ce66db0d1fd93294，已含047/PR49",
+    "Owner确认048全部设计并授权施工、完成后提交推送；动物模型先复用临时表现，以后精修。"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-043",
+    "TASK-046",
+    "TASK-047"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-048-nature.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/tasks/TASK-048.json",
+    "docs/tasks/TASK-048.md",
+    "docs/handoffs/TASK-048.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/design/DSGN-R15-nature-production.md",
+    "docs/planning/TASK-048/",
+    "docs/qa/TASK-048/",
+    "docs/assets/TASK-048/",
+    "Source/Hearthward/",
+    "Resources/Data/",
+    "Resources/UI/",
+    "Content/Hearthward/Nature/",
+    "docs/contracts/CT-TASK-048-nature.md",
+    "docs/contracts/README.md"
+  ],
+  "forbidden_paths": [
+    "Config/",
+    "Runtime/",
+    "art_source/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "已批准12类资源点与有限采食、矿业和起步链实际可操作",
+    "8野生／3家畜／4鱼、钓鱼张力与奖励、3作物与栏舍繁殖接通实际交互",
+    "自然时间与所有状态同档保存、旧档迁移、唯一奖励及过期回调保护",
+    "Editor构建、相关原生与真实PIE操作和重开读档通过",
+    "同步README、提交推送并清理独立工作树"
+  ],
+  "non_goals": [
+    "不合并main、不跳号",
+    "模型与动作允许临时表现，本单不追求最终精修",
+    "不添加未经批准的动物产品或独立伙伴危险活动"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: primary source research, Git checks and task branch push under continuing delivery instructions",
+    "install_dependencies": "not_granted",
+    "commit": "granted: explicit TASK-048 implementation and delivery",
+    "push": "granted: explicit TASK-048 implementation and delivery",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "D1—D6及实现所需Source、Resources、自然内容保存／公共接口范围获Owner确认。",
+    "模型缺项允许临时表现，记录未精修范围，不阻塞已授权玩法实现。",
+    "实现与定向验证完成：冻结源码48a0b8a4a6de4c778a1ff1eb8cd2fa22a809888f通过Editor构建、原生40/40、实际PIE91/91及自然地图19/19；工具33/33、仓库路径检查见报告。",
+    "Blocked仅表示正式独立PR审查尚未完成；Owner/Reviewer同为XLingyyy，Agent不自批或合并。",
+    "动物静态模型、默认材质、野猪复用猪及缺少专用动画按Owner指示保留，后续精修。"
+  ]
+}

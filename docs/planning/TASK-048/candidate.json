@@ -1,0 +1,734 @@
+{
+  "status": "PROPOSED_OWNER_APPROVAL_REQUIRED",
+  "version": 1,
+  "canonical_task": "TASK-048",
+  "source_task": "TASK-050",
+  "day_minutes": 1440,
+  "resources": [
+    {
+      "id": "tree",
+      "name": "树木",
+      "item": "wood",
+      "capacity": 12,
+      "tool": "axe",
+      "min_grade": 1,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "营地边缘及林地；单株间距≥4m"
+    },
+    {
+      "id": "stone_outcrop",
+      "name": "石点",
+      "item": "stone",
+      "capacity": 8,
+      "tool": "pickaxe",
+      "min_grade": 1,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "营地外缘和山坡；避开道路"
+    },
+    {
+      "id": "ore_vein",
+      "name": "普通矿点",
+      "item": "ore",
+      "capacity": 12,
+      "tool": "pickaxe",
+      "min_grade": 1,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "首营外150—300m安全可达岩壁"
+    },
+    {
+      "id": "rich_ore_vein",
+      "name": "精矿点",
+      "item": "refined_ore",
+      "capacity": 8,
+      "tool": "pickaxe",
+      "min_grade": 2,
+      "refresh_days": 4,
+      "action_seconds": 5,
+      "placement": "首营外400—800m高地；至少两处"
+    },
+    {
+      "id": "herb_patch",
+      "name": "药草",
+      "item": "herb",
+      "capacity": 4,
+      "tool": "hand",
+      "min_grade": 0,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "安全林缘，首营至少4点"
+    },
+    {
+      "id": "food_patch",
+      "name": "可食植物",
+      "item": "wild_food",
+      "capacity": 16,
+      "tool": "hand",
+      "min_grade": 0,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "首营20—45m内至少4组，共64份"
+    },
+    {
+      "id": "flower_patch",
+      "name": "山花",
+      "item": "flower",
+      "capacity": 4,
+      "tool": "hand",
+      "min_grade": 0,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "沿探索路线，不设隐藏兑换币"
+    },
+    {
+      "id": "fallen_branches",
+      "name": "落枝堆",
+      "item": "wood",
+      "capacity": 16,
+      "tool": "hand",
+      "min_grade": 0,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "首营20—45m内至少6堆，共96木"
+    },
+    {
+      "id": "loose_stones",
+      "name": "散石堆",
+      "item": "stone",
+      "capacity": 8,
+      "tool": "hand",
+      "min_grade": 0,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "首营20—45m内至少4堆，共32石"
+    },
+    {
+      "id": "wild_seed_greens",
+      "name": "野菜种源",
+      "item": "seed_greens",
+      "capacity": 4,
+      "tool": "hand",
+      "min_grade": 0,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "首营外50—250m安全探索点，每种至少2点；不随机抽空"
+    },
+    {
+      "id": "wild_seed_grain",
+      "name": "谷物种源",
+      "item": "seed_grain",
+      "capacity": 4,
+      "tool": "hand",
+      "min_grade": 0,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "首营外50—250m安全探索点，每种至少2点；不随机抽空"
+    },
+    {
+      "id": "wild_seed_herb",
+      "name": "药草种源",
+      "item": "seed_herb",
+      "capacity": 4,
+      "tool": "hand",
+      "min_grade": 0,
+      "refresh_days": 2,
+      "action_seconds": 5,
+      "placement": "首营外50—250m安全探索点，每种至少2点；不随机抽空"
+    }
+  ],
+  "wildlife": [
+    {
+      "id": "deer",
+      "name": "鹿",
+      "asset_stem": "stag_a",
+      "behavior": "flee",
+      "health": 75,
+      "damage": 0,
+      "run_mps": 7,
+      "detect_m": 22,
+      "flee_m": 70,
+      "group_size": 2,
+      "meat": 6,
+      "hide": 3,
+      "habitat": "林缘草地",
+      "active": "day",
+      "refresh_days": 2,
+      "hunt_xp": 30,
+      "attack_interval_seconds": 1.4
+    },
+    {
+      "id": "hare",
+      "name": "野兔",
+      "asset_stem": "hare",
+      "behavior": "flee",
+      "health": 20,
+      "damage": 0,
+      "run_mps": 6,
+      "detect_m": 14,
+      "flee_m": 50,
+      "group_size": 3,
+      "meat": 1,
+      "hide": 1,
+      "habitat": "草地与灌木边",
+      "active": "day",
+      "refresh_days": 2,
+      "hunt_xp": 30,
+      "attack_interval_seconds": 1.4
+    },
+    {
+      "id": "pheasant",
+      "name": "雉鸡",
+      "asset_stem": "pheasant",
+      "behavior": "flee",
+      "health": 20,
+      "damage": 0,
+      "run_mps": 5,
+      "detect_m": 12,
+      "flee_m": 50,
+      "group_size": 3,
+      "meat": 1,
+      "hide": 0,
+      "habitat": "草地，短距扑翼逃跑",
+      "active": "day",
+      "refresh_days": 2,
+      "hunt_xp": 30,
+      "attack_interval_seconds": 1.4
+    },
+    {
+      "id": "ram",
+      "name": "野羊",
+      "asset_stem": "ram",
+      "behavior": "retaliate",
+      "health": 90,
+      "damage": 15.037593985,
+      "run_mps": 6,
+      "detect_m": 18,
+      "flee_m": 60,
+      "group_size": 2,
+      "meat": 4,
+      "hide": 2,
+      "habitat": "山坡开阔地",
+      "active": "day",
+      "refresh_days": 2,
+      "hunt_xp": 30,
+      "attack_interval_seconds": 1.4
+    },
+    {
+      "id": "boar",
+      "name": "野猪",
+      "asset_stem": null,
+      "behavior": "retaliate",
+      "health": 120,
+      "damage": 15.037593985,
+      "run_mps": 7,
+      "detect_m": 18,
+      "flee_m": 70,
+      "group_size": 2,
+      "meat": 5,
+      "hide": 2,
+      "habitat": "低地密林",
+      "active": "dawn_dusk",
+      "refresh_days": 2,
+      "hunt_xp": 30,
+      "attack_interval_seconds": 1.4
+    },
+    {
+      "id": "wolf",
+      "name": "狼",
+      "asset_stem": "wolf",
+      "behavior": "aggressive",
+      "health": 100,
+      "damage": 15.037593985,
+      "run_mps": 8,
+      "detect_m": 24,
+      "flee_m": 80,
+      "group_size": 2,
+      "meat": 4,
+      "hide": 2,
+      "habitat": "远离营地的林道",
+      "active": "night",
+      "refresh_days": 2,
+      "hunt_xp": 30,
+      "attack_interval_seconds": 1.4
+    },
+    {
+      "id": "black_bear",
+      "name": "黑熊",
+      "asset_stem": "black_bear",
+      "behavior": "retaliate",
+      "health": 240,
+      "damage": 15.037593985,
+      "run_mps": 6,
+      "detect_m": 18,
+      "flee_m": 70,
+      "group_size": 1,
+      "meat": 8,
+      "hide": 4,
+      "habitat": "远林，营地外≥300m",
+      "active": "day",
+      "refresh_days": 2,
+      "hunt_xp": 30,
+      "attack_interval_seconds": 1.0
+    },
+    {
+      "id": "red_fox",
+      "name": "赤狐",
+      "asset_stem": "red_fox",
+      "behavior": "flee",
+      "health": 40,
+      "damage": 0,
+      "run_mps": 7,
+      "detect_m": 20,
+      "flee_m": 60,
+      "group_size": 1,
+      "meat": 2,
+      "hide": 2,
+      "habitat": "林缘与河岸",
+      "active": "night",
+      "refresh_days": 2,
+      "hunt_xp": 30,
+      "attack_interval_seconds": 1.4
+    }
+  ],
+  "domestic": [
+    {
+      "id": "goat",
+      "name": "山羊",
+      "asset_stem": "goat",
+      "health": 60,
+      "adult_feed_daily": 2,
+      "young_feed_daily": 1,
+      "meat": 4,
+      "juvenile_meat": 1,
+      "hide": 0,
+      "breeding_days": 2,
+      "maturity_days": 2,
+      "offspring_per_pair": 1,
+      "exploration_sites": 2,
+      "adults_per_site": 2
+    },
+    {
+      "id": "pig",
+      "name": "家猪",
+      "asset_stem": "pig",
+      "health": 80,
+      "adult_feed_daily": 3,
+      "young_feed_daily": 2,
+      "meat": 6,
+      "juvenile_meat": 1,
+      "hide": 0,
+      "breeding_days": 2,
+      "maturity_days": 2,
+      "offspring_per_pair": 1,
+      "exploration_sites": 2,
+      "adults_per_site": 2
+    },
+    {
+      "id": "hen",
+      "name": "家鸡",
+      "asset_stem": "hen",
+      "health": 20,
+      "adult_feed_daily": 1,
+      "young_feed_daily": 1,
+      "meat": 2,
+      "juvenile_meat": 1,
+      "hide": 0,
+      "breeding_days": 2,
+      "maturity_days": 2,
+      "offspring_per_pair": 1,
+      "exploration_sites": 2,
+      "adults_per_site": 2
+    }
+  ],
+  "fish": [
+    {
+      "id": "carp",
+      "name": "鲤鱼",
+      "asset_stem": "carp",
+      "item": "fish_carp",
+      "pool_weight": 35,
+      "struggle_seconds": 6,
+      "food": 20,
+      "weight": 50
+    },
+    {
+      "id": "crucian_carp",
+      "name": "鲫鱼",
+      "asset_stem": "crucian_carp",
+      "item": "fish_crucian_carp",
+      "pool_weight": 40,
+      "struggle_seconds": 5,
+      "food": 20,
+      "weight": 50
+    },
+    {
+      "id": "catfish",
+      "name": "鲶鱼",
+      "asset_stem": "catfish",
+      "item": "fish_catfish",
+      "pool_weight": 15,
+      "struggle_seconds": 7,
+      "food": 20,
+      "weight": 50
+    },
+    {
+      "id": "eel",
+      "name": "鳗鱼",
+      "asset_stem": "eel",
+      "item": "fish_eel",
+      "pool_weight": 10,
+      "struggle_seconds": 7,
+      "food": 20,
+      "weight": 50
+    }
+  ],
+  "crops": [
+    {
+      "id": "greens",
+      "name": "野菜",
+      "seed": "seed_greens",
+      "seed_cost": 1,
+      "seed_return": 1,
+      "days": 2,
+      "base_yield": 4,
+      "output": "wild_food",
+      "care_bonus_each": 0.25,
+      "care_flags": [
+        "watered",
+        "fertilized"
+      ]
+    },
+    {
+      "id": "grain",
+      "name": "谷物",
+      "seed": "seed_grain",
+      "seed_cost": 1,
+      "seed_return": 1,
+      "days": 3,
+      "base_yield": 8,
+      "output": "grain",
+      "care_bonus_each": 0.25,
+      "care_flags": [
+        "watered",
+        "fertilized"
+      ]
+    },
+    {
+      "id": "herb",
+      "name": "药草",
+      "seed": "seed_herb",
+      "seed_cost": 1,
+      "seed_return": 1,
+      "days": 4,
+      "base_yield": 12,
+      "output": "herb",
+      "care_bonus_each": 0.25,
+      "care_flags": [
+        "watered",
+        "fertilized"
+      ]
+    }
+  ],
+  "new_items": [
+    {
+      "id": "grain",
+      "name": "谷物",
+      "weight": 50,
+      "food": 20
+    },
+    {
+      "id": "bait",
+      "name": "鱼饵",
+      "weight": 5
+    },
+    {
+      "id": "feed",
+      "name": "饲料",
+      "weight": 25
+    },
+    {
+      "id": "seed_greens",
+      "name": "野菜种子",
+      "weight": 5
+    },
+    {
+      "id": "seed_grain",
+      "name": "谷物种子",
+      "weight": 5
+    },
+    {
+      "id": "seed_herb",
+      "name": "药草种子",
+      "weight": 5
+    },
+    {
+      "id": "fish_carp",
+      "name": "鲤鱼",
+      "weight": 50,
+      "food": 20
+    },
+    {
+      "id": "fish_crucian_carp",
+      "name": "鲫鱼",
+      "weight": 50,
+      "food": 20
+    },
+    {
+      "id": "fish_catfish",
+      "name": "鲶鱼",
+      "weight": 50,
+      "food": 20
+    },
+    {
+      "id": "fish_eel",
+      "name": "鳗鱼",
+      "weight": 50,
+      "food": 20
+    },
+    {
+      "id": "treasure_map_1",
+      "name": "藏宝图1",
+      "weight": 0,
+      "quest": true
+    },
+    {
+      "id": "treasure_map_2",
+      "name": "藏宝图2",
+      "weight": 0,
+      "quest": true
+    },
+    {
+      "id": "treasure_map_3",
+      "name": "藏宝图3",
+      "weight": 0,
+      "quest": true
+    }
+  ],
+  "recipes": [
+    {
+      "id": "bait_048",
+      "facility": "workbench",
+      "level": 1,
+      "inputs": {
+        "wild_food": 1
+      },
+      "outputs": {
+        "bait": 8
+      }
+    },
+    {
+      "id": "feed_048",
+      "facility": "workbench",
+      "level": 1,
+      "inputs": {
+        "wild_food": 2
+      },
+      "outputs": {
+        "feed": 4
+      }
+    },
+    {
+      "id": "feed_grain_048",
+      "facility": "workbench",
+      "level": 1,
+      "inputs": {
+        "grain": 2
+      },
+      "outputs": {
+        "feed": 4
+      }
+    },
+    {
+      "id": "grain_food_048",
+      "facility": "cooking",
+      "level": 1,
+      "inputs": {
+        "grain": 2,
+        "wood": 1
+      },
+      "outputs": {
+        "cooked_food": 1
+      }
+    },
+    {
+      "id": "grain_meal_048",
+      "facility": "cooking",
+      "level": 2,
+      "inputs": {
+        "grain": 3,
+        "wood": 1
+      },
+      "outputs": {
+        "full_meal": 1
+      }
+    },
+    {
+      "id": "cook_carp_048",
+      "facility": "campfire",
+      "level": 1,
+      "inputs": {
+        "fish_carp": 1,
+        "wood": 1
+      },
+      "outputs": {
+        "cooked_food": 1
+      }
+    },
+    {
+      "id": "cook_crucian_carp_048",
+      "facility": "campfire",
+      "level": 1,
+      "inputs": {
+        "fish_crucian_carp": 1,
+        "wood": 1
+      },
+      "outputs": {
+        "cooked_food": 1
+      }
+    },
+    {
+      "id": "cook_catfish_048",
+      "facility": "campfire",
+      "level": 1,
+      "inputs": {
+        "fish_catfish": 1,
+        "wood": 1
+      },
+      "outputs": {
+        "cooked_food": 1
+      }
+    },
+    {
+      "id": "cook_eel_048",
+      "facility": "campfire",
+      "level": 1,
+      "inputs": {
+        "fish_eel": 1,
+        "wood": 1
+      },
+      "outputs": {
+        "cooked_food": 1
+      }
+    }
+  ],
+  "rewards": [
+    {
+      "id": "treasure_map_1",
+      "weight": 35,
+      "kind": "map",
+      "claim": "nature048_treasure_1",
+      "outputs": {
+        "bow_2": 1,
+        "metal_ingot": 8
+      }
+    },
+    {
+      "id": "treasure_map_2",
+      "weight": 30,
+      "kind": "map",
+      "claim": "nature048_treasure_2",
+      "outputs": {
+        "pickaxe_3": 1,
+        "steel_ingot": 4
+      }
+    },
+    {
+      "id": "treasure_map_3",
+      "weight": 20,
+      "kind": "map",
+      "claim": "nature048_treasure_3",
+      "outputs": {
+        "crossbow_3": 1,
+        "steel_ingot": 4
+      }
+    },
+    {
+      "id": "blueprint_hunter_bow",
+      "weight": 15,
+      "kind": "blueprint",
+      "knowledge": "blueprint_hunter_bow"
+    }
+  ],
+  "fishing": {
+    "cast_seconds": 1,
+    "bite_seconds": [
+      2,
+      4
+    ],
+    "timeout_seconds": 12,
+    "tension_start": 0.45,
+    "tension_safe": [
+      0.15,
+      0.85
+    ],
+    "hold_rate": 0.3,
+    "release_rate": -0.25,
+    "fish_rate_amplitude": 0.05,
+    "fish_rate_period_seconds": 1.5,
+    "bait_per_cast": 1,
+    "durability_on_success": 1,
+    "treasure_chance": 0.02,
+    "stock_per_spot": 24,
+    "refresh_days": 2,
+    "initial_spots": 4,
+    "duplicate_reward": {
+      "rope": 2,
+      "herb": 2
+    }
+  },
+  "pens": [
+    {
+      "level": 1,
+      "camp_tier": 2,
+      "capacity": 6,
+      "materials": {
+        "wood": 60,
+        "stone": 20,
+        "rope": 10
+      }
+    },
+    {
+      "level": 2,
+      "camp_tier": 4,
+      "capacity": 10,
+      "materials": {
+        "wood": 120,
+        "stone": 40,
+        "rope": 20
+      }
+    },
+    {
+      "level": 3,
+      "camp_tier": 6,
+      "capacity": 14,
+      "materials": {
+        "wood": 180,
+        "stone": 60,
+        "rope": 30
+      }
+    }
+  ],
+  "starting_source_counts": {
+    "food_patch": 4,
+    "fallen_branches": 6,
+    "loose_stones": 4,
+    "tree": 12,
+    "stone_outcrop": 6,
+    "herb_patch": 4,
+    "ore_vein": 4,
+    "rich_ore_vein": 2
+  },
+  "rules": {
+    "mining_uses_047_five_seconds": true,
+    "crop_auto_replant": false,
+    "crop_auto_harvest": false,
+    "offline_growth": false,
+    "livestock_starvation_death": false,
+    "livestock_additional_products": false,
+    "weather_affects_catch": false,
+    "bonus_treasure_replaces_fish": false,
+    "animal_difficulty_multiplier": false
+  }
+}

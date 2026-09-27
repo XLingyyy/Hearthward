@@ -1,4 +1,5 @@
 #include "HearthwardSaveGame.h"
+#include "../Nature/HearthwardNatureState.h"
 #include "../Gameplay/HearthwardProgression.h"
 #include "../Camp/HearthwardCampState.h"
 #include "Serialization/JsonSerializer.h"
@@ -51,17 +52,18 @@ bool ValidSurvival(const FHearthwardSurvivalState& State,const TMap<FName,int32>
 }
 bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Error)
 {
-    constexpr uint32 LegacyMagic = 0x48575331, PreviousMagic = 0x48575332, Schema5Magic = 0x48575335, Magic = 0x48575336;
+    constexpr uint32 LegacyMagic = 0x48575331, PreviousMagic = 0x48575332, Schema5Magic = 0x48575335, Schema6Magic = 0x48575336, Magic = 0x48575337;
     uint32 Header[3] = {};
     if (Bytes.Num() < sizeof(Header) || Bytes.Num() > 64 * 1024 * 1024) { Error = TEXT("存档大小无效"); return false; }
     FMemory::Memcpy(Header, Bytes.GetData(), sizeof(Header));
     const int32 Length = Bytes.Num() - sizeof(Header);
-    if ((Header[0] != Magic && Header[0]!=Schema5Magic && Header[0]!=LegacyMagic && Header[0]!=PreviousMagic) || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
+    if ((Header[0] != Magic && Header[0]!=Schema6Magic && Header[0]!=Schema5Magic && Header[0]!=LegacyMagic && Header[0]!=PreviousMagic) || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
     { Error = TEXT("存档完整性校验失败"); return false; }
     TArray<uint8> Payload;
     Payload.Append(Bytes.GetData() + sizeof(Header), Length);
     Out = Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
 
+    if(Out && Header[0]==Schema6Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=6;
     if(Out && Header[0]==Schema5Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=5;
 
     // Historical files may omit a property that matched the class default of that build.
@@ -126,6 +128,24 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
     }
 
     if(Out && Header[0]!=Magic && Out->Schema==5 && !HearthwardSave::MigrateInventory(*Out,Error)){Out=nullptr;return false;}
+    if(Out && Header[0]!=Magic && Out->Schema==6)
+    {
+        for(auto& P:Out->Points)
+        {
+            P.World.Nature.Reset();
+            FHearthwardCampState Camp;
+            if(!P.World.CampEconomy.IsEmpty() && FHearthwardCampState::Parse(P.World.CampEconomy,Camp))
+            {
+                for(auto& Source:Camp.Sources)
+                {
+                    if(Source.RefreshMinutes==0)Source.RefreshMinutes=Source.Item==TEXT("refined_ore")?5760:2880;
+                    if(Source.Remaining==0 && Source.Due<0)Source.Due=P.World.CalendarMinutes+Source.RefreshMinutes;
+                }
+                P.World.CampEconomy=Camp.Snapshot();
+            }
+        }
+        Out->Schema=7;
+    }
     if (!Out || !HearthwardSave::Validate(*Out)) { Error = TEXT("存档版本或快照状态无效"); Out = nullptr; return false; }
     return true;
 }
@@ -138,6 +158,8 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
     for (const auto& P : Pool.Points)
     {
         const auto& S = P.World;
+        FHearthwardNatureState Nature;
+        if(!FHearthwardNatureState::Parse(S.Nature,Nature) || (!S.Nature.IsEmpty() && FMath::Abs(Nature.Calendar-S.CalendarMinutes)>1.e-4))return false;
         FHearthwardCampState Camp;
         if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,Camp) || FMath::Abs(Camp.Calendar-S.CalendarMinutes)>1.e-4 || !Camp.ValidateBuildings(S.Gameplay))) return false;
         TSharedPtr<FJsonObject> Gameplay;
@@ -182,6 +204,11 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
                 || (!I.UniqueClaim.IsNone() && UniqueClaims.Contains(I.UniqueClaim)))return false;
             InstanceIds.Add(I.Id);if(!I.UniqueClaim.IsNone())UniqueClaims.Add(I.UniqueClaim);
         }
+        for(const auto& Point:Nature.Points)for(const auto& I:Point.Pending.Instances)
+        {
+            if(InstanceIds.Contains(I.Id) || (!I.UniqueClaim.IsNone() && UniqueClaims.Contains(I.UniqueClaim)))return false;
+            InstanceIds.Add(I.Id);if(!I.UniqueClaim.IsNone())UniqueClaims.Add(I.UniqueClaim);
+        }
         if (!S.NPCMemory.IsValid(S.ActiveSeconds)) return false;
         if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay) || !UHearthwardHarvestSubsystem::Validate(S.HarvestedResources)) return false;
         if (!P.SaveId.IsValid() || !P.CampaignId.IsValid() || Ids.Contains(P.SaveId) || S.Map.IsEmpty()
@@ -218,7 +245,7 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
     if (!Pool || !Validate(*Pool)) { Error = TEXT("拒绝写入无效快照"); return false; }
     TArray<uint8> Payload, Bytes;
     if (!UGameplayStatics::SaveGameToMemory(Pool, Payload)) { Error = TEXT("快照序列化失败"); return false; }
-    const uint32 Header[] = {0x48575336, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
+    const uint32 Header[] = {0x48575337, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
     Bytes.Append(reinterpret_cast<const uint8*>(Header), sizeof(Header));
     Bytes.Append(Payload);
     IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true);
@@ -226,11 +253,12 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
     if (!FFileHelper::SaveArrayToFile(Bytes, *Temp)) { Error = TEXT("临时存档写入失败，原档未替换"); return false; }
     UHearthwardSaveGame* Verified = nullptr;
     if (!Read(Temp, Verified, Error)) return false;
-    if(IFileManager::Get().FileExists(*Path) && !IFileManager::Get().FileExists(*(Path+TEXT(".pre-schema6"))))
+    if(IFileManager::Get().FileExists(*Path))
     {
         TArray<uint8> Original;if(!FFileHelper::LoadFileToArray(Original,*Path))return false;
         uint32 Previous=0;if(Original.Num()>=4)FMemory::Memcpy(&Previous,Original.GetData(),4);
-        if(Previous!=0x48575336 && !FFileHelper::SaveArrayToFile(Original,*(Path+TEXT(".pre-schema6"))))
+        const FString Backup=Path+(Previous==0x48575336?TEXT(".pre-schema7"):TEXT(".pre-schema6"));
+        if(Previous!=0x48575337 && !IFileManager::Get().FileExists(*Backup) && !FFileHelper::SaveArrayToFile(Original,*Backup))
         {Error=TEXT("无法保留旧存档备份，原档未替换");return false;}
     }
 #if PLATFORM_WINDOWS

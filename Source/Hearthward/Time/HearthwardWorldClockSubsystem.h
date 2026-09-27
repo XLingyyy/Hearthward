@@ -36,7 +36,7 @@ public:
 
     UFUNCTION(BlueprintPure, Category="Hearthward|Time")
     FHearthwardClockSnapshot GetSnapshot() const;
-    double AdvanceCalendar(double Minutes);
+    UFUNCTION(BlueprintCallable, Category="Hearthward|Time") double AdvanceCalendar(double Minutes);
 private:
     double AdvanceSurvival(double Active,double Calendar);
 public:

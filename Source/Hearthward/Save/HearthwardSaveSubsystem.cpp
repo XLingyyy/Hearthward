@@ -1,4 +1,5 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Combat/HearthwardProjectile.h"
@@ -151,6 +152,9 @@ bool UHearthwardSaveSubsystem::EnableNaturalWorld()
 
 bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
+    auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+    if(Nature->Busy()){Status=TEXT("自然生产或钓鱼动作尚未结束");return false;}
+    Nature->EnsureWorld();S.Nature=!Nature->State.Seed?FString():Nature->Describe();
     S.GroundEquipment.Reset();
     for(TActorIterator<AHearthwardDroppedEquipment> It(GetWorld());It;++It)
         if(!It->IsActorBeingDestroyed()){FHearthwardGroundEquipment Entry;Entry.Item=It->Item;Entry.Transform=It->GetActorTransform();S.GroundEquipment.Add(Entry);}
@@ -263,7 +267,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         Upgraded.SurvivalVersion=S.SurvivalVersion; Upgraded.CalendarMinutes=S.CalendarMinutes; Upgraded.PlayerSurvival=S.PlayerSurvival;
         Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
-        Upgraded.CampEconomy=S.CampEconomy;
+        Upgraded.CampEconomy=S.CampEconomy;Upgraded.Nature=S.Nature;
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
         return Restore(Upgraded);
     }
@@ -277,6 +281,9 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     FHearthwardCampState CampCheck;
     if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,CampCheck) || FMath::Abs(CampCheck.Calendar-S.CalendarMinutes)>1.e-4 || !CampCheck.ValidateBuildings(S.Gameplay))) {Status=TEXT("营地快照无效");return false;}
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    FHearthwardNatureState NatureCheck;
+    if(!FHearthwardNatureState::Parse(S.Nature,NatureCheck) || (!S.Nature.IsEmpty() && FMath::Abs(NatureCheck.Calendar-S.CalendarMinutes)>1.e-4)){Status=TEXT("自然生态快照无效");return false;}
+    GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Cancel();
     Storage->AdvanceTimeline();
     GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Restore(S.HarvestedResources);
     if(auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>()) B->CancelPlacement();
@@ -350,6 +357,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         Survival->State=S.BrotherSurvival; Survival->BrotherHealth=S.BrotherHealth;
         Survival->BrotherHunger=S.BrotherHunger; Survival->BrotherStamina=S.BrotherStamina; Survival->ResetTransient();
     }
+    GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Restore(S.Nature,S.CalendarMinutes);
     Personal->OnInventoryChanged.Broadcast();
     if (Companion) { Companion->Bag->OnInventoryChanged.Broadcast(); Companion->Source->OnInventoryChanged.Broadcast(); }
     OnSnapshotRestored.Broadcast();

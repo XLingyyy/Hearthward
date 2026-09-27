@@ -1,4 +1,5 @@
 #include "HearthwardCombatComponent.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -34,7 +35,7 @@ FGuid UHearthwardCombatComponent::Epoch() const { return GetWorld()->GetSubsyste
 bool UHearthwardCombatComponent::Available() const
 {
     const auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
-    return G() && G()->Enabled && S && S->Alive() && !GetWorld()->IsPaused() && !Committing;
+    return G() && G()->Enabled && S && S->Alive() && !GetWorld()->IsPaused() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy();
 }
 TArray<UHearthwardCombatTargetComponent*> UHearthwardCombatComponent::Targets() const
 {
@@ -237,7 +238,7 @@ void UHearthwardCombatComponent::Finish()
 bool UHearthwardCombatComponent::MovementLocked() const
 { return Busy() && Action!=TEXT("draw"); }
 float UHearthwardCombatComponent::MovementMultiplier() const { return Body.IsValid()?(CarryingOnBack?.7f:.5f):1; }
-bool UHearthwardCombatComponent::CanSave() const { return !Busy() && !Body.IsValid() && !Committing; }
+bool UHearthwardCombatComponent::CanSave() const { return !Busy() && !Body.IsValid() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy(); }
 FString UHearthwardCombatComponent::Describe() const
 {
     if(Executing()) return FString::Printf(TEXT("处决 %.1f / 3.0 秒"),Elapsed);
@@ -323,7 +324,7 @@ bool UHearthwardCombatComponent::ToggleLock()
 }
 void UHearthwardCombatComponent::Perception(double Delta)
 {
-    const auto All=Targets();
+    const auto All=Targets().FilterByPredicate([](const auto* T){return !T->NaturalTarget;});
     TArray<AHearthwardCombatRegion*> Regions;
     for(TActorIterator<AHearthwardCombatRegion> It(GetWorld());It;++It) Regions.Add(*It);
     Regions.Sort([](const auto& A,const auto& B){return A.RegionId.LexicalLess(B.RegionId);});
@@ -486,7 +487,7 @@ void UHearthwardCombatComponent::LaunchProjectile(FName Item,float Scale,bool Th
 FString UHearthwardCombatComponent::Snapshot() const
 {
     FHearthwardCombatSave Out=State; Out.Targets.Reset(); Out.CrossbowLoaded=CrossbowLoaded;
-    for(auto* T:Targets()) Out.Targets.Add(T->Snapshot());
+    for(auto* T:Targets()) if(!T->NaturalTarget)Out.Targets.Add(T->Snapshot());
     Out.Arrows.Reset();
     for(TActorIterator<AHearthwardProjectile> It(GetWorld());It;++It)
         if(It->Landed && !It->HitTarget && It->Item==TEXT("arrow")) { FHearthwardArrowSave A; A.Position=It->GetActorLocation(); A.Rotation=It->GetActorRotation(); Out.Arrows.Add(A); }

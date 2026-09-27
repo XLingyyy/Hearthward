@@ -73,6 +73,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     MessageUntil=FPlatformTime::Seconds()+4;
     if(Action.StartsWith(TEXT("camp.")))return ExecuteCampAction(Action);
     if(Action.StartsWith(TEXT("gear.")))return ExecuteEquipmentAction(Action);
+    if(Action.StartsWith(TEXT("nature.")))return ExecuteNatureAction(Action);
     if(Action==TEXT("buildPrev")){Scroll-=4;Refresh();return true;}
     if(Action==TEXT("buildNext")){Scroll+=4;Refresh();return true;}
     auto* G=Gameplay(); auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
