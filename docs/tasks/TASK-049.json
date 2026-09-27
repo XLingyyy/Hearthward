@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "TASK-049",
+  "title": "完成叙事、故乡四区布局与8主线15支线施工稿",
+  "status": "Active",
+  "updated_at": "2026-09-27",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-049-narrative-layout",
+  "source_refs": [
+    "用户2026-09-27：开始真实049；owner/reviewer均为本人，不提issue",
+    "原稿Hearthward_TASK-043-076的TASK-051，按减2映射",
+    "Hearthward_Audit_2026-09-24；GDD v0.3 第2/4/8/9/12/13章",
+    "origin/main@efb275b65e771b24ea01b120b733efca9a234d6c；已含048/PR50"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-043",
+    "TASK-045",
+    "TASK-046",
+    "TASK-047",
+    "TASK-048"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-043-world-time-persistence.md",
+    "docs/contracts/CT-TASK-045-combat-alert.md",
+    "docs/contracts/CT-TASK-046-camp-economy.md",
+    "docs/contracts/CT-TASK-047-progression-inventory.md",
+    "docs/contracts/CT-TASK-048-nature.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-049.json",
+    "docs/tasks/TASK-049.md",
+    "docs/handoffs/TASK-049.md",
+    "docs/design/DSGN-R17-narrative-layout.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/planning/TASK-049/",
+    "docs/world/TASK-049/",
+    "docs/qa/TASK-049/"
+  ],
+  "forbidden_paths": [
+    "Source/",
+    "Content/",
+    "Config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "D1—D6叙事、空间、人口、任务、增援与兼容规则形成可审阅草案并取得Owner设计确认",
+    "80基础驻军、4区、8主线15支线、20初始加最多10营救和保护人物可按稳定ID核对",
+    "每张任务卡具备触发/步骤/奖励/分支/失败/伙伴/回档/安全入口",
+    "隐藏增援有终结边、可选任务不阻塞夺回，布局不依赖未批准通行能力",
+    "验证文档链接、任务范围与内容关系，同步README和单任务交接"
+  ],
+  "non_goals": [
+    "本轮不施工UE地图或玩法源码",
+    "不创建Issue、不修改旧任务或审计原件",
+    "不擅自批准R项或移植旧任务推送授权"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: research primary sources and read remote Git state",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted for TASK-049",
+    "push": "not_granted for TASK-049",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "用户指定同一Owner/Reviewer；不假称独立审查。",
+    "本轮写入为任务文档与候选设计，确认后的施工范围需按具体实现协调。"
+  ]
+}
