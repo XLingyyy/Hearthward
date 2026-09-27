@@ -1,0 +1,5046 @@
+{
+  "ok": false,
+  "checks": {
+    "title continue": true,
+    "prologue checkpoint resumed": true,
+    "harvest fallen_branches": true,
+    "harvest settled fallen_branches": true,
+    "harvest loose_stones": true,
+    "harvest settled loose_stones": true,
+    "fixture supply wood": true,
+    "fixture supply stone": true,
+    "fixture supply rope": true,
+    "fixture supply ore": true,
+    "fixture supply herb": true,
+    "fixture supply cooked_food": true,
+    "select workbench": true,
+    "pay and build workbench": false
+  },
+  "method": "Natural map; real UI/component transactions. Test supplies, scene relocation and garrison health fixtures are explicit. No invented quest facts.",
+  "waiting_at": 18,
+  "placement_feedback": "该设施只能建在营地范围内",
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 172, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 73, in run\n    report['placement_feedback']=str(builder.feedback);check('pay and build workbench',builder.confirm_placement());yield wait(lambda:not builder.is_building(),12)\n                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 11, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: pay and build workbench\n",
+  "state": {
+    "version": 1,
+    "phase": "occupied",
+    "legacy": false,
+    "legacyHometown": false,
+    "victory": false,
+    "enemies": [
+      {
+        "id": "home_river_gate_01",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 98000,
+          "y": 38000,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_01",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 98000,
+            "y": 38000,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_02",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 102000,
+          "y": 40000,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_02",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 102000,
+            "y": 40000,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_03",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 98000,
+          "y": 41500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_03",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 98000,
+            "y": 41500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_04",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 102000,
+          "y": 43500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_04",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 102000,
+            "y": 43500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_05",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 97100,
+          "y": 38300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_05",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 97100,
+            "y": 38300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_06",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 99300,
+          "y": 38300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_06",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 99300,
+            "y": 38300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_07",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 101100,
+          "y": 38300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_07",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 101100,
+            "y": 38300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_08",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 102900,
+          "y": 38300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_08",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 102900,
+            "y": 38300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_09",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 97500,
+          "y": 40100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_09",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 97500,
+            "y": 40100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_10",
+        "zone": "river_gate",
+        "kind": "guard",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 99300,
+          "y": 40100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_10",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 99300,
+            "y": 40100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_11",
+        "zone": "river_gate",
+        "kind": "archer",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 101100,
+          "y": 40100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_11",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 80,
+          "position": {
+            "x": 101100,
+            "y": 40100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_12",
+        "zone": "river_gate",
+        "kind": "archer",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 102900,
+          "y": 40100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_12",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 80,
+          "position": {
+            "x": 102900,
+            "y": 40100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_13",
+        "zone": "river_gate",
+        "kind": "archer",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 97100,
+          "y": 41900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_13",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 80,
+          "position": {
+            "x": 97100,
+            "y": 41900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_14",
+        "zone": "river_gate",
+        "kind": "archer",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 99300,
+          "y": 41900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_14",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 80,
+          "position": {
+            "x": 99300,
+            "y": 41900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_15",
+        "zone": "river_gate",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 101100,
+          "y": 41900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_15",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 200,
+          "position": {
+            "x": 101100,
+            "y": 41900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_river_gate_16",
+        "zone": "river_gate",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 1,
+        "home": {
+          "x": 102900,
+          "y": 41900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_river_gate_16",
+          "region": "river_gate",
+          "generation": 1,
+          "health": 200,
+          "position": {
+            "x": 102900,
+            "y": 41900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_01",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 109000,
+          "y": 28500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_01",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 109000,
+            "y": 28500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_02",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 119000,
+          "y": 32500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_02",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 119000,
+            "y": 32500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_03",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 109000,
+          "y": 38500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_03",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 109000,
+            "y": 38500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_04",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 119000,
+          "y": 42500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_04",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 119000,
+            "y": 42500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_05",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 121600,
+          "y": 29500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_05",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 121600,
+            "y": 29500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_06",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 125000,
+          "y": 29500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_06",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 125000,
+            "y": 29500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_07",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 108000,
+          "y": 32700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_07",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 108000,
+            "y": 32700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_08",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 111400,
+          "y": 32700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_08",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 111400,
+            "y": 32700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_09",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 114800,
+          "y": 32700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_09",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 114800,
+            "y": 32700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_10",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 117800,
+          "y": 32700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_10",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 117800,
+            "y": 32700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_11",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 121200,
+          "y": 32700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_11",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 121200,
+            "y": 32700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_12",
+        "zone": "workshops",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 125800,
+          "y": 32700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_12",
+          "region": "workshops",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 125800,
+            "y": 32700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_13",
+        "zone": "workshops",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 108000,
+          "y": 35900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_13",
+          "region": "workshops",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 108000,
+            "y": 35900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_14",
+        "zone": "workshops",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 111400,
+          "y": 35900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_14",
+          "region": "workshops",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 111400,
+            "y": 35900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_15",
+        "zone": "workshops",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 114800,
+          "y": 35900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_15",
+          "region": "workshops",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 114800,
+            "y": 35900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_16",
+        "zone": "workshops",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 118200,
+          "y": 35900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_16",
+          "region": "workshops",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 118200,
+            "y": 35900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_17",
+        "zone": "workshops",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 121600,
+          "y": 35900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_17",
+          "region": "workshops",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 121600,
+            "y": 35900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_18",
+        "zone": "workshops",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 126200,
+          "y": 37500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_18",
+          "region": "workshops",
+          "generation": 1,
+          "health": 300,
+          "position": {
+            "x": 126200,
+            "y": 37500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_19",
+        "zone": "workshops",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 108000,
+          "y": 39100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_19",
+          "region": "workshops",
+          "generation": 1,
+          "health": 300,
+          "position": {
+            "x": 108000,
+            "y": 39100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_workshops_20",
+        "zone": "workshops",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 111400,
+          "y": 39100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_workshops_20",
+          "region": "workshops",
+          "generation": 1,
+          "health": 300,
+          "position": {
+            "x": 111400,
+            "y": 39100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_01",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 92000,
+          "y": 52000,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_01",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 92000,
+            "y": 52000,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_02",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 96000,
+          "y": 54500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_02",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 96000,
+            "y": 54500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_03",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 92500,
+          "y": 58500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_03",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 92500,
+            "y": 58500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_04",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 96000,
+          "y": 62000,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_04",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 96000,
+            "y": 62000,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_05",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 101200,
+          "y": 47500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_05",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 101200,
+            "y": 47500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_06",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 92000,
+          "y": 51100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_06",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 92000,
+            "y": 51100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_07",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 94300,
+          "y": 51100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_07",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 94300,
+            "y": 51100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_08",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 96600,
+          "y": 51100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_08",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 96600,
+            "y": 51100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_09",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 98900,
+          "y": 51100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_09",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 98900,
+            "y": 51100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_10",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 101200,
+          "y": 51100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_10",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 101200,
+            "y": 51100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_11",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 92000,
+          "y": 54700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_11",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 92000,
+            "y": 54700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_12",
+        "zone": "dwellings",
+        "kind": "guard",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 94300,
+          "y": 54700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_12",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 150,
+          "position": {
+            "x": 94300,
+            "y": 54700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_13",
+        "zone": "dwellings",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 97000,
+          "y": 54700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_13",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 97000,
+            "y": 54700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_14",
+        "zone": "dwellings",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 98900,
+          "y": 54700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_14",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 98900,
+            "y": 54700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_15",
+        "zone": "dwellings",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 101200,
+          "y": 54700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_15",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 101200,
+            "y": 54700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_16",
+        "zone": "dwellings",
+        "kind": "archer",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 91600,
+          "y": 58300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_16",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 120,
+          "position": {
+            "x": 91600,
+            "y": 58300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_17",
+        "zone": "dwellings",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 94300,
+          "y": 58300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_17",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 300,
+          "position": {
+            "x": 94300,
+            "y": 58300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_18",
+        "zone": "dwellings",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 96600,
+          "y": 58300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_18",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 300,
+          "position": {
+            "x": 96600,
+            "y": 58300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_19",
+        "zone": "dwellings",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 98900,
+          "y": 58300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_19",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 300,
+          "position": {
+            "x": 98900,
+            "y": 58300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_dwellings_20",
+        "zone": "dwellings",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 2,
+        "home": {
+          "x": 101200,
+          "y": 58300,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_dwellings_20",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 300,
+          "position": {
+            "x": 101200,
+            "y": 58300,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_01",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 109000,
+          "y": 48500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_01",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 109000,
+            "y": 48500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_02",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 119000,
+          "y": 52500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_02",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 119000,
+            "y": 52500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_03",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 109000,
+          "y": 58500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_03",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 109000,
+            "y": 58500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_04",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 119000,
+          "y": 62500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_04",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 119000,
+            "y": 62500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_05",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 121600,
+          "y": 49500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_05",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 121600,
+            "y": 49500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_06",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 125000,
+          "y": 49500,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_06",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 125000,
+            "y": 49500,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_07",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 108000,
+          "y": 52700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_07",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 108000,
+            "y": 52700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_08",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 111400,
+          "y": 52700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_08",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 111400,
+            "y": 52700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_09",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 114800,
+          "y": 52700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_09",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 114800,
+            "y": 52700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_10",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 117800,
+          "y": 52700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_10",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 117800,
+            "y": 52700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_11",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 121600,
+          "y": 52700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_11",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 121600,
+            "y": 52700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_12",
+        "zone": "assembly",
+        "kind": "guard",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 125000,
+          "y": 52700,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_12",
+          "region": "assembly",
+          "generation": 1,
+          "health": 225,
+          "position": {
+            "x": 125000,
+            "y": 52700,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_13",
+        "zone": "assembly",
+        "kind": "archer",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 108000,
+          "y": 55900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_13",
+          "region": "assembly",
+          "generation": 1,
+          "health": 180,
+          "position": {
+            "x": 108000,
+            "y": 55900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_14",
+        "zone": "assembly",
+        "kind": "archer",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 111400,
+          "y": 55900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_14",
+          "region": "assembly",
+          "generation": 1,
+          "health": 180,
+          "position": {
+            "x": 111400,
+            "y": 55900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_15",
+        "zone": "assembly",
+        "kind": "archer",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 114800,
+          "y": 55900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_15",
+          "region": "assembly",
+          "generation": 1,
+          "health": 180,
+          "position": {
+            "x": 114800,
+            "y": 55900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_16",
+        "zone": "assembly",
+        "kind": "archer",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 118200,
+          "y": 55900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_16",
+          "region": "assembly",
+          "generation": 1,
+          "health": 180,
+          "position": {
+            "x": 118200,
+            "y": 55900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_17",
+        "zone": "assembly",
+        "kind": "archer",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 121600,
+          "y": 55900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_17",
+          "region": "assembly",
+          "generation": 1,
+          "health": 180,
+          "position": {
+            "x": 121600,
+            "y": 55900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_18",
+        "zone": "assembly",
+        "kind": "archer",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 125000,
+          "y": 55900,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_18",
+          "region": "assembly",
+          "generation": 1,
+          "health": 180,
+          "position": {
+            "x": 125000,
+            "y": 55900,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_19",
+        "zone": "assembly",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 108000,
+          "y": 59100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_19",
+          "region": "assembly",
+          "generation": 1,
+          "health": 450,
+          "position": {
+            "x": 108000,
+            "y": 59100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_20",
+        "zone": "assembly",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 111400,
+          "y": 59100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_20",
+          "region": "assembly",
+          "generation": 1,
+          "health": 450,
+          "position": {
+            "x": 111400,
+            "y": 59100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_21",
+        "zone": "assembly",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 114800,
+          "y": 59100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_21",
+          "region": "assembly",
+          "generation": 1,
+          "health": 450,
+          "position": {
+            "x": 114800,
+            "y": 59100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_22",
+        "zone": "assembly",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 118200,
+          "y": 59100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_22",
+          "region": "assembly",
+          "generation": 1,
+          "health": 450,
+          "position": {
+            "x": 118200,
+            "y": 59100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_23",
+        "zone": "assembly",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 121600,
+          "y": 59100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_23",
+          "region": "assembly",
+          "generation": 1,
+          "health": 450,
+          "position": {
+            "x": 121600,
+            "y": 59100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "home_assembly_24",
+        "zone": "assembly",
+        "kind": "heavy",
+        "group": "base",
+        "stage": 3,
+        "home": {
+          "x": 125000,
+          "y": 59100,
+          "z": 0
+        },
+        "combat": {
+          "id": "home_assembly_24",
+          "region": "assembly",
+          "generation": 1,
+          "health": 450,
+          "position": {
+            "x": 125000,
+            "y": 59100,
+            "z": 0
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 0,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {},
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": false,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "prologue_guard_01",
+        "zone": "prologue",
+        "kind": "guard",
+        "group": "prologue",
+        "stage": 1,
+        "home": {
+          "x": 94000,
+          "y": 48000,
+          "z": 23608.104829480428
+        },
+        "combat": {
+          "id": "prologue_guard_01",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 94337.4891343957,
+            "y": 48391.05024451019,
+            "z": 23695.82824658751
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 172.5879669189453,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {
+            "player": 0,
+            "brother": 0
+          },
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": true,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "prologue_guard_02",
+        "zone": "prologue",
+        "kind": "guard",
+        "group": "prologue",
+        "stage": 1,
+        "home": {
+          "x": 96000,
+          "y": 48000,
+          "z": 23970.57168879224
+        },
+        "combat": {
+          "id": "prologue_guard_02",
+          "region": "dwellings",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": 96337.49081239548,
+            "y": 48391.050021348994,
+            "z": 23997.754246270873
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 172.5879669189453,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {
+            "player": 0,
+            "brother": 0
+          },
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": true,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "field_slice_01",
+        "zone": "field_slice",
+        "kind": "guard",
+        "group": "field",
+        "stage": 1,
+        "home": {
+          "x": -41500,
+          "y": -86500,
+          "z": 21117.452553978786
+        },
+        "combat": {
+          "id": "field_slice_01",
+          "region": "field_slice",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": -41328.80736525336,
+            "y": -86496.3213821535,
+            "z": 21095.11352357282
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 1.5146650075912484,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {
+            "player": 0,
+            "brother": 0
+          },
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": true,
+        "refreshDue": -1,
+        "patrolPoint": 1
+      },
+      {
+        "id": "field_slice_02",
+        "zone": "field_slice",
+        "kind": "guard",
+        "group": "field",
+        "stage": 1,
+        "home": {
+          "x": -39000,
+          "y": -86500,
+          "z": 20765.77632658121
+        },
+        "combat": {
+          "id": "field_slice_02",
+          "region": "field_slice",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": -40324.449490320934,
+            "y": -86469.40496856463,
+            "z": 20944.124685771865
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": -178.5091552734375,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {
+            "player": 0,
+            "brother": 0
+          },
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": true,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      },
+      {
+        "id": "field_slice_03",
+        "zone": "field_slice",
+        "kind": "guard",
+        "group": "field",
+        "stage": 1,
+        "home": {
+          "x": -36500,
+          "y": -86500,
+          "z": 20623.643902113377
+        },
+        "combat": {
+          "id": "field_slice_03",
+          "region": "field_slice",
+          "generation": 1,
+          "health": 100,
+          "position": {
+            "x": -37724.90911320226,
+            "y": -86479.86531633565,
+            "z": 20675.43188686358
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": 179.04684448242188,
+            "roll": 0
+          },
+          "armorDurability": {},
+          "detection": {
+            "player": 0,
+            "brother": 0
+          },
+          "lastKnown": {},
+          "seen": [],
+          "broadcastRegions": [],
+          "reportingBody": "None",
+          "reportRemaining": 0,
+          "hitRemaining": 0,
+          "investigationRemaining": 0,
+          "investigation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        },
+        "located": true,
+        "refreshDue": -1,
+        "patrolPoint": 0
+      }
+    ],
+    "people": [
+      {
+        "id": "rescued_01",
+        "location": "slice_rescue",
+        "stage": "uncontacted",
+        "position": {
+          "x": -37999.96738692143,
+          "y": -84500.029934676,
+          "z": 21453.541503668155
+        },
+        "located": true
+      },
+      {
+        "id": "rescued_02",
+        "location": "loc_river_gate",
+        "stage": "uncontacted",
+        "position": {
+          "x": 97000,
+          "y": 41000,
+          "z": 0
+        },
+        "located": false
+      },
+      {
+        "id": "rescued_03",
+        "location": "loc_river_gate",
+        "stage": "uncontacted",
+        "position": {
+          "x": 97300,
+          "y": 41200,
+          "z": 0
+        },
+        "located": false
+      },
+      {
+        "id": "rescued_04",
+        "location": "loc_workshops",
+        "stage": "uncontacted",
+        "position": {
+          "x": 113000,
+          "y": 40000,
+          "z": 0
+        },
+        "located": false
+      },
+      {
+        "id": "rescued_05",
+        "location": "loc_workshops",
+        "stage": "uncontacted",
+        "position": {
+          "x": 113300,
+          "y": 40200,
+          "z": 0
+        },
+        "located": false
+      },
+      {
+        "id": "rescued_06",
+        "location": "loc_dwellings",
+        "stage": "uncontacted",
+        "position": {
+          "x": 94000,
+          "y": 58000,
+          "z": 0
+        },
+        "located": false
+      },
+      {
+        "id": "rescued_07",
+        "location": "loc_dwellings",
+        "stage": "uncontacted",
+        "position": {
+          "x": 94300,
+          "y": 58200,
+          "z": 0
+        },
+        "located": false
+      },
+      {
+        "id": "rescued_08",
+        "location": "loc_assembly",
+        "stage": "uncontacted",
+        "position": {
+          "x": 113000,
+          "y": 58500,
+          "z": 0
+        },
+        "located": false
+      },
+      {
+        "id": "rescued_09",
+        "location": "loc_assembly",
+        "stage": "uncontacted",
+        "position": {
+          "x": 113300,
+          "y": 58700,
+          "z": 0
+        },
+        "located": false
+      },
+      {
+        "id": "rescued_10",
+        "location": "loc_assembly",
+        "stage": "uncontacted",
+        "position": {
+          "x": 113600,
+          "y": 58900,
+          "z": 0
+        },
+        "located": false
+      }
+    ],
+    "reinforcements": {
+      "workshops": "pending",
+      "assembly": "pending"
+    },
+    "flags": [],
+    "facts": [
+      "prologue_placed",
+      "prologue_intro",
+      "relic",
+      "prologue_order",
+      "prologue_complete"
+    ],
+    "positions": {
+      "prologue_relic": {
+        "x": 92000,
+        "y": 53500,
+        "z": 22685.651447699696
+      },
+      "loc_river_gate": {
+        "x": 100000,
+        "y": 41000,
+        "z": 24095.621280613406
+      },
+      "loot_river_gate": {
+        "x": 95500,
+        "y": 37000,
+        "z": 22867.480926222634
+      },
+      "loc_workshops": {
+        "x": 117000,
+        "y": 35000,
+        "z": 24251.818064774547
+      },
+      "loot_workshops": {
+        "x": 119500,
+        "y": 37000,
+        "z": 24214.32106889449
+      },
+      "loc_dwellings": {
+        "x": 93000,
+        "y": 55000,
+        "z": 22798.7263962005
+      },
+      "loot_dwellings": {
+        "x": 95500,
+        "y": 57000,
+        "z": 23003.417758640433
+      },
+      "loc_assembly": {
+        "x": 117000,
+        "y": 55000,
+        "z": 24192.460231174184
+      },
+      "loot_assembly": {
+        "x": 119500,
+        "y": 57000,
+        "z": 23994.04554818035
+      },
+      "home_entry": {
+        "x": 101000,
+        "y": 25000,
+        "z": 22342.479924849315
+      },
+      "hometown": {
+        "x": 109000,
+        "y": 45000,
+        "z": 24186.180189974817
+      },
+      "prologue_exit": {
+        "x": 90000,
+        "y": 62000,
+        "z": 22145.612411306938
+      },
+      "route_north_trail": {
+        "x": 112000,
+        "y": 7000,
+        "z": 22036.21447508964
+      },
+      "camp": {
+        "x": -98000,
+        "y": -75000,
+        "z": 16199.971103227275
+      },
+      "route_fork": {
+        "x": -63000,
+        "y": -89000,
+        "z": 16314.353637369342
+      },
+      "camp_memorial": {
+        "x": -96800,
+        "y": -75600,
+        "z": 16192.495279240102
+      },
+      "camp_hunter": {
+        "x": -96700,
+        "y": -74000,
+        "z": 16192.495279240102
+      },
+      "camp_records": {
+        "x": -98800,
+        "y": -74400,
+        "z": 16170.591525520715
+      },
+      "civilian_initial_01": {
+        "x": -96600,
+        "y": -75100,
+        "z": 16192.495279240102
+      },
+      "camp_relic": {
+        "x": -97200,
+        "y": -75800,
+        "z": 16189.365796902413
+      },
+      "slice_rescue": {
+        "x": -38000,
+        "y": -84500,
+        "z": 21450.2680342565
+      }
+    }
+  },
+  "camp": {
+    "version": 1,
+    "tier": 1,
+    "rationHalfPoints": 198,
+    "rationDrainMinutes": 28.149442180991173,
+    "donatedPoints": 0,
+    "calendar": 88.14944218099117,
+    "hometown": false,
+    "rescued": [],
+    "camps": [
+      {
+        "id": "camp",
+        "position": {
+          "x": -196000,
+          "y": -150000,
+          "z": 36100
+        }
+      }
+    ],
+    "facilities": [],
+    "regions": [
+      {
+        "id": "camp_forage",
+        "camp": "camp",
+        "job": "forage",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 0,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_wood",
+        "camp": "camp",
+        "job": "wood",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 1,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_stone",
+        "camp": "camp",
+        "job": "stone",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 2,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      },
+      {
+        "id": "camp_ore",
+        "camp": "camp",
+        "job": "ore",
+        "facility": "00000000000000000000000000000000",
+        "workers": [],
+        "player": false,
+        "brother": false,
+        "enabled": false,
+        "safe": true,
+        "toRations": false,
+        "priority": 3,
+        "batch": {
+          "active": false,
+          "work": 0,
+          "required": 0,
+          "inputs": {},
+          "outputs": {},
+          "toRations": false
+        },
+        "completed": 0
+      }
+    ],
+    "sources": [
+      {
+        "id": "camp_048_tree0",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -193300,
+          "y": -150000,
+          "z": 18188.930771725034
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree1",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -198359.57991327625,
+          "y": -147838.43051629997,
+          "z": 14211.260088785028
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree2",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -195676.5265120301,
+          "y": -153685.8329998225,
+          "z": 16757.818868502858
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree3",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -193444.55448674771,
+          "y": -146666.87860575126,
+          "z": 17905.682276590636
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree4",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -198166.37001982136,
+          "y": -150383.19830012557,
+          "z": 14629.4729135358
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree5",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -193721.86236858252,
+          "y": -151449.1683588595,
+          "z": 17622.762458101795
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree6",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -196830.72951611746,
+          "y": -146909.71061694034,
+          "z": 15260.45597576358
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree7",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -197705.36127173068,
+          "y": -153283.55644581924,
+          "z": 15533.784151818483
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree8",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -192054.8479075704,
+          "y": -148559.24500084214,
+          "z": 18879.356623449115
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree9",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -198033.55848794093,
+          "y": -149160.57169685347,
+          "z": 14403.498462315176
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree10",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -194855.62143134774,
+          "y": -152445.48516487208,
+          "z": 16995.993530772703
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_tree11",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -195042.28391798036,
+          "y": -146946.67723516806,
+          "z": 16617.209850537405
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_stone_outcrop0",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -199201.28659040813,
+          "y": -151855.19922543995,
+          "z": 14333.184745178194
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_stone_outcrop1",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -191897.96444404536,
+          "y": -150901.83385259364,
+          "z": 19146.334714910266
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_stone_outcrop2",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -197265.27895578358,
+          "y": -148200.25858411513,
+          "z": 14940.656609374608
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_stone_outcrop3",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -196346.98808931795,
+          "y": -152677.61073830223,
+          "z": 16292.324505230561
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_stone_outcrop4",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -193553.1156345028,
+          "y": -147937.77864866902,
+          "z": 17906.973590379977
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_stone_outcrop5",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -199696.83980275897,
+          "y": -149847.10960547806,
+          "z": 14047.655259902298
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_ore_vein0",
+        "camp": "None",
+        "item": "ore",
+        "position": {
+          "x": -184658.77604048562,
+          "y": -161286.125956241,
+          "z": 24110.042270547154
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_ore_vein1",
+        "camp": "None",
+        "item": "ore",
+        "position": {
+          "x": -196923.74171509052,
+          "y": -130021.34385791172,
+          "z": 13153.478784458472
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_ore_vein2",
+        "camp": "None",
+        "item": "ore",
+        "position": {
+          "x": -200103.59389336625,
+          "y": -173646.575167629,
+          "z": 16565.471269448695
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_ore_vein3",
+        "camp": "None",
+        "item": "ore",
+        "position": {
+          "x": -168250.03843122357,
+          "y": -146266.4182168552,
+          "z": 33695.758669463
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_rich_ore_vein0",
+        "camp": "None",
+        "item": "refined_ore",
+        "position": {
+          "x": -200209.5279515904,
+          "y": -199822.48362360892,
+          "z": 13101.593593427213
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 5760,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_rich_ore_vein1",
+        "camp": "None",
+        "item": "refined_ore",
+        "position": {
+          "x": -152615.62222925527,
+          "y": -197050.99112075445,
+          "z": 21367.69158823457
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 5760,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_herb_patch0",
+        "camp": "camp",
+        "item": "herb",
+        "position": {
+          "x": -194906.19155081967,
+          "y": -148091.18280694517,
+          "z": 16766.54850463
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_herb_patch1",
+        "camp": "camp",
+        "item": "herb",
+        "position": {
+          "x": -198572.27521141237,
+          "y": -150820.6096738118,
+          "z": 14564.032712940236
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_herb_patch2",
+        "camp": "camp",
+        "item": "herb",
+        "position": {
+          "x": -193095.07638918236,
+          "y": -151342.1694435928,
+          "z": 18118.82928953939
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_herb_patch3",
+        "camp": "camp",
+        "item": "herb",
+        "position": {
+          "x": -197428.40483346782,
+          "y": -146586.84022762987,
+          "z": 14834.877473517525
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_food_patch0",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": -197421.52499546082,
+          "y": -153952.121795603,
+          "z": 15824.68824691488
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_food_patch1",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": -194052.57641901402,
+          "y": -148976.50530230012,
+          "z": 17563.652006562093
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_food_patch2",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": -198610.8142710159,
+          "y": -149311.77849331798,
+          "z": 14215.728288284707
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_food_patch3",
+        "camp": "camp",
+        "item": "wild_food",
+        "position": {
+          "x": -194269.33840580957,
+          "y": -152691.61855514377,
+          "z": 17386.72387910175
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_flower_patch0",
+        "camp": "camp",
+        "item": "flower",
+        "position": {
+          "x": -195373.2813548781,
+          "y": -146353.46414526657,
+          "z": 16377.673363142905
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_flower_patch1",
+        "camp": "camp",
+        "item": "flower",
+        "position": {
+          "x": -199320.63683063208,
+          "y": -152571.6475339847,
+          "z": 14229.441280155523
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_fallen_branches0",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -193807.5129349922,
+          "y": -150181.66031425013,
+          "z": 17711.842130117595
+        },
+        "capacity": 16,
+        "remaining": 14,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_fallen_branches1",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -197833.4982992863,
+          "y": -148018.0100942451,
+          "z": 14519.679410302597
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_fallen_branches2",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -195984.41597750343,
+          "y": -153199.96205262543,
+          "z": 16594.687502008383
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_fallen_branches3",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -193514.00158892982,
+          "y": -147259.59639830983,
+          "z": 17889.009806479524
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_fallen_branches4",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -200182.08072611984,
+          "y": -150387.55747988782,
+          "z": 13911.779059701177
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_fallen_branches5",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -194247.58114454866,
+          "y": -151330.04817772086,
+          "z": 17254.809176477323
+        },
+        "capacity": 16,
+        "remaining": 16,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_loose_stones0",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -196483.23126435006,
+          "y": -147343.59499602288,
+          "z": 15601.814308256326
+        },
+        "capacity": 8,
+        "remaining": 6,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_loose_stones1",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -197704.3634104139,
+          "y": -152708.34734944438,
+          "z": 15414.54412681533
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_loose_stones2",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -192431.5730659344,
+          "y": -149022.07913600572,
+          "z": 18768.174059087116
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_loose_stones3",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -199736.66352477486,
+          "y": -148082.35933954845,
+          "z": 13804.835892478703
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_wild_seed_greens0",
+        "camp": "None",
+        "item": "seed_greens",
+        "position": {
+          "x": -193740.55228332768,
+          "y": -156094.66127160683,
+          "z": 17994.92990734087
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_wild_seed_greens1",
+        "camp": "None",
+        "item": "seed_greens",
+        "position": {
+          "x": -191852.42547696174,
+          "y": -139811.88802692844,
+          "z": 16730.39634224292
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_wild_seed_grain0",
+        "camp": "None",
+        "item": "seed_grain",
+        "position": {
+          "x": -200953.19299168055,
+          "y": -154209.02354319463,
+          "z": 13171.992618248172
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_wild_seed_grain1",
+        "camp": "None",
+        "item": "seed_grain",
+        "position": {
+          "x": -185488.29467194158,
+          "y": -153240.9953866163,
+          "z": 23711.329017465017
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_wild_seed_herb0",
+        "camp": "None",
+        "item": "seed_herb",
+        "position": {
+          "x": -199286.48346994267,
+          "y": -144392.05684748915,
+          "z": 13984.851049791228
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "camp_048_wild_seed_herb1",
+        "camp": "None",
+        "item": "seed_herb",
+        "position": {
+          "x": -198309.59723277937,
+          "y": -160754.8017472354,
+          "z": 15200.394578297091
+        },
+        "capacity": 4,
+        "remaining": 4,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "Actor_UAID_BCFCE74B8AD0240403_1451805454|HierarchicalInstancedStaticMesh|SM_Tree|93|-194516,-150558,17002",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -194516.2,
+          "y": -150557.8,
+          "z": 17001.840694270428
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "Actor_UAID_BCFCE74B8AD0240403_1451805454|HierarchicalInstancedStaticMesh|SM_Tree|114|-193382,-149296,18146",
+        "camp": "camp",
+        "item": "wood",
+        "position": {
+          "x": -193382.5,
+          "y": -149295.59999999998,
+          "z": 18146.397493094322
+        },
+        "capacity": 12,
+        "remaining": 12,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "Actor_UAID_BCFCE74B8AD0240403_1458018936|HierarchicalInstancedStaticMesh|SM_Rock|27|-191758,-150350,17516",
+        "camp": "camp",
+        "item": "stone",
+        "position": {
+          "x": -191758,
+          "y": -150349.9,
+          "z": 17515.798149577127
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "Actor_UAID_BCFCE74B8AD0240403_1458896994|HierarchicalInstancedStaticMesh|SM_Rock|20|-96706,-77118,16106",
+        "camp": "None",
+        "item": "stone",
+        "position": {
+          "x": -96705.786093,
+          "y": -77117.970461,
+          "z": 16106.408325
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      },
+      {
+        "id": "Actor_UAID_BCFCE74B8AD0240403_1458896994|HierarchicalInstancedStaticMesh|SM_Rock|18|-95687,-77280,16117",
+        "camp": "None",
+        "item": "stone",
+        "position": {
+          "x": -95687.073486,
+          "y": -77280.350977,
+          "z": 16116.540088
+        },
+        "capacity": 8,
+        "remaining": 8,
+        "refreshMinutes": 2880,
+        "due": -1,
+        "blocked": false
+      }
+    ]
+  },
+  "game_feedback": "",
+  "feedback": "",
+  "save_status": "世界与知识已恢复；旧时间线请求已废止",
+  "position": "<Struct 'Vector' (0x0000024804E5EF40) {x: -96200.000000, y: -76800.000000, z: 16210.888728}>",
+  "building_feedback": "该设施只能建在营地范围内"
+}

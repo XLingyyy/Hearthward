@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "Misc/ConfigCacheIni.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
@@ -60,7 +61,12 @@ void UHearthwardScreenWidget::InitializeScreen(AHearthwardHUD* HUD)
     else if(!LoadId.IsEmpty())
     {
         FGuid Id;
-        if(FGuid::Parse(LoadId,Id) && Save->EnableNaturalWorld() && Save->LoadPoint(Id)) { OpenPage(TEXT("hud")); return; }
+        if(FGuid::Parse(LoadId,Id) && Save->EnableNaturalWorld() && Save->LoadPoint(Id))
+        {
+            auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+            if(Campaign->State.Victory && Campaign->State.Facts.Contains(TEXT("home_saved")))Campaign->Record(TEXT("home_continued"));
+            OpenPage(TEXT("hud"));return;
+        }
     }
     else return;
     Message=Save->GetStatus(); Refresh();
@@ -128,6 +134,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     {
         CampEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
         if(!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->CanManage(CampEpoch)) {Message=TEXT("请在安全营地打开管理面板");MessageUntil=FPlatformTime::Seconds()+4;Refresh();return;}
+        if(GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Tier>=2)GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("tier2_viewed"));
     }
     if(Name==TEXT("repairing"))Name=TEXT("equipment");
     if(Name==TEXT("equipment"))EquipmentEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
@@ -318,8 +325,10 @@ FReply UHearthwardScreenWidget::NativeOnMouseButtonDown(const FGeometry& G,const
         if(P.X>=407 && P.X<=1517 && P.Y>=95 && P.Y<=855)
         {
             const FVector2D Local=(P-FVector2D(962,475)-MapPan)/MapZoom;
-            const FVector Origin=Gameplay()->LocationPosition(TEXT("camp"));
-            Gameplay()->SetWaypoint(Origin+FVector(Local.X*6000/1110,-Local.Y*6000/760,0)); Refresh();
+            const bool Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active();
+            const double Extent=Campaign?403200:6000;
+            const FVector Origin=Campaign?FVector::ZeroVector:Gameplay()->LocationPosition(TEXT("camp"));
+            Gameplay()->SetWaypoint(Origin+FVector(Local.X*Extent/1110,-Local.Y*Extent/760,0)); Refresh();
         }
         return FReply::Handled();
     }

@@ -49,13 +49,13 @@ bool FNatureSaveTest::RunTest(const FString&)
     UHearthwardSaveGame* New=nullptr;FString Error;TestTrue(TEXT("Read actual schema6 envelope"),HearthwardSave::Read(Path,New,Error));
     if(New)
     {
-        TestEqual(TEXT("Migrated to schema7"),New->Schema,7);TestTrue(TEXT("Save at original path"),HearthwardSave::Write(Path,New,Error));
-        TArray<uint8> Backup;FFileHelper::LoadFileToArray(Backup,*(Path+TEXT(".pre-schema7")));TestTrue(TEXT("Original schema6 preserved"),Backup==Bytes);
+        TestEqual(TEXT("Migrated to current schema"),New->Schema,HearthwardSave::CurrentSchema);TestTrue(TEXT("Save at original path"),HearthwardSave::Write(Path,New,Error));
+        TArray<uint8> Backup;FFileHelper::LoadFileToArray(Backup,*(Path+TEXT(".pre-schema8")));TestTrue(TEXT("Original schema6 preserved"),Backup==Bytes);
         FHearthwardNatureState S;FHearthwardNaturePoint Point;Point.Id=FGuid::NewGuid();Point.Key=TEXT("bank");Point.Kind=TEXT("fish");Point.Definition=TEXT("carp");Point.Remaining=24;
         FHearthwardInventoryState Items;Items.Add(TEXT("bow_2"),1);Point.Pending=Items.Snapshot();S.Points.Add(Point);New->Points[0].World.Nature=S.Snapshot();
         TestTrue(TEXT("Pending exact instances save"),HearthwardSave::Validate(*New));New->Points[0].World.PlayerItems=Items.Snapshot();
         TestFalse(TEXT("Pending loot cannot duplicate a carried GUID"),HearthwardSave::Validate(*New));
     }
-    IFileManager::Get().Delete(*Path);IFileManager::Get().Delete(*(Path+TEXT(".pre-schema7")));return true;
+    IFileManager::Get().Delete(*Path);IFileManager::Get().Delete(*(Path+TEXT(".pre-schema8")));return true;
 }
 #endif

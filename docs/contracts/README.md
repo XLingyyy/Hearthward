@@ -21,3 +21,5 @@
 [CT-TASK-047 成长、逐件装备与库存保存](CT-TASK-047-progression-inventory.md)：Owner已批准D1—D6与施工，047分支接入三类容器、装备GUID、奖励去重、局部维修与schema6；正式PR审查另记。
 
 [CT-TASK-048 自然内容与保存](CT-TASK-048-nature.md)：Owner已批准D1—D6与施工，048分支接通有限源点、个体动物／作物／栏舍、钓鱼与唯一奖励、schema7迁移和时间线失效；正式PR审查另记。
+
+- [CT-TASK-049 战役与叙事](CT-TASK-049-campaign.md)：稳定驻军、救援、任务事实／奖励与schema8迁移；Owner已批准。

@@ -1,25 +1,25 @@
-# TASK-049｜接手与设计交接
+# TASK-049｜实施交接
 
-## 当前目标和来源
+真实049＝原规划051。Owner／Reviewer XLingyyy，不创建Issue。Owner已明确批准设计、施工、完成后提交推送；未授权合并main。任务维持Active，等待Owner验收，不伪称独立审查。
 
-真实TASK-049＝用户规划稿TASK-051：叙事、四区和主支线施工稿。Owner／Reviewer XLingyyy；用户明确不提Issue。原稿043对应真实041的偏移已按TASK-041映射核实。
+## 工作树与范围
 
-## 工作区与权限
+本单目录 `G:/GameFactory/Hearthward-task049`，分支 `codex/TASK-049-narrative-layout`。集成基线 `efb275b65e771b24ea01b120b733efca9a234d6c` 已含048／PR50；批准范围基线 `e2f3834efb29bd0d3a3339d92a934033cfaa8876`。原 `G:/GameFactory/Hearthward` 的旧TASK027分支及用户改动均保留。
 
-- 原目录 `G:/GameFactory/Hearthward` 留在旧TASK-027分支，HEAD bdfc0bced35cab4015b5a0d752077b4838c66f9f；Config/DefaultEngine.ini、Hearthward.uproject与未跟踪历史图片等原有改动均保留。
-- 本单独立目录 `G:/GameFactory/Hearthward-task049`，分支codex/TASK-049-narrative-layout，基线 `origin/main@efb275b65e771b24ea01b120b733efca9a234d6c`，已取回并核对048／PR50合入。仅检出文档、配置来源与源码用于阅读，LFS未下载，不作为可启动UE工作区。
-- 管理worktree工具在本轮工具目录不可用，采用Git worktree的文档隔离目录。未复用有任务依赖的旧工作树，未切换原工程分支或改动原配置。
-- 首次agent_context因049任务单不存在返回ERROR；随后按本轮任务授权补建MD／JSON，再执行接手与L0检查。
-- 可写范围见049 JSON；当前仅设计文档及README，本单不写二进制资产，因此不申请地图锁。提交／推送／合并未授权，当前未提交、未推送。
+已补齐运行所需LFS资产；引擎通过GameFactory公开UEClient操作，目标5.8.2。新增Campaign资产34件持有XLingyyy的LFS锁，保留至集成交接。没有修改Config、Runtime、共享地图、地形源或历史归档。当前实现复用手动伙伴指令；本工作树未配置本地AI模型权重，不将手动指令测试写成模型验证。
 
-## 交付与确认
+## 已实现
 
-[D1—D6](../design/DSGN-R17-narrative-layout.md)、[23张任务卡](../planning/TASK-049/QUESTS.md)、[数据](../planning/TASK-049/candidate.json)、[关卡约束与图](../world/TASK-049/LAYOUT.md)、[实施接口与迁移](../planning/TASK-049/IMPLEMENTATION.md)。新设计全部DRAFT，R17/R24保持OPEN，README及设计索引同步记录。
+夜袭序章和固定字幕、8主线15支线、80基础驻军／最多8名有限增援、四旗及永久胜利、10名受保护救援者真实到营、23项奖励与唯一里程碑、故乡第二营地和schema8同档恢复。旧营地档保留成长／物资／设施并跳过序章；旧故乡档明确标记兼容状态，不虚构80人战果。
 
-待Owner确认D1—D6后才能把新剧情／人数布局／救援返回／奖励／增援配置视为批准规则；施工源码和地图范围届时具体协调。Owner与Reviewer同人按本次指定登记，不伪称独立审查。没有创建Issue或PR。
+实际地形检查发现初稿穿水和陡坡问题，修订为南浅滩归路，移动同区落点和房屋，保持区域边界、人数、任务身份及通行能力。营地旧位置表保持相对坐标，Campaign使用独立世界坐标，避免经济中心重复偏移。
 
-## 发现与验证
+操作入口：Bootstrap标题新游戏→夜袭；E取护符，X跟随／Z等待，沿后巷到撤离点；J任务，M地图，E与族人／路标／旗帜交互，B建造，营地管理分工／设施／口粮，R仓储，F6存档。先夺回故乡仍可完成未完支线和营救。
 
-现有代码可复用Camp营救／故乡、047唯一奖与048自然物；正式人类关卡尚未布置。Gameplay旧任务kind／category不一致、领奖先写Claimed再执行世界变更是代码阅读事实，已列后续实现清单；本轮未修改或声称运行复现。
+## 验证和交付
 
-设计关系检查34/34 PASS；证据和边界见[报告](../qa/TASK-049/REPORT.md)。UE及实际通行均NOT_RUN。仓库L0检查PASS，0错误；git diff --check通过。本地候选allowed_paths对照无越界，结果见docs/qa/TASK-049/local-scope.json。正式--task/--base路径检查仍BLOCKED：主干基线尚无TASK-049任务快照，不能伪称已通过审批基线路径检查。初次稀疏检出缺少旧链接所指文件，补检出.github、Runtime和art_source的已有文件／LFS指针后L0通过，未改这些来源。SVG结构有效；未做UE布局验证。
+完整源码SHA、执行命令、通过项、失败修复及夹具边界见[QA报告](../qa/TASK-049/REPORT.md)。资产来源与TEMP_VISUAL边界见[资产说明](../qa/TASK-049/ASSETS.md)。当前Editor构建PASS，Campaign／Save原生10/10、正常新游戏16/16、胜利重开14/14、尾声84/84通过。世界流程78项通过后在标题入口失败，该问题由重开回归覆盖修复。所有23任务已实际结算并保存，清场／跨场景／护送边缘使用明确QA夹具。源码SHA与远端交付状态在提交后补录；不创建Issue、不自动合并。
+
+Owner重点验收：四区实战难度、完整650米护送与全图路线、人物区分及房屋布置、任务演出和主支线节奏。固定配音、最终美术／动画、Shipping、完整十小时流程不属于当前已验证结果。
+
+已知验证缺口：南侧路线前约1.46km分段物理移动有记录，采样目标(160m,-1040m)处自动通行受阻，全程4.8km与弟弟全程导航未验收。具体坐标、失败报告与夹具起点见QA报告；不将地形源数据检查当成全程PASS。

@@ -1,4 +1,5 @@
 #include "../Nature/HearthwardNatureSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
@@ -228,27 +229,54 @@ void UHearthwardScreenWidget::ComposeSkills()
 void UHearthwardScreenWidget::ComposeMap()
 {
     auto* G=Gameplay();
+    const bool Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active();
+    const double Extent=Campaign?403200:6000;
     const FVector2D Center(962,475),MapSize(1110,760);
-    const auto MapPoint=[&](FVector World){ return Center+FVector2D(World.X,-World.Y)*FVector2D(MapSize.X/6000,MapSize.Y/6000)*MapZoom+MapPan; };
+    const auto MapPoint=[&](FVector World){ return Center+FVector2D(World.X,-World.Y)*FVector2D(MapSize.X/Extent,MapSize.Y/Extent)*MapZoom+MapPan; };
     const int32 FirstMapElement=Elements.Num();
     Element(TEXT("image"),TEXT(""),Center-MapSize*.5*MapZoom+MapPan,MapSize*MapZoom,18,TEXT(""),TEXT("mapTerrain"));
     const float FogRadius=Number(Catalog()->GetObjectField(TEXT("tuning")),TEXT("fogRadius"));
-    const FVector Origin=G->LocationPosition(TEXT("camp"));
-    for(int32 X=-3000;X<3000;X+=300)
-        for(int32 Y=-3000;Y<3000;Y+=300)
+    const FVector Origin=Campaign?FVector::ZeroVector:G->LocationPosition(TEXT("camp"));
+    const int32 Cell=Extent/20;
+    for(int32 X=-Extent/2;X<Extent/2;X+=Cell)
+        for(int32 Y=-Extent/2;Y<Extent/2;Y+=Cell)
         {
-            const FVector2D World(Origin.X+X+150,Origin.Y+Y+150);
-            if(G->Explored.ContainsByPredicate([&](FVector2D Seen){ return FVector2D::Distance(World,Seen)<=FogRadius; })) continue;
-            Element(TEXT("fog"),TEXT(""),MapPoint(FVector(X,Y+300,0)),FVector2D(55.5,38)*MapZoom+FVector2D(1,1));
+            const FVector2D World(Origin.X+X+Cell/2,Origin.Y+Y+Cell/2);
+            if(G->Explored.ContainsByPredicate([&](FVector2D Seen){ return FVector2D::Distance(World,Seen)<=FMath::Max(double(FogRadius),Cell*.72); })) continue;
+            Element(TEXT("fog"),TEXT(""),MapPoint(FVector(X,Y+Cell,0)),FVector2D(55.5,38)*MapZoom+FVector2D(1,1));
         }
+    if(Campaign && G->QuestAvailable(TEXT("main_05")))
+    {
+        const auto& Route=Catalog()->GetObjectField(TEXT("campaign"))->GetArrayField(TEXT("route_trace"));
+        for(int32 I=0;I<Route.Num();I+=3)
+        {
+            const auto& P=Route[I]->AsArray();
+            Element(TEXT("text"),TEXT("·"),MapPoint(FVector(P[0]->AsNumber()*100,P[1]->AsNumber()*100,0))-FVector2D(4,10),FVector2D(12,20),18);
+            Elements.Last().Color=Color(TEXT("gold"));
+        }
+    }
     for(const auto& V:Rows(TEXT("locations")))
     {
         const auto R=V->AsObject(); const FName Id(*Text(R,TEXT("id"))); if(!G->Discovered.Contains(Id)) continue;
         if(Category==TEXT("travel") && Text(R,TEXT("kind"))==TEXT("landmark")) continue;
-        const FVector P=Position(R); const FVector2D UI=MapPoint(P)-FVector2D(27,27);
+        if(Campaign && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->HasLocation(Id))continue;
+        const FVector P=Campaign?G->LocationPosition(Id):Position(R); const FVector2D UI=MapPoint(P)-FVector2D(27,27);
         Element(TEXT("image"),TEXT(""),UI+FVector2D(10,9),FVector2D(34,36),18,TEXT(""),G->Activated.Contains(Id)?TEXT("mapTravelIcon"):Text(R,TEXT("kind"))==TEXT("landmark")?TEXT("mapLandmarkIcon"):TEXT("mapCampIcon"));
         Element(TEXT("tab"),TEXT(""),UI,FVector2D(54,54),32,TEXT("location:")+Id.ToString(),TEXT(""),SelectedLocation==Id);
         Element(TEXT("text"),Text(R,TEXT("name")),UI+FVector2D(-27,58),FVector2D(200,35),19);
+    }
+    if(const auto* Story=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign && Story->State.ShowRemaining())
+    {
+        TSet<FIntPoint> Areas;
+        for(const auto& Enemy:Story->State.Enemies)
+            if(Enemy.Combat.Health>0 && (Enemy.Group==TEXT("base") || Enemy.Group==TEXT("reinforcement")))
+                Areas.Add(FIntPoint(FMath::FloorToInt(Enemy.Combat.Position.X/5000),FMath::FloorToInt(Enemy.Combat.Position.Y/5000)));
+        for(const auto& Area:Areas)
+        {
+            Element(TEXT("text"),TEXT("○"),MapPoint(FVector((Area.X+.5)*5000,(Area.Y+.5)*5000,0))-FVector2D(16,20),FVector2D(40,40),30);
+            Elements.Last().Color=Color(TEXT("gold"));
+        }
+        Element(TEXT("text"),TEXT("○ 剩余驻军的大致区域"),FVector2D(1150,790),FVector2D(350,32),17);
     }
     const FVector Player=GetOwningPlayerPawn()->GetActorLocation()-Origin;
     if(G->HasWaypoint)
@@ -267,10 +295,10 @@ void UHearthwardScreenWidget::ComposeMap()
     {
         const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
         Element(TEXT("text"),TEXT("◎ ")+Text(Q,TEXT("objective")),FVector2D(535,816),FVector2D(910,42),19);
-        const auto Target=Find(TEXT("locations"),Text(Q,TEXT("location")));
+        const auto Target=Find(TEXT("locations"),Campaign?GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->QuestLocation(G->TrackedQuest).ToString():Text(Q,TEXT("location")));
         if(Target)
         {
-            Element(TEXT("image"),TEXT(""),MapPoint(Position(Target))+FVector2D(25,-40),FVector2D(33,40),18,TEXT(""),TEXT("mapQuestIcon")); Elements.Last().MapClipped=true;
+            Element(TEXT("image"),TEXT(""),MapPoint(Campaign?G->LocationPosition(FName(*Text(Target,TEXT("id")))):Position(Target))+FVector2D(25,-40),FVector2D(33,40),18,TEXT(""),TEXT("mapQuestIcon")); Elements.Last().MapClipped=true;
         }
     }
 }
@@ -282,13 +310,13 @@ void UHearthwardScreenWidget::ComposeJournal()
     for(const auto& V:Rows(TEXT("quests")))
     {
         const auto R=V->AsObject(); const FName Id(*Text(R,TEXT("id")));
-        if(Text(R,TEXT("kind"))==Category)
+        if(Text(R,TEXT("kind"))==Category && (bool(HearthwardCampaign::Find(TEXT("quests"),Id))==GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active()))
         {
             Timeline.Add(Id);
             if(G->QuestAvailable(Id)) Visible.Add(Id);
         }
     }
-    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Visible.Num()-5));
+    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Timeline.Num()-5));
     if(!Visible.Contains(SelectedQuest)) SelectedQuest=Visible.IsEmpty()?NAME_None:Visible[0];
     const auto Q=Find(TEXT("quests"),SelectedQuest.ToString());
     if(!Q) { Element(TEXT("text"),TEXT("暂无可显示任务"),FVector2D(408,310),FVector2D(550,60),24); return; }
@@ -301,8 +329,8 @@ void UHearthwardScreenWidget::ComposeJournal()
     Element(TEXT("button"),Text(Location,TEXT("name")),FVector2D(1276,320),FVector2D(300,38),20,TEXT("questMap"));
     Element(TEXT("text"),Text(Location,TEXT("description")),FVector2D(1298,359),FVector2D(280,52),15);
     Element(TEXT("text"),TEXT("当前目标"),FVector2D(425,574),FVector2D(340,40),20);
-    Element(TEXT("text"),TEXT("◇  ")+Text(Q,TEXT("objective")),FVector2D(407,621),FVector2D(815,50),19); Elements.Last().Color=Color(TEXT("gold"));
-    Element(TEXT("text"),FString::Printf(TEXT("进度 %d / %.0f"),G->QuestProgress(SelectedQuest),Number(Q,TEXT("required"))),FVector2D(443,658),FVector2D(400,30),15);
+    Element(TEXT("text"),TEXT("◇  ")+Text(Q,TEXT("objective")),FVector2D(407,621),FVector2D(815,105),17); Elements.Last().Color=Color(TEXT("gold"));
+    Element(TEXT("text"),FString::Printf(TEXT("进度 %d / %.0f"),G->QuestProgress(SelectedQuest),Number(Q,TEXT("required"))),FVector2D(443,695),FVector2D(400,30),15);
     Element(TEXT("text"),TEXT("任务进度"),FVector2D(425,720),FVector2D(340,35),20);
     const int32 Count=FMath::Min(5,Timeline.Num()-Scroll);
     if(Count>1) { Element(TEXT("line"),TEXT(""),FVector2D(452,785),FVector2D((Count-1)*171,1)); Elements.Last().Color=Color(TEXT("bronze")); }
@@ -316,7 +344,7 @@ void UHearthwardScreenWidget::ComposeJournal()
         Element(TEXT("text"),Available?Text(R,TEXT("name")):TEXT("???"),P+FVector2D(-50,50),FVector2D(144,30),15); Elements.Last().Align=TEXT("center");
     }
     Element(TEXT("text"),FString::Printf(TEXT("经验值\n+%.0f"),Number(Q,TEXT("xp"))),FVector2D(1290,798),FVector2D(135,70),16);
-    Element(TEXT("choice"),G->Claimed.Contains(SelectedQuest)?TEXT("已完成"):TEXT("领取奖励"),FVector2D(1403,740),FVector2D(180,46),18,TEXT("claim"));
+    Element(TEXT("choice"),G->Claimed.Contains(SelectedQuest)?TEXT("已完成"):(SelectedQuest==TEXT("side_06") || SelectedQuest==TEXT("side_09"))?TEXT("交付 6 份并领奖"):TEXT("领取奖励"),FVector2D(1403,740),FVector2D(180,46),18,TEXT("claim"));
     Element(TEXT("choice"),G->TrackedQuest==SelectedQuest?TEXT("取消追踪"):TEXT("追踪任务"),FVector2D(1403,805),FVector2D(180,46),18,TEXT("track"));
 }
 void UHearthwardScreenWidget::ComposeCodex()
@@ -495,7 +523,7 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("text"),TEXT("F / R 处决 · Alt 闪避 · 中键锁定 · V 感应"),FVector2D(680,790),FVector2D(820,32),16);
     }
     const bool Natural=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled();
-    if(Natural)
+    if(Natural && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active())
     {
         const FVector Camp=Gameplay()->LocationPosition(TEXT("camp")),Here=GetOwningPlayerPawn()->GetActorLocation();
         Element(TEXT("text"),TEXT("新营地 · 兄弟同行"),FVector2D(48,52),FVector2D(440,48),24);
@@ -511,12 +539,12 @@ void UHearthwardScreenWidget::ComposeHUD()
         Elements.Last().Component=TEXT("hud.construction"); Elements.Last().LayoutId=TEXT("hud.construction.feedback");
     }
     auto* G=Gameplay();
-    if(!Natural)
+    if(!Natural || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active())
     {
     const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
     Element(TEXT("text"),TEXT("◇  ")+Text(Q,TEXT("name")),FVector2D(46,59),FVector2D(540,48),24); Elements.Last().Color=Color(TEXT("gold"));
-    Element(TEXT("text"),Text(Q,TEXT("objective")),FVector2D(90,102),FVector2D(540,55),19);
-    Element(TEXT("text"),FString::Printf(TEXT("◇  进度 %d / %.0f"),G->QuestProgress(G->TrackedQuest),Number(Q,TEXT("required"))),FVector2D(96,138),FVector2D(470,35),18);
+    Element(TEXT("text"),Text(Q,TEXT("objective")),FVector2D(90,102),FVector2D(780,135),17);
+    Element(TEXT("text"),FString::Printf(TEXT("◇  进度 %d / %.0f"),G->QuestProgress(G->TrackedQuest),Number(Q,TEXT("required"))),FVector2D(96,246),FVector2D(470,35),18);
     }
     const float V[]={G->Health,G->Hunger,G->Stamina},Max[]={G->MaxHealth(),100,G->MaxStamina()}; const FString C[]={TEXT("health"),TEXT("hunger"),TEXT("stamina")};
     for(int32 I=0;I<3;++I)
@@ -598,7 +626,7 @@ void UHearthwardScreenWidget::ComposeHUD()
             Element(TEXT("notice"),TEXT("靠近弟弟2米内，按 E 扶起（5秒）"),FVector2D(560,590),FVector2D(570,50),20);
         break;
     }
-    if(Natural)
+    if(Natural && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active())
     {
         const bool Bench=G->Events.FindRef(TEXT("build:workbench"))>0;
         const bool Bed=G->Events.FindRef(TEXT("build:bed"))>0;
@@ -606,6 +634,8 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("notice"),FString::Printf(TEXT("营地小目标  %s工作台  %s绳索  %s床\nE 采集树木/石头/灌木 · R 仓储 · B 建造"),
             Bench?TEXT("✓"):TEXT("○"),Rope?TEXT("✓"):TEXT("○"),Bed?TEXT("✓"):TEXT("○")),FVector2D(1120,120),FVector2D(530,85),18);
     }
+    if(const auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->Active())
+        Element(TEXT("notice"),Campaign->Prompt(),FVector2D(920,310),FVector2D(720,115),18);
     const auto* Workshop=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
     const bool NearWorkbench=Workshop && Workshop->NearbyWorkbench().IsValid();
     if(NearWorkbench)

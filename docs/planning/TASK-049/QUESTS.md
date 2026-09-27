@@ -1,6 +1,6 @@
 # TASK-049｜8主线、15支线逐项任务卡
 
-**DRAFT：全表待Owner确认D4；规则见[DSGN-R17](../../design/DSGN-R17-narrative-layout.md)。**
+**APPROVED：Owner已确认D4；规则见[DSGN-R17](../../design/DSGN-R17-narrative-layout.md)。**
 
 通用语义：目标事实随世界存档；无支线时限。材料交付显式确认并原子扣取，奖励只领取一次。兄弟真死亡要求回档；普通族人不可死亡。弟弟可跟随、等待、按命令协助，所有必经动作均有手动入口。
 

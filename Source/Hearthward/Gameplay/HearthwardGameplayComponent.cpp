@@ -1,4 +1,5 @@
 #include "HearthwardGameplayComponent.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Nature/HearthwardNatureActor.h"
 #include "HearthwardProgression.h"
@@ -224,12 +225,14 @@ void UHearthwardGameplayComponent::Record(FName Kind,FName Target,int32 Count)
 }
 bool UHearthwardGameplayComponent::QuestAvailable(FName Id) const
 {
+    if(auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())return C->Available(Id);
     const auto R=Find(TEXT("quests"),Id.ToString());
     const FName Parent(*Text(R,TEXT("requires")));
     return R && (Parent.IsNone() || Claimed.Contains(Parent));
 }
 int32 UHearthwardGameplayComponent::QuestProgress(FName Id) const
 {
+    if(auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())return C->Progress(Id);
     const auto R=Find(TEXT("quests"),Id.ToString()); if (!R) return 0;
     const FString Event=Text(R,TEXT("event")); const FName Target(*Text(R,TEXT("target")));
     int32 Value=Events.FindRef(EventKey(FName(*Event),Target));
@@ -239,6 +242,7 @@ int32 UHearthwardGameplayComponent::QuestProgress(FName Id) const
 }
 bool UHearthwardGameplayComponent::Claim(FName Id)
 {
+    if(auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())return C->Claim(Id,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
     const auto R=Find(TEXT("quests"),Id.ToString());
     if (!QuestAvailable(Id) || Claimed.Contains(Id) || QuestProgress(Id)<Number(R,TEXT("required")))
         return Result(false,TEXT("尚未完成目标或奖励已领取"));
@@ -249,7 +253,7 @@ bool UHearthwardGameplayComponent::Claim(FName Id)
     const TArray<TSharedPtr<FJsonValue>>* HomePosition;
     if(R->TryGetArrayField(TEXT("reclaimedCamp"),HomePosition) && HomePosition->Num()==3)
         Economy->ReclaimHometown(Id,FVector((*HomePosition)[0]->AsNumber(),(*HomePosition)[1]->AsNumber(),(*HomePosition)[2]->AsNumber()));
-    GrantExperience(Text(R,TEXT("category"))==TEXT("main")?FName(TEXT("main_milestone")):FName(TEXT("side_quest")),EventKey(TEXT("quest"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
+    GrantExperience(Text(R,TEXT("kind"))==TEXT("main")?FName(TEXT("main_milestone")):FName(TEXT("side_quest")),EventKey(TEXT("quest"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
     for (const auto& Q : Rows(TEXT("quests")))
         if (Text(Q->AsObject(),TEXT("requires"))==Id.ToString()) { TrackedQuest=FName(*Text(Q->AsObject(),TEXT("id"))); break; }
     return Result(true,TEXT("任务完成，已获得成长经验"));
@@ -260,13 +264,14 @@ bool UHearthwardGameplayComponent::Track(FName Id)
     TrackedQuest=TrackedQuest==Id ? NAME_None : Id; return Result(true,TEXT("任务追踪已更新"));
 }
 FVector UHearthwardGameplayComponent::LocationPosition(FName Id) const
-{ const auto R=Find(TEXT("locations"),Id.ToString()); return R ? Origin+Position(R) : Origin; }
+{ if(const auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active() && C->HasLocation(Id))return C->Position(Id); const auto R=Find(TEXT("locations"),Id.ToString()); return R ? Origin+Position(R) : Origin; }
 FName UHearthwardGameplayComponent::NearbyLocation() const
 {
     for (const auto& L : Rows(TEXT("locations")))
     {
         const FName Id(*Text(L->AsObject(),TEXT("id")));
-        if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp")) continue;
+        if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp"))
+        {const auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();if(!C->Active() || !C->HasLocation(Id))continue;}
         if (FVector::Dist2D(GetOwner()->GetActorLocation(),LocationPosition(Id))<=Tune(TEXT("interactRadius"))) return Id;
     }
     return NAME_None;
@@ -280,6 +285,7 @@ bool UHearthwardGameplayComponent::ActivateNearby()
 }
 bool UHearthwardGameplayComponent::Travel(FName Id)
 {
+    if(auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())return C->Travel(Id);
     if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
     auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(!S->Alive() || UHearthwardSurvivalComponent::HasFailed(GetWorld())) return false;
@@ -343,6 +349,7 @@ void UHearthwardGameplayComponent::DamageOpponent(FName Target,float Damage,AAct
 void UHearthwardGameplayComponent::CommitOpponentHealth(FName Target,float NewHealth,float PreviousHealth)
 {
     if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->DamageAnimal(Target,NewHealth))return;
+    GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Damage(Target,NewHealth);
     const float Previous=PreviousHealth>=0?PreviousHealth:Opponents.FindRef(Target);
     if(Opponents.Contains(Target)) Opponents[Target]=NewHealth;
     if(Previous>0 && NewHealth<=0)
@@ -378,6 +385,8 @@ bool UHearthwardGameplayComponent::ApplyCompanionDirective(AActor* Speaker,FName
         // physical cargo remains in the companion bag and is never silently deleted.
         if(!It->Cancel(Speaker)) return Result(false,TEXT("伙伴指令已失效，请重新靠近后再试"));
         CompanionOrder=Order;
+        auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+        Campaign->Record(Campaign->State.Phase==TEXT("prologue")?FName(TEXT("prologue_order")):FName(TEXT("camp_order")));
         CompanionRoutineEnabled=Directive==TEXT("routine");
         CompanionRoutineActivity=NAME_None;
         CompanionTacticalIntent=Directive;
@@ -543,7 +552,8 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     for (const auto& L : Rows(TEXT("locations")))
     {
         const FName Id(*Text(L->AsObject(),TEXT("id")));
-        if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp")) continue;
+        if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp"))
+        {const auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();if(!C->Active() || !C->HasLocation(Id))continue;}
         if (!Discovered.Contains(Id) && FVector::Dist2D(P,LocationPosition(Id))<=Tune(TEXT("discoverRadius"))*(1+Effect(TEXT("discover"))))
         { Discovered.Add(Id); GrantExperience(TEXT("first_discovery"),EventKey(TEXT("discover"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()); Record(TEXT("discover"),Id); Feedback=TEXT("发现：")+Text(L->AsObject(),TEXT("name")); }
     }

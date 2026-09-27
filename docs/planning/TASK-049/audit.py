@@ -1,4 +1,4 @@
-"""Check the draft's finite content budgets and references; does not test UE gameplay."""
+"""Check the approved finite content budgets and references; does not test UE gameplay."""
 import json
 import math
 from pathlib import Path
@@ -52,15 +52,19 @@ all_enemy_ids = [e['id'] for e in enemies] + [e['id'] for g in d['reinforcements
 check('enemy IDs do not overlap across phases/groups', len(all_enemy_ids) == len(set(all_enemy_ids)))
 thresholds = {n: next(k for k in range(n+1) if k * 100 > n * 95) for n in (80,84,88)}
 check('strict 95 percent threshold', thresholds == {80:77,84:80,88:84})
-segments = [math.dist(a,b) for a,b in zip(d['route'],d['route'][1:])]
-check('planned walking route exceeds 7 minutes at 3.5 m/s', sum(segments)/3.5 >= 420)
+terrain = json.loads((ROOT/'docs/world/TASK-049/terrain-route.json').read_text(encoding='utf-8'))
+segments = terrain['segment_m']
+check('source-terrain route exceeds 7 minutes at 3.5 m/s', sum(segments)/3.5 >= 420)
 check('mean route discovery budget 90-150 seconds (GDD average)', 90 <= sum(segments)/len(segments)/3.5 <= 150)
 check('travel stations reference locations and require interaction', all(s['location'] in locations and 'interaction' in s['activation'] for s in d['travel_stations']))
-check('draft not accidentally approved', d['status'] == 'DRAFT_OWNER_REVIEW')
+check('owner approval recorded', d['status'] == 'APPROVED_IMPLEMENTATION' and bool(d.get('approval')))
+check('runtime quest cards match approved source', runtime['campaign']['quests'] == quests)
+check('runtime garrison matches approved source', runtime['campaign']['enemies'] == enemies)
+check('legacy camp offset remains relative before campaign initialization', next(r for r in runtime['locations'] if r['id']=='camp')['position'] == [0,0,100])
 totals = {'route_length_m': round(sum(segments),1), 'walking_minutes_at_3_5_mps': round(sum(segments)/3.5/60,2),
           'segment_seconds_at_3_5_mps': [round(x/3.5,1) for x in segments], 'remaining_enemy_thresholds': thresholds,
           'quest_and_rescue_xp': sum(q['reward']['xp'] for q in quests)+10*xp['first_rescue'],
           'base_garrison_xp':sum(xp[e['kind']] for e in enemies)}
-print(json.dumps({'scope':'draft data consistency only; UE/runtime/terrain NOT_RUN','base_sha':d['base_sha'],
+print(json.dumps({'scope':'approved content and runtime-table consistency; physical tests reported separately','base_sha':d['base_sha'],
                   'passed':sum(c['result']=='PASS' for c in checks),'total':len(checks),'checks':checks,'totals':totals},ensure_ascii=False,indent=2))
 raise SystemExit(0 if all(c['result']=='PASS' for c in checks) else 1)

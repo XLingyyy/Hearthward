@@ -1,13 +1,11 @@
-# TASK-049｜叙事与关卡施工稿
+# TASK-049｜叙事、四区控制与8主线15支线
 
-canonical049＝原稿051；Owner／Reviewer XLingyyy；Issue按用户要求不创建。基线 `efb275b65e771b24ea01b120b733efca9a234d6c`，任务分支 `codex/TASK-049-narrative-layout`。本轮为设计／内容阶段，待Owner确认，不冒充已实现关卡。
+canonical049＝原稿051；Owner／Reviewer XLingyyy；不创建Issue。状态Active，实施完成后交Owner验收，不由Agent自批。Owner已明确批准049设计、施工及完成后提交推送。
 
-交付：[D1—D6设计决定](../design/DSGN-R17-narrative-layout.md)、[23张任务卡](../planning/TASK-049/QUESTS.md)、[候选数据](../planning/TASK-049/candidate.json)、[布局](../world/TASK-049/LAYOUT.md)、[实现交接](../planning/TASK-049/IMPLEMENTATION.md)。
+任务分支 `codex/TASK-049-narrative-layout`；集成基线 `efb275b65e771b24ea01b120b733efca9a234d6c`，批准范围基线 `e2f3834efb29bd0d3a3339d92a934033cfaa8876`。完整权限、路径和验收见[任务JSON](TASK-049.json)。不合并main。
 
-来源为用户指定审计、续号任务稿与当前批准设计；依赖042/043/045/046，并核对047奖励与048自然资源。完整路径边界与验收见同名JSON。只修改README、本单任务／交接／设计／规划／关卡文档及CURRENT／R项索引；不修改代码、运行表、UE资产、秘密或历史归档。
+实现包含夜袭操作段、8主线／15支线、80稳定驻军／最多两组4人增援、四旗控制、10名救援者实际返营、永久夺回与双营地、schema8保存及旧档迁移。任务领取只结算奖励，人口与胜利由真实世界状态驱动。
 
-已确认事实：主干含048/PR50；现有Camp可按唯一ID登记营救、开启第二营地；Gameplay仍是旧单条件任务表，无正式自然地图人类关卡。设计新增内容一律DRAFT，R17/R24不提前关闭。
+[D1—D6](../design/DSGN-R17-narrative-layout.md)、[任务卡](../planning/TASK-049/QUESTS.md)、[批准数据](../planning/TASK-049/candidate.json)、[关卡布局](../world/TASK-049/LAYOUT.md)、[契约](../contracts/CT-TASK-049-campaign.md)共同约束实现。地形检查发现的水下／陡坡点位已在同区内修订，主路经南浅滩；未修改共享地形、水体或角色通行能力。
 
-本轮验收：检查任务数量、80人分配、救援10人不重复、奖励引用现有物品、依赖无环、所有支线安全入口、两增援的终态及胜利阈值；运行仓库文档／路径校验。UE构建／PIE／物理试玩均NOT_RUN，文档核对不能证明真实可达。
-
-完成设计确认后再协调Source、Resources、Content、公共接口与保存迁移的施工范围。没有新增提交／推送／合并授权。状态与证据见[交接](../handoffs/TASK-049.md)。
+[验证报告](../qa/TASK-049/REPORT.md)区分真实输入、原生测试、明确夹具及未覆盖范围。[交接](../handoffs/TASK-049.md)记录当前提交与待验收项。角色、旗帜、房屋为复用或临时表现；固定配音、完整演出、Shipping与十小时流程不在本次验证结论内。

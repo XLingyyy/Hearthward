@@ -1,0 +1,18 @@
+{
+  "ok": false,
+  "method": "Real map, capsule movement input along local navigation paths, no position teleport during route. Global time dilation 3 for QA. Source dry-ground checks separate.",
+  "checks": {
+    "continue campaign": true,
+    "ordinary travel back to camp": true,
+    "at route start": true,
+    "local path available": false,
+    "alive on foot": true
+  },
+  "path_points": 520,
+  "walk_distance_m": 1261.5431015817214,
+  "route_index": 133,
+  "position": "<Struct 'Vector' (0x00000252C1956180) {x: -3263.295702, y: -99195.360143, z: 11641.437443}>",
+  "game_seconds": 392.6156483069062,
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_route.py\", line 66, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_route.py\", line 48, in run\n    check('local path available',path is not None and len(path.path_points)>0 and not path.is_partial())\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_route.py\", line 12, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: local path available\n",
+  "health": 164.23728942871094
+}

@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
@@ -138,7 +139,12 @@ bool UHearthwardScreenWidget::ExecuteCampAction(const FString& Action)
     else if(Action==TEXT("camp.priority"))Success=E->Prioritize(CampRegion,CampEpoch);
     else if(Action==TEXT("camp.cancelAsk")){ConfirmAction=TEXT("camp.cancel");ConfirmMessage=TEXT("取消后不会返还已投入材料：\n")+(R?CampCost(R->Batch.Inputs):TEXT("无"));}
     else if(Action==TEXT("camp.cancel"))Success=E->CancelBatch(CampRegion,true,CampEpoch);
-    else if(Action.StartsWith(TEXT("camp.facility:"))){FGuid::Parse(Action.Mid(14),CampFacility);CampRecipe=NAME_None;}
+    else if(Action.StartsWith(TEXT("camp.facility:")))
+    {
+        FGuid::Parse(Action.Mid(14),CampFacility);CampRecipe=NAME_None;
+        const auto* Facility=E->State.Facilities.FindByPredicate([&](const auto& Entry){return Entry.Id==CampFacility;});
+        if(Facility && Facility->Kind==TEXT("forge") && Builder->CanUseFacility(CampFacility))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("forge_visited"));
+    }
     else if(Action==TEXT("camp.prev"))Scroll-=5;
     else if(Action==TEXT("camp.next"))Scroll+=5;
     else if(Action==TEXT("camp.demolishAsk")){ConfirmAction=TEXT("camp.demolish");TMap<FName,int32> Lost;

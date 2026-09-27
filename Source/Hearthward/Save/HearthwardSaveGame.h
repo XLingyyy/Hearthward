@@ -89,6 +89,7 @@ struct FHearthwardWorldSave
     UPROPERTY() FString Gameplay;
     UPROPERTY() FString CampEconomy;
     UPROPERTY() FString Nature;
+    UPROPERTY() FString Campaign;
     UPROPERTY() TMap<FString,int32> HarvestedResources;
 };
 
@@ -113,13 +114,13 @@ class HEARTHWARD_API UHearthwardSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Schema = 7;
+    UPROPERTY() int32 Schema = 8;
     UPROPERTY() TArray<FHearthwardSavePoint> Points;
 };
 
 namespace HearthwardSave
 {
-    constexpr int32 CurrentSchema = 7;
+    constexpr int32 CurrentSchema = 8;
     constexpr int32 NPCStateVersion = 3;
     constexpr int32 MaxPoints = 50;
     // INDEX_NONE means no capacity. An index equal to Num means append.

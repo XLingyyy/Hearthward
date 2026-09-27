@@ -1,5 +1,6 @@
 #include "HearthwardProjectile.h"
 #include "HearthwardCombatComponent.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -20,23 +21,28 @@ void AHearthwardProjectile::Tick(float Delta)
     Super::Tick(Delta);
     if(Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()) { Destroy(); return; }
     if(GetActorLocation().Z<GetWorld()->GetWorldSettings()->KillZ) { Destroy(); return; }
-    if(Landed || GetWorld()->IsPaused() || !Shooter.IsValid()) return;
+    if(Landed || GetWorld()->IsPaused() || (!Shooter.IsValid() && !EnemyShooter.IsValid())) return;
     Delta=FMath::Min(double(Delta),Lifetime); Lifetime-=Delta;
     if(Delta<=0){Destroy();return;}
     const int32 Steps=FMath::Max(1,FMath::CeilToInt(Delta/.016)); const double Dt=Delta/Steps;
     for(int32 I=0;I<Steps && !Landed;++I)
     {
         const FVector Move=Velocity*Dt+FVector(0,0,-.5*Gravity*Dt*Dt); Velocity.Z-=Gravity*Dt;
-        FCollisionQueryParams Q(SCENE_QUERY_STAT(CombatProjectile),false,this); Q.AddIgnoredActor(Shooter->GetOwner()); FHitResult Hit;
+        FCollisionQueryParams Q(SCENE_QUERY_STAT(CombatProjectile),false,this); Q.AddIgnoredActor(Shooter.IsValid()?Shooter->GetOwner():EnemyShooter.Get()); FHitResult Hit;
         if(GetWorld()->LineTraceSingleByChannel(Hit,GetActorLocation(),GetActorLocation()+Move,ECC_Visibility,Q))
         {
             SetActorLocation(Hit.ImpactPoint); Landed=true;
             auto* T=Hit.GetActor()?Hit.GetActor()->FindComponentByClass<UHearthwardCombatTargetComponent>():nullptr;
             HitTarget=Hit.GetActor() && (T || Hit.GetActor()->IsA<APawn>());
-            if(T && !Bait) Shooter->HitTarget(T,Power,T->HitPart(Hit),Item==TEXT("arrow"),Event);
+            if(T && !Bait && Shooter.IsValid()) Shooter->HitTarget(T,Power,T->HitPart(Hit),Item==TEXT("arrow"),Event);
+            if(EnemyShooter.IsValid() && Hit.GetActor())
+            {
+                if(auto* C=Hit.GetActor()->FindComponentByClass<UHearthwardCombatComponent>())C->Damage(Power,TEXT("body"),EnemyShooter->GetActorLocation(),false,true,Event);
+                else if(auto* S=Hit.GetActor()->FindComponentByClass<UHearthwardSurvivalComponent>())S->ReceiveDamage(Power,Event,Epoch);
+            }
         }
         else { SetActorLocation(GetActorLocation()+Move); RemainingRange-=Move.Size(); if(RemainingRange<=0) { Velocity.X=Velocity.Y=0; Power=0; } }
-        if(Landed && Bait)
+        if(Landed && Bait && Shooter.IsValid())
         {
             UHearthwardCombatTargetComponent* Nearest=nullptr; double Best=FMath::Square(1500.);
             for(auto* T:Shooter->Targets()) if(T->CanAct() && T->Memory.Seen.IsEmpty())

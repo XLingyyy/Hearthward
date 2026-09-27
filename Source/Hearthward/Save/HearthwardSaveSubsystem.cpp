@@ -1,4 +1,5 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
@@ -152,6 +153,9 @@ bool UHearthwardSaveSubsystem::EnableNaturalWorld()
 
 bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
+    auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+    if(Campaign->Busy()){Status=TEXT("剧情动作或传送尚未完成");return false;}
+    S.Campaign=Campaign->Active()?Campaign->Snapshot():FString();
     auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
     if(Nature->Busy()){Status=TEXT("自然生产或钓鱼动作尚未结束");return false;}
     Nature->EnsureWorld();S.Nature=!Nature->State.Seed?FString():Nature->Describe();
@@ -231,7 +235,17 @@ bool UHearthwardSaveSubsystem::WritePoint(bool Manual, bool NewCampaign)
     if (Slot == INDEX_NONE) { Status = TEXT("档池无可用位置，请先主动删除一个节点"); return false; }
     FHearthwardWorldSave S;
     if (!Capture(S)) return false;
-    if (NewCampaign) S = InitialWorld;
+    if (NewCampaign)
+    {
+        S=InitialWorld;
+        if(bNaturalWorld){FHearthwardCampaignState Campaign;Campaign.Initialize();S.Campaign=Campaign.Snapshot();}
+    }
+    else if(auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Victory)
+    {
+        FHearthwardCampaignState Saved=Campaign->State;
+        if(!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(UGameplayStatics::GetPlayerPawn(GetWorld(),0)->GetActorLocation()).IsNone())Saved.Facts.Add(TEXT("home_saved"));
+        S.Campaign=Saved.Snapshot();
+    }
     FHearthwardSavePoint Point;
     Point.SaveId = FGuid::NewGuid(); Point.CampaignId = NewCampaign ? FGuid::NewGuid() : CampaignId;
     Point.Created = FDateTime::UtcNow(); Point.Manual = Manual; Point.World = S;
@@ -267,7 +281,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         Upgraded.SurvivalVersion=S.SurvivalVersion; Upgraded.CalendarMinutes=S.CalendarMinutes; Upgraded.PlayerSurvival=S.PlayerSurvival;
         Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
-        Upgraded.CampEconomy=S.CampEconomy;Upgraded.Nature=S.Nature;
+        Upgraded.CampEconomy=S.CampEconomy;Upgraded.Nature=S.Nature;Upgraded.Campaign=S.Campaign;
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
         return Restore(Upgraded);
     }
@@ -281,6 +295,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     FHearthwardCampState CampCheck;
     if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,CampCheck) || FMath::Abs(CampCheck.Calendar-S.CalendarMinutes)>1.e-4 || !CampCheck.ValidateBuildings(S.Gameplay))) {Status=TEXT("营地快照无效");return false;}
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    FHearthwardCampaignState CampaignCheck;if(!FHearthwardCampaignState::Parse(S.Campaign,CampaignCheck)){Status=TEXT("战役快照无效");return false;}
     FHearthwardNatureState NatureCheck;
     if(!FHearthwardNatureState::Parse(S.Nature,NatureCheck) || (!S.Nature.IsEmpty() && FMath::Abs(NatureCheck.Calendar-S.CalendarMinutes)>1.e-4)){Status=TEXT("自然生态快照无效");return false;}
     GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Cancel();
@@ -360,6 +375,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Restore(S.Nature,S.CalendarMinutes);
     Personal->OnInventoryChanged.Broadcast();
     if (Companion) { Companion->Bag->OnInventoryChanged.Broadcast(); Companion->Source->OnInventoryChanged.Broadcast(); }
+    GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Restore(S.Campaign);
     OnSnapshotRestored.Broadcast();
     return true;
 }

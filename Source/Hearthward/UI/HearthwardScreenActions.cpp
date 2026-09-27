@@ -1,4 +1,6 @@
 #include "../Survival/HearthwardSurvivalComponent.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "HearthwardScreenWidget.h"
 #include "Misc/ConfigCacheIni.h"
 #include "../Building/HearthwardBuildingComponent.h"
@@ -57,7 +59,16 @@ bool UHearthwardScreenWidget::OpenSavePoint(const FHearthwardSavePoint& Point)
     if(Point.World.NaturalWorld)
     {
         if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds"))
-            return PrepareSession() && Save->LoadPoint(Point.SaveId);
+        {
+            const bool FromTitle=Page==TEXT("title");
+            const bool Loaded=PrepareSession() && Save->LoadPoint(Point.SaveId);
+            if(Loaded && FromTitle)
+            {
+                auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+                if(Campaign->State.Victory && Campaign->State.Facts.Contains(TEXT("home_saved")))Campaign->Record(TEXT("home_continued"));
+            }
+            return Loaded;
+        }
         const FString Options=TEXT("game=/Script/Hearthward.HearthwardGameMode?HearthwardLoad=")
             +Point.SaveId.ToString(EGuidFormats::Digits);
         UGameplayStatics::OpenLevel(this,NaturalMap,true,Options);
@@ -207,7 +218,9 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Next==TEXT("dialogue") || Next==TEXT("memory"))
         { auto* C=Companion(GetWorld()); if(!C || !C->CanCommunicate(GetOwningPlayerPawn())) { Message=TEXT("请靠近弟弟，交流范围30米"); Refresh(); return false; } }
         if(Next==TEXT("hud") && !Save->GetCampaignId().IsValid()) { OpenPage(TEXT("title")); return false; }
-        OpenPage(Next); return Page==Next;
+        OpenPage(Next);
+        if(Page==TEXT("storage") && GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(GetOwningPlayerPawn()->GetActorLocation())==TEXT("hometown"))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("home_storage"));
+        return Page==Next;
     }
     if(Action==TEXT("new"))
     {

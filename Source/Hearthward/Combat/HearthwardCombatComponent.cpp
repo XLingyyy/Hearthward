@@ -1,4 +1,5 @@
 #include "HearthwardCombatComponent.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
@@ -35,7 +36,7 @@ FGuid UHearthwardCombatComponent::Epoch() const { return GetWorld()->GetSubsyste
 bool UHearthwardCombatComponent::Available() const
 {
     const auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
-    return G() && G()->Enabled && S && S->Alive() && !GetWorld()->IsPaused() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy();
+    return G() && G()->Enabled && S && S->Alive() && !GetWorld()->IsPaused() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy() && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Busy();
 }
 TArray<UHearthwardCombatTargetComponent*> UHearthwardCombatComponent::Targets() const
 {
@@ -238,7 +239,7 @@ void UHearthwardCombatComponent::Finish()
 bool UHearthwardCombatComponent::MovementLocked() const
 { return Busy() && Action!=TEXT("draw"); }
 float UHearthwardCombatComponent::MovementMultiplier() const { return Body.IsValid()?(CarryingOnBack?.7f:.5f):1; }
-bool UHearthwardCombatComponent::CanSave() const { return !Busy() && !Body.IsValid() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy(); }
+bool UHearthwardCombatComponent::CanSave() const { return !Busy() && !Body.IsValid() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy() && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Busy(); }
 FString UHearthwardCombatComponent::Describe() const
 {
     if(Executing()) return FString::Printf(TEXT("处决 %.1f / 3.0 秒"),Elapsed);
@@ -360,7 +361,7 @@ void UHearthwardCombatComponent::Perception(double Delta)
         }
         Observer->Memory.InvestigationRemaining=FMath::Max(0.,Observer->Memory.InvestigationRemaining-Delta);
         if(!Engaged && Observer->Memory.InvestigationRemaining>0) Observer->Awareness=TEXT("调查诱饵");
-        if(auto* Pawn=Cast<APawn>(Observer->GetOwner())) if(auto* AI=Cast<AAIController>(Pawn->GetController()))
+        if(auto* Pawn=Cast<APawn>(Observer->GetOwner());Pawn && !Observer->CampaignTarget) if(auto* AI=Cast<AAIController>(Pawn->GetController()))
         {
             FVector Goal=Observer->Memory.Investigation;
             if(Engaged) { for(const auto& B:Brothers) if(Observer->Memory.Seen.Contains(B.Key)) { Goal=B.Value->GetActorLocation(); break; } }
@@ -487,7 +488,7 @@ void UHearthwardCombatComponent::LaunchProjectile(FName Item,float Scale,bool Th
 FString UHearthwardCombatComponent::Snapshot() const
 {
     FHearthwardCombatSave Out=State; Out.Targets.Reset(); Out.CrossbowLoaded=CrossbowLoaded;
-    for(auto* T:Targets()) if(!T->NaturalTarget)Out.Targets.Add(T->Snapshot());
+    for(auto* T:Targets()) if(!T->NaturalTarget && !T->CampaignTarget)Out.Targets.Add(T->Snapshot());
     Out.Arrows.Reset();
     for(TActorIterator<AHearthwardProjectile> It(GetWorld());It;++It)
         if(It->Landed && !It->HitTarget && It->Item==TEXT("arrow")) { FHearthwardArrowSave A; A.Position=It->GetActorLocation(); A.Rotation=It->GetActorRotation(); Out.Arrows.Add(A); }

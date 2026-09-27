@@ -8,6 +8,7 @@
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Interaction/HearthwardResourceInteractionComponent.h"
 #include "../Building/HearthwardBuildingComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "Engine/World.h"
 using namespace HearthwardData;
@@ -89,7 +90,7 @@ void UHearthwardGameplayComponent::GrantInitialEquipment()
         if(RewardFacts.Contains(Fact))continue;
         RewardFacts.Add(Fact);
         for(const auto& Item:Catalog()->GetObjectField(TEXT("loadout"))->Values)
-            if(Bag==Inventory() || Item.Key!=TEXT("amulet"))Bag->TryAdd(FName(*Item.Key),Item.Value->AsNumber());
+            if(Item.Key!=TEXT("amulet") || (Bag==Inventory() && UGameplayStatics::GetCurrentLevelName(GetWorld(),true)!=TEXT("L_HearthwardWilds")))Bag->TryAdd(FName(*Item.Key),Item.Value->AsNumber());
         for(const auto& I:Bag->Snapshot().Instances)
             if(!Text(Find(TEXT("items"),I.Definition.ToString()),TEXT("slot")).IsEmpty())Bag->EquipInstance(I.Id);
     }

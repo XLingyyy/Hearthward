@@ -128,8 +128,24 @@ bool FEquipmentMigrationFile047Test::RunTest(const FString&)
         FHearthwardGroundEquipment Ground;Ground.Transform=FTransform::Identity;Ground.Item=World.PlayerItems.Instances[0];World.GroundEquipment.Add(Ground);
         TestFalse(TEXT("Ground duplicate rejected"),HearthwardSave::Validate(*Migrated));World.GroundEquipment.Reset();
         Migrated->Schema=4;TestFalse(TEXT("Unknown schema4 rejected"),HearthwardSave::Validate(*Migrated));
-        Migrated->Schema=8;TestFalse(TEXT("Future schema rejected"),HearthwardSave::Validate(*Migrated));
+        Migrated->Schema=HearthwardSave::CurrentSchema+1;TestFalse(TEXT("Future schema rejected"),HearthwardSave::Validate(*Migrated));
     }
     IFileManager::Get().Delete(*Path);IFileManager::Get().Delete(*(Path+TEXT(".pre-schema6")));return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveGrowthCap049Test,"Hearthward.Save.Growth049FloatCaps",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FSaveGrowthCap049Test::RunTest(const FString&)
+{
+    auto* Pool=NewObject<UHearthwardSaveGame>();
+    FHearthwardSavePoint P;P.SaveId=FGuid::NewGuid();P.CampaignId=FGuid::NewGuid();P.Created=FDateTime::UtcNow();
+    P.World.Map=TEXT("PROTOTYPE_ONLY");P.World.SurvivalVersion=1;P.World.NPCStateVersion=HearthwardSave::NPCStateVersion;P.World.NPCMemory.Campaign=P.CampaignId;
+    auto* G=NewObject<UHearthwardGameplayComponent>();G->Experience=16030;G->CampTier=2;
+    P.World.Gameplay=G->SaveSnapshot();
+    // Level 29 plus tier 2 crosses a float rounding boundary at full stamina.
+    P.World.BrotherStamina=100+HearthwardProgression::Attribute(29,TEXT("stamina_bonus"))+5.f;
+    Pool->Points.Add(P);
+    TestTrue(TEXT("Runtime full stamina is a valid save at fractional growth"),HearthwardSave::Validate(*Pool));
+    Pool->Points[0].World.BrotherStamina+=.01f;
+    TestFalse(TEXT("Actual excess stamina still rejected"),HearthwardSave::Validate(*Pool));
+    return true;
 }
 #endif
