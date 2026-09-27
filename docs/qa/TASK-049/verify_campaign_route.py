@@ -55,13 +55,26 @@ def run():
     st.update(world=w,pawn=p,pc=pc,ui=pc.get_hud().get_editor_property('screen'),game=p.get_component_by_class(unreal.HearthwardGameplayComponent),bag=p.get_component_by_class(unreal.HearthwardInventoryComponent))
     c=next(x for x in unreal.ObjectIterator(unreal.HearthwardCampaignSubsystem) if x.get_outer()==w)
     check('continue campaign',st['ui'].execute_action('continue'));st['ui'].open_page('hud');yield delay(5)
-    c.interact();check('ordinary travel back to camp',c.travel('camp'));yield wait(lambda:not c.busy(),120);yield delay(3)
+    save=next(x for x in unreal.ObjectIterator(unreal.HearthwardSaveSubsystem) if x.get_outer()==w)
+    baseline=json.loads((Path(unreal.Paths.project_saved_dir())/'Task049/natural/results.json').read_text(encoding='utf-8'))
+    check('normal prologue checkpoint available',baseline['ok'] and bool(baseline.get('checkpoint')))
+    checkpoint=unreal.GuidLibrary.parse_string_to_guid(baseline['checkpoint']);checkpoint=checkpoint[0] if isinstance(checkpoint,tuple) else checkpoint
+    check('load explicit camp checkpoint',save.load_point(checkpoint));report['route_checkpoint']=baseline['checkpoint'];yield delay(3)
+    # Keep QA traversal from becoming the latest continue point mid-route.
+    check('QA autosave interval set to sixty minutes',save.set_auto_minutes(60))
+
+    if math.hypot(p.get_actor_location().x+98000,p.get_actor_location().y+75000)>=1000:
+        c.interact();check('ordinary travel back to camp',c.travel('camp'));yield wait(lambda:not c.busy(),120);yield delay(3)
     check('at route start',math.hypot(p.get_actor_location().x+98000,p.get_actor_location().y+75000)<1000)
     first=0
     if resume:
         first=int(resume['index']);report['segment_start_fixture']=resume
         p.get_movement_component().disable_movement();p.set_actor_location(unreal.Vector(resume['x'],resume['y'],60000),False,True);yield delay(6)
         p.set_actor_location(unreal.Vector(resume['x'],resume['y'],resume['z']+20),False,True);p.get_movement_component().set_movement_mode(unreal.MovementMode.MOVE_WALKING);yield delay(2)
+    brother=unreal.GameplayStatics.get_all_actors_of_class(w,unreal.HearthwardCompanionFixture)[0];st['brother']=brother
+    if resume:
+        brother.set_actor_location(p.get_actor_location()+unreal.Vector(0,180,0),False,True);yield delay(1)
+    check('normal brother follow command',st['game'].order_companion('follow'))
     st['bag'].try_add('roast',8)
     unreal.GameplayStatics.set_global_time_dilation(w,3);started=unreal.GameplayStatics.get_time_seconds(w)
     report['path_points']=len(route);report['walk_distance_m']=0;report['actual_walk_distance_m']=0;previous=p.get_actor_location();st['last_walk_position']=previous;st['walking']=True
@@ -85,10 +98,17 @@ def run():
             # Keep collision, gravity and movement limits enabled across this sampled segment.
             yield wait(lambda:move(goal),25)
         here=p.get_actor_location();report['walk_distance_m']+=(here-previous).length()/100;previous=here
+        gap=(here-brother.get_actor_location()).length()/100
+        report['maximum_brother_gap_m']=max(report.get('maximum_brother_gap_m',0),gap)
+        report['brother_position']=str(brother.get_actor_location());report['brother_reason']=str(brother.block_reason)
+        if gap>6:
+            report['companion_waits']=report.get('companion_waits',0)+1
+            yield wait(lambda:(p.get_actor_location()-brother.get_actor_location()).length()<550,25)
         if st['game'].hunger<65:st['game'].use_item('roast')
         check('alive on foot',st['game'].health>0 and p.get_movement_component().movement_mode==unreal.MovementMode.MOVE_WALKING)
         report['position']=[here.x,here.y,here.z];report['game_seconds']=unreal.GameplayStatics.get_time_seconds(w)-started
         if index%10==0:(out/'progress.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+    check('brother reaches final entry',(p.get_actor_location()-brother.get_actor_location()).length()<600)
     check('route reaches dry hometown entry',math.hypot(p.get_actor_location().x-101000,p.get_actor_location().y-25000)<1200)
     finish()
 runner=run();pending=None
