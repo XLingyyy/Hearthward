@@ -1,4 +1,5 @@
 #include "HearthwardCampSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
@@ -32,7 +33,7 @@ void UHearthwardCampSubsystem::SyncTier()
 {if(auto* P=CampPlayer(GetWorld()))if(auto* G=P->FindComponentByClass<UHearthwardGameplayComponent>())G->CampTier=State.Tier;}
 bool UHearthwardCampSubsystem::CanManage(FGuid Epoch) const
 {
-    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
+    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy() || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Busy())return false;
     const auto* P=CampPlayer(GetWorld());const auto* G=P?P->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
     const auto* S=P?P->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
     const auto* B=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
@@ -52,6 +53,8 @@ bool UHearthwardCampSubsystem::UpgradeCamp(FGuid Epoch)
 bool UHearthwardCampSubsystem::AssignWorker(FName Region,int32 Person,FGuid Epoch)
 {
     if(!CanManage(Epoch) || !State.Assign(Region,Person)) {Feedback=TEXT("岗位已满或人员不可用");return false;}
+    auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->Record(TEXT("worker_assigned"));
+    if(const auto* R=State.Regions.FindByPredicate([&](const auto& V){return V.Id==Region;});R && R->Camp==TEXT("hometown"))Campaign->Record(TEXT("home_work"));
     Feedback=TEXT("人员分配已更新；兄弟到达岗位且实际工作时计产出");return true;
 }
 bool UHearthwardCampSubsystem::SetProduction(FName Region,bool Enabled,bool ToRations,FGuid Epoch)
@@ -97,7 +100,7 @@ bool UHearthwardCampSubsystem::EatMeal(bool Brother,FGuid Epoch)
     if(!CanManage(Epoch) || !S || !S->Alive() || S->Busy() || State.CampAt(A->GetActorLocation()).IsNone()
         || FVector::Dist2D(A->GetActorLocation(),CampPlayer(GetWorld())->GetActorLocation())>3000 || !State.Eat(S->Hunger()))
     {Feedback=TEXT("需要角色在营地、非满饱食，且口粮至少5点");return false;}
-    S->State.Food(S->Hunger());Feedback=TEXT("用餐完成：口粮−5，饱食最多＋40");return true;
+    S->State.Food(S->Hunger());GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("public_meal"));Feedback=TEXT("用餐完成：口粮−5，饱食最多＋40");return true;
 }
 bool UHearthwardCampSubsystem::Craft(FGuid Facility,FName Recipe,int32 Batches,FGuid Epoch)
 {
@@ -197,6 +200,7 @@ bool UHearthwardCampSubsystem::RegisterFacility(FGuid Id,FName Kind,FVector Posi
 {
     if(State.Facilities.ContainsByPredicate([&](const auto& B){return B.Id==Id;}))return false;
     FHearthwardCampFacility B;B.Id=Id;B.Kind=Kind;B.Camp=State.CampAt(Position);B.Paid=Paid;State.Facilities.Add(B);
+    if(B.Camp==TEXT("hometown") && !Paid.IsEmpty())GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("home_work"));
     if(HearthwardCamp::Facility(Kind,1))
     {
         FHearthwardCampRegion R;R.Id=FName(*(TEXT("facility_")+Id.ToString()));R.Camp=B.Camp;R.Facility=Id;R.Job=TEXT("workshop");
@@ -221,25 +225,31 @@ bool UHearthwardCampSubsystem::RemoveFacility(FGuid Id,bool ConfirmLoss)
 }
 bool UHearthwardCampSubsystem::RecordRescue(FName Person)
 {
-    if(!State.Rescue(Person))return false;
-    if(auto* P=CampPlayer(GetWorld()))if(auto* G=P->FindComponentByClass<UHearthwardGameplayComponent>())
-    {
-        const auto Epoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
-        G->GrantExperience(TEXT("first_rescue"),FName(*(TEXT("rescue:")+Person.ToString())),Epoch);
-        if(State.Rescued.Num()>=5)G->GrantItemReward(TEXT("reward:rescue5"),TEXT("bow_rare"),1,Epoch);
-    }
+    auto* P=CampPlayer(GetWorld());auto* G=P?P->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
+    if(!G || !G->Enabled)return false;
+    auto Next=State;if(!Next.Rescue(Person))return false;
+    auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    const bool Bow=Next.Rescued.Num()>=5 && !G->RewardFacts.Contains(TEXT("reward:rescue5"));
+    if(Bow && !Store->CanAdjust({},{{TEXT("bow_rare"),1}}))return false;
+    const int32 XP=G->Experience;const auto Facts=G->RewardFacts;
+    if(!G->GrantExperience(TEXT("first_rescue"),FName(*(TEXT("rescue:")+Person.ToString())),Store->GetTimelineEpoch()))return false;
+    if(Bow && !G->GrantItemReward(TEXT("reward:rescue5"),TEXT("bow_rare"),1,Store->GetTimelineEpoch())){G->Experience=XP;G->RewardFacts=Facts;return false;}
+    State=MoveTemp(Next);
     return true;
 }
 bool UHearthwardCampSubsystem::ReclaimHometown(FName Victory,FVector Position)
 {
     if(Victory.IsNone() || State.Hometown || Position.ContainsNaN())return false;
     auto* P=CampPlayer(GetWorld());auto* B=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;if(!B)return false;
+    auto* G=P->FindComponentByClass<UHearthwardGameplayComponent>();auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    if(!G || !G->Enabled || (!G->RewardFacts.Contains(TEXT("reward:hometown")) && !Store->CanAdjust({},{{TEXT("hearth_blade"),1}})))return false;
+    const auto Previous=State;const auto Buildings=B->Snapshot();
     State.Hometown=true;State.AddCamp(TEXT("hometown"),Position);
-    B->AddGift(TEXT("warehouse_access"),Position+FVector(300,0,0));
-    B->AddGift(TEXT("bed"),Position+FVector(0,300,0));B->AddGift(TEXT("bed"),Position+FVector(250,300,0));
-    B->AddGift(TEXT("campfire"),Position+FVector(-300,0,0));RefreshQuartermasters();
-    if(auto* G=P->FindComponentByClass<UHearthwardGameplayComponent>())
-        G->GrantItemReward(TEXT("reward:hometown"),TEXT("hearth_blade"),1,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
+    const bool Built=B->AddGift(TEXT("warehouse_access"),Position+FVector(300,0,0)) && B->AddGift(TEXT("bed"),Position+FVector(0,300,0))
+        && B->AddGift(TEXT("bed"),Position+FVector(250,300,0)) && B->AddGift(TEXT("campfire"),Position+FVector(-300,0,0));
+    if(!Built || (!G->RewardFacts.Contains(TEXT("reward:hometown")) && !G->GrantItemReward(TEXT("reward:hometown"),TEXT("hearth_blade"),1,Store->GetTimelineEpoch())))
+    {B->Restore(Buildings);State=Previous;Feedback=TEXT("故乡设施落点尚未准备好，胜利结算待重试");return false;}
+    RefreshQuartermasters();
     return true;
 }
 bool UHearthwardCampSubsystem::Restore(const FString& Json,int32 LegacyTier,FVector Camp,double Calendar)

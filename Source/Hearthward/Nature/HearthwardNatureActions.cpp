@@ -1,4 +1,5 @@
 #include "HearthwardNatureSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "HearthwardNatureActor.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -74,13 +75,14 @@ bool UHearthwardNatureSubsystem::Commit(FName Action,FGuid Id,FName Option,int32
         const int32 N=FMath::Min(Yield,Source->Remaining);if(!PrepareBag({},{{Item,N}},Next))return false;
         if(Tool.IsValid() && !Next.Wear(Tool,1/(1+Gameplay()->Effect(TEXT("durability")))))return false;
         Source->Remaining-=N;if(Source->Remaining==0)Source->Due=State.Calendar+Source->RefreshMinutes;
-        PublishBag(Next);Gameplay()->Record(TEXT("harvest"),Item,N);return true;
+        PublishBag(Next);Gameplay()->Record(TEXT("harvest"),Item,N);
+        if(Item==TEXT("ore"))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("mine_source"));return true;
     }
     if(Action==TEXT("plant"))
     {
         const auto D=HearthwardNature::Definition(TEXT("crops"),Option);
         if(!D || !ClearPlot(Site,140) || !PrepareBag({{FName(Text(D,TEXT("seed"))),1}},{},Next))return false;
-        FHearthwardCrop C;C.Id=FGuid::NewGuid();C.Definition=Option;C.Position=Site;C.Planted=State.Calendar;State.Crops.Add(C);PublishBag(Next);return true;
+        FHearthwardCrop C;C.Id=FGuid::NewGuid();C.Definition=Option;C.Position=Site;C.Planted=State.Calendar;State.Crops.Add(C);PublishBag(Next);if(Option==TEXT("grain"))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("grain_planted"));return true;
     }
     if(Crop)
     {
@@ -90,6 +92,7 @@ bool UHearthwardNatureSubsystem::Commit(FName Action,FGuid Id,FName Option,int32
         {
             const auto D=HearthwardNature::Definition(TEXT("crops"),Crop->Definition);
             if(!PrepareBag({},{{FName(Text(D,TEXT("output"))),State.Yield(*Crop)},{FName(Text(D,TEXT("seed"))),1}},Next))return false;
+            if(Crop->Definition==TEXT("grain"))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("grain_harvested"));
             State.Crops.RemoveAll([&](const auto& C){return C.Id==Id;});PublishBag(Next);return true;
         }
     }

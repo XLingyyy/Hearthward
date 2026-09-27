@@ -55,6 +55,7 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
     {
         FAnimInstanceProxy::PreUpdate(Instance, DeltaSeconds);
         const auto* Brother = CastChecked<UHearthwardBrotherAnimInstance>(Instance);
+        for(int32 I=0;I<6;++I)if(Players[I].GetSequence()!=Brother->Clips[I])Players[I].SetSequence(Brother->Clips[I]);
         Locomotion.Alpha = FMath::Clamp(Brother->GroundSpeed / 40.f, 0.f, 1.f);
         Gait.Alpha = FMath::Clamp((Brother->GroundSpeed - 220.f) / 100.f, 0.f, 1.f);
         Players[1].SetPlayRate(FMath::Clamp(Brother->GroundSpeed / 180.f, 0.25f, 1.6f));
@@ -91,11 +92,11 @@ void UHearthwardBrotherAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
     Super::NativeUpdateAnimation(DeltaSeconds);
     const auto* Brother = Cast<AHearthwardCompanionFixture>(TryGetPawnOwner());
-    if (!Brother) return;
-    GroundSpeed = Brother->GetVelocity().Size2D();
+    if (!TryGetPawnOwner()) return;
+    GroundSpeed = TryGetPawnOwner()->GetVelocity().Size2D();
     AttackRemaining = FMath::Max(0.f, AttackRemaining - DeltaSeconds);
     MotionState = GroundSpeed < 5.f ? TEXT("Idle") : GroundSpeed > 270.f ? TEXT("Run") : TEXT("Walk");
-    if (GroundSpeed < 5.f)
+    if (Brother && GroundSpeed < 5.f)
     {
         const auto* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
         const auto* Gameplay = Player ? Player->FindComponentByClass<UHearthwardGameplayComponent>() : nullptr;

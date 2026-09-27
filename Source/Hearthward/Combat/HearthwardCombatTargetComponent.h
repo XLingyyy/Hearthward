@@ -42,6 +42,7 @@ public:
     UPROPERTY(EditAnywhere) float Exposure=-1;
     UPROPERTY() bool PrototypeEncounter=false;
     UPROPERTY() bool NaturalTarget=false;
+    UPROPERTY() bool CampaignTarget=false;
     UPROPERTY(BlueprintReadOnly) FString Awareness=TEXT("巡逻");
     UPROPERTY() FHearthwardCombatTargetSave Memory;
     TWeakObjectPtr<AActor> ExecutionOwner;

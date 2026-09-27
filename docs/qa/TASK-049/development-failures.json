@@ -1,0 +1,65 @@
+[
+  {
+    "report": "final-natural-pie.json",
+    "ok": false,
+    "passed": 9,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_natural.py\", line 77, in tick\n    if time.monotonic()>deadline:raise TimeoutError('Natural campaign condition timed out')\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTimeoutError: Natural campaign condition timed out\n",
+    "save_status": "快照已保存"
+  },
+  {
+    "report": "final-natural2-pie.json",
+    "ok": false,
+    "passed": 16,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_natural.py\", line 69, in run\n    check('safe checkpoint',st['save'].save_point(True));report['checkpoint']=unreal.GuidLibrary.conv_guid_to_string(next(x.save_id for x in st['save'].get_points() if str(x.save_id) not in previous_ids));finish()\n                                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nStopIteration\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_natural.py\", line 79, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\nRuntimeError: generator raised StopIteration\n",
+    "save_status": "快照已保存"
+  },
+  {
+    "report": "final-save-diagnostic-pie.json",
+    "ok": false,
+    "passed": 6,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_save_diagnostic.py\", line 97, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_save_diagnostic.py\", line 75, in run\n    for point in pool.get_editor_property('points'):\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nException: HearthwardSaveGame: Property 'Points' for attribute 'points' on 'HearthwardSaveGame' is protected and cannot be read\n",
+    "save_status": "快照已保存"
+  },
+  {
+    "report": "final-world-diagnostic-pie.json",
+    "ok": false,
+    "passed": 68,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 183, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 157, in run\n    check('checkpoint before final UI checks',st['save'].save_point(True))\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 11, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: checkpoint before final UI checks\n",
+    "save_status": "拒绝写入无效快照"
+  },
+  {
+    "report": "final-world-pie.json",
+    "ok": false,
+    "passed": 33,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 172, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 113, in run\n    camera=unreal.GameplayStatics.begin_deferred_actor_spawn_from_class(w,unreal.CameraActor,transform,unreal.SpawnActorCollisionHandlingMethod.ALWAYS_SPAWN)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: type object 'GameplayStatics' has no attribute 'begin_deferred_actor_spawn_from_class'\n",
+    "save_status": "世界与知识已恢复；旧时间线请求已废止"
+  },
+  {
+    "report": "final-world2-pie.json",
+    "ok": false,
+    "passed": 34,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 175, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 126, in run\n    check('actual human execution commits health and XP',target.get_component_by_class(unreal.HearthwardCombatTargetComponent).health==0 and st['game'].experience>xp)\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 11, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: actual human execution commits health and XP\n",
+    "save_status": "世界与知识已恢复；旧时间线请求已废止"
+  },
+  {
+    "report": "final-world3-pie.json",
+    "ok": false,
+    "passed": 67,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 180, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 155, in run\n    check('home warehouse opens',st['ui'].execute_action('storage'));st['ui'].open_page('hud')\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 11, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: home warehouse opens\n",
+    "save_status": "剧情动作或传送尚未完成"
+  },
+  {
+    "report": "final-world4-pie.json",
+    "ok": false,
+    "passed": 67,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 180, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 155, in run\n    check('home warehouse opens',st['ui'].execute_action('page:storage'));st['ui'].open_page('hud')\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 11, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: home warehouse opens\n",
+    "save_status": "剧情动作或传送尚未完成"
+  },
+  {
+    "report": "final-world5-pie.json",
+    "ok": false,
+    "passed": 67,
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 181, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 155, in run\n    check('checkpoint before final UI checks',st['save'].save_point(True))\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_world.py\", line 11, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: checkpoint before final UI checks\n",
+    "save_status": "拒绝写入无效快照"
+  }
+]

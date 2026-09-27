@@ -18,8 +18,9 @@ void UHearthwardCombatTargetComponent::CreateBodyCollision()
     for(int32 I=0;I<4;++I)
     {
         auto* Box=NewObject<UBoxComponent>(GetOwner()); GetOwner()->AddInstanceComponent(Box);
-        Box->SetupAttachment(GetOwner()->GetRootComponent()); Box->SetBoxExtent(FVector(25,25,Half[I]));
-        Box->SetRelativeLocation(FVector(0,0,Z[I])); Box->ComponentTags.Add(Parts[I]);
+        const float HeightScale=CampaignTarget?1.6f:1.f;
+        Box->SetupAttachment(GetOwner()->GetRootComponent()); Box->SetBoxExtent(FVector(25,25,Half[I]*HeightScale));
+        Box->SetRelativeLocation(FVector(0,0,Z[I]*HeightScale)); Box->ComponentTags.Add(Parts[I]);
         Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly); Box->SetCollisionResponseToAllChannels(ECR_Ignore);
         Box->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block); Box->RegisterComponent();
     }

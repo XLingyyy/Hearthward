@@ -17,6 +17,7 @@ public:
     AHearthwardProjectile();
     virtual void Tick(float Delta) override;
     TWeakObjectPtr<class UHearthwardCombatComponent> Shooter;
+    TWeakObjectPtr<AActor> EnemyShooter;
     FVector Velocity;
     double Gravity=0,RemainingRange=0,Lifetime=3;
     float Power=0;

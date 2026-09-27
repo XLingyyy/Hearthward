@@ -1,0 +1,49 @@
+{
+  "ok": false,
+  "method": "Real map, capsule movement input along local navigation paths, no position teleport during route. Global time dilation 3 for QA. Source dry-ground checks separate.",
+  "checks": {
+    "continue campaign": true,
+    "ordinary travel back to camp": true,
+    "at route start": true
+  },
+  "segment_start_fixture": {
+    "index": 156,
+    "x": 15953.925308,
+    "y": -103529.581555,
+    "z": 13746.245023
+  },
+  "path_points": 520,
+  "walk_distance_m": 0,
+  "actual_walk_distance_m": 20.760042400220414,
+  "route_index": 156,
+  "navigation_goal": "<Struct 'Vector' (0x00000290AF2424A0) {x: 16000.000000, y: -104000.000000, z: 13789.597523}>",
+  "navigation_partial": true,
+  "navigation_gaps": [
+    156
+  ],
+  "walking_detours": [
+    {
+      "index": 156,
+      "from": "<Struct 'Vector' (0x00000290AF2421D0) {x: 15953.925308, y: -103529.581555, z: 13746.244381}>",
+      "to": "<Struct 'Vector' (0x00000290AF255500) {x: 16352.020395, y: -103490.590506, z: 13746.244381}>"
+    },
+    {
+      "index": 156,
+      "from": "<Struct 'Vector' (0x00000290AF1FABD0) {x: 16293.520636, y: -103642.212889, z: 13821.069748}>",
+      "to": "<Struct 'Vector' (0x00000290AF256400) {x: 15984.270827, y: -103388.511183, z: 13821.069748}>"
+    },
+    {
+      "index": 156,
+      "from": "<Struct 'Vector' (0x00000290AF210F60) {x: 15954.170574, y: -103529.515782, z: 13746.267216}>",
+      "to": "<Struct 'Vector' (0x00000290AF255500) {x: 16352.286268, y: -103490.735706, z: 13746.267216}>"
+    },
+    {
+      "index": 156,
+      "from": "<Struct 'Vector' (0x00000290AF242450) {x: 16293.748698, y: -103642.419194, z: 13821.153760}>",
+      "to": "<Struct 'Vector' (0x00000290AF256400) {x: 15984.667357, y: -103388.512273, z: 13821.153760}>"
+    }
+  ],
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_route.py\", line 103, in tick\n    if time.monotonic()>deadline:raise TimeoutError('Walking route blocked at '+str(report.get('route_index')))\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTimeoutError: Walking route blocked at 156\n",
+  "position": "<Struct 'Vector' (0x00000290AF2424A0) {x: 15953.966166, y: -103529.536401, z: 13746.242688}>",
+  "health": 164.23728942871094
+}

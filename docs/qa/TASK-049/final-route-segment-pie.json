@@ -1,0 +1,29 @@
+{
+  "ok": false,
+  "method": "Real map, capsule movement input along local navigation paths, no position teleport during route. Global time dilation 3 for QA. Source dry-ground checks separate.",
+  "checks": {
+    "continue campaign": true,
+    "ordinary travel back to camp": true,
+    "at route start": true,
+    "alive on foot": true
+  },
+  "segment_start_fixture": {
+    "index": 132,
+    "x": -3251.549224,
+    "y": -99196.240479,
+    "z": 11642.881197
+  },
+  "path_points": 520,
+  "walk_distance_m": 201.93536271112686,
+  "route_index": 156,
+  "navigation_goal": "<Struct 'Vector' (0x0000022A36365550) {x: 16000.000000, y: -104000.000000, z: 13789.597523}>",
+  "navigation_partial": true,
+  "position": "<Struct 'Vector' (0x0000022A36366950) {x: 15953.925308, y: -103529.581555, z: 13746.245023}>",
+  "game_seconds": 65.0362291932106,
+  "navigation_gaps": [
+    133,
+    156
+  ],
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_route.py\", line 84, in tick\n    if time.monotonic()>deadline:raise TimeoutError('Walking route blocked at '+str(report.get('route_index')))\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTimeoutError: Walking route blocked at 156\n",
+  "health": 164.23728942871094
+}

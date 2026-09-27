@@ -1,4 +1,5 @@
 #include "HearthwardCharacter.h"
+#include "Campaign/HearthwardCampaignSubsystem.h"
 #include "Interaction/HearthwardResourceInteractionComponent.h"
 #include "Combat/HearthwardCombatComponent.h"
 #include "Combat/HearthwardProjectile.h"
@@ -296,6 +297,7 @@ void AHearthwardCharacter::Interact()
             if(auto* HUD=Cast<AHearthwardHUD>(PC->GetHUD());HUD && HUD->Screen) HUD->Screen->ExecuteAction(TEXT("page:crafting"));
         return;
     }
+    if(GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Interact())return;
     if (Gameplay->Enabled && Gameplay->ActivateNearby()) return;
     Interaction->InteractNearest();
 }
