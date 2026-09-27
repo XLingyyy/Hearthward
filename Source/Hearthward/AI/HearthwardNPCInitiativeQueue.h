@@ -10,6 +10,7 @@ class FHearthwardNPCInitiativeQueue
 public:
     void Reset();
     void DismissActive();
+    void DropPendingKind(FName Kind);
     void Enqueue(const FHearthwardNPCInitiative& Initiative);
     void Tick(double Now,bool bInteractionBlocked,bool bPaused,AActor* Speaker,AHearthwardCompanionFixture* Companion);
 

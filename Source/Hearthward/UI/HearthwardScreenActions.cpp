@@ -144,7 +144,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Page!=TEXT("dialogue"))return false;
         TArray<const FHearthwardAgentCapability*> Caps;
         for(const auto& C:HearthwardAgent::Capabilities())
-            if(C.Id==TEXT("collect") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
+            if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
         if(Action==TEXT("agentTypeNext")){AgentCapabilityIndex=(AgentCapabilityIndex+1)%Caps.Num();AgentItemIndex=0;}
         else AgentItemIndex=(AgentItemIndex+1)%Caps[AgentCapabilityIndex]->Items.Num();
         Refresh();return true;
@@ -154,7 +154,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Page!=TEXT("dialogue"))return false;
         TArray<const FHearthwardAgentCapability*> Caps;
         for(const auto& C:HearthwardAgent::Capabilities())
-            if(C.Id==TEXT("collect") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
+            if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
         AgentCapabilityIndex=FMath::Clamp(AgentCapabilityIndex,0,Caps.Num()-1);
         AgentItemIndex=FMath::Clamp(AgentItemIndex,0,Caps[AgentCapabilityIndex]->Items.Num()-1);
         const auto& C=*Caps[AgentCapabilityIndex];FHearthwardAgentGoal Goal;Goal.Intent=C.Id;Goal.Item=C.Items[AgentItemIndex];Goal.Quantity=1;Goal.QuantityMode=C.QuantityMode;Goal.SourceRef=C.Sources[0];Success=AI->SetStructuredGoal(GetOwningPlayerPawn(),Companion(GetWorld()),Goal);Refresh();return Success;

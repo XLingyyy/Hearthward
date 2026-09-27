@@ -28,6 +28,25 @@ bool HearthwardPlan::Build(const FHearthwardAgentGoal& Goal, FHearthwardAgentPla
         return true;
     }
 
+    if (Goal.Intent == TEXT("store"))
+    {
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Camp),
+            Action(EHearthwardAgentActionType::Deposit, EHearthwardAgentTarget::Camp)
+        };
+        return true;
+    }
+
+    if (Goal.Intent == TEXT("nature_care"))
+    {
+        if(!Goal.Station.IsValid()){ Error=TEXT("TARGET_REQUIRED");return false; }
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Nature),
+            Action(EHearthwardAgentActionType::CommitNature, EHearthwardAgentTarget::Nature)
+        };
+        return true;
+    }
+
     if (Goal.Intent == TEXT("craft"))
     {
         if (Goal.SourceRef == TEXT("camp"))
@@ -105,6 +124,7 @@ FString HearthwardPlan::ActionName(const FHearthwardAgentAction& Action)
     case EHearthwardAgentActionType::TakeMaterials: Type = TEXT("TakeMaterials"); break;
     case EHearthwardAgentActionType::CommitWorkshop: Type = TEXT("CommitWorkshop"); break;
     case EHearthwardAgentActionType::Deposit: Type = TEXT("Deposit"); break;
+    case EHearthwardAgentActionType::CommitNature: Type = TEXT("CommitNature"); break;
     }
 
     const TCHAR* Target = TEXT("None");
@@ -113,6 +133,7 @@ FString HearthwardPlan::ActionName(const FHearthwardAgentAction& Action)
     case EHearthwardAgentTarget::Source: Target = TEXT("Source"); break;
     case EHearthwardAgentTarget::Camp: Target = TEXT("Camp"); break;
     case EHearthwardAgentTarget::Workshop: Target = TEXT("Workshop"); break;
+    case EHearthwardAgentTarget::Nature: Target = TEXT("Nature"); break;
     default: break;
     }
     return FString::Printf(TEXT("%s:%s"), Type, Target);

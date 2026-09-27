@@ -20,6 +20,25 @@ bool UHearthwardNatureSubsystem::PrepareBag(const TMap<FName,int32>& In,const TM
 }
 void UHearthwardNatureSubsystem::PublishBag(const FHearthwardInventoryState& Result)
 {Bag()->RestoreInventory(Result.Snapshot(),false);Bag()->OnInventoryChanged.Broadcast();}
+bool UHearthwardNatureSubsystem::CommitCompanion(APawn* Actor,FName Action,FGuid Target,FGuid Epoch,int32 Count)
+{
+    if(!IsValid(Actor) || Actor==Player() || Busy() || Count<=0)return false;
+    const bool Crop=State.Crops.ContainsByPredicate([&](const auto& C){return C.Id==Target;});
+    const bool Pen=State.Pens.ContainsByPredicate([&](const auto& P){return P.Id==Target;});
+    if(Action==TEXT("deposit_feed") ? !Pen
+        : !Crop || (Action!=TEXT("water") && Action!=TEXT("fertilize") && Action!=TEXT("harvest")))return false;
+    ActionActor=Actor;
+    const bool Allowed=Safe(Epoch) && Near(Target);
+    bool Success=false;
+    if(Allowed)
+    {
+        TGuardValue<bool> Guard(Settling,true);
+        Success=Commit(Action,Target,NAME_None,Count,Actor->GetActorLocation());
+    }
+    ActionActor.Reset();
+    if(Success)RebuildActors();
+    return Success;
+}
 bool UHearthwardNatureSubsystem::Act(FName Action,FGuid Target,FName Option,FGuid Epoch,int32 Count)
 {
     if(Busy() || !Safe(Epoch) || Count<=0){Feedback=TEXT("当前无法操作，请在安全处重新打开面板");return false;}

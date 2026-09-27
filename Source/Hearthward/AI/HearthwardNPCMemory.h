@@ -76,6 +76,11 @@ struct FHearthwardNPCMemory
     UPROPERTY() TArray<FHearthwardNPCBelief> Beliefs;
     UPROPERTY() TArray<FHearthwardNPCCommandCoverage> CommandCoverage;
     UPROPERTY() FHearthwardAgentGoal WorkingGoal;
+    // Calendar minutes, shared with the world clock. Old saves initialize on first tick.
+    UPROPERTY() bool ConversationClockStarted = false;
+    UPROPERTY() double LastConversationCalendar = 0;
+    UPROPERTY() bool ReminderShownThisVisit = false;
+    UPROPERTY() int32 ReminderVisit = 0;
 
     static constexpr int32 MaxRecords = 64;
     static constexpr int32 MaxText = 120;

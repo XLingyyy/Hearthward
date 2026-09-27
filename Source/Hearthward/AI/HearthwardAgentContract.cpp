@@ -52,19 +52,27 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
 {
     static const TArray<FHearthwardAgentCapability> C=[]
     {
-        TArray<FName> All,Recipes,Repair;
-        for(const auto& I:HearthwardBasicItems()) All.Add(I.Id);
+        TArray<FName> All,Stored,Recipes,Repair;
+        for(const auto& I:HearthwardBasicItems())
+        {
+            All.Add(I.Id);
+            const auto D=HearthwardData::Find(TEXT("items"),I.Id.ToString());
+            if(!I.IsInstance() && I.WeightHundredths>0 && I.UniqueClaim.IsNone()
+                && HearthwardData::Text(D,TEXT("rarity"))==TEXT("common"))Stored.Add(I.Id);
+        }
         for(const auto& R:HearthwardData::Rows(TEXT("craftingRecipes"))) Recipes.Add(FName(*HearthwardData::Text(R->AsObject(),TEXT("id"))));
         for(const auto& R:HearthwardData::Rows(TEXT("repairRecipes"))) Repair.Add(FName(*HearthwardData::Text(R->AsObject(),TEXT("id"))));
         TArray<FHearthwardAgentCapability> Result={
             {TEXT("collect"),TEXT("采集木材→返营→入库；数量是新采集份数；S1为当前已知安全点"),{TEXT("wood")},Policy(TEXT("max_collect")),TEXT("additional_acquired"),{TEXT("S1")},{TEXT("ban"),TEXT("source")},true},
-            {TEXT("craft"),TEXT("取得授权材料→到工作台制作→产物入库；quantity是批数；默认弟弟背包bag，明确授权才用camp仓库"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max")},true},
-            {TEXT("repair"),TEXT("到工作台修理自己背包中唯一一件装备；quantity=1；不操作玩家装备"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max")},true},
+            {TEXT("store"),TEXT("将弟弟背包里指定数量的已有普通物品带回营地仓库；不能从仓库取出，不把旧货物算作新采集"),Stored,Policy(TEXT("max_collect")),TEXT("held_to_camp"),{TEXT("bag")},{},true},
+            {TEXT("nature_care"),TEXT("照料已知的当前地块或栏舍；必须指定唯一目标，浇水/施肥/收获各1次，喂饲料可指定份数"),{TEXT("water"),TEXT("fertilize"),TEXT("harvest"),TEXT("deposit_feed")},32,TEXT("action_count"),{TEXT("known_target")},{},true},
+            {TEXT("craft"),TEXT("取得授权材料→到工作台制作→产物入库；quantity是批数；默认弟弟背包bag，明确授权才用camp仓库；once:物品仅用于玩家明确说这次可用的单次例外"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
+            {TEXT("repair"),TEXT("到工作台修理自己背包中唯一一件装备；quantity=1；不操作玩家装备；once:物品仅用于玩家明确说这次可用的单次例外"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
             {TEXT("companion_order"),TEXT("高层伙伴指令；hold原地等待，follow跟随玩家，assist在玩家附近协助有效威胁，routine恢复营地低权限自由活动；UE决定目标、导航、攻击时机和伤害"),{TEXT("hold"),TEXT("follow"),TEXT("assist"),TEXT("routine")},1,TEXT("directive"),{TEXT("player")},{},true},
             {TEXT("inventory"),TEXT("只读询问营地当前或已有belief库存；‘多少/几份/是不是有/吗/？’这类疑问句属于inventory；回复必须说明来源与是否亲自确认"),All,0,TEXT("none"),{TEXT("none")},{},false},
             {TEXT("inventory_report"),TEXT("仅限玩家用陈述句明确报告营地某物品的精确当前数量；疑问句不是report；只更新弟弟的belief，不修改实际仓库"),All,100000,TEXT("reported_exact"),{TEXT("player")},{},false},
             {TEXT("recall"),TEXT("只读有效原话和本人实际事件"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{},false},
-            {TEXT("rule_proposal"),TEXT("提出长期规则卡，确认后生效；limits一条ban:wood或source:S1或no:物品或max:物品:整数"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{TEXT("ban"),TEXT("source"),TEXT("no"),TEXT("max")},false}
+            {TEXT("rule_proposal"),TEXT("提出长期规则卡，确认后生效；limits一条ban:wood或source:S1或no:物品或max:物品:整数；allow:物品仅撤销对应不得消耗规则，不授权仓库取用"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{TEXT("ban"),TEXT("source"),TEXT("no"),TEXT("max"),TEXT("allow")},false}
         };
         for(FName Id:{FName(TEXT("cancel")),FName(TEXT("clarify")),FName(TEXT("dialogue")),FName(TEXT("refuse"))})
             Result.Add({Id,TEXT("取消/澄清/闲聊/拒绝；无物品参数"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{},false});
@@ -132,7 +140,7 @@ bool HearthwardAgent::ValidLimit(const FString& Limit)
     TArray<FString> T;Limit.ParseIntoArray(T,TEXT(":"));
     if(T.Num()==2 && T[0]==TEXT("source")) return T[1]==TEXT("S1");
     if(T.Num()<2 || !HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==FName(*T[1]);})) return false;
-    if(T.Num()==2) return T[0]==TEXT("ban") || T[0]==TEXT("no");
+    if(T.Num()==2) return T[0]==TEXT("ban") || T[0]==TEXT("no") || T[0]==TEXT("allow") || T[0]==TEXT("once");
     if(T.Num()!=3 || T[0]!=TEXT("max") || !T[2].IsNumeric() || T[2].Contains(TEXT("."))) return false;
     int64 N=FCString::Atoi64(*T[2]);return N>=0 && N<=100000 && FString::Printf(TEXT("%lld"),N)==T[2];
 }
@@ -142,6 +150,7 @@ FString HearthwardAgent::Validate(const FHearthwardAgentGoal& G)
     if(!C || G.CapabilityVersion!=2 || !C->Items.Contains(G.Item)) return TEXT("UNSUPPORTED_CAPABILITY");
     if(G.Quantity<(C->Writes?1:0) || G.Quantity>C->MaxQuantity || G.QuantityMode!=C->QuantityMode || !C->Sources.Contains(G.SourceRef)) return TEXT("AMBIGUOUS_TARGET");
     if(G.Limits.Num()>4 || G.Unresolved.Num()>4) return TEXT("UNRESOLVED_CONSTRAINT");
+    if(G.Intent==TEXT("nature_care") && G.Item!=TEXT("deposit_feed") && G.Quantity!=1)return TEXT("AMBIGUOUS_TARGET");
     for(const auto& L:G.Limits)
     {
         FString Type,Rest;L.Split(TEXT(":"),&Type,&Rest);
@@ -182,6 +191,10 @@ FString HearthwardAgent::ItemText(FName Item)
     if(Item==TEXT("follow"))return TEXT("跟随玩家");
     if(Item==TEXT("assist"))return TEXT("协助战斗");
     if(Item==TEXT("routine"))return TEXT("营地自由活动");
+    if(Item==TEXT("water"))return TEXT("地块浇水");
+    if(Item==TEXT("fertilize"))return TEXT("地块施肥");
+    if(Item==TEXT("harvest"))return TEXT("成熟作物收获");
+    if(Item==TEXT("deposit_feed"))return TEXT("栏舍喂料");
     if(const auto* I=HearthwardBasicItems().FindByPredicate([&](const auto& X){return X.Id==Item;}))return I->DisplayName.ToString();
     if(auto R=HearthwardData::Find(TEXT("craftingRecipes"),Item.ToString()))return HearthwardData::Text(R,TEXT("name"));
     return TEXT("未指定物品");
@@ -193,6 +206,8 @@ FString HearthwardAgent::LimitText(const FString& L)
     const FString Name=ItemText(FName(*T[1]));
     if(T[0]==TEXT("ban"))return TEXT("禁止采集")+Name;
     if(T[0]==TEXT("no"))return TEXT("不得消耗")+Name;
+    if(T[0]==TEXT("allow"))return TEXT("解除以后不得消耗")+Name+TEXT("的约定（不授权取仓库）");
+    if(T[0]==TEXT("once"))return TEXT("仅本次允许消耗")+Name+TEXT("；其他约定仍有效");
     return FString::Printf(TEXT("累计最多消耗%s %s份"),*Name,*T[2]);
 }
 FString HearthwardAgent::EventText(FName Kind)
@@ -207,12 +222,14 @@ FString HearthwardAgent::GoalText(const FHearthwardAgentGoal& G)
 {
     if(G.Intent.IsNone())return TEXT("暂无待补充任务");
     const FString Name=ItemText(G.Item);
-    FString Action=G.Intent==TEXT("collect")?TEXT("新采集"):G.Intent==TEXT("craft")?TEXT("制作"):G.Intent==TEXT("repair")?TEXT("维修自己的"):G.Intent==TEXT("inventory_report")?TEXT("玩家报告库存"):TEXT("新增长期规则");
+    FString Action=G.Intent==TEXT("collect")?TEXT("新采集"):G.Intent==TEXT("store")?TEXT("搬运已有"):G.Intent==TEXT("nature_care")?TEXT("照料"):
+        G.Intent==TEXT("craft")?TEXT("制作"):G.Intent==TEXT("repair")?TEXT("维修自己的"):G.Intent==TEXT("inventory_report")?TEXT("玩家报告库存"):TEXT("新增长期规则");
     FString Unit=G.Intent==TEXT("craft")?TEXT("批"):G.Intent==TEXT("repair")?TEXT("件"):TEXT("份");
     FString Text=FString::Printf(TEXT("%s %s × %d %s\n来源：%s；目的地：营地仓库"),*Action,*Name,G.Quantity,*Unit,G.SourceRef==TEXT("camp")?TEXT("授权共享仓库材料"):G.SourceRef==TEXT("bag")?TEXT("弟弟背包"):TEXT("当前安全采集点"));
     if(G.Intent==TEXT("repair")) Text=FString::Printf(TEXT("维修弟弟自己的 %s × 1 件；保留在弟弟背包\n材料：%s"),*Name,G.SourceRef==TEXT("camp")?TEXT("授权共享仓库"):TEXT("弟弟背包"));
     if(G.Intent==TEXT("companion_order"))
         Text=FString::Printf(TEXT("伙伴高层指令：%s\n战术目标、导航、攻击时机与伤害由UE按当前世界状态决定"),*Name);
+    if(G.Intent==TEXT("nature_care"))Text=FString::Printf(TEXT("在目标[%s]执行%s × %d；实际完成由地块／栏舍状态决定"),*G.Station.ToString().Left(8),*G.Item.ToString(),G.Quantity);
     if(G.Intent==TEXT("inventory_report"))Text=FString::Printf(TEXT("玩家报告：营地仓库当前有 %d 份%s；仅更新弟弟认知，不改变实际仓库"),G.Quantity,*Name);
     if(G.Intent==TEXT("rule_proposal"))Text=TEXT("新增长期规则；确认后影响新接受的任务");
     TArray<FString> Labels;for(const auto& L:G.Limits)Labels.Add(LimitText(L));

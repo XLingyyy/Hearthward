@@ -112,6 +112,14 @@ bool FNPCRestrictionTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Edit changes target"),M.Put(Id,TEXT("collection_ban"),TEXT("保留石材"),0,TEXT("stone")));
     TestTrue(TEXT("Only current typed target enforced"),!M.BlocksCollection(TEXT("wood")) && M.BlocksCollection(TEXT("stone")));
     TestTrue(TEXT("Rule state validates"),M.IsValid(0));
+    TestTrue(TEXT("First typed budget accepted"),M.PutRule(TEXT("max:wood:3"),TEXT("木材最多三份"),0));
+    TestTrue(TEXT("Same rule slot replaced"),M.PutRule(TEXT("max:wood:5"),TEXT("木材最多五份"),0));
+    TestFalse(TEXT("Old typed budget removed"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("max:wood:3")));
+    TestTrue(TEXT("New typed budget active"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("max:wood:5")));
+    TestTrue(TEXT("Consumable ban accepted"),M.PutRule(TEXT("no:herb"),TEXT("以后别用草药"),0));
+    TestTrue(TEXT("Explicit allowance removes matching ban"),M.PutRule(TEXT("allow:herb"),TEXT("以后可以用草药"),0));
+    TestFalse(TEXT("Allowance did not affect a different budget"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("no:herb")));
+    TestTrue(TEXT("Unrelated budget remains"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("max:wood:5")));
     return true;
 }
 #endif

@@ -16,7 +16,8 @@
 #include "GameFramework/PlayerController.h"
 using namespace HearthwardData;
 APawn* UHearthwardNatureSubsystem::Player() const{return UGameplayStatics::GetPlayerPawn(GetWorld(),0);}
-UHearthwardInventoryComponent* UHearthwardNatureSubsystem::Bag() const{return Player()?Player()->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;}
+UHearthwardInventoryComponent* UHearthwardNatureSubsystem::Bag() const
+{auto* Actor=ActionActor.IsValid()?ActionActor.Get():Player();return Actor?Actor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;}
 UHearthwardGameplayComponent* UHearthwardNatureSubsystem::Gameplay() const{return Player()?Player()->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;}
 bool UHearthwardNatureSubsystem::DoesSupportWorldType(EWorldType::Type Type) const{return Type==EWorldType::Game || Type==EWorldType::PIE;}
 bool UHearthwardNatureSubsystem::IsTickable() const{return IsInitialized() && GetWorld()->HasBegunPlay() && !IsTemplate();}
@@ -24,6 +25,11 @@ TStatId UHearthwardNatureSubsystem::GetStatId() const{RETURN_QUICK_DECLARE_CYCLE
 bool UHearthwardNatureSubsystem::Safe(FGuid Epoch) const
 {
     const auto* G=Gameplay();const auto* P=Player();if(!P || !G || !G->Enabled || G->Health<=0 || G->InCombat() || Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())return false;
+    if(ActionActor.IsValid() && ActionActor.Get()!=P)
+    {
+        const auto* S=ActionActor->FindComponentByClass<UHearthwardSurvivalComponent>();
+        return S && S->Alive() && S->SafeToSave() && !ActionActor->IsActorBeingDestroyed();
+    }
     const auto* S=P->FindComponentByClass<UHearthwardSurvivalComponent>();const auto* C=P->FindComponentByClass<UHearthwardCombatComponent>();
     const auto* B=P->FindComponentByClass<UHearthwardBuildingComponent>();
     return (!S || S->SafeToSave()) && (!C || !C->Busy()) && (!B || (!B->IsBuilding() && !B->IsPlacing()));
@@ -39,7 +45,8 @@ FVector UHearthwardNatureSubsystem::Position(FGuid Id) const
 bool UHearthwardNatureSubsystem::Near(FGuid Id,double Distance) const
 {
     if(State.Points.ContainsByPredicate([&](const auto& P){return P.Id==Id && P.Kind==TEXT("resource");}))Distance=FMath::Min(Distance,240.);
-    return Player() && FVector::Dist(Player()->GetActorLocation(),Position(Id))<=Distance;
+    const auto* Actor=ActionActor.IsValid()?ActionActor.Get():Player();
+    return Actor && FVector::Dist(Actor->GetActorLocation(),Position(Id))<=Distance;
 }
 AHearthwardNatureActor* UHearthwardNatureSubsystem::Actor(FGuid Id) const{const auto* A=Actors.Find(Id);return A?A->Get():nullptr;}
 bool UHearthwardNatureSubsystem::Ground(FVector Desired,FVector& Result,bool Flat) const
@@ -193,7 +200,8 @@ void UHearthwardNatureSubsystem::Tick(float Delta)
     if(GetWorld()->IsPaused())return;
     RefreshIn-=Delta;
     if(RefreshIn<=0){RefreshIn=.5;EnsureWorld();RebuildActors();}
-    if(!PendingAction.IsNone() && (!Safe(ActionEpoch) || !Player()->GetVelocity().IsNearlyZero() || FVector::Dist(Player()->GetActorLocation(),ActionPosition)>350))Cancel();
+    const auto* Actor=ActionActor.IsValid()?ActionActor.Get():Player();
+    if(!PendingAction.IsNone() && (!Actor || !Safe(ActionEpoch) || !Actor->GetVelocity().IsNearlyZero() || FVector::Dist(Actor->GetActorLocation(),ActionPosition)>350))Cancel();
     if(IsFishing())TickFishing(Delta);
     SyncAnimals();
     for(auto& S:State.Slots)if(S.Due>=0 && S.Due<=State.Calendar && Player())

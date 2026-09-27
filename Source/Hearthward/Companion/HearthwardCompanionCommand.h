@@ -55,6 +55,15 @@ public:
         return R::Accepted;
     }
 
+    EHearthwardProposalResult AcceptNature(const FHearthwardCommandTicket& Ticket,FGuid CurrentEpoch,const FHearthwardAgentGoal& InGoal)
+    {
+        if(!Pending.Matches(Ticket) || Ticket.Epoch!=CurrentEpoch)return EHearthwardProposalResult::Stale;
+        if(InGoal.Intent!=TEXT("nature_care") || !InGoal.Station.IsValid() || !HearthwardAgent::Validate(InGoal).IsEmpty())
+            return EHearthwardProposalResult::Unsupported;
+        Active=Ticket;Pending={};ItemId=InGoal.Item;Requested=InGoal.Quantity;Delivered=Acquired=Carried=0;
+        Goal=InGoal;bActive=true;return EHearthwardProposalResult::Accepted;
+    }
+
     void Cancel() { Pending = {}; bActive = false; }
     bool IsPending(const FHearthwardCommandTicket& Ticket, FGuid Epoch) const
     { return Pending.Matches(Ticket) && Ticket.Epoch == Epoch; }

@@ -11,7 +11,8 @@ enum class EHearthwardAgentActionType : uint8
     Gather,
     TakeMaterials,
     CommitWorkshop,
-    Deposit
+    Deposit,
+    CommitNature
 };
 
 UENUM(BlueprintType)
@@ -20,7 +21,8 @@ enum class EHearthwardAgentTarget : uint8
     None,
     Source,
     Camp,
-    Workshop
+    Workshop,
+    Nature
 };
 
 USTRUCT(BlueprintType)

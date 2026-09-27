@@ -443,11 +443,11 @@ void UHearthwardScreenWidget::ComposeDialogue()
     }
     TArray<const FHearthwardAgentCapability*> Caps;
     for(const auto& C:HearthwardAgent::Capabilities())
-        if(C.Id==TEXT("collect") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
+        if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
     AgentCapabilityIndex=FMath::Clamp(AgentCapabilityIndex,0,Caps.Num()-1);
     AgentItemIndex=FMath::Clamp(AgentItemIndex,0,Caps[AgentCapabilityIndex]->Items.Num()-1);
     const auto& Cap=*Caps[AgentCapabilityIndex];
-    Element(TEXT("choice"),Cap.Id==TEXT("craft")?TEXT("制作"):Cap.Id==TEXT("repair")?TEXT("维修"):TEXT("采集"),FVector2D(955,240),FVector2D(140,36),16,TEXT("agentTypeNext"));Elements.Last().Component=TEXT("dialogue.panel");
+    Element(TEXT("choice"),Cap.Id==TEXT("craft")?TEXT("制作"):Cap.Id==TEXT("repair")?TEXT("维修"):Cap.Id==TEXT("store")?TEXT("入库"):TEXT("采集"),FVector2D(955,240),FVector2D(140,36),16,TEXT("agentTypeNext"));Elements.Last().Component=TEXT("dialogue.panel");
     Element(TEXT("choice"),HearthwardAgent::ItemText(Cap.Items[AgentItemIndex]),FVector2D(1100,240),FVector2D(150,36),16,TEXT("agentItemNext"));Elements.Last().Component=TEXT("dialogue.panel");
     Element(TEXT("choice"),TEXT("新建手动任务卡"),FVector2D(955,200),FVector2D(190,36),16,TEXT("agentCollectCard"));Elements.Last().Component=TEXT("dialogue.panel");
     Element(TEXT("choice"),TEXT("查看木材库存"),FVector2D(1150,200),FVector2D(210,36),16,TEXT("agentInventory"));Elements.Last().Component=TEXT("dialogue.panel");

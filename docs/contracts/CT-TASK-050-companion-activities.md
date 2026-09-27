@@ -1,4 +1,4 @@
-# CT-TASK-050｜伙伴活动与交流契约增量草案
+# CT-TASK-050｜伙伴活动与交流契约增量
 
 状态：APPROVED（随D1—D6获Owner确认）。Owner／Reviewer XLingyyy。只增补[CT-002](CT-002-companion-command.md)和[050设计](../design/DSGN-R18-companion-activities.md)的语义，不复制公共结构。
 

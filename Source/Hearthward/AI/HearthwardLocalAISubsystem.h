@@ -90,6 +90,7 @@ public:
     void RecordEvent(const FHearthwardNPCEvent& E);
     const FHearthwardNPCMemory& GetMemorySnapshot() const { return Memory; }
     void RestoreMemory(const FHearthwardNPCMemory& Snapshot);
+    void MarkConversation();
 
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;

@@ -4,6 +4,9 @@
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
+#include "../AI/HearthwardLocalAISubsystem.h"
+#include "../Companion/HearthwardCompanionFixture.h"
+#include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
 using namespace HearthwardData;
 void UHearthwardScreenWidget::OpenNature(FGuid Target)
@@ -42,11 +45,13 @@ void UHearthwardScreenWidget::ComposeNature()
     {
         Info=FString::Printf(TEXT("预计产量 %d  ·  浇水 %s  ·  施肥 %s"),N->State.Yield(*C),C->Watered?TEXT("完成"):TEXT("未做"),C->Fertilized?TEXT("完成"):TEXT("未做"));
         Button(TEXT("浇水"),TEXT("nature.water:"));Button(TEXT("施肥"),TEXT("nature.fertilize:"));Button(TEXT("收获并取回一粒种子"),TEXT("nature.harvest:"));
+        Button(TEXT("请弟弟浇水"),TEXT("nature.brother_water:"));Button(TEXT("请弟弟施肥"),TEXT("nature.brother_fertilize:"));Button(TEXT("请弟弟收获"),TEXT("nature.brother_harvest:"));
     }
     if(P)
     {
         Info=FString::Printf(TEXT("%d级栏舍  ·  动物及预留 %d / %d  ·  饲料 %d"),P->Level,N->State.Occupants(P->Id),HearthwardNature::Capacity(P->Level),P->Feed);
         Button(TEXT("放入10份饲料"),TEXT("nature.deposit_feed:"));Button(TEXT("取出全部饲料"),TEXT("nature.withdraw_feed:"));
+        Button(TEXT("请弟弟放入10份饲料"),TEXT("nature.brother_deposit_feed:"));
         Button(TEXT("升级：下一级材料为 60木 / 20石 / 10绳 × 等级"),TEXT("nature.upgrade_pen:"));
         Button(TEXT("移动空栏舍至前方"),TEXT("nature.move_pen:"));Button(TEXT("拆除空栏舍，返还累计材料80%"),TEXT("ask:nature.demolish_pen:confirmed"));
     }
@@ -71,6 +76,22 @@ bool UHearthwardScreenWidget::ExecuteNatureAction(const FString& Action)
     if(Action==TEXT("nature.next") || Action==TEXT("nature.prev")){Scroll+=Action==TEXT("nature.next")?7:-7;Refresh();return true;}
     FString Command,Option;if(!Action.Mid(7).Split(TEXT(":"),&Command,&Option))return false;
     if(Command==TEXT("select")){FGuid::Parse(Option,NatureSelection);Refresh();return true;}
+    if(Command.StartsWith(TEXT("brother_")))
+    {
+        const FName CareAction(*Command.Mid(8));
+        auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+        AHearthwardCompanionFixture* Brother=nullptr;
+        for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Brother=*It;break;}
+        FHearthwardAgentGoal Goal;
+        Goal.Intent=TEXT("nature_care");Goal.Item=CareAction;
+        Goal.Quantity=CareAction==TEXT("deposit_feed")?10:1;
+        Goal.QuantityMode=TEXT("action_count");Goal.SourceRef=TEXT("known_target");Goal.Station=NatureSelection;
+        OpenPage(TEXT("dialogue"));
+        const bool OK=AI && AI->SetStructuredGoal(GetOwningPlayerPawn(),Brother,Goal);
+        const FString Feedback=AI?AI->GetStatus():TEXT("伙伴对话未就绪");
+        if(OK)Refresh();else {OpenPage(TEXT("nature"));Message=Feedback;Refresh();}
+        return OK;
+    }
     auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();int32 Count=Command==TEXT("deposit_feed")?10:1;
     if(Command==TEXT("withdraw_feed")){const auto* P=N->State.Pens.FindByPredicate([&](const auto& X){return X.Id==NatureSelection;});Count=P?P->Feed:0;}
     const FGuid Target=Command==TEXT("plant") || Command==TEXT("build_pen")?FGuid():NatureSelection;
