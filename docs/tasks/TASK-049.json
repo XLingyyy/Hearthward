@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "TASK-049",
-  "title": "完成叙事、故乡四区布局与8主线15支线施工稿",
+  "title": "实现叙事、四区控制与8主线15支线",
   "status": "Active",
   "updated_at": "2026-09-27",
   "owner": "XLingyyy",
@@ -12,7 +12,8 @@
     "用户2026-09-27：开始真实049；owner/reviewer均为本人，不提issue",
     "原稿Hearthward_TASK-043-076的TASK-051，按减2映射",
     "Hearthward_Audit_2026-09-24；GDD v0.3 第2/4/8/9/12/13章",
-    "origin/main@efb275b65e771b24ea01b120b733efca9a234d6c；已含048/PR50"
+    "origin/main@efb275b65e771b24ea01b120b733efca9a234d6c；已含048/PR50",
+    "Owner明确：确认049设计，可以开始施工，完成后提交推送。D1—D6及所需源码、运行表、UI、自然场景和存档接口范围获授权。"
   ],
   "dependencies": [
     "TASK-042",
@@ -28,7 +29,8 @@
     "docs/contracts/CT-TASK-045-combat-alert.md",
     "docs/contracts/CT-TASK-046-camp-economy.md",
     "docs/contracts/CT-TASK-047-progression-inventory.md",
-    "docs/contracts/CT-TASK-048-nature.md"
+    "docs/contracts/CT-TASK-048-nature.md",
+    "docs/contracts/CT-TASK-049-campaign.md"
   ],
   "allowed_paths": [
     "README.md",
@@ -40,13 +42,16 @@
     "docs/design/OPEN_QUESTIONS.md",
     "docs/planning/TASK-049/",
     "docs/world/TASK-049/",
-    "docs/qa/TASK-049/"
+    "docs/qa/TASK-049/",
+    "Source/Hearthward/",
+    "Resources/Data/",
+    "Resources/UI/",
+    "Content/Hearthward/Campaign/",
+    "docs/contracts/CT-TASK-049-campaign.md",
+    "docs/contracts/README.md"
   ],
   "forbidden_paths": [
-    "Source/",
-    "Content/",
     "Config/",
-    "Resources/",
     "Runtime/",
     "art_source/",
     "docs/design/archive/"
@@ -56,12 +61,15 @@
     "80基础驻军、4区、8主线15支线、20初始加最多10营救和保护人物可按稳定ID核对",
     "每张任务卡具备触发/步骤/奖励/分支/失败/伙伴/回档/安全入口",
     "隐藏增援有终结边、可选任务不阻塞夺回，布局不依赖未批准通行能力",
-    "验证文档链接、任务范围与内容关系，同步README和单任务交接"
+    "验证文档链接、任务范围与内容关系，同步README和单任务交接",
+    "正常新游戏进入夜袭、营地、首次救援；正式任务与四区交互可达",
+    "schema8同档恢复剧情、驻军、救援与奖励，兼容schema7",
+    "Editor构建、相关原生测试、实际PIE操作和重开读档验证后提交推送任务分支"
   ],
   "non_goals": [
-    "本轮不施工UE地图或玩法源码",
-    "不创建Issue、不修改旧任务或审计原件",
-    "不擅自批准R项或移植旧任务推送授权"
+    "不创建Issue、不合并main",
+    "不增加第二场战争、普通族人死亡或新通行能力",
+    "不修改旧任务、原审计或历史归档"
   ],
   "prototype_only": false,
   "prototype_approval": null,
@@ -71,12 +79,12 @@
   "permissions": {
     "network": "granted: research primary sources and read remote Git state",
     "install_dependencies": "not_granted",
-    "commit": "not_granted for TASK-049",
-    "push": "not_granted for TASK-049",
+    "commit": "granted: explicit TASK-049 implementation and delivery",
+    "push": "granted: explicit TASK-049 implementation and delivery",
     "merge": "not_granted"
   },
   "notes": [
-    "用户指定同一Owner/Reviewer；不假称独立审查。",
-    "本轮写入为任务文档与候选设计，确认后的施工范围需按具体实现协调。"
+    "Owner/Reviewer均XLingyyy，Agent不自批合并。",
+    "Owner明确批准设计和施工，沿049完成后提交推送。"
   ]
 }
