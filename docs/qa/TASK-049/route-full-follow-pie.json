@@ -1,0 +1,11 @@
+{
+  "ok": false,
+  "method": "Real map, capsule movement input along local navigation paths, no position teleport during route. Global time dilation 3 for QA. Source dry-ground checks separate.",
+  "checks": {
+    "continue campaign": true,
+    "ordinary travel back to camp": false
+  },
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_route.py\", line 117, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_route.py\", line 59, in run\n    c.interact();check('ordinary travel back to camp',c.travel('camp'));yield wait(lambda:not c.busy(),120);yield delay(3)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward-task049/docs/qa/TASK-049/verify_campaign_route.py\", line 14, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ordinary travel back to camp\n",
+  "position": "<Struct 'Vector' (0x00000128AFC66180) {x: 152400.000000, y: -62006.863623, z: 19212.485998}>",
+  "health": 116.94915771484375
+}

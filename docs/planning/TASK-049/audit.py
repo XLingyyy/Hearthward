@@ -54,6 +54,7 @@ thresholds = {n: next(k for k in range(n+1) if k * 100 > n * 95) for n in (80,84
 check('strict 95 percent threshold', thresholds == {80:77,84:80,88:84})
 terrain = json.loads((ROOT/'docs/world/TASK-049/terrain-route.json').read_text(encoding='utf-8'))
 segments = terrain['segment_m']
+check('runtime map route matches collision-aware planning trace', runtime['campaign']['route_trace'] == d['route_trace'] == [p[:2] for p in terrain['path']])
 check('source-terrain route exceeds 7 minutes at 3.5 m/s', sum(segments)/3.5 >= 420)
 check('mean route discovery budget 90-150 seconds (GDD average)', 90 <= sum(segments)/len(segments)/3.5 <= 150)
 check('travel stations reference locations and require interaction', all(s['location'] in locations and 'interaction' in s['activation'] for s in d['travel_stations']))
