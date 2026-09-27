@@ -1,8 +1,10 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-27，核对主干为 `main@efb275b65e771b24ea01b120b733efca9a234d6c`，已含043规则、044生存、045战斗、046营地经济、047成长／装备和048自然资源／种养（PR #46—50）。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复经 PR #43 合入。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。有效设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
+UE 5.8.2 单人第三人称生存冒险项目。截至 2026-09-27，核对主干为 `main@3a163b919ad9e14d987f0197c491c58c890dcb71`，已含043规则、044生存、045战斗、046营地经济、047成长／装备和048自然资源／种养（PR #46—50），以及049叙事关卡和路线修复（PR #52）。Windows Demo 的受测源码为 `8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，基于 `main@68e68d8`；发行修复经 PR #43 合入。版本、任务编号和未完成验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041 账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026 自然地图](docs/tasks/TASK-026.md)已形成可运行的 4032 m World Partition 底座与营地入口，完整路线、流送、性能和 Owner 视觉验收仍未闭合。有效设计依据是 GDD v0.3、DSGN-001、[DSGN-002](docs/design/DSGN-002-ui-gameplay.md) 和 [025局部边界](docs/design/DSGN-025-agent-boundaries.md)。
 
-[TASK-049 叙事与四区关卡](docs/tasks/TASK-049.md)对应原规划051，Owner已批准设计与施工。任务分支已接入可操作夜袭、8主线／15支线、80驻军与两组有限增援、救援返营、四旗控制及schema8存档；尚未合入main。正常新游戏从夜袭开始，按 E 取护符，X 跟随／Z 等待，带弟弟沿后巷到撤离点；到营后按 J 查看目标。岩石阻挡已通过路线绕行修正；约4.99公里规划路线已完成连续步行与弟弟全程跟随验证，实际行走4.95公里，记录见[049报告](docs/qa/TASK-049/REPORT.md)，原048证据仍绑定其报告源码。
+[TASK-049 叙事与四区关卡](docs/tasks/TASK-049.md)对应原规划051，Owner已批准设计与施工。任务分支已接入可操作夜袭、8主线／15支线、80驻军与两组有限增援、救援返营、四旗控制及schema8存档；已由PR #52合入main，测试仍绑定049报告中的原源码。正常新游戏从夜袭开始，按 E 取护符，X 跟随／Z 等待，带弟弟沿后巷到撤离点；到营后按 J 查看目标。岩石阻挡已通过路线绕行修正；约4.99公里规划路线已完成连续步行与弟弟全程跟随验证，实际行走4.95公里，记录见[049报告](docs/qa/TASK-049/REPORT.md)，原048证据仍绑定其报告源码。
+
+[TASK-050 伙伴活动与长期交流](docs/tasks/TASK-050.md)的D1—D6已获Owner确认，实施与验证在任务分支进行。活动权限、替换撤销、物资保全、三日交流和记忆修正以设计和验证报告为准；044自动食药及救援规则继续沿用。
 
 [TASK-042 首版范围与第一体验切片](docs/tasks/TASK-042.md)已形成 [DSGN-003 已批准范围](docs/design/DSGN-003-first-release-slice.md)：拟从营地准备、兄弟分工和近郊救援走到回营成长。Owner于2026-09-26批准首版范围与切片方向，30—60分钟为设计预算；049已批准并接入具体任务与奖励；30—60分钟完整节奏仍待试玩验收。
 
