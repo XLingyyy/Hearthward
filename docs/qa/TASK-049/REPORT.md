@@ -2,7 +2,7 @@
 
 环境：Windows，UE 5.8.2，Development Editor，RTX 4060 Laptop 8GB。工作目录为独立 `Hearthward-task049`，分支 `codex/TASK-049-narrative-layout`。Owner／Reviewer为XLingyyy；Owner已批准设计、施工和提交推送。真人验收尚未完成，任务保持Active，不创建Issue、不合并main。
 
-实现与证据提交的完整SHA见[交接](../../handoffs/TASK-049.md)。共享地形、水体和角色通行能力未修改。引擎构建、原生测试、编辑器启动与停止均由GameFactory的公开UEClient执行。
+当前实现完整SHA：`9374cadbf2eeb5c0f4b54b5b955861b6f723b5dc`；后续文档补录不改变被测源码、运行数据和资产。交付说明见[交接](../../handoffs/TASK-049.md)。共享地形、水体和角色通行能力未修改。引擎构建、原生测试、编辑器启动与停止均由GameFactory的公开UEClient执行。
 
 ## 原生与静态验证
 
@@ -12,7 +12,7 @@
 - UE适配器日志中的`Condition failed`来自负向校验用例；Automation逐项结果与entries是测试成败依据。final-fixed的10项均Success。
 - 内容关系37/37 PASS，见[content-audit.json](content-audit.json)。覆盖8主线、15支线、10名稳定救援身份、20初始人口、80驻军、增援与奖励关系，以及营地局部坐标契约。
 - 源地形检查180/180点位PASS，见[terrain-audit.json](terrain-audit.json)。路线约4803.14m，13个发现节点；按3.5m/s计算22.87分钟、平均发现间隔114.36秒。这些数字来自几何计算，实测行走单独记录。
-- 仓库工具自测33/33 PASS；最终L0、范围和diff检查在收尾记录中。
+- 仓库工具自测33/33 PASS；最终L0／批准基线范围检查0错误，暂存区diff检查PASS，见[local-scope.json](local-scope.json)。
 
 ## 运行验证
 
@@ -51,3 +51,5 @@ G:/GameFactory/.venv/Scripts/python.exe -X utf8 docs/qa/TASK-049/run_engine.py -
 ```
 
 原生／构建入口：`run_engine.py --label repro-native --build --native 'Hearthward.Save+Hearthward.Campaign' --script ''`。静态入口：`docs/planning/TASK-049/audit.py`、`docs/qa/TASK-049/check_terrain.py`、`scripts/validate_repo.py --task TASK-049 --base e2f3834efb29bd0d3a3339d92a934033cfaa8876`。路线不会保存中途位置；开发时可用未提交的`.agent-local/route-resume.json`提供分段起点（index/x/y/z），报告会明确标记此定位夹具，完整复跑应移走该文件；尾声会保存完成状态；复跑全套前需重新从正常新游戏开始。
+
+证据绑定说明：final-epilogue2构建与PIE、final-natural3运行上述完整源码。final-fixed原生用例所覆盖的存档、成长及Campaign状态／任务规则此后未改；后续UI入口与未接触人物落位修改分别由final-continue、final-epilogue2和final-natural3实际运行覆盖。早期失败报告及路线PARTIAL保留原结论。
