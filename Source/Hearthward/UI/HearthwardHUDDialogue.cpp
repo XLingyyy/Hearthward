@@ -242,9 +242,10 @@ FString AHearthwardHUD::GetDialogueProgress() const
     if(C->GetRequested()==0) return Phase;
     const auto* Item=HearthwardBasicItems().FindByPredicate([C](const auto& Def){ return Def.Id==C->GetItem(); });
     const bool Retrieve=C->GetGoal().Intent==TEXT("retrieve");
+    const bool ToPlayer=Retrieve || C->GetGoal().Intent==TEXT("give");
     FString Result=FString::Printf(TEXT("%s · %s%s %d / %d · 携带 %d\n%s"),*Phase,
-        Item ? *Item->DisplayName.ToString() : TEXT("物资"),Retrieve?TEXT("交付玩家"):TEXT("入库"),C->GetDelivered(),C->GetRequested(),C->GetCarried(),
-        Retrieve?TEXT("仓库取货 → 玩家背包交付"):TEXT("采集 → 返营 → 入库"));
+        Item ? *Item->DisplayName.ToString() : TEXT("物资"),ToPlayer?TEXT("交付玩家"):TEXT("入库"),C->GetDelivered(),C->GetRequested(),C->GetCarried(),
+        Retrieve?TEXT("仓库取货 → 玩家背包交付"):ToPlayer?TEXT("弟弟背包 → 玩家背包交付"):TEXT("采集 → 返营 → 入库"));
     if(!C->BlockReason.IsEmpty()) Result+=TEXT("\n")+C->BlockReason;
     return Result;
 }

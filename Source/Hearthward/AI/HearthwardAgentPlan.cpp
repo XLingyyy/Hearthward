@@ -48,6 +48,15 @@ bool HearthwardPlan::Build(const FHearthwardAgentGoal& Goal, FHearthwardAgentPla
         return true;
     }
 
+    if (Goal.Intent == TEXT("give"))
+    {
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Player),
+            Action(EHearthwardAgentActionType::Handoff, EHearthwardAgentTarget::Player)
+        };
+        return true;
+    }
+
     if (Goal.Intent == TEXT("nature_collect"))
     {
         if(!Goal.Station.IsValid()){ Error=TEXT("TARGET_REQUIRED");return false; }

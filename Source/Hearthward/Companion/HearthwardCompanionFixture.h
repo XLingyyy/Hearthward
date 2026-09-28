@@ -87,6 +87,7 @@ private:
     void Deposit();
     void Withdraw();
     void Handoff();
+    bool ReconcileMissingCargo();
     bool PlayerAtTaskCamp(const AActor* Player) const;
     bool IsSourceValid() const;
     FString ResourceTargetReason(const FHearthwardAgentGoal& Goal,bool RequireKnown) const;

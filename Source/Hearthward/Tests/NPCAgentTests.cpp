@@ -43,6 +43,9 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     const auto* Retrieve=HearthwardAgent::FindCapability(TEXT("retrieve"));
     TestTrue(TEXT("Camp-to-player cargo is a distinct typed route"),Retrieve && Retrieve->Items.Contains(TEXT("wood"))
         && Retrieve->Sources==TArray<FString>{TEXT("camp")} && Retrieve->QuantityMode==TEXT("camp_to_player"));
+    const auto* Give=HearthwardAgent::FindCapability(TEXT("give"));
+    TestTrue(TEXT("Brother bag can be explicitly handed to player"),Give && Give->Items.Contains(TEXT("wood"))
+        && Give->Sources==TArray<FString>{TEXT("bag")} && Give->QuantityMode==TEXT("bag_to_player"));
     FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
     Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");
     TestTrue(TEXT("Single crop action has a typed contract"),HearthwardAgent::Validate(Care).IsEmpty());
@@ -612,6 +615,11 @@ bool FNPCAgentPlanTest::RunTest(const FString&)
     TestTrue(TEXT("Delivery withdraws from camp"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Withdraw,EHearthwardAgentTarget::Camp));
     TestTrue(TEXT("Delivery navigates to player"),Plan.Actions[2].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Player));
     TestTrue(TEXT("Only player handoff counts"),Plan.Actions[3].Matches(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
+
+    FHearthwardAgentGoal Give=Goal(TEXT("give"),TEXT("bag"));Give.QuantityMode=TEXT("bag_to_player");
+    TestTrue(TEXT("Brother-to-player delivery plan builds"),HearthwardPlan::Build(Give,Plan,Error));
+    TestEqual(TEXT("Held cargo only needs approach and handoff"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Held cargo handoff targets player"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
 
     FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
     Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");

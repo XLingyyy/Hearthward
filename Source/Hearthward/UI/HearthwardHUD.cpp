@@ -163,10 +163,12 @@ void AHearthwardHUD::DrawHUD()
             }
             Line(Status, 44, FLinearColor::White);
             const auto* Item = HearthwardBasicItems().FindByPredicate([Companion](const auto& Def) { return Def.Id == Companion->GetItem(); });
-            const bool Retrieve=Companion->GetGoal().Intent==TEXT("retrieve");
-            Line(FString::Printf(TEXT("%s%s %d / %d   携带 %d"), Item ? *Item->DisplayName.ToString() : TEXT("物资"),Retrieve?TEXT("交付玩家"):TEXT("入库"),
+            const bool ToPlayer=Companion->GetGoal().Intent==TEXT("retrieve") || Companion->GetGoal().Intent==TEXT("give");
+            Line(FString::Printf(TEXT("%s%s %d / %d   携带 %d"), Item ? *Item->DisplayName.ToString() : TEXT("物资"),ToPlayer?TEXT("交付玩家"):TEXT("入库"),
                 Companion->GetDelivered(), Companion->GetRequested(), Companion->GetCarried()), 76, FLinearColor::White);
-            Line(Retrieve?TEXT("仓库取货 → 玩家背包交付"):TEXT("采集 → 返营 → 入库"), 108, FLinearColor(0.70f, 0.74f, 0.71f));
+            Line(Companion->GetGoal().Intent==TEXT("retrieve")?TEXT("仓库取货 → 玩家背包交付"):
+                Companion->GetGoal().Intent==TEXT("give")?TEXT("弟弟背包 → 玩家背包交付"):TEXT("采集 → 返营 → 入库"),
+                108, FLinearColor(0.70f, 0.74f, 0.71f));
             Line(Companion->BlockReason, 140, FLinearColor(0.88f, 0.65f, 0.50f));
             break;
         }
