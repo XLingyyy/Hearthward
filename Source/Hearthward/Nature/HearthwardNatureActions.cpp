@@ -25,8 +25,10 @@ bool UHearthwardNatureSubsystem::CommitCompanion(APawn* Actor,FName Action,FGuid
     if(!IsValid(Actor) || Actor==Player() || Busy() || Count<=0)return false;
     const bool Crop=State.Crops.ContainsByPredicate([&](const auto& C){return C.Id==Target;});
     const bool Pen=State.Pens.ContainsByPredicate([&](const auto& P){return P.Id==Target;});
+    const bool Resource=State.Points.ContainsByPredicate([&](const auto& P){return P.Id==Target && P.Kind==TEXT("resource");});
     if(Action==TEXT("deposit_feed") ? !Pen
-        : !Crop || (Action!=TEXT("water") && Action!=TEXT("fertilize") && Action!=TEXT("harvest")))return false;
+        : Action==TEXT("harvest") ? !Crop && !Resource
+        : !Crop || (Action!=TEXT("water") && Action!=TEXT("fertilize")))return false;
     ActionActor=Actor;
     const bool Allowed=Safe(Epoch) && Near(Target);
     bool Success=false;
@@ -91,11 +93,23 @@ bool UHearthwardNatureSubsystem::Commit(FName Action,FGuid Id,FName Option,int32
         const auto D=HearthwardNature::Definition(TEXT("resources"),Point->Definition);const FName Item(Text(D,TEXT("item")));FGuid Tool;
         const int32 Yield=Text(D,TEXT("tool"))==TEXT("hand")?2:HearthwardHarvestTools::Yield(Bag(),Item,Tool);
         auto* Source=Camp->Source(Point->Key.ToString());if(!Source || Source->Blocked || Yield<=0 || Source->Remaining<=0)return false;
-        const int32 N=FMath::Min(Yield,Source->Remaining);if(!PrepareBag({},{{Item,N}},Next))return false;
-        if(Tool.IsValid() && !Next.Wear(Tool,1/(1+Gameplay()->Effect(TEXT("durability")))))return false;
+        int32 N=FMath::Min(Yield,Source->Remaining);
+        if(ActionActor.IsValid())
+        {
+            const auto* ItemDef=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==Item;});
+            if(!ItemDef || ItemDef->WeightHundredths<=0)return false;
+            N=FMath::Min(N,FMath::Min(Count,int32(FMath::FloorToInt((Bag()->GetCapacity()-Bag()->GetWeight())*100/ItemDef->WeightHundredths))));
+        }
+        if(N<=0 || !PrepareBag({},{{Item,N}},Next))return false;
+        if(Tool.IsValid() && !Next.Wear(Tool,ActionActor.IsValid()?1:1/(1+Gameplay()->Effect(TEXT("durability")))))return false;
         Source->Remaining-=N;if(Source->Remaining==0)Source->Due=State.Calendar+Source->RefreshMinutes;
-        PublishBag(Next);Gameplay()->Record(TEXT("harvest"),Item,N);
-        if(Item==TEXT("ore"))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("mine_source"));return true;
+        PublishBag(Next);
+        if(!ActionActor.IsValid())
+        {
+            Gameplay()->Record(TEXT("harvest"),Item,N);
+            if(Item==TEXT("ore"))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("mine_source"));
+        }
+        return true;
     }
     if(Action==TEXT("plant"))
     {

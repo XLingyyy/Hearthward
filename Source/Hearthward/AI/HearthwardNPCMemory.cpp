@@ -158,7 +158,7 @@ bool FHearthwardNPCMemory::IsValid(double Now) const
     for(const auto& E:Events)
     {
         if(!E.Id.IsValid() || !E.Command.IsValid() || E.Campaign!=Campaign || E.At<0 || E.At>Now || !FMath::IsFinite(E.At) || E.Count<0 || E.Reason.Len()>200 || EventIds.Contains(E.Id)) return false;
-        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("nature_care"),TEXT("completed"),TEXT("materials_taken"),TEXT("retained_adopted"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
+        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("nature_care"),TEXT("completed"),TEXT("materials_taken"),TEXT("retained_adopted"),TEXT("handoff"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
         const bool BasicItem=HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==E.Item;});
         const bool CraftItem=E.Kind==TEXT("craft") && HearthwardAgent::Capabilities().ContainsByPredicate([&](const auto& C){return C.Id==TEXT("craft") && C.Items.Contains(E.Item);});
         const bool DirectiveItem=E.Kind==TEXT("directive") && ValidCoordinationDirective(E.Item);
@@ -234,9 +234,10 @@ TArray<FString> FHearthwardNPCMemory::ApplicableRules(FName Capability) const
     for(const auto& R:Records)
     {
         if(R.Revoked) continue;
-        if(Capability==TEXT("collect") && R.Kind==TEXT("collection_ban")) Out.AddUnique(TEXT("ban:")+R.BlockedItem.ToString());
+        if((Capability==TEXT("collect") || Capability==TEXT("nature_collect")) && R.Kind==TEXT("collection_ban")) Out.AddUnique(TEXT("ban:")+R.BlockedItem.ToString());
         if(R.Kind!=TEXT("typed_constraint")) continue;
-        if((Capability==TEXT("collect") && (R.Constraint.StartsWith(TEXT("ban:")) || R.Constraint.StartsWith(TEXT("source:"))))
+        if(((Capability==TEXT("collect") || Capability==TEXT("nature_collect")) && R.Constraint.StartsWith(TEXT("ban:")))
+            || (Capability==TEXT("collect") && R.Constraint.StartsWith(TEXT("source:")))
             || ((Capability==TEXT("craft") || Capability==TEXT("repair")) && (R.Constraint.StartsWith(TEXT("no:")) || R.Constraint.StartsWith(TEXT("max:"))))) Out.AddUnique(R.Constraint);
     }
     return Out;

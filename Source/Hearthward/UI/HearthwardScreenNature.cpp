@@ -30,6 +30,11 @@ void UHearthwardScreenWidget::ComposeNature()
     for(const auto& C:N->State.Crops)Add(C.Id,C.Position,Text(HearthwardNature::Definition(TEXT("crops"),C.Definition),TEXT("name"))+(N->State.Ready(C)?TEXT(" · 成熟"):TEXT(" · 生长中")));
     for(const auto& P:N->State.Pens)Add(P.Id,P.Position,Text(HearthwardNature::Definition(TEXT("domestic"),P.Definition),TEXT("name"))+TEXT("栏舍"));
     for(const auto& A:N->State.Animals)if(A.Health>0 || !A.Loot.IsEmpty())Add(A.Id,A.Position,Text(HearthwardNature::Definition(A.Domestic?TEXT("domestic"):TEXT("wildlife"),A.Definition),TEXT("name"))+(A.Health>0?TEXT(""):TEXT(" · 尸体")));
+    auto* Camps=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+    for(const auto& R:N->State.Points)if(R.Kind==TEXT("resource")
+        && FVector::Dist2D(GetOwningPlayerPawn()->GetActorLocation(),R.Position)<=3000
+        && !Camps->State.CampAt(R.Position).IsNone())
+        Add(R.Id,R.Position,Text(HearthwardNature::Definition(TEXT("resources"),R.Definition),TEXT("name")));
     for(const auto& P:N->State.Points)if(P.Kind==TEXT("fish") || (P.Kind==TEXT("treasure") && !N->State.Opened.Contains(P.Definition)))Add(P.Id,P.Position,P.Kind==TEXT("fish")?TEXT("钓鱼点"):TEXT("藏宝箱"));
     List.Sort([](const auto& A,const auto& B){return A.Distance<B.Distance;});Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,List.Num()-7));
     for(int32 I=Scroll;I<FMath::Min(Scroll+7,List.Num());++I)
@@ -64,9 +69,13 @@ void UHearthwardScreenWidget::ComposeNature()
     }
     if(F)
     {
-        Info=F->Kind==TEXT("fish")?FString::Printf(TEXT("鱼群剩余 %d / 24  ·  耗尽后两天恢复"),F->Remaining):TEXT("藏宝奖励一次性领取，容量不足时保留全部内容");
+        Info=F->Kind==TEXT("fish")?FString::Printf(TEXT("鱼群剩余 %d / 24  ·  耗尽后两天恢复"),F->Remaining)
+            : F->Kind==TEXT("resource")?FString::Printf(TEXT("资源点剩余 %d  ·  以实际采得和入库计数"),Camps->Source(F->Key.ToString())?Camps->Source(F->Key.ToString())->Remaining:0)
+            : TEXT("藏宝奖励一次性领取，容量不足时保留全部内容");
         if(F->Kind==TEXT("fish"))Button(TEXT("开始钓鱼：1鱼饵，成功磨损1耐久"),TEXT("nature.fish:"));
-        Button(TEXT("领取留存物品"),TEXT("nature.claim:"));
+        if(F->Kind==TEXT("resource"))
+        {Button(TEXT("请弟弟采集并入库 4 份"),TEXT("nature.brother_collect:4"));Button(TEXT("请弟弟采集并入库 1 份"),TEXT("nature.brother_collect:1"));}
+        else Button(TEXT("领取留存物品"),TEXT("nature.claim:"));
     }
     Element(TEXT("text"),Info,{880,290},{610,60},19);
     Element(TEXT("text"),Message.IsEmpty()?N->Feedback:Message,{180,815},{1310,70},18);
@@ -79,13 +88,17 @@ bool UHearthwardScreenWidget::ExecuteNatureAction(const FString& Action)
     if(Command.StartsWith(TEXT("brother_")))
     {
         const FName CareAction(*Command.Mid(8));
+        const bool Collect=CareAction==TEXT("collect");
+        auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+        const auto* Point=Collect?N->State.Points.FindByPredicate([&](const auto& P){return P.Id==NatureSelection && P.Kind==TEXT("resource");}):nullptr;
         auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
         AHearthwardCompanionFixture* Brother=nullptr;
         for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Brother=*It;break;}
         FHearthwardAgentGoal Goal;
-        Goal.Intent=TEXT("nature_care");Goal.Item=CareAction;
-        Goal.Quantity=CareAction==TEXT("deposit_feed")?10:1;
-        Goal.QuantityMode=TEXT("action_count");Goal.SourceRef=TEXT("known_target");Goal.Station=NatureSelection;
+        Goal.Intent=Collect?FName(TEXT("nature_collect")):FName(TEXT("nature_care"));
+        Goal.Item=Collect && Point?FName(*Text(HearthwardNature::Definition(TEXT("resources"),Point->Definition),TEXT("item"))):CareAction;
+        Goal.Quantity=Collect?FCString::Atoi(*Option):(CareAction==TEXT("deposit_feed")?10:1);
+        Goal.QuantityMode=Collect?TEXT("additional_acquired"):TEXT("action_count");Goal.SourceRef=TEXT("known_target");Goal.Station=NatureSelection;
         OpenPage(TEXT("dialogue"));
         const bool OK=AI && AI->SetStructuredGoal(GetOwningPlayerPawn(),Brother,Goal);
         const FString Feedback=AI?AI->GetStatus():TEXT("伙伴对话未就绪");

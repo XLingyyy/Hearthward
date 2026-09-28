@@ -37,6 +37,18 @@ bool HearthwardPlan::Build(const FHearthwardAgentGoal& Goal, FHearthwardAgentPla
         return true;
     }
 
+    if (Goal.Intent == TEXT("nature_collect"))
+    {
+        if(!Goal.Station.IsValid()){ Error=TEXT("TARGET_REQUIRED");return false; }
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Nature),
+            Action(EHearthwardAgentActionType::CommitNature, EHearthwardAgentTarget::Nature),
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Camp),
+            Action(EHearthwardAgentActionType::Deposit, EHearthwardAgentTarget::Camp)
+        };
+        return true;
+    }
+
     if (Goal.Intent == TEXT("nature_care"))
     {
         if(!Goal.Station.IsValid()){ Error=TEXT("TARGET_REQUIRED");return false; }

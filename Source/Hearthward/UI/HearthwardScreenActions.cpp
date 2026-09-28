@@ -156,14 +156,16 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     }
     if(Action==TEXT("agentInventory")) {if(Page!=TEXT("dialogue"))return false;Success=AI->QueryInventory(GetOwningPlayerPawn(),Companion(GetWorld()),TEXT("wood"));Refresh();return Success;}
     if(Action==TEXT("agentRetryPath")) {if(Page!=TEXT("dialogue"))return false;auto* C=Companion(GetWorld());Success=C && C->ResumeBlocked(GetOwningPlayerPawn());Refresh();return Success;}
-    if(Action==TEXT("agentTypeNext") || Action==TEXT("agentItemNext") || Action==TEXT("agentInstanceNext"))
+    if(Action==TEXT("agentTypeNext") || Action==TEXT("agentItemNext") || Action==TEXT("agentInstanceNext") || Action==TEXT("agentSourceNext"))
     {
         if(Page!=TEXT("dialogue"))return false;
         TArray<const FHearthwardAgentCapability*> Caps;
         for(const auto& C:HearthwardAgent::Capabilities())
             if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
-        if(Action==TEXT("agentTypeNext")){AgentCapabilityIndex=(AgentCapabilityIndex+1)%Caps.Num();AgentItemIndex=0;AgentInstanceIndex=0;}
+        if(Action==TEXT("agentTypeNext")){AgentCapabilityIndex=(AgentCapabilityIndex+1)%Caps.Num();AgentItemIndex=0;AgentInstanceIndex=0;AgentSourceIndex=0;}
         else if(Action==TEXT("agentItemNext")){AgentItemIndex=(AgentItemIndex+1)%Caps[AgentCapabilityIndex]->Items.Num();AgentInstanceIndex=0;}
+        else if(Action==TEXT("agentSourceNext") && Caps[AgentCapabilityIndex]->Id==TEXT("store"))
+            AgentSourceIndex=(AgentSourceIndex+1)%Caps[AgentCapabilityIndex]->Sources.Num();
         else
         {
             auto* Brother=Companion(GetWorld());int32 Count=0;
@@ -182,7 +184,8 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
             if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
         AgentCapabilityIndex=FMath::Clamp(AgentCapabilityIndex,0,Caps.Num()-1);
         AgentItemIndex=FMath::Clamp(AgentItemIndex,0,Caps[AgentCapabilityIndex]->Items.Num()-1);
-        const auto& C=*Caps[AgentCapabilityIndex];FHearthwardAgentGoal Goal;Goal.Intent=C.Id;Goal.Item=C.Items[AgentItemIndex];Goal.Quantity=1;Goal.QuantityMode=C.QuantityMode;Goal.SourceRef=C.Sources[0];
+        const auto& C=*Caps[AgentCapabilityIndex];FHearthwardAgentGoal Goal;Goal.Intent=C.Id;Goal.Item=C.Items[AgentItemIndex];Goal.Quantity=1;Goal.QuantityMode=C.QuantityMode;
+        Goal.SourceRef=C.Id==TEXT("store")?C.Sources[FMath::Clamp(AgentSourceIndex,0,C.Sources.Num()-1)]:C.Sources[0];
         auto* Brother=Companion(GetWorld());
         if(C.Id==TEXT("repair") && Brother)
         {

@@ -38,11 +38,16 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     TestFalse(TEXT("Unknown material"),HearthwardAgent::ValidLimit(TEXT("no:secret")));
     const auto* Store=HearthwardAgent::FindCapability(TEXT("store"));
     TestTrue(TEXT("Store exposes ordinary stackable cargo"),Store && Store->Items.Contains(TEXT("wood")));
+    TestTrue(TEXT("Store identifies authorized player handoff separately"),Store && Store->Sources.Contains(TEXT("player_bag")));
     TestFalse(TEXT("Protected quest item cannot be delegated to storage"),Store && Store->Items.Contains(TEXT("amulet")));
     FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
     Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");
     TestTrue(TEXT("Single crop action has a typed contract"),HearthwardAgent::Validate(Care).IsEmpty());
     Care.Quantity=2;TestFalse(TEXT("Crop action cannot silently become a batch"),HearthwardAgent::Validate(Care).IsEmpty());
+    FHearthwardAgentGoal Resource;Resource.Intent=TEXT("nature_collect");Resource.Item=TEXT("stone");Resource.Quantity=4;
+    Resource.QuantityMode=TEXT("additional_acquired");Resource.SourceRef=TEXT("known_target");
+    TestTrue(TEXT("Known resource has a typed collection contract"),HearthwardAgent::Validate(Resource).IsEmpty() && Resource.WritesWorld());
+    Resource.Limits={TEXT("ban:stone")};TestEqual(TEXT("Collection ban covers nature resources"),HearthwardAgent::Validate(Resource),FString(TEXT("POLICY_CONFLICT")));
     TestTrue(TEXT("Explicit one-time allowance has a distinct type"),HearthwardAgent::ValidLimit(TEXT("once:herb")));
     TSharedPtr<FJsonObject> SchemaRoot;
     const TArray<TSharedPtr<FJsonValue>>* Branches=nullptr;
@@ -594,6 +599,14 @@ bool FNPCAgentPlanTest::RunTest(const FString&)
     TestTrue(TEXT("Identified nature action has an executable plan"),HearthwardPlan::Build(Care,Plan,Error));
     TestEqual(TEXT("Nature plan action count"),Plan.Actions.Num(),2);
     TestTrue(TEXT("Nature plan commits through one domain action"),Plan.Actions[1].Matches(EHearthwardAgentActionType::CommitNature,EHearthwardAgentTarget::Nature));
+
+    FHearthwardAgentGoal Resource=Goal(TEXT("nature_collect"),TEXT("known_target"));Resource.Item=TEXT("stone");
+    TestFalse(TEXT("Resource collection requires an identified point"),HearthwardPlan::Build(Resource,Plan,Error));
+    Resource.Station=FGuid::NewGuid();
+    TestTrue(TEXT("Identified resource point builds"),HearthwardPlan::Build(Resource,Plan,Error));
+    TestEqual(TEXT("Resource collection has return and deposit"),Plan.Actions.Num(),4);
+    TestTrue(TEXT("Resource collection commits through Nature"),Plan.Actions[1].Matches(EHearthwardAgentActionType::CommitNature,EHearthwardAgentTarget::Nature));
+    TestTrue(TEXT("Resource collection deposits at camp"),Plan.Actions[3].Matches(EHearthwardAgentActionType::Deposit,EHearthwardAgentTarget::Camp));
 
     TestTrue(TEXT("Bag craft plan builds"),HearthwardPlan::Build(Goal(TEXT("craft"),TEXT("bag")),Plan,Error));
     TestEqual(TEXT("Bag craft count"),Plan.Actions.Num(),4);

@@ -449,6 +449,12 @@ void UHearthwardScreenWidget::ComposeDialogue()
     const auto& Cap=*Caps[AgentCapabilityIndex];
     Element(TEXT("choice"),Cap.Id==TEXT("craft")?TEXT("制作"):Cap.Id==TEXT("repair")?TEXT("维修"):Cap.Id==TEXT("store")?TEXT("入库"):TEXT("采集"),FVector2D(955,240),FVector2D(140,36),16,TEXT("agentTypeNext"));Elements.Last().Component=TEXT("dialogue.panel");
     Element(TEXT("choice"),HearthwardAgent::ItemText(Cap.Items[AgentItemIndex]),FVector2D(1100,240),FVector2D(150,36),16,TEXT("agentItemNext"));Elements.Last().Component=TEXT("dialogue.panel");
+    if(Cap.Id==TEXT("store"))
+    {
+        AgentSourceIndex=FMath::Clamp(AgentSourceIndex,0,Cap.Sources.Num()-1);
+        Element(TEXT("choice"),Cap.Sources[AgentSourceIndex]==TEXT("player_bag")?TEXT("来源：玩家背包（需3米内）"):TEXT("来源：弟弟背包"),
+            FVector2D(955,285),FVector2D(330,36),15,TEXT("agentSourceNext"));Elements.Last().Component=TEXT("dialogue.panel");
+    }
     if(Cap.Id==TEXT("repair"))
     {
         TArray<FHearthwardItemInstance> Instances;

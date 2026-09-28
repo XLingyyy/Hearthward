@@ -128,7 +128,7 @@ private:
     FGuid StorageEpoch;
     FGuid MemoryEpoch, SelectedMemory;
     int64 MemoryRevision = 0;
-    int32 AgentCapabilityIndex=0,AgentItemIndex=0,AgentInstanceIndex=0;
+    int32 AgentCapabilityIndex=0,AgentItemIndex=0,AgentInstanceIndex=0,AgentSourceIndex=0;
     FName MemoryKind=TEXT("claim");
     FName MemoryBlockedItem=TEXT("wood");
     FGuid CraftingEpoch,Workbench;

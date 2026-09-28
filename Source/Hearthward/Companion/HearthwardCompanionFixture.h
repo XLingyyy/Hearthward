@@ -86,6 +86,7 @@ private:
     void HandleExecutionFailure(const FString& Reason);
     void Deposit();
     bool IsSourceValid() const;
+    FString ResourceTargetReason(const FHearthwardAgentGoal& Goal,bool RequireKnown) const;
     EHearthwardProposalResult AcceptGoal(AActor* Speaker, FHearthwardCommandTicket Ticket,
         FName ItemId, int32 Quantity, const TArray<FName>& Steps, const FHearthwardAgentGoal& Goal);
     void WorkshopTick();
