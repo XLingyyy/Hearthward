@@ -29,6 +29,7 @@ public:
     bool AddGift(FName Kind,FVector Position);
     AActor* ResolveWorkbench(FGuid Id) const;
     FGuid KnownWorkbench(AActor* Observer) const;
+    FGuid KnownFacility(AActor* Observer,FName Kind,int32 Level) const;
     UFUNCTION(BlueprintPure) FGuid NearbyWorkbench() const;
     UFUNCTION(BlueprintPure) bool CanUseWorkbench(FGuid Station) const;
     UFUNCTION(BlueprintPure) FString CraftingStatus(FGuid Station,FName Recipe,int32 Batches,FGuid Epoch) const;

@@ -239,7 +239,7 @@ def run():
     check("repair material fixture", brother.bag.try_add("wood", 6) == unreal.HearthwardInventoryResult.SUCCESS
           and brother.bag.try_add("stone", 6) == unreal.HearthwardInventoryResult.SUCCESS)
     ui.open_page("dialogue")
-    for _ in range(3):
+    for _ in range(7):
         check("repair capability selected", ui.execute_action("agentTypeNext"))
     check("second repair instance selected", ui.execute_action("agentInstanceNext"))
     check("specific repair card", ui.execute_action("agentCollectCard"))

@@ -335,7 +335,7 @@ AActor* AHearthwardCompanionFixture::ResolveActionTarget(const FHearthwardAgentA
     case EHearthwardAgentTarget::Workshop:
     {
         auto* Registry=WorkshopRegistry(GetWorld());
-        return Registry?Registry->ResolveWorkbench(Command.Goal.Station):nullptr;
+        return Registry?Registry->ResolveFacility(Command.Goal.Station):nullptr;
     }
     case EHearthwardAgentTarget::Nature:
         return GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Actor(Command.Goal.Station);
@@ -497,7 +497,7 @@ void AHearthwardCompanionFixture::HandleExecutionFailure(const FString& Reason)
     Context.bCampAvailable=IsValid(Camp) && !Camp->IsActorBeingDestroyed();
     Context.bSourceAvailable=IsSourceValid() && Source->GetItemCount(Command.GetItem())>0;
     auto* Registry=WorkshopRegistry(GetWorld());
-    Context.bStationAvailable=(Registry && Registry->ResolveWorkbench(Command.Goal.Station))
+    Context.bStationAvailable=(Registry && Registry->ResolveFacility(Command.Goal.Station))
         || (Command.Goal.Intent==TEXT("nature_collect")
             && IsValid(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Actor(Command.Goal.Station)));
     Context.AdaptiveAttempts=Execution.AdaptiveRecoveryAttempts;
@@ -1074,7 +1074,13 @@ FString AHearthwardCompanionFixture::PreviewGoal(const FHearthwardAgentGoal& Goa
         return Goal.Item==TEXT("deposit_feed") && Bag->GetItemCount(TEXT("feed"))<Goal.Quantity
             ? TEXT("BAG_INSUFFICIENT"):FString();
     }
-    auto* Registry=WorkshopRegistry(GetWorld());if(!Registry || !Registry->ResolveWorkbench(Goal.Station))return TEXT("STATION_UNAVAILABLE");
+    auto* Registry=WorkshopRegistry(GetWorld());
+    const auto Recipe=HearthwardData::Find(Goal.Intent==TEXT("craft")?TEXT("craftingRecipes"):TEXT("repairRecipes"),Goal.Item.ToString());
+    const auto* Facility=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Facilities.FindByPredicate(
+        [&](const auto& F){return F.Id==Goal.Station;});
+    if(!Registry || !Registry->ResolveFacility(Goal.Station) || !Recipe || !Facility || Facility->Paused
+        || Facility->Kind!=FName(*HearthwardData::Text(Recipe,TEXT("facility")))
+        || Facility->Level<HearthwardData::Number(Recipe,TEXT("facilityLevel")))return TEXT("STATION_UNAVAILABLE");
     TMap<FName,int32> Cost=HearthwardWorkshop::Materials(Goal.Intent,Goal.Item,Goal.Quantity);
     if(Goal.Intent==TEXT("repair"))
     {
@@ -1169,7 +1175,7 @@ void AHearthwardCompanionFixture::WorkshopTick()
     const auto* Current=Execution.Current();
     if(!Current)return;
     const auto& G=Command.Goal;
-    auto* Registry=WorkshopRegistry(GetWorld());AActor* Station=Registry?Registry->ResolveWorkbench(G.Station):nullptr;
+    auto* Registry=WorkshopRegistry(GetWorld());AActor* Station=Registry?Registry->ResolveFacility(G.Station):nullptr;
     if(!IsValid(Station)){HandleExecutionFailure(TEXT("STATION_UNAVAILABLE"));return;}
     const FGuid RepairId=G.Intent==TEXT("repair")?(G.EquipmentId.IsValid()?G.EquipmentId:Bag->FirstInstance(G.Item)):FGuid();
     auto Cost=HearthwardWorkshop::Materials(G.Intent,G.Item,G.Quantity);

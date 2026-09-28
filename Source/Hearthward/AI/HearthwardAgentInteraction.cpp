@@ -248,7 +248,9 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
         if(Goal.Intent==TEXT("craft") || Goal.Intent==TEXT("repair"))
         {
             auto* P=UGameplayStatics::GetPlayerPawn(GetWorld(),0);auto* B=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
-            Goal.Station=B?B->KnownWorkbench(PendingCompanion.Get()):FGuid();
+            const auto Recipe=HearthwardData::Find(Goal.Intent==TEXT("craft")?TEXT("craftingRecipes"):TEXT("repairRecipes"),Goal.Item.ToString());
+            Goal.Station=B && Recipe?B->KnownFacility(PendingCompanion.Get(),FName(*HearthwardData::Text(Recipe,TEXT("facility"))),
+                HearthwardData::Number(Recipe,TEXT("facilityLevel"))):FGuid();
         }
         if(ReasonCode.IsEmpty())
         {

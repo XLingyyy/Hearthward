@@ -21,6 +21,16 @@ FGuid UHearthwardBuildingComponent::KnownWorkbench(AActor* Observer) const
     for(const auto& B:Built)if(B.Recipe==TEXT("workbench") && B.Actor.IsValid() && FVector::Dist(Observer->GetActorLocation(),B.Actor->GetActorLocation())<=3000)return B.Id;
     return {};
 }
+FGuid UHearthwardBuildingComponent::KnownFacility(AActor* Observer,FName Kind,int32 Level) const
+{
+    if(!IsValid(Observer))return {};
+    const auto& Facilities=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Facilities;
+    for(const auto& B:Built)
+        if(B.Recipe==Kind && B.Actor.IsValid() && FVector::Dist(Observer->GetActorLocation(),B.Actor->GetActorLocation())<=3000)
+            if(const auto* Facility=Facilities.FindByPredicate([&](const auto& F){return F.Id==B.Id;}))
+                if(!Facility->Paused && Facility->Kind==Kind && Facility->Level>=Level)return B.Id;
+    return {};
+}
 namespace
 {
 TMap<FName,int32> RecipeItems(const TSharedPtr<FJsonObject>& Recipe,const TCHAR* Field)
