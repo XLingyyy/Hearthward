@@ -6,4 +6,4 @@ Owner／Reviewer XLingyyy；无Issue。真实050＝原稿052。用户已确认D1
 
 UE 5.8.2 Editor Development构建、NPCAgent原生15/15、增量PIE 26/26、原050完整PIE回归108/108与首次会合PIE 17/17均通过；范围/L0使用 `validate_repo.py --task TASK-050 --base eab1387`。具体证据、夹具、未注册能力与NOT_RUN见[报告](../qa/TASK-050/REPORT.md)和[能力矩阵](../planning/TASK-050/CAPABILITIES.md)。存档仍使用schema8，新增记忆字段走已有存档结构；真实旧schema8文件迁移、模型输出、自然地图任意路径、长程角色体验和Shipping未在本单验证。
 
-050仍未注册仓库→玩家及其他容器搬运、营地外安全点采集、栏舍普通产物、专项猎捕／钓鱼／牵引／救援者护送及限定批次在岗生产委托。栏舍物品与产出规则缺失，且任务非目标禁止修改运行数据表；钓鱼、牵引和救援者移动绑定玩家，生产没有委托批次回执。扩到这些活动需要先确定领域规则与本单范围，再逐项接唯一领域结算和自然场景验证。验收本分支请打开 `G:/GameFactory/Hearthward-task049/Hearthward.uproject`；原目录 `G:/GameFactory/Hearthward/Hearthward.uproject` 仍处于另一个检出状态。任务保持Active待Owner验收，不创建Issue或自批合并。
+050仍未注册仓库→玩家及其他容器搬运、营地外安全点采集、栏舍普通产物、专项猎捕／钓鱼／牵引／救援者护送及限定批次在岗生产委托。048 D5明定养殖仅产肉且不新增蛋奶毛、不自动宰杀，与050 D1的普通产物收取相冲突；任务非目标还禁止修改运行数据表。钓鱼、牵引和救援者移动绑定玩家，生产没有委托批次回执。扩到这些活动需要先确定领域规则与本单范围，再逐项接唯一领域结算和自然场景验证。验收本分支请打开 `G:/GameFactory/Hearthward-task049/Hearthward.uproject`；原目录 `G:/GameFactory/Hearthward/Hearthward.uproject` 仍处于另一个检出状态。任务保持Active待Owner验收，不创建Issue或自批合并。
