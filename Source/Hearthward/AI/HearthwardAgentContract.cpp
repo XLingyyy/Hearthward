@@ -67,7 +67,7 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
             {TEXT("store"),TEXT("将弟弟背包里指定数量的已有普通物品带回营地仓库；不能从仓库取出，不把旧货物算作新采集"),Stored,Policy(TEXT("max_collect")),TEXT("held_to_camp"),{TEXT("bag")},{},true},
             {TEXT("nature_care"),TEXT("照料已知的当前地块或栏舍；必须指定唯一目标，浇水/施肥/收获各1次，喂饲料可指定份数"),{TEXT("water"),TEXT("fertilize"),TEXT("harvest"),TEXT("deposit_feed")},32,TEXT("action_count"),{TEXT("known_target")},{},true},
             {TEXT("craft"),TEXT("取得授权材料→到工作台制作→产物入库；quantity是批数；默认弟弟背包bag，明确授权才用camp仓库；once:物品仅用于玩家明确说这次可用的单次例外"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
-            {TEXT("repair"),TEXT("到工作台修理自己背包中唯一一件装备；quantity=1；不操作玩家装备；once:物品仅用于玩家明确说这次可用的单次例外"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
+            {TEXT("repair"),TEXT("到工作台修理弟弟背包中明确的装备实例；同类多件必须由玩家选择实例；quantity=1；once:物品仅用于玩家明确说这次可用的单次例外"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
             {TEXT("companion_order"),TEXT("高层伙伴指令；hold原地等待，follow跟随玩家，assist在玩家附近协助有效威胁，routine恢复营地低权限自由活动；UE决定目标、导航、攻击时机和伤害"),{TEXT("hold"),TEXT("follow"),TEXT("assist"),TEXT("routine")},1,TEXT("directive"),{TEXT("player")},{},true},
             {TEXT("inventory"),TEXT("只读询问营地当前或已有belief库存；‘多少/几份/是不是有/吗/？’这类疑问句属于inventory；回复必须说明来源与是否亲自确认"),All,0,TEXT("none"),{TEXT("none")},{},false},
             {TEXT("inventory_report"),TEXT("仅限玩家用陈述句明确报告营地某物品的精确当前数量；疑问句不是report；只更新弟弟的belief，不修改实际仓库"),All,100000,TEXT("reported_exact"),{TEXT("player")},{},false},
@@ -226,7 +226,8 @@ FString HearthwardAgent::GoalText(const FHearthwardAgentGoal& G)
         G.Intent==TEXT("craft")?TEXT("制作"):G.Intent==TEXT("repair")?TEXT("维修自己的"):G.Intent==TEXT("inventory_report")?TEXT("玩家报告库存"):TEXT("新增长期规则");
     FString Unit=G.Intent==TEXT("craft")?TEXT("批"):G.Intent==TEXT("repair")?TEXT("件"):TEXT("份");
     FString Text=FString::Printf(TEXT("%s %s × %d %s\n来源：%s；目的地：营地仓库"),*Action,*Name,G.Quantity,*Unit,G.SourceRef==TEXT("camp")?TEXT("授权共享仓库材料"):G.SourceRef==TEXT("bag")?TEXT("弟弟背包"):TEXT("当前安全采集点"));
-    if(G.Intent==TEXT("repair")) Text=FString::Printf(TEXT("维修弟弟自己的 %s × 1 件；保留在弟弟背包\n材料：%s"),*Name,G.SourceRef==TEXT("camp")?TEXT("授权共享仓库"):TEXT("弟弟背包"));
+    if(G.Intent==TEXT("repair")) Text=FString::Printf(TEXT("维修弟弟自己的 %s × 1 件；保留在弟弟背包\n装备实例：%s；材料：%s"),*Name,
+        G.EquipmentId.IsValid()?*G.EquipmentId.ToString().Left(8):TEXT("待确认唯一实例"),G.SourceRef==TEXT("camp")?TEXT("授权共享仓库"):TEXT("弟弟背包"));
     if(G.Intent==TEXT("companion_order"))
         Text=FString::Printf(TEXT("伙伴高层指令：%s\n战术目标、导航、攻击时机与伤害由UE按当前世界状态决定"),*Name);
     if(G.Intent==TEXT("nature_care"))Text=FString::Printf(TEXT("在目标[%s]执行%s × %d；实际完成由地块／栏舍状态决定"),*G.Station.ToString().Left(8),*G.Item.ToString(),G.Quantity);

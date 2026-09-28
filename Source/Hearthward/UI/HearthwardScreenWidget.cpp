@@ -277,11 +277,27 @@ void UHearthwardScreenWidget::Refresh()
     if(!Message.IsEmpty()) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
     if(!ConfirmAction.IsEmpty())
     {
+        if(ConfirmAction==TEXT("resetAgreements"))
+        {
+            Element(TEXT("panel"),TEXT(""),FVector2D(350,165),FVector2D(972,635));
+            Element(TEXT("text"),TEXT("取消所有任务和约定"),FVector2D(405,202),FVector2D(850,45),27);
+            Element(TEXT("text"),TEXT("确认后停止所列委托、放弃候选卡、撤销所列玩家规则。事实、行动回执和物资保留。"),FVector2D(405,254),FVector2D(850,70),18);
+            for(int32 I=ResetScroll;I<FMath::Min(ResetScroll+2,ResetItems.Num());++I)
+                Element(TEXT("text"),FString::Printf(TEXT("%d/%d  %s"),I+1,ResetItems.Num(),*ResetItems[I]),
+                    FVector2D(405,340+(I-ResetScroll)*124),FVector2D(850,115),19);
+            Element(TEXT("button"),TEXT("上一页"),FVector2D(405,600),FVector2D(170,45),18,TEXT("resetPrev"));Elements.Last().Enabled=ResetScroll>0;
+            Element(TEXT("button"),TEXT("下一页"),FVector2D(595,600),FVector2D(170,45),18,TEXT("resetNext"));Elements.Last().Enabled=ResetScroll+2<ResetItems.Num();
+            Element(TEXT("button"),TEXT("确认取消"),FVector2D(405,704),FVector2D(280,55),22,TEXT("confirm"));
+            Element(TEXT("button"),TEXT("返回"),FVector2D(975,704),FVector2D(280,55),22,TEXT("cancel"));
+        }
+        else
+        {
         Element(TEXT("panel"),TEXT(""),FVector2D(490,310),FVector2D(690,290));
         Element(TEXT("text"),TEXT("确认操作"),FVector2D(550,342),FVector2D(580,45),28);
         Element(TEXT("text"),(ConfirmAction==TEXT("gear.dropConfirmed")?TEXT("这是唯一装备，放下后仅能在原地拾回。确认放到地面？"):ConfirmAction.StartsWith(TEXT("camp."))?ConfirmMessage:TEXT("未保存的进度可能丢失。是否继续？")),FVector2D(550,410),FVector2D(580,50),20);
         Element(TEXT("button"),TEXT("确认"),FVector2D(550,510),FVector2D(240,55),22,TEXT("confirm"));
         Element(TEXT("button"),TEXT("返回"),FVector2D(850,510),FVector2D(240,55),22,TEXT("cancel"));
+        }
     }
     ApplyLayout();
     KeyboardFocus=FocusedAction.IsEmpty()?INDEX_NONE:Elements.IndexOfByPredicate([&](const FHearthwardUIElement& E)

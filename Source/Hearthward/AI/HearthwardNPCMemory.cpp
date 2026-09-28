@@ -84,6 +84,14 @@ bool FHearthwardNPCMemory::Revoke(FGuid Id)
     ++Revision; Clarification.Reset(); WorkingGoal={}; return true;
 }
 
+int32 FHearthwardNPCMemory::RevokePlayerRules()
+{
+    const int32 Removed=Records.RemoveAll([](const auto& R)
+    { return !R.Revoked && (R.Kind==TEXT("agreement") || R.Kind==TEXT("collection_ban") || R.Kind==TEXT("typed_constraint")); });
+    if(Removed>0){++Revision;Clarification.Reset();WorkingGoal={};}
+    return Removed;
+}
+
 bool FHearthwardNPCMemory::AddClarification(const FString& Player,const FString& Question)
 {
     int32 Characters=Player.Len()+Question.Len();
@@ -119,7 +127,8 @@ TArray<FHearthwardPlayerMemory> FHearthwardNPCMemory::Retrieve(const FString& Qu
 bool FHearthwardNPCMemory::IsValid(double Now) const
 {
     if(Revision<1 || Events.Num()>HearthwardAgent::Policy(TEXT("max_events"))) return false;
-    if(!FMath::IsFinite(LastConversationCalendar) || LastConversationCalendar<0 || ReminderVisit<0) return false;
+    if(!FMath::IsFinite(LastConversationCalendar) || LastConversationCalendar<0 || ReminderVisit<0
+        || (ConversationClockStarted && ConversationClockAwaitingFirstMeeting)) return false;
     if (Records.Num()>MaxRecords || Clarification.Num()>4 || !FMath::IsFinite(CampObservedAt)
         || CampObservedAt<0 || CampObservedAt>Now) return false;
     TSet<FGuid> Ids; int32 Agreements=0, Characters=0;

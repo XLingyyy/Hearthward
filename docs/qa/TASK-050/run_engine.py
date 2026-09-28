@@ -1,9 +1,10 @@
 """Host runner; retains the UEClient that owns the editor until it is stopped."""
-import argparse,json,sys,time
+import argparse,json,sys,time,uuid
 from pathlib import Path
 p=argparse.ArgumentParser()
 p.add_argument('--framework',default='G:/GameFactory');p.add_argument('--engine',default='G:/UnrealEngine/UE_5.8')
 p.add_argument('--label',required=True);p.add_argument('--build',action='store_true');p.add_argument('--native',default='');p.add_argument('--null-rhi',action='store_true')
+p.add_argument('--isolated-pool',action='store_true')
 p.add_argument('--script',default='docs/qa/TASK-050/verify_companion_pie.py');p.add_argument('--map',default='/Game/Hearthward/Bootstrap/L_Bootstrap')
 p.add_argument('--result',default='Saved/Task050/pie/results.json');p.add_argument('--timeout',type=int,default=700)
 args=p.parse_args();sys.path.insert(0,args.framework)
@@ -24,7 +25,10 @@ result=root/args.result
 if result.exists():result.rename(result.with_name(args.label+'-previous.json'))
 stop=root/'Saved/Task050/stop-request'
 if stop.exists():stop.unlink()
-r=ue.runtime.launch_editor(map_path=args.map,extra_args=['-ExecutePythonScript='+str(root/args.script),'-NoSound','-unattended','-silent','-windowed','-ResX=1280','-ResY=720']+(['-NullRHI'] if args.null_rhi else []));save('launch',r)
+extra=['-ExecutePythonScript='+str(root/args.script),'-NoSound','-unattended','-silent','-windowed','-ResX=1280','-ResY=720']
+if args.isolated_pool:extra.append('-HearthwardSaveTestPool='+str(uuid.uuid4()))
+if args.null_rhi:extra.append('-NullRHI')
+r=ue.runtime.launch_editor(map_path=args.map,extra_args=extra);save('launch',r)
 if not r['ok']:sys.exit(1)
 try:
     deadline=time.monotonic()+args.timeout

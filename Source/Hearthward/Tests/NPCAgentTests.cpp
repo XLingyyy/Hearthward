@@ -703,6 +703,14 @@ bool FNPCAgentWorkshopTest::RunTest(const FString&)
     NPC->TryAdd(TEXT("stone"),3);TestTrue(TEXT("Own selected equipment repaired"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
     TestEqual(TEXT("Repair wood cost"),NPC->GetItemCount(TEXT("wood")),0);TestEqual(TEXT("Maximum restored"),NPC->FindInstance(Axe)->Durability,80.);
     TestFalse(TEXT("Completed repair cannot settle again"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
+    NPC->TryAdd(TEXT("axe"),1);FGuid SecondAxe;
+    for(const auto& Instance:NPC->Snapshot().Instances)if(Instance.Definition==TEXT("axe") && Instance.Id!=Axe)SecondAxe=Instance.Id;
+    TestTrue(TEXT("Second instance exists"),SecondAxe.IsValid());
+    NPC->WearInstance(SecondAxe,40);NPC->TryAdd(TEXT("wood"),6);NPC->TryAdd(TEXT("stone"),6);
+    TestFalse(TEXT("Two same-type instances need a target"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
+    TestTrue(TEXT("Explicit second instance repairs"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1,SecondAxe));
+    TestEqual(TEXT("First instance unchanged"),NPC->FindInstance(Axe)->Durability,80.);
+    TestEqual(TEXT("Selected second instance repaired"),NPC->FindInstance(SecondAxe)->Durability,80.);
     TestEqual(TEXT("Still no player debit"),Player->GetItemCount(TEXT("wood")),10);return true;
 }
 #endif

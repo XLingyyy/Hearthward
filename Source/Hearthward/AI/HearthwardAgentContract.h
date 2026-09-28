@@ -17,6 +17,7 @@ struct FHearthwardAgentGoal
     UPROPERTY(BlueprintReadOnly) FString Line;
     UPROPERTY(BlueprintReadOnly) FString Original;
     UPROPERTY(BlueprintReadOnly) FGuid Station;
+    UPROPERTY(BlueprintReadOnly) FGuid EquipmentId;
     UPROPERTY(BlueprintReadOnly) int64 RuleRevision = 0;
     UPROPERTY(BlueprintReadOnly) int32 CapabilityVersion = 2;
     bool WritesWorld() const { return Intent==TEXT("collect") || Intent==TEXT("store") || Intent==TEXT("nature_care") || Intent==TEXT("craft") || Intent==TEXT("repair") || Intent==TEXT("companion_order"); }

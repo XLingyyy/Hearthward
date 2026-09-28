@@ -42,6 +42,15 @@ def nature_state():
     return json.loads(st["nature"].describe())
 
 
+def inventory_instances(item):
+    state = json.loads(st["brother"].bag.describe_inventory())
+    return [entry for entry in state["instances"] if entry["definition"] == item]
+
+
+def guid_key(value):
+    return tuple(value.get_editor_property(part) for part in ("a", "b", "c", "d"))
+
+
 def goal(intent, item, count, mode, source):
     value = unreal.HearthwardAgentGoal()
     for key, field in {"intent": intent, "item": item, "quantity": count,
@@ -67,11 +76,9 @@ def grant_shared(item, quantity):
 
 def save_new_point(label):
     save = st["save"]
-    def key(value):
-        return tuple(value.get_editor_property(part) for part in ("a", "b", "c", "d"))
-    existing = {key(point.save_id) for point in save.get_points()}
+    existing = {guid_key(point.save_id) for point in save.get_points()}
     check(label, save.save_point(True))
-    created = [point.save_id for point in save.get_points() if key(point.save_id) not in existing]
+    created = [point.save_id for point in save.get_points() if guid_key(point.save_id) not in existing]
     check(label + " has new point", len(created) == 1)
     return created[0]
 
@@ -220,6 +227,34 @@ def run():
     check("workbench started", builder.confirm_placement())
     yield wait(lambda: not builder.is_building(), 10)
     check("workbench settled", builder.building_count() >= 1)
+    check("first repair instance fixture", brother.bag.try_add("axe", 1) == unreal.HearthwardInventoryResult.SUCCESS)
+    first_axe = brother.bag.first_instance("axe")
+    check("second repair instance fixture", brother.bag.try_add("axe", 1) == unreal.HearthwardInventoryResult.SUCCESS)
+    second_row = next(x for x in inventory_instances("axe") if guid_key(guid(x["id"])) != guid_key(first_axe))
+    second_axe = guid(second_row["id"])
+    check("wear first repair instance", brother.bag.wear_instance(first_axe, 20))
+    check("wear second repair instance", brother.bag.wear_instance(second_axe, 40))
+    second_worn = next(x["durability"] for x in inventory_instances("axe")
+                       if guid_key(guid(x["id"])) == guid_key(second_axe))
+    check("repair material fixture", brother.bag.try_add("wood", 6) == unreal.HearthwardInventoryResult.SUCCESS
+          and brother.bag.try_add("stone", 6) == unreal.HearthwardInventoryResult.SUCCESS)
+    ui.open_page("dialogue")
+    for _ in range(3):
+        check("repair capability selected", ui.execute_action("agentTypeNext"))
+    check("second repair instance selected", ui.execute_action("agentInstanceNext"))
+    check("specific repair card", ui.execute_action("agentCollectCard"))
+    check("repair card names second instance", second_row["id"][:8] in ai.get_candidate_text())
+    check("repair card quotes selected instance", f"所选实例当前耐久：{second_worn:.0f}" in ai.get_candidate_text()
+          and "预计消耗（结算前复核）" in ai.get_candidate_text())
+    check("specific repair confirmation", ai.confirm_candidate(ai.get_candidate_id()))
+    yield wait(lambda: brother.get_phase() == unreal.HearthwardCompanionPhase.COMPLETED, 25)
+    axes = {guid_key(guid(row["id"])): row["durability"] for row in inventory_instances("axe")}
+    check("only selected instance repaired", axes[guid_key(first_axe)] == 60 and axes[guid_key(second_axe)] == 80)
+    repair_point = save_new_point("repair save")
+    check("repair reload", save.load_point(repair_point))
+    axes = {guid_key(guid(row["id"])): row["durability"] for row in inventory_instances("axe")}
+    check("repair reload preserves target and durability", axes[guid_key(first_axe)] == 60 and axes[guid_key(second_axe)] == 80)
+    ui.open_page("hud")
     camp = subsystem(unreal.HearthwardCampSubsystem, world)
     check("pen rescue prerequisite", camp.record_rescue("task050_pen_fixture"))
     check("pen tier prerequisite", camp.upgrade_camp(store.get_timeline_epoch()))
@@ -286,6 +321,31 @@ def run():
     player.set_actor_location(unreal.Vector(-150, -150, 100), False, True)
     yield wait(lambda: ai.has_active_initiative(), 8)
     check("new camp visit permits one reminder", str(ai.get_initiative_kind()) == "conversation_reminder")
+
+    # One confirmation cancels the active task and listed rules; player claims and cargo survive.
+    check("clear reminder before reset", ai.query_recent_history(player, brother))
+    check("reset claim fixture", ai.put_player_memory(player, brother, unreal.Guid(), "claim", "我说营地有很多木材", "wood"))
+    check("reset agreement fixture", ai.put_player_memory(player, brother, unreal.Guid(), "agreement", "以后少采木材", "wood"))
+    check("reset restriction fixture", ai.put_player_memory(player, brother, unreal.Guid(), "collection_ban", "不要采木材", "wood"))
+    reset_wood = brother.bag.get_item_count("wood")
+    check("reset has cargo", reset_wood > 0)
+    ui.open_page("dialogue")
+    check("reset active task card", ai.set_structured_goal(player, brother, goal("store", "wood", 1, "held_to_camp", "bag")))
+    check("reset active task confirmation", ai.confirm_candidate(ai.get_candidate_id()))
+    ui.open_page("memory")
+    check("reset review card", ui.execute_action("memoryReset"))
+    check("reset confirmation", ui.execute_action("confirm"))
+    check("reset stops task and preserves cargo", brother.get_phase() == unreal.HearthwardCompanionPhase.CANCELLED
+          and brother.bag.get_item_count("wood") == reset_wood)
+    kinds = [str(row.kind) for row in ai.get_player_memories()]
+    check("reset preserves claim only", "claim" in kinds and "agreement" not in kinds
+          and "collection_ban" not in kinds and "typed_constraint" not in kinds)
+    ui.open_page("hud")
+    reset_point = save_new_point("reset save")
+    check("reset reload", save.load_point(reset_point))
+    kinds = [str(row.kind) for row in ai.get_player_memories()]
+    check("reset reload preserves claim and revoked rules", "claim" in kinds and "agreement" not in kinds
+          and "collection_ban" not in kinds and brother.bag.get_item_count("wood") == reset_wood)
     finish()
 
 

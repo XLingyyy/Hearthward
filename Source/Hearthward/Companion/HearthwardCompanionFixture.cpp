@@ -155,9 +155,9 @@ EHearthwardProposalResult AHearthwardCompanionFixture::AcceptGoal(AActor* Speake
     return Result;
 }
 
-bool AHearthwardCompanionFixture::Cancel(AActor* Speaker)
+bool AHearthwardCompanionFixture::Cancel(AActor* Speaker,bool bAllowPaused)
 {
-    if (bSettling || !CanCommunicate(Speaker) || GetWorld()->IsPaused()) return false;
+    if (bSettling || !CanCommunicate(Speaker) || (GetWorld()->IsPaused() && !bAllowPaused)) return false;
     if(Command.IsCurrent(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())) Event(TEXT("cancelled"),Command.GetItem(),Command.GetDelivered());
     Command.Cancel();
     Execution.Reset();
@@ -776,12 +776,17 @@ FString AHearthwardCompanionFixture::PreviewGoal(const FHearthwardAgentGoal& Goa
             ? TEXT("BAG_INSUFFICIENT"):FString();
     }
     auto* Registry=WorkshopRegistry(GetWorld());if(!Registry || !Registry->ResolveWorkbench(Goal.Station))return TEXT("STATION_UNAVAILABLE");
+    TMap<FName,int32> Cost=HearthwardWorkshop::Materials(Goal.Intent,Goal.Item,Goal.Quantity);
     if(Goal.Intent==TEXT("repair"))
     {
-        if(Bag->GetItemCount(Goal.Item)!=1 || !Bag->FirstInstance(Goal.Item).IsValid())return TEXT("AMBIGUOUS_TARGET");
-        if(EquipmentDurability(Goal.Item)>=HearthwardData::Number(HearthwardData::Find(TEXT("items"),Goal.Item.ToString()),TEXT("durability")))return TEXT("ALREADY_REPAIRED");
+        if(!Goal.EquipmentId.IsValid() && Bag->GetItemCount(Goal.Item)!=1)return TEXT("AMBIGUOUS_TARGET");
+        const FGuid Target=Goal.EquipmentId.IsValid()?Goal.EquipmentId:Bag->FirstInstance(Goal.Item);
+        const auto* Instance=Bag->FindInstance(Target);
+        if(!Instance || Instance->Definition!=Goal.Item)return TEXT("TARGET_UNAVAILABLE");
+        double Restored=0;
+        if(!HearthwardWorkshop::RepairQuote(Bag,Target,1,Cost,Restored))return TEXT("ALREADY_REPAIRED");
     }
-    if(!HearthwardAgent::AllowsCost(Goal.Limits,HearthwardWorkshop::Materials(Goal.Intent,Goal.Item,Goal.Quantity),{}))return TEXT("POLICY_CONFLICT");
+    if(!HearthwardAgent::AllowsCost(Goal.Limits,Cost,{}))return TEXT("POLICY_CONFLICT");
     return {};
 }
 EHearthwardProposalResult AHearthwardCompanionFixture::SubmitGoal(AActor* Speaker,FHearthwardCommandTicket Ticket,const FHearthwardAgentGoal& Goal)
@@ -850,7 +855,15 @@ void AHearthwardCompanionFixture::WorkshopTick()
     const auto& G=Command.Goal;
     auto* Registry=WorkshopRegistry(GetWorld());AActor* Station=Registry?Registry->ResolveWorkbench(G.Station):nullptr;
     if(!IsValid(Station)){HandleExecutionFailure(TEXT("STATION_UNAVAILABLE"));return;}
+    const FGuid RepairId=G.Intent==TEXT("repair")?(G.EquipmentId.IsValid()?G.EquipmentId:Bag->FirstInstance(G.Item)):FGuid();
     auto Cost=HearthwardWorkshop::Materials(G.Intent,G.Item,G.Quantity);
+    if(G.Intent==TEXT("repair"))
+    {
+        const auto* Instance=Bag->FindInstance(RepairId);
+        double Restored=0;
+        if(!Instance || Instance->Definition!=G.Item || !HearthwardWorkshop::RepairQuote(Bag,RepairId,1,Cost,Restored))
+        {HandleExecutionFailure(TEXT("TARGET_UNAVAILABLE"));return;}
+    }
     if(!HearthwardAgent::AllowsCost(G.Limits,Cost,Spent)){HandleExecutionFailure(TEXT("POLICY_CONFLICT"));return;}
 
     if(Current->Type==EHearthwardAgentActionType::TakeMaterials)
@@ -892,7 +905,7 @@ void AHearthwardCompanionFixture::WorkshopTick()
     }
 
     if(Current->Type!=EHearthwardAgentActionType::CommitWorkshop)return;
-    const FString Error=HearthwardWorkshop::Check(this,Station,Bag,G.Intent,G.Item,G.Quantity);
+    const FString Error=HearthwardWorkshop::Check(this,Station,Bag,G.Intent,G.Item,G.Quantity,RepairId);
     if(Error==TEXT("OUT_OF_RANGE") || Error==TEXT("PATH_BLOCKED"))
     {
         if(!MoveTowards(Station,0,160))HandleExecutionFailure(TEXT("PATH_BLOCKED"));
@@ -901,17 +914,16 @@ void AHearthwardCompanionFixture::WorkshopTick()
     if(!Error.IsEmpty()){HandleExecutionFailure(Error);return;}
 
     StopNavigation();TGuardValue<bool> Guard(bSettling,true);
-    if(G.Intent==TEXT("repair")){double Restored;HearthwardWorkshop::RepairQuote(Bag,Bag->FirstInstance(G.Item),1,Cost,Restored);}
-    const float Before=EquipmentDurability(G.Item);
+    const float Before=G.Intent==TEXT("repair")?Bag->FindInstance(RepairId)->Durability:0;
     const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCFA1,Ticket.Id.D);
     if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(),
         FString::Printf(TEXT("%s:%s:%d:r%lld"),*G.Intent.ToString(),*G.Item.ToString(),G.Quantity,Ticket.Revision),[&]
         {
-            if(!HearthwardWorkshop::Commit(Bag,G.Intent,G.Item,G.Quantity))return false;
+            if(!HearthwardWorkshop::Commit(Bag,G.Intent,G.Item,G.Quantity,RepairId))return false;
             for(const auto& C:Cost)Spent.FindOrAdd(C.Key)+=C.Value;
             Execution.AdaptiveRecoveryAttempts=0;
             Execution.LastRecoveryReason.Reset();
-            Event(G.Intent,G.Item,G.Quantity,G.Intent==TEXT("repair")?FString::Printf(TEXT("耐久 %.0f → %.0f"),Before,EquipmentDurability(G.Item)):TEXT("实际扣料并产生物品"),Op);
+            Event(G.Intent,G.Item,G.Quantity,G.Intent==TEXT("repair")?FString::Printf(TEXT("耐久 %.0f → %.0f"),Before,Bag->FindInstance(RepairId)->Durability):TEXT("实际扣料并产生物品"),Op);
             Command.RecordAcquisition(Command.GetRequested());
             if(G.Intent==TEXT("repair"))
             {

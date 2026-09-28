@@ -151,6 +151,27 @@ bool UHearthwardLocalAISubsystem::RevokePlayerMemory(AActor* Speaker,AHearthward
     CancelPending(); Status=TEXT("已撤销这条记录，待澄清内容已清除；执行中的委托保持原状"); MarkConversation(); return true;
 }
 
+bool UHearthwardLocalAISubsystem::CancelTasksAndAgreements(AActor* Speaker,AHearthwardCompanionFixture* Companion,
+    FGuid ExpectedEpoch,int64 ExpectedRevision,FGuid ExpectedCommand,bool bExpectedActive,FGuid ExpectedCandidate)
+{
+    auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
+    auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    if(!IsValid(Companion) || Companion->GetWorld()!=GetWorld() || !Companion->CanCommunicate(Speaker)
+        || Save->IsRestoring() || Store->GetTimelineEpoch()!=ExpectedEpoch
+        || Memory.Revision!=ExpectedRevision || Companion->EquipmentBusy()!=bExpectedActive
+        || (bExpectedActive && Companion->GetCommandId()!=ExpectedCommand) || CandidateId!=ExpectedCandidate)
+    { Status=TEXT("确认卡已失效，请重新核对任务和约定");return false; }
+    if(bExpectedActive && !Companion->Cancel(Speaker,true))
+    { Status=TEXT("当前委托无法取消，请稍后重试");return false; }
+    CancelPending();
+    const int32 Removed=Memory.RevokePlayerRules();
+    Memory.Clarification.Reset();Memory.WorkingGoal={};
+    PendingSpeaker=Speaker;PendingCompanion=Companion;
+    NPCLine=FString::Printf(TEXT("当前委托已停止，%d条约定已撤销；事实、回执和已取得的物资保留。"),Removed);
+    Status=NPCLine;LastAppliedIntent=TEXT("cancel_all_rules");ReasonCode=TEXT("deterministic_fallback");
+    MarkConversation();return true;
+}
+
 void UHearthwardLocalAISubsystem::ClearClarification()
 {
     CancelPending(); Memory.Clarification.Reset(); Memory.WorkingGoal={}; Status=TEXT("已结束这次澄清，请重新说明要做的事");
@@ -607,6 +628,7 @@ void UHearthwardLocalAISubsystem::MarkConversation()
 {
     const double Calendar=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
     Memory.ConversationClockStarted=true;
+    Memory.ConversationClockAwaitingFirstMeeting=false;
     Memory.LastConversationCalendar=Calendar;
     Initiatives.DropPendingKind(TEXT("conversation_reminder"));
 }
@@ -620,9 +642,11 @@ void UHearthwardLocalAISubsystem::Tick(float DeltaTime)
         for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Companion=*It;break;}
         const double GameNow=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
         const double Calendar=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
-        if(!Memory.ConversationClockStarted)
+        if(!Memory.ConversationClockStarted && IsValid(Player) && IsValid(Companion)
+            && Companion->CanCommunicate(Player))
         {
             Memory.ConversationClockStarted=true;
+            Memory.ConversationClockAwaitingFirstMeeting=false;
             Memory.LastConversationCalendar=Calendar;
         }
         auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();

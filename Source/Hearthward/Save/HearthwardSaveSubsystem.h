@@ -42,7 +42,7 @@ protected:
     virtual bool DoesSupportWorldType(EWorldType::Type Type) const override;
 private:
     bool Capture(FHearthwardWorldSave& Out);
-    bool Restore(const FHearthwardWorldSave& Snapshot);
+    bool Restore(const FHearthwardWorldSave& Snapshot,bool bNewProgress=false);
     bool ReloadPool();
     bool CommitPool(UHearthwardSaveGame* Candidate);
     bool WritePoint(bool Manual, bool NewCampaign);

@@ -24,11 +24,24 @@ bool AgentInteractionObject(FHttpResponsePtr R,TSharedPtr<FJsonObject>& O)
 {return R.IsValid() && R->GetResponseCode()==200 && R->GetContentLength()<256*1024 && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(R->GetContentAsString()),O) && O.IsValid();}
 
 }
-void UHearthwardLocalAISubsystem::RestoreMemory(const FHearthwardNPCMemory& Snapshot)
+void UHearthwardLocalAISubsystem::RestoreMemory(const FHearthwardNPCMemory& Snapshot,bool bNewProgress)
 {
     // Save decoding/migration and validation happen before world mutation. Do not repair a current-format
     // snapshot here, otherwise damaged new fields could be mistaken for legacy data.
     Memory=Snapshot;
+    if(bNewProgress)
+    {
+        Memory.ConversationClockStarted=false;
+        Memory.ConversationClockAwaitingFirstMeeting=true;
+        Memory.LastConversationCalendar=0;
+        Memory.ReminderShownThisVisit=false;
+        Memory.ReminderVisit=0;
+    }
+    if(!Memory.ConversationClockAwaitingFirstMeeting && !Memory.ConversationClockStarted)
+    {
+        Memory.ConversationClockStarted=true;
+        Memory.LastConversationCalendar=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
+    }
 }
 void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObject>>& Bodies,
     const TArray<FHearthwardNPCContextProjectionResult>& Projections,int32 TierIndex)
@@ -116,6 +129,9 @@ void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObje
 void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
 {
     CandidateId.Invalidate();Goal.Original=Input;Goal.RuleRevision=Memory.Revision;
+    if(Goal.Intent==TEXT("repair") && !Goal.EquipmentId.IsValid() && PendingCompanion.IsValid()
+        && PendingCompanion->Bag->GetItemCount(Goal.Item)==1)
+        Goal.EquipmentId=PendingCompanion->Bag->FirstInstance(Goal.Item);
     if(Goal.Intent==TEXT("nature_care") && !Goal.Station.IsValid() && PendingSpeaker.IsValid())
     {
         auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
@@ -271,10 +287,14 @@ FString UHearthwardLocalAISubsystem::GetCandidateText() const
     FString S=TEXT("原话：")+Candidate.Original+TEXT("\n")+HearthwardAgent::GoalText(Candidate);
     if(Candidate.Intent==TEXT("craft") || Candidate.Intent==TEXT("repair"))
     {
-        S+=TEXT("\n实际消耗：");for(const auto& C:HearthwardWorkshop::Materials(Candidate.Intent,Candidate.Item,Candidate.Quantity))
+        auto Cost=HearthwardWorkshop::Materials(Candidate.Intent,Candidate.Item,Candidate.Quantity);
+        const auto* Instance=Candidate.Intent==TEXT("repair") && PendingCompanion.IsValid()
+            ? PendingCompanion->Bag->FindInstance(Candidate.EquipmentId):nullptr;
+        if(Instance){double Restored=0;HearthwardWorkshop::RepairQuote(PendingCompanion->Bag,Candidate.EquipmentId,1,Cost,Restored);}
+        S+=TEXT("\n预计消耗（结算前复核）：");for(const auto& C:Cost)
         {const auto* I=HearthwardBasicItems().FindByPredicate([&](const auto& X){return X.Id==C.Key;});S+=FString::Printf(TEXT("%s%d "),*I->DisplayName.ToString(),C.Value);}
         if(Candidate.Intent==TEXT("craft")){S+=TEXT("\n实际产量：");for(const auto& C:HearthwardWorkshop::Outputs(Candidate.Item,Candidate.Quantity))S+=FString::Printf(TEXT("%s %d "),*HearthwardAgent::ItemText(C.Key),C.Value);}
-        if(Candidate.Intent==TEXT("repair") && PendingCompanion.IsValid())S+=FString::Printf(TEXT("\n当前耐久：%.0f；修好后仍由弟弟持有"),PendingCompanion->EquipmentDurability(Candidate.Item));
+        if(Instance)S+=FString::Printf(TEXT("\n所选实例当前耐久：%.0f；修好后仍由弟弟持有"),Instance->Durability);
     }
     if(PendingCompanion.IsValid() && PendingCompanion->GetRequested()>PendingCompanion->GetDelivered())S+=FString::Printf(TEXT("\n将替换任务 %s（已交付%d）"),*PendingCompanion->GetCommandId().ToString().Left(8),PendingCompanion->GetDelivered());
     return S;

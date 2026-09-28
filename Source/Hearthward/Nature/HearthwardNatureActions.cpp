@@ -10,12 +10,12 @@
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "GameFramework/Pawn.h"
 using namespace HearthwardData;
-namespace { using R=EHearthwardInventoryResult; }
+namespace { using NatureResult=EHearthwardInventoryResult; }
 bool UHearthwardNatureSubsystem::PrepareBag(const TMap<FName,int32>& In,const TMap<FName,int32>& Out,FHearthwardInventoryState& Result) const
 {
     if(!Bag() || !Result.Restore(Bag()->Snapshot()))return false;
-    for(const auto& M:In)if(Bag()->Available(M.Key)<M.Value || Result.Remove(M.Key,M.Value)!=R::Success)return false;
-    for(const auto& M:Out)if(Result.Add(M.Key,M.Value)!=R::Success)return false;
+    for(const auto& M:In)if(Bag()->Available(M.Key)<M.Value || Result.Remove(M.Key,M.Value)!=NatureResult::Success)return false;
+    for(const auto& M:Out)if(Result.Add(M.Key,M.Value)!=NatureResult::Success)return false;
     return true;
 }
 void UHearthwardNatureSubsystem::PublishBag(const FHearthwardInventoryState& Result)
@@ -168,7 +168,7 @@ bool UHearthwardNatureSubsystem::Commit(FName Action,FGuid Id,FName Option,int32
     {
         if(Point->Kind==TEXT("treasure") && (!State.Maps.Contains(Point->Definition) || State.Opened.Contains(Point->Definition)))return false;
         if(!PrepareBag({},Point->Pending.Stacks,Next))return false;
-        for(const auto& I:Point->Pending.Instances)if(Next.InsertInstance(I)!=R::Success)return false;
+        for(const auto& I:Point->Pending.Instances)if(Next.InsertInstance(I)!=NatureResult::Success)return false;
         Point->Pending={};if(Point->Kind==TEXT("treasure"))State.Opened.Add(Point->Definition);PublishBag(Next);return true;
     }
     return false;
@@ -183,7 +183,7 @@ bool UHearthwardNatureSubsystem::ReadMap(FName Item)
     for(int32 I=0;I<24 && !Found;++I)
     {const double A=Index*1.8+I*.13;Found=Ground(Camp->State.Camps[0].Position+FVector(FMath::Cos(A)*(23000+Index*9000),FMath::Sin(A)*(23000+Index*9000),0),At,true);}
     if(!Found)return false;
-    FHearthwardInventoryState Loot(true);for(const auto& M:HearthwardCamp::Counts(D,TEXT("outputs")))if(Loot.Add(M.Key,M.Value)!=R::Success)return false;
+    FHearthwardInventoryState Loot(true);for(const auto& M:HearthwardCamp::Counts(D,TEXT("outputs")))if(Loot.Add(M.Key,M.Value)!=NatureResult::Success)return false;
     FHearthwardNaturePoint P;P.Id=FGuid::NewGuid();P.Key=Item;P.Kind=TEXT("treasure");P.Definition=Item;P.Position=At;P.Pending=Loot.Snapshot();State.Points.Add(P);
     State.Rewards.Add(Item);State.Maps.Add(Item);PublishBag(Next);Gameplay()->SetWaypoint(At);RebuildActors();Feedback=TEXT("藏宝地点已标记");return true;
 }

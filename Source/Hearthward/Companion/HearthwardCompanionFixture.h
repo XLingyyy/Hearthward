@@ -36,7 +36,7 @@ public:
     EHearthwardProposalResult Submit(AActor* Speaker, FHearthwardCommandTicket Ticket,
         FName ItemId, int32 Quantity, const TArray<FName>& Steps);
     UFUNCTION(BlueprintCallable, Category="Hearthward|Companion|Prototype")
-    bool Cancel(AActor* Speaker);
+    bool Cancel(AActor* Speaker,bool bAllowPaused=false);
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
     EHearthwardCompanionPhase GetPhase() const { return Phase; }
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
