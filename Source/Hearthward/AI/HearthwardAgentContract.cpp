@@ -71,6 +71,8 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
             {TEXT("store"),TEXT("将弟弟背包已有物品或玩家在同一营地3米内明确交付的普通物品送入营地仓库；不能从仓库取出，不计作新采集"),Stored,Policy(TEXT("max_collect")),TEXT("held_to_camp"),{TEXT("bag"),TEXT("player_bag")},{},true},
             {TEXT("retrieve"),TEXT("从当前营地仓库取出明确数量的普通物品，交到同营地玩家背包；仅实际交给玩家计入完成，返仓不计交付"),Stored,Policy(TEXT("max_collect")),TEXT("camp_to_player"),{TEXT("camp")},{},true},
             {TEXT("give"),TEXT("将弟弟背包已有的明确数量普通物品，交入同营地玩家背包；仅实际交给玩家计入完成；中断时物品留在弟弟背包"),Stored,Policy(TEXT("max_collect")),TEXT("bag_to_player"),{TEXT("bag")},{},true},
+            {TEXT("fetch"),TEXT("从当前营地仓库取出明确数量的普通物品，留在弟弟背包；仅实际取入弟弟背包计入完成"),Stored,Policy(TEXT("max_collect")),TEXT("camp_to_bag"),{TEXT("camp")},{},true},
+            {TEXT("receive"),TEXT("从同营地玩家背包接收明确数量的普通物品，留在弟弟背包；仅实际接收计入完成"),Stored,Policy(TEXT("max_collect")),TEXT("player_to_bag"),{TEXT("player_bag")},{},true},
             {TEXT("nature_care"),TEXT("照料已知的当前地块或栏舍；必须指定唯一目标，浇水/施肥/收获各1次，喂饲料可指定份数"),{TEXT("water"),TEXT("fertilize"),TEXT("harvest"),TEXT("deposit_feed")},32,TEXT("action_count"),{TEXT("known_target")},{},true},
             {TEXT("craft"),TEXT("取得授权材料→到工作台制作→产物入库；quantity是批数；默认弟弟背包bag，明确授权才用camp仓库；once:物品仅用于玩家明确说这次可用的单次例外"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
             {TEXT("repair"),TEXT("到工作台修理弟弟背包中明确的装备实例；同类多件必须由玩家选择实例；quantity=1；once:物品仅用于玩家明确说这次可用的单次例外"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
@@ -230,7 +232,7 @@ FString HearthwardAgent::GoalText(const FHearthwardAgentGoal& G)
 {
     if(G.Intent.IsNone())return TEXT("暂无待补充任务");
     const FString Name=ItemText(G.Item);
-    FString Action=G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect")?TEXT("新采集"):G.Intent==TEXT("store")?TEXT("搬运已有"):G.Intent==TEXT("retrieve")?TEXT("仓库取出并交付"):G.Intent==TEXT("give")?TEXT("交给玩家"):G.Intent==TEXT("nature_care")?TEXT("照料"):
+    FString Action=G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect")?TEXT("新采集"):G.Intent==TEXT("store")?TEXT("搬运已有"):G.Intent==TEXT("retrieve")?TEXT("仓库取出并交付"):G.Intent==TEXT("give")?TEXT("交给玩家"):G.Intent==TEXT("fetch")?TEXT("仓库取到弟弟背包"):G.Intent==TEXT("receive")?TEXT("从玩家背包接收"):G.Intent==TEXT("nature_care")?TEXT("照料"):
         G.Intent==TEXT("craft")?TEXT("制作"):G.Intent==TEXT("repair")?TEXT("维修自己的"):G.Intent==TEXT("inventory_report")?TEXT("玩家报告库存"):TEXT("新增长期规则");
     FString Unit=G.Intent==TEXT("craft")?TEXT("批"):G.Intent==TEXT("repair")?TEXT("件"):TEXT("份");
     FString Text=FString::Printf(TEXT("%s %s × %d %s\n来源：%s；目的地：营地仓库"),*Action,*Name,G.Quantity,*Unit,G.SourceRef==TEXT("camp")?TEXT("授权共享仓库材料"):G.SourceRef==TEXT("bag")?TEXT("弟弟背包"):G.SourceRef==TEXT("player_bag")?TEXT("玩家背包，确认时当面交付"):TEXT("当前安全采集点"));
@@ -242,6 +244,8 @@ FString HearthwardAgent::GoalText(const FHearthwardAgentGoal& G)
     if(G.Intent==TEXT("nature_collect"))Text=FString::Printf(TEXT("从已知安全资源点[%s]新采集%s × %d份并送入当前营地仓库；仅计实际采得与入库"),*G.Station.ToString().Left(8),*Name,G.Quantity);
     if(G.Intent==TEXT("retrieve"))Text=FString::Printf(TEXT("从当前营地仓库取出%s × %d份，交入同营地玩家背包；仅计实际交付，受阻返仓不计完成"),*Name,G.Quantity);
     if(G.Intent==TEXT("give"))Text=FString::Printf(TEXT("从弟弟背包取已有%s × %d份，交入同营地玩家背包；仅计实际交付，受阻时留在弟弟背包"),*Name,G.Quantity);
+    if(G.Intent==TEXT("fetch"))Text=FString::Printf(TEXT("从当前营地仓库取出%s × %d份，留在弟弟背包；仅计实际取入，仓库库存相应减少"),*Name,G.Quantity);
+    if(G.Intent==TEXT("receive"))Text=FString::Printf(TEXT("从同营地玩家背包接收%s × %d份，留在弟弟背包；仅计实际接收，玩家背包相应减少"),*Name,G.Quantity);
     if(G.Intent==TEXT("inventory_report"))Text=FString::Printf(TEXT("玩家报告：营地仓库当前有 %d 份%s；仅更新弟弟认知，不改变实际仓库"),G.Quantity,*Name);
     if(G.Intent==TEXT("rule_proposal"))Text=TEXT("新增长期规则；确认后影响新接受的任务");
     TArray<FString> Labels;for(const auto& L:G.Limits)Labels.Add(LimitText(L));

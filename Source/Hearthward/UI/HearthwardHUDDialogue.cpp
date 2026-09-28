@@ -237,15 +237,17 @@ FString AHearthwardHUD::GetDialogueProgress() const
     case P::Cancelled: Phase=TEXT("已取消，保留携带物资"); break;
     case P::TakingCargo: Phase=TEXT("从营地仓库取货"); break;
     case P::GoingToPlayer: Phase=TEXT("前往玩家位置"); break;
-    case P::HandingOff: Phase=TEXT("当面交付玩家"); break;
+    case P::HandingOff: Phase=C->GetGoal().Intent==TEXT("receive")?TEXT("当面接收玩家物品"):TEXT("当面交付玩家"); break;
     }
     if(C->GetRequested()==0) return Phase;
     const auto* Item=HearthwardBasicItems().FindByPredicate([C](const auto& Def){ return Def.Id==C->GetItem(); });
     const bool Retrieve=C->GetGoal().Intent==TEXT("retrieve");
     const bool ToPlayer=Retrieve || C->GetGoal().Intent==TEXT("give");
+    const bool ToBrother=C->GetGoal().Intent==TEXT("fetch") || C->GetGoal().Intent==TEXT("receive");
     FString Result=FString::Printf(TEXT("%s · %s%s %d / %d · 携带 %d\n%s"),*Phase,
-        Item ? *Item->DisplayName.ToString() : TEXT("物资"),ToPlayer?TEXT("交付玩家"):TEXT("入库"),C->GetDelivered(),C->GetRequested(),C->GetCarried(),
-        Retrieve?TEXT("仓库取货 → 玩家背包交付"):ToPlayer?TEXT("弟弟背包 → 玩家背包交付"):TEXT("采集 → 返营 → 入库"));
+        Item ? *Item->DisplayName.ToString() : TEXT("物资"),ToPlayer?TEXT("交付玩家"):ToBrother?TEXT("交入弟弟背包"):TEXT("入库"),C->GetDelivered(),C->GetRequested(),C->GetCarried(),
+        Retrieve?TEXT("仓库取货 → 玩家背包交付"):ToPlayer?TEXT("弟弟背包 → 玩家背包交付"):
+        C->GetGoal().Intent==TEXT("fetch")?TEXT("营地仓库 → 弟弟背包"):ToBrother?TEXT("玩家背包 → 弟弟背包"):TEXT("采集 → 返营 → 入库"));
     if(!C->BlockReason.IsEmpty()) Result+=TEXT("\n")+C->BlockReason;
     return Result;
 }

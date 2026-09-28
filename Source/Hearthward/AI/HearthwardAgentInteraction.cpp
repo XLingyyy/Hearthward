@@ -193,6 +193,15 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
         if(Goal.Intent==TEXT("give") && !Goal.Original.Contains(TEXT("交给我"))
             && !Goal.Original.Contains(TEXT("给我")) && !Goal.Original.Contains(TEXT("玩家背包")))
             Goal.Unresolved.AddUnique(TEXT("必须明确交给玩家"));
+        if(Goal.Intent==TEXT("fetch") && (!Goal.Original.Contains(TEXT("仓库"))
+            || (!Goal.Original.Contains(TEXT("弟弟背包")) && !Goal.Original.Contains(TEXT("你背包")))))
+            Goal.Unresolved.AddUnique(TEXT("必须明确从营地仓库取货并留在弟弟背包"));
+        if(Goal.Intent==TEXT("receive") && (!Goal.Original.Contains(TEXT("玩家背包"))
+            && !Goal.Original.Contains(TEXT("我背包"))))
+            Goal.Unresolved.AddUnique(TEXT("必须明确从玩家背包取货"));
+        if(Goal.Intent==TEXT("receive") && !Goal.Original.Contains(TEXT("弟弟背包"))
+            && !Goal.Original.Contains(TEXT("你背包")))
+            Goal.Unresolved.AddUnique(TEXT("必须明确留在弟弟背包"));
         if(Input.Contains(TEXT("再来")) || Input.Contains(TEXT("补到")) || Input.Contains(TEXT("凑够")))
             Goal.Unresolved.AddUnique(TEXT("请明确新取得数量；追加量和最终总量不能混用"));
         if((Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect")) && (Input.Contains(TEXT("然后")) || Input.Contains(TEXT("再去")) || Input.Contains(TEXT("再修"))))
@@ -206,7 +215,7 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
                 Goal.Unresolved.AddUnique(TEXT("包含第二个任务，请分别安排并确认"));
         }
     }
-    if(Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect") || Goal.Intent==TEXT("store") || Goal.Intent==TEXT("retrieve") || Goal.Intent==TEXT("give") || Goal.Intent==TEXT("craft"))
+    if(Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect") || Goal.Intent==TEXT("store") || Goal.Intent==TEXT("retrieve") || Goal.Intent==TEXT("give") || Goal.Intent==TEXT("fetch") || Goal.Intent==TEXT("receive") || Goal.Intent==TEXT("craft"))
     {
         FRegexMatcher Number(FRegexPattern(TEXT("([0-9]+|[一二两三四五六七八九十]+)\\s*(份|个|根|单位|块|批)|[0-9]+|数量[为是： ]*[一二两三四五六七八九十]+")),Goal.Original);
         if(!Number.FindNext())

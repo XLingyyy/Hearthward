@@ -20,7 +20,7 @@ struct FHearthwardAgentGoal
     UPROPERTY(BlueprintReadOnly) FGuid EquipmentId;
     UPROPERTY(BlueprintReadOnly) int64 RuleRevision = 0;
     UPROPERTY(BlueprintReadOnly) int32 CapabilityVersion = 2;
-    bool WritesWorld() const { return Intent==TEXT("collect") || Intent==TEXT("nature_collect") || Intent==TEXT("store") || Intent==TEXT("retrieve") || Intent==TEXT("give") || Intent==TEXT("nature_care") || Intent==TEXT("craft") || Intent==TEXT("repair") || Intent==TEXT("companion_order"); }
+    bool WritesWorld() const { return Intent==TEXT("collect") || Intent==TEXT("nature_collect") || Intent==TEXT("store") || Intent==TEXT("retrieve") || Intent==TEXT("give") || Intent==TEXT("fetch") || Intent==TEXT("receive") || Intent==TEXT("nature_care") || Intent==TEXT("craft") || Intent==TEXT("repair") || Intent==TEXT("companion_order"); }
 };
 
 struct FHearthwardAgentCapability

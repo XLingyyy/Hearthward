@@ -11,7 +11,7 @@ unreal.EditorPythonScripting.set_keep_python_script_alive(True)
 out = Path(unreal.Paths.project_saved_dir()) / "Task050/retrieve"
 out.mkdir(parents=True, exist_ok=True)
 levels = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
-report = {"ok": False, "checks": {}, "method": "PIE camp-to-player cargo, save and return"}
+report = {"ok": False, "checks": {}, "method": "PIE same-camp container transfers, save and return"}
 st = {}
 
 
@@ -53,14 +53,19 @@ def grant(count):
 def order(count, intent="retrieve"):
     st["orders"] = st.get("orders", 0) + 1
     label = f"{intent} {count} #{st['orders']}"
+    mode, source, destination = {
+        "retrieve": ("camp_to_player", "camp", "玩家背包"),
+        "give": ("bag_to_player", "bag", "玩家背包"),
+        "fetch": ("camp_to_bag", "camp", "弟弟背包"),
+        "receive": ("player_to_bag", "player_bag", "弟弟背包"),
+    }[intent]
     goal = unreal.HearthwardAgentGoal()
     for name, value in {"intent": intent, "item": "wood", "quantity": count,
-                        "quantity_mode": "bag_to_player" if intent == "give" else "camp_to_player",
-                        "source_ref": "bag" if intent == "give" else "camp"}.items():
+                        "quantity_mode": mode, "source_ref": source}.items():
         goal.set_editor_property(name, value)
     ai, player, brother = st["ai"], st["player"], st["brother"]
     check("delivery card " + label, ai.set_structured_goal(player, brother, goal))
-    check("card shows player destination " + label, "玩家背包" in ai.get_candidate_text())
+    check("card shows destination " + label, destination in ai.get_candidate_text())
     check("confirm delivery " + label, ai.confirm_candidate(ai.get_candidate_id()))
 
 
@@ -231,6 +236,52 @@ def run():
     check("direct handoff completes without touching camp storage", brother.get_delivered() == 2
           and brother.get_carried() == 0 and brother.bag.get_item_count("wood") == 0
           and bag.get_item_count("wood") == give_player + 2 and store.get_item_count("wood") == give_camp)
+
+    check("free player capacity for warehouse fixture", bag.try_remove("stone", 3) == unreal.HearthwardInventoryResult.SUCCESS)
+    grant(3)
+    fetch_camp, fetch_player = store.get_item_count("wood"), bag.get_item_count("wood")
+    order(3, "fetch")
+    yield wait(lambda: brother.get_delivered() == 2 and
+               brother.get_phase() == unreal.HearthwardCompanionPhase.WAITING_AT_CAMP, 40)
+    check("warehouse-to-brother capacity stops after two units", store.get_item_count("wood") == fetch_camp - 2
+          and bag.get_item_count("wood") == fetch_player and brother.bag.get_item_count("wood") == 2
+          and brother.get_carried() == 0)
+    checkpoint = save_point("fetch")
+    check("reload partial warehouse-to-brother transfer", save.load_point(checkpoint))
+    check("warehouse-to-brother count survives reload", brother.get_delivered() == 2
+          and brother.bag.get_item_count("wood") == 2 and store.get_item_count("wood") == fetch_camp - 2)
+    check("free brother capacity for final warehouse unit",
+          brother.bag.try_remove("stone", 1) == unreal.HearthwardInventoryResult.SUCCESS)
+    check("resume warehouse-to-brother transfer", brother.resume_blocked(player))
+    yield wait(lambda: brother.get_phase() == unreal.HearthwardCompanionPhase.COMPLETED, 35)
+    check("warehouse-to-brother completes without player inventory change",
+          brother.get_delivered() == 3 and brother.get_carried() == 0
+          and brother.bag.get_item_count("wood") == 3
+          and store.get_item_count("wood") == fetch_camp - 3 and bag.get_item_count("wood") == fetch_player)
+
+    check("free brother capacity for player handoff",
+          brother.bag.try_remove("stone", 1) == unreal.HearthwardInventoryResult.SUCCESS)
+    receive_camp, receive_player, receive_brother = (
+        store.get_item_count("wood"), bag.get_item_count("wood"), brother.bag.get_item_count("wood"))
+    order(2, "receive")
+    yield wait(lambda: brother.get_delivered() == 1 and
+               brother.get_phase() == unreal.HearthwardCompanionPhase.WAITING_AT_CAMP, 40)
+    check("player-to-brother capacity stops after one unit", store.get_item_count("wood") == receive_camp
+          and bag.get_item_count("wood") == receive_player - 1
+          and brother.bag.get_item_count("wood") == receive_brother + 1 and brother.get_carried() == 0)
+    checkpoint = save_point("receive")
+    check("reload partial player-to-brother transfer", save.load_point(checkpoint))
+    check("player-to-brother count survives reload", brother.get_delivered() == 1
+          and bag.get_item_count("wood") == receive_player - 1
+          and brother.bag.get_item_count("wood") == receive_brother + 1)
+    check("free brother capacity for last player unit",
+          brother.bag.try_remove("stone", 1) == unreal.HearthwardInventoryResult.SUCCESS)
+    check("resume player-to-brother transfer", brother.resume_blocked(player))
+    yield wait(lambda: brother.get_phase() == unreal.HearthwardCompanionPhase.COMPLETED, 35)
+    check("player-to-brother completes without touching camp stock", brother.get_delivered() == 2
+          and brother.get_carried() == 0 and store.get_item_count("wood") == receive_camp
+          and bag.get_item_count("wood") == receive_player - 2
+          and brother.bag.get_item_count("wood") == receive_brother + 2)
     finish()
 
 

@@ -37,18 +37,29 @@ bool HearthwardPlan::Build(const FHearthwardAgentGoal& Goal, FHearthwardAgentPla
         return true;
     }
 
-    if (Goal.Intent == TEXT("retrieve"))
+    if (Goal.Intent == TEXT("retrieve") || Goal.Intent == TEXT("fetch"))
     {
         Out.Actions = {
             Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Camp),
-            Action(EHearthwardAgentActionType::Withdraw, EHearthwardAgentTarget::Camp),
+            Action(EHearthwardAgentActionType::Withdraw, EHearthwardAgentTarget::Camp)
+        };
+        if(Goal.Intent==TEXT("retrieve"))
+        {
+            Out.Actions.Add(Action(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Player));
+            Out.Actions.Add(Action(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
+        }
+        return true;
+    }
+
+    if (Goal.Intent == TEXT("give"))
+    {
+        Out.Actions = {
             Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Player),
             Action(EHearthwardAgentActionType::Handoff, EHearthwardAgentTarget::Player)
         };
         return true;
     }
-
-    if (Goal.Intent == TEXT("give"))
+    if (Goal.Intent == TEXT("receive"))
     {
         Out.Actions = {
             Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Player),

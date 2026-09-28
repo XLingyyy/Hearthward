@@ -46,6 +46,12 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     const auto* Give=HearthwardAgent::FindCapability(TEXT("give"));
     TestTrue(TEXT("Brother bag can be explicitly handed to player"),Give && Give->Items.Contains(TEXT("wood"))
         && Give->Sources==TArray<FString>{TEXT("bag")} && Give->QuantityMode==TEXT("bag_to_player"));
+    const auto* Fetch=HearthwardAgent::FindCapability(TEXT("fetch"));
+    TestTrue(TEXT("Camp stock can be explicitly kept in brother bag"),Fetch && Fetch->Items.Contains(TEXT("wood"))
+        && Fetch->Sources==TArray<FString>{TEXT("camp")} && Fetch->QuantityMode==TEXT("camp_to_bag"));
+    const auto* Receive=HearthwardAgent::FindCapability(TEXT("receive"));
+    TestTrue(TEXT("Player cargo can be explicitly received into brother bag"),Receive && Receive->Items.Contains(TEXT("wood"))
+        && Receive->Sources==TArray<FString>{TEXT("player_bag")} && Receive->QuantityMode==TEXT("player_to_bag"));
     FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
     Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");
     TestTrue(TEXT("Single crop action has a typed contract"),HearthwardAgent::Validate(Care).IsEmpty());
@@ -620,6 +626,14 @@ bool FNPCAgentPlanTest::RunTest(const FString&)
     TestTrue(TEXT("Brother-to-player delivery plan builds"),HearthwardPlan::Build(Give,Plan,Error));
     TestEqual(TEXT("Held cargo only needs approach and handoff"),Plan.Actions.Num(),2);
     TestTrue(TEXT("Held cargo handoff targets player"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
+    FHearthwardAgentGoal Fetch=Goal(TEXT("fetch"),TEXT("camp"));Fetch.QuantityMode=TEXT("camp_to_bag");
+    TestTrue(TEXT("Camp-to-brother delivery plan builds"),HearthwardPlan::Build(Fetch,Plan,Error));
+    TestEqual(TEXT("Camp-to-brother ends after physical withdrawal"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Camp-to-brother withdraws at camp"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Withdraw,EHearthwardAgentTarget::Camp));
+    FHearthwardAgentGoal Receive=Goal(TEXT("receive"),TEXT("player_bag"));Receive.QuantityMode=TEXT("player_to_bag");
+    TestTrue(TEXT("Player-to-brother delivery plan builds"),HearthwardPlan::Build(Receive,Plan,Error));
+    TestEqual(TEXT("Player-to-brother uses physical handoff"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Player-to-brother handoff targets player"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
 
     FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
     Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");

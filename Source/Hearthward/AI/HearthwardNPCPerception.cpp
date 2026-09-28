@@ -89,6 +89,7 @@ FHearthwardNPCSafetyDecision HearthwardPerception::Evaluate(
             return Decision(EHearthwardNPCSafetyVerdict::Unavailable, TEXT("CAMP_UNAVAILABLE"));
     }
     else if (Goal.Intent == TEXT("store") || Goal.Intent == TEXT("retrieve") || Goal.Intent == TEXT("give")
+        || Goal.Intent == TEXT("fetch") || Goal.Intent == TEXT("receive")
         || Goal.Intent == TEXT("craft") || Goal.Intent == TEXT("nature_collect"))
     {
         // Current craft execution always returns produced items to camp, even when materials came from the NPC bag.
