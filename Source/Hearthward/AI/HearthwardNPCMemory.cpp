@@ -158,7 +158,7 @@ bool FHearthwardNPCMemory::IsValid(double Now) const
     for(const auto& E:Events)
     {
         if(!E.Id.IsValid() || !E.Command.IsValid() || E.Campaign!=Campaign || E.At<0 || E.At>Now || !FMath::IsFinite(E.At) || E.Count<0 || E.Reason.Len()>200 || EventIds.Contains(E.Id)) return false;
-        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("nature_care"),TEXT("completed"),TEXT("materials_taken"),TEXT("retained_adopted"),TEXT("handoff"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
+        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("nature_care"),TEXT("completed"),TEXT("materials_taken"),TEXT("retained_adopted"),TEXT("handoff"),TEXT("withdrawn"),TEXT("returned"),TEXT("cargo_missing"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
         const bool BasicItem=HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==E.Item;});
         const bool CraftItem=E.Kind==TEXT("craft") && HearthwardAgent::Capabilities().ContainsByPredicate([&](const auto& C){return C.Id==TEXT("craft") && C.Items.Contains(E.Item);});
         const bool DirectiveItem=E.Kind==TEXT("directive") && ValidCoordinationDirective(E.Item);

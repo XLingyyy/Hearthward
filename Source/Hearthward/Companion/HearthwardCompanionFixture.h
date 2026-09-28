@@ -14,7 +14,7 @@ UENUM(BlueprintType)
 enum class EHearthwardCompanionPhase : uint8
 {
     Idle, GoingToSource, Gathering, Returning, ReturningBlocked, WaitingAtCamp, Completed, Cancelled,
-    GoingToWorkshop, TakingMaterials, HoldingSafely
+    GoingToWorkshop, TakingMaterials, HoldingSafely, TakingCargo, GoingToPlayer, HandingOff
 };
 
 // Runtime companion. Development fixtures and the natural camp supply explicit world participants.
@@ -85,6 +85,9 @@ private:
     void ReturnBlocked(const FString& Reason);
     void HandleExecutionFailure(const FString& Reason);
     void Deposit();
+    void Withdraw();
+    void Handoff();
+    bool PlayerAtTaskCamp(const AActor* Player) const;
     bool IsSourceValid() const;
     FString ResourceTargetReason(const FHearthwardAgentGoal& Goal,bool RequireKnown) const;
     EHearthwardProposalResult AcceptGoal(AActor* Speaker, FHearthwardCommandTicket Ticket,

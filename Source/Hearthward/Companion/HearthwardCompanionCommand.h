@@ -86,6 +86,8 @@ public:
     int32 GetCarried() const { return Carried; }
     bool RecordAcquisition(int32 Count)
     { if(!bActive || Count<=0 || Count>Requested-Acquired) return false; Acquired+=Count;Carried+=Count;return true; }
+    bool RecordUnfulfilled(int32 Count)
+    { if(!bActive || Count<=0 || Count>Carried) return false; Acquired-=Count;Carried-=Count;return true; }
     int32 Acquired = 0, Carried = 0;
     FHearthwardAgentGoal Goal;
 private:

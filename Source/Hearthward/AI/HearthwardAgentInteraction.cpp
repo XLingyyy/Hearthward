@@ -183,6 +183,10 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
             && !Goal.Original.Contains(TEXT("我背包")) && !Goal.Original.Contains(TEXT("我包里"))
             && !Goal.Original.Contains(TEXT("从我身上")))
             Goal.Unresolved.AddUnique(TEXT("必须明确授权从玩家背包当面交付"));
+        if(Goal.Intent==TEXT("retrieve") && (!Goal.Original.Contains(TEXT("仓库"))
+            || (!Goal.Original.Contains(TEXT("交给我")) && !Goal.Original.Contains(TEXT("给我"))
+                && !Goal.Original.Contains(TEXT("玩家背包")))))
+            Goal.Unresolved.AddUnique(TEXT("必须明确从营地仓库取货并交给玩家"));
         if(Input.Contains(TEXT("再来")) || Input.Contains(TEXT("补到")) || Input.Contains(TEXT("凑够")))
             Goal.Unresolved.AddUnique(TEXT("请明确新取得数量；追加量和最终总量不能混用"));
         if((Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect")) && (Input.Contains(TEXT("然后")) || Input.Contains(TEXT("再去")) || Input.Contains(TEXT("再修"))))
@@ -196,7 +200,7 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
                 Goal.Unresolved.AddUnique(TEXT("包含第二个任务，请分别安排并确认"));
         }
     }
-    if(Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect") || Goal.Intent==TEXT("store") || Goal.Intent==TEXT("craft"))
+    if(Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect") || Goal.Intent==TEXT("store") || Goal.Intent==TEXT("retrieve") || Goal.Intent==TEXT("craft"))
     {
         FRegexMatcher Number(FRegexPattern(TEXT("([0-9]+|[一二两三四五六七八九十]+)\\s*(份|个|根|单位|块|批)|[0-9]+|数量[为是： ]*[一二两三四五六七八九十]+")),Goal.Original);
         if(!Number.FindNext())

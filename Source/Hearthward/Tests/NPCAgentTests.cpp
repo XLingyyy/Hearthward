@@ -40,6 +40,9 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     TestTrue(TEXT("Store exposes ordinary stackable cargo"),Store && Store->Items.Contains(TEXT("wood")));
     TestTrue(TEXT("Store identifies authorized player handoff separately"),Store && Store->Sources.Contains(TEXT("player_bag")));
     TestFalse(TEXT("Protected quest item cannot be delegated to storage"),Store && Store->Items.Contains(TEXT("amulet")));
+    const auto* Retrieve=HearthwardAgent::FindCapability(TEXT("retrieve"));
+    TestTrue(TEXT("Camp-to-player cargo is a distinct typed route"),Retrieve && Retrieve->Items.Contains(TEXT("wood"))
+        && Retrieve->Sources==TArray<FString>{TEXT("camp")} && Retrieve->QuantityMode==TEXT("camp_to_player"));
     FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
     Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");
     TestTrue(TEXT("Single crop action has a typed contract"),HearthwardAgent::Validate(Care).IsEmpty());
@@ -123,6 +126,17 @@ bool FNPCAgentReceiptTest::RunTest(const FString&)
     TestFalse(TEXT("Cannot acquire over remainder"),C.RecordAcquisition(3));
     TestTrue(TEXT("Deposit real amount"),C.RecordDelivery(T,4));C.Carried-=4;TestTrue(TEXT("Remaining goal persists"),C.IsCurrent(Epoch));
     TestTrue(TEXT("Acquire remaining"),C.RecordAcquisition(2));TestEqual(TEXT("Additional units target"),C.GetAcquired(),6);
+    FHearthwardCompanionCommand Delivery;const auto DeliveryTicket=Delivery.Request(Epoch);
+    TestTrue(TEXT("Accept camp delivery"),Delivery.Accept(DeliveryTicket,Epoch,TEXT("wood"),5,
+        {TEXT("collect"),TEXT("return"),TEXT("deposit")})==EHearthwardProposalResult::Accepted);
+    TestTrue(TEXT("Withdraw cargo"),Delivery.RecordAcquisition(3));
+    TestFalse(TEXT("Unfulfilled amount cannot exceed carried cargo"),Delivery.RecordUnfulfilled(4));
+    TestTrue(TEXT("Returned warehouse cargo reverses acquisition"),Delivery.RecordUnfulfilled(3));
+    TestEqual(TEXT("Returned cargo is not player delivery"),Delivery.GetDelivered(),0);
+    TestEqual(TEXT("Returned cargo leaves no tracked load"),Delivery.GetCarried(),0);
+    TestTrue(TEXT("Returned quantity can be withdrawn again"),Delivery.RecordAcquisition(5));
+    Delivery.Carried-=5;TestTrue(TEXT("Only actual handoff completes goal"),Delivery.RecordDelivery(DeliveryTicket,5));
+    TestEqual(TEXT("Five delivered"),Delivery.GetDelivered(),5);
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentMemoryTest,"Hearthward.NPCAgent.MemoryRevisionCapacityAndEvents",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
@@ -591,6 +605,13 @@ bool FNPCAgentPlanTest::RunTest(const FString&)
     TestEqual(TEXT("Store has only travel and deposit"),Plan.Actions.Num(),2);
     TestTrue(TEXT("Store begins with camp travel"),Plan.Actions[0].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp));
     TestTrue(TEXT("Store finishes with deposit"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Deposit,EHearthwardAgentTarget::Camp));
+
+    FHearthwardAgentGoal Retrieve=Goal(TEXT("retrieve"),TEXT("camp"));Retrieve.QuantityMode=TEXT("camp_to_player");
+    TestTrue(TEXT("Camp-to-player delivery plan builds"),HearthwardPlan::Build(Retrieve,Plan,Error));
+    TestEqual(TEXT("Delivery has four real steps"),Plan.Actions.Num(),4);
+    TestTrue(TEXT("Delivery withdraws from camp"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Withdraw,EHearthwardAgentTarget::Camp));
+    TestTrue(TEXT("Delivery navigates to player"),Plan.Actions[2].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Player));
+    TestTrue(TEXT("Only player handoff counts"),Plan.Actions[3].Matches(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
 
     FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
     Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");
