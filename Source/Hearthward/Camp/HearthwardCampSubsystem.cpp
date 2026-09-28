@@ -126,7 +126,12 @@ double UHearthwardCampSubsystem::Efficiency(AActor* Actor,const FHearthwardCampR
     if(!S || !S->Alive() || S->Busy() || S->Resting || (Timer && Timer->GetStatus()==EHearthwardTimedActionStatus::Running))return 0;
     const auto* G=CampPlayer(GetWorld())?CampPlayer(GetWorld())->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
     if(!G || G->InCombat())return 0;
-    if(const auto* C=Cast<AHearthwardCompanionFixture>(Actor);C && (C->GetGoal().Intent!=NAME_None || G->CompanionOrder!=TEXT("wait")))return 0;
+    if(const auto* C=Cast<AHearthwardCompanionFixture>(Actor);C)
+    {
+        const auto Phase=C->GetPhase();
+        if((Phase!=EHearthwardCompanionPhase::Idle && Phase!=EHearthwardCompanionPhase::Completed
+            && Phase!=EHearthwardCompanionPhase::Cancelled) || G->CompanionOrder!=TEXT("wait"))return 0;
+    }
     FVector Workplace=FVector::ZeroVector;bool Found=false;
     if(Region.Facility.IsValid())
     {

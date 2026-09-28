@@ -29,6 +29,7 @@ Owner／Reviewer：XLingyyy。真实TASK-050对应原稿052；D1—D6已批准�
 | [仓库交付玩家PIE脚本](verify_retrieve_pie.py)及[结果](retrieve-pie.json) | PASS 29/29 | 5份货物按背包容量分多趟真实取货交付；携货回档后只交付一次；玩家离营时返仓不计完成、明确重试后才交付；1份货物被移走时只返仓剩余1份，短少回执与存档均有效。平地与显式物资夹具。 |
 | [交付增量构建](handoff-final-build.json)、[原生测试](handoff-final-native.json)、[PIE脚本](verify_retrieve_pie.py)及[结果](handoff-give-pie.json) | PASS；NPCAgent 15/15；PIE 48/48 | 同营地弟弟背包直接交给玩家；玩家容量只容1份时，先交1份并保留余下1份；中途存档、回档、腾出空间、明确继续后恰好交完，营地仓库库存不变。替换旧未完成委托后存档有效。 |
 | [六向搬运构建](bag-routes-build-build.json)、[原生测试](bag-routes-build-native.json)、[PIE脚本](verify_retrieve_pie.py)及[结果](bag-routes-pie-pie.json) | PASS；NPCAgent 15/15；PIE 74/74 | 六个同营地容器方向均有真实转移；新增仓库→弟弟背包3份和玩家→弟弟背包2份分别因容量分段，中途保存／加载并明确继续后完成，没有多取、重复交付或改动无关容器。 |
+| [在岗修复构建](brother-work-build.json)、[PIE脚本](verify_brother_work_pie.py)及[结果](brother-work2-pie.json) | PASS；PIE 11/11 | 已完成的搬运目标仍保留在状态面板时，玩家下达原地等待并分配弟弟到营地采集岗位，实际批次进度增长；执行中任务仍不计在岗工效。仅验证实时岗位进度，不把未完成批次记作产物。 |
 | `validate_repo.py --task TASK-050 --base eab1387`、`git diff --check` | PASS | 本地L0、批准范围和补丁格式。`eab1387`为已批准D1的Building路径补录；不代表远端审批或集成验收。 |
 
 PIE夹具直接为兄弟提供材料与近目标站位，以检验真实动作及领域回执；没有据此声称整张自然地图任意路径可达。原生UE日志中`Condition failed`是负例测试输出；最终自动化报告失败数为0。
