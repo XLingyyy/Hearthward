@@ -1,6 +1,6 @@
 # TASK-050｜伙伴活动与长期交流验证
 
-Owner／Reviewer：XLingyyy。真实TASK-050对应原稿052；D1—D6已批准。受测分支 `codex/TASK-050-companion-design`，基于已含049的 `main@3a163b9`；首批受测代码提交 `f008e19d48bf61ae99cd878a0c37e515097753d8`，本页记录后续能力增量。任务进入Owner验收；无Issue，不合并main。下列结果只约束所列场景与源码。
+Owner／Reviewer：XLingyyy。真实TASK-050对应原稿052；D1—D6已批准。受测分支 `codex/TASK-050-companion-design`，基于已含049的 `main@3a163b9`；首批受测代码提交 `f008e19d48bf61ae99cd878a0c37e515097753d8`，本页记录后续能力增量。首批经PR #53合入main；Owner已授权最终收尾提交继续集成。任务仍待Owner实玩验收，无Issue。下列结果只约束所列场景与源码，不自动外推为合并后SHA的运行结果。
 
 ## 本次可执行范围
 

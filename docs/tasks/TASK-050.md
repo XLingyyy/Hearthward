@@ -1,6 +1,6 @@
 # TASK-050｜伙伴活动与长期交流
 
-真实050＝原稿052。Owner／Reviewer：XLingyyy，不创建Issue。基于main `3a163b919ad9e14d987f0197c491c58c890dcb71`（049已由PR #52合入）。D1—D6实现已准备Owner验收，账本暂保持Active；Owner已批准设计、施工、提交和推送，分支 `codex/TASK-050-companion-design`。不合并main。
+真实050＝原稿052。Owner／Reviewer：XLingyyy，不创建Issue。开发基线为main `3a163b919ad9e14d987f0197c491c58c890dcb71`（049已由PR #52合入）。D1—D6实现已准备Owner实玩验收，账本暂保持Active；Owner已批准设计、施工、提交、推送，并于2026-09-29明确授权合并main。首批经PR #53合入；最终收尾提交与集成状态以GitHub PR为准，任务分支为`codex/TASK-050-companion-design`。
 
 主交付：[D1—D6设计](../design/DSGN-R18-companion-activities.md)、[能力矩阵](../planning/TASK-050/CAPABILITIES.md)、[契约](../contracts/CT-TASK-050-companion-activities.md)、[26项验收场景及对白](../qa/TASK-050/CASES.md)。范围与验收以[任务JSON](TASK-050.json)为准。
 
