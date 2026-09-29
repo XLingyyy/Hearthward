@@ -4,6 +4,9 @@
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Gameplay/HearthwardGameData.h"
+#include "../AI/HearthwardLocalAISubsystem.h"
+#include "../Companion/HearthwardCompanionFixture.h"
+#include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
 #include "Engine/World.h"
 
@@ -69,10 +72,12 @@ void UHearthwardScreenWidget::ComposeCamp()
         Label(Details,180,485,1200,110);
         if(R->Facility.IsValid())
         {
-            Label(TEXT("在“设施管理”选设施和配方，再点击“设为本营地后台生产”。"),180,630);
+            Button(TEXT("请弟弟生产1批"),TEXT("camp.brotherBatch:1"),180,610,340);
+            Button(TEXT("请弟弟生产3批"),TEXT("camp.brotherBatch:3"),550,610,340);
+            Label(TEXT("先配置设施配方并分配弟弟；任务只接受空闲且仅由弟弟工作的区域。"),180,670);
         }
         else Label(TEXT("需要区域内真实资源点；缺少来源时等待，不会凭空产出。"),180,630);
-        Label(TEXT("兄弟须到达对应设施／源点旁并停止其他工作；睡眠不计兄弟劳动。"),180,680);
+        Label(TEXT("兄弟须到达对应设施／源点旁并停止其他工作；睡眠不计兄弟劳动。"),180,745);
     }
     if(Category==TEXT("facilities"))
     {
@@ -134,6 +139,17 @@ bool UHearthwardScreenWidget::ExecuteCampAction(const FString& Action)
     else if(Action==TEXT("camp.personNext") || Action==TEXT("camp.personPrev"))
     {TArray<int32> People;for(int32 I=0;I<E->State.Population();++I)People.Add(I);People.Add(30);People.Add(31);int32 I=People.IndexOfByKey(CampPerson);CampPerson=People[(I+(Action.EndsWith(TEXT("Next"))?1:People.Num()-1))%People.Num()];}
     else if(Action==TEXT("camp.assign"))Success=E->AssignWorker(CampRegion,CampPerson,CampEpoch);
+    else if(Action.StartsWith(TEXT("camp.brotherBatch:")) && R && R->Facility.IsValid())
+    {
+        FHearthwardAgentGoal Goal;Goal.Intent=TEXT("camp_batch");Goal.Item=R->Job;
+        Goal.Quantity=FCString::Atoi(*Action.Mid(18));Goal.QuantityMode=TEXT("batches");Goal.SourceRef=TEXT("assigned_region");Goal.Station=R->Facility;
+        AHearthwardCompanionFixture* Brother=nullptr;
+        for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Brother=*It;break;}
+        auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+        OpenPage(TEXT("dialogue"));Success=AI && AI->SetStructuredGoal(GetOwningPlayerPawn(),Brother,Goal);
+        if(!Success){OpenPage(TEXT("camp"));Message=AI?AI->GetStatus():TEXT("伙伴对话未就绪");Refresh();}
+        return Success;
+    }
     else if(Action==TEXT("camp.toggle") && R)Success=E->SetProduction(CampRegion,!R->Enabled,R->ToRations,CampEpoch);
     else if(Action==TEXT("camp.rationToggle") && R)Success=E->SetProduction(CampRegion,R->Enabled,!R->ToRations,CampEpoch);
     else if(Action==TEXT("camp.priority"))Success=E->Prioritize(CampRegion,CampEpoch);

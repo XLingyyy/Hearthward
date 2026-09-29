@@ -7,6 +7,7 @@
 #include "Misc/Paths.h"
 #include "Misc/Crc.h"
 #include "HAL/FileManager.h"
+#include "Serialization/JsonSerializer.h"
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNatureGrowthTest,"Hearthward.Nature048.GrowthAndFeeding",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FNatureGrowthTest::RunTest(const FString&)
 {
@@ -15,11 +16,28 @@ bool FNatureGrowthTest::RunTest(const FString&)
     FHearthwardPen P;P.Id=FGuid::NewGuid();P.Definition=TEXT("goat");P.Feed=8;S.Pens.Add(P);
     for(int I=0;I<2;++I){FHearthwardAnimal A;A.Id=FGuid::NewGuid();A.Domestic=true;A.Captured=true;A.Pen=P.Id;A.Definition=P.Definition;A.Health=60;S.Animals.Add(A);}
     S.Advance(2880);TestEqual(TEXT("One birth per fed pair after two days"),S.Animals.Num(),3);TestEqual(TEXT("Only complete feed windows debited"),S.Pens[0].Feed,0);
+    TestEqual(TEXT("Fed adult goats produce one milk per day"),S.Pens[0].Products,4);
     const FString Paused=S.Snapshot();S.Advance(10000);TestEqual(TEXT("No feed no further birth"),S.Animals.Num(),3);
+    TestEqual(TEXT("No feed pauses ordinary products"),S.Pens[0].Products,4);
     auto* Baby=S.Animals.FindByPredicate([](const auto& A){return A.Juvenile;});TestTrue(TEXT("Unfed newborn does not grow"),Baby && Baby->Growth==0);
     FHearthwardNatureState Restored;TestTrue(TEXT("Round trip validates"),FHearthwardNatureState::Parse(Paused,Restored));TestEqual(TEXT("Restore retains feeding state"),Restored.Pens[0].Feed,0);
     S.Pens[0].Feed=100;S.Advance(2880);TestTrue(TEXT("Paid two days matures newborn"),S.Animals.ContainsByPredicate([](const auto& A){return A.Growth==2880 && !A.Juvenile;}));
+    TestEqual(TEXT("Juvenile produces only after maturity"),S.Pens[0].Products,8);
     TestTrue(TEXT("State valid after births and growth"),S.Valid());
+    FHearthwardNatureState H;FHearthwardPen Hen;Hen.Id=FGuid::NewGuid();Hen.Definition=TEXT("hen");Hen.Feed=100;H.Pens.Add(Hen);
+    FHearthwardAnimal Bird;Bird.Id=FGuid::NewGuid();Bird.Domestic=true;Bird.Captured=true;Bird.Pen=Hen.Id;Bird.Definition=TEXT("hen");Bird.Health=20;H.Animals.Add(Bird);
+    H.Advance(1440*30);TestEqual(TEXT("Pen product storage caps at 24"),H.Pens[0].Products,HearthwardNature::ProductCapacity);
+    FHearthwardNatureState ProductRestored;TestTrue(TEXT("Product state round trip"),FHearthwardNatureState::Parse(H.Snapshot(),ProductRestored));
+    TestEqual(TEXT("Stored eggs survive save"),ProductRestored.Pens[0].Products,HearthwardNature::ProductCapacity);
+    TSharedPtr<FJsonObject> LegacyRoot;TestTrue(TEXT("Read prior nature JSON"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(H.Snapshot()),LegacyRoot));
+    if(LegacyRoot)
+    {
+        for(const auto& Value:LegacyRoot->GetArrayField(TEXT("pens")))Value->AsObject()->RemoveField(TEXT("products"));
+        for(const auto& Value:LegacyRoot->GetArrayField(TEXT("animals")))Value->AsObject()->RemoveField(TEXT("productMinutes"));
+        FString LegacyJson;FJsonSerializer::Serialize(LegacyRoot.ToSharedRef(),TJsonWriterFactory<>::Create(&LegacyJson));
+        FHearthwardNatureState Legacy;TestTrue(TEXT("Prior nature JSON loads with product defaults"),FHearthwardNatureState::Parse(LegacyJson,Legacy));
+        if(Legacy.Pens.Num()==1)TestEqual(TEXT("No historical products invented"),Legacy.Pens[0].Products,0);
+    }
     S.Pens[0].Feed=-1;TestFalse(TEXT("Corrupt feed rejected"),S.Valid());return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNatureFishingTest,"Hearthward.Nature048.FishingInputAndRewards",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)

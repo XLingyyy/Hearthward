@@ -14,7 +14,11 @@ enum class EHearthwardAgentActionType : uint8
     Deposit,
     CommitNature,
     Withdraw,
-    Handoff
+    Handoff,
+    Escort,
+    Hunt,
+    LeadAnimal,
+    MonitorCampBatch
 };
 
 UENUM(BlueprintType)
@@ -25,7 +29,8 @@ enum class EHearthwardAgentTarget : uint8
     Camp,
     Workshop,
     Nature,
-    Player
+    Player,
+    Person
 };
 
 USTRUCT(BlueprintType)

@@ -52,6 +52,8 @@ bool UHearthwardCampSubsystem::UpgradeCamp(FGuid Epoch)
 }
 bool UHearthwardCampSubsystem::AssignWorker(FName Region,int32 Person,FGuid Epoch)
 {
+    if(const auto* R=State.Regions.FindByPredicate([&](const auto& Entry){return Entry.Id==Region;});R && R->Enabled && R->BatchStopAt>0)
+    {Feedback=TEXT("先暂停当前限定批次任务");return false;}
     if(!CanManage(Epoch) || !State.Assign(Region,Person)) {Feedback=TEXT("岗位已满或人员不可用");return false;}
     auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->Record(TEXT("worker_assigned"));
     if(const auto* R=State.Regions.FindByPredicate([&](const auto& V){return V.Id==Region;});R && R->Camp==TEXT("hometown"))Campaign->Record(TEXT("home_work"));
@@ -61,6 +63,11 @@ bool UHearthwardCampSubsystem::SetProduction(FName Region,bool Enabled,bool ToRa
 {
     auto* R=State.Regions.FindByPredicate([&](const auto& Entry){return Entry.Id==Region;});
     if(!CanManage(Epoch) || !R)return false;
+    if(Enabled && R->BatchStopAt>0)
+    {
+        if(const auto* Brother=CampBrother(GetWorld());Brother && Brother->PerformingCampBatch(R->Id))return false;
+        R->BatchStopAt=0;
+    }
     R->Enabled=Enabled;R->ToRations=ToRations;R->Status.Reset();Feedback=Enabled?TEXT("队列已开启，按真实劳动力和投入生产"):TEXT("队列已暂停，保留已投入进度");return true;
 }
 bool UHearthwardCampSubsystem::SelectProduction(FName Region,FGuid Facility,FName Recipe,FGuid Epoch)
@@ -68,7 +75,7 @@ bool UHearthwardCampSubsystem::SelectProduction(FName Region,FGuid Facility,FNam
     auto* R=State.Regions.FindByPredicate([&](const auto& Entry){return Entry.Id==Region;});
     auto* B=State.Facilities.FindByPredicate([&](const auto& Entry){return Entry.Id==Facility;});
     auto Def=HearthwardCamp::Recipe(Recipe);
-    if(!CanManage(Epoch) || !R || !R->Facility.IsValid() || R->Batch.Active || !B || B->Camp!=R->Camp || !Def || Text(Def,TEXT("facility"))!=B->Kind.ToString() || Number(Def,TEXT("level"))>B->Level)
+    if(!CanManage(Epoch) || !R || !R->Facility.IsValid() || R->Batch.Active || (R->Enabled && R->BatchStopAt>0) || !B || B->Camp!=R->Camp || !Def || Text(Def,TEXT("facility"))!=B->Kind.ToString() || Number(Def,TEXT("level"))>B->Level)
     {Feedback=TEXT("需先完成／取消当前批次，并选择本营地可用设施与配方");return false;}
     if(!CampPlayer(GetWorld())->FindComponentByClass<UHearthwardGameplayComponent>()->KnowsRecipe(Recipe)){Feedback=TEXT("尚未学会图纸配方");return false;}
     R->Facility=Facility;R->Job=Recipe;Feedback=TEXT("生产配方已设置");return true;
@@ -129,8 +136,8 @@ double UHearthwardCampSubsystem::Efficiency(AActor* Actor,const FHearthwardCampR
     if(const auto* C=Cast<AHearthwardCompanionFixture>(Actor);C)
     {
         const auto Phase=C->GetPhase();
-        if((Phase!=EHearthwardCompanionPhase::Idle && Phase!=EHearthwardCompanionPhase::Completed
-            && Phase!=EHearthwardCompanionPhase::Cancelled) || G->CompanionOrder!=TEXT("wait"))return 0;
+        if(!C->PerformingCampBatch(Region.Id) && ((Phase!=EHearthwardCompanionPhase::Idle && Phase!=EHearthwardCompanionPhase::Completed
+            && Phase!=EHearthwardCompanionPhase::Cancelled) || G->CompanionOrder!=TEXT("wait")))return 0;
     }
     FVector Workplace=FVector::ZeroVector;bool Found=false;
     if(Region.Facility.IsValid())

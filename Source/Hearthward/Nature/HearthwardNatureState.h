@@ -45,9 +45,11 @@ struct FHearthwardAnimal
     UPROPERTY() bool Juvenile=false;
     UPROPERTY() bool Captured=false;
     UPROPERTY() bool Following=false;
+    UPROPERTY() bool FollowingBrother=false;
     UPROPERTY() bool Rewarded=false;
     UPROPERTY() double Growth=0;
     UPROPERTY() double FedRemaining=0;
+    UPROPERTY() double ProductMinutes=0;
     UPROPERTY() double AlertRemaining=0;
     UPROPERTY() TMap<FName,int32> Loot;
 };
@@ -71,6 +73,7 @@ struct FHearthwardPen
     UPROPERTY() FVector Position=FVector::ZeroVector;
     UPROPERTY() int32 Level=1;
     UPROPERTY() int32 Feed=0;
+    UPROPERTY() int32 Products=0;
     UPROPERTY() TMap<FName,int32> Paid;
     UPROPERTY() TMap<FString,double> Pairs;
 };
@@ -100,6 +103,7 @@ struct FHearthwardNatureState
 };
 namespace HearthwardNature
 {
+    constexpr int32 ProductCapacity=24;
     TSharedPtr<FJsonObject> Definition(const TCHAR* Table,FName Id);
     const TArray<TSharedPtr<FJsonValue>>& Rows(const TCHAR* Table);
     int32 Capacity(int32 Level);

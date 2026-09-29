@@ -177,6 +177,28 @@ def run():
     check("distant player bag cannot be handed over", not ai.set_structured_goal(player, brother, handoff))
     check("rejected handoff leaves both containers unchanged", player_bag.get_item_count("wood") == player_before - 4
           and store.get_item_count("wood") == camp_before + 4)
+    outside = next(x for x in json.loads(nature.describe())["points"]
+                   if x["definition"] == "wild_seed_greens" and x["key"] in sources
+                   and (x["position"]["x"] - site["x"]) ** 2 + (x["position"]["y"] - site["y"]) ** 2 > 6000 ** 2
+                   and source_stock(x["key"]) >= 2)
+    outside_pos = outside["position"]
+    ox, oy, oz = outside_pos["x"], outside_pos["y"], outside_pos["z"]
+    player.set_actor_location(unreal.Vector(ox - 100, oy, oz + 100), False, True)
+    brother.set_actor_location(unreal.Vector(ox - 180, oy, oz + 100), False, True)
+    yield delay(.5)
+    outside_stock = source_stock(outside["key"])
+    outside_store = store.get_item_count("seed_greens")
+    ui.open_nature(guid(outside["id"]))
+    check("outside safe point card", ui.execute_action("nature.brother_collect:2"))
+    check("outside safe point confirmation", ai.confirm_candidate(ai.get_candidate_id()))
+    player.set_actor_location(unreal.Vector(site["x"], site["y"], site["z"] + 100), False, True)
+    check("outside collection runs without player escort",
+          (player.get_actor_location() - brother.get_actor_location()).length() > 3000)
+    yield wait(lambda: brother.get_phase() == unreal.HearthwardCompanionPhase.COMPLETED, 70)
+    check("outside source consumed exactly two", source_stock(outside["key"]) == outside_stock - 2)
+    check("outside harvest reaches camp once", store.get_item_count("seed_greens") == outside_store + 2
+          and brother.bag.get_item_count("seed_greens") == 0
+          and brother.get_acquired() == 2 and brother.get_delivered() == 2)
     finish()
 
 

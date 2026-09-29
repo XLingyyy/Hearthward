@@ -284,8 +284,20 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
     }
     for(auto& P:State.People)if(auto* A=Actor(P.Id);A && P.Stage==TEXT("following"))
     {
+        AActor* Leader=Player();
+        if(P.Escort==TEXT("brother"))
+        {
+            AHearthwardCompanionFixture* Brother=nullptr;
+            for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+                if(It->Escorting(P.Id)){Brother=*It;break;}
+            if(!Brother)
+            {P.Stage=TEXT("waiting");P.Escort=TEXT("player");if(auto* AI=Cast<AAIController>(A->GetController()))AI->StopMovement();continue;}
+            if(FVector::Dist2D(Brother->GetActorLocation(),Player()->GetActorLocation())>3000)
+            {if(auto* AI=Cast<AAIController>(A->GetController()))AI->StopMovement();continue;}
+            Leader=Brother;
+        }
         const bool Danger=State.Enemies.ContainsByPredicate([&](const auto& E){return E.Combat.Health>0 && FVector::Dist2D(E.Combat.Position,A->GetActorLocation())<2200;});
-        if(Danger || FVector::Dist2D(A->GetActorLocation(),Player()->GetActorLocation())>7000 || !A->WalkTo(Player()->GetActorLocation(),180))
+        if(Danger || FVector::Dist2D(A->GetActorLocation(),Leader->GetActorLocation())>7000 || !A->WalkTo(Leader->GetActorLocation(),180))
         {P.Stage=TEXT("waiting");if(auto* AI=Cast<AAIController>(A->GetController()))AI->StopMovement();Feedback=TEXT("族人停下等待；清除危险后靠近按 E 继续带路");}
         else if(!Camp->State.CampAt(A->GetActorLocation()).IsNone() && !G->InCombat())
         {if(Camp->RecordRescue(P.Id)){P.Stage=TEXT("arrived");Feedback=TEXT("族人已安全报到，人口与救援奖励已登记");}}

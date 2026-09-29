@@ -16,6 +16,7 @@ public:
     UFUNCTION(BlueprintPure) FString Describe() const { return State.Snapshot(); }
     UFUNCTION(BlueprintPure) FString Prompt() const;
     UFUNCTION(BlueprintCallable) bool Interact();
+    bool AssignEscort(FName Person,class AHearthwardCompanionFixture* Brother,FGuid Epoch);
     UFUNCTION(BlueprintCallable) bool Claim(FName Quest,FGuid Epoch);
     UFUNCTION(BlueprintCallable) bool Travel(FName Destination);
     UFUNCTION(BlueprintCallable) void Start();

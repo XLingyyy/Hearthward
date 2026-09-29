@@ -22,6 +22,38 @@ bool UHearthwardNatureSubsystem::StartFishing(FGuid Id,FGuid Epoch)
     {const auto D=V->AsObject();Roll-=Number(D,TEXT("pool_weight"));if(Roll<=0){FishingSpecies=FName(Text(D,TEXT("id")));Fishing.Required=Number(D,TEXT("struggle_seconds"));break;}}
     FishingId=Id;ActionEpoch=Epoch;ActionPosition=Player()->GetActorLocation();LineHeld=false;Feedback=TEXT("抛竿中");return true;
 }
+bool UHearthwardNatureSubsystem::CatchCompanion(APawn* Actor,FGuid Id,FGuid Epoch,FName& CaughtItem)
+{
+    CaughtItem=NAME_None;
+    if(!IsValid(Actor) || Actor==Player() || Busy())return false;
+    ActionActor=Actor;
+    const bool Success=[&]
+    {
+        if(!Safe(Epoch) || !StartFishing(Id,Epoch))return false;
+        while(!Fishing.Done && !Fishing.Failed)Fishing.Advance(.01,Fishing.Tension<.45);
+        if(!Fishing.Done){FishingId.Invalidate();Feedback=TEXT("脱钩，本次没有结算渔获");return false;}
+        const auto D=HearthwardNature::Definition(TEXT("fish"),FishingSpecies);
+        if(!D){FishingId.Invalidate();return false;}
+        const FName Item(*Text(D,TEXT("item")));
+        FHearthwardInventoryState Check;
+        if(!PrepareBag({{TEXT("bait"),1}},{{Item,1}},Check)
+            || !Check.Wear(FishingRod,1/(1+Gameplay()->Effect(TEXT("durability")))))
+        {FishingId.Invalidate();Feedback=TEXT("鱼饵、鱼竿或背包容量不足，本次未抛竿");return false;}
+        auto* Point=State.Points.FindByPredicate([&](const auto& P){return P.Id==Id;});
+        if(!Point || Point->Remaining<=0){FishingId.Invalidate();return false;}
+        const int32 Before=Point->Successes;
+        TGuardValue<bool> Guard(Settling,true);
+        FHearthwardInventoryState Bait;
+        if(!PrepareBag({{TEXT("bait"),1}},{},Bait)){FishingId.Invalidate();return false;}
+        PublishBag(Bait);
+        FinishFishing();
+        if(Point->Successes!=Before+1)return false;
+        CaughtItem=Item;
+        return true;
+    }();
+    FishingId.Invalidate();ActionActor.Reset();
+    return Success;
+}
 FString UHearthwardNatureSubsystem::FishingStatus() const
 {
     if(!IsFishing())return Feedback;

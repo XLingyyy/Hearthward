@@ -9,6 +9,7 @@
 #include "../Save/HearthwardSaveSubsystem.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "HttpModule.h"
@@ -133,15 +134,44 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
     if(Goal.Intent==TEXT("repair") && !Goal.EquipmentId.IsValid() && PendingCompanion.IsValid()
         && PendingCompanion->Bag->GetItemCount(Goal.Item)==1)
         Goal.EquipmentId=PendingCompanion->Bag->FirstInstance(Goal.Item);
-    if((Goal.Intent==TEXT("nature_care") || Goal.Intent==TEXT("nature_collect")) && !Goal.Station.IsValid() && PendingSpeaker.IsValid())
+    if(Goal.Intent==TEXT("camp_batch") && !Goal.Station.IsValid() && PendingCompanion.IsValid())
+    {
+        const auto& Regions=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Regions;
+        TArray<FGuid> Targets;
+        for(const auto& R:Regions)
+            if(R.Facility.IsValid() && R.Job==Goal.Item && R.Brother && !R.Player && R.Workers.IsEmpty() && !R.Enabled && !R.Batch.Active)
+                Targets.Add(R.Facility);
+        if(Targets.Num()==1)Goal.Station=Targets[0];
+    }
+    if((Goal.Intent==TEXT("nature_care") || Goal.Intent==TEXT("nature_collect") || Goal.Intent==TEXT("hunt") || Goal.Intent==TEXT("fish") || Goal.Intent==TEXT("capture")) && !Goal.Station.IsValid() && PendingSpeaker.IsValid())
     {
         auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
         TArray<FGuid> Targets;
-        if(Goal.Intent==TEXT("nature_collect"))
+        if(Goal.Intent==TEXT("fish"))
+        {
+            for(const auto& Point:Nature->State.Points)
+                if(Point.Kind==TEXT("fish") && Point.Remaining>0
+                    && FVector::Dist2D(PendingSpeaker->GetActorLocation(),Point.Position)<=3000 && Nature->Actor(Point.Id))
+                    Targets.Add(Point.Id);
+        }
+        else if(Goal.Intent==TEXT("hunt") || Goal.Intent==TEXT("capture"))
+        {
+            for(const auto& Animal:Nature->State.Animals)
+                if(Animal.Domestic==(Goal.Intent==TEXT("capture")) && Animal.Health>0 && Animal.Definition==Goal.Item
+                    && FVector::Dist2D(PendingSpeaker->GetActorLocation(),Animal.Position)<=3000 && Nature->Actor(Animal.Id))
+                    Targets.Add(Animal.Id);
+        }
+        else if(Goal.Intent==TEXT("nature_collect"))
+        {
             for(const auto& Point:Nature->State.Points)
                 if(Point.Kind==TEXT("resource") && FVector::Dist2D(PendingSpeaker->GetActorLocation(),Point.Position)<=300
                     && FName(*HearthwardData::Text(HearthwardNature::Definition(TEXT("resources"),Point.Definition),TEXT("item")))==Goal.Item)
                     Targets.Add(Point.Id);
+            for(const auto& Pen:Nature->State.Pens)
+                if(FVector::Dist2D(PendingSpeaker->GetActorLocation(),Pen.Position)<=300 && Pen.Products>=Goal.Quantity
+                    && FName(*HearthwardData::Text(HearthwardNature::Definition(TEXT("domestic"),Pen.Definition),TEXT("product")))==Goal.Item)
+                    Targets.Add(Pen.Id);
+        }
         else if(Goal.Item==TEXT("deposit_feed"))
             for(const auto& P:Nature->State.Pens)
                 if(FVector::Dist2D(PendingSpeaker->GetActorLocation(),P.Position)<=300)Targets.Add(P.Id);
@@ -310,6 +340,11 @@ bool UHearthwardLocalAISubsystem::ConfirmCandidate(FGuid Id)
         NPCLine=Candidate.Intent==TEXT("repair")?TEXT("维修任务已接受，完成后装备仍由我持有。"):
             Candidate.Intent==TEXT("nature_care")?TEXT("照料任务已接受，完成后按地块或栏舍的实际状态报告。"):
             Candidate.Intent==TEXT("nature_collect")?TEXT("采集任务已接受，我会按实际采得和入库数量报告。"):
+            Candidate.Intent==TEXT("escort")?TEXT("我会与你同行，带指定族人回营；到营报到后再报告完成。"):
+            Candidate.Intent==TEXT("hunt")?TEXT("我只追你指认的这只猎物；我真实击杀后，战利品会留在尸体上。"):
+            Candidate.Intent==TEXT("fish")?TEXT("我会在指定鱼点与你同行钓一条；鱼饵、鱼竿和渔获都从我的背包按实际结算。"):
+            Candidate.Intent==TEXT("capture")?TEXT("我会与你同行捕获这只家畜，并牵到当前营地栏舍；实际入栏后再报告完成。"):
+            Candidate.Intent==TEXT("camp_batch")?TEXT("我会到已分配的设施岗位，只做你确认的批数；材料和产物按营地实际结算。"):
             TEXT("任务已接受，完成数量以实际交付为准。");
     }
     LastAppliedIntent=Candidate.Intent.ToString();CandidateId.Invalidate();Memory.Clarification.Reset();Memory.WorkingGoal={};Status=NPCLine;MarkConversation();return true;

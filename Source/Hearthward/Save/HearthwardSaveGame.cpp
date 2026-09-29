@@ -248,17 +248,23 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
             || !S.Player.IsValid() || !S.Companion.IsValid() || !S.Source.IsValid() || !S.Camp.IsValid() || S.View.ContainsNaN()
             || !ValidCounts(S.Resource, false)
             || !ValidTimer(S.PlayerTimer) || !ValidTimer(S.CompanionTimer)
-            || uint8(S.Phase) > uint8(EHearthwardCompanionPhase::HandingOff)
+            || uint8(S.Phase) > uint8(EHearthwardCompanionPhase::CampBatchWorking)
             || S.Requested < 0 || S.Delivered < 0 || S.Delivered > S.Requested) return false;
         if (S.Requested > 0 && !HearthwardBasicItems().ContainsByPredicate([&S](const auto& I) { return I.Id == S.Item; })
-            && !(S.AgentGoal.Intent==TEXT("nature_care") && S.AgentGoal.Item==S.Item
-                && HearthwardAgent::IsCapabilityItem(TEXT("nature_care"),S.Item))) return false;
+            && !(S.AgentGoal.Item==S.Item && ((S.AgentGoal.Intent==TEXT("nature_care") && HearthwardAgent::IsCapabilityItem(TEXT("nature_care"),S.Item))
+                || (S.AgentGoal.Intent==TEXT("escort") && HearthwardAgent::IsCapabilityItem(TEXT("escort"),S.Item))
+                || (S.AgentGoal.Intent==TEXT("hunt") && HearthwardAgent::IsCapabilityItem(TEXT("hunt"),S.Item))
+                || (S.AgentGoal.Intent==TEXT("fish") && HearthwardAgent::IsCapabilityItem(TEXT("fish"),S.Item))
+                || (S.AgentGoal.Intent==TEXT("capture") && HearthwardAgent::IsCapabilityItem(TEXT("capture"),S.Item))
+                || (S.AgentGoal.Intent==TEXT("camp_batch") && HearthwardAgent::IsCapabilityItem(TEXT("camp_batch"),S.Item))))) return false;
         if (S.CommandActive && (S.Requested == 0 || S.Delivered == S.Requested)) return false;
         const bool Executing = S.Phase == EHearthwardCompanionPhase::GoingToSource || S.Phase == EHearthwardCompanionPhase::Gathering
             || S.Phase == EHearthwardCompanionPhase::Returning || S.Phase == EHearthwardCompanionPhase::ReturningBlocked
             || S.Phase == EHearthwardCompanionPhase::GoingToWorkshop || S.Phase == EHearthwardCompanionPhase::TakingMaterials || S.Phase == EHearthwardCompanionPhase::HoldingSafely
-            || S.Phase == EHearthwardCompanionPhase::TakingCargo || S.Phase == EHearthwardCompanionPhase::GoingToPlayer || S.Phase == EHearthwardCompanionPhase::HandingOff;
+            || S.Phase == EHearthwardCompanionPhase::TakingCargo || S.Phase == EHearthwardCompanionPhase::GoingToPlayer || S.Phase == EHearthwardCompanionPhase::HandingOff
+            || S.Phase == EHearthwardCompanionPhase::LeadingAnimal || S.Phase == EHearthwardCompanionPhase::CampBatchWorking;
         if (Executing && !S.CommandActive) return false;
+        if(S.CampBatchBaseline< -1 || (S.Phase==EHearthwardCompanionPhase::CampBatchWorking && S.CampBatchBaseline<0))return false;
         if (S.Phase == EHearthwardCompanionPhase::Completed && (S.Requested == 0 || S.Delivered != S.Requested || S.CommandActive)) return false;
         if (S.Phase == EHearthwardCompanionPhase::Gathering && S.CompanionTimer.Status != EHearthwardTimedActionStatus::Running
             && S.CompanionTimer.Status != EHearthwardTimedActionStatus::Completed) return false;

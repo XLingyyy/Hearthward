@@ -443,7 +443,7 @@ void UHearthwardScreenWidget::ComposeDialogue()
     }
     TArray<const FHearthwardAgentCapability*> Caps;
     for(const auto& C:HearthwardAgent::Capabilities())
-        if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("retrieve") || C.Id==TEXT("give") || C.Id==TEXT("fetch") || C.Id==TEXT("receive") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
+        if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("retrieve") || C.Id==TEXT("give") || C.Id==TEXT("fetch") || C.Id==TEXT("receive") || C.Id==TEXT("craft") || C.Id==TEXT("repair") || C.Id==TEXT("escort")) Caps.Add(&C);
     AgentCapabilityIndex=FMath::Clamp(AgentCapabilityIndex,0,Caps.Num()-1);
     AgentItemIndex=FMath::Clamp(AgentItemIndex,0,Caps[AgentCapabilityIndex]->Items.Num()-1);
     const auto& Cap=*Caps[AgentCapabilityIndex];

@@ -22,6 +22,7 @@
 #include "Camera/PlayerCameraManager.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
+#include "../Companion/HearthwardCompanionFixture.h"
 using namespace HearthwardData;
 AHearthwardNatureActor::AHearthwardNatureActor()
 {
@@ -149,12 +150,21 @@ void AHearthwardNatureActor::MoveAnimal(float Delta)
     {
         if(A->Following)
         {
-            const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();if(!G || G->InCombat() || A->AlertRemaining>0){A->Following=false;return;}
+            const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();if(!G || G->InCombat() || A->AlertRemaining>0){A->Following=false;A->FollowingBrother=false;return;}
+            AActor* Leader=Player;
+            if(A->FollowingBrother)
+            {
+                AHearthwardCompanionFixture* Brother=nullptr;
+                for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)if(It->LeadingAnimal(Id)){Brother=*It;break;}
+                if(!Brother){A->Following=false;A->FollowingBrother=false;return;}
+                Leader=Brother;
+                if(FVector::Dist2D(Player->GetActorLocation(),Leader->GetActorLocation())>3000)return;
+            }
             const auto* Pen=N->State.Pens.FindByPredicate([&](const auto& P){return P.Id==A->ReservedPen;});
             if(!Pen)return;
-            if(FVector::Dist2D(GetActorLocation(),Pen->Position)<190){A->Pen=Pen->Id;A->ReservedPen.Invalidate();A->Following=false;return;}
-            if(FVector::Dist2D(Player->GetActorLocation(),Pen->Position)<600)Goal=Pen->Position;
-            else if(FVector::Dist2D(Player->GetActorLocation(),GetActorLocation())>220)Goal=Player->GetActorLocation();else return;
+            if(FVector::Dist2D(GetActorLocation(),Pen->Position)<190){A->Pen=Pen->Id;A->ReservedPen.Invalidate();A->Following=false;A->FollowingBrother=false;return;}
+            if(FVector::Dist2D(Leader->GetActorLocation(),Pen->Position)<600)Goal=Pen->Position;
+            else if(FVector::Dist2D(Leader->GetActorLocation(),GetActorLocation())>220)Goal=Leader->GetActorLocation();else return;
             Speed=300;
         }
         else return;

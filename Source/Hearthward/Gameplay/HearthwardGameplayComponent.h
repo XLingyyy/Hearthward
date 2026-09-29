@@ -104,6 +104,7 @@ public:
     FVector LocationPosition(FName Id) const;
     UFUNCTION() void InventoryChanged();
 private:
+    friend class AHearthwardCompanionFixture;
 
     void DamageOpponent(FName Target,float Damage,AActor* Source);
     void TickCompanion(float Delta);
