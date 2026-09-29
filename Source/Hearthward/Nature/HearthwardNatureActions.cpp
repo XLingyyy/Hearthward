@@ -8,6 +8,7 @@
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Camp/HearthwardCampSubsystem.h"
+#include "../Companion/HearthwardCompanionFixture.h"
 #include "GameFramework/Pawn.h"
 using namespace HearthwardData;
 namespace { using NatureResult=EHearthwardInventoryResult; }
@@ -26,8 +27,10 @@ bool UHearthwardNatureSubsystem::CommitCompanion(APawn* Actor,FName Action,FGuid
     const bool Crop=State.Crops.ContainsByPredicate([&](const auto& C){return C.Id==Target;});
     const bool Pen=State.Pens.ContainsByPredicate([&](const auto& P){return P.Id==Target;});
     const bool Resource=State.Points.ContainsByPredicate([&](const auto& P){return P.Id==Target && P.Kind==TEXT("resource");});
-    if(Action==TEXT("deposit_feed") ? !Pen
+    const bool Animal=State.Animals.ContainsByPredicate([&](const auto& A){return A.Id==Target && A.Domestic;});
+    if(Action==TEXT("deposit_feed") || Action==TEXT("collect_product") ? !Pen
         : Action==TEXT("harvest") ? !Crop && !Resource
+        : Action==TEXT("capture") || Action==TEXT("lead") ? !Animal
         : !Crop || (Action!=TEXT("water") && Action!=TEXT("fertilize")))return false;
     ActionActor=Actor;
     const bool Allowed=Safe(Epoch) && Near(Target);
@@ -144,7 +147,13 @@ bool UHearthwardNatureSubsystem::Commit(FName Action,FGuid Id,FName Option,int32
         {Pen->Feed+=Count;PublishBag(Next);return true;}
         if(Action==TEXT("withdraw_feed") && Pen->Feed>=Count && PrepareBag({},{{TEXT("feed"),Count}},Next))
         {Pen->Feed-=Count;PublishBag(Next);return true;}
-        if(Pen->Feed==0 && State.Occupants(Id)==0)
+        if(Action==TEXT("collect_product") && Pen->Products>=Count)
+        {
+            const FName Product(*Text(HearthwardNature::Definition(TEXT("domestic"),Pen->Definition),TEXT("product")));
+            if(Product.IsNone() || !PrepareBag({},{{Product,Count}},Next))return false;
+            Pen->Products-=Count;PublishBag(Next);return true;
+        }
+        if(Pen->Feed==0 && Pen->Products==0 && State.Occupants(Id)==0)
         {
             if(Action==TEXT("move_pen") && ClearPlot(Site,200,Id)){Pen->Position=Site;return true;}
             if(Action==TEXT("demolish_pen") && Option==TEXT("confirmed") && PrepareBag({},HearthwardCamp::Refund(Pen->Paid),Next))
@@ -159,23 +168,29 @@ bool UHearthwardNatureSubsystem::Commit(FName Action,FGuid Id,FName Option,int32
         {
             const auto D=HearthwardNature::Definition(TEXT("domestic"),Animal->Definition);const int32 N=Number(D,Animal->Juvenile?TEXT("juvenile_meat"):TEXT("meat"));
             if(!PrepareBag({},{{TEXT("meat"),N}},Next))return false;
-            Animal->Health=0;Animal->Rewarded=true;Animal->Pen.Invalidate();Animal->ReservedPen.Invalidate();Animal->Following=false;
+            Animal->Health=0;Animal->Rewarded=true;Animal->Pen.Invalidate();Animal->ReservedPen.Invalidate();Animal->Following=false;Animal->FollowingBrother=false;
             PublishBag(Next);return true;
         }
         if(Action==TEXT("capture") && Animal->Domestic && Animal->Health>0 && !Animal->Captured)
         {
-            auto* Home=State.Pens.FindByPredicate([&](const auto& P){return P.Definition==Animal->Definition && State.Occupants(P.Id)<HearthwardNature::Capacity(P.Level);});
+            const auto* Brother=Cast<AHearthwardCompanionFixture>(ActionActor.Get());
+            const FName TaskCamp=Brother && IsValid(Brother->Camp)?Camp->State.CampAt(Brother->Camp->GetActorLocation()):NAME_None;
+            auto* Home=State.Pens.FindByPredicate([&](const auto& P){return P.Definition==Animal->Definition && State.Occupants(P.Id)<HearthwardNature::Capacity(P.Level)
+                && (!ActionActor.IsValid() || Camp->State.CampAt(P.Position)==TaskCamp);});
             if(!Home || !PrepareBag({{TEXT("feed"),1},{TEXT("rope"),1}},{},Next))return false;
-            Animal->ReservedPen=Home->Id;Animal->Captured=true;Animal->Following=true;PublishBag(Next);return true;
+            Animal->ReservedPen=Home->Id;Animal->Captured=true;Animal->Following=true;Animal->FollowingBrother=ActionActor.IsValid();PublishBag(Next);return true;
         }
         if(Action==TEXT("lead") && Animal->Domestic && Animal->Captured && Animal->Health>0)
         {
             if(!Animal->ReservedPen.IsValid())
             {
-                auto* Home=State.Pens.FindByPredicate([&](const auto& P){return P.Id!=Animal->Pen && P.Definition==Animal->Definition && State.Occupants(P.Id)<HearthwardNature::Capacity(P.Level);});
+                const auto* Brother=Cast<AHearthwardCompanionFixture>(ActionActor.Get());
+                const FName TaskCamp=Brother && IsValid(Brother->Camp)?Camp->State.CampAt(Brother->Camp->GetActorLocation()):NAME_None;
+                auto* Home=State.Pens.FindByPredicate([&](const auto& P){return P.Id!=Animal->Pen && P.Definition==Animal->Definition && State.Occupants(P.Id)<HearthwardNature::Capacity(P.Level)
+                    && (!ActionActor.IsValid() || Camp->State.CampAt(P.Position)==TaskCamp);});
                 if(!Home)return false;Animal->Pen.Invalidate();Animal->ReservedPen=Home->Id;
             }
-            Animal->Following=true;return true;
+            Animal->Following=true;Animal->FollowingBrother=ActionActor.IsValid();return true;
         }
     }
     if(Action==TEXT("claim") && Point && (!Point->Pending.Stacks.IsEmpty() || !Point->Pending.Instances.IsEmpty()))
@@ -205,7 +220,7 @@ bool UHearthwardNatureSubsystem::DamageAnimal(FName Target,float Health)
 {
     FGuid Id;if(!FGuid::Parse(Target.ToString(),Id))return false;
     auto* A=State.Animals.FindByPredicate([&](const auto& X){return X.Id==Id;});if(!A)return false;
-    const float Before=A->Health;A->Health=FMath::Clamp(Health,0.f,Before);A->AlertRemaining=15;A->Following=false;
+    const float Before=A->Health;A->Health=FMath::Clamp(Health,0.f,Before);A->AlertRemaining=15;A->Following=false;A->FollowingBrother=false;
     if(!A->Domestic && Before>A->Health)Gameplay()->NotifyCombat();
     if(Before>0 && A->Health<=0 && !A->Rewarded)
     {

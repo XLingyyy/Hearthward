@@ -10,12 +10,20 @@
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
+#include "../Companion/HearthwardCompanionFixture.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 using namespace HearthwardData;
 APawn* UHearthwardNatureSubsystem::Player() const{return UGameplayStatics::GetPlayerPawn(GetWorld(),0);}
+bool UHearthwardNatureSubsystem::WorkingOn(FGuid Id) const
+{
+    if(!PendingAction.IsNone() && PendingId==Id)return true;
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+        if(It->CapturingAnimal(Id))return true;
+    return false;
+}
 UHearthwardInventoryComponent* UHearthwardNatureSubsystem::Bag() const
 {auto* Actor=ActionActor.IsValid()?ActionActor.Get():Player();return Actor?Actor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;}
 UHearthwardGameplayComponent* UHearthwardNatureSubsystem::Gameplay() const{return Player()?Player()->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;}

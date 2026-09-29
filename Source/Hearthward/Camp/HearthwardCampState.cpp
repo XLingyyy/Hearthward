@@ -146,6 +146,7 @@ void FHearthwardCampState::Advance(double Minutes,bool Sleeping,const FExchange&
         for(int32 Index:Order)
         {
             auto& R=Regions[Index];R.Status.Reset();
+            if(R.BatchStopAt>0 && R.Completed>=R.BatchStopAt)R.Enabled=false;
             if(!R.Enabled || !R.Safe) {R.Status=R.Safe?TEXT("已暂停"):TEXT("区域不安全");continue;}
             auto* Facility=Facilities.FindByPredicate([&](const auto& B){return B.Id==R.Facility;});
             const bool Processing=!R.Facility.IsValid()?false:true;
@@ -194,6 +195,7 @@ void FHearthwardCampState::Advance(double Minutes,bool Sleeping,const FExchange&
             if(!Food && !Exchange({},R.Batch.Outputs)) {R.Status=TEXT("仓储数量达到上限，产物待入库");continue;}
             if(Food) for(const auto& O:R.Batch.Outputs) Donate(O.Key,O.Value);
             R.Batch={};R.Completed++;R.Status=TEXT("生产中");
+            if(R.BatchStopAt>0 && R.Completed>=R.BatchStopAt)R.Enabled=false;
         }
     }
 }
@@ -228,7 +230,7 @@ bool FHearthwardCampState::Validate() const
     }
     for(const auto& R:Regions)
     {
-        if(R.Id.IsNone() || RegionsSeen.Contains(R.Id) || !CampsSeen.Contains(R.Camp) || R.Completed<0 || R.Priority<0
+        if(R.Id.IsNone() || RegionsSeen.Contains(R.Id) || !CampsSeen.Contains(R.Camp) || R.Completed<0 || R.BatchStopAt<0 || R.Priority<0
             || R.Workers.Num()+int(R.Player)+int(R.Brother)>5 || (R.Facility.IsValid() && !Buildings.Contains(R.Facility))) return false;
         RegionsSeen.Add(R.Id);
         TArray<int32> Assigned=R.Workers;if(R.Player) Assigned.Add(30);if(R.Brother) Assigned.Add(31);

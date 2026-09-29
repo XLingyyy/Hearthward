@@ -25,6 +25,7 @@ struct FHearthwardCampaignPerson
     UPROPERTY() FName Id;
     UPROPERTY() FName Location;
     UPROPERTY() FName Stage=TEXT("uncontacted");
+    UPROPERTY() FName Escort=TEXT("player");
     UPROPERTY() FVector Position=FVector::ZeroVector;
     UPROPERTY() bool Located=false;
 };

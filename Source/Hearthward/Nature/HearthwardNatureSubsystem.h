@@ -16,12 +16,13 @@ public:
     UFUNCTION(BlueprintCallable) bool Act(FName Action,FGuid Target,FName Option,FGuid Epoch,int32 Count=1);
     // Called only after the companion's five-second action completed.
     bool CommitCompanion(class APawn* Actor,FName Action,FGuid Target,FGuid Epoch,int32 Count=1);
+    bool CatchCompanion(class APawn* Actor,FGuid Target,FGuid Epoch,FName& CaughtItem);
     UFUNCTION(BlueprintCallable) void Cancel();
     UFUNCTION(BlueprintCallable) void HoldLine(bool Held) { LineHeld=Held; }
     UFUNCTION(BlueprintPure) FString FishingStatus() const;
     UFUNCTION(BlueprintPure) double FishingTension() const { return Fishing.Tension; }
     UFUNCTION(BlueprintPure) bool IsFishing() const { return FishingId.IsValid(); }
-    bool WorkingOn(FGuid Id) const { return !PendingAction.IsNone() && PendingId==Id; }
+    bool WorkingOn(FGuid Id) const;
     UFUNCTION(BlueprintCallable) bool ReadMap(FName Item);
     void EnsureWorld();
     void Advance(double Minutes);

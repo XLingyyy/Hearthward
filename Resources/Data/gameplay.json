@@ -1308,6 +1308,34 @@
       "indestructible": true,
       "key": true,
       "protected": true
+    },
+    {
+      "id": "egg",
+      "name": "鸡蛋",
+      "weight": 25,
+      "food": 20,
+      "category": "食物",
+      "icon": "meat",
+      "description": "成年家鸡在栏舍中产出的鸡蛋。",
+      "displayOrder": 75,
+      "rarity": "common",
+      "status": "APPROVED_TASK_050",
+      "version": 1,
+      "durability": 0
+    },
+    {
+      "id": "milk",
+      "name": "羊奶",
+      "weight": 50,
+      "food": 20,
+      "category": "食物",
+      "icon": "meat",
+      "description": "成年山羊在栏舍中产出的羊奶。",
+      "displayOrder": 76,
+      "rarity": "common",
+      "status": "APPROVED_TASK_050",
+      "version": 1,
+      "durability": 0
     }
   ],
   "skills": [
@@ -7027,6 +7055,7 @@
         "id": "goat",
         "name": "山羊",
         "asset_stem": "goat",
+        "product": "milk",
         "health": 60,
         "adult_feed_daily": 2,
         "young_feed_daily": 1,
@@ -7059,6 +7088,7 @@
         "id": "hen",
         "name": "家鸡",
         "asset_stem": "hen",
+        "product": "egg",
         "health": 20,
         "adult_feed_daily": 1,
         "young_feed_daily": 1,
@@ -7456,7 +7486,7 @@
       "crop_auto_harvest": false,
       "offline_growth": false,
       "livestock_starvation_death": false,
-      "livestock_additional_products": false,
+      "livestock_additional_products": true,
       "weather_affects_catch": false,
       "bonus_treasure_replaces_fish": false,
       "animal_difficulty_multiplier": false

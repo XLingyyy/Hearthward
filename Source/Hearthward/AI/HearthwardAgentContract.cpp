@@ -1,5 +1,7 @@
 #include "HearthwardAgentContract.h"
 #include "../Nature/HearthwardNatureState.h"
+#include "../Camp/HearthwardCampState.h"
+#include "../Campaign/HearthwardCampaignState.h"
 #include "../Inventory/HearthwardInventoryState.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "Dom/JsonObject.h"
@@ -53,7 +55,7 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
 {
     static const TArray<FHearthwardAgentCapability> C=[]
     {
-        TArray<FName> All,Stored,Resources,Recipes,Repair;
+        TArray<FName> All,Stored,Resources,Recipes,Repair,People,Wildlife,Domestic,CampRecipes;
         for(const auto& I:HearthwardBasicItems())
         {
             All.Add(I.Id);
@@ -65,17 +67,37 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
         for(const auto& R:HearthwardData::Rows(TEXT("repairRecipes"))) Repair.Add(FName(*HearthwardData::Text(R->AsObject(),TEXT("id"))));
         for(const auto& R:HearthwardNature::Rows(TEXT("resources")))
             Resources.AddUnique(FName(*HearthwardData::Text(R->AsObject(),TEXT("item"))));
+        for(const auto& R:HearthwardNature::Rows(TEXT("domestic")))
+        {
+            Domestic.Add(FName(*HearthwardData::Text(R->AsObject(),TEXT("id"))));
+            const FName Product(*HearthwardData::Text(R->AsObject(),TEXT("product")));
+            if(!Product.IsNone())Resources.AddUnique(Product);
+        }
+        for(const auto& R:HearthwardCampaign::Rows(TEXT("people")))
+        {
+            const FName Person(*HearthwardData::Text(R->AsObject(),TEXT("id")));
+            if(Person.ToString().StartsWith(TEXT("rescued_")))People.Add(Person);
+        }
+        for(const auto& R:HearthwardNature::Rows(TEXT("wildlife")))
+            Wildlife.Add(FName(*HearthwardData::Text(R->AsObject(),TEXT("id"))));
+        for(const auto& R:HearthwardCamp::Table()->GetArrayField(TEXT("recipes")))
+            CampRecipes.Add(FName(*HearthwardData::Text(R->AsObject(),TEXT("id"))));
         TArray<FHearthwardAgentCapability> Result={
             {TEXT("collect"),TEXT("采集木材→返营→入库；数量是新采集份数；S1为当前已知安全点"),{TEXT("wood")},Policy(TEXT("max_collect")),TEXT("additional_acquired"),{TEXT("S1")},{TEXT("ban"),TEXT("source")},true},
-            {TEXT("nature_collect"),TEXT("从已选定的同营地安全资源点采集→返营→入库；数量是新采集份数；必须指定真实资源点"),Resources,Policy(TEXT("max_collect")),TEXT("additional_acquired"),{TEXT("known_target")},{TEXT("ban")},true},
+            {TEXT("nature_collect"),TEXT("从已选定的同营地安全资源点采集或收取栏舍普通产物→返营→入库；数量是新取得份数；必须指定真实目标"),Resources,Policy(TEXT("max_collect")),TEXT("additional_acquired"),{TEXT("known_target")},{TEXT("ban")},true},
             {TEXT("store"),TEXT("将弟弟背包已有物品或玩家在同一营地3米内明确交付的普通物品送入营地仓库；不能从仓库取出，不计作新采集"),Stored,Policy(TEXT("max_collect")),TEXT("held_to_camp"),{TEXT("bag"),TEXT("player_bag")},{},true},
             {TEXT("retrieve"),TEXT("从当前营地仓库取出明确数量的普通物品，交到同营地玩家背包；仅实际交给玩家计入完成，返仓不计交付"),Stored,Policy(TEXT("max_collect")),TEXT("camp_to_player"),{TEXT("camp")},{},true},
             {TEXT("give"),TEXT("将弟弟背包已有的明确数量普通物品，交入同营地玩家背包；仅实际交给玩家计入完成；中断时物品留在弟弟背包"),Stored,Policy(TEXT("max_collect")),TEXT("bag_to_player"),{TEXT("bag")},{},true},
             {TEXT("fetch"),TEXT("从当前营地仓库取出明确数量的普通物品，留在弟弟背包；仅实际取入弟弟背包计入完成"),Stored,Policy(TEXT("max_collect")),TEXT("camp_to_bag"),{TEXT("camp")},{},true},
             {TEXT("receive"),TEXT("从同营地玩家背包接收明确数量的普通物品，留在弟弟背包；仅实际接收计入完成"),Stored,Policy(TEXT("max_collect")),TEXT("player_to_bag"),{TEXT("player_bag")},{},true},
             {TEXT("nature_care"),TEXT("照料已知的当前地块或栏舍；必须指定唯一目标，浇水/施肥/收获各1次，喂饲料可指定份数"),{TEXT("water"),TEXT("fertilize"),TEXT("harvest"),TEXT("deposit_feed")},32,TEXT("action_count"),{TEXT("known_target")},{},true},
+            {TEXT("hunt"),TEXT("仅在玩家同行时狩猎玩家已指认的单只野生动物；必须指定现场目标，弟弟真实命中并击杀后才完成；战利品留在尸体"),Wildlife,1,TEXT("one_animal"),{TEXT("known_target")},{},true},
+            {TEXT("fish"),TEXT("仅在玩家同行时于已指认鱼点钓获一条；弟弟使用自己的鱼竿、鱼饵和背包，按Nature鱼群库存与稀有奖励结算"),{TEXT("fish")},1,TEXT("one_catch"),{TEXT("known_target")},{},true},
+            {TEXT("capture"),TEXT("仅在玩家同行时捕获已指认的单只家畜并实际牵引入当前营地同种栏舍；新捕获消耗弟弟的饲料和绳索，继续牵引不重复消耗"),Domestic,1,TEXT("one_animal"),{TEXT("known_target")},{},true},
+            {TEXT("camp_batch"),TEXT("在当前营地已配置、只由弟弟工作的设施生产区执行指定配方的有限批次；材料和产物由营地共享仓储真实结算，到批数上限自动停产"),CampRecipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("assigned_region")},{},true},
             {TEXT("craft"),TEXT("取得授权材料→到工作台制作→产物入库；quantity是批数；默认弟弟背包bag，明确授权才用camp仓库；once:物品仅用于玩家明确说这次可用的单次例外"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
             {TEXT("repair"),TEXT("到工作台修理弟弟背包中明确的装备实例；同类多件必须由玩家选择实例；quantity=1；once:物品仅用于玩家明确说这次可用的单次例外"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
+            {TEXT("escort"),TEXT("仅在玩家同行时护送已接触的指定族人回当前营地；玩家负责交谈，族人实际入营报到才完成；不能搜寻未知族人"),People,1,TEXT("one_person"),{TEXT("known_person")},{},true},
             {TEXT("companion_order"),TEXT("高层伙伴指令；hold原地等待，follow跟随玩家，assist在玩家附近协助有效威胁，routine恢复营地低权限自由活动；UE决定目标、导航、攻击时机和伤害"),{TEXT("hold"),TEXT("follow"),TEXT("assist"),TEXT("routine")},1,TEXT("directive"),{TEXT("player")},{},true},
             {TEXT("inventory"),TEXT("只读询问营地当前或已有belief库存；‘多少/几份/是不是有/吗/？’这类疑问句属于inventory；回复必须说明来源与是否亲自确认"),All,0,TEXT("none"),{TEXT("none")},{},false},
             {TEXT("inventory_report"),TEXT("仅限玩家用陈述句明确报告营地某物品的精确当前数量；疑问句不是report；只更新弟弟的belief，不修改实际仓库"),All,100000,TEXT("reported_exact"),{TEXT("player")},{},false},
@@ -203,8 +225,13 @@ FString HearthwardAgent::ItemText(FName Item)
     if(Item==TEXT("fertilize"))return TEXT("地块施肥");
     if(Item==TEXT("harvest"))return TEXT("成熟作物收获");
     if(Item==TEXT("deposit_feed"))return TEXT("栏舍喂料");
+    if(Item==TEXT("fish"))return TEXT("鱼点渔获");
+    if(auto R=HearthwardNature::Definition(TEXT("domestic"),Item))return HearthwardData::Text(R,TEXT("name"));
+    if(Item.ToString().StartsWith(TEXT("rescued_")))return TEXT("族人")+Item.ToString().Right(2);
+    if(auto R=HearthwardNature::Definition(TEXT("wildlife"),Item))return HearthwardData::Text(R,TEXT("name"));
     if(const auto* I=HearthwardBasicItems().FindByPredicate([&](const auto& X){return X.Id==Item;}))return I->DisplayName.ToString();
     if(auto R=HearthwardData::Find(TEXT("craftingRecipes"),Item.ToString()))return HearthwardData::Text(R,TEXT("name"));
+    if(auto R=HearthwardCamp::Recipe(Item))return HearthwardData::Text(R,TEXT("name"));
     return TEXT("未指定物品");
 }
 FString HearthwardAgent::LimitText(const FString& L)
@@ -241,7 +268,12 @@ FString HearthwardAgent::GoalText(const FHearthwardAgentGoal& G)
     if(G.Intent==TEXT("companion_order"))
         Text=FString::Printf(TEXT("伙伴高层指令：%s\n战术目标、导航、攻击时机与伤害由UE按当前世界状态决定"),*Name);
     if(G.Intent==TEXT("nature_care"))Text=FString::Printf(TEXT("在目标[%s]执行%s × %d；实际完成由地块／栏舍状态决定"),*G.Station.ToString().Left(8),*G.Item.ToString(),G.Quantity);
-    if(G.Intent==TEXT("nature_collect"))Text=FString::Printf(TEXT("从已知安全资源点[%s]新采集%s × %d份并送入当前营地仓库；仅计实际采得与入库"),*G.Station.ToString().Left(8),*Name,G.Quantity);
+    if(G.Intent==TEXT("nature_collect"))Text=FString::Printf(TEXT("从已知安全目标[%s]取得%s × %d份并送入当前营地仓库；仅计实际取得与入库"),*G.Station.ToString().Left(8),*Name,G.Quantity);
+    if(G.Intent==TEXT("escort"))Text=FString::Printf(TEXT("同行护送已接触的%s回当前营地；只有族人真实到营报到才计完成。玩家需在弟弟30米内同行。"),*Name);
+    if(G.Intent==TEXT("hunt"))Text=FString::Printf(TEXT("同行狩猎已指认的%s[%s]；弟弟真实击杀才计完成，战利品留在尸体；玩家需在弟弟30米内同行。"),*Name,*G.Station.ToString().Left(8));
+    if(G.Intent==TEXT("fish"))Text=FString::Printf(TEXT("在已指认鱼点[%s]同行钓获一条；消耗弟弟鱼饵并磨损鱼竿，渔获留在弟弟背包；玩家需在弟弟30米内同行。"),*G.Station.ToString().Left(8));
+    if(G.Intent==TEXT("capture"))Text=FString::Printf(TEXT("同行捕获或继续牵引已指认的%s[%s]回当前营地栏舍；只有动物实际入栏才计完成；新捕获消耗弟弟1份饲料和1条绳索。"),*Name,*G.Station.ToString().Left(8));
+    if(G.Intent==TEXT("camp_batch"))Text=FString::Printf(TEXT("在当前营地设施[%s]执行%s × %d批；共享仓储按现有生产配方真实扣料与入库，到限定批数自动停产。"),*G.Station.ToString().Left(8),*Name,G.Quantity);
     if(G.Intent==TEXT("retrieve"))Text=FString::Printf(TEXT("从当前营地仓库取出%s × %d份，交入同营地玩家背包；仅计实际交付，受阻返仓不计完成"),*Name,G.Quantity);
     if(G.Intent==TEXT("give"))Text=FString::Printf(TEXT("从弟弟背包取已有%s × %d份，交入同营地玩家背包；仅计实际交付，受阻时留在弟弟背包"),*Name,G.Quantity);
     if(G.Intent==TEXT("fetch"))Text=FString::Printf(TEXT("从当前营地仓库取出%s × %d份，留在弟弟背包；仅计实际取入，仓库库存相应减少"),*Name,G.Quantity);

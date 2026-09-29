@@ -79,6 +79,7 @@ struct FHearthwardWorldSave
     UPROPERTY() FHearthwardAgentGoal AgentGoal;
     UPROPERTY() int32 Acquired = 0;
     UPROPERTY() int32 Carried = 0;
+    UPROPERTY() int32 CampBatchBaseline = -1;
     UPROPERTY() FGuid CommandId;
     UPROPERTY() TMap<FName,float> NPCDurability;
     UPROPERTY() TMap<FName,int32> NPCSpent;

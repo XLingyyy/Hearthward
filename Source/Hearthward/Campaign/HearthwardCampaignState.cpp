@@ -119,7 +119,8 @@ bool FHearthwardCampaignState::Validate() const
     for(const auto& P:People)
     {
         if(!P.Id.ToString().StartsWith(TEXT("rescued_")) || Ids.Contains(P.Id) || P.Position.ContainsNaN() || !HearthwardCampaign::Find(TEXT("locations"),P.Location)
-            || (P.Stage!=TEXT("uncontacted") && P.Stage!=TEXT("waiting") && P.Stage!=TEXT("following") && P.Stage!=TEXT("arrived")))return false;
+            || (P.Stage!=TEXT("uncontacted") && P.Stage!=TEXT("waiting") && P.Stage!=TEXT("following") && P.Stage!=TEXT("arrived"))
+            || (P.Escort!=TEXT("player") && P.Escort!=TEXT("brother")))return false;
         Ids.Add(P.Id);
     }
     for(int32 I=1;I<=10;++I)if(!Ids.Contains(FName(*FString::Printf(TEXT("rescued_%02d"),I))))return false;

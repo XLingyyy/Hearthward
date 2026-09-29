@@ -81,7 +81,18 @@ void FHearthwardNatureState::Advance(double Minutes)
         }
         for(auto& A:Animals)if(A.Health>0 && A.Domestic && A.Pen.IsValid() && A.FedRemaining>1.e-7)
         {
+            const bool Producing=!A.Juvenile && !Text(HearthwardNature::Definition(TEXT("domestic"),A.Definition),TEXT("product")).IsEmpty();
             if(A.Juvenile){A.Growth=FMath::Min(2880.,A.Growth+Step);if(A.Growth>=2880-1.e-6)A.Juvenile=false;}
+            if(Producing)
+            {
+                A.ProductMinutes+=Step;
+                if(A.ProductMinutes>=1440-1.e-6)
+                {
+                    A.ProductMinutes=0;
+                    if(auto* Pen=Pens.FindByPredicate([&](const auto& P){return P.Id==A.Pen;}))
+                        Pen->Products=FMath::Min(HearthwardNature::ProductCapacity,Pen->Products+1);
+                }
+            }
             A.FedRemaining=FMath::Max(0.,A.FedRemaining-Step);
         }
         for(const auto& Pair:Pairs)
@@ -127,16 +138,20 @@ bool FHearthwardNatureState::Valid() const
     for(const auto& C:Crops)if(!Id(C.Id,C.Position) || !HearthwardNature::Definition(TEXT("crops"),C.Definition) || !FMath::IsFinite(C.Planted) || C.Planted<0 || C.Planted>Calendar)return false;
     for(const auto& P:Pens)
     {
-        if(!Id(P.Id,P.Position) || !HearthwardNature::Definition(TEXT("domestic"),P.Definition) || !HearthwardNature::Capacity(P.Level) || P.Feed<0 || Occupants(P.Id)>HearthwardNature::Capacity(P.Level))return false;
+        const auto D=HearthwardNature::Definition(TEXT("domestic"),P.Definition);
+        if(!Id(P.Id,P.Position) || !D || !HearthwardNature::Capacity(P.Level) || P.Feed<0 || P.Products<0
+            || P.Products>HearthwardNature::ProductCapacity || (P.Products>0 && Text(D,TEXT("product")).IsEmpty())
+            || Occupants(P.Id)>HearthwardNature::Capacity(P.Level))return false;
         for(const auto& Pair:P.Pairs)if(!FMath::IsFinite(Pair.Value) || Pair.Value<0 || Pair.Value>=2880+1.e-6)return false;
         for(const auto& Cost:P.Paid)if(Cost.Value<=0 || !Find(TEXT("items"),Cost.Key.ToString()))return false;
     }
     for(const auto& A:Animals)
     {
         const auto D=HearthwardNature::Definition(A.Domestic?TEXT("domestic"):TEXT("wildlife"),A.Definition);
-        if(!Id(A.Id,A.Position) || !D || A.Destination.ContainsNaN() || !FMath::IsFinite(A.Health) || A.Health<0 || A.Health>Number(D,TEXT("health")) || !FMath::IsFinite(A.Growth) || A.Growth<0 || A.Growth>2880 || !FMath::IsFinite(A.FedRemaining) || A.FedRemaining<0 || A.FedRemaining>1440 || !FMath::IsFinite(A.AlertRemaining) || A.AlertRemaining<0)return false;
+        if(!Id(A.Id,A.Position) || !D || A.Destination.ContainsNaN() || !FMath::IsFinite(A.Health) || A.Health<0 || A.Health>Number(D,TEXT("health")) || !FMath::IsFinite(A.Growth) || A.Growth<0 || A.Growth>2880 || !FMath::IsFinite(A.FedRemaining) || A.FedRemaining<0 || A.FedRemaining>1440 || !FMath::IsFinite(A.ProductMinutes) || A.ProductMinutes<0 || A.ProductMinutes>=1440 || !FMath::IsFinite(A.AlertRemaining) || A.AlertRemaining<0)return false;
         for(FGuid Home:{A.Pen,A.ReservedPen})if(Home.IsValid() && !Pens.ContainsByPredicate([&](const auto& P){return P.Id==Home && P.Definition==A.Definition;}))return false;
         if(A.Pen.IsValid() && A.ReservedPen.IsValid())return false;
+        if(A.FollowingBrother && (!A.Domestic || !A.Captured || !A.Following || !A.ReservedPen.IsValid()))return false;
         for(const auto& Loot:A.Loot)if(Loot.Value<=0 || !Find(TEXT("items"),Loot.Key.ToString()))return false;
     }
     TSet<FName> SlotsSeen;

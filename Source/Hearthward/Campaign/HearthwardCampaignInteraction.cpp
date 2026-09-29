@@ -56,6 +56,7 @@ bool UHearthwardCampaignSubsystem::Use(FName Id)
     {
         if(P->Stage==TEXT("arrived"))return false;
         P->Stage=P->Stage==TEXT("following")?FName(TEXT("waiting")):FName(TEXT("following"));
+        P->Escort=TEXT("player");
         Feedback=P->Stage==TEXT("following")?TEXT("我会跟在你后面。遇到危险就先躲起来，记得回来接我。"):TEXT("我在这里等你。");return true;
     }
     if(Id==TEXT("prologue_relic") || (Id==TEXT("camp_relic") && State.Legacy))
@@ -99,4 +100,15 @@ bool UHearthwardCampaignSubsystem::Use(FName Id)
     if(Id==TEXT("camp_hunter") && State.Facts.Contains(TEXT("hunter_record")))
     {G->KnownRecipes.Add(TEXT("craft_bow_rare"));Record(TEXT("hunter_confirmed"));Feedback=TEXT("猎弓结构核对完毕，制作知识已登记。");return true;}
     Feedback=TEXT("已查看此处。按 J 查看任务记录。");return true;
+}
+bool UHearthwardCampaignSubsystem::AssignEscort(FName Person,AHearthwardCompanionFixture* Brother,FGuid Epoch)
+{
+    auto* P=State.People.FindByPredicate([&](const auto& X){return X.Id==Person;});
+    auto* A=Actor(Person);
+    if(!P || !A || P->Stage==TEXT("uncontacted") || P->Stage==TEXT("arrived")
+        || !IsValid(Brother) || !Player() || !Safe() || Busy()
+        || Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()
+        || FVector::Dist2D(Brother->GetActorLocation(),A->GetActorLocation())>300
+        || FVector::Dist2D(Brother->GetActorLocation(),Player()->GetActorLocation())>3000)return false;
+    P->Stage=TEXT("following");P->Escort=TEXT("brother");return true;
 }

@@ -163,7 +163,12 @@ bool FHearthwardNPCMemory::IsValid(double Now) const
         const bool CraftItem=E.Kind==TEXT("craft") && HearthwardAgent::Capabilities().ContainsByPredicate([&](const auto& C){return C.Id==TEXT("craft") && C.Items.Contains(E.Item);});
         const bool DirectiveItem=E.Kind==TEXT("directive") && ValidCoordinationDirective(E.Item);
         const bool NatureItem=HearthwardAgent::IsCapabilityItem(TEXT("nature_care"),E.Item);
-        if(!BasicItem && !CraftItem && !DirectiveItem && !NatureItem)return false;
+        const bool EscortItem=HearthwardAgent::IsCapabilityItem(TEXT("escort"),E.Item);
+        const bool HuntItem=HearthwardAgent::IsCapabilityItem(TEXT("hunt"),E.Item);
+        const bool FishItem=HearthwardAgent::IsCapabilityItem(TEXT("fish"),E.Item);
+        const bool CaptureItem=HearthwardAgent::IsCapabilityItem(TEXT("capture"),E.Item);
+        const bool CampBatchItem=HearthwardAgent::IsCapabilityItem(TEXT("camp_batch"),E.Item);
+        if(!BasicItem && !CraftItem && !DirectiveItem && !NatureItem && !EscortItem && !HuntItem && !FishItem && !CaptureItem && !CampBatchItem)return false;
         EventIds.Add(E.Id);
         if(IsEpisodeEvent(E)) EpisodeCommands.Add(E.Command);
     }

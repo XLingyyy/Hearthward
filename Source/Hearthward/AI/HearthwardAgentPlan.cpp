@@ -90,6 +90,56 @@ bool HearthwardPlan::Build(const FHearthwardAgentGoal& Goal, FHearthwardAgentPla
         return true;
     }
 
+    if (Goal.Intent == TEXT("escort"))
+    {
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Person),
+            Action(EHearthwardAgentActionType::Escort, EHearthwardAgentTarget::Person)
+        };
+        return true;
+    }
+
+    if (Goal.Intent == TEXT("hunt"))
+    {
+        if(!Goal.Station.IsValid()){ Error=TEXT("TARGET_REQUIRED");return false; }
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Nature),
+            Action(EHearthwardAgentActionType::Hunt, EHearthwardAgentTarget::Nature)
+        };
+        return true;
+    }
+
+    if (Goal.Intent == TEXT("fish"))
+    {
+        if(!Goal.Station.IsValid()){ Error=TEXT("TARGET_REQUIRED");return false; }
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Nature),
+            Action(EHearthwardAgentActionType::CommitNature, EHearthwardAgentTarget::Nature)
+        };
+        return true;
+    }
+
+    if (Goal.Intent == TEXT("capture"))
+    {
+        if(!Goal.Station.IsValid()){ Error=TEXT("TARGET_REQUIRED");return false; }
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Nature),
+            Action(EHearthwardAgentActionType::CommitNature, EHearthwardAgentTarget::Nature),
+            Action(EHearthwardAgentActionType::LeadAnimal, EHearthwardAgentTarget::Nature)
+        };
+        return true;
+    }
+
+    if (Goal.Intent == TEXT("camp_batch"))
+    {
+        if(!Goal.Station.IsValid()){ Error=TEXT("TARGET_REQUIRED");return false; }
+        Out.Actions = {
+            Action(EHearthwardAgentActionType::MoveTo, EHearthwardAgentTarget::Workshop),
+            Action(EHearthwardAgentActionType::MonitorCampBatch, EHearthwardAgentTarget::Workshop)
+        };
+        return true;
+    }
+
     if (Goal.Intent == TEXT("craft"))
     {
         if (Goal.SourceRef == TEXT("camp"))
@@ -170,6 +220,10 @@ FString HearthwardPlan::ActionName(const FHearthwardAgentAction& Action)
     case EHearthwardAgentActionType::CommitNature: Type = TEXT("CommitNature"); break;
     case EHearthwardAgentActionType::Withdraw: Type = TEXT("Withdraw"); break;
     case EHearthwardAgentActionType::Handoff: Type = TEXT("Handoff"); break;
+    case EHearthwardAgentActionType::Escort: Type = TEXT("Escort"); break;
+    case EHearthwardAgentActionType::Hunt: Type = TEXT("Hunt"); break;
+    case EHearthwardAgentActionType::LeadAnimal: Type = TEXT("LeadAnimal"); break;
+    case EHearthwardAgentActionType::MonitorCampBatch: Type = TEXT("MonitorCampBatch"); break;
     }
 
     const TCHAR* Target = TEXT("None");
@@ -180,6 +234,7 @@ FString HearthwardPlan::ActionName(const FHearthwardAgentAction& Action)
     case EHearthwardAgentTarget::Workshop: Target = TEXT("Workshop"); break;
     case EHearthwardAgentTarget::Nature: Target = TEXT("Nature"); break;
     case EHearthwardAgentTarget::Player: Target = TEXT("Player"); break;
+    case EHearthwardAgentTarget::Person: Target = TEXT("Person"); break;
     default: break;
     }
     return FString::Printf(TEXT("%s:%s"), Type, Target);

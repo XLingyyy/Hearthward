@@ -219,7 +219,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
         S.CommandActive = Companion->Command.bActive; S.Statement = Companion->Statement; S.BlockReason = Companion->BlockReason;
         S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
         S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
-        S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;
+        S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;S.CampBatchBaseline=Companion->CampBatchBaseline;
         S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability.Reset();S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
         S.NPCReceipts=Companion->Receipts;
     }
@@ -334,10 +334,10 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
         Companion->Command.ItemId = S.Item; Companion->Command.Requested = S.Requested; Companion->Command.Delivered = S.Delivered;
         Companion->Command.bActive = S.CommandActive;
         Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), 1};
-        Companion->Command.Acquired=S.Acquired;Companion->Command.Carried=S.Carried;Companion->Command.Goal=S.AgentGoal;
+        Companion->Command.Acquired=S.Acquired;Companion->Command.Carried=S.Carried;Companion->Command.Goal=S.AgentGoal;Companion->CampBatchBaseline=S.CampBatchBaseline;
         Companion->Spent=S.NPCSpent;Companion->AppliedOperations=TSet<FGuid>(S.NPCOperations);
         Companion->Receipts=S.NPCReceipts;
-        Companion->NavigationFailures=0;Companion->LastProgressAt=GetWorld()->GetTimeSeconds();Companion->LastProgressPosition=Companion->GetActorLocation();
+        Companion->NavigationFailures=0;Companion->LastProgressAt=GetWorld()->GetTimeSeconds();Companion->LastProgressPosition=Companion->GetActorLocation();Companion->NextHuntAttackAt=0;
     }
     auto* PlayerTimer = Player->FindComponentByClass<UHearthwardTimedActionComponent>();
     PlayerTimer->State = TimerState(S.PlayerTimer, S.ActiveSeconds);

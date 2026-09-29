@@ -67,6 +67,8 @@ struct FHearthwardCampRegion
     UPROPERTY() int32 Priority = 0;
     UPROPERTY() FHearthwardCampBatch Batch;
     UPROPERTY() int32 Completed = 0;
+    // Zero means an ordinary continuous queue; a companion order sets an absolute completion ceiling.
+    UPROPERTY() int32 BatchStopAt = 0;
     FString Status;
     // Recomputed from real actors each advance; never restored as free labor.
     double PlayerEfficiency = 0, BrotherEfficiency = 0;

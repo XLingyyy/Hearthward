@@ -100,6 +100,27 @@ bool FCampProcessingTest::RunTest(const FString&)
     TestEqual(TEXT("Cancellation gives no unfinished output"),Store.GetCount(TEXT("rope")),1);
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampBoundedCompanionBatchTest,"Hearthward.Camp.BoundedCompanionBatch",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FCampBoundedCompanionBatchTest::RunTest(const FString&)
+{
+    auto S=CampForage(0,0);FHearthwardInventoryState Store(true);Store.Add(TEXT("wood"),20);
+    FHearthwardCampFacility Facility;Facility.Id=FGuid::NewGuid();Facility.Kind=TEXT("workbench");Facility.Camp=TEXT("camp");S.Facilities.Add(Facility);
+    auto& R=S.Regions.AddDefaulted_GetRef();R.Id=TEXT("processing");R.Camp=TEXT("camp");R.Facility=Facility.Id;R.Job=TEXT("rope");
+    TestTrue(TEXT("Brother holds the only workstation slot"),S.Assign(R.Id,31));
+    R.BrotherEfficiency=3;R.Enabled=true;R.BatchStopAt=2;
+    auto Exchange=[&](const auto& In,const auto& Out){return CampExchange(Store,In,Out);};
+    S.Advance(480,false,Exchange);
+    TestEqual(TEXT("Large calendar step stops at exactly two authorized batches"),R.Completed,2);
+    TestEqual(TEXT("Only two batches debit shared wood"),Store.GetCount(TEXT("wood")),16);
+    TestEqual(TEXT("Only two batches credit shared rope"),Store.GetCount(TEXT("rope")),2);
+    TestFalse(TEXT("Queue stops with no unapproved third input in flight"),R.Enabled || R.Batch.Active);
+    FHearthwardCampState Reloaded;
+    TestTrue(TEXT("Completion ceiling survives camp snapshot"),FHearthwardCampState::Parse(S.Snapshot(),Reloaded));
+    Reloaded.Advance(480,false,Exchange);
+    TestEqual(TEXT("Reload cannot resume past the ceiling"),Reloaded.Regions.Last().Completed,2);
+    TestEqual(TEXT("Reload does not debit another input"),Store.GetCount(TEXT("wood")),16);
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampUpgradeTest,"Hearthward.Camp.GrowthRefundAndSnapshotRejection",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FCampUpgradeTest::RunTest(const FString&)
 {

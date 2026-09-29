@@ -14,7 +14,7 @@ UENUM(BlueprintType)
 enum class EHearthwardCompanionPhase : uint8
 {
     Idle, GoingToSource, Gathering, Returning, ReturningBlocked, WaitingAtCamp, Completed, Cancelled,
-    GoingToWorkshop, TakingMaterials, HoldingSafely, TakingCargo, GoingToPlayer, HandingOff
+    GoingToWorkshop, TakingMaterials, HoldingSafely, TakingCargo, GoingToPlayer, HandingOff, LeadingAnimal, CampBatchWorking
 };
 
 // Runtime companion. Development fixtures and the natural camp supply explicit world participants.
@@ -63,6 +63,14 @@ public:
     void DiscardProposal(const FHearthwardCommandTicket& Ticket) { Command.DiscardPending(Ticket); }
 
     bool EquipmentBusy() const { return bSettling || Command.IsCurrent(Command.GetActive().Epoch); }
+    bool Escorting(FName Person) const
+    { return Command.Goal.Intent==TEXT("escort") && Command.Goal.Item==Person
+        && (Phase==EHearthwardCompanionPhase::GoingToSource || Phase==EHearthwardCompanionPhase::GoingToPlayer); }
+    bool LeadingAnimal(FGuid Animal) const
+    { return Command.Goal.Intent==TEXT("capture") && Command.Goal.Station==Animal
+        && Phase==EHearthwardCompanionPhase::LeadingAnimal; }
+    bool CapturingAnimal(FGuid Animal) const;
+    bool PerformingCampBatch(FName Region) const;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardInventoryComponent> Bag;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardTimedActionComponent> Action;
     UPROPERTY(BlueprintReadOnly) TObjectPtr<UHearthwardCompanionNavigationComponent> Navigation;
@@ -103,6 +111,7 @@ private:
     AActor* ResolveActionTarget(const FHearthwardAgentAction& Action) const;
     bool ActionRequiresSafety(const FHearthwardAgentAction& Action) const;
     void Event(FName Kind,FName Item,int32 Count,const FString& Reason=FString(),FGuid Operation=FGuid());
+    void StopCampBatch();
 
     FHearthwardCompanionCommand Command;
     FHearthwardAgentExecutionState Execution;
@@ -114,6 +123,10 @@ private:
     int32 NavigationFailures = 0;
     FVector LastProgressPosition = FVector::ZeroVector;
     double LastProgressAt = 0;
+    FGuid LastNatureSafetyTarget;
+    double NextNatureSafetyAt = 0;
+    double NextHuntAttackAt = 0;
+    int32 CampBatchBaseline = -1;
     TSet<FGuid> AppliedOperations;
     TArray<FHearthwardAgentReceipt> Receipts;
 };
