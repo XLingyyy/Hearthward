@@ -3,10 +3,12 @@
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Building/HearthwardWorkshopService.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Save/HearthwardSaveSubsystem.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "HttpModule.h"
@@ -23,11 +25,24 @@ bool AgentInteractionObject(FHttpResponsePtr R,TSharedPtr<FJsonObject>& O)
 {return R.IsValid() && R->GetResponseCode()==200 && R->GetContentLength()<256*1024 && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(R->GetContentAsString()),O) && O.IsValid();}
 
 }
-void UHearthwardLocalAISubsystem::RestoreMemory(const FHearthwardNPCMemory& Snapshot)
+void UHearthwardLocalAISubsystem::RestoreMemory(const FHearthwardNPCMemory& Snapshot,bool bNewProgress)
 {
     // Save decoding/migration and validation happen before world mutation. Do not repair a current-format
     // snapshot here, otherwise damaged new fields could be mistaken for legacy data.
     Memory=Snapshot;
+    if(bNewProgress)
+    {
+        Memory.ConversationClockStarted=false;
+        Memory.ConversationClockAwaitingFirstMeeting=true;
+        Memory.LastConversationCalendar=0;
+        Memory.ReminderShownThisVisit=false;
+        Memory.ReminderVisit=0;
+    }
+    if(!Memory.ConversationClockAwaitingFirstMeeting && !Memory.ConversationClockStarted)
+    {
+        Memory.ConversationClockStarted=true;
+        Memory.LastConversationCalendar=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
+    }
 }
 void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObject>>& Bodies,
     const TArray<FHearthwardNPCContextProjectionResult>& Projections,int32 TierIndex)
@@ -115,13 +130,35 @@ void UHearthwardLocalAISubsystem::CountRequest(const TArray<TSharedPtr<FJsonObje
 void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
 {
     CandidateId.Invalidate();Goal.Original=Input;Goal.RuleRevision=Memory.Revision;
+    if(Goal.Intent==TEXT("repair") && !Goal.EquipmentId.IsValid() && PendingCompanion.IsValid()
+        && PendingCompanion->Bag->GetItemCount(Goal.Item)==1)
+        Goal.EquipmentId=PendingCompanion->Bag->FirstInstance(Goal.Item);
+    if((Goal.Intent==TEXT("nature_care") || Goal.Intent==TEXT("nature_collect")) && !Goal.Station.IsValid() && PendingSpeaker.IsValid())
+    {
+        auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+        TArray<FGuid> Targets;
+        if(Goal.Intent==TEXT("nature_collect"))
+            for(const auto& Point:Nature->State.Points)
+                if(Point.Kind==TEXT("resource") && FVector::Dist2D(PendingSpeaker->GetActorLocation(),Point.Position)<=300
+                    && FName(*HearthwardData::Text(HearthwardNature::Definition(TEXT("resources"),Point.Definition),TEXT("item")))==Goal.Item)
+                    Targets.Add(Point.Id);
+        else if(Goal.Item==TEXT("deposit_feed"))
+            for(const auto& P:Nature->State.Pens)
+                if(FVector::Dist2D(PendingSpeaker->GetActorLocation(),P.Position)<=300)Targets.Add(P.Id);
+        else
+            for(const auto& C:Nature->State.Crops)
+                if(FVector::Dist2D(PendingSpeaker->GetActorLocation(),C.Position)<=300
+                    && (Goal.Item==TEXT("water")&&!C.Watered || Goal.Item==TEXT("fertilize")&&!C.Fertilized
+                        || Goal.Item==TEXT("harvest")&&Nature->State.Ready(C)))Targets.Add(C.Id);
+        if(Targets.Num()==1)Goal.Station=Targets[0];
+    }
     if(!Memory.WorkingGoal.Original.IsEmpty())Goal.Original=Memory.WorkingGoal.Original+TEXT("\n补充：")+Input;
     if(Goal.WritesWorld())
     {
         // Schema-constrained generation can discard a sign or round a fraction. Preserve the player's numeric boundary.
         FRegexMatcher InvalidQuantity(FRegexPattern(TEXT("[-−负]\\s*[0-9一二两三四五六七八九十]|[0-9]+[.．][0-9]+|[零一二两三四五六七八九十]+点[零一二两三四五六七八九十]+")),Goal.Original);
         if(InvalidQuantity.FindNext())Goal.Unresolved.AddUnique(TEXT("原话含负数或小数数量，不能改写成正整数任务"));
-        if(Goal.Intent==TEXT("collect") && (Input.Contains(TEXT("尚未发现")) || Input.Contains(TEXT("未发现"))
+        if((Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect")) && (Input.Contains(TEXT("尚未发现")) || Input.Contains(TEXT("未发现"))
             || Input.Contains(TEXT("未知地点")) || Input.Contains(TEXT("没去过"))))
             Goal.Unresolved.AddUnique(TEXT("未知地点不能映射为当前已知安全采集点；玩家口述安全不是权威安全证据"));
         if(Goal.Intent==TEXT("collect") && (Input.Contains(TEXT("改成")) || Input.Contains(TEXT("改为")) || Input.Contains(TEXT("换成")) || Input.Contains(TEXT("不是"))))
@@ -134,27 +171,51 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
                     Goal.Unresolved.AddUnique(TEXT("物品已更改，请核对当前已注册的采集能力；不能沿用旧物品"));
                 }
         }
-        if(Goal.Intent==TEXT("collect") && !HearthwardAgent::Normalize(Goal.Original).Contains(HearthwardAgent::ItemText(Goal.Item))
+        if((Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect")) && !HearthwardAgent::Normalize(Goal.Original).Contains(HearthwardAgent::ItemText(Goal.Item))
             && !Goal.Original.Contains(Goal.Item.ToString()))Goal.Unresolved.AddUnique(TEXT("item"));
         if(Goal.Intent==TEXT("craft") && !Goal.Original.Contains(TEXT("批")))
             Goal.Unresolved.AddUnique(TEXT("请明确制作批数，不能把成品件数直接当批数"));
         if(Goal.Intent==TEXT("repair") && (Input.Contains(TEXT("我的")) || Input.Contains(TEXT("我背包"))
             || Input.Contains(TEXT("我装备")) || Input.Contains(TEXT("我身上")) || Input.Contains(TEXT("玩家")) || Input.Contains(TEXT("我穿")) || Input.Contains(TEXT("装备全"))))
             Goal.Unresolved.AddUnique(TEXT("只能维修弟弟自己的唯一装备，不能代换玩家装备或多件目标"));
+        if(Goal.Intent==TEXT("store") && Goal.SourceRef==TEXT("player_bag")
+            && !Goal.Original.Contains(TEXT("玩家背包")) && !Goal.Original.Contains(TEXT("我的背包"))
+            && !Goal.Original.Contains(TEXT("我背包")) && !Goal.Original.Contains(TEXT("我包里"))
+            && !Goal.Original.Contains(TEXT("从我身上")))
+            Goal.Unresolved.AddUnique(TEXT("必须明确授权从玩家背包当面交付"));
+        if(Goal.Intent==TEXT("retrieve") && (!Goal.Original.Contains(TEXT("仓库"))
+            || (!Goal.Original.Contains(TEXT("交给我")) && !Goal.Original.Contains(TEXT("给我"))
+                && !Goal.Original.Contains(TEXT("玩家背包")))))
+            Goal.Unresolved.AddUnique(TEXT("必须明确从营地仓库取货并交给玩家"));
+        if(Goal.Intent==TEXT("give") && (!Goal.Original.Contains(TEXT("弟弟背包"))
+            && !Goal.Original.Contains(TEXT("你背包")) && !Goal.Original.Contains(TEXT("你包里"))))
+            Goal.Unresolved.AddUnique(TEXT("必须明确从弟弟背包取货"));
+        if(Goal.Intent==TEXT("give") && !Goal.Original.Contains(TEXT("交给我"))
+            && !Goal.Original.Contains(TEXT("给我")) && !Goal.Original.Contains(TEXT("玩家背包")))
+            Goal.Unresolved.AddUnique(TEXT("必须明确交给玩家"));
+        if(Goal.Intent==TEXT("fetch") && (!Goal.Original.Contains(TEXT("仓库"))
+            || (!Goal.Original.Contains(TEXT("弟弟背包")) && !Goal.Original.Contains(TEXT("你背包")))))
+            Goal.Unresolved.AddUnique(TEXT("必须明确从营地仓库取货并留在弟弟背包"));
+        if(Goal.Intent==TEXT("receive") && (!Goal.Original.Contains(TEXT("玩家背包"))
+            && !Goal.Original.Contains(TEXT("我背包"))))
+            Goal.Unresolved.AddUnique(TEXT("必须明确从玩家背包取货"));
+        if(Goal.Intent==TEXT("receive") && !Goal.Original.Contains(TEXT("弟弟背包"))
+            && !Goal.Original.Contains(TEXT("你背包")))
+            Goal.Unresolved.AddUnique(TEXT("必须明确留在弟弟背包"));
         if(Input.Contains(TEXT("再来")) || Input.Contains(TEXT("补到")) || Input.Contains(TEXT("凑够")))
             Goal.Unresolved.AddUnique(TEXT("请明确新取得数量；追加量和最终总量不能混用"));
-        if(Goal.Intent==TEXT("collect") && (Input.Contains(TEXT("然后")) || Input.Contains(TEXT("再去")) || Input.Contains(TEXT("再修"))))
+        if((Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect")) && (Input.Contains(TEXT("然后")) || Input.Contains(TEXT("再去")) || Input.Contains(TEXT("再修"))))
         {
             if(Input.Contains(TEXT("制作")) || Input.Contains(TEXT("修")) || Input.Contains(TEXT("工作台")) || Input.Contains(TEXT("建造")) || Input.Contains(TEXT("敌营")))
                 Goal.Unresolved.AddUnique(TEXT("包含第二个任务，请分别安排并确认"));
         }
-        if(Goal.Intent!=TEXT("collect") && (Input.Contains(TEXT("然后")) || Input.Contains(TEXT("再去")) || Input.Contains(TEXT("先"))))
+        if(Goal.Intent!=TEXT("collect") && Goal.Intent!=TEXT("nature_collect") && (Input.Contains(TEXT("然后")) || Input.Contains(TEXT("再去")) || Input.Contains(TEXT("先"))))
         {
             if(Input.Contains(TEXT("采")) || Input.Contains(TEXT("收集")) || (Goal.Intent==TEXT("craft") && Input.Contains(TEXT("修"))))
                 Goal.Unresolved.AddUnique(TEXT("包含第二个任务，请分别安排并确认"));
         }
     }
-    if(Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("craft"))
+    if(Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("nature_collect") || Goal.Intent==TEXT("store") || Goal.Intent==TEXT("retrieve") || Goal.Intent==TEXT("give") || Goal.Intent==TEXT("fetch") || Goal.Intent==TEXT("receive") || Goal.Intent==TEXT("craft"))
     {
         FRegexMatcher Number(FRegexPattern(TEXT("([0-9]+|[一二两三四五六七八九十]+)\\s*(份|个|根|单位|块|批)|[0-9]+|数量[为是： ]*[一二两三四五六七八九十]+")),Goal.Original);
         if(!Number.FindNext())
@@ -171,7 +232,14 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
         if(U==TEXT("物品") || U==TEXT("缺少物品") || U==TEXT("item"))continue;
         Goal.Unresolved.AddUnique(U);
     }
-    for(const auto& L:Memory.ApplicableRules(Goal.Intent))Goal.Limits.AddUnique(L);
+    for(const auto& L:Goal.Limits)
+        if(L.StartsWith(TEXT("once:")) && !Goal.Original.Contains(TEXT("这次")) && !Goal.Original.Contains(TEXT("本次")))
+            Goal.Unresolved.AddUnique(TEXT("仅本次例外必须由玩家明确提出"));
+    for(const auto& L:Memory.ApplicableRules(Goal.Intent))
+    {
+        const bool Exception=Goal.Limits.Contains(TEXT("once:")+L.RightChop(3));
+        if(!(L.StartsWith(TEXT("no:")) && Exception))Goal.Limits.AddUnique(L);
+    }
     if(Goal.Original.Len()>1000 || Goal.Unresolved.Num()>4 || Goal.Limits.Num()>4)
     {ReasonCode=TEXT("CONTEXT_OVERFLOW");NPCLine=TEXT("本次条件超出任务卡容量，请保留全部要求重新整理。草稿仍保留。");Status=NPCLine;LastAppliedIntent=TEXT("refuse");return;}
     ReasonCode=HearthwardAgent::Validate(Goal);
@@ -180,7 +248,9 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
         if(Goal.Intent==TEXT("craft") || Goal.Intent==TEXT("repair"))
         {
             auto* P=UGameplayStatics::GetPlayerPawn(GetWorld(),0);auto* B=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
-            Goal.Station=B?B->KnownWorkbench(PendingCompanion.Get()):FGuid();
+            const auto Recipe=HearthwardData::Find(Goal.Intent==TEXT("craft")?TEXT("craftingRecipes"):TEXT("repairRecipes"),Goal.Item.ToString());
+            Goal.Station=B && Recipe?B->KnownFacility(PendingCompanion.Get(),FName(*HearthwardData::Text(Recipe,TEXT("facility"))),
+                HearthwardData::Number(Recipe,TEXT("facilityLevel"))):FGuid();
         }
         if(ReasonCode.IsEmpty())
         {
@@ -215,7 +285,10 @@ bool UHearthwardLocalAISubsystem::ConfirmCandidate(FGuid Id)
     {
         const double Now=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
         if(!Memory.PutRule(Candidate.Limits[0],Candidate.Original,Now)){ReasonCode=TEXT("MEMORY_CAPACITY");Status=TEXT("规则未保存，请缩短原话或管理记录容量");return false;}
-        PendingCompanion->DiscardProposal(Ticket);NPCLine=TEXT("长期规则已确认，将用于后续接受的任务。当前任务保持原状。");
+        PendingCompanion->DiscardProposal(Ticket);
+        NPCLine=Candidate.Limits[0].StartsWith(TEXT("allow:"))
+            ? TEXT("对应的禁用约定已撤销。以后可用自有材料；取用仓库仍需单独授权。当前任务保持原状。")
+            : TEXT("长期规则已确认，将用于后续接受的任务。当前任务保持原状。");
     }
     else if(Candidate.Intent==TEXT("companion_order"))
     {
@@ -234,9 +307,12 @@ bool UHearthwardLocalAISubsystem::ConfirmCandidate(FGuid Id)
     {
         ReasonCode=PendingCompanion->PreviewGoal(Candidate);if(!ReasonCode.IsEmpty()){Status=TEXT("条件已变化，未执行：")+ReasonCode;return false;}
         if(PendingCompanion->SubmitGoal(PendingSpeaker.Get(),Ticket,Candidate)!=EHearthwardProposalResult::Accepted){ReasonCode=TEXT("STALE_CONFIRMATION");return false;}
-        NPCLine=Candidate.Intent==TEXT("repair")?TEXT("维修任务已接受，完成后装备仍由我持有。"):TEXT("任务已接受，完成数量以实际交付为准。");
+        NPCLine=Candidate.Intent==TEXT("repair")?TEXT("维修任务已接受，完成后装备仍由我持有。"):
+            Candidate.Intent==TEXT("nature_care")?TEXT("照料任务已接受，完成后按地块或栏舍的实际状态报告。"):
+            Candidate.Intent==TEXT("nature_collect")?TEXT("采集任务已接受，我会按实际采得和入库数量报告。"):
+            TEXT("任务已接受，完成数量以实际交付为准。");
     }
-    LastAppliedIntent=Candidate.Intent.ToString();CandidateId.Invalidate();Memory.Clarification.Reset();Memory.WorkingGoal={};Status=NPCLine;return true;
+    LastAppliedIntent=Candidate.Intent.ToString();CandidateId.Invalidate();Memory.Clarification.Reset();Memory.WorkingGoal={};Status=NPCLine;MarkConversation();return true;
 }
 FString UHearthwardLocalAISubsystem::GetCandidateText() const
 {
@@ -244,10 +320,14 @@ FString UHearthwardLocalAISubsystem::GetCandidateText() const
     FString S=TEXT("原话：")+Candidate.Original+TEXT("\n")+HearthwardAgent::GoalText(Candidate);
     if(Candidate.Intent==TEXT("craft") || Candidate.Intent==TEXT("repair"))
     {
-        S+=TEXT("\n实际消耗：");for(const auto& C:HearthwardWorkshop::Materials(Candidate.Intent,Candidate.Item,Candidate.Quantity))
+        auto Cost=HearthwardWorkshop::Materials(Candidate.Intent,Candidate.Item,Candidate.Quantity);
+        const auto* Instance=Candidate.Intent==TEXT("repair") && PendingCompanion.IsValid()
+            ? PendingCompanion->Bag->FindInstance(Candidate.EquipmentId):nullptr;
+        if(Instance){double Restored=0;HearthwardWorkshop::RepairQuote(PendingCompanion->Bag,Candidate.EquipmentId,1,Cost,Restored);}
+        S+=TEXT("\n预计消耗（结算前复核）：");for(const auto& C:Cost)
         {const auto* I=HearthwardBasicItems().FindByPredicate([&](const auto& X){return X.Id==C.Key;});S+=FString::Printf(TEXT("%s%d "),*I->DisplayName.ToString(),C.Value);}
         if(Candidate.Intent==TEXT("craft")){S+=TEXT("\n实际产量：");for(const auto& C:HearthwardWorkshop::Outputs(Candidate.Item,Candidate.Quantity))S+=FString::Printf(TEXT("%s %d "),*HearthwardAgent::ItemText(C.Key),C.Value);}
-        if(Candidate.Intent==TEXT("repair") && PendingCompanion.IsValid())S+=FString::Printf(TEXT("\n当前耐久：%.0f；修好后仍由弟弟持有"),PendingCompanion->EquipmentDurability(Candidate.Item));
+        if(Instance)S+=FString::Printf(TEXT("\n所选实例当前耐久：%.0f；修好后仍由弟弟持有"),Instance->Durability);
     }
     if(PendingCompanion.IsValid() && PendingCompanion->GetRequested()>PendingCompanion->GetDelivered())S+=FString::Printf(TEXT("\n将替换任务 %s（已交付%d）"),*PendingCompanion->GetCommandId().ToString().Left(8),PendingCompanion->GetDelivered());
     return S;
@@ -263,7 +343,11 @@ bool UHearthwardLocalAISubsystem::SetStructuredGoal(AActor* Speaker,AHearthwardC
 {
     if(!IsValid(Companion) || !Companion->CanCommunicate(Speaker) || GetWorld()->IsPaused())return false;
     CancelPending();Memory.Clarification.Reset();Memory.WorkingGoal={};PendingSpeaker=Speaker;PendingCompanion=Companion;Input=HearthwardAgent::GoalText(Goal);Ticket=Companion->Request(Speaker,Input);
-    if(!Ticket.Id.IsValid())return false;StageCandidate(Goal);ReasonCode=TEXT("deterministic_fallback");return HasCandidate();
+    if(!Ticket.Id.IsValid())return false;
+    StageCandidate(Goal);
+    if(!HasCandidate() && !NPCLine.IsEmpty())MarkConversation();
+    if(HasCandidate())ReasonCode=TEXT("deterministic_fallback");
+    return HasCandidate();
 }
 bool UHearthwardLocalAISubsystem::QueryInventory(AActor* Speaker,AHearthwardCompanionFixture* Companion,FName Item)
 {
@@ -287,7 +371,7 @@ bool UHearthwardLocalAISubsystem::ReportCampInventory(AActor* Speaker,AHearthwar
     if(!RecordPlayerCampReport(Item,Count))return false;
     const auto* Def=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==Item;});
     NPCLine=FString::Printf(TEXT("我记下你说营地现在有 %d 份%s；这是你的报告，我还没有亲自确认。"),Count,*Def->DisplayName.ToString());
-    Status=NPCLine;LastAppliedIntent=TEXT("inventory_report");ReasonCode=TEXT("player_report");return true;
+    Status=NPCLine;LastAppliedIntent=TEXT("inventory_report");ReasonCode=TEXT("player_report");MarkConversation();return true;
 }
 
 FHearthwardNPCBeliefView UHearthwardLocalAISubsystem::GetCampStockBelief(FName Item) const
@@ -336,12 +420,12 @@ bool UHearthwardLocalAISubsystem::QueryRecentHistory(AActor* Speaker,AHearthward
     CancelPending();Initiatives.Reset();PendingSpeaker=Speaker;PendingCompanion=Companion;
     NPCLine=BuildEpisodeRecall(Item);
     if(NPCLine.IsEmpty())NPCLine=TEXT("我没有找到对应的实际行动记录。");
-    Status=TEXT("弟弟的实际经历");LastAppliedIntent=TEXT("recall");ReasonCode=TEXT("deterministic_fallback");return true;
+    Status=TEXT("弟弟的实际经历");LastAppliedIntent=TEXT("recall");ReasonCode=TEXT("deterministic_fallback");MarkConversation();return true;
 }
 
 bool UHearthwardLocalAISubsystem::CancelExecution(AActor* Speaker,AHearthwardCompanionFixture* Companion)
 {
     if(!IsValid(Companion) || !Companion->Cancel(Speaker))return false;
     ClearClarification();PendingSpeaker=Speaker;PendingCompanion=Companion;
-    NPCLine=TEXT("已停止当前委托，实际取得的物资保留。");Status=NPCLine;LastAppliedIntent=TEXT("cancel");ReasonCode=TEXT("deterministic_fallback");return true;
+    NPCLine=TEXT("已停止当前委托，实际取得的物资保留。");Status=NPCLine;LastAppliedIntent=TEXT("cancel");ReasonCode=TEXT("deterministic_fallback");MarkConversation();return true;
 }

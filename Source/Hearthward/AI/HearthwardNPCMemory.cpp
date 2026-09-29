@@ -84,6 +84,14 @@ bool FHearthwardNPCMemory::Revoke(FGuid Id)
     ++Revision; Clarification.Reset(); WorkingGoal={}; return true;
 }
 
+int32 FHearthwardNPCMemory::RevokePlayerRules()
+{
+    const int32 Removed=Records.RemoveAll([](const auto& R)
+    { return !R.Revoked && (R.Kind==TEXT("agreement") || R.Kind==TEXT("collection_ban") || R.Kind==TEXT("typed_constraint")); });
+    if(Removed>0){++Revision;Clarification.Reset();WorkingGoal={};}
+    return Removed;
+}
+
 bool FHearthwardNPCMemory::AddClarification(const FString& Player,const FString& Question)
 {
     int32 Characters=Player.Len()+Question.Len();
@@ -119,6 +127,8 @@ TArray<FHearthwardPlayerMemory> FHearthwardNPCMemory::Retrieve(const FString& Qu
 bool FHearthwardNPCMemory::IsValid(double Now) const
 {
     if(Revision<1 || Events.Num()>HearthwardAgent::Policy(TEXT("max_events"))) return false;
+    if(!FMath::IsFinite(LastConversationCalendar) || LastConversationCalendar<0 || ReminderVisit<0
+        || (ConversationClockStarted && ConversationClockAwaitingFirstMeeting)) return false;
     if (Records.Num()>MaxRecords || Clarification.Num()>4 || !FMath::IsFinite(CampObservedAt)
         || CampObservedAt<0 || CampObservedAt>Now) return false;
     TSet<FGuid> Ids; int32 Agreements=0, Characters=0;
@@ -148,11 +158,12 @@ bool FHearthwardNPCMemory::IsValid(double Now) const
     for(const auto& E:Events)
     {
         if(!E.Id.IsValid() || !E.Command.IsValid() || E.Campaign!=Campaign || E.At<0 || E.At>Now || !FMath::IsFinite(E.At) || E.Count<0 || E.Reason.Len()>200 || EventIds.Contains(E.Id)) return false;
-        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("completed"),TEXT("materials_taken"),TEXT("retained_adopted"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
+        if(!TArray<FName>{TEXT("acquired"),TEXT("delivered"),TEXT("craft"),TEXT("repair"),TEXT("nature_care"),TEXT("completed"),TEXT("materials_taken"),TEXT("retained_adopted"),TEXT("handoff"),TEXT("withdrawn"),TEXT("returned"),TEXT("cargo_missing"),TEXT("cancelled"),TEXT("blocked"),TEXT("replanned"),TEXT("directive")}.Contains(E.Kind))return false;
         const bool BasicItem=HearthwardBasicItems().ContainsByPredicate([&](const auto& I){return I.Id==E.Item;});
         const bool CraftItem=E.Kind==TEXT("craft") && HearthwardAgent::Capabilities().ContainsByPredicate([&](const auto& C){return C.Id==TEXT("craft") && C.Items.Contains(E.Item);});
         const bool DirectiveItem=E.Kind==TEXT("directive") && ValidCoordinationDirective(E.Item);
-        if(!BasicItem && !CraftItem && !DirectiveItem)return false;
+        const bool NatureItem=HearthwardAgent::IsCapabilityItem(TEXT("nature_care"),E.Item);
+        if(!BasicItem && !CraftItem && !DirectiveItem && !NatureItem)return false;
         EventIds.Add(E.Id);
         if(IsEpisodeEvent(E)) EpisodeCommands.Add(E.Command);
     }
@@ -198,7 +209,22 @@ void FHearthwardNPCMemory::Migrate(FGuid CampaignId,bool bLegacyCognition,FGuid 
 
 bool FHearthwardNPCMemory::PutRule(const FString& Constraint,const FString& Original,double Now)
 {
-    if(!HearthwardAgent::ValidLimit(Constraint) || Records.Num()>=MaxRecords || Original.IsEmpty() || Original.Len()>MaxText || !FMath::IsFinite(Now) || Now<0) return false;
+    if(!HearthwardAgent::ValidLimit(Constraint) || Original.IsEmpty() || Original.Len()>MaxText || !FMath::IsFinite(Now) || Now<0) return false;
+    TArray<FString> Parts;Constraint.ParseIntoArray(Parts,TEXT(":"));
+    if(Parts[0]==TEXT("allow"))
+    {
+        Records.RemoveAll([&](const auto& R){return R.Kind==TEXT("typed_constraint") && R.Constraint==TEXT("no:")+Parts[1];});
+        ++Revision;Clarification.Reset();WorkingGoal={};return true;
+    }
+    // A confirmed rule replaces the earlier rule for this capability, item and constraint kind.
+    const int32 Previous=Records.IndexOfByPredicate([&](const auto& R)
+    {
+        TArray<FString> Existing;R.Constraint.ParseIntoArray(Existing,TEXT(":"));
+        return R.Kind==TEXT("typed_constraint") && Existing.Num()>=2
+            && Existing[0]==Parts[0] && Existing[1]==Parts[1];
+    });
+    if(Previous!=INDEX_NONE)Records.RemoveAt(Previous);
+    else if(Records.Num()>=MaxRecords)return false;
     FHearthwardPlayerMemory R;R.Id=FGuid::NewGuid();R.Kind=TEXT("typed_constraint");R.Text=Original;R.Constraint=Constraint;R.RecordedAt=Now;R.Campaign=Campaign;R.Revision=++Revision;Records.Add(R);Clarification.Reset();WorkingGoal={};return true;
 }
 
@@ -208,9 +234,10 @@ TArray<FString> FHearthwardNPCMemory::ApplicableRules(FName Capability) const
     for(const auto& R:Records)
     {
         if(R.Revoked) continue;
-        if(Capability==TEXT("collect") && R.Kind==TEXT("collection_ban")) Out.AddUnique(TEXT("ban:")+R.BlockedItem.ToString());
+        if((Capability==TEXT("collect") || Capability==TEXT("nature_collect")) && R.Kind==TEXT("collection_ban")) Out.AddUnique(TEXT("ban:")+R.BlockedItem.ToString());
         if(R.Kind!=TEXT("typed_constraint")) continue;
-        if((Capability==TEXT("collect") && (R.Constraint.StartsWith(TEXT("ban:")) || R.Constraint.StartsWith(TEXT("source:"))))
+        if(((Capability==TEXT("collect") || Capability==TEXT("nature_collect")) && R.Constraint.StartsWith(TEXT("ban:")))
+            || (Capability==TEXT("collect") && R.Constraint.StartsWith(TEXT("source:")))
             || ((Capability==TEXT("craft") || Capability==TEXT("repair")) && (R.Constraint.StartsWith(TEXT("no:")) || R.Constraint.StartsWith(TEXT("max:"))))) Out.AddUnique(R.Constraint);
     }
     return Out;

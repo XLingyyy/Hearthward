@@ -76,6 +76,12 @@ struct FHearthwardNPCMemory
     UPROPERTY() TArray<FHearthwardNPCBelief> Beliefs;
     UPROPERTY() TArray<FHearthwardNPCCommandCoverage> CommandCoverage;
     UPROPERTY() FHearthwardAgentGoal WorkingGoal;
+    // Calendar minutes, shared with the world clock. New progress waits for the first meeting.
+    UPROPERTY() bool ConversationClockStarted = false;
+    UPROPERTY() bool ConversationClockAwaitingFirstMeeting = false;
+    UPROPERTY() double LastConversationCalendar = 0;
+    UPROPERTY() bool ReminderShownThisVisit = false;
+    UPROPERTY() int32 ReminderVisit = 0;
 
     static constexpr int32 MaxRecords = 64;
     static constexpr int32 MaxText = 120;
@@ -83,6 +89,7 @@ struct FHearthwardNPCMemory
     static constexpr int32 MaxClarificationCharacters = 800;
     bool Put(FGuid Id, FName Kind, const FString& Text, double Now, FName BlockedItem = NAME_None);
     bool Revoke(FGuid Id);
+    int32 RevokePlayerRules();
     bool AddClarification(const FString& Player, const FString& Question);
     TArray<FHearthwardPlayerMemory> Retrieve(const FString& Query, bool IncludeAgreements = true) const;
     bool BlocksCollection(FName Item) const;

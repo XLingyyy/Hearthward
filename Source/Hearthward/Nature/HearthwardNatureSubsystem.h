@@ -14,6 +14,8 @@ public:
     UFUNCTION(BlueprintPure) FString Describe() const { return State.Snapshot(); }
     UFUNCTION(BlueprintPure) bool Busy() const { return !PendingAction.IsNone() || FishingId.IsValid() || Settling; }
     UFUNCTION(BlueprintCallable) bool Act(FName Action,FGuid Target,FName Option,FGuid Epoch,int32 Count=1);
+    // Called only after the companion's five-second action completed.
+    bool CommitCompanion(class APawn* Actor,FName Action,FGuid Target,FGuid Epoch,int32 Count=1);
     UFUNCTION(BlueprintCallable) void Cancel();
     UFUNCTION(BlueprintCallable) void HoldLine(bool Held) { LineHeld=Held; }
     UFUNCTION(BlueprintPure) FString FishingStatus() const;
@@ -36,6 +38,7 @@ protected:
 private:
     friend class AHearthwardNatureActor;
     bool Settling=false,LineHeld=false;
+    TWeakObjectPtr<class APawn> ActionActor;
     FGuid PendingId,ActionEpoch,FishingId,FishingRod;
     FName PendingAction,PendingOption,FishingSpecies;
     FVector ActionPosition=FVector::ZeroVector;

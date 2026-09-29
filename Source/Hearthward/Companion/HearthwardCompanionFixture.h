@@ -14,7 +14,7 @@ UENUM(BlueprintType)
 enum class EHearthwardCompanionPhase : uint8
 {
     Idle, GoingToSource, Gathering, Returning, ReturningBlocked, WaitingAtCamp, Completed, Cancelled,
-    GoingToWorkshop, TakingMaterials, HoldingSafely
+    GoingToWorkshop, TakingMaterials, HoldingSafely, TakingCargo, GoingToPlayer, HandingOff
 };
 
 // Runtime companion. Development fixtures and the natural camp supply explicit world participants.
@@ -36,7 +36,7 @@ public:
     EHearthwardProposalResult Submit(AActor* Speaker, FHearthwardCommandTicket Ticket,
         FName ItemId, int32 Quantity, const TArray<FName>& Steps);
     UFUNCTION(BlueprintCallable, Category="Hearthward|Companion|Prototype")
-    bool Cancel(AActor* Speaker);
+    bool Cancel(AActor* Speaker,bool bAllowPaused=false);
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
     EHearthwardCompanionPhase GetPhase() const { return Phase; }
     UFUNCTION(BlueprintPure, Category="Hearthward|Companion|Prototype")
@@ -85,7 +85,12 @@ private:
     void ReturnBlocked(const FString& Reason);
     void HandleExecutionFailure(const FString& Reason);
     void Deposit();
+    void Withdraw();
+    void Handoff();
+    bool ReconcileMissingCargo();
+    bool PlayerAtTaskCamp(const AActor* Player) const;
     bool IsSourceValid() const;
+    FString ResourceTargetReason(const FHearthwardAgentGoal& Goal,bool RequireKnown) const;
     EHearthwardProposalResult AcceptGoal(AActor* Speaker, FHearthwardCommandTicket Ticket,
         FName ItemId, int32 Quantity, const TArray<FName>& Steps, const FHearthwardAgentGoal& Goal);
     void WorkshopTick();

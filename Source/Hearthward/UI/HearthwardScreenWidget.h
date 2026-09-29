@@ -114,6 +114,11 @@ private:
     FName SelectedItem=TEXT("axe"),SelectedSkill=TEXT("strong"),SelectedQuest=TEXT("ember"),SelectedLocation=TEXT("camp");
     FName SelectedCodex;
     FString Category,Message,ConfirmAction,ConfirmMessage;
+    TArray<FString> ResetItems;
+    FGuid ResetEpoch,ResetCommand,ResetCandidate;
+    int64 ResetRevision=0;
+    int32 ResetScroll=0;
+    bool bResetActive=false;
     int32 Quantity=1,Scroll=0,Hover=INDEX_NONE,KeyboardFocus=INDEX_NONE;
     float RefreshDelay=0,MapZoom=1;
     double MessageUntil=0;
@@ -123,7 +128,7 @@ private:
     FGuid StorageEpoch;
     FGuid MemoryEpoch, SelectedMemory;
     int64 MemoryRevision = 0;
-    int32 AgentCapabilityIndex=0,AgentItemIndex=0;
+    int32 AgentCapabilityIndex=0,AgentItemIndex=0,AgentInstanceIndex=0,AgentSourceIndex=0;
     FName MemoryKind=TEXT("claim");
     FName MemoryBlockedItem=TEXT("wood");
     FGuid CraftingEpoch,Workbench;

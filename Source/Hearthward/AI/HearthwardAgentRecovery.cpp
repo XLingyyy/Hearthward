@@ -55,7 +55,8 @@ FHearthwardAgentRecoveryDecision HearthwardRecovery::Decide(const FHearthwardAge
             const bool TargetAvailable =
                 (Context.FailedAction.Target == T::Source && Context.bSourceAvailable)
                 || (Context.FailedAction.Target == T::Camp && Context.bCampAvailable)
-                || (Context.FailedAction.Target == T::Workshop && Context.bStationAvailable);
+                || (Context.FailedAction.Target == T::Workshop && Context.bStationAvailable)
+                || (Context.FailedAction.Target == T::Nature && Context.bStationAvailable);
             if (TargetAvailable)
                 return Decision(EHearthwardAgentRecoveryMode::RetryCurrent, TEXT("RETRY_ROUTE"));
         }
@@ -63,6 +64,7 @@ FHearthwardAgentRecoveryDecision HearthwardRecovery::Decide(const FHearthwardAge
         if (Context.FailedAction.Target == T::Workshop && Context.bStationAvailable)
             return Decision(EHearthwardAgentRecoveryMode::RewindToMove,
                 TEXT("REACQUIRE_WORKSHOP"), T::Workshop);
+
 
         if (Context.FailedAction.Target == T::Camp && Context.bCampAvailable)
             return Decision(EHearthwardAgentRecoveryMode::RewindToMove,

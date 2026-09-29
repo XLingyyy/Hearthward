@@ -51,6 +51,8 @@ public:
     UFUNCTION(BlueprintPure) TArray<FHearthwardPlayerMemory> GetPlayerMemories() const { return Memory.Records; }
     UFUNCTION(BlueprintCallable) bool PutPlayerMemory(AActor* Speaker, AHearthwardCompanionFixture* Companion, FGuid Id, FName Kind, const FString& Text, FName BlockedItem = NAME_None);
     UFUNCTION(BlueprintCallable) bool RevokePlayerMemory(AActor* Speaker, AHearthwardCompanionFixture* Companion, FGuid Id);
+    bool CancelTasksAndAgreements(AActor* Speaker, AHearthwardCompanionFixture* Companion,
+        FGuid ExpectedEpoch,int64 ExpectedRevision,FGuid ExpectedCommand,bool bExpectedActive,FGuid ExpectedCandidate);
     UFUNCTION(BlueprintCallable) void ClearClarification();
     UFUNCTION(BlueprintPure) int32 GetClarificationTurns() const { return Memory.Clarification.Num(); }
     UFUNCTION(BlueprintPure) FString GetLastAppliedIntent() const { return LastAppliedIntent; }
@@ -89,7 +91,8 @@ public:
     void BeginCommandCoverage(FGuid Command) { Memory.BeginCommand(Command); }
     void RecordEvent(const FHearthwardNPCEvent& E);
     const FHearthwardNPCMemory& GetMemorySnapshot() const { return Memory; }
-    void RestoreMemory(const FHearthwardNPCMemory& Snapshot);
+    void RestoreMemory(const FHearthwardNPCMemory& Snapshot,bool bNewProgress=false);
+    void MarkConversation();
 
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;

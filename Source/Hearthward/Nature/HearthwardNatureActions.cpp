@@ -10,16 +10,37 @@
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "GameFramework/Pawn.h"
 using namespace HearthwardData;
-namespace { using R=EHearthwardInventoryResult; }
+namespace { using NatureResult=EHearthwardInventoryResult; }
 bool UHearthwardNatureSubsystem::PrepareBag(const TMap<FName,int32>& In,const TMap<FName,int32>& Out,FHearthwardInventoryState& Result) const
 {
     if(!Bag() || !Result.Restore(Bag()->Snapshot()))return false;
-    for(const auto& M:In)if(Bag()->Available(M.Key)<M.Value || Result.Remove(M.Key,M.Value)!=R::Success)return false;
-    for(const auto& M:Out)if(Result.Add(M.Key,M.Value)!=R::Success)return false;
+    for(const auto& M:In)if(Bag()->Available(M.Key)<M.Value || Result.Remove(M.Key,M.Value)!=NatureResult::Success)return false;
+    for(const auto& M:Out)if(Result.Add(M.Key,M.Value)!=NatureResult::Success)return false;
     return true;
 }
 void UHearthwardNatureSubsystem::PublishBag(const FHearthwardInventoryState& Result)
 {Bag()->RestoreInventory(Result.Snapshot(),false);Bag()->OnInventoryChanged.Broadcast();}
+bool UHearthwardNatureSubsystem::CommitCompanion(APawn* Actor,FName Action,FGuid Target,FGuid Epoch,int32 Count)
+{
+    if(!IsValid(Actor) || Actor==Player() || Busy() || Count<=0)return false;
+    const bool Crop=State.Crops.ContainsByPredicate([&](const auto& C){return C.Id==Target;});
+    const bool Pen=State.Pens.ContainsByPredicate([&](const auto& P){return P.Id==Target;});
+    const bool Resource=State.Points.ContainsByPredicate([&](const auto& P){return P.Id==Target && P.Kind==TEXT("resource");});
+    if(Action==TEXT("deposit_feed") ? !Pen
+        : Action==TEXT("harvest") ? !Crop && !Resource
+        : !Crop || (Action!=TEXT("water") && Action!=TEXT("fertilize")))return false;
+    ActionActor=Actor;
+    const bool Allowed=Safe(Epoch) && Near(Target);
+    bool Success=false;
+    if(Allowed)
+    {
+        TGuardValue<bool> Guard(Settling,true);
+        Success=Commit(Action,Target,NAME_None,Count,Actor->GetActorLocation());
+    }
+    ActionActor.Reset();
+    if(Success)RebuildActors();
+    return Success;
+}
 bool UHearthwardNatureSubsystem::Act(FName Action,FGuid Target,FName Option,FGuid Epoch,int32 Count)
 {
     if(Busy() || !Safe(Epoch) || Count<=0){Feedback=TEXT("当前无法操作，请在安全处重新打开面板");return false;}
@@ -72,11 +93,23 @@ bool UHearthwardNatureSubsystem::Commit(FName Action,FGuid Id,FName Option,int32
         const auto D=HearthwardNature::Definition(TEXT("resources"),Point->Definition);const FName Item(Text(D,TEXT("item")));FGuid Tool;
         const int32 Yield=Text(D,TEXT("tool"))==TEXT("hand")?2:HearthwardHarvestTools::Yield(Bag(),Item,Tool);
         auto* Source=Camp->Source(Point->Key.ToString());if(!Source || Source->Blocked || Yield<=0 || Source->Remaining<=0)return false;
-        const int32 N=FMath::Min(Yield,Source->Remaining);if(!PrepareBag({},{{Item,N}},Next))return false;
-        if(Tool.IsValid() && !Next.Wear(Tool,1/(1+Gameplay()->Effect(TEXT("durability")))))return false;
+        int32 N=FMath::Min(Yield,Source->Remaining);
+        if(ActionActor.IsValid())
+        {
+            const auto* ItemDef=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==Item;});
+            if(!ItemDef || ItemDef->WeightHundredths<=0)return false;
+            N=FMath::Min(N,FMath::Min(Count,int32(FMath::FloorToInt((Bag()->GetCapacity()-Bag()->GetWeight())*100/ItemDef->WeightHundredths))));
+        }
+        if(N<=0 || !PrepareBag({},{{Item,N}},Next))return false;
+        if(Tool.IsValid() && !Next.Wear(Tool,ActionActor.IsValid()?1:1/(1+Gameplay()->Effect(TEXT("durability")))))return false;
         Source->Remaining-=N;if(Source->Remaining==0)Source->Due=State.Calendar+Source->RefreshMinutes;
-        PublishBag(Next);Gameplay()->Record(TEXT("harvest"),Item,N);
-        if(Item==TEXT("ore"))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("mine_source"));return true;
+        PublishBag(Next);
+        if(!ActionActor.IsValid())
+        {
+            Gameplay()->Record(TEXT("harvest"),Item,N);
+            if(Item==TEXT("ore"))GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("mine_source"));
+        }
+        return true;
     }
     if(Action==TEXT("plant"))
     {
@@ -149,7 +182,7 @@ bool UHearthwardNatureSubsystem::Commit(FName Action,FGuid Id,FName Option,int32
     {
         if(Point->Kind==TEXT("treasure") && (!State.Maps.Contains(Point->Definition) || State.Opened.Contains(Point->Definition)))return false;
         if(!PrepareBag({},Point->Pending.Stacks,Next))return false;
-        for(const auto& I:Point->Pending.Instances)if(Next.InsertInstance(I)!=R::Success)return false;
+        for(const auto& I:Point->Pending.Instances)if(Next.InsertInstance(I)!=NatureResult::Success)return false;
         Point->Pending={};if(Point->Kind==TEXT("treasure"))State.Opened.Add(Point->Definition);PublishBag(Next);return true;
     }
     return false;
@@ -164,7 +197,7 @@ bool UHearthwardNatureSubsystem::ReadMap(FName Item)
     for(int32 I=0;I<24 && !Found;++I)
     {const double A=Index*1.8+I*.13;Found=Ground(Camp->State.Camps[0].Position+FVector(FMath::Cos(A)*(23000+Index*9000),FMath::Sin(A)*(23000+Index*9000),0),At,true);}
     if(!Found)return false;
-    FHearthwardInventoryState Loot(true);for(const auto& M:HearthwardCamp::Counts(D,TEXT("outputs")))if(Loot.Add(M.Key,M.Value)!=R::Success)return false;
+    FHearthwardInventoryState Loot(true);for(const auto& M:HearthwardCamp::Counts(D,TEXT("outputs")))if(Loot.Add(M.Key,M.Value)!=NatureResult::Success)return false;
     FHearthwardNaturePoint P;P.Id=FGuid::NewGuid();P.Key=Item;P.Kind=TEXT("treasure");P.Definition=Item;P.Position=At;P.Pending=Loot.Snapshot();State.Points.Add(P);
     State.Rewards.Add(Item);State.Maps.Add(Item);PublishBag(Next);Gameplay()->SetWaypoint(At);RebuildActors();Feedback=TEXT("藏宝地点已标记");return true;
 }

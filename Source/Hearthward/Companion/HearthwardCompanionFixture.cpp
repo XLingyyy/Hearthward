@@ -19,6 +19,9 @@
 #include "../AI/HearthwardAgentRecovery.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Building/HearthwardWorkshopService.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
+#include "../Nature/HearthwardNatureActor.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Save/HearthwardSaveSubsystem.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
@@ -27,6 +30,39 @@
 namespace
 {
 UHearthwardBuildingComponent* WorkshopRegistry(UWorld* World);
+int32 TransferableCargo(const FHearthwardInventorySnapshot& CampSnapshot,
+    const FHearthwardInventorySnapshot& BrotherSnapshot,const FHearthwardInventorySnapshot& PlayerSnapshot,
+    FName Item,int32 Limit)
+{
+    FHearthwardInventoryState CampState(true),BrotherState,PlayerState;
+    if(Limit<=0 || !CampState.Restore(CampSnapshot) || !BrotherState.Restore(BrotherSnapshot)
+        || !PlayerState.Restore(PlayerSnapshot))return 0;
+    int32 Low=0,High=Limit;
+    while(Low<High)
+    {
+        const int32 Mid=Low+(High-Low+1)/2;
+        auto CampAfter=CampState,BrotherAfter=BrotherState,PlayerAfter=PlayerState;
+        if(CampAfter.TransferTo(BrotherAfter,Item,Mid)==EHearthwardInventoryResult::Success
+            && BrotherAfter.TransferTo(PlayerAfter,Item,Mid)==EHearthwardInventoryResult::Success)Low=Mid;
+        else High=Mid-1;
+    }
+    return Low;
+}
+int32 TransferableHandoff(const FHearthwardInventorySnapshot& SourceSnapshot,
+    const FHearthwardInventorySnapshot& TargetSnapshot,FName Item,int32 Limit,bool SourceIsStorage=false)
+{
+    FHearthwardInventoryState SourceState(SourceIsStorage),TargetState;
+    if(Limit<=0 || !SourceState.Restore(SourceSnapshot) || !TargetState.Restore(TargetSnapshot))return 0;
+    int32 Low=0,High=Limit;
+    while(Low<High)
+    {
+        const int32 Mid=Low+(High-Low+1)/2;
+        auto SourceAfter=SourceState,TargetAfter=TargetState;
+        if(SourceAfter.TransferTo(TargetAfter,Item,Mid)==EHearthwardInventoryResult::Success)Low=Mid;
+        else High=Mid-1;
+    }
+    return Low;
+}
 }
 
 AHearthwardCompanionFixture::AHearthwardCompanionFixture()
@@ -121,15 +157,30 @@ EHearthwardProposalResult AHearthwardCompanionFixture::AcceptGoal(AActor* Speake
     if(!Safety.IsAllowed())
         return Safety.Verdict==EHearthwardNPCSafetyVerdict::Unsafe ? R::Unsafe : R::Unavailable;
 
-    const auto Result = Command.Accept(Ticket, GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(), ItemId, Quantity, Steps);
+    const auto Epoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    const FGuid SupersededId=Command.IsCurrent(Epoch)?Command.GetActive().Id:FGuid();
+    const FName SupersededItem=Command.GetItem();
+    const int32 SupersededDelivered=Command.GetDelivered();
+    const auto Result = Goal.Intent==TEXT("nature_care") || Goal.Intent==TEXT("nature_collect")
+        ? Command.AcceptNature(Ticket,Epoch,Goal)
+        : Command.Accept(Ticket,Epoch,ItemId,Quantity,Steps);
     if (Result == R::Accepted)
     {
+        if(SupersededId.IsValid())
+        {
+            FHearthwardNPCEvent E;E.Id=FGuid::NewGuid();E.Command=SupersededId;
+            E.Campaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId();
+            E.Kind=TEXT("cancelled");E.Item=SupersededItem;E.Count=SupersededDelivered;
+            E.Reason=TEXT("superseded_by_new_order");
+            E.At=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
+            GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RecordEvent(E);
+        }
         StopNavigation();
         Action->InterruptAction();
         BlockReason.Reset();
         Spent.Reset();AppliedOperations.Reset();Receipts.Reset();NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();
         Command.Goal=Goal;
-        if(Goal.Intent==TEXT("collect"))
+        if(Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("give") || (Goal.Intent==TEXT("store") && Goal.SourceRef==TEXT("bag")))
         {
             // Physical cargo retained from a cancelled/superseded command may satisfy a later request,
             // but only up to the new requested quantity. The surplus remains in the bag and is never
@@ -141,6 +192,15 @@ EHearthwardProposalResult AHearthwardCompanionFixture::AcceptGoal(AActor* Speake
                 Event(TEXT("retained_adopted"),Goal.Item,Adopted,TEXT("physical_cargo_reused"));
             }
         }
+        if(Goal.Intent==TEXT("store") && Goal.SourceRef==TEXT("player_bag"))
+        {
+            TGuardValue<bool> Guard(bSettling,true);
+            auto* PlayerBag=Speaker->FindComponentByClass<UHearthwardInventoryComponent>();
+            if(!PlayerBag || PlayerBag->TransferTo(Bag,Goal.Item,Goal.Quantity)!=EHearthwardInventoryResult::Success)
+            {Command.Cancel();Phase=EHearthwardCompanionPhase::Cancelled;BlockReason=TEXT("PLAYER_HANDOFF_FAILED");return R::Unavailable;}
+            Command.RecordAcquisition(Goal.Quantity);
+            Event(TEXT("handoff"),Goal.Item,Goal.Quantity,TEXT("player_bag"));
+        }
         if(!BuildExecutionPlan(true))
         {
             Command.Cancel();
@@ -150,9 +210,9 @@ EHearthwardProposalResult AHearthwardCompanionFixture::AcceptGoal(AActor* Speake
     return Result;
 }
 
-bool AHearthwardCompanionFixture::Cancel(AActor* Speaker)
+bool AHearthwardCompanionFixture::Cancel(AActor* Speaker,bool bAllowPaused)
 {
-    if (bSettling || !CanCommunicate(Speaker) || GetWorld()->IsPaused()) return false;
+    if (bSettling || !CanCommunicate(Speaker) || (GetWorld()->IsPaused() && !bAllowPaused)) return false;
     if(Command.IsCurrent(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())) Event(TEXT("cancelled"),Command.GetItem(),Command.GetDelivered());
     Command.Cancel();
     Execution.Reset();
@@ -197,7 +257,8 @@ bool AHearthwardCompanionFixture::BuildExecutionPlan(bool PreferReturnForExistin
         return false;
     }
     Execution.Cursor=0;
-    if(PreferReturnForExistingCargo && Command.Goal.Intent==TEXT("collect") && Bag->GetWeight()>0)
+    if(PreferReturnForExistingCargo && ((Command.Goal.Intent==TEXT("collect") && Bag->GetWeight()>0)
+        || (Command.Goal.Intent==TEXT("nature_collect") && Command.Carried>0)))
     {
         const int32 Return=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp);
         if(Return!=INDEX_NONE)Execution.Cursor=Return;
@@ -219,12 +280,21 @@ void AHearthwardCompanionFixture::RestoreExecutionPlan()
     switch(Phase)
     {
     case P::GoingToSource:
-        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Source);break;
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,
+            (Command.Goal.Intent==TEXT("nature_care") || Command.Goal.Intent==TEXT("nature_collect"))?EHearthwardAgentTarget::Nature:EHearthwardAgentTarget::Source);break;
     case P::Gathering:
-        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::Gather,EHearthwardAgentTarget::Source);
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,
+            (Command.Goal.Intent==TEXT("nature_care") || Command.Goal.Intent==TEXT("nature_collect"))?EHearthwardAgentActionType::CommitNature:EHearthwardAgentActionType::Gather,
+            (Command.Goal.Intent==TEXT("nature_care") || Command.Goal.Intent==TEXT("nature_collect"))?EHearthwardAgentTarget::Nature:EHearthwardAgentTarget::Source);
         Execution.bStarted=true;break;
     case P::TakingMaterials:
         Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::TakeMaterials,EHearthwardAgentTarget::Camp);break;
+    case P::TakingCargo:
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::Withdraw,EHearthwardAgentTarget::Camp);break;
+    case P::GoingToPlayer:
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Player);break;
+    case P::HandingOff:
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player);break;
     case P::GoingToWorkshop:
         Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Workshop);break;
     case P::Returning:
@@ -232,14 +302,17 @@ void AHearthwardCompanionFixture::RestoreExecutionPlan()
     case P::ReturningBlocked:
     case P::HoldingSafely:
         Execution.bRecoveryToCamp=true;
-        Execution.Cursor=Command.Carried>0
+        Execution.Cursor=(Command.Goal.Intent==TEXT("give") || Command.Goal.Intent==TEXT("fetch") || Command.Goal.Intent==TEXT("receive"))?0:(Command.Carried>0
             ? HearthwardPlan::FindLast(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp)
-            : 0;
+            : 0);
         break;
     case P::WaitingAtCamp:
-        if(Command.Goal.Intent==TEXT("collect"))
-            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Source);
-        else if(Command.Goal.SourceRef==TEXT("camp"))
+        if(Command.Goal.Intent==TEXT("collect") || Command.Goal.Intent==TEXT("nature_collect"))
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,
+                Command.Goal.Intent==TEXT("nature_collect")?EHearthwardAgentTarget::Nature:EHearthwardAgentTarget::Source);
+        else if(Command.Goal.Intent==TEXT("give") || Command.Goal.Intent==TEXT("receive"))
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Player);
+        else if(Command.Goal.Intent==TEXT("retrieve") || Command.Goal.Intent==TEXT("fetch") || Command.Goal.SourceRef==TEXT("camp"))
             Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp);
         else
             Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Workshop);
@@ -262,8 +335,12 @@ AActor* AHearthwardCompanionFixture::ResolveActionTarget(const FHearthwardAgentA
     case EHearthwardAgentTarget::Workshop:
     {
         auto* Registry=WorkshopRegistry(GetWorld());
-        return Registry?Registry->ResolveWorkbench(Command.Goal.Station):nullptr;
+        return Registry?Registry->ResolveFacility(Command.Goal.Station):nullptr;
     }
+    case EHearthwardAgentTarget::Nature:
+        return GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Actor(Command.Goal.Station);
+    case EHearthwardAgentTarget::Player:
+        return UGameplayStatics::GetPlayerPawn(GetWorld(),0);
     default:
         return nullptr;
     }
@@ -287,11 +364,14 @@ void AHearthwardCompanionFixture::SyncPhaseFromExecution()
     if(!Current)return;
     using A=EHearthwardAgentActionType;
     using T=EHearthwardAgentTarget;
-    if(Current->Type==A::MoveTo && Current->Target==T::Source)Phase=EHearthwardCompanionPhase::GoingToSource;
-    else if(Current->Type==A::Gather)Phase=EHearthwardCompanionPhase::Gathering;
+    if(Current->Type==A::MoveTo && (Current->Target==T::Source || Current->Target==T::Nature))Phase=EHearthwardCompanionPhase::GoingToSource;
+    else if(Current->Type==A::Gather || Current->Type==A::CommitNature)Phase=EHearthwardCompanionPhase::Gathering;
     else if(Current->Type==A::MoveTo && Current->Target==T::Camp)Phase=EHearthwardCompanionPhase::Returning;
     else if(Current->Type==A::Deposit)Phase=EHearthwardCompanionPhase::Returning;
     else if(Current->Type==A::TakeMaterials)Phase=EHearthwardCompanionPhase::TakingMaterials;
+    else if(Current->Type==A::Withdraw)Phase=EHearthwardCompanionPhase::TakingCargo;
+    else if(Current->Type==A::MoveTo && Current->Target==T::Player)Phase=EHearthwardCompanionPhase::GoingToPlayer;
+    else if(Current->Type==A::Handoff)Phase=EHearthwardCompanionPhase::HandingOff;
     else if((Current->Type==A::MoveTo && Current->Target==T::Workshop) || Current->Type==A::CommitWorkshop)
         Phase=EHearthwardCompanionPhase::GoingToWorkshop;
 }
@@ -307,9 +387,14 @@ void AHearthwardCompanionFixture::AdvanceExecution()
         return;
     }
 
-    if(Command.Goal.Intent==TEXT("collect") && Command.GetDelivered()<Command.GetRequested())
+    if((Command.Goal.Intent==TEXT("collect") || Command.Goal.Intent==TEXT("nature_collect") || Command.Goal.Intent==TEXT("retrieve")
+        || (Command.Goal.Intent==TEXT("give") && Command.Carried>0) || Command.Goal.Intent==TEXT("fetch")
+        || Command.Goal.Intent==TEXT("receive")) && Command.GetDelivered()<Command.GetRequested())
     {
-        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Source);
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,
+            (Command.Goal.Intent==TEXT("give") || Command.Goal.Intent==TEXT("receive"))?EHearthwardAgentTarget::Player:
+            (Command.Goal.Intent==TEXT("retrieve") || Command.Goal.Intent==TEXT("fetch"))?EHearthwardAgentTarget::Camp:
+            Command.Goal.Intent==TEXT("nature_collect")?EHearthwardAgentTarget::Nature:EHearthwardAgentTarget::Source);
         NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();
         SyncPhaseFromExecution();
         return;
@@ -334,6 +419,15 @@ void AHearthwardCompanionFixture::AdvanceExecution()
 bool AHearthwardCompanionFixture::IsAtCamp() const
 {
     return Navigation && Navigation->IsAt(Camp);
+}
+
+bool AHearthwardCompanionFixture::PlayerAtTaskCamp(const AActor* Player) const
+{
+    if(!IsValid(Player) || Player->IsActorBeingDestroyed() || Player->GetWorld()!=GetWorld()
+        || !IsValid(Camp) || Camp->IsActorBeingDestroyed())return false;
+    const auto& Camps=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State;
+    const FName Site=Camps.CampAt(Camp->GetActorLocation());
+    return !Site.IsNone() && Site==Camps.CampAt(Player->GetActorLocation());
 }
 
 bool AHearthwardCompanionFixture::At(const AActor* Target) const
@@ -403,7 +497,9 @@ void AHearthwardCompanionFixture::HandleExecutionFailure(const FString& Reason)
     Context.bCampAvailable=IsValid(Camp) && !Camp->IsActorBeingDestroyed();
     Context.bSourceAvailable=IsSourceValid() && Source->GetItemCount(Command.GetItem())>0;
     auto* Registry=WorkshopRegistry(GetWorld());
-    Context.bStationAvailable=Registry && Registry->ResolveWorkbench(Command.Goal.Station);
+    Context.bStationAvailable=(Registry && Registry->ResolveFacility(Command.Goal.Station))
+        || (Command.Goal.Intent==TEXT("nature_collect")
+            && IsValid(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Actor(Command.Goal.Station)));
     Context.AdaptiveAttempts=Execution.AdaptiveRecoveryAttempts;
     Context.MaxAdaptiveAttempts=HearthwardAgent::Policy(TEXT("max_adaptive_replans"));
 
@@ -466,6 +562,8 @@ void AHearthwardCompanionFixture::Deposit()
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     const auto Ticket = Command.GetActive();
     TGuardValue<bool> Guard(bSettling, true);
+    if(Command.Goal.Intent==TEXT("retrieve") && !ReconcileMissingCargo())
+    {ReturnBlocked(TEXT("CARGO_ACCOUNTING_FAILED"));return;}
     for (const auto& Item : HearthwardBasicItems())
     {
         if (!Command.IsCurrent(Storage->GetTimelineEpoch()))
@@ -479,7 +577,8 @@ void AHearthwardCompanionFixture::Deposit()
         if(Item.IsInstance() && Item.Id!=Command.GetItem())continue;
         if(Command.Goal.Intent!=TEXT("collect") || Item.Id==Command.GetItem())Count=Owned;
         if (Count == 0) continue;
-        const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xDE01^FCrc::StrCrc32(*Item.Id.ToString()),Ticket.Id.D^uint32(Command.Acquired));
+        const FGuid Op=Command.Goal.Intent==TEXT("retrieve")?FGuid::NewGuid():
+            FGuid(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xDE01^FCrc::StrCrc32(*Item.Id.ToString()),Ticket.Id.D^uint32(Command.Acquired));
         const bool Settled=HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
             FString::Printf(TEXT("deposit:%s:%d:owned%d:r%lld"),*Item.Id.ToString(),Count,Owned,Ticket.Revision),[&]
             {
@@ -505,7 +604,19 @@ void AHearthwardCompanionFixture::Deposit()
                 if(Result.MovedCount>0)
                     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RecordCampStockReceipt(Item.Id,Storage->GetItemCount(Item.Id));
                 if(Item.Id==Command.GetItem() && Result.MovedCount>0 && Owned>0)
-                {Command.Carried-=Owned;Command.RecordDelivery(Ticket,Owned);Event(TEXT("delivered"),Item.Id,Owned,FString(),Op);}
+                {
+                    if(Command.Goal.Intent==TEXT("retrieve"))
+                    {
+                        if(!ensure(Command.RecordUnfulfilled(Owned)))return false;
+                        Event(TEXT("returned"),Item.Id,Owned,TEXT("undelivered_cargo"),Op);
+                    }
+                    else
+                    {
+                        Command.Carried-=Owned;
+                        Command.RecordDelivery(Ticket,Owned);
+                        Event(TEXT("delivered"),Item.Id,Owned,FString(),Op);
+                    }
+                }
                 return true;
             });
         if (Storage->GetTimelineEpoch() != Ticket.Epoch)
@@ -539,6 +650,83 @@ void AHearthwardCompanionFixture::Deposit()
     const auto* Current=Execution.Current();
     if(Current && Current->Type==EHearthwardAgentActionType::Deposit)AdvanceExecution();
     else Phase=EHearthwardCompanionPhase::WaitingAtCamp;
+}
+
+bool AHearthwardCompanionFixture::ReconcileMissingCargo()
+{
+    const int32 Missing=Command.Carried-Bag->GetItemCount(Command.GetItem());
+    if(Missing<=0)return true;
+    if(!ensure(Command.RecordUnfulfilled(Missing)))return false;
+    Event(TEXT("cargo_missing"),Command.GetItem(),Missing,TEXT("no_longer_in_brother_bag"));
+    return true;
+}
+
+void AHearthwardCompanionFixture::Withdraw()
+{
+    if(!At(Camp)){HandleExecutionFailure(TEXT("CAMP_POSITION_CHANGED"));return;}
+    auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+    const bool Fetch=Command.Goal.Intent==TEXT("fetch");
+    if(!Fetch && !PlayerAtTaskCamp(Player)){HandleExecutionFailure(TEXT("PLAYER_LEFT_CAMP"));return;}
+    auto* PlayerBag=Player?Player->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
+    auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    const auto Ticket=Command.GetActive();
+    const int32 Limit=FMath::Min(Storage->Available(Command.GetItem()),Command.GetRequested()-Command.GetAcquired());
+    const int32 Count=Fetch?TransferableHandoff(Storage->InventorySnapshot(),Bag->Snapshot(),Command.GetItem(),Limit,true)
+        : PlayerBag?TransferableCargo(Storage->InventorySnapshot(),Bag->Snapshot(),PlayerBag->Snapshot(),Command.GetItem(),Limit):0;
+    if(Count<=0){HandleExecutionFailure(Limit<=0?TEXT("CAMP_STOCK_INSUFFICIENT"):TEXT("BAG_CAPACITY_INSUFFICIENT"));return;}
+    const FGuid Op=FGuid::NewGuid();
+    TGuardValue<bool> Guard(bSettling,true);
+    if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
+        FString::Printf(TEXT("withdraw:%s:%d:r%lld"),*Command.GetItem().ToString(),Count,Ticket.Revision),[&]
+        {
+            const auto Result=Storage->Transfer(Bag,false,Command.GetItem(),Count,Op,Ticket.Epoch);
+            if(Result.Result!=EHearthwardInventoryResult::Success || Result.MovedCount!=Count)return false;
+            if(!ensure(Command.RecordAcquisition(Count)))return false;
+            if(Fetch)
+            {
+                Command.Carried-=Count;
+                if(!ensure(Command.RecordDelivery(Ticket,Count)))return false;
+            }
+            GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RecordCampStockReceipt(Command.GetItem(),Storage->GetItemCount(Command.GetItem()));
+            Event(Fetch?TEXT("delivered"):TEXT("withdrawn"),Command.GetItem(),Count,Fetch?TEXT("brother_bag"):TEXT("camp"),Op);
+            return true;
+        })) {HandleExecutionFailure(TEXT("CAMP_WITHDRAW_FAILED"));return;}
+    AdvanceExecution();
+}
+
+void AHearthwardCompanionFixture::Handoff()
+{
+    auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+    if(!PlayerAtTaskCamp(Player) || !Navigation->IsAt(Player,300.f))
+    {HandleExecutionFailure(TEXT("PLAYER_HANDOFF_OUT_OF_RANGE"));return;}
+    auto* PlayerBag=Player->FindComponentByClass<UHearthwardInventoryComponent>();
+    const bool Receiving=Command.Goal.Intent==TEXT("receive");
+    const int32 Count=Receiving && PlayerBag
+        ? TransferableHandoff(PlayerBag->Snapshot(),Bag->Snapshot(),Command.GetItem(),
+            FMath::Min(PlayerBag->Available(Command.GetItem()),Command.GetRequested()-Command.GetAcquired()))
+        : Command.Goal.Intent==TEXT("give") && PlayerBag
+        ? TransferableHandoff(Bag->Snapshot(),PlayerBag->Snapshot(),Command.GetItem(),FMath::Min(Command.Carried,Bag->Available(Command.GetItem())))
+        : Command.Carried;
+    if(!PlayerBag || (Receiving && PlayerBag->Available(Command.GetItem())<=0)
+        || (!Receiving && (Command.Carried<=0 || Bag->Available(Command.GetItem())<=0))
+        || (Command.Goal.Intent!=TEXT("give") && Bag->Available(Command.GetItem())<Command.Carried))
+    {HandleExecutionFailure(TEXT("CARGO_UNAVAILABLE"));return;}
+    if(Count<=0){HandleExecutionFailure(Receiving?TEXT("BAG_CAPACITY_INSUFFICIENT"):TEXT("PLAYER_BAG_CAPACITY_INSUFFICIENT"));return;}
+    auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    const auto Ticket=Command.GetActive();
+    const FGuid Op=FGuid::NewGuid();
+    TGuardValue<bool> Guard(bSettling,true);
+    if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
+        FString::Printf(TEXT("handoff:%s:%d:r%lld"),*Command.GetItem().ToString(),Count,Ticket.Revision),[&]
+        {
+            if((Receiving?PlayerBag->TransferTo(Bag,Command.GetItem(),Count):Bag->TransferTo(PlayerBag,Command.GetItem(),Count))!=EHearthwardInventoryResult::Success)return false;
+            if(Receiving && !ensure(Command.RecordAcquisition(Count)))return false;
+            Command.Carried-=Count;
+            if(!ensure(Command.RecordDelivery(Ticket,Count)))return false;
+            Event(TEXT("delivered"),Command.GetItem(),Count,Receiving?TEXT("brother_bag"):TEXT("player_bag"),Op);
+            return true;
+        })) {HandleExecutionFailure(Receiving?TEXT("BAG_CAPACITY_INSUFFICIENT"):TEXT("PLAYER_BAG_CAPACITY_INSUFFICIENT"));return;}
+    AdvanceExecution();
 }
 
 void AHearthwardCompanionFixture::Tick(float DeltaSeconds)
@@ -593,6 +781,13 @@ void AHearthwardCompanionFixture::TickRecovery(float DeltaSeconds)
     }
     if(At(Camp))
     {
+        if(Command.Goal.Intent==TEXT("give") || Command.Goal.Intent==TEXT("fetch") || Command.Goal.Intent==TEXT("receive"))
+        {
+            if(Command.Goal.Intent==TEXT("give") && !ReconcileMissingCargo())BlockReason=TEXT("CARGO_ACCOUNTING_FAILED");
+            Execution.bRecoveryToCamp=false;
+            Phase=EHearthwardCompanionPhase::WaitingAtCamp;
+            return;
+        }
         Deposit();
         return;
     }
@@ -614,6 +809,15 @@ void AHearthwardCompanionFixture::TickExecution(float DeltaSeconds)
         const auto Safety=HearthwardPerception::Evaluate(HearthwardPerception::Capture(this),Command.Goal);
         if(!Safety.IsAllowed()){HandleExecutionFailure(Safety.Reason);return;}
     }
+    if(Command.Goal.Intent==TEXT("nature_collect") && Current->Target==EHearthwardAgentTarget::Nature)
+        if(const FString Reason=ResourceTargetReason(Command.Goal,false);!Reason.IsEmpty())
+        {HandleExecutionFailure(Reason);return;}
+    if(Command.Goal.Intent==TEXT("give") || Command.Goal.Intent==TEXT("receive"))
+    {
+        const auto& Camps=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State;
+        if(!IsValid(Camp) || Camps.CampAt(GetActorLocation())!=Camps.CampAt(Camp->GetActorLocation()))
+        {HandleExecutionFailure(TEXT("BROTHER_LEFT_CAMP"));return;}
+    }
 
     using A=EHearthwardAgentActionType;
     using T=EHearthwardAgentTarget;
@@ -631,9 +835,16 @@ void AHearthwardCompanionFixture::TickExecution(float DeltaSeconds)
                 Current->Target==T::Camp?TEXT("CAMP_UNAVAILABLE"):TEXT("STATION_UNAVAILABLE"));
             return;
         }
+        if(Current->Target==T::Player && !PlayerAtTaskCamp(Target))
+        {HandleExecutionFailure(TEXT("PLAYER_LEFT_CAMP"));return;}
         const float Acceptance=Current->Target==T::Workshop
-            ? float(HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("crafting")),TEXT("reach"))) : 40.f;
-        if(At(Target) || (Current->Target==T::Workshop && FVector::Dist2D(GetActorLocation(),Target->GetActorLocation())<=Acceptance))
+            ? float(HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("crafting")),TEXT("reach")))
+            : Current->Target==T::Nature || Current->Target==T::Player ? 180.f : 40.f;
+        if(At(Target) || (Current->Target==T::Workshop
+                && FVector::Dist(GetActorLocation(),Target->GetActorLocation())<=Acceptance)
+            || (Current->Target==T::Nature
+                && FVector::Dist(GetActorLocation(),Target->GetActorLocation())<=240.f)
+            || (Current->Target==T::Player && Navigation->IsAt(Target,300.f)))
         {
             StopNavigation();
             AdvanceExecution();
@@ -693,11 +904,57 @@ void AHearthwardCompanionFixture::TickExecution(float DeltaSeconds)
         return;
     }
 
+    if(Current->Type==A::CommitNature)
+    {
+        auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+        if(!IsValid(Nature->Actor(Command.Goal.Station))){HandleExecutionFailure(TEXT("TARGET_UNAVAILABLE"));return;}
+        if(FVector::Dist(GetActorLocation(),Nature->Actor(Command.Goal.Station)->GetActorLocation())>300)
+        {HandleExecutionFailure(TEXT("TARGET_POSITION_CHANGED"));return;}
+        if(!Execution.bStarted)
+        {
+            StopNavigation();
+            if(!Action->StartAction()){HandleExecutionFailure(TEXT("ACTION_BUSY"));return;}
+            Execution.bStarted=true;return;
+        }
+        if(Action->GetStatus()==EHearthwardTimedActionStatus::Interrupted){HandleExecutionFailure(TEXT("ACTION_INTERRUPTED"));return;}
+        if(Action->GetStatus()!=EHearthwardTimedActionStatus::Completed)return;
+        const auto Ticket=Command.GetActive();
+        const bool Collect=Command.Goal.Intent==TEXT("nature_collect");
+        const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCA01,Ticket.Id.D^uint32(Collect?Command.Acquired:0));
+        TGuardValue<bool> Guard(bSettling,true);
+        if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,
+            GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(),
+            FString::Printf(TEXT("nature:%s:%s:%d:%d"),*Command.Goal.Item.ToString(),*Command.Goal.Station.ToString(),Command.Goal.Quantity,Command.Acquired),[&]
+            {
+                const int32 Before=Collect?Bag->GetItemCount(Command.Goal.Item):0;
+                if(!Nature->CommitCompanion(this,Collect?FName(TEXT("harvest")):Command.Goal.Item,Command.Goal.Station,
+                    Ticket.Epoch,Collect?Command.GetRequested()-Command.GetAcquired():Command.Goal.Quantity))return false;
+                if(Collect)
+                {
+                    const int32 Gained=Bag->GetItemCount(Command.Goal.Item)-Before;
+                    if(!ensure(Gained>0 && Command.RecordAcquisition(Gained)))return false;
+                    Event(TEXT("acquired"),Command.Goal.Item,Gained,FString(),Op);
+                }
+                else
+                {
+                    Command.RecordAcquisition(Command.Goal.Quantity);
+                    Command.Carried=0;
+                    Command.RecordDelivery(Ticket,Command.Goal.Quantity);
+                    Event(TEXT("nature_care"),Command.Goal.Item,Command.Goal.Quantity,FString(),Op);
+                }
+                return true;
+            })) {HandleExecutionFailure(TEXT("NATURE_CONDITIONS_CHANGED"));return;}
+        AdvanceExecution();return;
+    }
+
     if(Current->Type==A::TakeMaterials || Current->Type==A::CommitWorkshop)
     {
         WorkshopTick();
         return;
     }
+
+    if(Current->Type==A::Withdraw){Withdraw();return;}
+    if(Current->Type==A::Handoff){Handoff();return;}
 
     if(Current->Type==A::Deposit)
     {
@@ -711,24 +968,137 @@ namespace
 UHearthwardBuildingComponent* WorkshopRegistry(UWorld* World)
 {auto* P=UGameplayStatics::GetPlayerPawn(World,0);return P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;}
 }
+FString AHearthwardCompanionFixture::ResourceTargetReason(const FHearthwardAgentGoal& Goal,bool RequireKnown) const
+{
+    if(!Goal.Station.IsValid())return TEXT("TARGET_REQUIRED");
+    auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+    auto* Camps=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+    const auto* Point=Nature->State.Points.FindByPredicate([&](const auto& P){return P.Id==Goal.Station && P.Kind==TEXT("resource");});
+    if(!Point || !IsValid(Nature->Actor(Goal.Station)))return TEXT("TARGET_UNAVAILABLE");
+    const auto Def=HearthwardNature::Definition(TEXT("resources"),Point->Definition);
+    if(!Def || FName(*HearthwardData::Text(Def,TEXT("item")))!=Goal.Item)return TEXT("TARGET_INVALID");
+    const FName Site=Camps->State.CampAt(Point->Position);
+    if(Site.IsNone() || !IsValid(Camp) || Site!=Camps->State.CampAt(Camp->GetActorLocation()))return TEXT("CAMP_UNAVAILABLE");
+    if(RequireKnown)
+    {
+        const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+        if(!Player || FVector::Dist2D(Player->GetActorLocation(),Point->Position)>3000)return TEXT("TARGET_NOT_KNOWN");
+    }
+    for(const auto& R:Camps->State.Regions)
+        if(R.Camp==Site && !R.Facility.IsValid() && !R.Safe)return TEXT("AREA_UNSAFE");
+    const auto* Resource=Camps->Source(Point->Key.ToString());
+    if(!Resource || Resource->Blocked || Resource->Remaining<=0)return TEXT("SOURCE_UNAVAILABLE");
+    FGuid Tool;
+    if(HearthwardData::Text(Def,TEXT("tool"))!=TEXT("hand")
+        && HearthwardHarvestTools::Yield(Bag,Goal.Item,Tool)<=0)return TEXT("TOOL_REQUIRED");
+    return {};
+}
 FString AHearthwardCompanionFixture::PreviewGoal(const FHearthwardAgentGoal& Goal) const
 {
     const FString Error=HearthwardAgent::Validate(Goal);if(!Error.IsEmpty())return Error;
     const auto Safety=HearthwardPerception::Evaluate(HearthwardPerception::Capture(this),Goal);
     if(!Safety.IsAllowed())return Safety.Reason;
     if(Goal.Intent==TEXT("collect")) return {};
-    auto* Registry=WorkshopRegistry(GetWorld());if(!Registry || !Registry->ResolveWorkbench(Goal.Station))return TEXT("STATION_UNAVAILABLE");
+    if(Goal.Intent==TEXT("nature_collect"))return ResourceTargetReason(Goal,true);
+    if(Goal.Intent==TEXT("store"))
+    {
+        if(Goal.SourceRef==TEXT("bag"))return Bag->GetItemCount(Goal.Item)>=Goal.Quantity?FString():TEXT("BAG_INSUFFICIENT");
+        const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+        auto* Camps=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+        if(!Player || !IsValid(Camp) || FVector::Dist(GetActorLocation(),Player->GetActorLocation())>300
+            || Camps->State.CampAt(Player->GetActorLocation()).IsNone()
+            || Camps->State.CampAt(Player->GetActorLocation())!=Camps->State.CampAt(Camp->GetActorLocation()))return TEXT("PLAYER_HANDOFF_OUT_OF_RANGE");
+        const auto* PlayerBag=Player->FindComponentByClass<UHearthwardInventoryComponent>();
+        if(!PlayerBag || PlayerBag->Available(Goal.Item)<Goal.Quantity)return TEXT("PLAYER_BAG_INSUFFICIENT");
+        FHearthwardInventoryState SourceAfter,TargetAfter;
+        if(!SourceAfter.Restore(PlayerBag->Snapshot()) || !TargetAfter.Restore(Bag->Snapshot())
+            || SourceAfter.TransferTo(TargetAfter,Goal.Item,Goal.Quantity)!=EHearthwardInventoryResult::Success)
+            return TEXT("BAG_CAPACITY_INSUFFICIENT");
+        return {};
+    }
+    if(Goal.Intent==TEXT("retrieve"))
+    {
+        auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+        auto* PlayerBag=Player?Player->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
+        auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+        if(!PlayerAtTaskCamp(Player))return TEXT("PLAYER_LEFT_CAMP");
+        if(Storage->Available(Goal.Item)<Goal.Quantity)return TEXT("CAMP_STOCK_INSUFFICIENT");
+        if(!PlayerBag || TransferableCargo(Storage->InventorySnapshot(),Bag->Snapshot(),PlayerBag->Snapshot(),Goal.Item,1)!=1)
+            return TEXT("BAG_CAPACITY_INSUFFICIENT");
+        return {};
+    }
+    if(Goal.Intent==TEXT("give"))
+    {
+        auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+        auto* PlayerBag=Player?Player->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
+        const auto& Camps=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State;
+        if(!PlayerAtTaskCamp(Player) || Camps.CampAt(GetActorLocation())!=Camps.CampAt(Camp->GetActorLocation()))
+            return TEXT("PLAYER_LEFT_CAMP");
+        if(Bag->Available(Goal.Item)<Goal.Quantity)return TEXT("BAG_INSUFFICIENT");
+        if(!PlayerBag || TransferableHandoff(Bag->Snapshot(),PlayerBag->Snapshot(),Goal.Item,1)!=1)
+            return TEXT("PLAYER_BAG_CAPACITY_INSUFFICIENT");
+        return {};
+    }
+    if(Goal.Intent==TEXT("fetch"))
+    {
+        auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+        auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+        if(!PlayerAtTaskCamp(Player))return TEXT("PLAYER_LEFT_CAMP");
+        if(Storage->Available(Goal.Item)<Goal.Quantity)return TEXT("CAMP_STOCK_INSUFFICIENT");
+        if(TransferableHandoff(Storage->InventorySnapshot(),Bag->Snapshot(),Goal.Item,1,true)!=1)
+            return TEXT("BAG_CAPACITY_INSUFFICIENT");
+        return {};
+    }
+    if(Goal.Intent==TEXT("receive"))
+    {
+        auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+        auto* PlayerBag=Player?Player->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
+        const auto& Camps=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State;
+        if(!PlayerAtTaskCamp(Player) || Camps.CampAt(GetActorLocation())!=Camps.CampAt(Camp->GetActorLocation()))
+            return TEXT("PLAYER_LEFT_CAMP");
+        if(!PlayerBag || PlayerBag->Available(Goal.Item)<Goal.Quantity)return TEXT("PLAYER_BAG_INSUFFICIENT");
+        if(TransferableHandoff(PlayerBag->Snapshot(),Bag->Snapshot(),Goal.Item,1)!=1)
+            return TEXT("BAG_CAPACITY_INSUFFICIENT");
+        return {};
+    }
+    if(Goal.Intent==TEXT("nature_care"))
+    {
+        if(!Goal.Station.IsValid())return TEXT("TARGET_REQUIRED");
+        auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+        if(!IsValid(Nature->Actor(Goal.Station)))return TEXT("TARGET_UNAVAILABLE");
+        const auto* Crop=Nature->State.Crops.FindByPredicate([&](const auto& C){return C.Id==Goal.Station;});
+        const bool Pen=Nature->State.Pens.ContainsByPredicate([&](const auto& P){return P.Id==Goal.Station;});
+        if((Goal.Item==TEXT("deposit_feed"))!=Pen || (Goal.Item!=TEXT("deposit_feed") && !Crop))return TEXT("TARGET_INVALID");
+        if(Crop && ((Goal.Item==TEXT("water") && Crop->Watered) || (Goal.Item==TEXT("fertilize") && Crop->Fertilized)))return TEXT("ALREADY_DONE");
+        if(Crop && Goal.Item==TEXT("harvest") && !Nature->State.Ready(*Crop))return TEXT("NOT_READY");
+        return Goal.Item==TEXT("deposit_feed") && Bag->GetItemCount(TEXT("feed"))<Goal.Quantity
+            ? TEXT("BAG_INSUFFICIENT"):FString();
+    }
+    auto* Registry=WorkshopRegistry(GetWorld());
+    const auto Recipe=HearthwardData::Find(Goal.Intent==TEXT("craft")?TEXT("craftingRecipes"):TEXT("repairRecipes"),Goal.Item.ToString());
+    const auto* Facility=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Facilities.FindByPredicate(
+        [&](const auto& F){return F.Id==Goal.Station;});
+    if(!Registry || !Registry->ResolveFacility(Goal.Station) || !Recipe || !Facility || Facility->Paused
+        || Facility->Kind!=FName(*HearthwardData::Text(Recipe,TEXT("facility")))
+        || Facility->Level<HearthwardData::Number(Recipe,TEXT("facilityLevel")))return TEXT("STATION_UNAVAILABLE");
+    TMap<FName,int32> Cost=HearthwardWorkshop::Materials(Goal.Intent,Goal.Item,Goal.Quantity);
     if(Goal.Intent==TEXT("repair"))
     {
-        if(Bag->GetItemCount(Goal.Item)!=1 || !Bag->FirstInstance(Goal.Item).IsValid())return TEXT("AMBIGUOUS_TARGET");
-        if(EquipmentDurability(Goal.Item)>=HearthwardData::Number(HearthwardData::Find(TEXT("items"),Goal.Item.ToString()),TEXT("durability")))return TEXT("ALREADY_REPAIRED");
+        if(!Goal.EquipmentId.IsValid() && Bag->GetItemCount(Goal.Item)!=1)return TEXT("AMBIGUOUS_TARGET");
+        const FGuid Target=Goal.EquipmentId.IsValid()?Goal.EquipmentId:Bag->FirstInstance(Goal.Item);
+        const auto* Instance=Bag->FindInstance(Target);
+        if(!Instance || Instance->Definition!=Goal.Item)return TEXT("TARGET_UNAVAILABLE");
+        double Restored=0;
+        if(!HearthwardWorkshop::RepairQuote(Bag,Target,1,Cost,Restored))return TEXT("ALREADY_REPAIRED");
     }
-    if(!HearthwardAgent::AllowsCost(Goal.Limits,HearthwardWorkshop::Materials(Goal.Intent,Goal.Item,Goal.Quantity),{}))return TEXT("POLICY_CONFLICT");
+    if(!HearthwardAgent::AllowsCost(Goal.Limits,Cost,{}))return TEXT("POLICY_CONFLICT");
     return {};
 }
 EHearthwardProposalResult AHearthwardCompanionFixture::SubmitGoal(AActor* Speaker,FHearthwardCommandTicket Ticket,const FHearthwardAgentGoal& Goal)
 {
     if(!PreviewGoal(Goal).IsEmpty())return EHearthwardProposalResult::Unsupported;
+    FHearthwardAgentPlan CheckedPlan;FString PlanError;
+    if(!HearthwardPlan::Build(Goal,CheckedPlan,PlanError))return EHearthwardProposalResult::Unsupported;
     FName Output=Goal.Item;int32 Count=Goal.Quantity;
     if(Goal.Intent==TEXT("craft"))
     {
@@ -750,7 +1120,7 @@ bool AHearthwardCompanionFixture::ResumeBlocked(AActor* Speaker)
     if(!Execution.Current() && !BuildExecutionPlan(false))return false;
 
     NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();BlockReason.Reset();
-    if(Command.Carried>0)
+    if(Command.Carried>0 && Command.Goal.Intent!=TEXT("give"))
     {
         Execution.bRecoveryToCamp=true;
         Phase=P::ReturningBlocked;
@@ -759,13 +1129,32 @@ bool AHearthwardCompanionFixture::ResumeBlocked(AActor* Speaker)
 
     const auto Safety=HearthwardPerception::Evaluate(HearthwardPerception::Capture(this),Command.Goal);
     if(!Safety.IsAllowed()){BlockReason=Safety.Reason;return false;}
+    if(Command.Goal.Intent==TEXT("give") || Command.Goal.Intent==TEXT("receive"))
+    {
+        auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+        if(!PlayerAtTaskCamp(Player)){BlockReason=TEXT("PLAYER_LEFT_CAMP");return false;}
+        const auto& Camps=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State;
+        if(Camps.CampAt(GetActorLocation())!=Camps.CampAt(Camp->GetActorLocation()))
+        {Execution.bRecoveryToCamp=true;Phase=P::ReturningBlocked;return true;}
+        if(Command.Goal.Intent==TEXT("give") && Command.Carried==0)
+        {
+            const int32 Adopted=FMath::Min(Bag->Available(Command.GetItem()),Command.GetRequested()-Command.GetAcquired());
+            if(Adopted<=0 || !Command.RecordAcquisition(Adopted)){BlockReason=TEXT("BAG_INSUFFICIENT");return false;}
+            Event(TEXT("retained_adopted"),Command.GetItem(),Adopted,TEXT("physical_cargo_reused"));
+        }
+        Execution.Cursor=HearthwardPlan::Find(Execution.Plan,EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Player);
+    }
 
     if(const auto* Current=Execution.Current())
     {
         using A=EHearthwardAgentActionType;using T=EHearthwardAgentTarget;
         if(Current->Type==A::Gather)
             Execution.Cursor=HearthwardPlan::Find(Execution.Plan,A::MoveTo,T::Source);
+        else if(Current->Type==A::CommitNature)
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,A::MoveTo,T::Nature);
         else if(Current->Type==A::TakeMaterials)
+            Execution.Cursor=HearthwardPlan::Find(Execution.Plan,A::MoveTo,T::Camp);
+        else if(Command.Goal.Intent==TEXT("retrieve") || Command.Goal.Intent==TEXT("fetch"))
             Execution.Cursor=HearthwardPlan::Find(Execution.Plan,A::MoveTo,T::Camp);
         else if(Current->Type==A::CommitWorkshop)
             Execution.Cursor=HearthwardPlan::Find(Execution.Plan,A::MoveTo,T::Workshop);
@@ -786,9 +1175,17 @@ void AHearthwardCompanionFixture::WorkshopTick()
     const auto* Current=Execution.Current();
     if(!Current)return;
     const auto& G=Command.Goal;
-    auto* Registry=WorkshopRegistry(GetWorld());AActor* Station=Registry?Registry->ResolveWorkbench(G.Station):nullptr;
+    auto* Registry=WorkshopRegistry(GetWorld());AActor* Station=Registry?Registry->ResolveFacility(G.Station):nullptr;
     if(!IsValid(Station)){HandleExecutionFailure(TEXT("STATION_UNAVAILABLE"));return;}
+    const FGuid RepairId=G.Intent==TEXT("repair")?(G.EquipmentId.IsValid()?G.EquipmentId:Bag->FirstInstance(G.Item)):FGuid();
     auto Cost=HearthwardWorkshop::Materials(G.Intent,G.Item,G.Quantity);
+    if(G.Intent==TEXT("repair"))
+    {
+        const auto* Instance=Bag->FindInstance(RepairId);
+        double Restored=0;
+        if(!Instance || Instance->Definition!=G.Item || !HearthwardWorkshop::RepairQuote(Bag,RepairId,1,Cost,Restored))
+        {HandleExecutionFailure(TEXT("TARGET_UNAVAILABLE"));return;}
+    }
     if(!HearthwardAgent::AllowsCost(G.Limits,Cost,Spent)){HandleExecutionFailure(TEXT("POLICY_CONFLICT"));return;}
 
     if(Current->Type==EHearthwardAgentActionType::TakeMaterials)
@@ -830,7 +1227,7 @@ void AHearthwardCompanionFixture::WorkshopTick()
     }
 
     if(Current->Type!=EHearthwardAgentActionType::CommitWorkshop)return;
-    const FString Error=HearthwardWorkshop::Check(this,Station,Bag,G.Intent,G.Item,G.Quantity);
+    const FString Error=HearthwardWorkshop::Check(this,Station,Bag,G.Intent,G.Item,G.Quantity,RepairId);
     if(Error==TEXT("OUT_OF_RANGE") || Error==TEXT("PATH_BLOCKED"))
     {
         if(!MoveTowards(Station,0,160))HandleExecutionFailure(TEXT("PATH_BLOCKED"));
@@ -839,17 +1236,16 @@ void AHearthwardCompanionFixture::WorkshopTick()
     if(!Error.IsEmpty()){HandleExecutionFailure(Error);return;}
 
     StopNavigation();TGuardValue<bool> Guard(bSettling,true);
-    if(G.Intent==TEXT("repair")){double Restored;HearthwardWorkshop::RepairQuote(Bag,Bag->FirstInstance(G.Item),1,Cost,Restored);}
-    const float Before=EquipmentDurability(G.Item);
+    const float Before=G.Intent==TEXT("repair")?Bag->FindInstance(RepairId)->Durability:0;
     const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCFA1,Ticket.Id.D);
     if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(),
         FString::Printf(TEXT("%s:%s:%d:r%lld"),*G.Intent.ToString(),*G.Item.ToString(),G.Quantity,Ticket.Revision),[&]
         {
-            if(!HearthwardWorkshop::Commit(Bag,G.Intent,G.Item,G.Quantity))return false;
+            if(!HearthwardWorkshop::Commit(Bag,G.Intent,G.Item,G.Quantity,RepairId))return false;
             for(const auto& C:Cost)Spent.FindOrAdd(C.Key)+=C.Value;
             Execution.AdaptiveRecoveryAttempts=0;
             Execution.LastRecoveryReason.Reset();
-            Event(G.Intent,G.Item,G.Quantity,G.Intent==TEXT("repair")?FString::Printf(TEXT("耐久 %.0f → %.0f"),Before,EquipmentDurability(G.Item)):TEXT("实际扣料并产生物品"),Op);
+            Event(G.Intent,G.Item,G.Quantity,G.Intent==TEXT("repair")?FString::Printf(TEXT("耐久 %.0f → %.0f"),Before,Bag->FindInstance(RepairId)->Durability):TEXT("实际扣料并产生物品"),Op);
             Command.RecordAcquisition(Command.GetRequested());
             if(G.Intent==TEXT("repair"))
             {
@@ -864,8 +1260,20 @@ void AHearthwardCompanionFixture::WorkshopTick()
 void AHearthwardCompanionFixture::StopForSurvival()
 {
     if(bSettling) return;
-    Command.Cancel(); Execution.Reset(); StopNavigation(); Action->InterruptAction();
-    Phase=EHearthwardCompanionPhase::Cancelled;
+    StopNavigation();Action->InterruptAction();
+    const auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
+    const auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    if(Survival && Survival->Alive() && Storage && Command.IsCurrent(Storage->GetTimelineEpoch()))
+    {
+        if(Phase!=EHearthwardCompanionPhase::HoldingSafely)
+            Event(TEXT("blocked"),Command.GetItem(),Command.GetDelivered(),TEXT("生存行动暂停，等待玩家明确继续"));
+        Execution.bStarted=false;
+        Execution.bRecoveryToCamp=false;
+        Phase=EHearthwardCompanionPhase::HoldingSafely;
+        BlockReason=TEXT("生存行动暂停了原委托；会合后由玩家明确继续");
+        return;
+    }
+    Command.Cancel();Execution.Reset();Phase=EHearthwardCompanionPhase::Cancelled;
 }
 
 void AHearthwardCompanionFixture::FellOutOfWorld(const UDamageType& DamageType)

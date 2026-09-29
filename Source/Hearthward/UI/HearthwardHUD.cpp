@@ -157,12 +157,21 @@ void AHearthwardHUD::DrawHUD()
             case P::WaitingAtCamp: Status = TEXT("已返营，等待玩家"); break;
             case P::Completed: Status = TEXT("目标已交付"); break;
             case P::Cancelled: Status = TEXT("已取消，保留携带物资"); break;
+            case P::TakingCargo: Status = TEXT("从营地仓库取货"); break;
+            case P::GoingToPlayer: Status = TEXT("前往玩家位置"); break;
+            case P::HandingOff: Status = Companion->GetGoal().Intent==TEXT("receive")?TEXT("当面接收玩家物品"):TEXT("当面交付玩家"); break;
             }
             Line(Status, 44, FLinearColor::White);
             const auto* Item = HearthwardBasicItems().FindByPredicate([Companion](const auto& Def) { return Def.Id == Companion->GetItem(); });
-            Line(FString::Printf(TEXT("%s入库 %d / %d   携带 %d"), Item ? *Item->DisplayName.ToString() : TEXT("物资"),
-                Companion->GetDelivered(), Companion->GetRequested(), Companion->Bag->GetItemCount(Companion->GetItem())), 76, FLinearColor::White);
-            Line(TEXT("采集 → 返营 → 入库"), 108, FLinearColor(0.70f, 0.74f, 0.71f));
+            const bool ToPlayer=Companion->GetGoal().Intent==TEXT("retrieve") || Companion->GetGoal().Intent==TEXT("give");
+            const bool ToBrother=Companion->GetGoal().Intent==TEXT("fetch") || Companion->GetGoal().Intent==TEXT("receive");
+            Line(FString::Printf(TEXT("%s%s %d / %d   携带 %d"), Item ? *Item->DisplayName.ToString() : TEXT("物资"),ToPlayer?TEXT("交付玩家"):ToBrother?TEXT("交入弟弟背包"):TEXT("入库"),
+                Companion->GetDelivered(), Companion->GetRequested(), Companion->GetCarried()), 76, FLinearColor::White);
+            Line(Companion->GetGoal().Intent==TEXT("retrieve")?TEXT("仓库取货 → 玩家背包交付"):
+                Companion->GetGoal().Intent==TEXT("give")?TEXT("弟弟背包 → 玩家背包交付"):
+                Companion->GetGoal().Intent==TEXT("fetch")?TEXT("营地仓库 → 弟弟背包"):
+                Companion->GetGoal().Intent==TEXT("receive")?TEXT("玩家背包 → 弟弟背包"):TEXT("采集 → 返营 → 入库"),
+                108, FLinearColor(0.70f, 0.74f, 0.71f));
             Line(Companion->BlockReason, 140, FLinearColor(0.88f, 0.65f, 0.50f));
             break;
         }

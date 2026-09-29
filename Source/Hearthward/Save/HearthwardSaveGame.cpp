@@ -239,7 +239,8 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
             if(InstanceIds.Contains(I.Id) || (!I.UniqueClaim.IsNone() && UniqueClaims.Contains(I.UniqueClaim)))return false;
             InstanceIds.Add(I.Id);if(!I.UniqueClaim.IsNone())UniqueClaims.Add(I.UniqueClaim);
         }
-        if (!S.NPCMemory.IsValid(S.ActiveSeconds)) return false;
+        if (!S.NPCMemory.IsValid(S.ActiveSeconds)
+            || (S.NPCMemory.ConversationClockStarted && S.NPCMemory.LastConversationCalendar>S.CalendarMinutes)) return false;
         if(!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay) || !UHearthwardHarvestSubsystem::Validate(S.HarvestedResources)) return false;
         if (!P.SaveId.IsValid() || !P.CampaignId.IsValid() || Ids.Contains(P.SaveId) || S.Map.IsEmpty()
             || !FMath::IsFinite(S.ActiveSeconds) || S.ActiveSeconds < 0 || S.KnowledgeRevision != S.Knowledge.Num()
@@ -247,13 +248,16 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
             || !S.Player.IsValid() || !S.Companion.IsValid() || !S.Source.IsValid() || !S.Camp.IsValid() || S.View.ContainsNaN()
             || !ValidCounts(S.Resource, false)
             || !ValidTimer(S.PlayerTimer) || !ValidTimer(S.CompanionTimer)
-            || uint8(S.Phase) > uint8(EHearthwardCompanionPhase::HoldingSafely)
+            || uint8(S.Phase) > uint8(EHearthwardCompanionPhase::HandingOff)
             || S.Requested < 0 || S.Delivered < 0 || S.Delivered > S.Requested) return false;
-        if (S.Requested > 0 && !HearthwardBasicItems().ContainsByPredicate([&S](const auto& I) { return I.Id == S.Item; })) return false;
+        if (S.Requested > 0 && !HearthwardBasicItems().ContainsByPredicate([&S](const auto& I) { return I.Id == S.Item; })
+            && !(S.AgentGoal.Intent==TEXT("nature_care") && S.AgentGoal.Item==S.Item
+                && HearthwardAgent::IsCapabilityItem(TEXT("nature_care"),S.Item))) return false;
         if (S.CommandActive && (S.Requested == 0 || S.Delivered == S.Requested)) return false;
         const bool Executing = S.Phase == EHearthwardCompanionPhase::GoingToSource || S.Phase == EHearthwardCompanionPhase::Gathering
             || S.Phase == EHearthwardCompanionPhase::Returning || S.Phase == EHearthwardCompanionPhase::ReturningBlocked
-            || S.Phase == EHearthwardCompanionPhase::GoingToWorkshop || S.Phase == EHearthwardCompanionPhase::TakingMaterials || S.Phase == EHearthwardCompanionPhase::HoldingSafely;
+            || S.Phase == EHearthwardCompanionPhase::GoingToWorkshop || S.Phase == EHearthwardCompanionPhase::TakingMaterials || S.Phase == EHearthwardCompanionPhase::HoldingSafely
+            || S.Phase == EHearthwardCompanionPhase::TakingCargo || S.Phase == EHearthwardCompanionPhase::GoingToPlayer || S.Phase == EHearthwardCompanionPhase::HandingOff;
         if (Executing && !S.CommandActive) return false;
         if (S.Phase == EHearthwardCompanionPhase::Completed && (S.Requested == 0 || S.Delivered != S.Requested || S.CommandActive)) return false;
         if (S.Phase == EHearthwardCompanionPhase::Gathering && S.CompanionTimer.Status != EHearthwardTimedActionStatus::Running

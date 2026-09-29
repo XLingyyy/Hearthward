@@ -22,6 +22,13 @@ void FHearthwardNPCInitiativeQueue::DismissActive()
     VisibleUntil=0;
 }
 
+void FHearthwardNPCInitiativeQueue::DropPendingKind(FName Kind)
+{
+    for(const auto& Entry:Pending)if(Entry.Kind==Kind)History.Remove(Entry.DedupeKey);
+    Pending.RemoveAll([&](const auto& Entry){return Entry.Kind==Kind;});
+    if(Active.Kind==Kind)DismissActive();
+}
+
 void FHearthwardNPCInitiativeQueue::Enqueue(const FHearthwardNPCInitiative& Initiative)
 {
     if(!Initiative.IsValid() || History.Contains(Initiative.DedupeKey)
@@ -34,6 +41,12 @@ void FHearthwardNPCInitiativeQueue::Enqueue(const FHearthwardNPCInitiative& Init
 
     const int32 MaxQueue=HearthwardAgent::Policy(TEXT("initiative_queue_max"));
     if(Pending.Num()>=MaxQueue)Pending.RemoveAt(0);
+    if(Initiative.Kind!=TEXT("conversation_reminder"))
+    {
+        if(Active.Kind==TEXT("conversation_reminder"))DismissActive();
+        const int32 Reminder=Pending.IndexOfByPredicate([](const auto& Entry){return Entry.Kind==TEXT("conversation_reminder");});
+        if(Reminder!=INDEX_NONE){Pending.Insert(Initiative,Reminder);return;}
+    }
     Pending.Add(Initiative);
 }
 

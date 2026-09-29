@@ -112,6 +112,22 @@ bool FNPCRestrictionTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Edit changes target"),M.Put(Id,TEXT("collection_ban"),TEXT("保留石材"),0,TEXT("stone")));
     TestTrue(TEXT("Only current typed target enforced"),!M.BlocksCollection(TEXT("wood")) && M.BlocksCollection(TEXT("stone")));
     TestTrue(TEXT("Rule state validates"),M.IsValid(0));
+    TestTrue(TEXT("First typed budget accepted"),M.PutRule(TEXT("max:wood:3"),TEXT("木材最多三份"),0));
+    TestTrue(TEXT("Same rule slot replaced"),M.PutRule(TEXT("max:wood:5"),TEXT("木材最多五份"),0));
+    TestFalse(TEXT("Old typed budget removed"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("max:wood:3")));
+    TestTrue(TEXT("New typed budget active"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("max:wood:5")));
+    TestTrue(TEXT("Consumable ban accepted"),M.PutRule(TEXT("no:herb"),TEXT("以后别用草药"),0));
+    TestTrue(TEXT("Explicit allowance removes matching ban"),M.PutRule(TEXT("allow:herb"),TEXT("以后可以用草药"),0));
+    TestFalse(TEXT("Allowance did not affect a different budget"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("no:herb")));
+    TestTrue(TEXT("Unrelated budget remains"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("max:wood:5")));
+    TestTrue(TEXT("Player claim retained separately"),M.Put({},TEXT("claim"),TEXT("我说营地有木材"),0));
+    TestTrue(TEXT("Text agreement accepted"),M.Put({},TEXT("agreement"),TEXT("以后少采木材"),0));
+    const int64 BeforeReset=M.Revision;
+    TestEqual(TEXT("All active rules revoked together"),M.RevokePlayerRules(),3);
+    TestTrue(TEXT("Reset changes revision once"),M.Revision==BeforeReset+1);
+    TestTrue(TEXT("Player claim remains"),M.Records.ContainsByPredicate([](const auto& R){return R.Kind==TEXT("claim");}));
+    TestFalse(TEXT("Collection ban removed"),M.BlocksCollection(TEXT("stone")));
+    TestFalse(TEXT("Typed budget removed"),M.ApplicableRules(TEXT("craft")).Contains(TEXT("max:wood:5")));
     return true;
 }
 #endif

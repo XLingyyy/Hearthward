@@ -238,6 +238,11 @@ bool UHearthwardSaveSubsystem::WritePoint(bool Manual, bool NewCampaign)
     if (NewCampaign)
     {
         S=InitialWorld;
+        S.NPCMemory.ConversationClockStarted=false;
+        S.NPCMemory.ConversationClockAwaitingFirstMeeting=true;
+        S.NPCMemory.LastConversationCalendar=0;
+        S.NPCMemory.ReminderShownThisVisit=false;
+        S.NPCMemory.ReminderVisit=0;
         if(bNaturalWorld){FHearthwardCampaignState Campaign;Campaign.Initialize();S.Campaign=Campaign.Snapshot();}
     }
     else if(auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Victory)
@@ -260,7 +265,7 @@ bool UHearthwardSaveSubsystem::WritePoint(bool Manual, bool NewCampaign)
     if (NewCampaign)
     {
         CampaignId = Point.CampaignId;
-        if (!Restore(S)) return false;
+        if (!Restore(S,true)) return false;
     }
     NextAutoSeconds = S.ActiveSeconds + AutoMinutes * 60.0;
     Status = S.Safety.SevereHunger ? TEXT("已保存；严重饥饿，仍可能难以脱困") : TEXT("快照已保存");
@@ -269,7 +274,7 @@ bool UHearthwardSaveSubsystem::WritePoint(bool Manual, bool NewCampaign)
 bool UHearthwardSaveSubsystem::StartNewProgress() { return WritePoint(false, true); }
 bool UHearthwardSaveSubsystem::SavePoint(bool Manual) { return WritePoint(Manual, false); }
 
-bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
+bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewProgress)
 {
     if (S.Map != UGameplayStatics::GetCurrentLevelName(GetWorld(), true) || S.NaturalWorld != bNaturalWorld)
     { Status = TEXT("请先打开存档所属地图"); return false; }
@@ -283,7 +288,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
         Upgraded.CampEconomy=S.CampEconomy;Upgraded.Nature=S.Nature;Upgraded.Campaign=S.Campaign;
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
-        return Restore(Upgraded);
+        return Restore(Upgraded,bNewProgress);
     }
     APawn* Player = nullptr;
     AHearthwardCompanionFixture* Companion = nullptr;
@@ -314,7 +319,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S)
     GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.ActivePlaySeconds = S.ActiveSeconds;
     GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.CalendarMinutes = S.CalendarMinutes;
     Knowledge = S.Knowledge; KnowledgeRevision = S.KnowledgeRevision; AutoMinutes = S.AutoMinutes; Safety = S.Safety;
-    GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RestoreMemory(S.NPCMemory);
+    GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RestoreMemory(S.NPCMemory,bNewProgress);
     Player->SetActorTransform(S.Player, false, nullptr, ETeleportType::TeleportPhysics);
     if (auto* Character = Cast<ACharacter>(Player)) Character->GetCharacterMovement()->StopMovementImmediately();
     if (Player->GetController()) Player->GetController()->SetControlRotation(S.View);

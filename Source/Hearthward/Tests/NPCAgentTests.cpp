@@ -36,6 +36,31 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     TestFalse(TEXT("Forbidden material"),HearthwardAgent::AllowsCost({TEXT("no:herb")},{{TEXT("herb"),1}},{}));
     TestFalse(TEXT("Malformed constraint"),HearthwardAgent::ValidLimit(TEXT("max:wood:-1")));
     TestFalse(TEXT("Unknown material"),HearthwardAgent::ValidLimit(TEXT("no:secret")));
+    const auto* Store=HearthwardAgent::FindCapability(TEXT("store"));
+    TestTrue(TEXT("Store exposes ordinary stackable cargo"),Store && Store->Items.Contains(TEXT("wood")));
+    TestTrue(TEXT("Store identifies authorized player handoff separately"),Store && Store->Sources.Contains(TEXT("player_bag")));
+    TestFalse(TEXT("Protected quest item cannot be delegated to storage"),Store && Store->Items.Contains(TEXT("amulet")));
+    const auto* Retrieve=HearthwardAgent::FindCapability(TEXT("retrieve"));
+    TestTrue(TEXT("Camp-to-player cargo is a distinct typed route"),Retrieve && Retrieve->Items.Contains(TEXT("wood"))
+        && Retrieve->Sources==TArray<FString>{TEXT("camp")} && Retrieve->QuantityMode==TEXT("camp_to_player"));
+    const auto* Give=HearthwardAgent::FindCapability(TEXT("give"));
+    TestTrue(TEXT("Brother bag can be explicitly handed to player"),Give && Give->Items.Contains(TEXT("wood"))
+        && Give->Sources==TArray<FString>{TEXT("bag")} && Give->QuantityMode==TEXT("bag_to_player"));
+    const auto* Fetch=HearthwardAgent::FindCapability(TEXT("fetch"));
+    TestTrue(TEXT("Camp stock can be explicitly kept in brother bag"),Fetch && Fetch->Items.Contains(TEXT("wood"))
+        && Fetch->Sources==TArray<FString>{TEXT("camp")} && Fetch->QuantityMode==TEXT("camp_to_bag"));
+    const auto* Receive=HearthwardAgent::FindCapability(TEXT("receive"));
+    TestTrue(TEXT("Player cargo can be explicitly received into brother bag"),Receive && Receive->Items.Contains(TEXT("wood"))
+        && Receive->Sources==TArray<FString>{TEXT("player_bag")} && Receive->QuantityMode==TEXT("player_to_bag"));
+    FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
+    Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");
+    TestTrue(TEXT("Single crop action has a typed contract"),HearthwardAgent::Validate(Care).IsEmpty());
+    Care.Quantity=2;TestFalse(TEXT("Crop action cannot silently become a batch"),HearthwardAgent::Validate(Care).IsEmpty());
+    FHearthwardAgentGoal Resource;Resource.Intent=TEXT("nature_collect");Resource.Item=TEXT("stone");Resource.Quantity=4;
+    Resource.QuantityMode=TEXT("additional_acquired");Resource.SourceRef=TEXT("known_target");
+    TestTrue(TEXT("Known resource has a typed collection contract"),HearthwardAgent::Validate(Resource).IsEmpty() && Resource.WritesWorld());
+    Resource.Limits={TEXT("ban:stone")};TestEqual(TEXT("Collection ban covers nature resources"),HearthwardAgent::Validate(Resource),FString(TEXT("POLICY_CONFLICT")));
+    TestTrue(TEXT("Explicit one-time allowance has a distinct type"),HearthwardAgent::ValidLimit(TEXT("once:herb")));
     TSharedPtr<FJsonObject> SchemaRoot;
     const TArray<TSharedPtr<FJsonValue>>* Branches=nullptr;
     TestTrue(TEXT("Schema parses structurally"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(HearthwardAgent::Schema()),SchemaRoot)
@@ -110,6 +135,17 @@ bool FNPCAgentReceiptTest::RunTest(const FString&)
     TestFalse(TEXT("Cannot acquire over remainder"),C.RecordAcquisition(3));
     TestTrue(TEXT("Deposit real amount"),C.RecordDelivery(T,4));C.Carried-=4;TestTrue(TEXT("Remaining goal persists"),C.IsCurrent(Epoch));
     TestTrue(TEXT("Acquire remaining"),C.RecordAcquisition(2));TestEqual(TEXT("Additional units target"),C.GetAcquired(),6);
+    FHearthwardCompanionCommand Delivery;const auto DeliveryTicket=Delivery.Request(Epoch);
+    TestTrue(TEXT("Accept camp delivery"),Delivery.Accept(DeliveryTicket,Epoch,TEXT("wood"),5,
+        {TEXT("collect"),TEXT("return"),TEXT("deposit")})==EHearthwardProposalResult::Accepted);
+    TestTrue(TEXT("Withdraw cargo"),Delivery.RecordAcquisition(3));
+    TestFalse(TEXT("Unfulfilled amount cannot exceed carried cargo"),Delivery.RecordUnfulfilled(4));
+    TestTrue(TEXT("Returned warehouse cargo reverses acquisition"),Delivery.RecordUnfulfilled(3));
+    TestEqual(TEXT("Returned cargo is not player delivery"),Delivery.GetDelivered(),0);
+    TestEqual(TEXT("Returned cargo leaves no tracked load"),Delivery.GetCarried(),0);
+    TestTrue(TEXT("Returned quantity can be withdrawn again"),Delivery.RecordAcquisition(5));
+    Delivery.Carried-=5;TestTrue(TEXT("Only actual handoff completes goal"),Delivery.RecordDelivery(DeliveryTicket,5));
+    TestEqual(TEXT("Five delivered"),Delivery.GetDelivered(),5);
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentMemoryTest,"Hearthward.NPCAgent.MemoryRevisionCapacityAndEvents",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
@@ -573,6 +609,48 @@ bool FNPCAgentPlanTest::RunTest(const FString&)
     TestTrue(TEXT("Collect return"),Plan.Actions[2].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp));
     TestTrue(TEXT("Collect deposit"),Plan.Actions[3].Matches(EHearthwardAgentActionType::Deposit,EHearthwardAgentTarget::Camp));
 
+    FHearthwardAgentGoal Store=Goal(TEXT("store"),TEXT("bag"));Store.QuantityMode=TEXT("held_to_camp");
+    TestTrue(TEXT("Held cargo store plan builds"),HearthwardPlan::Build(Store,Plan,Error));
+    TestEqual(TEXT("Store has only travel and deposit"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Store begins with camp travel"),Plan.Actions[0].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Camp));
+    TestTrue(TEXT("Store finishes with deposit"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Deposit,EHearthwardAgentTarget::Camp));
+
+    FHearthwardAgentGoal Retrieve=Goal(TEXT("retrieve"),TEXT("camp"));Retrieve.QuantityMode=TEXT("camp_to_player");
+    TestTrue(TEXT("Camp-to-player delivery plan builds"),HearthwardPlan::Build(Retrieve,Plan,Error));
+    TestEqual(TEXT("Delivery has four real steps"),Plan.Actions.Num(),4);
+    TestTrue(TEXT("Delivery withdraws from camp"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Withdraw,EHearthwardAgentTarget::Camp));
+    TestTrue(TEXT("Delivery navigates to player"),Plan.Actions[2].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Player));
+    TestTrue(TEXT("Only player handoff counts"),Plan.Actions[3].Matches(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
+
+    FHearthwardAgentGoal Give=Goal(TEXT("give"),TEXT("bag"));Give.QuantityMode=TEXT("bag_to_player");
+    TestTrue(TEXT("Brother-to-player delivery plan builds"),HearthwardPlan::Build(Give,Plan,Error));
+    TestEqual(TEXT("Held cargo only needs approach and handoff"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Held cargo handoff targets player"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
+    FHearthwardAgentGoal Fetch=Goal(TEXT("fetch"),TEXT("camp"));Fetch.QuantityMode=TEXT("camp_to_bag");
+    TestTrue(TEXT("Camp-to-brother delivery plan builds"),HearthwardPlan::Build(Fetch,Plan,Error));
+    TestEqual(TEXT("Camp-to-brother ends after physical withdrawal"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Camp-to-brother withdraws at camp"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Withdraw,EHearthwardAgentTarget::Camp));
+    FHearthwardAgentGoal Receive=Goal(TEXT("receive"),TEXT("player_bag"));Receive.QuantityMode=TEXT("player_to_bag");
+    TestTrue(TEXT("Player-to-brother delivery plan builds"),HearthwardPlan::Build(Receive,Plan,Error));
+    TestEqual(TEXT("Player-to-brother uses physical handoff"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Player-to-brother handoff targets player"),Plan.Actions[1].Matches(EHearthwardAgentActionType::Handoff,EHearthwardAgentTarget::Player));
+
+    FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
+    Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");
+    TestFalse(TEXT("Nature action requires an identified target"),HearthwardPlan::Build(Care,Plan,Error));
+    Care.Station=FGuid::NewGuid();
+    TestTrue(TEXT("Identified nature action has an executable plan"),HearthwardPlan::Build(Care,Plan,Error));
+    TestEqual(TEXT("Nature plan action count"),Plan.Actions.Num(),2);
+    TestTrue(TEXT("Nature plan commits through one domain action"),Plan.Actions[1].Matches(EHearthwardAgentActionType::CommitNature,EHearthwardAgentTarget::Nature));
+
+    FHearthwardAgentGoal Resource=Goal(TEXT("nature_collect"),TEXT("known_target"));Resource.Item=TEXT("stone");
+    TestFalse(TEXT("Resource collection requires an identified point"),HearthwardPlan::Build(Resource,Plan,Error));
+    Resource.Station=FGuid::NewGuid();
+    TestTrue(TEXT("Identified resource point builds"),HearthwardPlan::Build(Resource,Plan,Error));
+    TestEqual(TEXT("Resource collection has return and deposit"),Plan.Actions.Num(),4);
+    TestTrue(TEXT("Resource collection commits through Nature"),Plan.Actions[1].Matches(EHearthwardAgentActionType::CommitNature,EHearthwardAgentTarget::Nature));
+    TestTrue(TEXT("Resource collection deposits at camp"),Plan.Actions[3].Matches(EHearthwardAgentActionType::Deposit,EHearthwardAgentTarget::Camp));
+
     TestTrue(TEXT("Bag craft plan builds"),HearthwardPlan::Build(Goal(TEXT("craft"),TEXT("bag")),Plan,Error));
     TestEqual(TEXT("Bag craft count"),Plan.Actions.Num(),4);
     TestTrue(TEXT("Bag craft starts at workshop"),Plan.Actions[0].Matches(EHearthwardAgentActionType::MoveTo,EHearthwardAgentTarget::Workshop));
@@ -681,6 +759,14 @@ bool FNPCAgentWorkshopTest::RunTest(const FString&)
     NPC->TryAdd(TEXT("stone"),3);TestTrue(TEXT("Own selected equipment repaired"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
     TestEqual(TEXT("Repair wood cost"),NPC->GetItemCount(TEXT("wood")),0);TestEqual(TEXT("Maximum restored"),NPC->FindInstance(Axe)->Durability,80.);
     TestFalse(TEXT("Completed repair cannot settle again"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
+    NPC->TryAdd(TEXT("axe"),1);FGuid SecondAxe;
+    for(const auto& Instance:NPC->Snapshot().Instances)if(Instance.Definition==TEXT("axe") && Instance.Id!=Axe)SecondAxe=Instance.Id;
+    TestTrue(TEXT("Second instance exists"),SecondAxe.IsValid());
+    NPC->WearInstance(SecondAxe,40);NPC->TryAdd(TEXT("wood"),6);NPC->TryAdd(TEXT("stone"),6);
+    TestFalse(TEXT("Two same-type instances need a target"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1));
+    TestTrue(TEXT("Explicit second instance repairs"),HearthwardWorkshop::Commit(NPC,TEXT("repair"),TEXT("axe"),1,SecondAxe));
+    TestEqual(TEXT("First instance unchanged"),NPC->FindInstance(Axe)->Durability,80.);
+    TestEqual(TEXT("Selected second instance repaired"),NPC->FindInstance(SecondAxe)->Durability,80.);
     TestEqual(TEXT("Still no player debit"),Player->GetItemCount(TEXT("wood")),10);return true;
 }
 #endif

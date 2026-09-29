@@ -20,7 +20,7 @@ TMap<FName,int32> HearthwardWorkshop::Materials(FName Intent,FName Item,int32 N)
 {return WorkshopCounts(Find(Intent==TEXT("craft")?TEXT("craftingRecipes"):TEXT("repairRecipes"),Item.ToString()),TEXT("materials"),N);}
 TMap<FName,int32> HearthwardWorkshop::Outputs(FName Recipe,int32 N)
 {return WorkshopCounts(Find(TEXT("craftingRecipes"),Recipe.ToString()),TEXT("outputs"),N);}
-FString HearthwardWorkshop::Check(AActor* Operator,AActor* Station,UHearthwardInventoryComponent* Bag,FName Intent,FName Item,int32 N)
+FString HearthwardWorkshop::Check(AActor* Operator,AActor* Station,UHearthwardInventoryComponent* Bag,FName Intent,FName Item,int32 N,FGuid EquipmentId)
 {
     if(!IsValid(Operator) || !IsValid(Station) || Operator->IsActorBeingDestroyed() || Station->IsActorBeingDestroyed() || !IsValid(Bag)
         || Bag->GetOwner()!=Operator || Station->GetWorld()!=Operator->GetWorld() || Operator->GetWorld()->IsPaused())return TEXT("UNAVAILABLE");
@@ -40,21 +40,27 @@ FString HearthwardWorkshop::Check(AActor* Operator,AActor* Station,UHearthwardIn
     if(Intent==TEXT("repair"))
     {
         double Restored;
-        if(N!=1 || Bag->GetItemCount(Item)!=1)return TEXT("AMBIGUOUS_TARGET");
-        if(!RepairQuote(Bag,Bag->FirstInstance(Item),1,Cost,Restored))return TEXT("ALREADY_REPAIRED");
+        if(N!=1 || (!EquipmentId.IsValid() && Bag->GetItemCount(Item)!=1))return TEXT("AMBIGUOUS_TARGET");
+        const FGuid Target=EquipmentId.IsValid()?EquipmentId:Bag->FirstInstance(Item);
+        const auto* Instance=Bag->FindInstance(Target);
+        if(!Instance || Instance->Definition!=Item)return TEXT("TARGET_UNAVAILABLE");
+        if(!RepairQuote(Bag,Target,1,Cost,Restored))return TEXT("ALREADY_REPAIRED");
         for(const auto& C:Cost)if(Bag->Available(C.Key)<C.Value)return TEXT("INSUFFICIENT_MATERIAL");
         return {};
     }
     auto R=Bag->CheckExchange(Cost,Intent==TEXT("craft")?Outputs(Item,N):TMap<FName,int32>(),1);
     return R==EHearthwardInventoryResult::Success?FString():R==EHearthwardInventoryResult::CapacityExceeded?TEXT("CAPACITY_EXCEEDED"):TEXT("INSUFFICIENT_MATERIAL");
 }
-bool HearthwardWorkshop::Commit(UHearthwardInventoryComponent* Bag,FName Intent,FName Item,int32 N)
+bool HearthwardWorkshop::Commit(UHearthwardInventoryComponent* Bag,FName Intent,FName Item,int32 N,FGuid EquipmentId)
 {
     auto Cost=Materials(Intent,Item,N);if(!IsValid(Bag) || Cost.IsEmpty())return false;
     if(Intent==TEXT("craft"))return Bag->TryExchange(Cost,Outputs(Item,N),1)==EHearthwardInventoryResult::Success;
     double Restored;
-    if(Intent!=TEXT("repair") || N!=1 || Bag->GetItemCount(Item)!=1 || !RepairQuote(Bag,Bag->FirstInstance(Item),1,Cost,Restored))return false;
-    return Bag->RepairInstance(Bag->FirstInstance(Item),Restored,Cost);
+    if(Intent!=TEXT("repair") || N!=1 || (!EquipmentId.IsValid() && Bag->GetItemCount(Item)!=1))return false;
+    const FGuid Target=EquipmentId.IsValid()?EquipmentId:Bag->FirstInstance(Item);
+    const auto* Instance=Bag->FindInstance(Target);
+    if(!Instance || Instance->Definition!=Item || !RepairQuote(Bag,Target,1,Cost,Restored))return false;
+    return Bag->RepairInstance(Target,Restored,Cost);
 }
 
 bool HearthwardWorkshop::RepairQuote(const UHearthwardInventoryComponent* Bag,FGuid Instance,double Fraction,TMap<FName,int32>& Materials,double& Restored)

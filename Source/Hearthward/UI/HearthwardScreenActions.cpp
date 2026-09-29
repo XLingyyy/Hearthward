@@ -80,7 +80,10 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
 {
     const FString Action=InAction; // Refresh can invalidate the element that supplied this string.
     // A confirmation owns input until the player confirms or cancels it.
-    if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")) return false;
+    if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")
+        && !(ConfirmAction==TEXT("resetAgreements") && (Action==TEXT("resetPrev") || Action==TEXT("resetNext")))) return false;
+    if(Action==TEXT("resetPrev") || Action==TEXT("resetNext"))
+    { ResetScroll=FMath::Clamp(ResetScroll+(Action==TEXT("resetNext")?2:-2),0,FMath::Max(0,ResetItems.Num()-2));Refresh();return true; }
     MessageUntil=FPlatformTime::Seconds()+4;
     if(Action.StartsWith(TEXT("camp.")))return ExecuteCampAction(Action);
     if(Action.StartsWith(TEXT("gear.")))return ExecuteEquipmentAction(Action);
@@ -129,6 +132,20 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
             Success=AI->RevokePlayerMemory(GetOwningPlayerPawn(),C,SelectedMemory); Message=AI->GetStatus();
             if(Success) { SelectedMemory.Invalidate(); Draft->SetText(FText::GetEmpty()); }
         }
+        else if(Action==TEXT("memoryReset"))
+        {
+            ResetItems.Reset();ResetEpoch=Store->GetTimelineEpoch();ResetRevision=AI->GetMemoryRevision();
+            ResetCommand=C->GetCommandId();bResetActive=C->EquipmentBusy();ResetCandidate=AI->GetCandidateId();ResetScroll=0;
+            if(bResetActive)ResetItems.Add(FString::Printf(TEXT("当前委托 [%s]：%s，完成 %d/%d"),
+                *ResetCommand.ToString().Left(8),*HearthwardAgent::ItemText(C->GetGoal().Item),C->GetDelivered(),C->GetRequested()));
+            if(ResetCandidate.IsValid())ResetItems.Add(TEXT("未确认任务卡 [")+ResetCandidate.ToString().Left(8)+TEXT("]"));
+            for(const auto& R:AI->GetPlayerMemories())
+                if(!R.Revoked && (R.Kind==TEXT("agreement") || R.Kind==TEXT("collection_ban") || R.Kind==TEXT("typed_constraint")))
+                    ResetItems.Add(FString::Printf(TEXT("约定 [%s] %s：%s"),*R.Id.ToString().Left(8),
+                        R.Kind==TEXT("typed_constraint")?*R.Constraint:(R.Kind==TEXT("collection_ban")?TEXT("采集限制"):TEXT("文字约定")),*R.Text));
+            if(ResetItems.IsEmpty()){Message=TEXT("当前没有委托或约定需要取消");Refresh();return false;}
+            ConfirmAction=TEXT("resetAgreements");Refresh();return true;
+        }
         else return false;
         MemoryRevision=AI->GetMemoryRevision(); Refresh(); return Success;
     }
@@ -139,14 +156,24 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     }
     if(Action==TEXT("agentInventory")) {if(Page!=TEXT("dialogue"))return false;Success=AI->QueryInventory(GetOwningPlayerPawn(),Companion(GetWorld()),TEXT("wood"));Refresh();return Success;}
     if(Action==TEXT("agentRetryPath")) {if(Page!=TEXT("dialogue"))return false;auto* C=Companion(GetWorld());Success=C && C->ResumeBlocked(GetOwningPlayerPawn());Refresh();return Success;}
-    if(Action==TEXT("agentTypeNext") || Action==TEXT("agentItemNext"))
+    if(Action==TEXT("agentTypeNext") || Action==TEXT("agentItemNext") || Action==TEXT("agentInstanceNext") || Action==TEXT("agentSourceNext"))
     {
         if(Page!=TEXT("dialogue"))return false;
         TArray<const FHearthwardAgentCapability*> Caps;
         for(const auto& C:HearthwardAgent::Capabilities())
-            if(C.Id==TEXT("collect") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
-        if(Action==TEXT("agentTypeNext")){AgentCapabilityIndex=(AgentCapabilityIndex+1)%Caps.Num();AgentItemIndex=0;}
-        else AgentItemIndex=(AgentItemIndex+1)%Caps[AgentCapabilityIndex]->Items.Num();
+            if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("retrieve") || C.Id==TEXT("give") || C.Id==TEXT("fetch") || C.Id==TEXT("receive") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
+        if(Action==TEXT("agentTypeNext")){AgentCapabilityIndex=(AgentCapabilityIndex+1)%Caps.Num();AgentItemIndex=0;AgentInstanceIndex=0;AgentSourceIndex=0;}
+        else if(Action==TEXT("agentItemNext")){AgentItemIndex=(AgentItemIndex+1)%Caps[AgentCapabilityIndex]->Items.Num();AgentInstanceIndex=0;}
+        else if(Action==TEXT("agentSourceNext") && Caps[AgentCapabilityIndex]->Id==TEXT("store"))
+            AgentSourceIndex=(AgentSourceIndex+1)%Caps[AgentCapabilityIndex]->Sources.Num();
+        else
+        {
+            auto* Brother=Companion(GetWorld());int32 Count=0;
+            if(Brother && Caps[AgentCapabilityIndex]->Id==TEXT("repair"))
+                for(const auto& Instance:Brother->Bag->Snapshot().Instances)
+                    if(Instance.Definition==Caps[AgentCapabilityIndex]->Items[AgentItemIndex])++Count;
+            if(Count>0)AgentInstanceIndex=(AgentInstanceIndex+1)%Count;
+        }
         Refresh();return true;
     }
     if(Action==TEXT("agentCollectCard"))
@@ -154,10 +181,19 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Page!=TEXT("dialogue"))return false;
         TArray<const FHearthwardAgentCapability*> Caps;
         for(const auto& C:HearthwardAgent::Capabilities())
-            if(C.Id==TEXT("collect") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
+            if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("retrieve") || C.Id==TEXT("give") || C.Id==TEXT("fetch") || C.Id==TEXT("receive") || C.Id==TEXT("craft") || C.Id==TEXT("repair")) Caps.Add(&C);
         AgentCapabilityIndex=FMath::Clamp(AgentCapabilityIndex,0,Caps.Num()-1);
         AgentItemIndex=FMath::Clamp(AgentItemIndex,0,Caps[AgentCapabilityIndex]->Items.Num()-1);
-        const auto& C=*Caps[AgentCapabilityIndex];FHearthwardAgentGoal Goal;Goal.Intent=C.Id;Goal.Item=C.Items[AgentItemIndex];Goal.Quantity=1;Goal.QuantityMode=C.QuantityMode;Goal.SourceRef=C.Sources[0];Success=AI->SetStructuredGoal(GetOwningPlayerPawn(),Companion(GetWorld()),Goal);Refresh();return Success;
+        const auto& C=*Caps[AgentCapabilityIndex];FHearthwardAgentGoal Goal;Goal.Intent=C.Id;Goal.Item=C.Items[AgentItemIndex];Goal.Quantity=1;Goal.QuantityMode=C.QuantityMode;
+        Goal.SourceRef=C.Id==TEXT("store")?C.Sources[FMath::Clamp(AgentSourceIndex,0,C.Sources.Num()-1)]:C.Sources[0];
+        auto* Brother=Companion(GetWorld());
+        if(C.Id==TEXT("repair") && Brother)
+        {
+            TArray<FGuid> Instances;
+            for(const auto& Instance:Brother->Bag->Snapshot().Instances)if(Instance.Definition==Goal.Item)Instances.Add(Instance.Id);
+            if(!Instances.IsEmpty())Goal.EquipmentId=Instances[FMath::Clamp(AgentInstanceIndex,0,Instances.Num()-1)];
+        }
+        Success=AI->SetStructuredGoal(GetOwningPlayerPawn(),Brother,Goal);Refresh();return Success;
     }
     if(Action==TEXT("clearClarification"))
     { if(Page!=TEXT("dialogue")) return false; AI->ClearClarification(); Refresh(); return true; }
@@ -210,6 +246,16 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action.StartsWith(TEXT("ask:"))) { ConfirmAction=Action.Mid(4); Refresh(); return true; }
     if(Action==TEXT("cancel")) { ConfirmAction.Reset(); Refresh(); return true; }
     if(Action==TEXT("confirm")) { const FString Confirmed=ConfirmAction; ConfirmAction.Reset(); return ExecuteAction(Confirmed); }
+    if(Action==TEXT("resetAgreements"))
+    {
+        if(Page!=TEXT("memory"))return false;
+        auto* C=Companion(GetWorld());
+        Success=C && AI->CancelTasksAndAgreements(GetOwningPlayerPawn(),C,ResetEpoch,ResetRevision,
+            ResetCommand,bResetActive,ResetCandidate);
+        Message=AI->GetStatus();ResetItems.Reset();
+        if(Success){SelectedMemory.Invalidate();Draft->SetText(FText::GetEmpty());}
+        MemoryRevision=AI->GetMemoryRevision();Refresh();return Success;
+    }
     if(Action.StartsWith(TEXT("page:")))
     {
         const FName Next(*Action.Mid(5));

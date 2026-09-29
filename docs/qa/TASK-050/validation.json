@@ -1,0 +1,46 @@
+{
+  "task": "TASK-050",
+  "baseline": "3498688f9a48eba40051bc58725f795ed25890aa",
+  "date": "2026-09-27",
+  "result": "PASS for registered subset; owner review pending",
+  "checks": {
+    "scope_and_L0": {
+      "command": "scripts/validate_repo.py --task TASK-050 --base 3498688",
+      "exit_code": 0,
+      "changed_paths": 38
+    },
+    "patch_format": {
+      "command": "git diff --check",
+      "exit_code": 0
+    },
+    "editor_build": {
+      "result": "PASS",
+      "evidence": "survival-build.json"
+    },
+    "native_automation": {
+      "result": "PASS",
+      "passed": [
+        30,
+        8
+      ],
+      "failed": [
+        0,
+        0
+      ],
+      "evidence": "native-summary.json"
+    },
+    "pie": {
+      "result": "PASS",
+      "checks": 77,
+      "fixture": "flat-floor, supplied items, near-target setup",
+      "evidence": "survival4-pie.json"
+    }
+  },
+  "not_run": [
+    "real local model",
+    "arbitrary natural-world pathing",
+    "pre-050 schema8 real-file migration",
+    "long-duration play",
+    "Shipping"
+  ]
+}\n
