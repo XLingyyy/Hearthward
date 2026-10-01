@@ -72,16 +72,30 @@ FString UHearthwardSaveSubsystem::PoolPath() const
     FString TestId;
     FGuid Id;
     if (FParse::Value(FCommandLine::Get(), TEXT("HearthwardSaveTestPool="), TestId) && FGuid::Parse(TestId, Id))
-        Name = TEXT("test-") + Id.ToString(EGuidFormats::Digits);
+        return FPaths::Combine(FPaths::ProjectSavedDir(),TEXT("SaveGames/HearthwardPrototype"),TEXT("test-")+Id.ToString(EGuidFormats::Digits)+TEXT(".hws"));
 #endif
-    return FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("SaveGames/HearthwardPrototype"), Name + TEXT(".hws"));
+    return FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("SaveGames/HearthwardPrototype/Compatible-v8"), Name + TEXT(".hws"));
+}
+FString UHearthwardSaveSubsystem::ReadPoolPath() const
+{
+    const FString Destination=PoolPath();
+    if(IFileManager::Get().FileExists(*Destination) || !Destination.Contains(TEXT("Compatible-v8")))return Destination;
+    const FString Legacy=FPaths::Combine(FPaths::ProjectSavedDir(),TEXT("SaveGames/HearthwardPrototype/pool.hws"));
+    return IFileManager::Get().FileExists(*Legacy)?Legacy:Destination;
 }
 
 bool UHearthwardSaveSubsystem::ReloadPool()
 {
-    if (!IFileManager::Get().FileExists(*PoolPath())) { Pool = NewObject<UHearthwardSaveGame>(this); return true; }
+    Compatibility={};
+    const FString Source=ReadPoolPath();
+    if (!IFileManager::Get().FileExists(*Source)) { Pool = NewObject<UHearthwardSaveGame>(this); return true; }
     UHearthwardSaveGame* Loaded = nullptr;
-    if (!HearthwardSave::Read(PoolPath(), Loaded, Status)) { Pool = nullptr; return false; }
+    if (!HearthwardSave::Read(Source, Loaded, Status))
+    {
+        UHearthwardSaveGame* Preview=nullptr;
+        HearthwardSave::InspectCompatibility(Source,Compatibility,Preview);
+        Status=Compatibility.Summary;Pool=nullptr;return false;
+    }
     Pool = Loaded;
     return true;
 }
@@ -91,9 +105,17 @@ bool UHearthwardSaveSubsystem::LoadPointIndex()
 }
 bool UHearthwardSaveSubsystem::CommitPool(UHearthwardSaveGame* Candidate)
 {
+    const FString Source=ReadPoolPath();FString BackupPath;
+    if(Source!=PoolPath() && IFileManager::Get().FileExists(*Source) && !HearthwardSave::Backup(Source,BackupPath,Status))return false;
     if (!HearthwardSave::Write(PoolPath(), Candidate, Status)) return false;
     Pool = Candidate;
     return true;
+}
+bool UHearthwardSaveSubsystem::ResolveSaveConflicts()
+{
+    if(bRestoring || CampaignId.IsValid()){Status=TEXT("请返回主菜单再处理存档兼容冲突。");return false;}
+    if(!HearthwardSave::ResolveCompatibility(Compatibility,PoolPath(),Status))return false;
+    const FString Done=Status;const bool Loaded=ReloadPool();if(Loaded)Status=Done;return Loaded;
 }
 
 bool UHearthwardSaveSubsystem::Participants(APawn*& Player, AHearthwardCompanionFixture*& Companion) const

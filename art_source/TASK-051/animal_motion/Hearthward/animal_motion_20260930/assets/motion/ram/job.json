@@ -1,0 +1,148 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "ram",
+  "name": "公羊",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "ram",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\898640cb-65dd-43ea-8658-3ce51bb79acf\\ram_rigged.fbx",
+  "rig_task_id": "898640cb-65dd-43ea-8658-3ce51bb79acf",
+  "source_task_id": "8334bd78-63dd-4981-917c-e2430e97a48d",
+  "rig_type": "quadruped",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\08_公羊_野羊_动作指导.md",
+  "guidance_sha256": "3ac13ec6f977ed07e7db200ceb68f6a396a691469d62bc06a20a71056325245a",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\ram",
+  "action_rows": [
+    [
+      "`AN_ram_Idle`",
+      "稳立呼吸",
+      "2.8—3.8",
+      "循环",
+      "P0",
+      "四蹄稳定、粗颈承托卷角，头部不漂浮。"
+    ],
+    [
+      "`AN_ram_Walk`",
+      "稳健蹄行",
+      "0.95—1.25",
+      "循环",
+      "P0",
+      "四蹄逐次落地，胸背保持公羊的厚实体积。"
+    ],
+    [
+      "`AN_ram_Trot`",
+      "短促小跑",
+      "0.60—0.80",
+      "循环",
+      "P0",
+      "对角肢配合，用于100到600 cm/s的视觉过渡。"
+    ],
+    [
+      "`AN_ram_RunClose`",
+      "反击追近",
+      "0.45—0.65",
+      "循环",
+      "P0",
+      "覆盖600 cm/s；头仍能定向，不全程埋头冲撞。"
+    ],
+    [
+      "`AN_ram_Turn_L`<br>`AN_ram_Turn_R`",
+      "左右绕步",
+      "0.55—0.85",
+      "单次",
+      "P0",
+      "粗颈和角的摆动有受限惯性，内侧蹄小步支撑。"
+    ],
+    [
+      "`AN_ram_Start`<br>`AN_ram_Stop`",
+      "起步与蹄部撑停",
+      "0.30 / 0.50",
+      "单次",
+      "P0",
+      "停止时恢复抬头站姿，不能持续压头硬滑。"
+    ],
+    [
+      "`AN_ram_AlertHeadLow`",
+      "低头警告",
+      "1.4—2.0",
+      "循环",
+      "P0",
+      "只响应现有警戒/反击意图，不自造发情仇恨。"
+    ],
+    [
+      "`AN_ram_RamShort`",
+      "即时命中后头撞回收",
+      "0.4—0.6",
+      "单次",
+      "G",
+      "接已有伤害事件，不由角部触碰重复结算。"
+    ],
+    [
+      "`AN_ram_RamFull`",
+      "短距离头撞完整候选",
+      "0.85—1.15",
+      "单次",
+      "G",
+      "压头预备、短促接触、颈部回收；需未来攻击时序适配。"
+    ],
+    [
+      "`AN_ram_Graze_In`<br>`AN_ram_Graze_Loop`<br>`AN_ram_Graze_Out`",
+      "低头采食三段",
+      "0.65 / 2.5 / 0.65",
+      "进入/循环/退出",
+      "P1",
+      "角和嘴部不插进地面，保持前蹄接地。"
+    ],
+    [
+      "`AN_ram_Chew`",
+      "站姿反刍",
+      "2.0—3.0",
+      "循环",
+      "P1",
+      "口鼻轻微变化，不能把角当下颌骨带动。"
+    ],
+    [
+      "`AN_ram_SlopeStep`",
+      "坡面稳步",
+      "0.9—1.2",
+      "单次",
+      "G",
+      "只在批准可行走坡面上适配落足，不能攀上无导航悬崖。"
+    ],
+    [
+      "`AN_ram_LieDown`<br>`AN_ram_Rest`<br>`AN_ram_GetUp`",
+      "卧下休息三段",
+      "1.2 / 3.5 / 1.1",
+      "进入/循环/退出",
+      "P1",
+      "角与头颈避地，起身先有前蹄支撑。"
+    ],
+    [
+      "`AN_ram_Hit_L`<br>`AN_ram_Hit_R`",
+      "左右受击",
+      "0.23—0.38",
+      "单次",
+      "P0",
+      "短促收颈，不以动画改变反击触发规则。"
+    ],
+    [
+      "`AN_ram_Collapse_L`<br>`AN_ram_Collapse_R`",
+      "左右倒地",
+      "0.8—1.15",
+      "单次",
+      "P0",
+      "身体失力而非角先砸地；两侧分别验收。"
+    ],
+    [
+      "`AN_ram_CorpseHold_L`<br>`AN_ram_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "承接对应侧倒，等效死亡后不进入Rest呼吸。"
+    ]
+  ],
+  "source_sha256": "cb9183718a1cd6ee84f387a76d2abf2aed9c34d84786704336ccd92ea267bdda",
+  "original_guidance_sha256": "47a4e5f638540d0d60fce51b7463023296fc54e9f52a9a6e32ed8712a830b7b6",
+  "r2_baseline_guidance_sha256": "09c368ef2e5a67b4a8080aa3371f4e92b552249b9e6bba45f1c171eef7e9e58e"
+}

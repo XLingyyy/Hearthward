@@ -1,18 +1,19 @@
-# 最短上手路径
+# 最短阅读路径
 
-核对日期：2026-09-27。当前主干`origin/main@e95fde185dc38d0b69c2de42ce66db0d1fd93294`已含043—047，047由PR #49合并。047的Editor构建、原生32/32与PIE64/64仍绑定其报告中的源码，不声称在本次main重跑。当前canonical048对应原稿050，D1—D6与施工已获Owner确认，048分支实现自然资源／动物／垂钓／种养和schema7；模型允许临时表现，尚未合入main，见[048任务单](tasks/TASK-048.md)。Windows Demo受测源码仍为`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，详见[发行报告](releases/demo-20260924/REPORT.md)。
+核对日期：2026-10-02。主干已集成043—050及PR #55的UI／加载／场景修复。当前`codex/project-progress-20261002`集中同步动物建模、303段动作、制作说明与更新／存档兼容源码，main合并及正式发行仍待后续流程。当前事实见[项目状态](PROJECT_STATE.md)及[同步报告](qa/project-progress-20261002/REPORT.md)。
 
-## 先看游戏
+## 先看游戏与制作源
 
-- [README](../README.md#运行)：从 `L_Bootstrap` 的标题页进入自然营地，采集、委托、仓储、建造、制作和存读档的当前操作入口。
-- 自然图有地图 `M`、日志 `J` 页面入口，尚无正式非营地地点、四区敌人和完整主支线。开发场景内容与自然地图内容分开看。
-- 4032 m World Partition 底座、新营地和局部自然物件已接入；全路线通行、流送、性能与 Owner 视觉仍见 [TASK-026 交接](handoffs/TASK-026.md)。AI NPC 交付口径见 [TASK-029](tasks/TASK-029.md)，Demo 资源与家具见 [TASK-030](tasks/TASK-030.md)。
+- [README](../README.md)是玩法、构建和运行入口。正常新游戏从夜袭序章开始；自然世界和各模块原始验证见对应任务报告。
+- [动物演示操作](qa/TASK-051/使用说明.md)说明14种动物的近景、弟弟接近、致命伤和重置；专用地图使用独立临时档池。
+- [建模与动作制作说明](../art_source/TASK-051/制作说明.md)提供Blender／FBX、贴图、连续预览、指导、工具代码与克隆恢复步骤。先运行`git lfs pull`取回二进制。
+- [更新兼容报告](qa/update-compatibility-20260930.md)说明旧档保留、新版进度隔离、冲突清理及正式版更新提示。
 
 ## 开始一项开发任务
 
-1. 读根 [AGENTS](../AGENTS.md) 和 [WORKFLOW](../WORKFLOW.md)；实际工作区以用户指定目录为准。Hearthward 是独立 Git 仓库，上层 GameFactory 是工具仓库。
-2. 读本页、[PROJECT_STATE](PROJECT_STATE.md)、当前 `docs/tasks/TASK-xxx.json` 和该任务分支的 `docs/handoffs/TASK-xxx.md`；运行 `python scripts/agent_context.py --task TASK-xxx`。
-3. 核对目录、分支、HEAD、未提交改动、Owner、审查安排、可选 Issue、资产锁、允许路径和证据对应的源码。无法核实的项目标未知，不将旧任务的提交／推送权限转给新任务。
-4. 按任务来源读取最小相关代码、契约与 [CURRENT](design/CURRENT.md)；未定规则在 [OPEN_QUESTIONS](design/OPEN_QUESTIONS.md)。读实现后再修改；定向验证，完成后同步 README 和本任务交接。
+1. 阅读[AGENTS](../AGENTS.md)、[WORKFLOW](../WORKFLOW.md)，确认实际工作目录。Hearthward是游戏仓库，GameFactory是独立工具仓库。
+2. 阅读[PROJECT_STATE](PROJECT_STATE.md)、当前`docs/tasks/TASK-xxx.json`和任务分支的交接；运行`python scripts/agent_context.py --task TASK-xxx`。
+3. 核对目录、分支、完整HEAD、未提交文件、Owner、授权范围、相关契约和实际LFS锁。当前同步任务为[TASK-051](tasks/TASK-051.md)。
+4. 读取最小相关实现、[设计基线](design/CURRENT.md)和[未定规则](design/OPEN_QUESTIONS.md)。实施后执行匹配验证，更新README和本任务交接，记录真实提交与推送状态。
 
-TASK-041 是“当前基线、编号与验收账本”，来源规划稿写为 TASK-043；后续规划编号按减 2 解释。2026-09-23 证据中的 TASK-041/042 是历史集成标签，属于 TASK-029 的来源，不覆盖本次 canonical TASK-041。[映射表](planning/TASK-041-baseline-ledger.md#2-编号映射)保留旧证据位置。任务 JSON、审查安排、可选 Issue 和主干测试结果仍须各自核实。
+TASK-041及早期AI标签与canonical任务的对应关系见[映射账本](planning/TASK-041-baseline-ledger.md)。原始测试只证明各报告中列出的版本与路径；没有执行的当前UE／发行检查不得写为PASS。

@@ -21,6 +21,7 @@ public:
     FName Kind,Definition;
     FString InteractionText;
     UPROPERTY() TObjectPtr<class UHearthwardCombatTargetComponent> Combat;
+    UPROPERTY() TObjectPtr<class UHearthwardAnimalMotionComponent> AnimalMotion;
     void Configure(FGuid Entity,FName Type,FName Def);
     void Refresh();
     virtual void Tick(float Delta) override;

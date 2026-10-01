@@ -1,4 +1,5 @@
 #include "HearthwardCombatTargetComponent.h"
+#include "../Animals/HearthwardAnimalMotionComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -28,6 +29,8 @@ void UHearthwardCombatTargetComponent::CreateBodyCollision()
 void UHearthwardCombatTargetComponent::SetCorpse()
 {
     Health=0; ExecutionOwner.Reset(); Memory.Seen.Reset(); Awareness=Memory.bStunned?TEXT("已击晕"):TEXT("已清除");
+    if(auto* Motion=GetOwner()->FindComponentByClass<UHearthwardAnimalMotionComponent>();Motion && Motion->Ready())
+    {Motion->OnFatalDamage();return;}
     if(auto* C=Cast<ACharacter>(GetOwner()))
     {
         C->GetCharacterMovement()->StopMovementImmediately(); C->GetCharacterMovement()->DisableMovement();

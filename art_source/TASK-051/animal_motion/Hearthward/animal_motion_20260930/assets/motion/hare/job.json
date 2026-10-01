@@ -1,0 +1,132 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "hare",
+  "name": "野兔",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "hare",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\f5903e26-3215-4370-a17b-730a1dc0fbe4\\hare_rigged.fbx",
+  "rig_task_id": "f5903e26-3215-4370-a17b-730a1dc0fbe4",
+  "source_task_id": "588471a5-d278-414e-bd5b-de3209def6d4",
+  "rig_type": "quadruped",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\02_野兔_动作指导.md",
+  "guidance_sha256": "22948dc3370574939ce02aa2d7b5ec67b1e09691273040b8eb9fb700193e189e",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare",
+  "action_rows": [
+    [
+      "`AN_hare_IdleCrouch`",
+      "低伏呼吸",
+      "2.0—3.0",
+      "循环",
+      "P0",
+      "后腿收在身体下，前足轻撑，保留野兔的长腿比例。"
+    ],
+    [
+      "`AN_hare_Scan`",
+      "停步听察",
+      "1.1—1.8",
+      "单次",
+      "P1",
+      "头先抬起，耳部只在骨骼支持时独立转动。"
+    ],
+    [
+      "`AN_hare_HopSlow`",
+      "低速短跳",
+      "0.8—1.0",
+      "循环",
+      "P0",
+      "小幅后肢推进、前肢承接，服务100 cm/s游走。"
+    ],
+    [
+      "`AN_hare_BoundFast`",
+      "高速奔跃",
+      "0.35—0.50",
+      "循环",
+      "P0",
+      "前肢接地回收与后肢蹬伸有清楚相位，服务600 cm/s。"
+    ],
+    [
+      "`AN_hare_TurnHop_L`<br>`AN_hare_TurnHop_R`",
+      "左右调整跳",
+      "0.35—0.55",
+      "单次",
+      "P0",
+      "身体弯向转弯内侧；不让世界根额外跃移或穿障。"
+    ],
+    [
+      "`AN_hare_StartBound`",
+      "收身蹬出",
+      "0.20—0.32",
+      "单次",
+      "P0",
+      "警觉后立即接奔跃，已有逃离位移不等动画播完。"
+    ],
+    [
+      "`AN_hare_StopCrouch`",
+      "落足收身",
+      "0.30—0.48",
+      "单次",
+      "P0",
+      "前足吸收动作、后足回收，结束回低伏。"
+    ],
+    [
+      "`AN_hare_Alert`",
+      "紧张定向",
+      "1.3—1.9",
+      "循环",
+      "P0",
+      "前足不反复跳动，避免警觉循环变成无目的蹦跳。"
+    ],
+    [
+      "`AN_hare_Nibble_In`<br>`AN_hare_Nibble_Loop`<br>`AN_hare_Nibble_Out`",
+      "低头啃食",
+      "0.35 / 1.8 / 0.35",
+      "进入/循环/退出",
+      "P1",
+      "小幅口鼻/头部动作，不能强拉没有独立骨的下颌。"
+    ],
+    [
+      "`AN_hare_Groom`",
+      "舔拭与梳理",
+      "1.4—2.1",
+      "单次",
+      "P1",
+      "一侧前足与口鼻接近；只在可变形范围内执行。"
+    ],
+    [
+      "`AN_hare_Rest`",
+      "低伏休息",
+      "2.5—3.5",
+      "循环",
+      "P1",
+      "可由低伏Idle平滑进入，警觉即退出，不新建冬眠玩法。"
+    ],
+    [
+      "`AN_hare_Hit_L`<br>`AN_hare_Hit_R`",
+      "侧向受击",
+      "0.18—0.30",
+      "单次",
+      "P0",
+      "短促缩身；不加入空中旋转或连续翻滚。"
+    ],
+    [
+      "`AN_hare_Collapse_L`<br>`AN_hare_Collapse_R`",
+      "失力侧倒",
+      "0.45—0.75",
+      "单次",
+      "P0",
+      "后肢停止推进，身体沿可接地侧沉下，避免压扁耳朵。"
+    ],
+    [
+      "`AN_hare_CorpseHold_L`<br>`AN_hare_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "保留对应侧倒姿态；不把等效死亡演成暂时昏睡。"
+    ]
+  ],
+  "source_sha256": "bc49e30f0bba702c79e92324ca711226f208e564d1c1262ede68ecf20c38661c",
+  "original_guidance_sha256": "f20d6d012f36563174136972492853fae888dcca31bc0bbefa95ccf155777cc1",
+  "r2_baseline_guidance_sha256": "130c0e0b595b90cdeccb0811ab58d199691d3cb4eb68685afc464b9feb9344e1"
+}

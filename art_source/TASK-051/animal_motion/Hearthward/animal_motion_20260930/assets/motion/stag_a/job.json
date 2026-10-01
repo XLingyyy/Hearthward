@@ -1,0 +1,132 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "stag_a",
+  "name": "雄鹿A",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "stag_a",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\9719b0c5-89b2-4754-959e-03e085f78059\\stag_a_rigged.fbx",
+  "rig_task_id": "9719b0c5-89b2-4754-959e-03e085f78059",
+  "source_task_id": "6cda5dcd-6fcb-4588-a12f-820a1393de76",
+  "rig_type": "quadruped",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\01_雄鹿A_动作指导.md",
+  "guidance_sha256": "a1967c666d29c2b560f26e52d77c55b0c8a57347d0f8e7386e658490ba1df11e",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\stag_a",
+  "action_rows": [
+    [
+      "`AN_stag_a_Idle`",
+      "站立呼吸",
+      "3.0—4.0",
+      "循环",
+      "P0",
+      "四蹄承重，胸腹轻呼吸；鹿角和头颈保持稳定。"
+    ],
+    [
+      "`AN_stag_a_LookAround`",
+      "抬头侧看",
+      "1.6—2.4",
+      "单次",
+      "P1",
+      "颈部先转、胸背小幅跟随；有耳骨才做独立听向。"
+    ],
+    [
+      "`AN_stag_a_Walk`",
+      "缓步",
+      "1.0—1.3",
+      "循环",
+      "P0",
+      "逐蹄落地、重心平稳；以当前100 cm/s校准落足。"
+    ],
+    [
+      "`AN_stag_a_Trot`",
+      "轻快小跑",
+      "0.7—0.9",
+      "循环",
+      "P0",
+      "对角肢配合，姿态比奔逃收敛；作为速度混合过渡。"
+    ],
+    [
+      "`AN_stag_a_Gallop`",
+      "惊逃奔跑",
+      "0.45—0.65",
+      "循环",
+      "P0",
+      "后肢推进、伸身与收身交替；对应700 cm/s高速端。"
+    ],
+    [
+      "`AN_stag_a_Turn_L`<br>`AN_stag_a_Turn_R`",
+      "左右小步转向",
+      "0.6—0.9",
+      "单次",
+      "P0",
+      "内侧蹄短步、外侧蹄迈开；根朝向仍由游戏控制。"
+    ],
+    [
+      "`AN_stag_a_StartRun`",
+      "受惊起跑",
+      "0.30—0.45",
+      "单次",
+      "P0",
+      "低重心后肢蹬地，首帧即可接现有逃离位移。"
+    ],
+    [
+      "`AN_stag_a_Stop`",
+      "收步站稳",
+      "0.45—0.65",
+      "单次",
+      "P0",
+      "前蹄减速承重，颈部避免过度甩动。"
+    ],
+    [
+      "`AN_stag_a_Alert`",
+      "抬颈警觉",
+      "1.6—2.4",
+      "循环",
+      "P0",
+      "站姿紧张、视线朝威胁，不能阻塞已确认逃离。"
+    ],
+    [
+      "`AN_stag_a_Graze_In`<br>`AN_stag_a_Graze_Loop`<br>`AN_stag_a_Graze_Out`",
+      "低头采食三段",
+      "0.7 / 2.2 / 0.6",
+      "进入/循环/退出",
+      "P1",
+      "前蹄不滑，嘴靠近植物但不穿地；不消耗场景草资源。"
+    ],
+    [
+      "`AN_stag_a_LieDown`<br>`AN_stag_a_Rest`<br>`AN_stag_a_GetUp`",
+      "卧下休息三段",
+      "1.3 / 3.5 / 1.2",
+      "进入/循环/退出",
+      "P1",
+      "腿部折收与胸腹承重清晰，退出回标准站姿。"
+    ],
+    [
+      "`AN_stag_a_Hit_L`<br>`AN_stag_a_Hit_R`",
+      "左右受击",
+      "0.25—0.4",
+      "单次",
+      "P0",
+      "局部躯干收缩，不做动画根击退，随后服从逃离或死亡。"
+    ],
+    [
+      "`AN_stag_a_Collapse_L`<br>`AN_stag_a_Collapse_R`",
+      "左右倒地",
+      "0.9—1.3",
+      "单次",
+      "P0",
+      "前后腿先失力、躯干沉下再侧倒；鹿角落点避开穿地。"
+    ],
+    [
+      "`AN_stag_a_CorpseHold_L`<br>`AN_stag_a_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "承接对应倒地末帧，血量为零后不呼吸、不站起。"
+    ]
+  ],
+  "source_sha256": "71c686ec245022bcfecd2b4d7b2ff231d941caacbf52d1bb7c5d7e6941f99d10",
+  "original_guidance_sha256": "9eb78a5da64d09197d75340a1bdc0185cc8422ed81277af7cc97e60202452737",
+  "r2_baseline_guidance_sha256": "e2cf6e53e1a24ec713bbc180a2479b917ff2bb5caeff2a2968b7db6b8f28f273"
+}

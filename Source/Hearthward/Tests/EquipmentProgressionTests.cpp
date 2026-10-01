@@ -62,6 +62,7 @@ bool FProgression047Test::RunTest(const FString&)
     auto* G=NewObject<UHearthwardGameplayComponent>();G->Skills.Add(TEXT("strong"),1);G->Health=35;G->Stamina=22;
     TSharedPtr<FJsonObject> J;FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(G->SaveSnapshot()),J);
     J->GetObjectField(TEXT("durability"))->SetNumberField(TEXT("axe"),25);J->GetObjectField(TEXT("equipment"))->SetStringField(TEXT("weapon"),TEXT("axe"));
+    J->SetArrayField(TEXT("knownRecipes"),{MakeShared<FJsonValueString>(TEXT("rope"))});
     FJsonSerializer::Serialize(J.ToSharedRef(),TJsonWriterFactory<>::Create(&P.World.Gameplay));Legacy->Points.Add(P);
     auto* Again=DuplicateObject<UHearthwardSaveGame>(Legacy,GetTransientPackage());FString Error;
     TestTrue(TEXT("Schema5 migration"),HearthwardSave::MigrateInventory(*Legacy,Error));
@@ -72,7 +73,9 @@ bool FProgression047Test::RunTest(const FString&)
     TestTrue(TEXT("Deterministic migrated identity"),S.PlayerItems.Instances[0].Id==Again->Points[0].World.PlayerItems.Instances[0].Id);
     TestFalse(TEXT("Legacy gloves do not become leggings"),S.PlayerItems.Instances.ContainsByPredicate([](const auto& I){return I.Definition==TEXT("leggings");}));
     FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(S.Gameplay),J);
-    TestTrue(TEXT("Old allocation refunded"),J->GetObjectField(TEXT("skills"))->Values.IsEmpty());
+    TestEqual(TEXT("Compatible learned allocation survives migration"),J->GetObjectField(TEXT("skills"))->GetNumberField(TEXT("strong")),1.);
+    TestEqual(TEXT("Known recipe survives migration"),J->GetArrayField(TEXT("knownRecipes")).Num(),1);
+    TestEqual(TEXT("Known recipe identity preserved"),J->GetArrayField(TEXT("knownRecipes"))[0]->AsString(),FString(TEXT("rope")));
     TestEqual(TEXT("Migration does not heal"),J->GetNumberField(TEXT("health")),35.);
     TestEqual(TEXT("Migration does not refill stamina"),J->GetNumberField(TEXT("stamina")),22.);
     return true;

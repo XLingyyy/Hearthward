@@ -1,38 +1,68 @@
-# TASK-051｜施工与定向验证
+# TASK-051 动物实机成果
 
-2026-10-02；Owner／Reviewer XLingyyy，无Issue。工作目录 G:/GameFactory/Hearthward/.agent-local/task051，分支 codex/TASK-051-experience-baseline。main来源 e1c44c49a88ce26125aa0e05fbe9d74b95ad7e58；路径授权快照 99c3c77193f6c6132e5d78a89db5e6f9a8d20bdf。用户已确认D1—D6并授权施工、提交和任务分支推送。源码提交及证据关联见本目录SOURCE.json。
+2026-10-02更新，工作区`E:/AiAgent/XLingGame/Hearthward`，分支`codex/animal-runtime-20261001`，完整HEAD `9058ee2978f87cafa02e13666ebd0d96b81cd2f2`。本报告对应该HEAD上的本地未提交实现，不代表main或旧安装包已更新。三个阶段按用户要求顺序完成；最终自动验证与Owner观感验收分别记录。
 
-已接入44个语义操作、主副键和单修饰键组合、上下文优先序、设备配置持久化、设置草稿／应用／取消、15秒显示回退、字幕及舒适性设置、实际胶囊攀越、自然湖游泳／溺亡和按最大生命值结算的坠落伤害。54个固定cue按实际信息、近距说话人和事件去重触发，缺失录音明确UNPRODUCED；没有动态TTS。大字号采用独立HUD布局及可滚动菜单。
+## 实施结果
 
-| 验证 | 结果 | 实际范围与证据 |
+14个成套骨骼模型、14个对应Skeleton、303段AnimSequence导入独立`/Game/Hearthward/Animals/MotionR3`目录。使用原制作成果当前版本，包含已修正四足腿部向内弯曲和骨段刚度的R3动作；未重生成或覆盖原文件。每段绑定本物种Skeleton，核对来源SHA256、时长与引擎骨姿态。材质绑定原Color、Normal、Roughness。实际返回的动画对象名称带Skeleton后缀，行为配置使用真实资产路径。[导入报告](import_report.json)
+
+新增原生动物动画与行为组件，接入当前自然动物Actor及CombatTarget。14种动物按物种缓步／缓游与自然动作轮换，主角或真实弟弟进入感知范围后警觉、起步并快速逃离，脱离威胁后收步恢复。非致命受击中断当前行为；致命伤停止水平移动，陆地播放倒地并保持，鱼类挣扎沉降后静止。动画切换约0.14秒混合，步态播放速度随实际位移匹配；不通过伸缩骨架制造速度。物种循环、速度与距离见[行为设定](行为设定.md)及`Resources/Data/animal_motion.json`。
+
+新地图`/Game/Imported/Scenes/animal_demo_20261001/Map/animal_demo_20261001`通过单独`HearthwardAnimalDemoGameMode`生成14种各一只，使用现有主角和弟弟。陆地44×32米，水池12×24米、约2米深，区域包含围栏、水面、池壁和池边观察步道。动物每次目标和位移均收紧到保留整只网格余量的边界，鱼类另约束深度。围栏用于标记范围，兄弟可通过；动物实际由行为范围限制。[地图构建报告](world_report.json)
+
+## 2026-10-02速度调整
+
+Owner要求所有动物快速行动略快于Shift疾跑，同时只逐渐拉开距离。14种动物基础逃离统一提高到630厘米/秒，对比玩家600厘米/秒高5%；同向直线每10秒多拉开3米。两个疾跑技能满级时玩家708、动物743.4厘米/秒，优势仍为5%；不按追赶距离或Shift当前状态切换速度。缓步、自然活动、捕捉／照料规则沿原设定。
+
+按当前真实位移除以步态参考速度计算播放倍率，播放上限覆盖新的速度需求。鱼类原始导出参考速度为0，配置另保存展示参考速度180厘米/秒，保留原资产元数据；鲤鱼、鲫鱼、鲶鱼的Burst用于起步，SwimCruise循环用于持续游离，鳗鱼继续UndulateFast循环。骨架和原配对FBX／Blend文件保持原成果。参数及逐种调整见`speed_adjustment.json`。
+
+新版原生验证增加角色真实疾跑测速、满级疾跑技能测速，以及逐种普通／技能加成后的速度差和动画倍率检查，共199项。自动验证使用D3D真实渲染的离屏模式、60Hz固定模拟步长，保留42张原生截图；约300模拟秒不代表相同墙钟耗时。互动演示入口继续使用正常窗口与实时步长。本次199/199检查全部通过，普通动物实际630、满级疾跑技能时743.4厘米/秒，玩家实测600、708厘米/秒。当前证据绑定新版Source、配置、DLL和地图。
+
+## 本地操作
+
+双击[启动动物实机演示](../../../scripts/animals/启动动物实机演示.cmd)。本机UE 5.8.2 Development独立游戏窗口打开新演示地图，使用隔离的临时档池。
+
+| 键位 | 操作 |
+|---|---|
+| F5 | 循环14种近景，鱼类自动水下观察 |
+| F1、WASD、鼠标 | 返回主角并实际走近动物 |
+| F2 | 让真实弟弟步行靠近所选动物，或停止等待 |
+| F3 | 对当前动物施加真实致命伤 |
+| F4 | 重置全部14只动物、生命与兄弟位置 |
+| Esc | 退出 |
+
+建议逐种看30秒左右的自然活动，再让弟弟靠近，最后检查完整倒地／沉降与死亡保持。按F4可反复检查。演示Controller已局部清除F1–F5的UE调试显示冲突，没有改全局输入。详见[使用说明](使用说明.md)。
+
+## 验证和证据
+
+| 检查 | 实际结果 | 证据 |
 |---|---|---|
-| Editor Development构建 | PASS | UEClient.build.project，UE 5.8.2 / Win64 / HearthwardEditor；[build.json](build.json) |
-| 定向原生 | PASS，7/7 | Experience 3项、Survival 2项、Combat 2项；0失败、0测试警告；[native-index.json](native-index.json)、[native.json](native.json) |
-| 渲染PIE | PASS，51项检查 | 草稿、取消、INI保存、跨地图设置、暂停中显示回退、cue知识／距离／去重、攀越支出／落点／取消／顶棚／存档拒绝、正常新游戏、自然湖游泳／漂浮／消耗／下沉／真死亡和回档入口；[experience-pie.json](experience-pie.json) |
-| Windows实际按键 | PASS，14项检查 | computer-use对实际PIE窗口按Y、Ctrl+U、I；实际INI和位移由脚本独立观察，4次I短按移动2.2756厘米；[input-pie.json](input-pie.json) |
-| 大字号画面 | PASS，局部复核 | 150% HUD、48字号字幕、设置与键位页面；未宣称所有页面和字号组合均人工验收 |
-| T-002、仓库L0、diff | PASS，0错误 | 相对批准快照检查全部修改和未跟踪路径；禁止路径负例只调用原验证函数 |
-| Shipping、中文IME、32例逐项验收 | NOT_RUN | 本轮使用局部Editor构建及上述定向检查 |
-| 五通道实际听音、人工录音 | NOT_RUN／UNPRODUCED | 音量及PCM16播放入口已实现，28组真人录音仍缺失 |
-| D5联合性能、D6真人／十小时体验 | NOT_RUN | [PROTOCOL.md](PROTOCOL.md)和规划报告模板保留未测状态 |
+| 配对导入、时长、引擎骨姿态 | 14套、303段通过 | `import_report.json` |
+| Development Editor构建 | 通过 | `build_result.json`、`build.log` |
+| 最终有渲染离屏独立游戏检查 | 199/199通过，14只、42张原生截图，60Hz固定模拟步长 | `runtime_8ccedf902b8e`、`runtime_result.json` |
+| 原生定向回归 | 6/6通过：Animals边界、Nature048、Combat | `regression_result.json`、`automation/20261002_000637/index.json` |
+| 既有实际窗口按键 | F1–F5和Esc的物理按键记录保留；本次控制器映射未改 | `keyboard_check.json`、`interactive_fc35ac894952/game.log` |
+| 用户批处理启动入口修复 | 复现LF解析错误后改CRLF；当时实际启动并检查14种画面 | `启动修复.md`、`launch_repair.json`、`interactive_a9249349d0f3/game.log` |
+| 本次新版批处理入口 | 原.cmd返回0，普通窗口地图记录14种就绪；随后收到退出命令 | `speed_demo_launch.json`、`interactive_62508adc7fa1/game.log` |
+| 仓库工具测试 | 33/33通过 | `tool_tests.log` |
+| 全仓文档／配置自检 | 通过 | `repo_validation.log` |
+| 本地范围和继承改动审计 | 通过；上一任务16个文件指纹未变 | `scope_audit.json` |
+| 最终证据与当前文件匹配 | Source、DLL、479个动物／演示资产、地图和原配对文件匹配 | `verification_summary.json` |
 
-环境：Windows 11 24H2、i7-13650HX、16 GB RAM、RTX 4060 Laptop、UE 5.8.2。原生使用NullRHI；渲染PIE使用D3D12、独立UserDir和随机测试存档池。攀越测试平台只存在PIE，标记PROTOTYPE_ONLY，不保存地图。自然湖检查通过正常新游戏加载L_HearthwardWilds；移动阶段使用Enhanced Input注入，实际键位另外验证。
+原生实机检查先在100模拟秒中检查角色普通／技能疾跑与自然活动，再逐种检查玩家感知、弟弟感知、非致命伤、致命倒地、死亡停止位移、Actor无重复90度翻转及重置；约300模拟秒期间每0.15模拟秒检查整只网格的XY边界和鱼类深度。原生截图包含每种自然、逃离与死亡三种状态，42张均保留原图；复核缩略图为`contact_natural.jpg`、`contact_flee.jpg`、`contact_dead.jpg`，逃离截图HUD显示实际快速移动速度。自动运行通过真实渲染世界中的脚本威胁／伤害探针验证，不能称为用户人工按键验收；物理按键检查另行保存。当前速度版已用原.cmd实际启动至14种就绪，但窗口在本次UI选择前收到退出命令，不能将这次启动称为新的物理按键检查，也不声称窗口仍在运行。Owner可再次双击入口检查速度。
 
-首轮原生复现12米阈值浮点误差使角色保留极少生命值，修复阈值容差后通过，保留[native-first.json](native-first.json)。UEClient的native diagnostics包含首轮旧进程日志Condition failed；最终UE导出的native-index明确7个Success、0 errors、0 warnings，进程退出0。最终build.json对应全部C++修改；原生通过后新增的UI布局和箭回收筛选完成最终构建与渲染PIE复核，未重复执行不受影响的原生用例。
+最终运行的`binding.json`绑定完整HEAD、分支、所有Source/Hearthward文件、动作配置、动物与演示资产、地图与已编译DLL的SHA256。`verification_summary.json`检查运行后的当前文件是否仍匹配该证据，并复核原配对FBX／Blend未改变。早期构建错误、导入接口缺字段、公共建图接口不支持SkeletalMesh直接放置，以及灯光／键位修复前的运行记录保留。截图时序也在复核中修正：旧逃离截图请求后同帧重置了动物，最终版在仍快速移动时请求截图，下一阶段才重置。最终结果仅看上述最终证据。本次速度调节初轮发现鱼类参考速度缺失、单次Burst不适合持续逃离，已补独立参考值并改为Burst起步后循环游动；失败记录`runtime_8bc19314abc1`保留。前一次可见自动窗口在逐种验证前收到退出命令，记录`runtime_31e3737b48f4`不算完成验证；最终改为离屏真实渲染验证。构建初轮完成编译链接后收尾停住，验证进程链后只取消本次构建子进程，随后用同一UEClient公共构建接口重试并完成新版编译；首轮日志`speed_build_stalled_uba*`保留，重试临时环境参数没有写入全局配置。
 
-初次编辑器启动被本任务日志控制台QuickEdit选区阻塞；宿主仅关闭自己启动的UE进程的此控制台模式，后续启动成功，早期记录保留为experience-*-startup-blocked.json。实际输入初次无人值守启动超时；改用交互启动后捕获成功。单次I短按位移0.5689厘米，低于脚本1厘米判据，保留[input-short-tap.json](input-short-tap.json)，随后用多次实际短按复核。失败报告没有改写为通过。
+本次原生回归报告的6个测试均Success且测试失败数为0；引擎初始化阶段另有13条`LogAutomationTest: Condition failed`诊断，发生在第一个测试开始之前，没有将它们隐藏或宣称全日志无错误，详见`regression_result.json`。独立渲染实机结果单独记录。
 
-ui-*.png：CaptureUI的1920×1080离屏UI，透明世界背景；pie-*.png：Shot SHOWUI的实际编辑器窗口及游戏视口，尺寸以图片为准。地图切换后离屏截图有字体图集局部缺字，时钟完整显示已用实际PIE图确认。离屏图不作为完整世界1080p渲染或性能证据。
+官方`validate_repo.py --task TASK-051 --base 9058ee2978f87cafa02e13666ebd0d96b81cd2f2`报错：基线没有TASK-051的批准快照。此检查未通过，原因见`path_validation.log`；没有为让检查通过擅自提交或伪造基线。另依据本轮用户授权的任务范围、真实HEAD及开工文件指纹执行本地审计，将继承的存档兼容工作分别列出。
 
-从本worktree执行，Python使用G:/GameFactory/.venv/Scripts/python.exe -X utf8：
+## 交付边界
 
-- docs/qa/TASK-051/run_build.py
-- docs/qa/TASK-051/run_native.py
-- docs/qa/TASK-051/run_engine.py --label experience --isolated-pool --timeout 540
-- docs/qa/TASK-051/run_engine.py --label input --interactive --isolated-pool --script docs/qa/TASK-051/verify_input_pie.py --result Saved/Task051/input/results.json --timeout 400
-- scripts/validate_repo.py --task TASK-051 --base 99c3c77193f6c6132e5d78a89db5e6f9a8d20bdf
-- git diff --check
+Owner实机观感检查尚未进行，任务保留Active，不代填Reviewer或真人验收。模型弯腿、骨段质感及动作衔接的最终观感由本次实机演示检查。
 
-实际键位脚本通过ready.json请求操作，computer-use执行并观察后才写对应.sent；这些文件只同步阶段，PASS由实际INI和坐标决定。复跑前清除本测试input目录的旧.sent。
+本次通过原`.cmd`重新打开新版普通窗口，运行记录`interactive_62508adc7fa1/launch.json`（PID 29992）。原启动问题及CRLF修复记录保留于[启动修复](启动修复.md)。旧版141项运行及启动记录属于修改前证据；本版以199项最终运行和本次互动记录为准。
 
-施工完成，状态Active等待Owner最终体验签收。人工录音、正式性能和真人验收继续按协议执行。未创建Issue、未合并main、未发布；原027工作区及其他UE工程保留。
+自然活动是已有动作的游戏展示循环；觅食、刨地、扑跃、嚎叫姿态不生成额外资源、声音或完整生态。检测距离与时长用于观察，不能当作现实动物的精确作息。自然陆生动物Actor已接入同一组件；本轮四种可见鱼类在演示地图提供，正常地图的048鱼点与钓鱼收益机制保持原实现。
+
+未更改自然主地图、正常档池、共享输入或存档代码，没有重新打包发行版，没有提交、推送或合并。上一任务16个文件的开工指纹均与当前一致；README已明确区分本地分支成果与main。

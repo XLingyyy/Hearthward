@@ -1,0 +1,138 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "carp",
+  "name": "鲤鱼",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "carp",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\4b774d6e-f721-4d28-8de1-7ba317dea2a5\\carp_rigged.fbx",
+  "rig_task_id": "4b774d6e-f721-4d28-8de1-7ba317dea2a5",
+  "source_task_id": "b2ce3e41-e542-4b01-978c-2ce448eaf8b0",
+  "rig_type": "aquatic",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\11_鲤鱼_动作指导.md",
+  "guidance_sha256": "9703c1daf8fb7b17d107ffc6bd84ed77426b32cb460e92c58ce94aeb8a36141c",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\carp",
+  "action_rows": [
+    [
+      "`AN_carp_Hover`",
+      "水中悬停",
+      "1.6—2.2",
+      "循环",
+      "P0/G",
+      "头胸较稳，小幅尾摆；有鳍骨才加入成对鳍微调。"
+    ],
+    [
+      "`AN_carp_SwimSlow`",
+      "低速巡游",
+      "0.8—1.1",
+      "循环",
+      "P0/G",
+      "前身小摆、后身和尾鳍摆幅递增；候选0.5体长/s。"
+    ],
+    [
+      "`AN_carp_SwimCruise`",
+      "常速巡游",
+      "0.55—0.8",
+      "循环",
+      "P0/G",
+      "尾部推进更清楚；候选1.0体长/s，不改玩法配置。"
+    ],
+    [
+      "`AN_carp_Burst`",
+      "短促加速",
+      "0.30—0.45",
+      "单次",
+      "P0/G",
+      "尾摆加力后平滑接滑行，不把躯干拉长。"
+    ],
+    [
+      "`AN_carp_Coast`",
+      "减摆滑行",
+      "0.7—1.0",
+      "循环",
+      "P1/G",
+      "小幅鳍调整、尾摆衰减；展示移动根仍由专门路径控制。"
+    ],
+    [
+      "`AN_carp_Turn_L`<br>`AN_carp_Turn_R`",
+      "左右缓弧转向",
+      "0.50—0.80",
+      "单次",
+      "P0/G",
+      "头先定向、躯干逐段弯曲、尾部跟随。"
+    ],
+    [
+      "`AN_carp_Brake`",
+      "减速悬停",
+      "0.35—0.55",
+      "单次",
+      "P0/G",
+      "逐渐收尾摆；有胸鳍权重才展示展开减速。"
+    ],
+    [
+      "`AN_carp_Bite_In`",
+      "接近鱼饵的咬钩提示",
+      "0.35—0.50",
+      "单次",
+      "G",
+      "只响应权威Bite阶段，口部控制不足用轻探头替代。"
+    ],
+    [
+      "`AN_carp_Hooked_In`",
+      "上钩收紧",
+      "0.25—0.40",
+      "单次",
+      "P0/G",
+      "由已存在钓鱼上下文驱动，不在片段开始时额外消耗饵。"
+    ],
+    [
+      "`AN_carp_Struggle`",
+      "水中左右挣扎",
+      "0.7—1.0",
+      "循环",
+      "P0/G",
+      "左右尾摆与短变向组合；6 s进度不是单片段固定长度。"
+    ],
+    [
+      "`AN_carp_EscapeHide`",
+      "失败后脱钩退出表现",
+      "0.3—0.5",
+      "单次",
+      "G",
+      "只在失败/取消后退出展示，不额外释放库存鱼实体。"
+    ],
+    [
+      "`AN_carp_LiftOut`",
+      "成功后出水候选",
+      "0.45—0.75",
+      "单次",
+      "G",
+      "先有成功事件与鱼线/手部挂点，根不自己飞向玩家。"
+    ],
+    [
+      "`AN_carp_LandFlop`",
+      "落在支撑面后扑动",
+      "0.55—0.85",
+      "循环",
+      "G",
+      "鱼腹/侧体接触真实支撑面，不能在空中当水中游动循环。"
+    ],
+    [
+      "`AN_carp_Settle`",
+      "离水动作收束",
+      "0.40—0.65",
+      "单次",
+      "G",
+      "先确认展示终点与承托，再减小摆动，不决定鱼的生死。"
+    ],
+    [
+      "`AN_carp_DisplayStill`",
+      "渔获静态展示",
+      "静态姿态",
+      "保持",
+      "P1/G",
+      "只服务已有静态展示需求，不创建新的库存或死亡规则。"
+    ]
+  ],
+  "source_sha256": "e8baad574246edeb9b9a5656b298fa09c2e368914f52ff3036a0ff2c69d43da5"
+}

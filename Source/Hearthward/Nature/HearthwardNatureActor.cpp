@@ -1,5 +1,6 @@
 #include "HearthwardNatureActor.h"
 #include "HearthwardNatureSubsystem.h"
+#include "../Animals/HearthwardAnimalMotionComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Combat/HearthwardCombatTargetComponent.h"
@@ -32,6 +33,7 @@ AHearthwardNatureActor::AHearthwardNatureActor()
     Label=CreateDefaultSubobject<UTextRenderComponent>(TEXT("Label"));Label->SetupAttachment(RootComponent);Label->SetHorizontalAlignment(EHTA_Center);Label->SetWorldSize(20);
     Interaction=CreateDefaultSubobject<UHearthwardNatureInteraction>(TEXT("Interaction"));Interaction->SetupAttachment(RootComponent);Interaction->MaxDistance=300;
     Combat=CreateDefaultSubobject<UHearthwardCombatTargetComponent>(TEXT("Combat"));Combat->NaturalTarget=true;Combat->Protected=true;
+    AnimalMotion=CreateDefaultSubobject<UHearthwardAnimalMotionComponent>(TEXT("AnimalMotion"));
 }
 void AHearthwardNatureActor::Configure(FGuid Entity,FName Type,FName Def)
 {
@@ -96,6 +98,7 @@ void AHearthwardNatureActor::Configure(FGuid Entity,FName Type,FName Def)
     if(Kind==TEXT("treasure")){Part(FVector(0,0,30),FVector(.85,.7,.12),FLinearColor(.25f,.13f,.04f));for(int32 X:{-25,25})Part(FVector(X,0,0),FVector(.07,.68,.55),FLinearColor(.45f,.4f,.22f));}
     Label->SetWorldScale3D(FVector(1));Label->SetRelativeLocation(FVector(0,0,Kind==TEXT("animal")?120:160)/Scale);
     Refresh();
+    if(Kind==TEXT("animal") && AnimalMotion->Configure(Definition))Shape->SetVisibility(false,false);
 }
 void AHearthwardNatureActor::Refresh()
 {
@@ -140,6 +143,7 @@ void AHearthwardNatureActor::MoveAnimal(float Delta)
 {
     auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();auto* A=N->State.Animals.FindByPredicate([&](const auto& X){return X.Id==Id;});
     if(!A || A->Health<=0 || !Combat->CanAct() || N->WorkingOn(Id))return;
+    if(AnimalMotion->ControlsNatureMovement())return;
     auto* Player=UGameplayStatics::GetPlayerPawn(this,0);if(!Player)return;
     const auto D=HearthwardNature::Definition(A->Domestic?TEXT("domestic"):TEXT("wildlife"),Definition);
     A->AlertRemaining=FMath::Max(0.,A->AlertRemaining-Delta);AttackDelay-=Delta;WanderDelay-=Delta;Age+=Delta;

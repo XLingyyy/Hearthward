@@ -1,0 +1,132 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "red_fox",
+  "name": "赤狐",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "red_fox",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\5fd7f6b9-9e53-4a39-95f9-e56e66a6893f\\red_fox_rigged.fbx",
+  "rig_task_id": "5fd7f6b9-9e53-4a39-95f9-e56e66a6893f",
+  "source_task_id": "e976d24b-8ce3-4b1f-9cbd-e23883468b83",
+  "rig_type": "quadruped",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\10_赤狐_动作指导.md",
+  "guidance_sha256": "721a1e675c9ec2a1f5835ca9b5a8f51177eba6064a5b880576e76f677bf15699",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\red_fox",
+  "action_rows": [
+    [
+      "`AN_red_fox_Idle`",
+      "轻姿站立",
+      "2.4—3.2",
+      "循环",
+      "P0",
+      "身体窄、头部小幅倾听，蓬尾保持低幅摆动。"
+    ],
+    [
+      "`AN_red_fox_Walk`",
+      "轻巧步行",
+      "0.75—1.0",
+      "循环",
+      "P0",
+      "窄足迹趾行，用100 cm/s校准落足。"
+    ],
+    [
+      "`AN_red_fox_Trot`",
+      "轻快小跑",
+      "0.45—0.65",
+      "循环",
+      "P0",
+      "对角肢轻快交替，不沿用狼的宽幅肩背动作。"
+    ],
+    [
+      "`AN_red_fox_RunFlee`",
+      "快速逃离",
+      "0.35—0.50",
+      "循环",
+      "P0",
+      "覆盖700 cm/s，保持轻体型与蓬尾平衡。"
+    ],
+    [
+      "`AN_red_fox_Turn_L`<br>`AN_red_fox_Turn_R`",
+      "左右轻步转向",
+      "0.35—0.60",
+      "单次",
+      "P0",
+      "尾根随腰部稍滞后，禁止尾尖连续甩穿身体。"
+    ],
+    [
+      "`AN_red_fox_StartRun`<br>`AN_red_fox_Stop`",
+      "蹬出与收步",
+      "0.22 / 0.35",
+      "单次",
+      "P0",
+      "起步紧凑、停止重心收回，不做大片横滑。"
+    ],
+    [
+      "`AN_red_fox_AlertListen`",
+      "停步倾听",
+      "1.3—2.0",
+      "循环",
+      "P0",
+      "头偏向来源，耳部只在可靠独立权重时转动。"
+    ],
+    [
+      "`AN_red_fox_Sniff`",
+      "低头嗅探",
+      "1.0—1.6",
+      "单次",
+      "P1",
+      "鼻部先行、颈腰小幅随动，尾部不过度摆动。"
+    ],
+    [
+      "`AN_red_fox_PounceVisual`",
+      "伏低扑跃候选",
+      "0.65—0.95",
+      "单次",
+      "G",
+      "只在未来确认环境动作后启用，不产生攻击或猎物掉落。"
+    ],
+    [
+      "`AN_red_fox_Groom`",
+      "舔拭前足/毛部",
+      "1.5—2.1",
+      "单次",
+      "P1",
+      "口鼻接近毛部而非穿入内部，无口骨时用头身姿态短版。"
+    ],
+    [
+      "`AN_red_fox_CurlDown`<br>`AN_red_fox_CurlRest`<br>`AN_red_fox_GetUp`",
+      "蜷卧休息三段",
+      "0.85 / 3.0 / 0.8",
+      "进入/循环/退出",
+      "P1",
+      "尾部贴近身体但不穿腹部，起身回窄足站姿。"
+    ],
+    [
+      "`AN_red_fox_Hit_L`<br>`AN_red_fox_Hit_R`",
+      "左右受击",
+      "0.18—0.30",
+      "单次",
+      "P0",
+      "局部收身、接逃离；不变成撕咬反击。"
+    ],
+    [
+      "`AN_red_fox_Collapse_L`<br>`AN_red_fox_Collapse_R`",
+      "轻体侧倒",
+      "0.55—0.85",
+      "单次",
+      "P0",
+      "腿先失力，躯干与蓬尾顺次接地。"
+    ],
+    [
+      "`AN_red_fox_CorpseHold_L`<br>`AN_red_fox_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "不保留活体尾摆、理毛或听察循环。"
+    ]
+  ],
+  "source_sha256": "42884de64d766e475bfc0a94859480c6209458788ef81cf4e47b366dee0cb0a7",
+  "original_guidance_sha256": "da86d322fb5f79bab1ffd06f24e5878697bd802aec9042e2cd8398951c260141",
+  "r2_baseline_guidance_sha256": "3a70da343d35f72c578b8e20652a5f09f418c7c2663bdc4fc65b8ffaee7a74b7"
+}

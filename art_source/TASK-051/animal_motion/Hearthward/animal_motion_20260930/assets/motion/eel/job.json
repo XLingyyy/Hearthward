@@ -1,0 +1,138 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "eel",
+  "name": "鳗鱼",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "eel",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\e15f6550-5028-47db-8efe-9d22d46178b5\\eel_rigged.fbx",
+  "rig_task_id": "e15f6550-5028-47db-8efe-9d22d46178b5",
+  "source_task_id": "e473cc70-a885-4fc7-abe4-b64643fb1bbf",
+  "rig_type": "serpentine",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\14_鳗鱼_动作指导.md",
+  "guidance_sha256": "a44086292c0d40ab01187b236e57253329213c975e460cc904a102659c0ff411",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\eel",
+  "action_rows": [
+    [
+      "`AN_eel_UndulateSlow`",
+      "缓慢全身波动",
+      "1.0—1.4",
+      "循环",
+      "P0/G",
+      "按身体弧长传播S形波，头部小幅、后段适当增幅。"
+    ],
+    [
+      "`AN_eel_UndulateCruise`",
+      "常速全身游动",
+      "0.7—1.0",
+      "循环",
+      "P0/G",
+      "各段保持明确相位差；候选0.8体长/s。"
+    ],
+    [
+      "`AN_eel_UndulateFast`",
+      "加速波动",
+      "0.45—0.7",
+      "循环",
+      "P0/G",
+      "适度提高频率而非无限弯曲，候选1.3体长/s。"
+    ],
+    [
+      "`AN_eel_HoverWave`",
+      "低速保持位置",
+      "1.4—2.0",
+      "循环",
+      "P0/G",
+      "保留低幅全身波，不能整条身体僵直悬空。"
+    ],
+    [
+      "`AN_eel_Turn_L`<br>`AN_eel_Turn_R`",
+      "左右连续弧转",
+      "0.65—1.0",
+      "单次",
+      "P0/G",
+      "弯曲从前身向后传递，身体不自交或形成折角。"
+    ],
+    [
+      "`AN_eel_StartWave`<br>`AN_eel_StopWave`",
+      "起波与收波",
+      "0.4 / 0.6",
+      "单次",
+      "P0/G",
+      "渐增/渐减幅度，与绑定S形偏置叠加而非清零。"
+    ],
+    [
+      "`AN_eel_Bite_In`",
+      "接近鱼饵候选",
+      "0.30—0.50",
+      "单次",
+      "G",
+      "头部先探，长体顺势跟随；无嘴部权重不强拉开口。"
+    ],
+    [
+      "`AN_eel_Hooked_In`",
+      "上钩紧缩",
+      "0.3—0.5",
+      "单次",
+      "P0/G",
+      "前段受限、后段波动响应，仍服从统一钓鱼上下文。"
+    ],
+    [
+      "`AN_eel_StruggleS`",
+      "长体S形挣扎",
+      "0.75—1.10",
+      "循环",
+      "P0/G",
+      "全身相位连续，7 s进度不通过循环次数判定。"
+    ],
+    [
+      "`AN_eel_StruggleArc`",
+      "受限弧形换向",
+      "0.6—0.9",
+      "单次",
+      "G",
+      "作为挣扎变化；不能盘紧成骨链自交结。"
+    ],
+    [
+      "`AN_eel_EscapeHide`",
+      "脱钩收束退出",
+      "0.4—0.65",
+      "单次",
+      "G",
+      "失败取消只隐藏展示，不凭空放生第二条鱼。"
+    ],
+    [
+      "`AN_eel_LiftSupported`",
+      "成功后受托提起",
+      "0.65—1.0",
+      "单次",
+      "G",
+      "先定义支撑点及模型姿态，不能只挂头部让长身穿地。"
+    ],
+    [
+      "`AN_eel_LandWriggle`",
+      "支撑面上蠕动",
+      "0.7—1.1",
+      "循环",
+      "G",
+      "腹侧接触面与全身波协调，不赋予陆地寻路。"
+    ],
+    [
+      "`AN_eel_SettleArc`",
+      "弧形收束",
+      "0.55—0.85",
+      "单次",
+      "G",
+      "回到自然弯曲承托姿态，不把源模型拉成直棍。"
+    ],
+    [
+      "`AN_eel_DisplayStill`",
+      "弧形静态展示",
+      "静态姿态",
+      "保持",
+      "P1/G",
+      "维持绑定比例与鳍边轮廓，不新建死亡规则。"
+    ]
+  ],
+  "source_sha256": "3c2d5b0b7cf11d049e88650890e9f18370a4a0d2cd5286cfee874cf7e3db9bdf"
+}

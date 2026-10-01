@@ -1,0 +1,146 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "pheasant",
+  "name": "雉鸡",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "pheasant",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\34208956-0641-428d-9406-7c2b67c3fa9c\\pheasant_rigged.fbx",
+  "rig_task_id": "34208956-0641-428d-9406-7c2b67c3fa9c",
+  "source_task_id": "59a5036b-7578-46b1-8716-558e6df2b8f6",
+  "rig_type": "avian",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\04_雉鸡_动作指导.md",
+  "guidance_sha256": "89d1a7173b26d4f96b2bde24ad1f43e82c2e534a7395fd79d83d27f374f297c8",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pheasant",
+  "action_rows": [
+    [
+      "`AN_pheasant_Idle`",
+      "站立观察",
+      "2.0—3.0",
+      "循环",
+      "P0",
+      "颈部小幅观察、双足承重，长尾轻微平衡。"
+    ],
+    [
+      "`AN_pheasant_Walk`",
+      "地面缓走",
+      "0.6—0.85",
+      "循环",
+      "P0",
+      "左右足交替接地，头部保持视线相对稳定。"
+    ],
+    [
+      "`AN_pheasant_RunGround`",
+      "地面逃跑",
+      "0.30—0.45",
+      "循环",
+      "P0",
+      "双足快速换步，长尾保持后伸，覆盖500 cm/s。"
+    ],
+    [
+      "`AN_pheasant_FlutterRun`",
+      "贴地扑翼跑",
+      "0.30—0.45",
+      "循环",
+      "P0",
+      "与RunGround保持同一落足相位；翅膀能展开才启用。"
+    ],
+    [
+      "`AN_pheasant_Turn_L`<br>`AN_pheasant_Turn_R`",
+      "左右碎步转向",
+      "0.35—0.60",
+      "单次",
+      "P0",
+      "转身不让两脚持续粘地，也不让长尾扫穿障碍。"
+    ],
+    [
+      "`AN_pheasant_StartRun`<br>`AN_pheasant_Stop`",
+      "起跑与收步",
+      "0.20 / 0.35",
+      "单次",
+      "P0",
+      "与站姿及跑姿连续，当前位移不等待翅膀动作。"
+    ],
+    [
+      "`AN_pheasant_Alert`",
+      "抬头警觉",
+      "1.2—1.8",
+      "循环",
+      "P0",
+      "胸背轻收紧，不能用雄性求偶动作代替警觉。"
+    ],
+    [
+      "`AN_pheasant_Peck`",
+      "低头啄食",
+      "0.8—1.3",
+      "单次",
+      "P1",
+      "头颈下探后回收，喙不穿地，不创建物品。"
+    ],
+    [
+      "`AN_pheasant_Scratch`",
+      "刨地找食",
+      "1.2—1.8",
+      "单次",
+      "P1",
+      "一足支撑另一足刨地，然后切回站姿。"
+    ],
+    [
+      "`AN_pheasant_Preen`",
+      "理羽",
+      "1.5—2.2",
+      "单次",
+      "P1",
+      "头转向翼侧，限制嘴喙穿入身体和尾羽。"
+    ],
+    [
+      "`AN_pheasant_Shake`",
+      "收翅抖羽",
+      "0.6—1.0",
+      "单次",
+      "P1",
+      "胸背短促抖动，羽片不能被权重拉成长条。"
+    ],
+    [
+      "`AN_pheasant_DustBath`",
+      "尘浴",
+      "2.0—3.0",
+      "单次",
+      "G",
+      "只在空旷合适地面启用，退出需回站立并可受警戒中断。"
+    ],
+    [
+      "`AN_pheasant_Takeoff`<br>`AN_pheasant_FlightShort`<br>`AN_pheasant_Land`",
+      "短飞三段",
+      "0.35 / 0.6—1.0 / 0.45",
+      "进入/循环/退出",
+      "G",
+      "须先有真实离地、碰撞及落地事件；当前地面跑包不启用。"
+    ],
+    [
+      "`AN_pheasant_Hit_L`<br>`AN_pheasant_Hit_R`",
+      "左右受击",
+      "0.18—0.28",
+      "单次",
+      "P0",
+      "短促侧收，翅不无故大展开遮住玩家。"
+    ],
+    [
+      "`AN_pheasant_Collapse_L`<br>`AN_pheasant_Collapse_R`",
+      "折翼侧倒",
+      "0.45—0.70",
+      "单次",
+      "P0",
+      "足失力、翼收回，尾羽平顺落地。"
+    ],
+    [
+      "`AN_pheasant_CorpseHold_L`<br>`AN_pheasant_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "最终姿态禁止继续扇翅或反复换边。"
+    ]
+  ],
+  "source_sha256": "b53fbbf6121fa529c858340e2dda9dc3f291ee3b91b02d3dbb8bf91b54b21d2c"
+}

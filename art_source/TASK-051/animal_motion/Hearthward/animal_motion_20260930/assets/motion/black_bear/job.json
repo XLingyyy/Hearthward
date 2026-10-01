@@ -1,0 +1,140 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "black_bear",
+  "name": "黑熊",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "black_bear",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\7cad7852-6c8a-4cce-b7c8-d376901dd007\\black_bear_rigged.fbx",
+  "rig_task_id": "7cad7852-6c8a-4cce-b7c8-d376901dd007",
+  "source_task_id": "7f5206d7-7c0a-41da-a755-7250f789f84b",
+  "rig_type": "quadruped",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\07_黑熊_动作指导.md",
+  "guidance_sha256": "db975e25a76c3cbdf87b6ba86620a30212e5c8d1cd36e3e09fbacefe45cc6ee1",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear",
+  "action_rows": [
+    [
+      "`AN_black_bear_Idle`",
+      "重体站立呼吸",
+      "3.0—4.5",
+      "循环",
+      "P0",
+      "宽掌承重，胸肩和腹部微动，体积不压塌。"
+    ],
+    [
+      "`AN_black_bear_WalkHeavy`",
+      "跖行慢步",
+      "1.1—1.5",
+      "循环",
+      "P0",
+      "整掌接地与离地清晰，匹配100 cm/s。"
+    ],
+    [
+      "`AN_black_bear_Lope`",
+      "重体快跑",
+      "0.50—0.75",
+      "循环",
+      "P0",
+      "肩部推移和后肢推进均有重量，覆盖600 cm/s。"
+    ],
+    [
+      "`AN_black_bear_Turn_L`<br>`AN_black_bear_Turn_R`",
+      "左右宽步转向",
+      "0.75—1.1",
+      "单次",
+      "P0",
+      "前掌腾出空间、后足跟进，避免重体原地高速旋转。"
+    ],
+    [
+      "`AN_black_bear_StartRun`<br>`AN_black_bear_StopBrace`",
+      "起跑与撑停",
+      "0.40 / 0.65",
+      "单次",
+      "P0",
+      "前掌缓冲减速，头颈有短促但受限的惯性。"
+    ],
+    [
+      "`AN_black_bear_AlertHuff`",
+      "低头警戒",
+      "1.7—2.5",
+      "循环",
+      "P0",
+      "肩背收紧而不自动扑人，仍服从retaliate规则。"
+    ],
+    [
+      "`AN_black_bear_SwipeShort_L`<br>`AN_black_bear_SwipeShort_R`",
+      "即时命中后拍击回收",
+      "0.35—0.55",
+      "单次",
+      "G",
+      "单爪局部击打后回收，只表现一个已有伤害事件。"
+    ],
+    [
+      "`AN_black_bear_SwipeFull_L`<br>`AN_black_bear_SwipeFull_R`",
+      "完整短拍击候选",
+      "0.65—0.85",
+      "单次",
+      "G",
+      "0.2 s左右蓄力、短接触、余段回收；不能超出现有1.0 s攻击周期。"
+    ],
+    [
+      "`AN_black_bear_SniffForage`",
+      "低头嗅食",
+      "1.5—2.4",
+      "单次",
+      "P1",
+      "保持头胸重量，鼻部不扎入土层。"
+    ],
+    [
+      "`AN_black_bear_DigVisual`",
+      "前掌刨探",
+      "1.6—2.4",
+      "单次",
+      "G",
+      "需确认脚下空间，不改变资源库存或挖出新道具。"
+    ],
+    [
+      "`AN_black_bear_RearSniff_In`<br>`AN_black_bear_RearSniff_Hold`<br>`AN_black_bear_RearSniff_Out`",
+      "原地站起嗅探",
+      "0.9 / 1.2 / 0.8",
+      "进入/循环/退出",
+      "G",
+      "只作短时姿态，核实腰脊权重与后掌支撑；不启用双足移动。"
+    ],
+    [
+      "`AN_black_bear_LieDown`<br>`AN_black_bear_Rest`<br>`AN_black_bear_GetUp`",
+      "躺卧休息三段",
+      "1.5 / 4.0 / 1.35",
+      "进入/循环/退出",
+      "P1",
+      "先屈腿缓降再卧下，不能直接扁平贴地。"
+    ],
+    [
+      "`AN_black_bear_Hit_L`<br>`AN_black_bear_Hit_R`",
+      "重体受击",
+      "0.25—0.45",
+      "单次",
+      "P0",
+      "局部肩背收缩，保持重量，不每次飞退。"
+    ],
+    [
+      "`AN_black_bear_Collapse_L`<br>`AN_black_bear_Collapse_R`",
+      "沉重侧倒",
+      "1.0—1.4",
+      "单次",
+      "P0",
+      "前掌失力、体重逐步沉向侧腹，长爪朝向稳定。"
+    ],
+    [
+      "`AN_black_bear_CorpseHold_L`<br>`AN_black_bear_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "全身停止活体循环，拾取后不再次播放倒地。"
+    ]
+  ],
+  "source_sha256": "a099d2aad71f036926d07eeb0ac5c9612b859ecc1d3ab27147ca4b4eb6b140eb",
+  "original_guidance_sha256": "9696fbbbe3a9f6f466847208127d310e6196492a3a3c2b14fc2070b4432c3318",
+  "r2_baseline_guidance_sha256": "d8a3503b15bcf45d78369392340e4c7d29a9eceb80b1d9b9f6e01a77daeffb57"
+}

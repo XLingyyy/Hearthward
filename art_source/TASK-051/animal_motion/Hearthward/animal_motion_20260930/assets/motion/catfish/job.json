@@ -1,0 +1,138 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "catfish",
+  "name": "鲶鱼",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "catfish",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\e97151ca-323f-4786-b576-ecd4d5bee2bb\\catfish_rigged.fbx",
+  "rig_task_id": "e97151ca-323f-4786-b576-ecd4d5bee2bb",
+  "source_task_id": "d8fb01be-19a2-4706-88fd-eb16471c8c27",
+  "rig_type": "aquatic",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\13_鲶鱼_动作指导.md",
+  "guidance_sha256": "7959680f314d8b73251d687d57bc78e70c35775ace30bbea215a92fb12c769bf",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\catfish",
+  "action_rows": [
+    [
+      "`AN_catfish_HoverLow`",
+      "低位悬停",
+      "1.8—2.6",
+      "循环",
+      "P0/G",
+      "宽头稳定、后身微摆；在水中不直接贴穿河床。"
+    ],
+    [
+      "`AN_catfish_SwimSlow`",
+      "贴近底部慢巡游",
+      "0.9—1.3",
+      "循环",
+      "P0/G",
+      "头部位移收敛、后身柔和传波；候选0.35体长/s。"
+    ],
+    [
+      "`AN_catfish_SwimCruise`",
+      "常速游动",
+      "0.65—0.95",
+      "循环",
+      "P0/G",
+      "后身与尾推进，候选0.8体长/s，不启用现实底栖AI。"
+    ],
+    [
+      "`AN_catfish_Burst`",
+      "尾部加力",
+      "0.35—0.55",
+      "单次",
+      "P0/G",
+      "宽头不剧烈左右甩，避免触须扫穿身体。"
+    ],
+    [
+      "`AN_catfish_Turn_L`<br>`AN_catfish_Turn_R`",
+      "左右缓弧绕身",
+      "0.6—0.95",
+      "单次",
+      "P0/G",
+      "头定向后背段依次跟随，不将全身折成硬直角。"
+    ],
+    [
+      "`AN_catfish_Brake`",
+      "减速沉稳悬停",
+      "0.4—0.65",
+      "单次",
+      "P0/G",
+      "降低尾摆而非自由下沉，不因动画落到河床里。"
+    ],
+    [
+      "`AN_catfish_WhiskerSearch`",
+      "触须/口部探寻候选",
+      "1.0—1.6",
+      "单次",
+      "G",
+      "先检查触须骨和权重；无可靠控制则用低幅头部探看。"
+    ],
+    [
+      "`AN_catfish_Bite_In`",
+      "鱼饵吸取提示",
+      "0.30—0.50",
+      "单次",
+      "G",
+      "大嘴只在有可用口部蒙皮时展开，不能改变渔获概率。"
+    ],
+    [
+      "`AN_catfish_Hooked_In`",
+      "上钩收紧",
+      "0.25—0.45",
+      "单次",
+      "P0/G",
+      "只由有效钓鱼上下文驱动，无视觉触须碰撞玩法。"
+    ],
+    [
+      "`AN_catfish_Struggle`",
+      "强侧摆挣扎",
+      "0.7—1.05",
+      "循环",
+      "P0/G",
+      "宽头抗摆、后身强摆，7 s玩法进度可跨多个循环。"
+    ],
+    [
+      "`AN_catfish_EscapeHide`",
+      "脱钩退出",
+      "0.35—0.55",
+      "单次",
+      "G",
+      "失败结束展示，不额外减库存或发物品。"
+    ],
+    [
+      "`AN_catfish_LiftOut`",
+      "成功后提离水面",
+      "0.55—0.85",
+      "单次",
+      "G",
+      "必须有承托/鱼线方向约束，触须不拖穿水岸。"
+    ],
+    [
+      "`AN_catfish_LandFlop`",
+      "腹侧撑摆",
+      "0.6—0.95",
+      "循环",
+      "G",
+      "背腹与尾形成受限扑动，胸鳍和须不承担不合理的人式支撑。"
+    ],
+    [
+      "`AN_catfish_Settle`",
+      "侧摆收束",
+      "0.45—0.70",
+      "单次",
+      "G",
+      "收至稳定承托姿态，不新增缺氧或死亡计时。"
+    ],
+    [
+      "`AN_catfish_DisplayStill`",
+      "静态渔获展示",
+      "静态姿态",
+      "保持",
+      "P1/G",
+      "保持口须和鳍自然形态，不生成电击或毒刺攻击。"
+    ]
+  ],
+  "source_sha256": "0cdb310cf823fdb5ee0902020bcadd937bd500038960a0fa4e298417ca1d916d"
+}

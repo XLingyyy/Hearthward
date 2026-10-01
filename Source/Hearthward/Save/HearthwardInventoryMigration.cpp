@@ -51,14 +51,18 @@ bool HearthwardSave::MigrateInventory(UHearthwardSaveGame& Pool,FString& Error)
         S.Inventory.Reset();S.Bag.Reset();S.Storage.Reset();S.NPCDurability.Reset();
         if(G)
         {
-            G->SetNumberField(TEXT("experience"),FMath::Min(double(HearthwardProgression::MaximumExperience()),Number(G,TEXT("experience"))));
-            G->SetObjectField(TEXT("skills"),MakeShared<FJsonObject>());G->SetObjectField(TEXT("equipment"),MakeShared<FJsonObject>());G->SetObjectField(TEXT("durability"),MakeShared<FJsonObject>());
+            if(Number(G,TEXT("experience"))>HearthwardProgression::MaximumExperience())
+            {Error=TEXT("旧角色经验超过新版等级上限，请先查看冲突清单并确认处理；原档保留。");return false;}
+            // Compatible learned skills survive upgrades. Unsupported skills are
+            // handled by the explicit compatibility preview, never silently reset.
+            G->SetObjectField(TEXT("equipment"),MakeShared<FJsonObject>());G->SetObjectField(TEXT("durability"),MakeShared<FJsonObject>());
             TArray<TSharedPtr<FJsonValue>> Facts;
             const TArray<TSharedPtr<FJsonValue>>* Claimed;
             if(G->TryGetArrayField(TEXT("claimed"),Claimed))for(const auto& Q:*Claimed)Facts.Add(MakeShared<FJsonValueString>(TEXT("quest:")+Q->AsString()));
             if(G->TryGetArrayField(TEXT("discovered"),Claimed))for(const auto& Q:*Claimed)Facts.Add(MakeShared<FJsonValueString>(TEXT("discover:")+Q->AsString()));
             if(S.PlayerItems.Instances.ContainsByPredicate([](const auto& I){return I.Definition==TEXT("amulet");}))Facts.Add(MakeShared<FJsonValueString>(TEXT("claim:campaign_start_amulet")));
-            G->SetArrayField(TEXT("rewardFacts"),Facts);G->SetArrayField(TEXT("knownRecipes"),{});
+            G->SetArrayField(TEXT("rewardFacts"),Facts);
+            if(!G->HasField(TEXT("knownRecipes")))G->SetArrayField(TEXT("knownRecipes"),{});
             const int32 Level=HearthwardProgression::Level(Number(G,TEXT("experience")));
             const auto Growth=Find(TEXT("levels"),FString::FromInt(Level));
             const auto& Tiers=Catalog()->GetObjectField(TEXT("campEconomy"))->GetArrayField(TEXT("camp_tiers"));

@@ -1,0 +1,140 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "wolf",
+  "name": "狼",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "wolf",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\f16365c7-739d-4dd0-a081-74188b4a2453\\wolf_rigged.fbx",
+  "rig_task_id": "f16365c7-739d-4dd0-a081-74188b4a2453",
+  "source_task_id": "4ca01192-6ab4-4df4-bb58-b1928304cd8b",
+  "rig_type": "quadruped",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\06_狼_动作指导.md",
+  "guidance_sha256": "11525c693461a2bafa084337644fa4f6e6adf68f9089563be203c729a6567b3f",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\wolf",
+  "action_rows": [
+    [
+      "`AN_wolf_Idle`",
+      "站立呼吸",
+      "2.4—3.2",
+      "循环",
+      "P0",
+      "四爪趾行承重，头颈轻观察，尾巴不持续狗式大摆。"
+    ],
+    [
+      "`AN_wolf_Walk`",
+      "巡游步行",
+      "0.8—1.1",
+      "循环",
+      "P0",
+      "落足窄且稳定，覆盖100 cm/s游走。"
+    ],
+    [
+      "`AN_wolf_Trot`",
+      "对角小跑",
+      "0.50—0.70",
+      "循环",
+      "P0",
+      "对角肢配对，背线较平稳，作为走到跑的过渡。"
+    ],
+    [
+      "`AN_wolf_Gallop`",
+      "高速追击",
+      "0.35—0.50",
+      "循环",
+      "P0",
+      "背部收放与后肢推进清晰，覆盖800 cm/s。"
+    ],
+    [
+      "`AN_wolf_Turn_L`<br>`AN_wolf_Turn_R`",
+      "左右转向步",
+      "0.40—0.65",
+      "单次",
+      "P0",
+      "前肩先带动方向，后肢和尾部跟进，避免侧滑。"
+    ],
+    [
+      "`AN_wolf_StartRun`<br>`AN_wolf_Stop`",
+      "起跑与收步",
+      "0.25 / 0.40",
+      "单次",
+      "P0",
+      "首帧可接已有追击位移，停步末帧回站姿。"
+    ],
+    [
+      "`AN_wolf_AlertThreat`",
+      "低头警告",
+      "1.4—2.0",
+      "循环",
+      "P0",
+      "胸肩紧张、头朝目标；有口部控制才做露齿/低吼形态。"
+    ],
+    [
+      "`AN_wolf_BiteShort`",
+      "即时命中后咬击回收短版",
+      "0.35—0.55",
+      "单次",
+      "G",
+      "由既有伤害事件单次触发，播放不再次扣血。"
+    ],
+    [
+      "`AN_wolf_BiteFull`",
+      "探头咬击完整候选",
+      "0.8—1.1",
+      "单次",
+      "G",
+      "保留前摇、接触和回收；未来时序协调后才替换短版。"
+    ],
+    [
+      "`AN_wolf_SniffGround`",
+      "嗅探地面",
+      "1.2—1.8",
+      "单次",
+      "P1",
+      "头先低、颈肩跟随；不创建追踪系统或新的仇恨。"
+    ],
+    [
+      "`AN_wolf_Howl`",
+      "抬头长嚎",
+      "2.0—3.0",
+      "单次",
+      "G",
+      "有可靠下颌/喉部变形及声音授权才启用；不召唤援兵。"
+    ],
+    [
+      "`AN_wolf_LieDown`<br>`AN_wolf_Rest`<br>`AN_wolf_GetUp`",
+      "卧下休息三段",
+      "1.0 / 3.0 / 0.9",
+      "进入/循环/退出",
+      "P1",
+      "爪腿折收自然，威胁到来优先回到运动。"
+    ],
+    [
+      "`AN_wolf_Hit_L`<br>`AN_wolf_Hit_R`",
+      "左右受击",
+      "0.18—0.32",
+      "单次",
+      "P0",
+      "肩腰短促收缩，不能用表现自造无敌时间。"
+    ],
+    [
+      "`AN_wolf_Collapse_L`<br>`AN_wolf_Collapse_R`",
+      "失力侧倒",
+      "0.65—0.95",
+      "单次",
+      "P0",
+      "四肢失去承重后身体侧落，尾巴随后沉下。"
+    ],
+    [
+      "`AN_wolf_CorpseHold_L`<br>`AN_wolf_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "血量为零后固定终态，不出现活体警戒呼吸。"
+    ]
+  ],
+  "source_sha256": "9c4aeb3e8d6c59b94293880b364355c82ad8930ebe1369a98fc0b11ea1638fbc",
+  "original_guidance_sha256": "753bb2e465bd29096ed8fc9d9e0099fc8e878a8a5060f7972e8334628ffae7de",
+  "r2_baseline_guidance_sha256": "ceb5fd5cbd37fa9b1131d4863f252b4819416e7c0b01013b2452981d39965ee2"
+}

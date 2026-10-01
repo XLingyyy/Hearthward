@@ -1,0 +1,2004 @@
+[
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "stag_a",
+    "name": "雄鹿A",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "stag_a",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\9719b0c5-89b2-4754-959e-03e085f78059\\stag_a_rigged.fbx",
+    "rig_task_id": "9719b0c5-89b2-4754-959e-03e085f78059",
+    "source_task_id": "6cda5dcd-6fcb-4588-a12f-820a1393de76",
+    "rig_type": "quadruped",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\01_雄鹿A_动作指导.md",
+    "guidance_sha256": "a1967c666d29c2b560f26e52d77c55b0c8a57347d0f8e7386e658490ba1df11e",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\stag_a",
+    "action_rows": [
+      [
+        "`AN_stag_a_Idle`",
+        "站立呼吸",
+        "3.0—4.0",
+        "循环",
+        "P0",
+        "四蹄承重，胸腹轻呼吸；鹿角和头颈保持稳定。"
+      ],
+      [
+        "`AN_stag_a_LookAround`",
+        "抬头侧看",
+        "1.6—2.4",
+        "单次",
+        "P1",
+        "颈部先转、胸背小幅跟随；有耳骨才做独立听向。"
+      ],
+      [
+        "`AN_stag_a_Walk`",
+        "缓步",
+        "1.0—1.3",
+        "循环",
+        "P0",
+        "逐蹄落地、重心平稳；以当前100 cm/s校准落足。"
+      ],
+      [
+        "`AN_stag_a_Trot`",
+        "轻快小跑",
+        "0.7—0.9",
+        "循环",
+        "P0",
+        "对角肢配合，姿态比奔逃收敛；作为速度混合过渡。"
+      ],
+      [
+        "`AN_stag_a_Gallop`",
+        "惊逃奔跑",
+        "0.45—0.65",
+        "循环",
+        "P0",
+        "后肢推进、伸身与收身交替；对应700 cm/s高速端。"
+      ],
+      [
+        "`AN_stag_a_Turn_L`<br>`AN_stag_a_Turn_R`",
+        "左右小步转向",
+        "0.6—0.9",
+        "单次",
+        "P0",
+        "内侧蹄短步、外侧蹄迈开；根朝向仍由游戏控制。"
+      ],
+      [
+        "`AN_stag_a_StartRun`",
+        "受惊起跑",
+        "0.30—0.45",
+        "单次",
+        "P0",
+        "低重心后肢蹬地，首帧即可接现有逃离位移。"
+      ],
+      [
+        "`AN_stag_a_Stop`",
+        "收步站稳",
+        "0.45—0.65",
+        "单次",
+        "P0",
+        "前蹄减速承重，颈部避免过度甩动。"
+      ],
+      [
+        "`AN_stag_a_Alert`",
+        "抬颈警觉",
+        "1.6—2.4",
+        "循环",
+        "P0",
+        "站姿紧张、视线朝威胁，不能阻塞已确认逃离。"
+      ],
+      [
+        "`AN_stag_a_Graze_In`<br>`AN_stag_a_Graze_Loop`<br>`AN_stag_a_Graze_Out`",
+        "低头采食三段",
+        "0.7 / 2.2 / 0.6",
+        "进入/循环/退出",
+        "P1",
+        "前蹄不滑，嘴靠近植物但不穿地；不消耗场景草资源。"
+      ],
+      [
+        "`AN_stag_a_LieDown`<br>`AN_stag_a_Rest`<br>`AN_stag_a_GetUp`",
+        "卧下休息三段",
+        "1.3 / 3.5 / 1.2",
+        "进入/循环/退出",
+        "P1",
+        "腿部折收与胸腹承重清晰，退出回标准站姿。"
+      ],
+      [
+        "`AN_stag_a_Hit_L`<br>`AN_stag_a_Hit_R`",
+        "左右受击",
+        "0.25—0.4",
+        "单次",
+        "P0",
+        "局部躯干收缩，不做动画根击退，随后服从逃离或死亡。"
+      ],
+      [
+        "`AN_stag_a_Collapse_L`<br>`AN_stag_a_Collapse_R`",
+        "左右倒地",
+        "0.9—1.3",
+        "单次",
+        "P0",
+        "前后腿先失力、躯干沉下再侧倒；鹿角落点避开穿地。"
+      ],
+      [
+        "`AN_stag_a_CorpseHold_L`<br>`AN_stag_a_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "承接对应倒地末帧，血量为零后不呼吸、不站起。"
+      ]
+    ],
+    "source_sha256": "71c686ec245022bcfecd2b4d7b2ff231d941caacbf52d1bb7c5d7e6941f99d10",
+    "original_guidance_sha256": "9eb78a5da64d09197d75340a1bdc0185cc8422ed81277af7cc97e60202452737",
+    "r2_baseline_guidance_sha256": "e2cf6e53e1a24ec713bbc180a2479b917ff2bb5caeff2a2968b7db6b8f28f273"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "hare",
+    "name": "野兔",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "hare",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\f5903e26-3215-4370-a17b-730a1dc0fbe4\\hare_rigged.fbx",
+    "rig_task_id": "f5903e26-3215-4370-a17b-730a1dc0fbe4",
+    "source_task_id": "588471a5-d278-414e-bd5b-de3209def6d4",
+    "rig_type": "quadruped",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\02_野兔_动作指导.md",
+    "guidance_sha256": "22948dc3370574939ce02aa2d7b5ec67b1e09691273040b8eb9fb700193e189e",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare",
+    "action_rows": [
+      [
+        "`AN_hare_IdleCrouch`",
+        "低伏呼吸",
+        "2.0—3.0",
+        "循环",
+        "P0",
+        "后腿收在身体下，前足轻撑，保留野兔的长腿比例。"
+      ],
+      [
+        "`AN_hare_Scan`",
+        "停步听察",
+        "1.1—1.8",
+        "单次",
+        "P1",
+        "头先抬起，耳部只在骨骼支持时独立转动。"
+      ],
+      [
+        "`AN_hare_HopSlow`",
+        "低速短跳",
+        "0.8—1.0",
+        "循环",
+        "P0",
+        "小幅后肢推进、前肢承接，服务100 cm/s游走。"
+      ],
+      [
+        "`AN_hare_BoundFast`",
+        "高速奔跃",
+        "0.35—0.50",
+        "循环",
+        "P0",
+        "前肢接地回收与后肢蹬伸有清楚相位，服务600 cm/s。"
+      ],
+      [
+        "`AN_hare_TurnHop_L`<br>`AN_hare_TurnHop_R`",
+        "左右调整跳",
+        "0.35—0.55",
+        "单次",
+        "P0",
+        "身体弯向转弯内侧；不让世界根额外跃移或穿障。"
+      ],
+      [
+        "`AN_hare_StartBound`",
+        "收身蹬出",
+        "0.20—0.32",
+        "单次",
+        "P0",
+        "警觉后立即接奔跃，已有逃离位移不等动画播完。"
+      ],
+      [
+        "`AN_hare_StopCrouch`",
+        "落足收身",
+        "0.30—0.48",
+        "单次",
+        "P0",
+        "前足吸收动作、后足回收，结束回低伏。"
+      ],
+      [
+        "`AN_hare_Alert`",
+        "紧张定向",
+        "1.3—1.9",
+        "循环",
+        "P0",
+        "前足不反复跳动，避免警觉循环变成无目的蹦跳。"
+      ],
+      [
+        "`AN_hare_Nibble_In`<br>`AN_hare_Nibble_Loop`<br>`AN_hare_Nibble_Out`",
+        "低头啃食",
+        "0.35 / 1.8 / 0.35",
+        "进入/循环/退出",
+        "P1",
+        "小幅口鼻/头部动作，不能强拉没有独立骨的下颌。"
+      ],
+      [
+        "`AN_hare_Groom`",
+        "舔拭与梳理",
+        "1.4—2.1",
+        "单次",
+        "P1",
+        "一侧前足与口鼻接近；只在可变形范围内执行。"
+      ],
+      [
+        "`AN_hare_Rest`",
+        "低伏休息",
+        "2.5—3.5",
+        "循环",
+        "P1",
+        "可由低伏Idle平滑进入，警觉即退出，不新建冬眠玩法。"
+      ],
+      [
+        "`AN_hare_Hit_L`<br>`AN_hare_Hit_R`",
+        "侧向受击",
+        "0.18—0.30",
+        "单次",
+        "P0",
+        "短促缩身；不加入空中旋转或连续翻滚。"
+      ],
+      [
+        "`AN_hare_Collapse_L`<br>`AN_hare_Collapse_R`",
+        "失力侧倒",
+        "0.45—0.75",
+        "单次",
+        "P0",
+        "后肢停止推进，身体沿可接地侧沉下，避免压扁耳朵。"
+      ],
+      [
+        "`AN_hare_CorpseHold_L`<br>`AN_hare_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "保留对应侧倒姿态；不把等效死亡演成暂时昏睡。"
+      ]
+    ],
+    "source_sha256": "bc49e30f0bba702c79e92324ca711226f208e564d1c1262ede68ecf20c38661c",
+    "original_guidance_sha256": "f20d6d012f36563174136972492853fae888dcca31bc0bbefa95ccf155777cc1",
+    "r2_baseline_guidance_sha256": "130c0e0b595b90cdeccb0811ab58d199691d3cb4eb68685afc464b9feb9344e1"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "goat",
+    "name": "山羊",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "goat",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\496dc3de-1fa5-4773-b0b9-a68b301f3a31\\goat_rigged.fbx",
+    "rig_task_id": "496dc3de-1fa5-4773-b0b9-a68b301f3a31",
+    "source_task_id": "d005ba13-ec3b-4bc8-8bd4-dcc4a3c6e639",
+    "rig_type": "quadruped",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\03_山羊_动作指导.md",
+    "guidance_sha256": "3fcddab7b6c0f00725133164733af2b184c828c8266581bbef50f678be202a2f",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\goat",
+    "action_rows": [
+      [
+        "`AN_goat_Idle`",
+        "安静站立",
+        "2.5—3.5",
+        "循环",
+        "P0",
+        "四蹄站稳，胸腹小幅起伏，胡须不穿胸。"
+      ],
+      [
+        "`AN_goat_BrowseLook`",
+        "探看枝叶",
+        "1.0—1.7",
+        "单次",
+        "P1",
+        "头颈轻探，角整体刚性；不假设有可操作枝叶资源。"
+      ],
+      [
+        "`AN_goat_Walk`",
+        "短步行走",
+        "0.9—1.2",
+        "循环",
+        "P0",
+        "分趾蹄接触稳定，用100 cm/s校准。"
+      ],
+      [
+        "`AN_goat_TrotFollow`",
+        "牵引小跑",
+        "0.55—0.75",
+        "循环",
+        "P0",
+        "对角肢平稳交换，覆盖300 cm/s牵引跟随。"
+      ],
+      [
+        "`AN_goat_RunFlee`",
+        "逃离快跑",
+        "0.45—0.65",
+        "循环",
+        "P0",
+        "覆盖400 cm/s，保持山羊轻巧、收敛的身体摆动。"
+      ],
+      [
+        "`AN_goat_Turn_L`<br>`AN_goat_Turn_R`",
+        "左右绕步",
+        "0.45—0.75",
+        "单次",
+        "P0",
+        "每侧有明确支撑蹄，不用原地旋转模型替代转步。"
+      ],
+      [
+        "`AN_goat_Start`<br>`AN_goat_Stop`",
+        "起步与收步",
+        "0.30 / 0.45",
+        "单次",
+        "P0",
+        "牵引者移动即起步，到栏位即收步，不影响入栏结算。"
+      ],
+      [
+        "`AN_goat_Alert`",
+        "未捕获警觉",
+        "1.3—2.0",
+        "循环",
+        "P0",
+        "抬头定向；已捕获温顺状态不无故反复惊跳。"
+      ],
+      [
+        "`AN_goat_CapturedIdle`",
+        "捕获后等待",
+        "2.5—3.5",
+        "循环",
+        "P0",
+        "等待牵引与栏内静止时使用，四蹄仍须落地。"
+      ],
+      [
+        "`AN_goat_Graze_In`<br>`AN_goat_Graze_Loop`<br>`AN_goat_Graze_Out`",
+        "低头进食三段",
+        "0.55 / 2.3 / 0.55",
+        "进入/循环/退出",
+        "P1",
+        "四蹄稳定，小幅咀嚼只在权重允许时出现。"
+      ],
+      [
+        "`AN_goat_Chew`",
+        "站姿反刍",
+        "2.5—3.5",
+        "循环",
+        "P1",
+        "口鼻微动，躯干不跟着下颌大幅摆动。"
+      ],
+      [
+        "`AN_goat_LieDown`<br>`AN_goat_Rest`<br>`AN_goat_GetUp`",
+        "卧下休息三段",
+        "1.0 / 3.0 / 0.95",
+        "进入/循环/退出",
+        "P1",
+        "腿部顺序折收，头角不压进地面。"
+      ],
+      [
+        "`AN_goat_CareStand`",
+        "照料时安静站立",
+        "2.0—3.0",
+        "循环",
+        "G",
+        "仅在已确认照料/收取事件期间表达安静，不展示未核实的挤奶。"
+      ],
+      [
+        "`AN_goat_SlopeStep`",
+        "低矮坡面抬蹄",
+        "0.8—1.1",
+        "单次",
+        "G",
+        "需要可行走坡面与落足修正，不授予攀崖或跳障能力。"
+      ],
+      [
+        "`AN_goat_Hit_L`<br>`AN_goat_Hit_R`",
+        "左右受击",
+        "0.22—0.38",
+        "单次",
+        "P0",
+        "中断牵引表现但状态以权威逻辑为准。"
+      ],
+      [
+        "`AN_goat_Collapse_L`<br>`AN_goat_Collapse_R`",
+        "左右倒地",
+        "0.7—1.0",
+        "单次",
+        "P0",
+        "蹄先松力、侧腹接地，角不穿地。"
+      ],
+      [
+        "`AN_goat_CorpseHold_L`<br>`AN_goat_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "屠宰/死亡后静止，不播放重新起身。"
+      ]
+    ],
+    "source_sha256": "1f0ae5b499b3a6cb2e5937deb64f38933962ab1ec55292ed521db8754a7673f0",
+    "original_guidance_sha256": "4002ee20feb2a44598c6e3919e0f224b32a5b0e823cc64509ed836a5d10abb0a",
+    "r2_baseline_guidance_sha256": "c5353e16a12221f3f463fa340e2b18350409d28c208debbbb70c2385f067be17"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "pheasant",
+    "name": "雉鸡",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "pheasant",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\34208956-0641-428d-9406-7c2b67c3fa9c\\pheasant_rigged.fbx",
+    "rig_task_id": "34208956-0641-428d-9406-7c2b67c3fa9c",
+    "source_task_id": "59a5036b-7578-46b1-8716-558e6df2b8f6",
+    "rig_type": "avian",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\04_雉鸡_动作指导.md",
+    "guidance_sha256": "4e7c5f097f89ce5ff3809d663b2d9ef42bb3c9c33f8bf0454ac6103d389da9c7",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pheasant",
+    "action_rows": [
+      [
+        "`AN_pheasant_Idle`",
+        "站立观察",
+        "2.0—3.0",
+        "循环",
+        "P0",
+        "颈部小幅观察、双足承重，长尾轻微平衡。"
+      ],
+      [
+        "`AN_pheasant_Walk`",
+        "地面缓走",
+        "0.6—0.85",
+        "循环",
+        "P0",
+        "左右足交替接地，头部保持视线相对稳定。"
+      ],
+      [
+        "`AN_pheasant_RunGround`",
+        "地面逃跑",
+        "0.30—0.45",
+        "循环",
+        "P0",
+        "双足快速换步，长尾保持后伸，覆盖500 cm/s。"
+      ],
+      [
+        "`AN_pheasant_FlutterRun`",
+        "贴地扑翼跑",
+        "0.30—0.45",
+        "循环",
+        "P0",
+        "与RunGround保持同一落足相位；翅膀能展开才启用。"
+      ],
+      [
+        "`AN_pheasant_Turn_L`<br>`AN_pheasant_Turn_R`",
+        "左右碎步转向",
+        "0.35—0.60",
+        "单次",
+        "P0",
+        "转身不让两脚持续粘地，也不让长尾扫穿障碍。"
+      ],
+      [
+        "`AN_pheasant_StartRun`<br>`AN_pheasant_Stop`",
+        "起跑与收步",
+        "0.20 / 0.35",
+        "单次",
+        "P0",
+        "与站姿及跑姿连续，当前位移不等待翅膀动作。"
+      ],
+      [
+        "`AN_pheasant_Alert`",
+        "抬头警觉",
+        "1.2—1.8",
+        "循环",
+        "P0",
+        "胸背轻收紧，不能用雄性求偶动作代替警觉。"
+      ],
+      [
+        "`AN_pheasant_Peck`",
+        "低头啄食",
+        "0.8—1.3",
+        "单次",
+        "P1",
+        "头颈下探后回收，喙不穿地，不创建物品。"
+      ],
+      [
+        "`AN_pheasant_Scratch`",
+        "刨地找食",
+        "1.2—1.8",
+        "单次",
+        "P1",
+        "一足支撑另一足刨地，然后切回站姿。"
+      ],
+      [
+        "`AN_pheasant_Preen`",
+        "理羽",
+        "1.5—2.2",
+        "单次",
+        "P1",
+        "头转向翼侧，限制嘴喙穿入身体和尾羽。"
+      ],
+      [
+        "`AN_pheasant_Shake`",
+        "收翅抖羽",
+        "0.6—1.0",
+        "单次",
+        "P1",
+        "胸背短促抖动，羽片不能被权重拉成长条。"
+      ],
+      [
+        "`AN_pheasant_DustBath`",
+        "尘浴",
+        "2.0—3.0",
+        "单次",
+        "G",
+        "只在空旷合适地面启用，退出需回站立并可受警戒中断。"
+      ],
+      [
+        "`AN_pheasant_Takeoff`<br>`AN_pheasant_FlightShort`<br>`AN_pheasant_Land`",
+        "短飞三段",
+        "0.35 / 0.6—1.0 / 0.45",
+        "进入/循环/退出",
+        "G",
+        "须先有真实离地、碰撞及落地事件；当前地面跑包不启用。"
+      ],
+      [
+        "`AN_pheasant_Hit_L`<br>`AN_pheasant_Hit_R`",
+        "左右受击",
+        "0.18—0.28",
+        "单次",
+        "P0",
+        "短促侧收，翅不无故大展开遮住玩家。"
+      ],
+      [
+        "`AN_pheasant_Collapse_L`<br>`AN_pheasant_Collapse_R`",
+        "折翼侧倒",
+        "0.45—0.70",
+        "单次",
+        "P0",
+        "足失力、翼收回，尾羽平顺落地。"
+      ],
+      [
+        "`AN_pheasant_CorpseHold_L`<br>`AN_pheasant_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "最终姿态禁止继续扇翅或反复换边。"
+      ]
+    ],
+    "source_sha256": "b53fbbf6121fa529c858340e2dda9dc3f291ee3b91b02d3dbb8bf91b54b21d2c",
+    "original_guidance_sha256": "89d1a7173b26d4f96b2bde24ad1f43e82c2e534a7395fd79d83d27f374f297c8"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "pig",
+    "name": "猪",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "pig",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\b52f3438-f5a5-4442-9f72-3ab9dbcbfa2b\\pig_rigged.fbx",
+    "rig_task_id": "b52f3438-f5a5-4442-9f72-3ab9dbcbfa2b",
+    "source_task_id": "0059d8b0-37bf-4db1-9336-41c0debd81e0",
+    "rig_type": "quadruped",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\05_猪_家猪与野猪_动作指导.md",
+    "guidance_sha256": "54f928aff4ea15b1b630607566e2c857a80803a9ff8d08e31ab483b33946d942",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig",
+    "action_rows": [
+      [
+        "`AN_pig_IdleDomestic`",
+        "家猪安静站立",
+        "3.0—4.0",
+        "循环",
+        "P0",
+        "重腹稳定、低头轻嗅；只用于domestic.pig。"
+      ],
+      [
+        "`AN_pig_IdleWild`",
+        "野猪警戒待机",
+        "2.0—3.0",
+        "循环",
+        "P0",
+        "颈部收紧、头低位定向；仍为同一家猪临时外形。"
+      ],
+      [
+        "`AN_pig_Walk`",
+        "稳步行走",
+        "1.0—1.3",
+        "循环",
+        "P0",
+        "短腿四拍落足，腹部不左右甩成气球。"
+      ],
+      [
+        "`AN_pig_TrotFollow`",
+        "家猪跟随小跑",
+        "0.6—0.85",
+        "循环",
+        "P0",
+        "覆盖300 cm/s，避免为了赶路把体型拉成长腿。"
+      ],
+      [
+        "`AN_pig_RunDomestic`",
+        "家猪逃离",
+        "0.50—0.70",
+        "循环",
+        "P0",
+        "覆盖400 cm/s，起伏较野猪追击收敛。"
+      ],
+      [
+        "`AN_pig_RunWild`",
+        "野猪追近",
+        "0.40—0.60",
+        "循环",
+        "P0",
+        "覆盖700 cm/s，只由boar现有反击状态启用。"
+      ],
+      [
+        "`AN_pig_Turn_L`<br>`AN_pig_Turn_R`",
+        "左右撑步转向",
+        "0.65—0.95",
+        "单次",
+        "P0",
+        "腹部外侧留空间，小半径不做高速横移。"
+      ],
+      [
+        "`AN_pig_Start`<br>`AN_pig_Stop`",
+        "起步与前蹄撑停",
+        "0.35 / 0.55",
+        "单次",
+        "P0",
+        "前肢承重、肩颈回收，位移归游戏逻辑。"
+      ],
+      [
+        "`AN_pig_AlertWild`",
+        "低头警告",
+        "1.4—2.0",
+        "循环",
+        "P0",
+        "只表达现有警戒；不新增怒气、獠牙或冲锋增伤。"
+      ],
+      [
+        "`AN_pig_SnoutStrikeShort`",
+        "即时命中后吻部回收短版",
+        "0.45—0.65",
+        "单次",
+        "G",
+        "匹配现有即时伤害事件，不能假装有已生效的前摇。"
+      ],
+      [
+        "`AN_pig_SnoutStrikeFull`",
+        "短促顶撞完整候选",
+        "0.8—1.1",
+        "单次",
+        "G",
+        "前摇—接触—回收，需先确定统一攻击事件，周期不超过1.4 s。"
+      ],
+      [
+        "`AN_pig_RootSniff`",
+        "嗅地与拱探",
+        "1.5—2.2",
+        "单次",
+        "P1",
+        "吻部轻探，前蹄支撑；不把根骨推进地里或生成采集收益。"
+      ],
+      [
+        "`AN_pig_Eat_In`<br>`AN_pig_Eat_Loop`<br>`AN_pig_Eat_Out`",
+        "低头进食三段",
+        "0.65 / 2.6 / 0.65",
+        "进入/循环/退出",
+        "P1",
+        "重腹保持体积，不由循环次数扣饲料。"
+      ],
+      [
+        "`AN_pig_LieDown`<br>`AN_pig_Rest`<br>`AN_pig_GetUp`",
+        "躺卧休息三段",
+        "1.2 / 3.5 / 1.1",
+        "进入/循环/退出",
+        "P1",
+        "侧腹缓落、四腿收回，退出时先建立前蹄支撑。"
+      ],
+      [
+        "`AN_pig_CapturedIdle`",
+        "捕获后等待",
+        "2.5—3.5",
+        "循环",
+        "P0",
+        "仅家猪，适配暂时等待及栏内静止。"
+      ],
+      [
+        "`AN_pig_Hit_L`<br>`AN_pig_Hit_R`",
+        "左右受击",
+        "0.25—0.40",
+        "单次",
+        "P0",
+        "家猪服从逃离/牵引取消，野猪服从既有反击状态。"
+      ],
+      [
+        "`AN_pig_Collapse_L`<br>`AN_pig_Collapse_R`",
+        "左右倒地",
+        "0.85—1.15",
+        "单次",
+        "P0",
+        "体重逐步压向侧腹，腿蹄不穿地。"
+      ],
+      [
+        "`AN_pig_CorpseHold_L`<br>`AN_pig_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "家猪屠宰和野猪死亡都不额外生成第二次掉落。"
+      ]
+    ],
+    "source_sha256": "b294ec7439340e18998f9e8d34808ac8ec872c90940730b59a6eb3b089091555",
+    "original_guidance_sha256": "6fa76142374eca6bfa79d23400298f9f0597476f4699b39cde9722244fb4dc53",
+    "r2_baseline_guidance_sha256": "19817bce436d45ad26ce4c3fdf1a92dc2d65f8956e8e624d410f85efa285b9c0"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "wolf",
+    "name": "狼",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "wolf",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\f16365c7-739d-4dd0-a081-74188b4a2453\\wolf_rigged.fbx",
+    "rig_task_id": "f16365c7-739d-4dd0-a081-74188b4a2453",
+    "source_task_id": "4ca01192-6ab4-4df4-bb58-b1928304cd8b",
+    "rig_type": "quadruped",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\06_狼_动作指导.md",
+    "guidance_sha256": "11525c693461a2bafa084337644fa4f6e6adf68f9089563be203c729a6567b3f",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\wolf",
+    "action_rows": [
+      [
+        "`AN_wolf_Idle`",
+        "站立呼吸",
+        "2.4—3.2",
+        "循环",
+        "P0",
+        "四爪趾行承重，头颈轻观察，尾巴不持续狗式大摆。"
+      ],
+      [
+        "`AN_wolf_Walk`",
+        "巡游步行",
+        "0.8—1.1",
+        "循环",
+        "P0",
+        "落足窄且稳定，覆盖100 cm/s游走。"
+      ],
+      [
+        "`AN_wolf_Trot`",
+        "对角小跑",
+        "0.50—0.70",
+        "循环",
+        "P0",
+        "对角肢配对，背线较平稳，作为走到跑的过渡。"
+      ],
+      [
+        "`AN_wolf_Gallop`",
+        "高速追击",
+        "0.35—0.50",
+        "循环",
+        "P0",
+        "背部收放与后肢推进清晰，覆盖800 cm/s。"
+      ],
+      [
+        "`AN_wolf_Turn_L`<br>`AN_wolf_Turn_R`",
+        "左右转向步",
+        "0.40—0.65",
+        "单次",
+        "P0",
+        "前肩先带动方向，后肢和尾部跟进，避免侧滑。"
+      ],
+      [
+        "`AN_wolf_StartRun`<br>`AN_wolf_Stop`",
+        "起跑与收步",
+        "0.25 / 0.40",
+        "单次",
+        "P0",
+        "首帧可接已有追击位移，停步末帧回站姿。"
+      ],
+      [
+        "`AN_wolf_AlertThreat`",
+        "低头警告",
+        "1.4—2.0",
+        "循环",
+        "P0",
+        "胸肩紧张、头朝目标；有口部控制才做露齿/低吼形态。"
+      ],
+      [
+        "`AN_wolf_BiteShort`",
+        "即时命中后咬击回收短版",
+        "0.35—0.55",
+        "单次",
+        "G",
+        "由既有伤害事件单次触发，播放不再次扣血。"
+      ],
+      [
+        "`AN_wolf_BiteFull`",
+        "探头咬击完整候选",
+        "0.8—1.1",
+        "单次",
+        "G",
+        "保留前摇、接触和回收；未来时序协调后才替换短版。"
+      ],
+      [
+        "`AN_wolf_SniffGround`",
+        "嗅探地面",
+        "1.2—1.8",
+        "单次",
+        "P1",
+        "头先低、颈肩跟随；不创建追踪系统或新的仇恨。"
+      ],
+      [
+        "`AN_wolf_Howl`",
+        "抬头长嚎",
+        "2.0—3.0",
+        "单次",
+        "G",
+        "有可靠下颌/喉部变形及声音授权才启用；不召唤援兵。"
+      ],
+      [
+        "`AN_wolf_LieDown`<br>`AN_wolf_Rest`<br>`AN_wolf_GetUp`",
+        "卧下休息三段",
+        "1.0 / 3.0 / 0.9",
+        "进入/循环/退出",
+        "P1",
+        "爪腿折收自然，威胁到来优先回到运动。"
+      ],
+      [
+        "`AN_wolf_Hit_L`<br>`AN_wolf_Hit_R`",
+        "左右受击",
+        "0.18—0.32",
+        "单次",
+        "P0",
+        "肩腰短促收缩，不能用表现自造无敌时间。"
+      ],
+      [
+        "`AN_wolf_Collapse_L`<br>`AN_wolf_Collapse_R`",
+        "失力侧倒",
+        "0.65—0.95",
+        "单次",
+        "P0",
+        "四肢失去承重后身体侧落，尾巴随后沉下。"
+      ],
+      [
+        "`AN_wolf_CorpseHold_L`<br>`AN_wolf_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "血量为零后固定终态，不出现活体警戒呼吸。"
+      ]
+    ],
+    "source_sha256": "9c4aeb3e8d6c59b94293880b364355c82ad8930ebe1369a98fc0b11ea1638fbc",
+    "original_guidance_sha256": "753bb2e465bd29096ed8fc9d9e0099fc8e878a8a5060f7972e8334628ffae7de",
+    "r2_baseline_guidance_sha256": "ceb5fd5cbd37fa9b1131d4863f252b4819416e7c0b01013b2452981d39965ee2"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "black_bear",
+    "name": "黑熊",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "black_bear",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\7cad7852-6c8a-4cce-b7c8-d376901dd007\\black_bear_rigged.fbx",
+    "rig_task_id": "7cad7852-6c8a-4cce-b7c8-d376901dd007",
+    "source_task_id": "7f5206d7-7c0a-41da-a755-7250f789f84b",
+    "rig_type": "quadruped",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\07_黑熊_动作指导.md",
+    "guidance_sha256": "db975e25a76c3cbdf87b6ba86620a30212e5c8d1cd36e3e09fbacefe45cc6ee1",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear",
+    "action_rows": [
+      [
+        "`AN_black_bear_Idle`",
+        "重体站立呼吸",
+        "3.0—4.5",
+        "循环",
+        "P0",
+        "宽掌承重，胸肩和腹部微动，体积不压塌。"
+      ],
+      [
+        "`AN_black_bear_WalkHeavy`",
+        "跖行慢步",
+        "1.1—1.5",
+        "循环",
+        "P0",
+        "整掌接地与离地清晰，匹配100 cm/s。"
+      ],
+      [
+        "`AN_black_bear_Lope`",
+        "重体快跑",
+        "0.50—0.75",
+        "循环",
+        "P0",
+        "肩部推移和后肢推进均有重量，覆盖600 cm/s。"
+      ],
+      [
+        "`AN_black_bear_Turn_L`<br>`AN_black_bear_Turn_R`",
+        "左右宽步转向",
+        "0.75—1.1",
+        "单次",
+        "P0",
+        "前掌腾出空间、后足跟进，避免重体原地高速旋转。"
+      ],
+      [
+        "`AN_black_bear_StartRun`<br>`AN_black_bear_StopBrace`",
+        "起跑与撑停",
+        "0.40 / 0.65",
+        "单次",
+        "P0",
+        "前掌缓冲减速，头颈有短促但受限的惯性。"
+      ],
+      [
+        "`AN_black_bear_AlertHuff`",
+        "低头警戒",
+        "1.7—2.5",
+        "循环",
+        "P0",
+        "肩背收紧而不自动扑人，仍服从retaliate规则。"
+      ],
+      [
+        "`AN_black_bear_SwipeShort_L`<br>`AN_black_bear_SwipeShort_R`",
+        "即时命中后拍击回收",
+        "0.35—0.55",
+        "单次",
+        "G",
+        "单爪局部击打后回收，只表现一个已有伤害事件。"
+      ],
+      [
+        "`AN_black_bear_SwipeFull_L`<br>`AN_black_bear_SwipeFull_R`",
+        "完整短拍击候选",
+        "0.65—0.85",
+        "单次",
+        "G",
+        "0.2 s左右蓄力、短接触、余段回收；不能超出现有1.0 s攻击周期。"
+      ],
+      [
+        "`AN_black_bear_SniffForage`",
+        "低头嗅食",
+        "1.5—2.4",
+        "单次",
+        "P1",
+        "保持头胸重量，鼻部不扎入土层。"
+      ],
+      [
+        "`AN_black_bear_DigVisual`",
+        "前掌刨探",
+        "1.6—2.4",
+        "单次",
+        "G",
+        "需确认脚下空间，不改变资源库存或挖出新道具。"
+      ],
+      [
+        "`AN_black_bear_RearSniff_In`<br>`AN_black_bear_RearSniff_Hold`<br>`AN_black_bear_RearSniff_Out`",
+        "原地站起嗅探",
+        "0.9 / 1.2 / 0.8",
+        "进入/循环/退出",
+        "G",
+        "只作短时姿态，核实腰脊权重与后掌支撑；不启用双足移动。"
+      ],
+      [
+        "`AN_black_bear_LieDown`<br>`AN_black_bear_Rest`<br>`AN_black_bear_GetUp`",
+        "躺卧休息三段",
+        "1.5 / 4.0 / 1.35",
+        "进入/循环/退出",
+        "P1",
+        "先屈腿缓降再卧下，不能直接扁平贴地。"
+      ],
+      [
+        "`AN_black_bear_Hit_L`<br>`AN_black_bear_Hit_R`",
+        "重体受击",
+        "0.25—0.45",
+        "单次",
+        "P0",
+        "局部肩背收缩，保持重量，不每次飞退。"
+      ],
+      [
+        "`AN_black_bear_Collapse_L`<br>`AN_black_bear_Collapse_R`",
+        "沉重侧倒",
+        "1.0—1.4",
+        "单次",
+        "P0",
+        "前掌失力、体重逐步沉向侧腹，长爪朝向稳定。"
+      ],
+      [
+        "`AN_black_bear_CorpseHold_L`<br>`AN_black_bear_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "全身停止活体循环，拾取后不再次播放倒地。"
+      ]
+    ],
+    "source_sha256": "a099d2aad71f036926d07eeb0ac5c9612b859ecc1d3ab27147ca4b4eb6b140eb",
+    "original_guidance_sha256": "9696fbbbe3a9f6f466847208127d310e6196492a3a3c2b14fc2070b4432c3318",
+    "r2_baseline_guidance_sha256": "d8a3503b15bcf45d78369392340e4c7d29a9eceb80b1d9b9f6e01a77daeffb57"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "ram",
+    "name": "公羊",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "ram",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\898640cb-65dd-43ea-8658-3ce51bb79acf\\ram_rigged.fbx",
+    "rig_task_id": "898640cb-65dd-43ea-8658-3ce51bb79acf",
+    "source_task_id": "8334bd78-63dd-4981-917c-e2430e97a48d",
+    "rig_type": "quadruped",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\08_公羊_野羊_动作指导.md",
+    "guidance_sha256": "3ac13ec6f977ed07e7db200ceb68f6a396a691469d62bc06a20a71056325245a",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\ram",
+    "action_rows": [
+      [
+        "`AN_ram_Idle`",
+        "稳立呼吸",
+        "2.8—3.8",
+        "循环",
+        "P0",
+        "四蹄稳定、粗颈承托卷角，头部不漂浮。"
+      ],
+      [
+        "`AN_ram_Walk`",
+        "稳健蹄行",
+        "0.95—1.25",
+        "循环",
+        "P0",
+        "四蹄逐次落地，胸背保持公羊的厚实体积。"
+      ],
+      [
+        "`AN_ram_Trot`",
+        "短促小跑",
+        "0.60—0.80",
+        "循环",
+        "P0",
+        "对角肢配合，用于100到600 cm/s的视觉过渡。"
+      ],
+      [
+        "`AN_ram_RunClose`",
+        "反击追近",
+        "0.45—0.65",
+        "循环",
+        "P0",
+        "覆盖600 cm/s；头仍能定向，不全程埋头冲撞。"
+      ],
+      [
+        "`AN_ram_Turn_L`<br>`AN_ram_Turn_R`",
+        "左右绕步",
+        "0.55—0.85",
+        "单次",
+        "P0",
+        "粗颈和角的摆动有受限惯性，内侧蹄小步支撑。"
+      ],
+      [
+        "`AN_ram_Start`<br>`AN_ram_Stop`",
+        "起步与蹄部撑停",
+        "0.30 / 0.50",
+        "单次",
+        "P0",
+        "停止时恢复抬头站姿，不能持续压头硬滑。"
+      ],
+      [
+        "`AN_ram_AlertHeadLow`",
+        "低头警告",
+        "1.4—2.0",
+        "循环",
+        "P0",
+        "只响应现有警戒/反击意图，不自造发情仇恨。"
+      ],
+      [
+        "`AN_ram_RamShort`",
+        "即时命中后头撞回收",
+        "0.4—0.6",
+        "单次",
+        "G",
+        "接已有伤害事件，不由角部触碰重复结算。"
+      ],
+      [
+        "`AN_ram_RamFull`",
+        "短距离头撞完整候选",
+        "0.85—1.15",
+        "单次",
+        "G",
+        "压头预备、短促接触、颈部回收；需未来攻击时序适配。"
+      ],
+      [
+        "`AN_ram_Graze_In`<br>`AN_ram_Graze_Loop`<br>`AN_ram_Graze_Out`",
+        "低头采食三段",
+        "0.65 / 2.5 / 0.65",
+        "进入/循环/退出",
+        "P1",
+        "角和嘴部不插进地面，保持前蹄接地。"
+      ],
+      [
+        "`AN_ram_Chew`",
+        "站姿反刍",
+        "2.0—3.0",
+        "循环",
+        "P1",
+        "口鼻轻微变化，不能把角当下颌骨带动。"
+      ],
+      [
+        "`AN_ram_SlopeStep`",
+        "坡面稳步",
+        "0.9—1.2",
+        "单次",
+        "G",
+        "只在批准可行走坡面上适配落足，不能攀上无导航悬崖。"
+      ],
+      [
+        "`AN_ram_LieDown`<br>`AN_ram_Rest`<br>`AN_ram_GetUp`",
+        "卧下休息三段",
+        "1.2 / 3.5 / 1.1",
+        "进入/循环/退出",
+        "P1",
+        "角与头颈避地，起身先有前蹄支撑。"
+      ],
+      [
+        "`AN_ram_Hit_L`<br>`AN_ram_Hit_R`",
+        "左右受击",
+        "0.23—0.38",
+        "单次",
+        "P0",
+        "短促收颈，不以动画改变反击触发规则。"
+      ],
+      [
+        "`AN_ram_Collapse_L`<br>`AN_ram_Collapse_R`",
+        "左右倒地",
+        "0.8—1.15",
+        "单次",
+        "P0",
+        "身体失力而非角先砸地；两侧分别验收。"
+      ],
+      [
+        "`AN_ram_CorpseHold_L`<br>`AN_ram_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "承接对应侧倒，等效死亡后不进入Rest呼吸。"
+      ]
+    ],
+    "source_sha256": "cb9183718a1cd6ee84f387a76d2abf2aed9c34d84786704336ccd92ea267bdda",
+    "original_guidance_sha256": "47a4e5f638540d0d60fce51b7463023296fc54e9f52a9a6e32ed8712a830b7b6",
+    "r2_baseline_guidance_sha256": "09c368ef2e5a67b4a8080aa3371f4e92b552249b9e6bba45f1c171eef7e9e58e"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "hen",
+    "name": "母鸡",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "hen",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\26fa1cc2-4548-4062-ad40-c4fd8ba30863\\hen_rigged.fbx",
+    "rig_task_id": "26fa1cc2-4548-4062-ad40-c4fd8ba30863",
+    "source_task_id": "bcc1c840-fd3e-4e0a-b429-d3b9e27ee67e",
+    "rig_type": "avian",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\09_母鸡_家鸡_动作指导.md",
+    "guidance_sha256": "c3da8656f24b9d30ea14993e9160627cc090d41ad3076aee602111c7e665c56b",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hen",
+    "action_rows": [
+      [
+        "`AN_hen_Idle`",
+        "站立观察",
+        "2.0—3.0",
+        "循环",
+        "P0",
+        "小幅抬头与呼吸，双脚稳定，尾羽收敛。"
+      ],
+      [
+        "`AN_hen_Walk`",
+        "觅食碎步",
+        "0.55—0.80",
+        "循环",
+        "P0",
+        "双足交替，头部有稳定段与短促前伸段。"
+      ],
+      [
+        "`AN_hen_FollowRun`",
+        "牵引快跑",
+        "0.30—0.45",
+        "循环",
+        "P0",
+        "覆盖300 cm/s，不把觅食慢走机械倍速。"
+      ],
+      [
+        "`AN_hen_EscapeFlutter`",
+        "逃离扑翼跑",
+        "0.27—0.42",
+        "循环",
+        "P0",
+        "覆盖400 cm/s；能可靠展翼才叠加扑翼，根仍贴地。"
+      ],
+      [
+        "`AN_hen_Turn_L`<br>`AN_hen_Turn_R`",
+        "左右碎步转身",
+        "0.30—0.55",
+        "单次",
+        "P0",
+        "爪趾与脚踝自然换位，不持续锁两脚原地旋转。"
+      ],
+      [
+        "`AN_hen_Start`<br>`AN_hen_Stop`",
+        "起跑与收步",
+        "0.18 / 0.32",
+        "单次",
+        "P0",
+        "接上现有牵引速度，停下即回标准站姿。"
+      ],
+      [
+        "`AN_hen_Alert`",
+        "紧张抬头",
+        "1.0—1.6",
+        "循环",
+        "P0",
+        "视线朝威胁，不变成雄鸡打鸣或斗鸡姿态。"
+      ],
+      [
+        "`AN_hen_CapturedIdle`",
+        "栏内/牵引等待",
+        "2.0—3.0",
+        "循环",
+        "P0",
+        "静止仍有微呼吸，不能为装饰让Actor走出栏位。"
+      ],
+      [
+        "`AN_hen_Peck`",
+        "低头啄食",
+        "0.65—1.0",
+        "单次",
+        "P1",
+        "喙接近可见地面后收回，不插进脚趾。"
+      ],
+      [
+        "`AN_hen_ScratchPeck`",
+        "单足刨地后啄食",
+        "1.4—2.0",
+        "单次",
+        "P1",
+        "一足撑地、另一足刨后换回承重，保持顺序。"
+      ],
+      [
+        "`AN_hen_Preen`",
+        "理羽",
+        "1.5—2.2",
+        "单次",
+        "P1",
+        "口鼻靠近翼侧，羽毛网格不过度拉伸。"
+      ],
+      [
+        "`AN_hen_Shake`",
+        "抖羽收翅",
+        "0.6—0.9",
+        "单次",
+        "P1",
+        "短促胸背动作，翅根不漏空或翻面。"
+      ],
+      [
+        "`AN_hen_DustBath_In`<br>`AN_hen_DustBath_Loop`<br>`AN_hen_DustBath_Out`",
+        "尘浴三段",
+        "0.55 / 2.0 / 0.6",
+        "进入/循环/退出",
+        "G",
+        "合适地面与空位确认后才启用，不使尘浴自动变成死亡姿态。"
+      ],
+      [
+        "`AN_hen_NestSettle`<br>`AN_hen_NestRest`<br>`AN_hen_NestExit`",
+        "安静蹲伏三段",
+        "0.55 / 2.5 / 0.55",
+        "进入/循环/退出",
+        "G",
+        "可用于未来产物展示，现有鸡蛋产量仍由栏舍逻辑控制。"
+      ],
+      [
+        "`AN_hen_Hit_L`<br>`AN_hen_Hit_R`",
+        "左右受击",
+        "0.16—0.27",
+        "单次",
+        "P0",
+        "翅腿短促收缩，受击不会变成主动战斗。"
+      ],
+      [
+        "`AN_hen_Collapse_L`<br>`AN_hen_Collapse_R`",
+        "侧倒收翅",
+        "0.4—0.65",
+        "单次",
+        "P0",
+        "足失力、翼平顺收回，鸡冠不压入地面。"
+      ],
+      [
+        "`AN_hen_CorpseHold_L`<br>`AN_hen_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "屠宰/死亡只表达一个已确认结果，不生成额外鸡蛋。"
+      ]
+    ],
+    "source_sha256": "14de89a8885108d6b965227256891d6ad2bb0aee42a79a94a4c3c5cbb9d37f03",
+    "original_guidance_sha256": "08497a19691908bfebb569c74b38f7c28babfb2ff9712012f51ab1b333a33e2d"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "red_fox",
+    "name": "赤狐",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "red_fox",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\5fd7f6b9-9e53-4a39-95f9-e56e66a6893f\\red_fox_rigged.fbx",
+    "rig_task_id": "5fd7f6b9-9e53-4a39-95f9-e56e66a6893f",
+    "source_task_id": "e976d24b-8ce3-4b1f-9cbd-e23883468b83",
+    "rig_type": "quadruped",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\10_赤狐_动作指导.md",
+    "guidance_sha256": "721a1e675c9ec2a1f5835ca9b5a8f51177eba6064a5b880576e76f677bf15699",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\red_fox",
+    "action_rows": [
+      [
+        "`AN_red_fox_Idle`",
+        "轻姿站立",
+        "2.4—3.2",
+        "循环",
+        "P0",
+        "身体窄、头部小幅倾听，蓬尾保持低幅摆动。"
+      ],
+      [
+        "`AN_red_fox_Walk`",
+        "轻巧步行",
+        "0.75—1.0",
+        "循环",
+        "P0",
+        "窄足迹趾行，用100 cm/s校准落足。"
+      ],
+      [
+        "`AN_red_fox_Trot`",
+        "轻快小跑",
+        "0.45—0.65",
+        "循环",
+        "P0",
+        "对角肢轻快交替，不沿用狼的宽幅肩背动作。"
+      ],
+      [
+        "`AN_red_fox_RunFlee`",
+        "快速逃离",
+        "0.35—0.50",
+        "循环",
+        "P0",
+        "覆盖700 cm/s，保持轻体型与蓬尾平衡。"
+      ],
+      [
+        "`AN_red_fox_Turn_L`<br>`AN_red_fox_Turn_R`",
+        "左右轻步转向",
+        "0.35—0.60",
+        "单次",
+        "P0",
+        "尾根随腰部稍滞后，禁止尾尖连续甩穿身体。"
+      ],
+      [
+        "`AN_red_fox_StartRun`<br>`AN_red_fox_Stop`",
+        "蹬出与收步",
+        "0.22 / 0.35",
+        "单次",
+        "P0",
+        "起步紧凑、停止重心收回，不做大片横滑。"
+      ],
+      [
+        "`AN_red_fox_AlertListen`",
+        "停步倾听",
+        "1.3—2.0",
+        "循环",
+        "P0",
+        "头偏向来源，耳部只在可靠独立权重时转动。"
+      ],
+      [
+        "`AN_red_fox_Sniff`",
+        "低头嗅探",
+        "1.0—1.6",
+        "单次",
+        "P1",
+        "鼻部先行、颈腰小幅随动，尾部不过度摆动。"
+      ],
+      [
+        "`AN_red_fox_PounceVisual`",
+        "伏低扑跃候选",
+        "0.65—0.95",
+        "单次",
+        "G",
+        "只在未来确认环境动作后启用，不产生攻击或猎物掉落。"
+      ],
+      [
+        "`AN_red_fox_Groom`",
+        "舔拭前足/毛部",
+        "1.5—2.1",
+        "单次",
+        "P1",
+        "口鼻接近毛部而非穿入内部，无口骨时用头身姿态短版。"
+      ],
+      [
+        "`AN_red_fox_CurlDown`<br>`AN_red_fox_CurlRest`<br>`AN_red_fox_GetUp`",
+        "蜷卧休息三段",
+        "0.85 / 3.0 / 0.8",
+        "进入/循环/退出",
+        "P1",
+        "尾部贴近身体但不穿腹部，起身回窄足站姿。"
+      ],
+      [
+        "`AN_red_fox_Hit_L`<br>`AN_red_fox_Hit_R`",
+        "左右受击",
+        "0.18—0.30",
+        "单次",
+        "P0",
+        "局部收身、接逃离；不变成撕咬反击。"
+      ],
+      [
+        "`AN_red_fox_Collapse_L`<br>`AN_red_fox_Collapse_R`",
+        "轻体侧倒",
+        "0.55—0.85",
+        "单次",
+        "P0",
+        "腿先失力，躯干与蓬尾顺次接地。"
+      ],
+      [
+        "`AN_red_fox_CorpseHold_L`<br>`AN_red_fox_CorpseHold_R`",
+        "倒地保持",
+        "静态末帧",
+        "保持",
+        "P0",
+        "不保留活体尾摆、理毛或听察循环。"
+      ]
+    ],
+    "source_sha256": "42884de64d766e475bfc0a94859480c6209458788ef81cf4e47b366dee0cb0a7",
+    "original_guidance_sha256": "da86d322fb5f79bab1ffd06f24e5878697bd802aec9042e2cd8398951c260141",
+    "r2_baseline_guidance_sha256": "3a70da343d35f72c578b8e20652a5f09f418c7c2663bdc4fc65b8ffaee7a74b7"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "carp",
+    "name": "鲤鱼",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "carp",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\4b774d6e-f721-4d28-8de1-7ba317dea2a5\\carp_rigged.fbx",
+    "rig_task_id": "4b774d6e-f721-4d28-8de1-7ba317dea2a5",
+    "source_task_id": "b2ce3e41-e542-4b01-978c-2ce448eaf8b0",
+    "rig_type": "aquatic",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\11_鲤鱼_动作指导.md",
+    "guidance_sha256": "91a19a2edff323d9815502ec55ba0c3a7886e34b45b47434258f559b581a4af1",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\carp",
+    "action_rows": [
+      [
+        "`AN_carp_Hover`",
+        "水中悬停",
+        "1.6—2.2",
+        "循环",
+        "P0/G",
+        "头胸较稳，小幅尾摆；有鳍骨才加入成对鳍微调。"
+      ],
+      [
+        "`AN_carp_SwimSlow`",
+        "低速巡游",
+        "0.8—1.1",
+        "循环",
+        "P0/G",
+        "前身小摆、后身和尾鳍摆幅递增；候选0.5体长/s。"
+      ],
+      [
+        "`AN_carp_SwimCruise`",
+        "常速巡游",
+        "0.55—0.8",
+        "循环",
+        "P0/G",
+        "尾部推进更清楚；候选1.0体长/s，不改玩法配置。"
+      ],
+      [
+        "`AN_carp_Burst`",
+        "短促加速",
+        "0.30—0.45",
+        "单次",
+        "P0/G",
+        "尾摆加力后平滑接滑行，不把躯干拉长。"
+      ],
+      [
+        "`AN_carp_Coast`",
+        "减摆滑行",
+        "0.7—1.0",
+        "循环",
+        "P1/G",
+        "小幅鳍调整、尾摆衰减；展示移动根仍由专门路径控制。"
+      ],
+      [
+        "`AN_carp_Turn_L`<br>`AN_carp_Turn_R`",
+        "左右缓弧转向",
+        "0.50—0.80",
+        "单次",
+        "P0/G",
+        "头先定向、躯干逐段弯曲、尾部跟随。"
+      ],
+      [
+        "`AN_carp_Brake`",
+        "减速悬停",
+        "0.35—0.55",
+        "单次",
+        "P0/G",
+        "逐渐收尾摆；有胸鳍权重才展示展开减速。"
+      ],
+      [
+        "`AN_carp_Bite_In`",
+        "接近鱼饵的咬钩提示",
+        "0.35—0.50",
+        "单次",
+        "G",
+        "只响应权威Bite阶段，口部控制不足用轻探头替代。"
+      ],
+      [
+        "`AN_carp_Hooked_In`",
+        "上钩收紧",
+        "0.25—0.40",
+        "单次",
+        "P0/G",
+        "由已存在钓鱼上下文驱动，不在片段开始时额外消耗饵。"
+      ],
+      [
+        "`AN_carp_Struggle`",
+        "水中左右挣扎",
+        "0.7—1.0",
+        "循环",
+        "P0/G",
+        "左右尾摆与短变向组合；6 s进度不是单片段固定长度。"
+      ],
+      [
+        "`AN_carp_EscapeHide`",
+        "失败后脱钩退出表现",
+        "0.3—0.5",
+        "单次",
+        "G",
+        "只在失败/取消后退出展示，不额外释放库存鱼实体。"
+      ],
+      [
+        "`AN_carp_LiftOut`",
+        "成功后出水候选",
+        "0.45—0.75",
+        "单次",
+        "G",
+        "先有成功事件与鱼线/手部挂点，根不自己飞向玩家。"
+      ],
+      [
+        "`AN_carp_LandFlop`",
+        "落在支撑面后扑动",
+        "0.55—0.85",
+        "循环",
+        "G",
+        "鱼腹/侧体接触真实支撑面，不能在空中当水中游动循环。"
+      ],
+      [
+        "`AN_carp_Settle`",
+        "离水动作收束",
+        "0.40—0.65",
+        "单次",
+        "G",
+        "先确认展示终点与承托，再减小摆动，不决定鱼的生死。"
+      ],
+      [
+        "`AN_carp_DisplayStill`",
+        "渔获静态展示",
+        "静态姿态",
+        "保持",
+        "P1/G",
+        "只服务已有静态展示需求，不创建新的库存或死亡规则。"
+      ]
+    ],
+    "source_sha256": "e8baad574246edeb9b9a5656b298fa09c2e368914f52ff3036a0ff2c69d43da5",
+    "original_guidance_sha256": "9703c1daf8fb7b17d107ffc6bd84ed77426b32cb460e92c58ce94aeb8a36141c"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "crucian_carp",
+    "name": "鲫鱼",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "crucian_carp",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\a87ebcaf-a4d7-412a-b10d-c7b90717dcef\\crucian_carp_rigged.fbx",
+    "rig_task_id": "a87ebcaf-a4d7-412a-b10d-c7b90717dcef",
+    "source_task_id": "e193cb21-fa34-4bb1-b522-c0198e186127",
+    "rig_type": "aquatic",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\12_鲫鱼_动作指导.md",
+    "guidance_sha256": "3c5c81abe8c0f654e87a3dcb0f12356eb07decf858bd46b4d474f1544a25a73c",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\crucian_carp",
+    "action_rows": [
+      [
+        "`AN_crucian_carp_Hover`",
+        "紧凑悬停",
+        "1.4—2.0",
+        "循环",
+        "P0/G",
+        "高体侧保持竖直稳定，小尾摆不变成大幅滚转。"
+      ],
+      [
+        "`AN_crucian_carp_SwimSlow`",
+        "缓慢短巡游",
+        "0.75—1.0",
+        "循环",
+        "P0/G",
+        "紧凑尾摆与小位移；候选0.4体长/s。"
+      ],
+      [
+        "`AN_crucian_carp_SwimCruise`",
+        "常速游动",
+        "0.50—0.70",
+        "循环",
+        "P0/G",
+        "短而稳定的尾摆，候选0.9体长/s；不是生物速度测量。"
+      ],
+      [
+        "`AN_crucian_carp_Burst`",
+        "短促逃动",
+        "0.25—0.40",
+        "单次",
+        "P0/G",
+        "后身加力，高体侧不压扁成细长鱼。"
+      ],
+      [
+        "`AN_crucian_carp_PauseGlide`",
+        "短滑行停顿",
+        "0.60—0.90",
+        "循环",
+        "P1/G",
+        "作为游动节奏变化，不是完全静止的贴图。"
+      ],
+      [
+        "`AN_crucian_carp_Turn_L`<br>`AN_crucian_carp_Turn_R`",
+        "左右短弧转向",
+        "0.4—0.65",
+        "单次",
+        "P0/G",
+        "尾部跟随转弯，腹部保持体积，不绕纵轴翻筋斗。"
+      ],
+      [
+        "`AN_crucian_carp_Brake`",
+        "减速悬停",
+        "0.30—0.50",
+        "单次",
+        "P0/G",
+        "尾摆逐步减幅，回Hover的波动相位连续。"
+      ],
+      [
+        "`AN_crucian_carp_Bite_In`",
+        "轻探鱼饵",
+        "0.25—0.40",
+        "单次",
+        "G",
+        "口/鳃盖无可靠权重时不强行做开合。"
+      ],
+      [
+        "`AN_crucian_carp_Hooked_In`",
+        "上钩短收紧",
+        "0.20—0.35",
+        "单次",
+        "P0/G",
+        "只表达当前钓鱼阶段，不能绕过抛竿耗饵确认。"
+      ],
+      [
+        "`AN_crucian_carp_Struggle`",
+        "密集短摆挣扎",
+        "0.50—0.75",
+        "循环",
+        "P0/G",
+        "比鲤鱼采用更紧凑节奏；以张力参数控制，5 s由玩法结算。"
+      ],
+      [
+        "`AN_crucian_carp_EscapeHide`",
+        "脱钩退出",
+        "0.25—0.45",
+        "单次",
+        "G",
+        "失败仅退出表现，不直接产生自由游动鱼。"
+      ],
+      [
+        "`AN_crucian_carp_LiftOut`",
+        "成功出水候选",
+        "0.40—0.65",
+        "单次",
+        "G",
+        "绑定成功上下文与承托位置，不靠根运动生成位移。"
+      ],
+      [
+        "`AN_crucian_carp_LandFlop`",
+        "侧体扑动",
+        "0.45—0.70",
+        "循环",
+        "G",
+        "高体侧可小幅侧翻再回支撑，避免穿岸和随机弹飞。"
+      ],
+      [
+        "`AN_crucian_carp_Settle`",
+        "停止扑动的收束",
+        "0.35—0.55",
+        "单次",
+        "G",
+        "收束到同侧支撑姿态，不判断死亡。"
+      ],
+      [
+        "`AN_crucian_carp_DisplayStill`",
+        "静态渔获展示",
+        "静态姿态",
+        "保持",
+        "P1/G",
+        "物品结算/显示仍由原系统控制。"
+      ]
+    ],
+    "source_sha256": "9b255e42c6d93f98be96b8d58928453fa378f94d4a68d38c82ad016c8113a200",
+    "original_guidance_sha256": "3a6d2a0d32ebd05a46d00727c24678675d632d2ce789c1ba3d7d4b8782b0ab82"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "catfish",
+    "name": "鲶鱼",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "catfish",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\e97151ca-323f-4786-b576-ecd4d5bee2bb\\catfish_rigged.fbx",
+    "rig_task_id": "e97151ca-323f-4786-b576-ecd4d5bee2bb",
+    "source_task_id": "d8fb01be-19a2-4706-88fd-eb16471c8c27",
+    "rig_type": "aquatic",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\13_鲶鱼_动作指导.md",
+    "guidance_sha256": "d8572ced7e997cda4a9399f440e05966283ce8ed551a9302ec7f11602eb91c3c",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\catfish",
+    "action_rows": [
+      [
+        "`AN_catfish_HoverLow`",
+        "低位悬停",
+        "1.8—2.6",
+        "循环",
+        "P0/G",
+        "宽头稳定、后身微摆；在水中不直接贴穿河床。"
+      ],
+      [
+        "`AN_catfish_SwimSlow`",
+        "贴近底部慢巡游",
+        "0.9—1.3",
+        "循环",
+        "P0/G",
+        "头部位移收敛、后身柔和传波；候选0.35体长/s。"
+      ],
+      [
+        "`AN_catfish_SwimCruise`",
+        "常速游动",
+        "0.65—0.95",
+        "循环",
+        "P0/G",
+        "后身与尾推进，候选0.8体长/s，不启用现实底栖AI。"
+      ],
+      [
+        "`AN_catfish_Burst`",
+        "尾部加力",
+        "0.35—0.55",
+        "单次",
+        "P0/G",
+        "宽头不剧烈左右甩，避免触须扫穿身体。"
+      ],
+      [
+        "`AN_catfish_Turn_L`<br>`AN_catfish_Turn_R`",
+        "左右缓弧绕身",
+        "0.6—0.95",
+        "单次",
+        "P0/G",
+        "头定向后背段依次跟随，不将全身折成硬直角。"
+      ],
+      [
+        "`AN_catfish_Brake`",
+        "减速沉稳悬停",
+        "0.4—0.65",
+        "单次",
+        "P0/G",
+        "降低尾摆而非自由下沉，不因动画落到河床里。"
+      ],
+      [
+        "`AN_catfish_WhiskerSearch`",
+        "触须/口部探寻候选",
+        "1.0—1.6",
+        "单次",
+        "G",
+        "先检查触须骨和权重；无可靠控制则用低幅头部探看。"
+      ],
+      [
+        "`AN_catfish_Bite_In`",
+        "鱼饵吸取提示",
+        "0.30—0.50",
+        "单次",
+        "G",
+        "大嘴只在有可用口部蒙皮时展开，不能改变渔获概率。"
+      ],
+      [
+        "`AN_catfish_Hooked_In`",
+        "上钩收紧",
+        "0.25—0.45",
+        "单次",
+        "P0/G",
+        "只由有效钓鱼上下文驱动，无视觉触须碰撞玩法。"
+      ],
+      [
+        "`AN_catfish_Struggle`",
+        "强侧摆挣扎",
+        "0.7—1.05",
+        "循环",
+        "P0/G",
+        "宽头抗摆、后身强摆，7 s玩法进度可跨多个循环。"
+      ],
+      [
+        "`AN_catfish_EscapeHide`",
+        "脱钩退出",
+        "0.35—0.55",
+        "单次",
+        "G",
+        "失败结束展示，不额外减库存或发物品。"
+      ],
+      [
+        "`AN_catfish_LiftOut`",
+        "成功后提离水面",
+        "0.55—0.85",
+        "单次",
+        "G",
+        "必须有承托/鱼线方向约束，触须不拖穿水岸。"
+      ],
+      [
+        "`AN_catfish_LandFlop`",
+        "腹侧撑摆",
+        "0.6—0.95",
+        "循环",
+        "G",
+        "背腹与尾形成受限扑动，胸鳍和须不承担不合理的人式支撑。"
+      ],
+      [
+        "`AN_catfish_Settle`",
+        "侧摆收束",
+        "0.45—0.70",
+        "单次",
+        "G",
+        "收至稳定承托姿态，不新增缺氧或死亡计时。"
+      ],
+      [
+        "`AN_catfish_DisplayStill`",
+        "静态渔获展示",
+        "静态姿态",
+        "保持",
+        "P1/G",
+        "保持口须和鳍自然形态，不生成电击或毒刺攻击。"
+      ]
+    ],
+    "source_sha256": "0cdb310cf823fdb5ee0902020bcadd937bd500038960a0fa4e298417ca1d916d",
+    "original_guidance_sha256": "7959680f314d8b73251d687d57bc78e70c35775ace30bbea215a92fb12c769bf"
+  },
+  {
+    "schema": "hearthward.animal.motion.job.v1",
+    "slug": "eel",
+    "name": "鳗鱼",
+    "game_id": "Hearthward",
+    "run_id": "animal_motion_20260930",
+    "task_id": "eel",
+    "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\e15f6550-5028-47db-8efe-9d22d46178b5\\eel_rigged.fbx",
+    "rig_task_id": "e15f6550-5028-47db-8efe-9d22d46178b5",
+    "source_task_id": "e473cc70-a885-4fc7-abe4-b64643fb1bbf",
+    "rig_type": "serpentine",
+    "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\14_鳗鱼_动作指导.md",
+    "guidance_sha256": "a1efa8ad12ba2634297bb283f317c709a04eacb3ad322658c2067060d04bd3b7",
+    "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\eel",
+    "action_rows": [
+      [
+        "`AN_eel_UndulateSlow`",
+        "缓慢全身波动",
+        "1.0—1.4",
+        "循环",
+        "P0/G",
+        "按身体弧长传播S形波，头部小幅、后段适当增幅。"
+      ],
+      [
+        "`AN_eel_UndulateCruise`",
+        "常速全身游动",
+        "0.7—1.0",
+        "循环",
+        "P0/G",
+        "各段保持明确相位差；候选0.8体长/s。"
+      ],
+      [
+        "`AN_eel_UndulateFast`",
+        "加速波动",
+        "0.45—0.7",
+        "循环",
+        "P0/G",
+        "适度提高频率而非无限弯曲，候选1.3体长/s。"
+      ],
+      [
+        "`AN_eel_HoverWave`",
+        "低速保持位置",
+        "1.4—2.0",
+        "循环",
+        "P0/G",
+        "保留低幅全身波，不能整条身体僵直悬空。"
+      ],
+      [
+        "`AN_eel_Turn_L`<br>`AN_eel_Turn_R`",
+        "左右连续弧转",
+        "0.65—1.0",
+        "单次",
+        "P0/G",
+        "弯曲从前身向后传递，身体不自交或形成折角。"
+      ],
+      [
+        "`AN_eel_StartWave`<br>`AN_eel_StopWave`",
+        "起波与收波",
+        "0.4 / 0.6",
+        "单次",
+        "P0/G",
+        "渐增/渐减幅度，与绑定S形偏置叠加而非清零。"
+      ],
+      [
+        "`AN_eel_Bite_In`",
+        "接近鱼饵候选",
+        "0.30—0.50",
+        "单次",
+        "G",
+        "头部先探，长体顺势跟随；无嘴部权重不强拉开口。"
+      ],
+      [
+        "`AN_eel_Hooked_In`",
+        "上钩紧缩",
+        "0.3—0.5",
+        "单次",
+        "P0/G",
+        "前段受限、后段波动响应，仍服从统一钓鱼上下文。"
+      ],
+      [
+        "`AN_eel_StruggleS`",
+        "长体S形挣扎",
+        "0.75—1.10",
+        "循环",
+        "P0/G",
+        "全身相位连续，7 s进度不通过循环次数判定。"
+      ],
+      [
+        "`AN_eel_StruggleArc`",
+        "受限弧形换向",
+        "0.6—0.9",
+        "单次",
+        "G",
+        "作为挣扎变化；不能盘紧成骨链自交结。"
+      ],
+      [
+        "`AN_eel_EscapeHide`",
+        "脱钩收束退出",
+        "0.4—0.65",
+        "单次",
+        "G",
+        "失败取消只隐藏展示，不凭空放生第二条鱼。"
+      ],
+      [
+        "`AN_eel_LiftSupported`",
+        "成功后受托提起",
+        "0.65—1.0",
+        "单次",
+        "G",
+        "先定义支撑点及模型姿态，不能只挂头部让长身穿地。"
+      ],
+      [
+        "`AN_eel_LandWriggle`",
+        "支撑面上蠕动",
+        "0.7—1.1",
+        "循环",
+        "G",
+        "腹侧接触面与全身波协调，不赋予陆地寻路。"
+      ],
+      [
+        "`AN_eel_SettleArc`",
+        "弧形收束",
+        "0.55—0.85",
+        "单次",
+        "G",
+        "回到自然弯曲承托姿态，不把源模型拉成直棍。"
+      ],
+      [
+        "`AN_eel_DisplayStill`",
+        "弧形静态展示",
+        "静态姿态",
+        "保持",
+        "P1/G",
+        "维持绑定比例与鳍边轮廓，不新建死亡规则。"
+      ]
+    ],
+    "source_sha256": "3c2d5b0b7cf11d049e88650890e9f18370a4a0d2cd5286cfee874cf7e3db9bdf",
+    "original_guidance_sha256": "a44086292c0d40ab01187b236e57253329213c975e460cc904a102659c0ff411"
+  }
+]

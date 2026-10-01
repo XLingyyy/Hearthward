@@ -1,0 +1,352 @@
+{
+  "body": "pelvis",
+  "root": "root",
+  "chains": {
+    "FL": [
+      "1_Right_Limb_0",
+      "1_Right_Limb_1",
+      "1_Right_Limb_2",
+      "1_Right_Limb_3",
+      "1_Right_Limb_4"
+    ],
+    "FR": [
+      "Spine_5",
+      "bone_18",
+      "bone_19",
+      "bone_20",
+      "bone_21"
+    ],
+    "BL": [
+      "0_Right_Limb_0",
+      "0_Right_Limb_1",
+      "0_Right_Limb_2",
+      "0_Right_Limb_3",
+      "0_Right_Limb_4"
+    ],
+    "BR": [
+      "0_Left_Limb_0",
+      "0_Left_Limb_1",
+      "0_Left_Limb_2",
+      "0_Left_Limb_3",
+      "0_Left_Limb_4"
+    ]
+  },
+  "spine": [
+    "Spine_0",
+    "Spine_1",
+    "Spine_2",
+    "Spine_3",
+    "Spine_4",
+    "Spine_5"
+  ],
+  "neck": [
+    "Tail_0",
+    "bone_29",
+    "bone_30",
+    "bone_31"
+  ],
+  "head": "bone_31",
+  "wings": [],
+  "ears": [
+    "EarRepair_L",
+    "EarRepair_R"
+  ],
+  "tail": [
+    "TailRepair_0",
+    "TailRepair_1",
+    "TailRepair_2"
+  ],
+  "restfeet": {
+    "FL": [
+      0.3474522829055786,
+      0.037040531635284424,
+      0.04813838750123978
+    ],
+    "FR": [
+      0.37042558193206787,
+      -0.2260078340768814,
+      0.042225249111652374
+    ],
+    "BL": [
+      -0.3515200912952423,
+      0.09390022605657578,
+      0.05996439978480339
+    ],
+    "BR": [
+      -0.3342895805835724,
+      -0.2403658628463745,
+      0.05996503680944443
+    ]
+  },
+  "hip": [
+    0.07119445502758026,
+    -0.07667883485555649,
+    0.7562437057495117
+  ],
+  "repairs": [
+    "Added fixed game root; moved deforming body pivot to anatomical hip center",
+    "Added anatomical 3-link tail; removed tail skin from the neck chain",
+    "Corrected spatially mismatched foot/toe weights and normalized skin influences",
+    "Rebound paw soles to contact bones; smoothed seam and shoulder weights with at most eight influences",
+    "Calibrated bind orientations to solved natural stance; rebaked all world-space joint trajectories without IK rest twist",
+    "2026-10-01: smoothed thorax/upper-limb gradients; retained paw soles and original influence regions",
+    "2026-10-01: corrected anatomical left/right roles from normalized joint positions; existing gait phases remapped by actual bone identity",
+    "2026-10-01: isolated two spatially verified ear bones and ear skin",
+    "2026-10-01: spatially separated tail-tip weights from hind-paw weights, with a smooth haunch fade",
+    "2026-10-01 R2: neutral bone_29 yaw -59.0 deg, head-centre Y shift +7.99 cm; locally rebaked mesh and rest matrices; global-axis motion retargeted",
+    "2026-10-01 R3: measured limb rest pivots; retargeted complete library; calibrated shaft skinning; exact-length medial gait solve and restrained torso compression"
+  ],
+  "axis": {
+    "rotation_z_degrees": -29.05461466745747,
+    "scale": 1.5973978469873569,
+    "target_length_m": 1.6633927822113037,
+    "forward": "+X",
+    "up": "+Z",
+    "dcc_units": "metres",
+    "engine_units": "centimetres",
+    "body_reference_length_m": 1.6,
+    "head_rebind_length_note": "Measured +X extent after local head correction; body and limb scale unchanged"
+  },
+  "bone_heads": {
+    "root": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "pelvis": [
+      0.07119445502758026,
+      -0.0766788125038147,
+      0.7562437653541565
+    ],
+    "0_Left_Limb_0": [
+      -0.3469254672527313,
+      -0.16570158302783966,
+      0.793201208114624
+    ],
+    "0_Left_Limb_1": [
+      -0.3312193751335144,
+      -0.165249302983284,
+      0.5181898474693298
+    ],
+    "0_Left_Limb_2": [
+      -0.38259267807006836,
+      -0.2087118923664093,
+      0.2523493766784668
+    ],
+    "0_Left_Limb_3": [
+      -0.3342895805835724,
+      -0.2403658628463745,
+      0.05996503680944443
+    ],
+    "0_Left_Limb_4": [
+      -0.282024621963501,
+      -0.2558729648590088,
+      0.018572581931948662
+    ],
+    "0_Right_Limb_0": [
+      -0.3630068898200989,
+      0.012343959882855415,
+      0.7813747525215149
+    ],
+    "0_Right_Limb_1": [
+      -0.3461894392967224,
+      0.027037227526307106,
+      0.48983022570610046
+    ],
+    "0_Right_Limb_2": [
+      -0.40026238560676575,
+      0.035076454281806946,
+      0.2610878646373749
+    ],
+    "0_Right_Limb_3": [
+      -0.3515200912952423,
+      0.09390022605657578,
+      0.05996439978480339
+    ],
+    "0_Right_Limb_4": [
+      -0.30614712834358215,
+      0.10251536965370178,
+      0.018572015687823296
+    ],
+    "Head_0": [
+      -0.3560093641281128,
+      -0.07253111153841019,
+      0.7824291586875916
+    ],
+    "Spine_0": [
+      -0.1826639622449875,
+      -0.10137547552585602,
+      0.8227672576904297
+    ],
+    "Spine_1": [
+      -0.010936111211776733,
+      -0.10884194821119308,
+      0.8109408020973206
+    ],
+    "Spine_2": [
+      0.15849430859088898,
+      -0.10826756805181503,
+      0.7932011485099792
+    ],
+    "Spine_3": [
+      0.31758660078048706,
+      -0.10194987058639526,
+      0.8168541193008423
+    ],
+    "Spine_4": [
+      0.3750205934047699,
+      -0.1812088042497635,
+      0.8582464456558228
+    ],
+    "Spine_5": [
+      0.516882598400116,
+      -0.20590543746948242,
+      0.71632981300354
+    ],
+    "bone_18": [
+      0.36120155453681946,
+      -0.21920359134674072,
+      0.45397186279296875
+    ],
+    "bone_19": [
+      0.3479662239551544,
+      -0.2219104766845703,
+      0.16234661638736725
+    ],
+    "bone_20": [
+      0.37042558193206787,
+      -0.2260078340768814,
+      0.042225249111652374
+    ],
+    "bone_21": [
+      0.44911012053489685,
+      -0.24266359210014343,
+      0.0185724887996912
+    ],
+    "bone_22": [
+      0.33137083053588867,
+      -0.02843420021235943,
+      0.8700729608535767
+    ],
+    "1_Right_Limb_0": [
+      0.477827787399292,
+      0.05254782736301422,
+      0.7340693473815918
+    ],
+    "1_Right_Limb_1": [
+      0.3449074625968933,
+      0.02098776586353779,
+      0.486955463886261
+    ],
+    "1_Right_Limb_2": [
+      0.3270527720451355,
+      0.020686684176325798,
+      0.1824154406785965
+    ],
+    "1_Right_Limb_3": [
+      0.3474522829055786,
+      0.037040531635284424,
+      0.04813838750123978
+    ],
+    "1_Right_Limb_4": [
+      0.4175218939781189,
+      0.0657576471567154,
+      0.018572311848402023
+    ],
+    "Tail_0": [
+      0.3178265690803528,
+      -0.1037643700838089,
+      0.8196773529052734
+    ],
+    "bone_29": [
+      0.45370548963546753,
+      -0.07610449194908142,
+      0.8641595244407654
+    ],
+    "bone_30": [
+      0.5325401425361633,
+      -0.13259288668632507,
+      0.9824235439300537
+    ],
+    "bone_31": [
+      0.6373106241226196,
+      -0.08170139789581299,
+      1.1598193645477295
+    ],
+    "EarRepair_L": [
+      0.657396674156189,
+      -0.1498437523841858,
+      1.124828815460205
+    ],
+    "EarRepair_R": [
+      0.558640718460083,
+      -0.2714318633079529,
+      1.124828815460205
+    ],
+    "1_Left_Limb_0": [
+      0.6192919611930847,
+      -0.24797850847244263,
+      1.1479929685592651
+    ],
+    "TailRepair_0": [
+      -0.35496625304222107,
+      -0.07667887210845947,
+      0.7872878909111023
+    ],
+    "TailRepair_1": [
+      -0.5033107399940491,
+      -0.051119204610586166,
+      0.5748586058616638
+    ],
+    "TailRepair_2": [
+      -0.6514841914176941,
+      -0.024585526436567307,
+      0.3624293804168701
+    ]
+  },
+  "bone_count": 39,
+  "skeleton_signature": "2d3bd130bc2cafb95687814694932f3c23220847ed5c56f8b0b681c3c6ed72c3",
+  "skin_qa": {
+    "unweighted_vertices": 0,
+    "max_sum_error": 3.135150473099202e-05,
+    "max_influences": 8,
+    "weighted_vertices_per_bone": {
+      "pelvis": 14441,
+      "0_Left_Limb_0": 13879,
+      "0_Left_Limb_1": 8813,
+      "0_Left_Limb_2": 4701,
+      "0_Left_Limb_3": 2403,
+      "0_Left_Limb_4": 218,
+      "0_Right_Limb_0": 14398,
+      "0_Right_Limb_1": 9267,
+      "0_Right_Limb_2": 4951,
+      "0_Right_Limb_3": 2981,
+      "0_Right_Limb_4": 601,
+      "Head_0": 4297,
+      "Spine_0": 15236,
+      "Spine_1": 16754,
+      "Spine_2": 17351,
+      "Spine_3": 21122,
+      "Spine_4": 5297,
+      "Spine_5": 11549,
+      "bone_18": 5934,
+      "bone_19": 2321,
+      "bone_20": 2194,
+      "bone_21": 0,
+      "bone_22": 6070,
+      "1_Right_Limb_0": 10934,
+      "1_Right_Limb_1": 5280,
+      "1_Right_Limb_2": 2128,
+      "1_Right_Limb_3": 2027,
+      "1_Right_Limb_4": 1076,
+      "bone_29": 16551,
+      "bone_30": 12824,
+      "bone_31": 4132,
+      "TailRepair_0": 2227,
+      "TailRepair_1": 5745,
+      "TailRepair_2": 7726,
+      "EarRepair_L": 2974,
+      "EarRepair_R": 381
+    }
+  }
+}

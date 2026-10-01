@@ -1,0 +1,156 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "goat",
+  "name": "山羊",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "goat",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\496dc3de-1fa5-4773-b0b9-a68b301f3a31\\goat_rigged.fbx",
+  "rig_task_id": "496dc3de-1fa5-4773-b0b9-a68b301f3a31",
+  "source_task_id": "d005ba13-ec3b-4bc8-8bd4-dcc4a3c6e639",
+  "rig_type": "quadruped",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\03_山羊_动作指导.md",
+  "guidance_sha256": "3fcddab7b6c0f00725133164733af2b184c828c8266581bbef50f678be202a2f",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\goat",
+  "action_rows": [
+    [
+      "`AN_goat_Idle`",
+      "安静站立",
+      "2.5—3.5",
+      "循环",
+      "P0",
+      "四蹄站稳，胸腹小幅起伏，胡须不穿胸。"
+    ],
+    [
+      "`AN_goat_BrowseLook`",
+      "探看枝叶",
+      "1.0—1.7",
+      "单次",
+      "P1",
+      "头颈轻探，角整体刚性；不假设有可操作枝叶资源。"
+    ],
+    [
+      "`AN_goat_Walk`",
+      "短步行走",
+      "0.9—1.2",
+      "循环",
+      "P0",
+      "分趾蹄接触稳定，用100 cm/s校准。"
+    ],
+    [
+      "`AN_goat_TrotFollow`",
+      "牵引小跑",
+      "0.55—0.75",
+      "循环",
+      "P0",
+      "对角肢平稳交换，覆盖300 cm/s牵引跟随。"
+    ],
+    [
+      "`AN_goat_RunFlee`",
+      "逃离快跑",
+      "0.45—0.65",
+      "循环",
+      "P0",
+      "覆盖400 cm/s，保持山羊轻巧、收敛的身体摆动。"
+    ],
+    [
+      "`AN_goat_Turn_L`<br>`AN_goat_Turn_R`",
+      "左右绕步",
+      "0.45—0.75",
+      "单次",
+      "P0",
+      "每侧有明确支撑蹄，不用原地旋转模型替代转步。"
+    ],
+    [
+      "`AN_goat_Start`<br>`AN_goat_Stop`",
+      "起步与收步",
+      "0.30 / 0.45",
+      "单次",
+      "P0",
+      "牵引者移动即起步，到栏位即收步，不影响入栏结算。"
+    ],
+    [
+      "`AN_goat_Alert`",
+      "未捕获警觉",
+      "1.3—2.0",
+      "循环",
+      "P0",
+      "抬头定向；已捕获温顺状态不无故反复惊跳。"
+    ],
+    [
+      "`AN_goat_CapturedIdle`",
+      "捕获后等待",
+      "2.5—3.5",
+      "循环",
+      "P0",
+      "等待牵引与栏内静止时使用，四蹄仍须落地。"
+    ],
+    [
+      "`AN_goat_Graze_In`<br>`AN_goat_Graze_Loop`<br>`AN_goat_Graze_Out`",
+      "低头进食三段",
+      "0.55 / 2.3 / 0.55",
+      "进入/循环/退出",
+      "P1",
+      "四蹄稳定，小幅咀嚼只在权重允许时出现。"
+    ],
+    [
+      "`AN_goat_Chew`",
+      "站姿反刍",
+      "2.5—3.5",
+      "循环",
+      "P1",
+      "口鼻微动，躯干不跟着下颌大幅摆动。"
+    ],
+    [
+      "`AN_goat_LieDown`<br>`AN_goat_Rest`<br>`AN_goat_GetUp`",
+      "卧下休息三段",
+      "1.0 / 3.0 / 0.95",
+      "进入/循环/退出",
+      "P1",
+      "腿部顺序折收，头角不压进地面。"
+    ],
+    [
+      "`AN_goat_CareStand`",
+      "照料时安静站立",
+      "2.0—3.0",
+      "循环",
+      "G",
+      "仅在已确认照料/收取事件期间表达安静，不展示未核实的挤奶。"
+    ],
+    [
+      "`AN_goat_SlopeStep`",
+      "低矮坡面抬蹄",
+      "0.8—1.1",
+      "单次",
+      "G",
+      "需要可行走坡面与落足修正，不授予攀崖或跳障能力。"
+    ],
+    [
+      "`AN_goat_Hit_L`<br>`AN_goat_Hit_R`",
+      "左右受击",
+      "0.22—0.38",
+      "单次",
+      "P0",
+      "中断牵引表现但状态以权威逻辑为准。"
+    ],
+    [
+      "`AN_goat_Collapse_L`<br>`AN_goat_Collapse_R`",
+      "左右倒地",
+      "0.7—1.0",
+      "单次",
+      "P0",
+      "蹄先松力、侧腹接地，角不穿地。"
+    ],
+    [
+      "`AN_goat_CorpseHold_L`<br>`AN_goat_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "屠宰/死亡后静止，不播放重新起身。"
+    ]
+  ],
+  "source_sha256": "1f0ae5b499b3a6cb2e5937deb64f38933962ab1ec55292ed521db8754a7673f0",
+  "original_guidance_sha256": "4002ee20feb2a44598c6e3919e0f224b32a5b0e823cc64509ed836a5d10abb0a",
+  "r2_baseline_guidance_sha256": "c5353e16a12221f3f463fa340e2b18350409d28c208debbbb70c2385f067be17"
+}

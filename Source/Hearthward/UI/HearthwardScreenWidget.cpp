@@ -19,6 +19,7 @@
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Save/HearthwardSaveSubsystem.h"
+#include "../Update/HearthwardUpdateSubsystem.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -66,8 +67,9 @@ void UHearthwardScreenWidget::InitializeScreen(AHearthwardHUD* HUD)
     SettingsVolume=FMath::Clamp(SettingsVolume,0,100);
     ApplyMasterVolume();
     OpenPage(TEXT("title"));
+    GetGameInstance()->GetSubsystem<UHearthwardUpdateSubsystem>()->Check();
     auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
-    if(!Save->LoadPointIndex()) { Message=Save->GetStatus(); Refresh(); return; }
+    if(!Save->LoadPointIndex()) { ConfirmAction=TEXT("compat.resolve");CompatibilityScroll=0;Refresh();return; }
     if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)!=TEXT("L_HearthwardWilds")) return;
     const FString LoadId=GetWorld()->URL.GetOption(TEXT("HearthwardLoad="),TEXT(""));
     auto* Loading=GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>();
@@ -332,10 +334,12 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("crafting")) ComposeCrafting();
     if(Page==TEXT("repairing")) ComposeRepair();
     if(Page==TEXT("save")) ComposeSave();
+    if(Page==TEXT("title") && ConfirmAction!=TEXT("compat.resolve"))ComposeUpdateNotice();
     if(!Message.IsEmpty()) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
     if(!ConfirmAction.IsEmpty())
     {
-        if(ConfirmAction==TEXT("resetAgreements"))
+        if(ConfirmAction==TEXT("compat.resolve"))ComposeCompatibility();
+        else if(ConfirmAction==TEXT("resetAgreements"))
         {
             Element(TEXT("panel"),TEXT(""),FVector2D(350,165),FVector2D(972,635));
             Element(TEXT("text"),TEXT("取消所有任务和约定"),FVector2D(405,202),FVector2D(850,45),27);
@@ -392,8 +396,9 @@ int32 UHearthwardScreenWidget::Hit(const FVector2D& P) const
 {
     for(int32 I=Elements.Num()-1;I>=0;--I)
     {
-        const auto& E=Elements[I]; if(E.Action.IsEmpty() || !E.Enabled || E.Hidden || E.TextScrollClipped) continue;
-        if(!ConfirmAction.IsEmpty() && E.Action!=TEXT("confirm") && E.Action!=TEXT("cancel")) continue;
+        const auto& E=Elements[I]; if(E.Action.IsEmpty() || !E.Enabled || E.Hidden) continue;
+        if(!ConfirmAction.IsEmpty() && E.Action!=TEXT("confirm") && E.Action!=TEXT("cancel")
+            && !(ConfirmAction==TEXT("compat.resolve") && (E.Action.StartsWith(TEXT("compat.")) || E.Action==TEXT("update.open")))) continue;
         const auto MapPoint=ComponentPoint(TEXT("map.canvas"),P,true);
         if(E.MapClipped && (MapPoint.X<407 || MapPoint.X>1517 || MapPoint.Y<95 || MapPoint.Y>855)) continue;
         if(P.X>=E.Position.X && P.Y>=E.Position.Y && P.X<E.Position.X+E.Size.X && P.Y<E.Position.Y+E.Size.Y) return I;
@@ -480,9 +485,13 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     const bool Confirming=!ConfirmAction.IsEmpty();
     if(Key==EKeys::Enter && Elements.IsValidIndex(KeyboardFocus))
     {
-        const auto& Focus=Elements[KeyboardFocus];
-        if(Focus.Enabled && !Focus.Hidden && !Focus.Action.IsEmpty() && (!Confirming || Focus.Action==TEXT("confirm") || Focus.Action==TEXT("cancel") || Focus.Action.StartsWith(TEXT("reset"))))
-            ExecuteAction(Focus.Action);
+        if(ConfirmAction==TEXT("compat.resolve"))
+        {
+            if(Key==EKeys::PageDown)ExecuteAction(TEXT("compat.next"));
+            if(Key==EKeys::PageUp)ExecuteAction(TEXT("compat.prev"));
+        }
+        if(Key==EKeys::Escape) ExecuteAction(TEXT("cancel"));
+        if(Key==EKeys::Enter) ExecuteAction(TEXT("confirm"));
         return FReply::Handled();
     }
     if(Key==EKeys::Escape) {ExecuteAction(Confirming?TEXT("cancel"):TEXT("back"));return FReply::Handled();}

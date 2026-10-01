@@ -116,6 +116,7 @@ class HEARTHWARD_API UHearthwardSaveGame : public USaveGame
     GENERATED_BODY()
 public:
     UPROPERTY() int32 Schema = 8;
+    UPROPERTY() FString WriterVersion;
     UPROPERTY() TArray<FHearthwardSavePoint> Points;
 };
 

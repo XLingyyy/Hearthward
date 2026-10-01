@@ -1,0 +1,154 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "hen",
+  "name": "母鸡",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "hen",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\26fa1cc2-4548-4062-ad40-c4fd8ba30863\\hen_rigged.fbx",
+  "rig_task_id": "26fa1cc2-4548-4062-ad40-c4fd8ba30863",
+  "source_task_id": "bcc1c840-fd3e-4e0a-b429-d3b9e27ee67e",
+  "rig_type": "avian",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\09_母鸡_家鸡_动作指导.md",
+  "guidance_sha256": "08497a19691908bfebb569c74b38f7c28babfb2ff9712012f51ab1b333a33e2d",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hen",
+  "action_rows": [
+    [
+      "`AN_hen_Idle`",
+      "站立观察",
+      "2.0—3.0",
+      "循环",
+      "P0",
+      "小幅抬头与呼吸，双脚稳定，尾羽收敛。"
+    ],
+    [
+      "`AN_hen_Walk`",
+      "觅食碎步",
+      "0.55—0.80",
+      "循环",
+      "P0",
+      "双足交替，头部有稳定段与短促前伸段。"
+    ],
+    [
+      "`AN_hen_FollowRun`",
+      "牵引快跑",
+      "0.30—0.45",
+      "循环",
+      "P0",
+      "覆盖300 cm/s，不把觅食慢走机械倍速。"
+    ],
+    [
+      "`AN_hen_EscapeFlutter`",
+      "逃离扑翼跑",
+      "0.27—0.42",
+      "循环",
+      "P0",
+      "覆盖400 cm/s；能可靠展翼才叠加扑翼，根仍贴地。"
+    ],
+    [
+      "`AN_hen_Turn_L`<br>`AN_hen_Turn_R`",
+      "左右碎步转身",
+      "0.30—0.55",
+      "单次",
+      "P0",
+      "爪趾与脚踝自然换位，不持续锁两脚原地旋转。"
+    ],
+    [
+      "`AN_hen_Start`<br>`AN_hen_Stop`",
+      "起跑与收步",
+      "0.18 / 0.32",
+      "单次",
+      "P0",
+      "接上现有牵引速度，停下即回标准站姿。"
+    ],
+    [
+      "`AN_hen_Alert`",
+      "紧张抬头",
+      "1.0—1.6",
+      "循环",
+      "P0",
+      "视线朝威胁，不变成雄鸡打鸣或斗鸡姿态。"
+    ],
+    [
+      "`AN_hen_CapturedIdle`",
+      "栏内/牵引等待",
+      "2.0—3.0",
+      "循环",
+      "P0",
+      "静止仍有微呼吸，不能为装饰让Actor走出栏位。"
+    ],
+    [
+      "`AN_hen_Peck`",
+      "低头啄食",
+      "0.65—1.0",
+      "单次",
+      "P1",
+      "喙接近可见地面后收回，不插进脚趾。"
+    ],
+    [
+      "`AN_hen_ScratchPeck`",
+      "单足刨地后啄食",
+      "1.4—2.0",
+      "单次",
+      "P1",
+      "一足撑地、另一足刨后换回承重，保持顺序。"
+    ],
+    [
+      "`AN_hen_Preen`",
+      "理羽",
+      "1.5—2.2",
+      "单次",
+      "P1",
+      "口鼻靠近翼侧，羽毛网格不过度拉伸。"
+    ],
+    [
+      "`AN_hen_Shake`",
+      "抖羽收翅",
+      "0.6—0.9",
+      "单次",
+      "P1",
+      "短促胸背动作，翅根不漏空或翻面。"
+    ],
+    [
+      "`AN_hen_DustBath_In`<br>`AN_hen_DustBath_Loop`<br>`AN_hen_DustBath_Out`",
+      "尘浴三段",
+      "0.55 / 2.0 / 0.6",
+      "进入/循环/退出",
+      "G",
+      "合适地面与空位确认后才启用，不使尘浴自动变成死亡姿态。"
+    ],
+    [
+      "`AN_hen_NestSettle`<br>`AN_hen_NestRest`<br>`AN_hen_NestExit`",
+      "安静蹲伏三段",
+      "0.55 / 2.5 / 0.55",
+      "进入/循环/退出",
+      "G",
+      "可用于未来产物展示，现有鸡蛋产量仍由栏舍逻辑控制。"
+    ],
+    [
+      "`AN_hen_Hit_L`<br>`AN_hen_Hit_R`",
+      "左右受击",
+      "0.16—0.27",
+      "单次",
+      "P0",
+      "翅腿短促收缩，受击不会变成主动战斗。"
+    ],
+    [
+      "`AN_hen_Collapse_L`<br>`AN_hen_Collapse_R`",
+      "侧倒收翅",
+      "0.4—0.65",
+      "单次",
+      "P0",
+      "足失力、翼平顺收回，鸡冠不压入地面。"
+    ],
+    [
+      "`AN_hen_CorpseHold_L`<br>`AN_hen_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "屠宰/死亡只表达一个已确认结果，不生成额外鸡蛋。"
+    ]
+  ],
+  "source_sha256": "14de89a8885108d6b965227256891d6ad2bb0aee42a79a94a4c3c5cbb9d37f03"
+}

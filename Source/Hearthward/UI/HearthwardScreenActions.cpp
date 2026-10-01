@@ -15,6 +15,10 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "../Save/HearthwardSaveSubsystem.h"
+#include "../Update/HearthwardUpdateSubsystem.h"
+#include "Engine/GameInstance.h"
+#include "HAL/PlatformProcess.h"
+#include "Misc/Paths.h"
 #include "Components/EditableTextBox.h"
 #include "EngineUtils.h"
 #include "Engine/Engine.h"
@@ -88,6 +92,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->IsLoading())return false;
     // A confirmation owns input until the player confirms or cancels it.
     if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")
+        && !(ConfirmAction==TEXT("compat.resolve") && (Action==TEXT("compat.next") || Action==TEXT("compat.prev") || Action==TEXT("compat.folder") || Action==TEXT("update.open")))
         && !(ConfirmAction==TEXT("resetAgreements") && (Action==TEXT("resetPrev") || Action==TEXT("resetNext")))) return false;
     if(Action==TEXT("resetPrev") || Action==TEXT("resetNext"))
     { ResetScroll=FMath::Clamp(ResetScroll+(Action==TEXT("resetNext")?2:-2),0,FMath::Max(0,ResetItems.Num()-2));Refresh();return true; }
@@ -101,6 +106,29 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action==TEXT("buildPrev")){Scroll-=4;Refresh();return true;}
     if(Action==TEXT("buildNext")){Scroll+=4;Refresh();return true;}
     auto* G=Gameplay(); auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
+    if(Action==TEXT("update.open"))
+    {GetGameInstance()->GetSubsystem<UHearthwardUpdateSubsystem>()->OpenReleasePage();return true;}
+    if(Action==TEXT("update.check"))
+    {GetGameInstance()->GetSubsystem<UHearthwardUpdateSubsystem>()->Check(true);Refresh();return true;}
+    if(Action==TEXT("compat.folder"))
+    {FPlatformProcess::ExploreFolder(*(FPaths::ProjectSavedDir()/TEXT("SaveGames/HearthwardPrototype")));return true;}
+    if(Action==TEXT("compat.show"))
+    {
+        if(Save->LoadPointIndex()){Message=TEXT("存档兼容，原始进度已保留。");Refresh();return true;}
+        ConfirmAction=TEXT("compat.resolve");CompatibilityScroll=0;Refresh();return true;
+    }
+    if(Action==TEXT("compat.next") || Action==TEXT("compat.prev"))
+    {CompatibilityScroll=FMath::Clamp(CompatibilityScroll+(Action==TEXT("compat.next")?2:-2),0,FMath::Max(0,((Save->GetCompatibility().Changes.Num()-1)/2)*2));Refresh();return true;}
+    if(Action==TEXT("confirm") && ConfirmAction==TEXT("compat.resolve")
+        && (!Save->GetCompatibility().CanRepair || CompatibilityScroll+2<Save->GetCompatibility().Changes.Num()))return false;
+    if(Action==TEXT("compat.resolve"))
+    {
+        const bool Done=Save->ResolveSaveConflicts();Message=Save->GetStatus();
+        if(!Done){ConfirmAction=TEXT("compat.resolve");CompatibilityScroll=0;}
+        Refresh();return Done;
+    }
+    if(Page==TEXT("title") && (Action==TEXT("new") || Action==TEXT("continue") || Action==TEXT("newPrompt") || Action==TEXT("continuePrompt") || Action==TEXT("page:save")))
+        if(!Save->LoadPointIndex()){ConfirmAction=TEXT("compat.resolve");CompatibilityScroll=0;Refresh();return false;}
     auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
     bool Success=true;
