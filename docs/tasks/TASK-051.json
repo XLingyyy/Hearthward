@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "id": "TASK-051",
+  "title": "动物建模与动作接入、当前项目进度归档和GitHub PR同步",
+  "status": "Active",
+  "updated_at": "2026-10-02",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/project-progress-20261002",
+  "source_refs": [
+    "用户2026-10-01明确要求：先导入14种动物动作，再实现自然行为、兄弟接近逃离和致命倒地，最后建立限定活动实机演示区",
+    "Resource/Tripo/动物/动作/制作成果当前R3资产及14种动物303段动作",
+    "用户后续要求：全部动物快速行走加速，略快于玩家Shift疾跑但不迅速拉开距离",
+    "用户2026-10-02明确授权：将当前项目进度，包括建模、新增加动作及制作说明文档，全部打包为pull request同步远端GitHub仓库。",
+    "原始实现工作区codex/animal-runtime-20261001；本次隔离同步分支基于origin/main@e1c44c4，保留PR #55的UI、加载与场景修复。"
+  ],
+  "dependencies": [
+    "TASK-048",
+    "TASK-050"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-051-animal-motion.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-051.json",
+    "docs/tasks/TASK-051.md",
+    "docs/handoffs/TASK-051.md",
+    "docs/contracts/CT-TASK-051-animal-motion.md",
+    "docs/qa/TASK-051/",
+    "scripts/animals/",
+    "Source/Hearthward/Animals/",
+    "Source/Hearthward/Nature/HearthwardNatureActor.h",
+    "Source/Hearthward/Nature/HearthwardNatureActor.cpp",
+    "Source/Hearthward/Combat/HearthwardCombatTargetComponent.cpp",
+    "Source/Hearthward/Tests/AnimalMotionTests.cpp",
+    "Resources/Data/animal_motion.json",
+    "Content/Hearthward/Animals/",
+    "Content/Hearthward/Tests/AnimalMotion/",
+    "Content/Imported/Scenes/animal_demo_20261001/",
+    ".gitattributes",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/qa/project-progress-20261002/",
+    "docs/qa/legacy-camp-fix-20260929.md",
+    "docs/qa/update-compatibility-20260930.md",
+    "art_source/TASK-004/",
+    "art_source/TASK-051/",
+    "Config/DefaultGame.ini",
+    "Source/Hearthward/Save/",
+    "Source/Hearthward/Update/",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenCompatibility.cpp",
+    "scripts/release/demo.iss"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "14套当前绑定及303段动作成套导入对应Skeleton并核对来源",
+    "按物种交替缓步/游动、觅食、警觉、清理及休息；玩家或弟弟靠近时快速逃离",
+    "非致命受击、致命倒地和倒地保持衔接，死亡停止移动",
+    "单独可运行演示区包含每种一只，陆地和水域具有严格活动边界",
+    "构建、真实运行及定向边界/行为/死亡验证，提供启动和操作入口，同步README与交接",
+    "14种动物快速逃离为玩家基础疾跑速度的105%，随疾跑技能保持小幅优势；步态随真实速度匹配并复测边界",
+    "当前14套配对Blender源、SK和303段FBX、PBR纹理、制作指导/复核/预览及相关制作代码可从Git与LFS恢复；补齐未入库建模源。",
+    "纳入当前更新提示与存档兼容源码，与远端已合入改动整合，提交推送并创建PR，明确最新受测源码与原历史证据。"
+  ],
+  "non_goals": [
+    "不发布Release、不合并main、不改远端保护、不重生成资产或产生云端消费",
+    "不将真实用户存档、密钥、生成缓存、编译二进制或模型权重入库",
+    "归档TASK-004源文件不构成执行其余模型适配或整单验收"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "user_authorized Git fetch/push, Git LFS upload and GitHub PR creation on 2026-10-02",
+    "install_dependencies": "not_granted",
+    "commit": "user_authorized_2026-10-02",
+    "push": "user_authorized_2026-10-02",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "当前HEAD 9058ee2978f87cafa02e13666ebd0d96b81cd2f2，继承但不修改上一项存档兼容的未提交工作。",
+    "本轮用户明确要求玩家/弟弟靠近快速逃离，覆盖动画动物接入路径的旧静态攻击/报复默认；已有采集、捕捉、伤害与掉落入口保留。",
+    "全部新二进制使用独立Animals/Tests/AnimalMotion命名空间，已核对现有远端LFS锁；不修改既有锁定资产。",
+    "游戏内演示区域与参数用于本轮观察验收；正式全地图投放和经济平衡仍沿048。",
+    "三个阶段已实现并编译；最终验证见docs/qa/TASK-051/REPORT.md。保留Active，等待Owner在实机中检查动作观感，没有指定Reviewer或代替真人验收。",
+    "2026-10-01修复Owner报告的启动批处理故障：LF导致cmd截断路径，改为CRLF并用同目录.gitattributes固定检出换行。已通过原.cmd实际启动，检查到14种动物画面；C++与资产未变，见docs/qa/TASK-051/启动修复.md。",
+    "2026-10-02速度调整完成：基础疾跑600cm/s，14种动物基础快速逃离630cm/s，疾跑技能同倍率加成。鱼类补独立游动参考速度和持续循环；新版构建、199/199离屏渲染实机检查、42张原生图、6/6回归通过。缓步／自然周期及原配对资产保持原成果，当前待Owner在普通窗口检查。",
+    "2026-10-02本次用户授权覆盖当前项目全部进度，包含前序存档兼容改动和仓库外制作成果归档；原始游戏工作区保持不变。本同步分支人工解合并冲突，先提交批准快照，再对实现提交执行范围及运行验证；自动化通过不替代Owner观感验收。"
+  ]
+}
