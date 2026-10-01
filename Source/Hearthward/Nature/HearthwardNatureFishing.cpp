@@ -67,7 +67,7 @@ void UHearthwardNatureSubsystem::TickFishing(double Delta)
     if(!Safe(ActionEpoch) || !Near(FishingId) || !Rod || Rod->Durability<=0 || FVector::Dist(Player()->GetActorLocation(),ActionPosition)>100){Cancel();return;}
     const bool WasCast=Fishing.Cast;
     const auto* PC=Cast<APlayerController>(Player()->GetController());
-    Fishing.Advance(Delta,LineHeld || (PC && PC->IsInputKeyDown(EKeys::LeftMouseButton)));
+    Fishing.Advance(Delta,LineHeld);
     if(!WasCast && Fishing.Cast)
     {
         TGuardValue<bool> Guard(Settling,true);FHearthwardInventoryState Next;

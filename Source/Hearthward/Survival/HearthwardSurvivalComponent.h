@@ -34,8 +34,6 @@ public:
     UFUNCTION(BlueprintCallable) void GiveUp();
     void FatalEnvironment();
     void FallImpact(float Speed);
-    UPROPERTY(EditAnywhere) TObjectPtr<class UCurveFloat> FallDamageCurve;
-    UPROPERTY(EditAnywhere) float SwimmingCostPerSecond=0;
     void ResetTransient();
     bool AutomaticBehavior(float Delta);
     FString Describe() const;

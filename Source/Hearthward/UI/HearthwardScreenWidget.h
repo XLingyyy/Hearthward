@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Dom/JsonObject.h"
 #include "Styling/SlateBrush.h"
+#include "../Experience/HearthwardPlayerSettings.h"
 #include "HearthwardScreenWidget.generated.h"
 
 struct FHearthwardUIElement
@@ -14,6 +15,7 @@ struct FHearthwardUIElement
     int32 Tracking=0;
     bool Enabled=true, Selected=false, Hidden=false;
     bool MapClipped=false;
+    bool TextScrollClipped=false;
 };
 
 struct FHearthwardSavePoint;
@@ -49,6 +51,7 @@ public:
     virtual FReply NativeOnMouseWheel(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
+    virtual FReply NativeOnKeyUp(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual TSharedRef<SWidget> RebuildWidget() override;
 private:
     UPROPERTY() TObjectPtr<class AHearthwardHUD> OwnerHUD;
@@ -97,6 +100,10 @@ private:
     FVector2D CanvasPoint(const FGeometry& Geometry,const FVector2D& Screen) const;
     int32 Hit(const FVector2D& Point) const;
     void ApplyLayout();
+    void ApplyReadableLayout();
+    void ApplyReadableHUD();
+    bool ReadableLayout() const;
+    float TextScroll=0,TextScrollMaximum=0;
     void LoadComponents();
     bool LayoutKey(const FKeyEvent& Event);
     FReply LayoutMouseDown(const FGeometry& Geometry,const FPointerEvent& Event);

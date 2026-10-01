@@ -1,4 +1,5 @@
 #include "HearthwardCampaignSubsystem.h"
+#include "../Experience/HearthwardPresentationComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Camp/HearthwardCampSubsystem.h"
@@ -110,6 +111,7 @@ bool UHearthwardCampaignSubsystem::Claim(FName Id,FGuid Epoch)
     if(!Store->Adjust(Inputs,Items)){G->Experience=OldXP;G->RewardFacts=OldFacts;return false;}
     if(!Delivery.IsNone())State.Facts.Add(Delivery);
     G->Claimed.Add(Id);
+    if(auto* Presentation=Player()->FindComponentByClass<UHearthwardPresentationComponent>()) Presentation->PlayFixedCue(FName(*(TEXT("fixed.")+Id.ToString()+TEXT(".complete"))),FGuid::NewGuid(),true);
     for(const auto& V:HearthwardCampaign::Rows(TEXT("quests")))
     {const FName Next(*Text(V->AsObject(),TEXT("id")));if(Text(V->AsObject(),TEXT("category"))==TEXT("main") && Available(Next) && !G->Claimed.Contains(Next)){G->TrackedQuest=Next;break;}}
     Feedback=TEXT("任务完成，奖励已登记到共享仓储");G->Feedback=Feedback;G->OnChanged.Broadcast();return true;
