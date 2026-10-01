@@ -530,7 +530,7 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     auto* Character=Cast<ACharacter>(GetOwner()); if (!Character) return;
     const bool Moving=Character->GetVelocity().Size2D()>5;
     const auto* Combat=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();
-    const bool Running=Sprinting && Moving && Stamina>0 && (!Combat || (!Combat->Busy() && !Combat->Guarding()));
+    const bool Running=Sprinting && Moving && Stamina>0 && !Character->GetCharacterMovement()->IsSwimming() && (!Combat || (!Combat->Busy() && !Combat->Guarding()));
     auto* Survival=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
     auto& Delay=Survival->State.RecoveryDelay;
     const bool Swimming=Character->GetCharacterMovement()->IsSwimming();

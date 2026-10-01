@@ -1,5 +1,11 @@
 #include "HearthwardScreenWidget.h"
+#include "../HearthwardCharacter.h"
+#include "../Experience/HearthwardPresentationComponent.h"
+#include "GameFramework/GameUserSettings.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Companion/HearthwardCompanionFixture.h"
+#include "../Combat/HearthwardCombatComponent.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "Misc/ConfigCacheIni.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
@@ -21,6 +27,7 @@
 #include "Components/SizeBox.h"
 #include "Engine/Texture2D.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "ImageUtils.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -29,6 +36,9 @@
 #include "Serialization/JsonSerializer.h"
 #include "Rendering/DrawElements.h"
 #include "Styling/CoreStyle.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Rendering/SlateRenderer.h"
+#include "Fonts/FontMeasure.h"
 
 using namespace HearthwardData;
 TSharedRef<SWidget> UHearthwardScreenWidget::RebuildWidget()
@@ -153,9 +163,14 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     }
     if(Name==TEXT("repairing"))Name=TEXT("equipment");
     if(Name==TEXT("equipment"))EquipmentEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    if(DisplayDeadline>0) {FinishDisplayChange(false);}
+    if(Elements.IsValidIndex(KeyboardFocus)) PageFocus.Add(Page,Elements[KeyboardFocus].Action);
+    BindingCapture=NAME_None;
+    if(auto* C=Cast<AHearthwardCharacter>(GetOwningPlayerPawn())) C->ResetHeldInput();
     const FName PreviousPage=Page;
     const bool RestoringMemoryDraft=Name==TEXT("memory") && !ReturnPages.IsEmpty() && ReturnPages.Last()==Name;
-    if(Page==TEXT("dialogue") && Name!=Page) GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();
+    if(Page==TEXT("dialogue") && Name!=Page)
+    {GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->CancelPending();GetOwningPlayerPawn()->FindComponentByClass<UHearthwardPresentationComponent>()->StopFixedCue();}
     if(Name==TEXT("crafting") || Name==TEXT("repairing"))
     {
         auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
@@ -185,7 +200,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         else { ReturnPages.Reset(); ReturnCategories.Reset(); }
     }
     if(Page!=Name) Category=RestoringParent?RestoredCategory:FString();
-    Page=Name; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
+    Page=Name; TextScroll=0; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
     GConfig->GetBool(TEXT("Hearthward.Survival"),TEXT("MenuPause"),MenuPause,GGameUserSettingsIni);
     if(Name==TEXT("settings") && PreviousPage!=Name)
@@ -217,11 +232,32 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if(Name==TEXT("memory") && !RestoringMemoryDraft) { MemoryEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(); MemoryRevision=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemoryRevision(); SelectedMemory.Invalidate(); MemoryKind=TEXT("claim"); }
     if(Name==TEXT("nature")) NatureEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     if (Name==TEXT("storage")) StorageEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    if(Name==TEXT("dialogue") && PreviousPage!=Name)
+    {
+        auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();const FName Quest=Gameplay()->TrackedQuest;
+        const FName Cue(*(TEXT("fixed.")+Quest.ToString()+TEXT(".intro"))),Fact(*(TEXT("cue:")+Cue.ToString()));
+        const FName Location=Campaign->QuestLocation(Quest);
+        const bool Observed=Gameplay()->Discovered.Contains(Location) && FVector::Dist(GetOwningPlayerPawn()->GetActorLocation(),Gameplay()->LocationPosition(Location))<=3000;
+        if(Campaign->Available(Quest) && !Campaign->State.Facts.Contains(Fact) && Observed)
+            if(GetOwningPlayerPawn()->FindComponentByClass<UHearthwardPresentationComponent>()->PlayFixedCue(Cue,FGuid::NewGuid(),true)) Campaign->Record(Fact);
+    }
     Refresh();
 }
 void UHearthwardScreenWidget::Element(FString Type,FString TextValue,FVector2D P,FVector2D Size,float Font,FString Action,FString Asset,bool Selected)
 {
+    const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
+    for(const auto& D:HearthwardInput::Definitions()) if(D.Contexts.Contains(Page) && D.Primary.Key.IsValid())
+    {
+        const FString Old=D.Primary.Key.GetDisplayName().ToString(),Current=HearthwardInput::Label(Bindings,D.Id);
+        if(Current!=Old)
+        {
+            if(TextValue.StartsWith(Old+TEXT(" "))) TextValue=Current+TextValue.Mid(Old.Len());
+            TextValue.ReplaceInline(*(TEXT("[")+Old+TEXT("]")),*(TEXT("[")+Current+TEXT("]")));
+        }
+    }
     FHearthwardUIElement E; E.Type=Type; E.Text=TextValue; E.Position=P; E.Size=Size; E.Font=Font; E.Action=Action; E.Asset=Asset; E.Selected=Selected;
+    const float TextScale=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f;
+    if(!TextValue.IsEmpty()) E.Font=FMath::Max(Font,24.f)*TextScale;
     E.Color=Color(TEXT("text"));
     E.Tracking=Number(Theme->GetObjectField(TEXT("typography")),TEXT("tracking"));
     Elements.Add(MoveTemp(E));
@@ -316,18 +352,29 @@ void UHearthwardScreenWidget::Refresh()
         {
         Element(TEXT("panel"),TEXT(""),FVector2D(490,310),FVector2D(690,290));
         Element(TEXT("text"),TEXT("确认操作"),FVector2D(550,342),FVector2D(580,45),28);
-        Element(TEXT("text"),(ConfirmAction==TEXT("gear.dropConfirmed")?TEXT("这是唯一装备，放下后仅能在原地拾回。确认放到地面？"):ConfirmAction.StartsWith(TEXT("camp."))?ConfirmMessage:TEXT("未保存的进度可能丢失。是否继续？")),FVector2D(550,410),FVector2D(580,50),20);
+        Element(TEXT("text"),(ConfirmAction==TEXT("gear.dropConfirmed")?TEXT("这是唯一装备，放下后仅能在原地拾回。确认放到地面？"):(ConfirmAction.StartsWith(TEXT("camp.")) || ConfirmAction==TEXT("settings.display"))?ConfirmMessage:TEXT("未保存的进度可能丢失。是否继续？")),FVector2D(550,410),FVector2D(580,50),20);
         Element(TEXT("button"),TEXT("确认"),FVector2D(550,510),FVector2D(240,55),22,TEXT("confirm"));
         Element(TEXT("button"),TEXT("返回"),FVector2D(850,510),FVector2D(240,55),22,TEXT("cancel"));
         }
     }
     ApplyLayout();
+    ApplyReadableLayout();
+    ApplyReadableHUD();
+    if(Draft)
+    {
+        FEditableTextBoxStyle Style=Draft->GetWidgetStyle();
+        Style.TextStyle.Font=FSlateFontInfo(Typeface,FMath::RoundToInt(18*GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f));
+        Draft->SetWidgetStyle(Style);
+    }
     KeyboardFocus=FocusedAction.IsEmpty()?INDEX_NONE:Elements.IndexOfByPredicate([&](const FHearthwardUIElement& E)
     { return E.Action==FocusedAction && E.Enabled && !E.Hidden; });
+    if(KeyboardFocus==INDEX_NONE && ConfirmAction.IsEmpty() && PageFocus.Contains(Page))
+        KeyboardFocus=Elements.IndexOfByPredicate([&](const auto& E){return E.Action==PageFocus[Page] && E.Enabled && !E.Hidden;});
 }
 void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
 {
     Super::NativeTick(G,Delta);
+    if(DisplayDeadline>0 && FPlatformTime::Seconds()>=DisplayDeadline) FinishDisplayChange(false);
     if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) && Page!=TEXT("save") && Page!=TEXT("title"))
     {
         GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->LoadPointIndex();
@@ -345,7 +392,7 @@ int32 UHearthwardScreenWidget::Hit(const FVector2D& P) const
 {
     for(int32 I=Elements.Num()-1;I>=0;--I)
     {
-        const auto& E=Elements[I]; if(E.Action.IsEmpty() || !E.Enabled || E.Hidden) continue;
+        const auto& E=Elements[I]; if(E.Action.IsEmpty() || !E.Enabled || E.Hidden || E.TextScrollClipped) continue;
         if(!ConfirmAction.IsEmpty() && E.Action!=TEXT("confirm") && E.Action!=TEXT("cancel")) continue;
         const auto MapPoint=ComponentPoint(TEXT("map.canvas"),P,true);
         if(E.MapClipped && (MapPoint.X<407 || MapPoint.X>1517 || MapPoint.Y<95 || MapPoint.Y>855)) continue;
@@ -356,7 +403,8 @@ int32 UHearthwardScreenWidget::Hit(const FVector2D& P) const
 FReply UHearthwardScreenWidget::NativeOnMouseButtonDown(const FGeometry& G,const FPointerEvent& E)
 {
     if(LayoutEditing) return LayoutMouseDown(G,E);
-    if(Page==TEXT("map") && ConfirmAction.IsEmpty() && E.GetEffectingButton()==EKeys::RightMouseButton)
+    if(CaptureBinding(E.GetEffectingButton(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown())) return FReply::Handled();
+    if(Page==TEXT("map") && ConfirmAction.IsEmpty() && HearthwardInput::Matches(GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings,TEXT("map.marker"),E.GetEffectingButton(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown()))
     {
         if(const auto* Bounds=LayoutBounds.Find(TEXT("map.canvas"));Bounds && Bounds->Hidden) return FReply::Handled();
         const FVector2D P=ComponentPoint(TEXT("map.canvas"),CanvasPoint(G,E.GetScreenSpacePosition()),true);
@@ -394,80 +442,212 @@ void UHearthwardScreenWidget::NativeOnMouseLeave(const FPointerEvent& E)
 FReply UHearthwardScreenWidget::NativeOnMouseWheel(const FGeometry& G,const FPointerEvent& E)
 {
     if(LayoutEditing) return FReply::Handled();
+    if(ReadableLayout()) {TextScroll=FMath::Clamp(TextScroll-E.GetWheelDelta()*90,0.f,TextScrollMaximum);Refresh();return FReply::Handled();}
     if(Page==TEXT("map")) MapZoom=FMath::Clamp(MapZoom+E.GetWheelDelta()*.1f,1.f,2.f);
     else Scroll=FMath::Max(0,Scroll-(E.GetWheelDelta()>0?1:-1));
     Refresh(); return FReply::Handled();
 }
+bool UHearthwardScreenWidget::InputMatches(FName Id,const FKeyEvent& E) const
+{ return HearthwardInput::Matches(GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings,Id,E.GetKey(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown()); }
 FReply UHearthwardScreenWidget::NativeOnPreviewKeyDown(const FGeometry& G,const FKeyEvent& E)
 {
     if(LayoutKey(E)) return FReply::Handled();
-    if(E.GetKey()==EKeys::F6)
-    {
-        if(ConfirmAction.IsEmpty()) ExecuteAction(Page==TEXT("save")?TEXT("back"):TEXT("page:save"));
-        return FReply::Handled();
-    }
+    if(CaptureBinding(E.GetKey(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown())) return FReply::Handled();
     if(E.GetKey()==EKeys::Escape)
-    {
-        ExecuteAction(ConfirmAction.IsEmpty()?TEXT("back"):TEXT("cancel"));
-        return FReply::Handled();
-    }
+    { ExecuteAction(ConfirmAction.IsEmpty()?TEXT("back"):TEXT("cancel"));return FReply::Handled(); }
+    if(!ConfirmAction.IsEmpty()) return NativeOnKeyDown(G,E);
+    // Slate owns IME composition and emits OnTextCommitted after composition completes.
+    if(Draft && Draft->HasKeyboardFocus()) return Super::NativeOnPreviewKeyDown(G,E);
+    if(InputMatches(TEXT("ui.save"),E))
+    { ExecuteAction(Page==TEXT("save")?TEXT("back"):TEXT("page:save"));return FReply::Handled(); }
     return Super::NativeOnPreviewKeyDown(G,E);
+}
+FReply UHearthwardScreenWidget::NativeOnKeyUp(const FGeometry& G,const FKeyEvent& E)
+{
+    if(!BindingCapture.IsNone() && E.GetKey().IsModifierKey())
+    {
+        const FKey Key=E.GetKey()==EKeys::RightShift?EKeys::LeftShift:E.GetKey()==EKeys::RightControl?EKeys::LeftControl:E.GetKey()==EKeys::RightAlt?EKeys::LeftAlt:E.GetKey();
+        SettingsBindings.FindChecked(BindingCapture)[BindingSlot]={Key,FKey()};BindingCapture=NAME_None;SettingsDirty=true;Refresh();return FReply::Handled();
+    }
+    return Super::NativeOnKeyUp(G,E);
 }
 FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEvent& E)
 {
     const FKey Key=E.GetKey();
-    if(!ConfirmAction.IsEmpty())
+    if(ReadableLayout() && (Key==EKeys::PageUp || Key==EKeys::PageDown || Key==EKeys::Home || Key==EKeys::End))
+    {TextScroll=Key==EKeys::Home?0:Key==EKeys::End?TextScrollMaximum:FMath::Clamp(TextScroll+(Key==EKeys::PageDown?600:-600),0.f,TextScrollMaximum);Refresh();return FReply::Handled();}
+    if(E.IsRepeat()) return FReply::Handled();
+    const bool Confirming=!ConfirmAction.IsEmpty();
+    if(Key==EKeys::Enter && Elements.IsValidIndex(KeyboardFocus))
     {
-        if(Key==EKeys::Escape) ExecuteAction(TEXT("cancel"));
-        if(Key==EKeys::Enter) ExecuteAction(TEXT("confirm"));
+        const auto& Focus=Elements[KeyboardFocus];
+        if(Focus.Enabled && !Focus.Hidden && !Focus.Action.IsEmpty() && (!Confirming || Focus.Action==TEXT("confirm") || Focus.Action==TEXT("cancel") || Focus.Action.StartsWith(TEXT("reset"))))
+            ExecuteAction(Focus.Action);
         return FReply::Handled();
     }
-    if(Page==TEXT("map") && (Key==EKeys::Left || Key==EKeys::Right || Key==EKeys::Up || Key==EKeys::Down))
+    if(Key==EKeys::Escape) {ExecuteAction(Confirming?TEXT("cancel"):TEXT("back"));return FReply::Handled();}
+    if(Page==TEXT("map") && !Confirming && KeyboardFocus==INDEX_NONE && (Key==EKeys::Left || Key==EKeys::Right || Key==EKeys::Up || Key==EKeys::Down))
     {
         MapPan+=FVector2D(Key==EKeys::Left?30:Key==EKeys::Right?-30:0,Key==EKeys::Up?30:Key==EKeys::Down?-30:0);
-        MapPan.X=FMath::Clamp(MapPan.X,-450.f,450.f); MapPan.Y=FMath::Clamp(MapPan.Y,-300.f,300.f);
-        Refresh(); return FReply::Handled();
+        MapPan.X=FMath::Clamp(MapPan.X,-450.f,450.f);MapPan.Y=FMath::Clamp(MapPan.Y,-300.f,300.f);Refresh();return FReply::Handled();
     }
-    if(Key==EKeys::Escape) { ExecuteAction(TEXT("back")); return FReply::Handled(); }
-    if(Key==EKeys::R && Page==TEXT("settings")) { ExecuteAction(TEXT("settings.defaults")); return FReply::Handled(); }
-    const bool HasCampaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId().IsValid();
-    if(Key==EKeys::Tab && HasCampaign) { OpenPage(Page==TEXT("inventory")?TEXT("hud"):TEXT("inventory")); return FReply::Handled(); }
-    if(Key==EKeys::T && Page==TEXT("dialogue")) { ExecuteAction(TEXT("back")); return FReply::Handled(); }
-    if(Key==EKeys::T && HasCampaign) { ExecuteAction(TEXT("page:dialogue")); return FReply::Handled(); }
-    if(Key==EKeys::R && Page==TEXT("storage")) { ExecuteAction(TEXT("back")); return FReply::Handled(); }
-    if(Key==EKeys::Enter && Elements.IsValidIndex(KeyboardFocus) && Elements[KeyboardFocus].Enabled &&
-        !Elements[KeyboardFocus].Hidden && !Elements[KeyboardFocus].Action.IsEmpty())
-    { ExecuteAction(Elements[KeyboardFocus].Action); return FReply::Handled(); }
-    if(Key==EKeys::Up || Key==EKeys::Down)
+    if(Key==EKeys::Up || Key==EKeys::Down || Key==EKeys::Left || Key==EKeys::Right || Key==EKeys::Tab)
     {
-        Hover=INDEX_NONE;
-        const int32 Direction=Key==EKeys::Down?1:-1;
-        int32 Candidate=KeyboardFocus==INDEX_NONE?(Direction>0?Elements.Num()-1:0):KeyboardFocus;
-        KeyboardFocus=INDEX_NONE;
+        // Tab enters map button navigation; arrows then reach every actionable element.
+        if(Key==EKeys::Tab && !Confirming && InputMatches(TEXT("ui.inventory"),E) && Page!=TEXT("map"))
+        {OpenPage(Page==TEXT("inventory")?TEXT("hud"):TEXT("inventory"));return FReply::Handled();}
+        Hover=INDEX_NONE;const int32 Direction=Key==EKeys::Up || Key==EKeys::Left || (Key==EKeys::Tab && E.IsShiftDown())?-1:1;
+        int32 Candidate=KeyboardFocus==INDEX_NONE?(Direction>0?Elements.Num()-1:0):KeyboardFocus;KeyboardFocus=INDEX_NONE;
         for(int32 N=0;N<Elements.Num();++N)
         {
-            Candidate=(Candidate+Direction+Elements.Num())%Elements.Num();
-            if(!Elements[Candidate].Action.IsEmpty() && !Elements[Candidate].Hidden && Elements[Candidate].Enabled)
-            { KeyboardFocus=Candidate; break; }
+            Candidate=(Candidate+Direction+Elements.Num())%Elements.Num();const auto& Item=Elements[Candidate];
+            if(!Item.Action.IsEmpty() && !Item.Hidden && Item.Enabled && (!Confirming || Item.Action==TEXT("confirm") || Item.Action==TEXT("cancel") || Item.Action==TEXT("resetPrev") || Item.Action==TEXT("resetNext")))
+            {
+                KeyboardFocus=Candidate;PageFocus.Add(Page,Item.Action);
+                if(ReadableLayout())
+                {
+                    if(Item.Position.Y<70) TextScroll+=Item.Position.Y-70;
+                    else if(Item.Position.Y+Item.Size.Y>790) TextScroll+=Item.Position.Y+Item.Size.Y-790;
+                    TextScroll=FMath::Clamp(TextScroll,0.f,TextScrollMaximum);Refresh();
+                }
+                break;
+            }
         }
         return FReply::Handled();
     }
-    if(Key==EKeys::F && Page==TEXT("inventory")) ExecuteAction(TEXT("use"));
-    if(Key==EKeys::F && Page==TEXT("crafting") && Elements.ContainsByPredicate([](const FHearthwardUIElement& Item)
-        { return Item.Action==TEXT("craft") && Item.Enabled && !Item.Hidden; })) ExecuteAction(TEXT("craft"));
-    if(Key==EKeys::F && Page==TEXT("repairing") && Elements.ContainsByPredicate([](const FHearthwardUIElement& Item)
-        { return Item.Action==TEXT("repairEquipment") && Item.Enabled && !Item.Hidden; })) ExecuteAction(TEXT("repairEquipment"));
-    if(Key==EKeys::F && Page==TEXT("skills")) ExecuteAction(TEXT("learn"));
-    if(Key==EKeys::F && Page==TEXT("journal") && (Category==TEXT("main") || Category==TEXT("side"))) ExecuteAction(TEXT("questMap"));
-    if(Key==EKeys::V && Page==TEXT("journal") && (Category==TEXT("main") || Category==TEXT("side"))) ExecuteAction(TEXT("track"));
-    if(Key==EKeys::R && Page==TEXT("inventory")) ExecuteAction(TEXT("drop"));
-    if(Key==EKeys::H && Page==TEXT("inventory")) ExecuteAction(TEXT("repair"));
-    if(Key==EKeys::E && Page==TEXT("storage")) ExecuteAction(TEXT("transfer"));
-    if(Key==EKeys::P && HasCampaign) ExecuteAction(Page==TEXT("pause")?TEXT("page:hud"):TEXT("page:pause"));
-    if(Key==EKeys::M && HasCampaign) OpenPage(TEXT("map"));
-    if(Key==EKeys::K && HasCampaign) OpenPage(TEXT("skills"));
-    if(Key==EKeys::J && HasCampaign) OpenPage(TEXT("journal"));
+    if(Confirming) return FReply::Handled();
+    auto Is=[&](const TCHAR* Id){return InputMatches(FName(Id),E);};
+    if(Page==TEXT("settings") && Is(TEXT("settings.defaults"))) {ExecuteAction(TEXT("settings.defaults"));return FReply::Handled();}
+    if(Page==TEXT("storage") && Is(TEXT("storage.open"))) {ExecuteAction(TEXT("back"));return FReply::Handled();}
+    struct FPageAction {const TCHAR* Page;const TCHAR* Id;const TCHAR* Action;};
+    const FPageAction Shortcuts[]={
+        {TEXT("inventory"),TEXT("inventory.use"),TEXT("use")},{TEXT("inventory"),TEXT("inventory.drop"),TEXT("drop")},{TEXT("inventory"),TEXT("inventory.repair"),TEXT("repair")},
+        {TEXT("crafting"),TEXT("crafting.commit"),TEXT("craft")},{TEXT("repairing"),TEXT("repair.commit"),TEXT("repairEquipment")},{TEXT("skills"),TEXT("skills.learn"),TEXT("learn")},
+        {TEXT("journal"),TEXT("journal.locate"),TEXT("questMap")},{TEXT("journal"),TEXT("journal.track"),TEXT("track")},{TEXT("storage"),TEXT("storage.transfer"),TEXT("transfer")}};
+    for(const auto& S:Shortcuts) if(Page==S.Page && Is(S.Id))
+    {ExecuteAction(S.Action);return FReply::Handled();}
+    const bool Campaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId().IsValid();
+    if(!Campaign) return FReply::Handled();
+    if(Is(TEXT("ui.inventory"))) {OpenPage(Page==TEXT("inventory")?TEXT("hud"):TEXT("inventory"));return FReply::Handled();}
+    if(Is(TEXT("companion.dialogue"))) {ExecuteAction(Page==TEXT("dialogue")?TEXT("back"):TEXT("page:dialogue"));return FReply::Handled();}
+    if(Is(TEXT("ui.pause"))) {ExecuteAction(Page==TEXT("pause")?TEXT("page:hud"):TEXT("page:pause"));return FReply::Handled();}
+    if(Is(TEXT("ui.map"))) {OpenPage(TEXT("map"));return FReply::Handled();}
+    if(Is(TEXT("ui.skills"))) {OpenPage(TEXT("skills"));return FReply::Handled();}
+    if(Is(TEXT("ui.journal"))) {OpenPage(TEXT("journal"));return FReply::Handled();}
     return FReply::Handled();
 }
 void UHearthwardScreenWidget::DraftCommitted(const FText& TextValue,ETextCommit::Type Method)
 { if(Method==ETextCommit::OnEnter) ExecuteAction(Page==TEXT("memory")?TEXT("memorySave"):TEXT("send")); }
+
+bool UHearthwardScreenWidget::ReadableLayout() const
+{ return Page!=TEXT("hud") && Page!=TEXT("map") && !LayoutEditing && ConfirmAction.IsEmpty() && GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale>100; }
+void UHearthwardScreenWidget::ApplyReadableLayout()
+{
+    if(!ReadableLayout()) return;
+    if(Draft && (Page==TEXT("dialogue") || Page==TEXT("memory")))
+    {auto* CanvasSlot=CastChecked<UCanvasPanelSlot>(Draft->Slot);CanvasSlot->SetPosition({190,795});CanvasSlot->SetSize({1292,90});}
+    const auto Original=Elements;TArray<FHearthwardUIElement> Rows;
+    const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+    float Y=70;
+    for(const auto& Source:Original)
+    {
+        if(Source.Hidden) continue;
+        if(Source.Type==TEXT("image") && Source.Position.IsNearlyZero() && Source.Size.X>=1600) {Rows.Add(Source);continue;}
+        if(Source.Text.IsEmpty() && Source.Action.IsEmpty()) continue;
+        if(Source.Action.IsEmpty() && Source.Type!=TEXT("text") && Source.Type!=TEXT("notice")) continue;
+        auto E=Source;E.Asset.Reset();E.MapClipped=false;E.FontRole.Reset();
+        if(!E.Action.IsEmpty())
+        {
+            E.Type=TEXT("button");
+            if(E.Text.IsEmpty())
+                for(const auto& Label:Original)
+                    if(!Label.Text.IsEmpty() && Label.Position.X>=Source.Position.X && Label.Position.Y>=Source.Position.Y
+                        && Label.Position.X<Source.Position.X+Source.Size.X && Label.Position.Y<Source.Position.Y+Source.Size.Y)
+                        if(Label.Text.Len()>E.Text.Len()) E.Text=Label.Text;
+            if(E.Action.StartsWith(TEXT("skill:"))) E.Text=Text(Find(TEXT("skills"),E.Action.Mid(6)),TEXT("name"));
+            else if(E.Action.StartsWith(TEXT("item:"))) E.Text=Text(Find(TEXT("items"),E.Action.Mid(5)),TEXT("name"))+(E.Text.IsEmpty()?FString():TEXT(" · ")+E.Text);
+            if(E.Text.IsEmpty()) continue;
+        }
+        else
+        {
+            const bool LabelOfButton=Original.ContainsByPredicate([&](const auto& Button)
+            {return !Button.Action.IsEmpty() && Source.Position.X>=Button.Position.X && Source.Position.Y>=Button.Position.Y && Source.Position.X<Button.Position.X+Button.Size.X && Source.Position.Y<Button.Position.Y+Button.Size.Y;});
+            if(LabelOfButton) continue;
+        }
+        E.Font=FMath::Max(24.f*GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f,E.Font);E.Align=TEXT("left");E.TextInset=20;
+        FSlateFontInfo Font(Typeface,FMath::RoundToInt(E.Font*.75f));
+        TArray<FString> SourceLines;E.Text.ParseIntoArrayLines(SourceLines,false);int32 Lines=0;
+        for(FString Line:SourceLines)
+        {
+            do {const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,1230)+1,1,FMath::Max(1,Line.Len()));Line=Line.Mid(Count);++Lines;} while(!Line.IsEmpty());
+        }
+        E.Position={190,Y};E.Size={1292,FMath::Max(68.f,Lines*E.Font*1.6f+22)};Y+=E.Size.Y+14;
+        Rows.Add(E);
+    }
+    const float Bottom=Page==TEXT("dialogue") || Page==TEXT("memory")?770:835;
+    TextScrollMaximum=FMath::Max(0.f,Y-Bottom);TextScroll=FMath::Clamp(TextScroll,0.f,TextScrollMaximum);
+    for(auto& E:Rows) if(!(E.Type==TEXT("image") && E.Size.X>=1600))
+    {E.Position.Y-=TextScroll;E.TextScrollClipped=E.Position.Y+E.Size.Y<60 || E.Position.Y>Bottom;}
+    Elements=MoveTemp(Rows);
+}
+
+void UHearthwardScreenWidget::ApplyReadableHUD()
+{
+    if(Page!=TEXT("hud") || LayoutEditing || GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale<=100) return;
+    const auto Original=Elements;Elements.Reset();
+    auto* G=Gameplay();const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
+    auto Key=[&](const TCHAR* Id){return HearthwardInput::Label(Bindings,FName(Id));};
+    auto Label=[&](FString Text,FVector2D P,FVector2D Size)
+    {Element(TEXT("text"),Text,P,Size,24);Elements.Last().FontRole=TEXT("body");};
+    const auto Quest=Find(TEXT("quests"),G->TrackedQuest.ToString());
+    Label(Text(Quest,TEXT("name")),{48,42},{650,60});Elements.Last().Color=Color(TEXT("gold"));
+    Label(Text(Quest,TEXT("objective")),{48,108},{650,115});
+    Label(FString::Printf(TEXT("进度 %d / %.0f · %s 任务"),G->QuestProgress(G->TrackedQuest),Number(Quest,TEXT("required")),*Key(TEXT("ui.journal"))),{48,233},{650,55});
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+    {
+        auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();
+        Label(FString::Printf(TEXT("弟弟 · 生命 %.0f · 饱食 %.0f"),S->Health(),S->Hunger()),{48,310},{650,55});
+        Label(S->Describe().IsEmpty()?GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetStatus():S->Describe(),{48,373},{650,110});
+        Label(Key(TEXT("companion.wait"))+TEXT(" 等待 · ")+Key(TEXT("companion.follow"))+TEXT(" 跟随 · ")+Key(TEXT("companion.attack"))+TEXT(" 进攻"),{48,495},{650,55});
+        break;
+    }
+    const float Values[]={G->Health,G->Hunger,G->Stamina},Maximum[]={G->MaxHealth(),100,G->MaxStamina()};
+    const TCHAR* Names[]={TEXT("生命"),TEXT("饱食"),TEXT("耐力")},*Colors[]={TEXT("health"),TEXT("hunger"),TEXT("stamina")};
+    for(int32 I=0;I<3;++I)
+    {
+        const float Y=610+I*56;Label(Names[I],{48,Y},{130,55});Elements.Last().Color=Color(Colors[I]);
+        Element(TEXT("bar"),TEXT(""),{190,Y+20},{175,12});Elements.Last().Value=Values[I]/Maximum[I];Elements.Last().Color=Color(Colors[I]);
+        Label(FString::Printf(TEXT("%.0f / %.0f"),Values[I],Maximum[I]),{388,Y},{265,55});
+    }
+    const auto& Slots=Theme->GetObjectField(TEXT("inventory"))->GetArrayField(TEXT("quickSlots"));
+    const TCHAR* Shortcuts[]={TEXT("survival.medicine"),TEXT("survival.food"),TEXT(""),TEXT("combat.throw")};
+    for(int32 I=0;I<Slots.Num();++I)
+    {
+        const FString Id=Slots[I]->AsString();const auto Item=Find(TEXT("items"),Id);const float X=48+I*155;
+        Element(TEXT("image"),TEXT(""),{X,797},{52,52},18,TEXT(""),Text(Item,TEXT("quickIcon")).IsEmpty()?Text(Item,TEXT("icon")):Text(Item,TEXT("quickIcon")));
+        FString Binding;if(I<UE_ARRAY_COUNT(Shortcuts) && Shortcuts[I][0])
+        {const auto& Keys=Bindings.FindChecked(FName(Shortcuts[I]));Binding=(Keys[0].Key.IsValid()?Keys[0]:Keys[1]).Label()+TEXT(" · ");}
+        Label(Binding+FString::FromInt(Inventory()->GetItemCount(FName(*Id))),{X,854},{150,55});
+    }
+    TSet<FString> Seen;float Y=110;
+    const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+    for(const auto& Source:Original)
+    {
+        if(Source.Hidden || Source.Text.IsEmpty() || Seen.Contains(Source.Text)) continue;
+        const bool Notice=Source.Type==TEXT("notice");
+        const bool WorldText=Source.Type==TEXT("text") && Source.Position.X>=900 && Source.Component.IsEmpty();
+        if(!Notice && !WorldText) continue;
+        if(Source.Text.StartsWith(Key(TEXT("combat.dodge")))) continue;
+        Seen.Add(Source.Text);auto E=Source;E.Type=TEXT("text");E.FontRole=TEXT("body");E.Asset.Reset();E.TextInset=0;
+        E.Position={1000,Y};E.Size={620,0};FSlateFontInfo Font(Typeface,FMath::RoundToInt(E.Font*.75f));
+        TArray<FString> SourceLines;E.Text.ParseIntoArrayLines(SourceLines,false);int32 Count=0;
+        for(FString Line:SourceLines) do {const int32 N=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,600)+1,1,FMath::Max(1,Line.Len()));Line=Line.Mid(N);++Count;} while(!Line.IsEmpty());
+        E.Size.Y=FMath::Min(3,Count)*E.Font*1.6f;
+        if(Y+E.Size.Y>570) continue;Y+=E.Size.Y+18;Elements.Add(E);
+    }
+    for(const auto& Source:Original) if(Source.Type==TEXT("bar") && Source.Text==TEXT("发现程度"))
+    {auto E=Source;E.Text.Reset();E.Position={1000,588};E.Size={620,12};Elements.Add(E);}
+    const int32 Time=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
+    Label(Key(TEXT("ui.inventory"))+TEXT(" 背包 · ")+Key(TEXT("ui.map"))+TEXT(" 地图 · ")+Key(TEXT("ui.save"))+TEXT(" 存档"),{1000,886},{620,55});
+    Label(FString::Printf(TEXT("第%d天 %02d:%02d"),Time/1440+1,(Time/60)%24,Time%60),{1080,42},{540,55});
+}

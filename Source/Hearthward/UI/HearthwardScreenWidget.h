@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Dom/JsonObject.h"
 #include "Styling/SlateBrush.h"
+#include "../Experience/HearthwardPlayerSettings.h"
 #include "HearthwardScreenWidget.generated.h"
 
 struct FHearthwardUIElement
@@ -14,6 +15,7 @@ struct FHearthwardUIElement
     int32 Tracking=0;
     bool Enabled=true, Selected=false, Hidden=false;
     bool MapClipped=false;
+    bool TextScrollClipped=false;
 };
 
 struct FHearthwardSavePoint;
@@ -49,6 +51,7 @@ public:
     virtual FReply NativeOnMouseWheel(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
+    virtual FReply NativeOnKeyUp(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual TSharedRef<SWidget> RebuildWidget() override;
 private:
     UPROPERTY() TObjectPtr<class AHearthwardHUD> OwnerHUD;
@@ -87,6 +90,17 @@ private:
     bool ExecuteSettingsAction(const FString& Action);
     void LoadSettingsDraft();
     void ApplyMasterVolume();
+    bool CaptureBinding(FKey Key,bool Shift,bool Control,bool Alt);
+    void FinishDisplayChange(bool Keep);
+    bool InputMatches(FName Id,const FKeyEvent& Event) const;
+    FHearthwardBindings SettingsBindings;
+    FHearthwardComfortSettings SettingsComfort;
+    FName BindingCapture;
+    int32 BindingSlot=0,SettingsMode=1;
+    FIntPoint SettingsResolution=FIntPoint(1920,1080),PreviousResolution;
+    EWindowMode::Type PreviousMode=EWindowMode::Windowed;
+    double DisplayDeadline=0;
+    TMap<FName,FString> PageFocus;
     void Element(FString Type,FString Text,FVector2D Position,FVector2D Size,float Font=18,FString Action=TEXT(""),FString Asset=TEXT(""),bool Selected=false);
     FString Resolve(const FString& Bind) const;
     FLinearColor Color(const FString& Name) const;
@@ -94,6 +108,10 @@ private:
     FVector2D CanvasPoint(const FGeometry& Geometry,const FVector2D& Screen) const;
     int32 Hit(const FVector2D& Point) const;
     void ApplyLayout();
+    void ApplyReadableLayout();
+    void ApplyReadableHUD();
+    bool ReadableLayout() const;
+    float TextScroll=0,TextScrollMaximum=0;
     void LoadComponents();
     bool LayoutKey(const FKeyEvent& Event);
     FReply LayoutMouseDown(const FGeometry& Geometry,const FPointerEvent& Event);

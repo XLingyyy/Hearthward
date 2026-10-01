@@ -1,4 +1,5 @@
 #include "../Nature/HearthwardNatureSubsystem.h"
+#include "../Experience/HearthwardTraversalComponent.h"
 #include "HearthwardHUD.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardScreenWidget.h"
@@ -24,29 +25,11 @@ void AHearthwardHUD::BeginPlay()
     }
     GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this, &AHearthwardHUD::SnapshotRestored);
     EnableInput(GetOwningPlayerController());
-    InputComponent->BindKey(EKeys::T,IE_Pressed,this,&AHearthwardHUD::ToggleDialogue);
-
-    InputComponent->BindKey(EKeys::F6,IE_Pressed,this,&AHearthwardHUD::ToggleSaveMenu).bExecuteWhenPaused = true;
 #if !UE_BUILD_SHIPPING
-    InputComponent->BindKey(EKeys::F10,IE_Pressed,this,&AHearthwardHUD::EditUILayout).bExecuteWhenPaused = true;
+    InputComponent->BindKey(EKeys::F10,IE_Pressed,this,&AHearthwardHUD::EditUILayout).bExecuteWhenPaused=true;
 #endif
     InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
-    InputComponent->BindKey(EKeys::P,IE_Pressed,this,&AHearthwardHUD::OpenPause).bExecuteWhenPaused=true;
-    InputComponent->BindKey(EKeys::M,IE_Pressed,this,&AHearthwardHUD::OpenMap).bExecuteWhenPaused=true;
-    InputComponent->BindKey(EKeys::K,IE_Pressed,this,&AHearthwardHUD::OpenSkills).bExecuteWhenPaused=true;
-    InputComponent->BindKey(EKeys::J,IE_Pressed,this,&AHearthwardHUD::OpenJournal).bExecuteWhenPaused=true;
-    InputComponent->BindKey(EKeys::B,IE_Pressed,this,&AHearthwardHUD::OpenBuilding);
-    InputComponent->BindKey(EKeys::Q,IE_Pressed,this,&AHearthwardHUD::HeavyAttack);
-    InputComponent->BindKey(EKeys::LeftShift,IE_Pressed,this,&AHearthwardHUD::SprintStart);
-    InputComponent->BindKey(EKeys::LeftShift,IE_Released,this,&AHearthwardHUD::SprintStop);
 
-
-    InputComponent->BindKey(EKeys::Two,IE_Pressed,this,&AHearthwardHUD::Eat);
-    InputComponent->BindKey(EKeys::One,IE_Pressed,this,&AHearthwardHUD::Heal);
-    InputComponent->BindKey(EKeys::Four,IE_Pressed,this,&AHearthwardHUD::Throw);
-    InputComponent->BindKey(EKeys::Z,IE_Pressed,this,&AHearthwardHUD::CompanionWait);
-    InputComponent->BindKey(EKeys::X,IE_Pressed,this,&AHearthwardHUD::CompanionFollow);
-    InputComponent->BindKey(EKeys::C,IE_Pressed,this,&AHearthwardHUD::CompanionAttack);
 }
 void AHearthwardHUD::EndPlay(const EEndPlayReason::Type Reason)
 {
@@ -96,6 +79,7 @@ void AHearthwardHUD::ToggleDialogue()
 
 void AHearthwardHUD::OpenPause()
 {
+    if(auto* T=GetOwningPawn()->FindComponentByClass<UHearthwardTraversalComponent>();T && T->IsVaulting()) {T->CancelVault();return;}
     if(auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();N->Busy()){N->Cancel();return;}
     if(auto* B=GetOwningPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->CancelPlacement(); return; }
     if(Screen) Screen->ExecuteAction(TEXT("page:pause"));

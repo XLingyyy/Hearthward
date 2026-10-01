@@ -1,0 +1,30 @@
+{
+  "task": "TASK-051",
+  "date": "2026-10-02",
+  "command": [
+    "G:/GameFactory/.venv/Scripts/python.exe",
+    "-X",
+    "utf8",
+    "scripts/validate_repo.py",
+    "--task",
+    "TASK-051",
+    "--base",
+    "99c3c77193f6c6132e5d78a89db5e6f9a8d20bdf"
+  ],
+  "returncode": 0,
+  "stdout": "NOTE: gdd-v0.3.docx: LFS pointer OID matches; actual remote object was NOT downloaded or verified\nNOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 52\nNOTE: Scope from base commit 99c3c77193f6c6132e5d78a89db5e6f9a8d20bdf; inspected 70 changed paths\nNOTE: Local path check only: current GitHub assignment, approvals and LFS locks are NOT verified\nPASS: repository checks only; 0 error(s)\n",
+  "stderr": "",
+  "forbidden_path_negative_cases": {
+    "Content/Forbidden.uasset": true,
+    "Config/DefaultGame.ini": true,
+    "Source/Hearthward/Combat/Unrelated.cpp": true,
+    "scripts/validate_repo.py": true
+  },
+  "diff_check_returncode": 0,
+  "diff_check_stdout": "",
+  "diff_check_stderr": "",
+  "ok": true,
+  "checked_paths_count": 70,
+  "all_changed_paths_allowed": true,
+  "source_revision": "591d3509b29c72fe64dc824fcae680d8ed1bf1e7"
+}

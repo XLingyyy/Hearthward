@@ -77,3 +77,9 @@ Owner确认DSGN-R17 D1—D6并授权沿049施工、完成后提交推送。R17�
 ## TASK-050已批准设计
 
 [DSGN-R18伙伴活动与长期交流](DSGN-R18-companion-activities.md)的D1—D6已获Owner确认并在050分支施工；044自动食药与救援规则继续有效。设计允许的活动逐项接入，尚未通过运行验证的能力不得进入执行目录。范围见[TASK-050](../tasks/TASK-050.md)。
+
+## TASK-051已批准设计与分支实施（2026-10-02）
+
+Owner XLingyyy已确认[DSGN-R23操作、通行、视听与验收基线](DSGN-R23-input-traversal-acceptance.md)D1—D6并授权沿051施工、提交推送。canonical051对应原稿053，Owner／Reviewer均为XLingyyy，无Issue。语义键位、重绑定／键鼠范围、通行／坠落、字幕及舒适性、固定对白清单、联合性能和真实试玩门槛成为有效设计。044／045／049／050规则继续沿用。
+
+051任务分支已接入基础运行实现；主干尚未合并。人工录音全部UNPRODUCED，联合性能、真人节奏及一对三验收没有以自动化结果替代。具体覆盖见[051报告](../qa/TASK-051/REPORT.md)；最终体验签收由Owner执行。

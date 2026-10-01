@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "id": "TASK-051",
+  "title": "定义操作、通行、视听与性能验收基线",
+  "status": "Active",
+  "updated_at": "2026-10-02",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-051-experience-baseline",
+  "source_refs": [
+    "用户：工作目录Hearthward，先理解工作流，开始051；Owner/Reviewer均为本人，不提Issue",
+    "G:/GameFactory/Hearthward/docs/Hearthward_TASK-043-076.md：原稿TASK-053，canonical编号减2",
+    "G:/GameFactory/Hearthward/docs/Hearthward_Audit_2026-09-24.md：历史审计，仅作来源",
+    "origin/main@e1c44c49a88ce26125aa0e05fbe9d74b95ad7e58，已包含050与PR #55的UI/fix1/fix2",
+    "GDD v0.3 Q020/Q071/Q104/Q149/Q177/Q178/Q267—269、R23/R24/R25；DSGN-003及044/045/049/050已批准规则",
+    "用户2026-10-01：确认051设计，可以开始施工，做完之后提交推送"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-044",
+    "TASK-045",
+    "TASK-049",
+    "TASK-050"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-051-input-traversal.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-051.json",
+    "docs/tasks/TASK-051.md",
+    "docs/handoffs/TASK-051.md",
+    "docs/design/DSGN-R23-input-traversal-acceptance.md",
+    "docs/design/CURRENT.md",
+    "docs/design/OPEN_QUESTIONS.md",
+    "docs/planning/TASK-051/",
+    "docs/qa/TASK-051/",
+    "docs/contracts/CT-TASK-051-input-traversal.md",
+    "Source/Hearthward/Input/",
+    "Source/Hearthward/Experience/",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Survival/",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Source/Hearthward/Tests/ExperienceTests.cpp",
+    "Source/Hearthward/Tests/SurvivalTests.cpp",
+    "Resources/Data/experience.json",
+    "Resources/Audio/",
+    "Source/Hearthward/Nature/HearthwardNatureFishing.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "config/",
+    "Runtime/",
+    "art_source/",
+    "scripts/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "核对当前输入、设置、通行、对白与性能证据，区分实现事实、已批准规则和051候选",
+    "交付完整操作表、同键冲突优先序、重绑定与控制器范围、焦点和暂停验收",
+    "给出攀越、游泳、坠落与导航落点的可施工参数和边界，不改变044生存优先序",
+    "交付字幕、舒适性设置及固定对白清单，动态回复保持文字",
+    "定义目标硬件、画质、帧时及CPU/Vulkan联合测量协议和报告模板",
+    "给出一对三、首条切片、十小时与3:3:4、委托可用性的采样与候选门槛",
+    "Owner已批准D1—D6，沿051接入统一语义输入、设置、通行及字幕表现，验收证据区分实际PASS与NOT_RUN",
+    "通过最小文档及路径检查，同步README和任务交接"
+  ],
+  "non_goals": [
+    "不改变044暂停、生存、045战斗和049/050叙事伙伴规则",
+    "不新增云推理、动态TTS、付费生成或任意硬件兼容承诺",
+    "不创建Issue、不合并main、不发布；人工录音和真人正式验收需实际证据"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002"
+  ],
+  "permissions": {
+    "network": "granted: read-only origin fetch and official engineering references",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user2026-10-01 TASK-051",
+    "push": "granted: user2026-10-01 task branch",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner2026-10-01批准D1—D6并明确沿051施工、提交推送；覆盖此前文档-only范围。",
+    "专用worktree保留原027未知改动；不编辑共享二进制资产。",
+    "Owner与Reviewer按用户要求同为XLingyyy；设计批准不代替最终体验签收。",
+    "2026-10-02施工完成，Editor构建、原生7/7、渲染PIE51项、实际按键14项及T-002通过；源码591d3509b29c72fe64dc824fcae680d8ed1bf1e7。状态Active等待Owner最终体验签收。"
+  ]
+}

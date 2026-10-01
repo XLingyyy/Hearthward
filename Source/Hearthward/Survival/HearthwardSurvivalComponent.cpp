@@ -1,11 +1,12 @@
 #include "HearthwardSurvivalComponent.h"
+#include "../Experience/HearthwardPresentationComponent.h"
 #include "../Gameplay/HearthwardProgression.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "GameFramework/PainCausingVolume.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
-#include "Curves/CurveFloat.h"
+#include "../Experience/HearthwardTraversalComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -55,7 +56,8 @@ bool UHearthwardSurvivalComponent::SafeToSave() const
 {
     const auto* C=Cast<ACharacter>(GetOwner());
     return Alive() && !Settling && CancelledMedicine.IsNone() && State.DrowningRemaining<0 && !InCombat()
-        && (!C || (!C->GetCharacterMovement()->IsFalling() && !C->GetCharacterMovement()->IsSwimming()));
+        && (!C || (!C->GetCharacterMovement()->IsFalling() && !C->GetCharacterMovement()->IsSwimming()))
+        && (!GetOwner()->FindComponentByClass<UHearthwardTraversalComponent>() || !GetOwner()->FindComponentByClass<UHearthwardTraversalComponent>()->IsVaulting());
 }
 bool UHearthwardSurvivalComponent::Permitted(FName Item) const
 {
@@ -127,6 +129,7 @@ bool UHearthwardSurvivalComponent::ReceiveDamage(float Amount,FGuid Event,FGuid 
     if(!Enabled() || Settling || Timeline!=Epoch() || !Event.IsValid() || DamageEvents.Contains(Event)
         || Amount<=0 || !FMath::IsFinite(Amount) || State.Life==EHearthwardLife::Dead) return false;
     DamageEvents.Add(Event);
+    if(auto* T=GetOwner()->FindComponentByClass<UHearthwardTraversalComponent>()) T->CancelVault();
     CancelAction(true);
     TGuardValue<bool> Guard(Settling,true);
     State.Damage(Health(),Amount);
@@ -165,6 +168,8 @@ bool UHearthwardSurvivalComponent::BeginRescue(UHearthwardSurvivalComponent* Tar
     if(auto* C=Cast<AHearthwardCompanionFixture>(GetOwner())) C->StopForSurvival();
     if(auto* T=GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>()) T->InterruptAction();
     Rescue=Target; RescueRemaining=5; ActionEpoch=Epoch(); ActionOrigin=GetOwner()->GetActorLocation();
+    if(Cast<AHearthwardCompanionFixture>(GetOwner()))
+        if(auto* P=Target->GetOwner()->FindComponentByClass<UHearthwardPresentationComponent>()) P->PlayFixedCue(TEXT("fixed.rescue.started"),FGuid::NewGuid(),true);
     Status=TEXT("正在扶起，需持续5秒"); return true;
 }
 void UHearthwardSurvivalComponent::FinishActions(double Delta)
@@ -221,9 +226,22 @@ void UHearthwardSurvivalComponent::AdvanceContinuous(double Delta,double Calenda
     if(!Enabled() || GetWorld()->IsPaused()) return;
     if(!CancelledMedicine.IsNone() && CancelFrame!=GFrameCounter) { Bag()->ReleaseReservation(); CancelledMedicine=NAME_None; }
     auto* C=Cast<ACharacter>(GetOwner()); const bool Swimming=C && C->GetCharacterMovement()->IsSwimming();
-    if(Swimming && SwimmingCostPerSecond>0 && Alive()) { Stamina()=FMath::Max(0.f,Stamina()-float(Delta*SwimmingCostPerSecond)); State.RecoveryDelay=.5; }
-    if(Swimming && Stamina()<=0 && State.DrowningRemaining<0) State.DrowningRemaining=10;
-    if(!Swimming && C && !C->GetPhysicsVolume()->bWaterVolume && C->GetCharacterMovement()->IsMovingOnGround()) State.DrowningRemaining=-1;
+    double ExhaustionAt=0;
+    if(Swimming && Alive())
+    {
+        const bool Paddling=!C->GetCharacterMovement()->GetCurrentAcceleration().IsNearlyZero() || C->GetVelocity().Size2D()>=5;
+        if(Paddling)
+        {
+            const float Correction=Bag()->GetStaminaCostMultiplier()*FMath::Max(.1f,1-(Gameplay()?Gameplay()->Effect(TEXT("cost")):0));
+            const double Rate=MaxStamina()/25*Correction;
+            if(Stamina()>0) ExhaustionAt=FMath::Min(Delta,Stamina()/Rate);
+            Stamina()=FMath::Max(0.f,Stamina()-float(Delta*Rate));
+        }
+        State.RecoveryDelay=.5;
+    }
+    if(Swimming && Stamina()<=0 && State.DrowningRemaining<0) State.DrowningRemaining=10+ExhaustionAt;
+    const auto* Traversal=GetOwner()->FindComponentByClass<UHearthwardTraversalComponent>();
+    if(!Swimming && C && (Traversal?Traversal->BreathingOnGround():(!C->GetPhysicsVolume()->bWaterVolume && C->GetCharacterMovement()->IsMovingOnGround()))) State.DrowningRemaining=-1;
     if(PreviousSwimming && !Swimming) State.RecoveryDelay=.5;
     PreviousSwimming=Swimming;
     if((Resting || Treatment) && (GetOwner()->GetVelocity().Size()>5 || Swimming)) CancelAction();
@@ -298,7 +316,11 @@ bool UHearthwardSurvivalComponent::AutomaticBehavior(float Delta)
             if(Hunger()+Food>=25 && Food<Best) { Best=Food; Choice=Id; }
             else if(Best==DBL_MAX && Food>Largest) { Largest=Food; Choice=Id; }
         }
-        if(!Choice.IsNone()) Eat(Choice,true);
+        if(!Choice.IsNone())
+        {
+            if(auto* P=Player->FindComponentByClass<UHearthwardPresentationComponent>()) P->PlayFixedCue(TEXT("fixed.hunger.food"),FGuid::NewGuid(),true);
+            Eat(Choice,true);
+        }
     }
     if(Health()<MaxHealth()*.35f && State.SafeSeconds>=3 && Health()+State.HotRemaining*State.HotRate<MaxHealth()*.35)
     {
@@ -330,6 +352,7 @@ void UHearthwardSurvivalComponent::FatalEnvironment()
 { ReceiveDamage(1,FGuid::NewGuid(),Epoch(),true); }
 void UHearthwardSurvivalComponent::FallImpact(float Speed)
 {
-    if(!Enabled() || !FallDamageCurve) return;
-    ReceiveDamage(FallDamageCurve->GetFloatValue(Speed),FGuid::NewGuid(),Epoch());
+    if(!Enabled()) return;
+    const auto* C=CastChecked<ACharacter>(GetOwner());
+    ReceiveDamage(UHearthwardTraversalComponent::FallDamage(Speed,C->GetCharacterMovement()->GetGravityZ(),MaxHealth()),FGuid::NewGuid(),Epoch());
 }

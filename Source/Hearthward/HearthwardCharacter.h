@@ -21,7 +21,11 @@ public:
     virtual void FellOutOfWorld(const class UDamageType& DamageType) override;
     virtual void Landed(const FHitResult& Hit) override;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<class UHearthwardGameplayComponent> Gameplay;
-    AHearthwardCharacter();
+    AHearthwardCharacter(const FObjectInitializer& Initializer=FObjectInitializer::Get());
+    virtual void Tick(float DeltaSeconds) override;
+    UFUNCTION(BlueprintCallable) void RebuildInputBindings();
+    UFUNCTION(BlueprintCallable) void ResetHeldInput();
+    UFUNCTION(BlueprintPure) bool SemanticHeld(FName Id) const;
     virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -46,8 +50,12 @@ private:
     void Look(const FInputActionValue& Value);
     float LookSensitivity=1.f;
     bool bInvertLookY=false;
+    TSet<FKey> ActiveKeys;
+    bool SprintLatched=false;
+    void KeyPressed(FKey Key);
+    void KeyReleased(FKey Key);
     void ToggleInventory();
-    void Interact();
+    void Interact(bool AllowVault=false);
     void StartJump();
     void StartSprint();
     void StopSprint();
