@@ -6,6 +6,9 @@
 #include "Rendering/SlateRenderer.h"
 #include "Blueprint/WidgetTree.h"
 #include "Fonts/FontMeasure.h"
+#include "../Experience/HearthwardPresentationComponent.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
+#include "Engine/GameInstance.h"
 
 int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometry& G,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool ParentEnabled) const
 {
@@ -19,10 +22,32 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     { Box(P,FVector2D(S.X,1),C,L); Box(P+FVector2D(0,S.Y-1),FVector2D(S.X,1),C,L); Box(P,FVector2D(1,S.Y),C,L); Box(P+FVector2D(S.X-1,0),FVector2D(1,S.Y),C,L); };
     if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue"))
         Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
+    const auto& Comfort=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort;
+    const auto* Survival=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(Page==TEXT("hud") && Survival->State.Severe() && Comfort.HungerVisual>0)
+    {
+        const float Edge=FMath::Min(G.GetLocalSize().X,G.GetLocalSize().Y)*.15f;
+        for(int32 Strip=0;Strip<16;++Strip)
+        {
+            const float Alpha=.35f*(1-Strip/16.f)*Comfort.HungerVisual/100.f;
+            auto Mask=[&](FVector2D P,FVector2D Size){FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(Size,FSlateLayoutTransform(P)),White,ESlateDrawEffect::None,FLinearColor(0,0,0,Alpha));};
+            const float T=Edge/16,At=Strip*T;
+            Mask({0,At},{G.GetLocalSize().X,T});Mask({0,G.GetLocalSize().Y-At-T},{G.GetLocalSize().X,T});
+            Mask({At,Edge},{T,G.GetLocalSize().Y-2*Edge});Mask({G.GetLocalSize().X-At-T,Edge},{T,G.GetLocalSize().Y-2*Edge});
+        }
+    }
     for(int32 I=0;I<Elements.Num();++I)
     {
         const auto& E=Elements[I]; const bool Focus=I==Hover || I==KeyboardFocus || E.Selected;
-        if(E.Hidden) continue;
+        if(E.Hidden || E.TextScrollClipped) continue;
+        const bool TextClip=ReadableLayout() && !(E.Type==TEXT("image") && E.Size.X>=1600);
+        if(TextClip)
+        {
+            const float Bottom=Page==TEXT("dialogue") || Page==TEXT("memory")?770:835;
+            const FVector2D A=G.LocalToAbsolute(Offset+FVector2D(180,60)*Scale),B=G.LocalToAbsolute(Offset+FVector2D(1492,Bottom)*Scale);
+            Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
+        }
+
         if(E.MapClipped)
         {
             const FVector2D A=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),FVector2D(407,95))*Scale);
@@ -168,7 +193,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
             for(FString Line:SourceLines)
             {
-                while(E.Type==TEXT("text") && Line.Len()>1 && Measure->Measure(Line,Font).X>E.Size.X)
+                while((E.Type==TEXT("text") || E.Type==TEXT("button")) && Line.Len()>1 && Measure->Measure(Line,Font).X>E.Size.X)
                 {
                     const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,E.Size.X)+1,1,Line.Len());
                     Lines.Add(Line.Left(Count)); Line=Line.Mid(Count);
@@ -178,6 +203,8 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             FVector2D P=E.Position;
             if(E.Type==TEXT("button") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("notice")) P+=FVector2D(E.TextInset,FMath::Max(0.f,float(E.Size.Y-E.Font*1.3f)*.5f));
             if(E.Type==TEXT("slot") || E.Type==TEXT("node")) P+=FVector2D(FMath::Max(4.,E.Size.X-E.Text.Len()*E.Font*.6-6),E.Size.Y-E.Font*1.3f);
+            const int32 MaximumLines=Page==TEXT("hud")?FMath::Max(1,FMath::FloorToInt((E.Size.Y+E.Font*.3f)/(E.Font*1.6f))):Lines.Num();
+            if(Lines.Num()>MaximumLines) {Lines.SetNum(MaximumLines);Lines.Last()=Lines.Last().LeftChop(FMath::Min(2,Lines.Last().Len()))+TEXT("…");}
             for(const auto& Line:Lines)
             {
                 FVector2D TextPosition=P;
@@ -195,8 +222,27 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             }
         }
         if(E.MapClipped) Out.PopClip();
+        if(TextClip) Out.PopClip();
     }
     const int32 ContentLayer=Layer+Elements.Num()*4+5;
+    const FString Subtitle=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardPresentationComponent>()->GetSubtitle();
+    if(!Subtitle.IsEmpty() && ConfirmAction.IsEmpty() && (Page==TEXT("hud") || Page==TEXT("dialogue")))
+    {
+        const float FontSize=Comfort.SubtitleSize*941.f/1080;
+        FSlateFontInfo Font(Typeface,FMath::RoundToInt(FontSize*.75f));
+        const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+        const bool LargeHUD=Page==TEXT("hud") && Comfort.TextScale>100;
+        const float Width=LargeHUD?860:1100,Left=LargeHUD?740:286,Bottom=LargeHUD?850:680;
+        TArray<FString> Lines;FString Rest=Subtitle;
+        while(!Rest.IsEmpty())
+        {
+            const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Rest),Font,Width)+1,1,Rest.Len());
+            Lines.Add(Rest.Left(Count));Rest=Rest.Mid(Count);
+        }
+        const float Height=Lines.Num()*FontSize*1.6f+22;
+        Box({Left-18,Bottom-Height},{Width+36,Height},FLinearColor(0,0,0,Comfort.SubtitleBackground/100.f),ContentLayer);
+        for(int32 I=0;I<Lines.Num();++I) FSlateDrawElement::MakeText(Out,ContentLayer+1,Geometry({Left,Bottom+11-Height+I*FontSize*1.6f},{Width,FontSize*1.6f}),Lines[I],Font,ESlateDrawEffect::None,FLinearColor::White);
+    }
     if(LayoutEditing)
     {
         const FLinearColor Cyan(.15f,.85f,.95f);

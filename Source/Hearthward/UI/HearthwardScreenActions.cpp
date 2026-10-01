@@ -91,6 +91,8 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         && !(ConfirmAction==TEXT("resetAgreements") && (Action==TEXT("resetPrev") || Action==TEXT("resetNext")))) return false;
     if(Action==TEXT("resetPrev") || Action==TEXT("resetNext"))
     { ResetScroll=FMath::Clamp(ResetScroll+(Action==TEXT("resetNext")?2:-2),0,FMath::Max(0,ResetItems.Num()-2));Refresh();return true; }
+    if(ConfirmAction==TEXT("settings.display") && (Action==TEXT("confirm") || Action==TEXT("cancel")))
+    {FinishDisplayChange(Action==TEXT("confirm"));return true;}
     MessageUntil=FPlatformTime::Seconds()+4;
     if(Action.StartsWith(TEXT("camp.")))return ExecuteCampAction(Action);
     if(Action.StartsWith(TEXT("gear.")))return ExecuteEquipmentAction(Action);

@@ -1,19 +1,13 @@
-# TASK-051｜操作、通行与验收基线交接
+# TASK-051｜施工交接
 
-Owner／Reviewer：XLingyyy；无Issue。canonical 051＝原稿053。工作目录 `G:/GameFactory/Hearthward/.agent-local/task051`，分支 `codex/TASK-051-experience-baseline`，基线 `e1c44c49a88ce26125aa0e05fbe9d74b95ad7e58`（包含050及PR #55）。原Hearthward的027检出与未提交改动保留。
+2026-10-02；Owner／Reviewer XLingyyy，无Issue。canonical 051＝原稿053。工作目录 G:/GameFactory/Hearthward/.agent-local/task051，分支 codex/TASK-051-experience-baseline；来源main e1c44c49a88ce26125aa0e05fbe9d74b95ad7e58包含050和PR #55。路径批准快照99c3c77193f6c6132e5d78a89db5e6f9a8d20bdf。
 
-用户授权开始051设计任务。本轮只编制本地设计、操作表及验收协议，范围以任务JSON为准；新规则须Owner确认。尚无提交、推送、合并或发布授权。当前任务Active。
+Owner已确认[设计D1—D6](../design/DSGN-R23-input-traversal-acceptance.md)，授权沿051施工、提交和推送任务分支。已接入统一语义输入及重绑定、设置设备持久化、显示15秒回退、字号／字幕／舒适性、胶囊攀越／游泳／溺亡／坠落、固定cue触发及缺失真人录音状态。运行契约见[CT-TASK-051](../contracts/CT-TASK-051-input-traversal.md)，操作表和54个cue见本单planning目录。
 
-已读根工作流、启动／项目状态、两份指定文档、相关已批准设计和当前输入／设置／生存实现。开始时051尚无任务JSON，首次接手脚本报告缺文件；本次登记后重新执行。当前工作树只读取文档和源码，LFS资产保持指针，不作为可运行UE工程。
+Editor构建通过，Experience／Survival／Combat原生7/7通过，渲染PIE51项检查通过。Windows实际输入、画面及路径检查的最终记录见[报告](../qa/TASK-051/REPORT.md)，源码与证据关联见[SOURCE.json](../qa/TASK-051/SOURCE.json)。README、CURRENT、OPEN_QUESTIONS及任务单均同步。
 
-已完成[设计D1—D6](../design/DSGN-R23-input-traversal-acceptance.md)、[输入表](../planning/TASK-051/INPUT.md)、[54个逻辑固定对白cue](../planning/TASK-051/fixed-dialogue.csv)、[32项未来验收用例](../qa/TASK-051/CASES.md)及[联合性能／试玩协议和报告模板](../qa/TASK-051/PROTOCOL.md)。049的46句文本与运行表逐项一致，可复用20组录音；另8句051候选状态文本，全部录音尚未制作。新的通行／舒适性／门槛均标为候选，未覆盖旧批准。
+54个逻辑cue共享28组人工录音，当前全部UNPRODUCED，动态回复继续文字。五通道实际听音、中文IME、全部B01—B32逐条执行、Shipping、联合性能和正式真人样本未测；没有虚构录音、模型运行、帧率或十小时通关证据。
 
-L0 `validate_repo.py`通过，检查52任务快照、0错误；本地范围检查12路径、0越界；台词来源、唯一cue、B01—B32和模板JSON检查通过；`git diff --check`通过。详细命令与复核方法见[051报告](../qa/TASK-051/REPORT.md)。基线锁定的正式范围检查BLOCKED：main尚无051任务快照；本轮未伪造批准提交，也未改检查器。UE构建、运行、模型、联合性能和真人体验本轮均NOT_RUN。
+专用worktree可运行UE。现有Content／Resources二进制从本机LFS对象恢复读取，未编辑源资产、未取得新LFS编辑锁；有效Git差异仅有051允许路径。原Hearthward的027检出及未知改动保持原状。验证使用独立UserDir／测试存档池，宿主通过UEClient管理自己启动的进程；结束后停止测试进程。
 
-README已替换旧“UI/fix未合入main”说明为PR #55已集成，纠正schema8及石斧hand_r现状，并添加051候选入口。CURRENT／R项只登记待审稿，R23／R24／R25没有关闭；全局PROJECT_STATE和START_HERE的既有漂移未扩入本单。
-
-下一步为Owner明确确认／修订D1—D6，再将实际获准子范围登记为有效设计。后续施工需独立任务及相应源码／资产权限；当前051只有文档范围。状态保持Active，Owner与Reviewer按用户要求同为XLingyyy，未声明独立审查通过。没有Issue、没有新二进制锁；12个文档路径未提交，分支未推送。回滚本单可按这些明确文件逐项撤销；禁止清理原027工作区或删除工作树中的未交接文件。
-
-## 2026-10-01施工授权
-
-Owner明确确认D1—D6，允许沿051施工、提交推送。任务JSON已扩展到统一输入、设置、通行、视听运行入口及定向测试；仅此专用worktree可写，不修改原027目录。D1—D6成为有效设计，旧待批准／无提交授权段落仅为前次设计交付历史。
+施工完成并提交推送后，状态保留Active等待Owner最终签收。Owner与Reviewer同为XLingyyy，没有伪造独立审查通过，无Issue、main合并或发布。本单可通过正常Git revert回滚；不要清理原027工作区或其他未交接文件。

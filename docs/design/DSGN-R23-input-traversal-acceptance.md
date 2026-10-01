@@ -80,17 +80,17 @@ Shift在同帧左键组合中解释为重击，攻击期间不扣冲刺费；持
 
 字幕默认开启，支持说话人文字标签及可调背景；动态对话保留滚动记录，不按语音长度截断。静音后仍可读取任务、发现条、警戒、倒地、溺水和行动受阻；保留GDD“不新增环境脚步方向性视觉提示”的范围。
 
-严重饥饿候选视觉：暗角边缘厚度为短边15%、最高遮罩不透明度0.35；环境远景可见距离缩短到80m但保留HUD／交互提示；FOV比用户设置减少10°且不低于70°。三项用统一0—100%舒适性强度，默认100%；设为0只移除视觉限制，044移速−20%、输出−25%、劳动−30%和死亡期限保持。镜头震动不与饥饿重复叠乘；固定镜头、字幕和模态页不施加抖动。
+严重饥饿视觉：暗角边缘厚度为短边15%、最高遮罩不透明度0.35；环境远景可见距离缩短到80m但保留HUD／交互提示；FOV比用户设置减少10°且不低于70°。三项用统一0—100%舒适性强度，默认100%；设为0只移除视觉限制，044移速−20%、输出−25%、劳动−30%和死亡期限保持。镜头震动不与饥饿重复叠乘；固定镜头、字幕和模态页不施加抖动。
 
 这些表现不改变敌人权威亮度、感知范围、任务答案或地图清雾。天气继续只影响氛围；不能以玩家图形设置或FOV作为敌人感知输入。昼夜、极端亮暗背景和战斗中大字号字幕分别验收遮挡、文字和交互可读性。
 
 ## D5｜目标设备、画质与游戏／模型联合性能
 
-候选目标为已有目标机档位：Windows 11 x64、i7-13650HX、RTX 4060 Laptop 8GB、16GB内存、SSD，接电且记录实际性能／散热模式、显卡功率和驱动。已读取本机物理内存约16GB；驱动577.00只来自fix2历史环境，复测必须写实际值。此为目标验收设备，最低配置与其他显卡支持尚未认证。
+已批准目标为已有目标机档位：Windows 11 x64、i7-13650HX、RTX 4060 Laptop 8GB、16GB内存、SSD，接电且记录实际性能／散热模式、显卡功率和驱动。已读取本机物理内存约16GB；驱动577.00只来自fix2历史环境，复测必须写实际值。此为目标验收设备，最低配置与其他显卡支持尚未认证。
 
 采用当前项目定制“极高”（sg档位3）、1920×1080、100%渲染比例、DX12 SM6／Nanite／VSM／原生TAA，关闭动态分辨率、帧生成、VSync并不限帧。画质字段和截图进入报告；不能通过改变分辨率／关闭敌人／暂停世界取得通过。旧Demo中等30FPS保持为历史发行策略，不替代本目标。
 
-| 指标 | 候选通过门槛 |
+| 指标 | 已批准通过门槛 |
 |---|---|
 | 连续游戏及真实CPU／Vulkan请求窗口 | 每场景分别p99帧时≤16.67ms，1% Low≥60FPS，>50ms长帧比例≤0.1%；加载页不计持续帧时，但单列加载时长 |
 | Vulkan暖请求 | 到UE显示完整且已校验回复的p95≤10秒；包含排队／上下文准备／网络和UI，不用生成token速率代替 |
@@ -107,7 +107,7 @@ fix2已有营地76.88平均／66.34低帧、序章94.11／69.85，均为原源�
 
 ## D6｜一对三、切片、约十小时与委托可用性
 
-| 验收主题 | 样本及候选门槛 |
+| 验收主题 | 样本及已批准门槛 |
 |---|---|
 | 普通难度玩家一对三 | 5名真人，3名首次接触；同等教学后每人I／II标准配装各3局，合计30局，两档分别至少12/15局击败三名普通敌人且本人未真死亡；全部敌人可同时攻击 |
 | 弟弟一对三 | 相同两档各15局，由真人下达已支持进攻／战术指令并观察；主角不造成伤害或施救，各档至少12/15局清敌且弟弟未真死亡。倒地后没人救导致失败按失败计，不能只统计初次击倒 |
@@ -125,8 +125,8 @@ fix2已有营地76.88平均／66.34低帧、序章94.11／69.85，均为原源�
 
 ## 来源、变化与审批
 
-本轮新增候选：重绑定和键鼠交付范围；通行／坠落数值；字幕、视野和饥饿视觉强度；固定状态台词；联合性能及试玩量化门槛。继承的044暂停／生命优先、045战斗、049剧情任务、050权限和动态纯文字不重新申请批准。
+本轮批准：重绑定和键鼠交付范围；通行／坠落数值；字幕、视野和饥饿视觉强度；固定状态台词；联合性能及试玩量化门槛。继承的044暂停／生命优先、045战斗、049剧情任务、050权限和动态纯文字不重新申请批准。
 
-工程参考于2026-10-01核对：[Epic Enhanced Input](https://dev.epicgames.com/documentation/en-us/unreal-engine/enhanced-input-in-unreal-engine)与[UserSettings](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/EnhancedInput/UEnhancedInputUserSettings)用于映射及用户设置；[Microsoft文字](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/101)和[字幕](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/104)用于实际字身、缩放和说话人可读性；[Epic Timing Insights](https://dev.epicgames.com/documentation/unreal-engine/timing-insights-in-unreal-engine)用于帧时与CPU/GPU时间；[llama.cpp b10964](https://github.com/ggml-org/llama.cpp/blob/b10964/tools/server/README.md)用于prompt／prediction时间。所列尺寸、性能与成功率是本项目候选，不是官方认证标准；不引入新输入框架或云服务。
+工程参考于2026-10-01核对：[Epic Enhanced Input](https://dev.epicgames.com/documentation/en-us/unreal-engine/enhanced-input-in-unreal-engine)与[UserSettings](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/EnhancedInput/UEnhancedInputUserSettings)用于映射及用户设置；[Microsoft文字](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/101)和[字幕](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/104)用于实际字身、缩放和说话人可读性；[Epic Timing Insights](https://dev.epicgames.com/documentation/unreal-engine/timing-insights-in-unreal-engine)用于帧时与CPU/GPU时间；[llama.cpp b10964](https://github.com/ggml-org/llama.cpp/blob/b10964/tools/server/README.md)用于prompt／prediction时间。所列尺寸、性能与成功率是本项目门槛，不是官方认证标准；不引入新输入框架或云服务。
 
 R23／R24／R25保持原批准子范围及未决登记。Owner已明确确认051设计并允许施工、完成后提交推送。D1—D6全部生效，沿051接入基础实现；共享二进制内容、人工录音、真人试玩和发行验收仍按实际交付范围执行。最终真人体验签收独立于设计批准。

@@ -1,0 +1,561 @@
+{
+  "version": 1,
+  "source": "TASK-051 D1-D6 APPROVED 2026-10-01",
+  "water": [
+    {
+      "id": "lake_west",
+      "source": "TASK-026 prepare_rebuild.py lakes[0]; unchanged existing water mesh",
+      "center_m": [
+        -930,
+        -360
+      ],
+      "radius_m": [
+        240,
+        330
+      ],
+      "surface_m": 157
+    }
+  ],
+  "fixed_dialogue": [
+    {
+      "cue_id": "fixed.main_01.intro",
+      "speaker": "弟弟",
+      "text": "后巷还能走，先带人出去。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_001",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_01:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_01.complete",
+      "speaker": "弟弟",
+      "text": "人都到齐了，先把火生起来。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_002",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_01:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_02.intro",
+      "speaker": "弟弟",
+      "text": "先把做工具的地方安好。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_003",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_02:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_02.complete",
+      "speaker": "弟弟",
+      "text": "这回出门，回来就有地方修整了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_004",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_02:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_03.intro",
+      "speaker": "弟弟",
+      "text": "前面有动静，先看清楚再过去。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_005",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_03:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_03.complete",
+      "speaker": "族人",
+      "text": "路我记得，等安全了就跟你们走。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_006",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_03:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_04.intro",
+      "speaker": "弟弟",
+      "text": "人回来了，营地也该往外腾一点。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_007",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_04:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_04.complete",
+      "speaker": "弟弟",
+      "text": "下次出门，我们能多做些准备。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_008",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_04:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_05.intro",
+      "speaker": "弟弟",
+      "text": "地形没变，守在那里的人变了。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_009",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_05:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_05.complete",
+      "speaker": "弟弟",
+      "text": "入口记下了，怎么进去由你定。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_010",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_05:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_06.intro",
+      "speaker": "弟弟",
+      "text": "先把能守住的地方拿回来。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_011",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_06:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_06.complete",
+      "speaker": "弟弟",
+      "text": "两处旗帜都换了，剩下的路能走得更稳。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_012",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_06:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_07.intro",
+      "speaker": "弟弟",
+      "text": "还不能漏下守军，先看清敌和旗帜两项。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_013",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_07:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_07.complete",
+      "speaker": "弟弟",
+      "text": "这一次，火可以留在这里了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_014",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_07:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_08.intro",
+      "speaker": "弟弟",
+      "text": "两边用的是同一份家当，别再往返搬了。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_015",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_08:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.main_08.complete",
+      "speaker": "弟弟",
+      "text": "有两处落脚的地方，日子就能接着过。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_016",
+      "source": "Resources/Data/gameplay.json:campaign.quests:main_08:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_01.intro",
+      "speaker": "族人",
+      "text": "还有人留在里面，走的时候叫上我们。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_017",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_01:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_01.complete",
+      "speaker": "族人",
+      "text": "都回来了，这份吃的先收好。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_018",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_01:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_02.intro",
+      "speaker": "族人",
+      "text": "还有人留在里面，走的时候叫上我们。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_017",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_02:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_02.complete",
+      "speaker": "族人",
+      "text": "都回来了，这份吃的先收好。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_018",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_02:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_03.intro",
+      "speaker": "族人",
+      "text": "还有人留在里面，走的时候叫上我们。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_017",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_03:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_03.complete",
+      "speaker": "族人",
+      "text": "都回来了，这份吃的先收好。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_018",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_03:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_04.intro",
+      "speaker": "族人",
+      "text": "还有人留在里面，走的时候叫上我们。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_017",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_04:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_04.complete",
+      "speaker": "族人",
+      "text": "都回来了，这份吃的先收好。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_018",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_04:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_05.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_05:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_05.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_05:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_06.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_06:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_06.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_06:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_07.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_07:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_07.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_07:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_08.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_08:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_08.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_08:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_09.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_09:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_09.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_09:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_10.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_10:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_10.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_10:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_11.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_11:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_11.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_11:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_12.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_12:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_12.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_12:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_13.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_13:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_13.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_13:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_14.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_14:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_14.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_14:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_15.intro",
+      "speaker": "弟弟",
+      "text": "这件事还没有做完。",
+      "trigger": "任务已可接受且当前对话获知条件成立",
+      "audio_group": "voice_quest_019",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_15:dialogue[0]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.side_15.complete",
+      "speaker": "弟弟",
+      "text": "已经办妥，东西都登记过了。",
+      "trigger": "任务真实条件完成且本人观察或允许回执成立",
+      "audio_group": "voice_quest_020",
+      "source": "Resources/Data/gameplay.json:campaign.quests:side_15:dialogue[1]",
+      "text_status": "CONFIRMED_049_TEXT_APPROVED_051_TRIGGER",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.task.accepted",
+      "speaker": "弟弟",
+      "text": "我按刚才说的去做。",
+      "trigger": "玩家确认后真实目标已接受",
+      "audio_group": "voice_state_task_accepted",
+      "source": "TASK-051:D4",
+      "text_status": "APPROVED_051",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.task.blocked",
+      "speaker": "弟弟",
+      "text": "这条路走不通，我先停下。",
+      "trigger": "真实导航已判定受阻",
+      "audio_group": "voice_state_task_blocked",
+      "source": "TASK-051:D4",
+      "text_status": "APPROVED_051",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.task.cancelled",
+      "speaker": "弟弟",
+      "text": "我停下了，已经交出去的东西照旧。",
+      "trigger": "取消已生效，已提交事务保持",
+      "audio_group": "voice_state_task_cancelled",
+      "source": "TASK-051:D4",
+      "text_status": "APPROVED_051",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.task.delivered",
+      "speaker": "弟弟",
+      "text": "这趟的东西已经放进仓库。",
+      "trigger": "本人实际入库回执成立",
+      "audio_group": "voice_state_task_delivered",
+      "source": "TASK-051:D4",
+      "text_status": "APPROVED_051",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.task.finished",
+      "speaker": "弟弟",
+      "text": "这件事办妥了。",
+      "trigger": "当前任务实际完成回执成立",
+      "audio_group": "voice_state_task_finished",
+      "source": "TASK-051:D4",
+      "text_status": "APPROVED_051",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.rescue.started",
+      "speaker": "弟弟",
+      "text": "先别动，我来扶你。",
+      "trigger": "已接受合法五秒扶起动作",
+      "audio_group": "voice_state_rescue_started",
+      "source": "TASK-051:D4",
+      "text_status": "APPROVED_051",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.hunger.food",
+      "speaker": "弟弟",
+      "text": "我得找点吃的。",
+      "trigger": "自身已触发自动进食且尚未完成",
+      "audio_group": "voice_state_hunger_food",
+      "source": "TASK-051:D4",
+      "text_status": "APPROVED_051",
+      "voice_status": "UNPRODUCED"
+    },
+    {
+      "cue_id": "fixed.camp.three_days",
+      "speaker": "弟弟",
+      "text": "这几天走得不少，回来歇一会儿吧。",
+      "trigger": "050三日回营主动交流条件成立",
+      "audio_group": "voice_state_camp_three_days",
+      "source": "TASK-051:D4",
+      "text_status": "APPROVED_051",
+      "voice_status": "UNPRODUCED"
+    }
+  ]
+}

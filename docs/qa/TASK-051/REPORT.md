@@ -1,25 +1,38 @@
-# TASK-051｜本轮设计交付检查
+# TASK-051｜施工与定向验证
 
-2026-10-01，操作Agent；Owner／Reviewer XLingyyy。工作目录 `G:/GameFactory/Hearthward/.agent-local/task051`，分支 `codex/TASK-051-experience-baseline`。基线／HEAD为 `e1c44c49a88ce26125aa0e05fbe9d74b95ad7e58`；受查产物是本单列明的未提交文档，没有游戏代码或资产改动。
+2026-10-02；Owner／Reviewer XLingyyy，无Issue。工作目录 G:/GameFactory/Hearthward/.agent-local/task051，分支 codex/TASK-051-experience-baseline。main来源 e1c44c49a88ce26125aa0e05fbe9d74b95ad7e58；路径授权快照 99c3c77193f6c6132e5d78a89db5e6f9a8d20bdf。用户已确认D1—D6并授权施工、提交和任务分支推送。源码提交及证据关联见本目录SOURCE.json。
 
-本轮交付[六组候选设计](../../design/DSGN-R23-input-traversal-acceptance.md)、[输入表](../../planning/TASK-051/INPUT.md)、[固定对白清单](../../planning/TASK-051/fixed-dialogue.csv)、[32项验收用例](CASES.md)及[测量协议／报告模板](PROTOCOL.md)。54个逻辑cue含049的46句来源文本（20组可共享录音）及8句051候选状态文本；所有录音UNPRODUCED。文档只定义验收，不报告游戏能力PASS。
+已接入44个语义操作、主副键和单修饰键组合、上下文优先序、设备配置持久化、设置草稿／应用／取消、15秒显示回退、字幕及舒适性设置、实际胶囊攀越、自然湖游泳／溺亡和按最大生命值结算的坠落伤害。54个固定cue按实际信息、近距说话人和事件去重触发，缺失录音明确UNPRODUCED；没有动态TTS。大字号采用独立HUD布局及可滚动菜单。
 
-开始时051尚未登记，首次 `agent_context.py --task TASK-051` 报缺任务JSON；创建本地任务／交接后同命令已成功，确认专用分支、实际HEAD与仅本单新增文件。原Hearthward仍保留027检出及既有改动。
-
-| 检查 | 结果 | 说明 |
+| 验证 | 结果 | 实际范围与证据 |
 |---|---|---|
-| 接手回执 | PASS | 登记后读取实际任务、分支、HEAD和交接 |
-| 文档／任务L0 | PASS | `G:/GameFactory/.venv/Scripts/python.exe -X utf8 scripts/validate_repo.py`：52任务快照，0错误；只做仓库检查 |
-| 本地授权路径 | PASS | 临时Python调用现有collect_scope_changes／path_allowed：12个修改／新增路径全部符合本轮051范围，0越界；覆盖未跟踪文件 |
-| 基线批准快照路径检查 | BLOCKED | 基线main尚无TASK-051.json；现有check_scope要求基线任务快照。不得制造提交或更改检查器以伪造批准 |
-| 清单／模板一致性 | PASS | 临时Python逐项对照46句原049文本；54个唯一cue、28录音组；B01—B32连续；报告模板为有效JSON且结果均NOT_RUN；UTF-8及尾随空白检查通过 |
-| diff检查 | PASS | `git diff --check`无输出、退出0；新增未跟踪文本另由上述Python检查尾随空白 |
-| UE构建／原生／PIE／Shipping | NOT_RUN | 本单只改文档，文档工作树未下载LFS二进制 |
-| 模型／联合性能／真人试玩 | NOT_RUN | 后续实现与验收任务按协议实际执行 |
-| Owner设计批准／体验签收 | NOT_RUN | D1—D6待确认，不能代签 |
+| Editor Development构建 | PASS | UEClient.build.project，UE 5.8.2 / Win64 / HearthwardEditor；[build.json](build.json) |
+| 定向原生 | PASS，7/7 | Experience 3项、Survival 2项、Combat 2项；0失败、0测试警告；[native-index.json](native-index.json)、[native.json](native.json) |
+| 渲染PIE | PASS，51项检查 | 草稿、取消、INI保存、跨地图设置、暂停中显示回退、cue知识／距离／去重、攀越支出／落点／取消／顶棚／存档拒绝、正常新游戏、自然湖游泳／漂浮／消耗／下沉／真死亡和回档入口；[experience-pie.json](experience-pie.json) |
+| Windows实际按键 | PASS，14项检查 | computer-use对实际PIE窗口按Y、Ctrl+U、I；实际INI和位移由脚本独立观察，4次I短按移动2.2756厘米；[input-pie.json](input-pie.json) |
+| 大字号画面 | PASS，局部复核 | 150% HUD、48字号字幕、设置与键位页面；未宣称所有页面和字号组合均人工验收 |
+| T-002、仓库L0、diff | PASS，0错误 | 相对批准快照检查全部修改和未跟踪路径；禁止路径负例只调用原验证函数 |
+| Shipping、中文IME、32例逐项验收 | NOT_RUN | 本轮使用局部Editor构建及上述定向检查 |
+| 五通道实际听音、人工录音 | NOT_RUN／UNPRODUCED | 音量及PCM16播放入口已实现，28组真人录音仍缺失 |
+| D5联合性能、D6真人／十小时体验 | NOT_RUN | [PROTOCOL.md](PROTOCOL.md)和规划报告模板保留未测状态 |
 
-基线快照限制不阻止本轮已授权的本地设计编制；本地范围检查仅证明文件没有超出本单声明范围，不能替代基线批准、远端调度或真人审查。代码／资产未变化，本轮不重复运行UE与工具测试。
+环境：Windows 11 24H2、i7-13650HX、16 GB RAM、RTX 4060 Laptop、UE 5.8.2。原生使用NullRHI；渲染PIE使用D3D12、独立UserDir和随机测试存档池。攀越测试平台只存在PIE，标记PROTOTYPE_ONLY，不保存地图。自然湖检查通过正常新游戏加载L_HearthwardWilds；移动阶段使用Enhanced Input注入，实际键位另外验证。
 
-复核入口：L0与`git diff --check`按上表命令运行；本地范围可在Python中加载`docs/tasks/TASK-051.json`，用`scripts.validate_repo.collect_scope_changes(root, base_sha)`枚举基线差异／暂存／未暂存／未跟踪路径，再逐个调用`path_allowed(path, allowed_paths, forbidden_paths)`。清单检查对照`Resources/Data/gameplay.json`的`campaign.quests[].dialogue[]`，分离说话人前缀后比较本单CSV文本与cue ID。以上临时检查未添加脚本或修改检查器，结论仅针对本轮文档。
+首轮原生复现12米阈值浮点误差使角色保留极少生命值，修复阈值容差后通过，保留[native-first.json](native-first.json)。UEClient的native diagnostics包含首轮旧进程日志Condition failed；最终UE导出的native-index明确7个Success、0 errors、0 warnings，进程退出0。最终build.json对应全部C++修改；原生通过后新增的UI布局和箭回收筛选完成最终构建与渲染PIE复核，未重复执行不受影响的原生用例。
 
-当前未提交、未推送、未合并，无Issue，无新增二进制编辑或LFS锁。README、CURRENT及R项只登记候选状态，R23／R24／R25未据此关闭。最后一步为Owner审阅明确方案，审批后再登记有效规则与后续施工范围。
+初次编辑器启动被本任务日志控制台QuickEdit选区阻塞；宿主仅关闭自己启动的UE进程的此控制台模式，后续启动成功，早期记录保留为experience-*-startup-blocked.json。实际输入初次无人值守启动超时；改用交互启动后捕获成功。单次I短按位移0.5689厘米，低于脚本1厘米判据，保留[input-short-tap.json](input-short-tap.json)，随后用多次实际短按复核。失败报告没有改写为通过。
+
+ui-*.png：CaptureUI的1920×1080离屏UI，透明世界背景；pie-*.png：Shot SHOWUI的实际编辑器窗口及游戏视口，尺寸以图片为准。地图切换后离屏截图有字体图集局部缺字，时钟完整显示已用实际PIE图确认。离屏图不作为完整世界1080p渲染或性能证据。
+
+从本worktree执行，Python使用G:/GameFactory/.venv/Scripts/python.exe -X utf8：
+
+- docs/qa/TASK-051/run_build.py
+- docs/qa/TASK-051/run_native.py
+- docs/qa/TASK-051/run_engine.py --label experience --isolated-pool --timeout 540
+- docs/qa/TASK-051/run_engine.py --label input --interactive --isolated-pool --script docs/qa/TASK-051/verify_input_pie.py --result Saved/Task051/input/results.json --timeout 400
+- scripts/validate_repo.py --task TASK-051 --base 99c3c77193f6c6132e5d78a89db5e6f9a8d20bdf
+- git diff --check
+
+实际键位脚本通过ready.json请求操作，computer-use执行并观察后才写对应.sent；这些文件只同步阶段，PASS由实际INI和坐标决定。复跑前清除本测试input目录的旧.sent。
+
+施工完成，状态Active等待Owner最终体验签收。人工录音、正式性能和真人验收继续按协议执行。未创建Issue、未合并main、未发布；原027工作区及其他UE工程保留。

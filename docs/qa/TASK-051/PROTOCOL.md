@@ -1,6 +1,6 @@
 # TASK-051｜联合性能、试玩协议与报告模板
 
-状态：DRAFT，量化门槛统一取[设计D5／D6](../../design/DSGN-R23-input-traversal-acceptance.md)，本文件定义测法。本轮没有运行游戏。CPU与Vulkan各保存一份报告；没有覆盖的场景填NOT_RUN，缺少环境或前置填BLOCKED，并附原因。
+状态：APPROVED，量化门槛统一取[设计D5／D6](../../design/DSGN-R23-input-traversal-acceptance.md)，本文件定义测法。本单局部运行覆盖见REPORT；本协议的联合性能与真人矩阵尚未执行。CPU与Vulkan各保存一份报告；没有覆盖的场景填NOT_RUN，缺少环境或前置填BLOCKED，并附原因。
 
 ## 1. 版本与环境
 

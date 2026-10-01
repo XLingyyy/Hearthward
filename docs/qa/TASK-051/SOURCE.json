@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "task": "TASK-051",
+  "date": "2026-10-02",
+  "branch": "codex/TASK-051-experience-baseline",
+  "main_base": "e1c44c49a88ce26125aa0e05fbe9d74b95ad7e58",
+  "approved_scope_base": "99c3c77193f6c6132e5d78a89db5e6f9a8d20bdf",
+  "source_revision": "Validated implementation working tree; commit binding recorded by following evidence commit",
+  "environment": {
+    "ue": "5.8.2",
+    "platform": "Windows 11 24H2 / Win64 Development Editor",
+    "cpu": "i7-13650HX",
+    "ram_gb": 16,
+    "gpu": "RTX 4060 Laptop",
+    "rendered_rhi": "D3D12",
+    "native_rhi": "NullRHI"
+  },
+  "results": {
+    "build": "PASS",
+    "native": {
+      "success": 7,
+      "failed": 0,
+      "warnings": 0,
+      "report": "native-index.json",
+      "scope": "Experience + Survival + Combat; unchanged test paths after run. Later UI layout and arrow recovery change covered by final build/PIE, not an additional native run."
+    },
+    "rendered_pie": {
+      "success": 51,
+      "report": "experience-pie.json"
+    },
+    "physical_input": {
+      "success": 14,
+      "report": "input-pie.json",
+      "method": "computer-use: Y, Ctrl-U, I binding capture; four separate physical I taps; each followed by observed window state",
+      "movement_cm": 2.2755784268623813
+    }
+  },
+  "not_run": [
+    "Shipping",
+    "Chinese IME",
+    "all B01-B32 acceptance cases",
+    "five-channel listening",
+    "human voice recordings",
+    "joint game/model performance",
+    "formal human and ten-hour playtests"
+  ],
+  "source_assets_modified": false,
+  "owner_acceptance": "Pending; Active; Owner and Reviewer XLingyyy"
+}

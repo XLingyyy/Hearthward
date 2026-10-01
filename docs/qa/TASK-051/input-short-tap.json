@@ -1,0 +1,21 @@
+{
+  "ok": false,
+  "checks": {
+    "isolated progress": true,
+    "default preferences applied": true,
+    "storage capture opens": true,
+    "captured storage key applies": true,
+    "physical Y persisted": true,
+    "other R semantics remain independent": true,
+    "combination capture opens": true,
+    "captured chord applies": true,
+    "physical Ctrl-U persisted": true,
+    "movement capture opens": true,
+    "captured movement applies": true,
+    "physical I persisted": true,
+    "remapped physical input moves character": false
+  },
+  "method": "PIE fixture for observed physical key capture through the real settings UI.\n\nThe host agent presses keys with computer-use after ready.json is observed.\nSent markers synchronize observation only; persisted bindings and displacement\nare asserted separately. Test state and configuration are isolated.\n",
+  "movement_cm": 0.5688911098925757,
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-051/verify_input_pie.py\", line 107, in tick\n    pending = next(runner)\n              ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-051/verify_input_pie.py\", line 86, in run\n    check(\"remapped physical input moves character\", report[\"movement_cm\"] > 1)\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-051/verify_input_pie.py\", line 26, in check\n    raise AssertionError(name)\nAssertionError: remapped physical input moves character\n"
+}

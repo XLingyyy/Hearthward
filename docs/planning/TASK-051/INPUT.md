@@ -1,6 +1,6 @@
 # TASK-051｜默认操作与上下文消费表
 
-状态：DRAFT；[D1／D2候选](../../design/DSGN-R23-input-traversal-acceptance.md)为权威语义。默认键保留当前入口，新增通行只在批准并施工后可用。重绑定界面及全部HUD提示须读取操作ID的当前绑定；不得只修改文字。
+状态：APPROVED；[D1／D2](../../design/DSGN-R23-input-traversal-acceptance.md)为权威语义。默认键保留当前入口，051分支已接入新增通行。重绑定界面及全部HUD提示须读取操作ID的当前绑定；不得只修改文字。
 
 | 操作ID | 默认输入 | 上下文／行为 |
 |---|---|---|
@@ -9,7 +9,7 @@
 | sprint | Shift | 移动时按住冲刺；同帧重击修饰只付重击费 |
 | jump | Space | 普通落地起跳，5耐力；不绕过战斗Busy与生命状态 |
 | interact | E | 扶起、搬尸、回收箭、工作台、任务／站点、采集按D1优先 |
-| traversal.vault | E | 候选低障攀越，显式提示选中后消费，无其他有效E对象 |
+| traversal.vault | E | 低障攀越，显式提示选中后消费，无其他有效E对象 |
 | combat.attack | 左键 | 近战轻击；远程状态由武器解释，不自动锁定命中 |
 | combat.heavyModifier | Shift＋左键 | 近战重击；射箭不切近战，Shift是可映射修饰动作 |
 | combat.guardAim | 右键 | 合法盾组合格挡，远程瞄准；弓松开取消未释放箭 |
