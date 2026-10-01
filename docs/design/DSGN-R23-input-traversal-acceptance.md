@@ -1,6 +1,6 @@
 # DSGN-R23｜操作、通行、视听与验收基线
 
-状态：**DRAFT，D1—D6候选等待Owner确认**。2026-10-01；TASK-051＝原稿053。Owner／Reviewer XLingyyy；无Issue。数值在批准前均为候选，批准后作为INITIAL_TUNING接受实测，不能因本稿存在就修改运行配置。
+状态：**APPROVED，Owner于2026-10-01确认D1—D6并授权沿051施工、提交推送**。2026-10-01；TASK-051＝原稿053。Owner／Reviewer XLingyyy；无Issue。本稿新增数值作为INITIAL_TUNING接受实测，实际覆盖以本单报告为准。
 
 依据：[当前设计](CURRENT.md)、[DSGN-003](DSGN-003-first-release-slice.md)、[044生存](DSGN-R04-survival-recovery.md)、[045战斗](DSGN-R06-combat-stealth.md)、[049叙事](DSGN-R17-narrative-layout.md)、[050伙伴](DSGN-R18-companion-activities.md)，GDD Q020/Q071/Q104/Q149/Q177/Q178/Q267—269及R23/R24/R25。实现核对基线 `e1c44c49a88ce26125aa0e05fbe9d74b95ad7e58`。原2026-09-24审计只描述历史版本。
 
@@ -129,4 +129,4 @@ fix2已有营地76.88平均／66.34低帧、序章94.11／69.85，均为原源�
 
 工程参考于2026-10-01核对：[Epic Enhanced Input](https://dev.epicgames.com/documentation/en-us/unreal-engine/enhanced-input-in-unreal-engine)与[UserSettings](https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Plugins/EnhancedInput/UEnhancedInputUserSettings)用于映射及用户设置；[Microsoft文字](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/101)和[字幕](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/104)用于实际字身、缩放和说话人可读性；[Epic Timing Insights](https://dev.epicgames.com/documentation/unreal-engine/timing-insights-in-unreal-engine)用于帧时与CPU/GPU时间；[llama.cpp b10964](https://github.com/ggml-org/llama.cpp/blob/b10964/tools/server/README.md)用于prompt／prediction时间。所列尺寸、性能与成功率是本项目候选，不是官方认证标准；不引入新输入框架或云服务。
 
-R23／R24／R25保持原批准子范围及未决登记。本稿等待Owner对D1—D6确认；审批后只登记实际批准部分，后续代码／资产施工与提交推送仍按具体任务授权。最终真人体验签收独立于设计批准。
+R23／R24／R25保持原批准子范围及未决登记。Owner已明确确认051设计并允许施工、完成后提交推送。D1—D6全部生效，沿051接入基础实现；共享二进制内容、人工录音、真人试玩和发行验收仍按实际交付范围执行。最终真人体验签收独立于设计批准。
