@@ -25,6 +25,7 @@ public:
     virtual void BeginPlay() override;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+    void SetLookSettings(int32 Sensitivity,bool InvertY);
 
 private:
     UFUNCTION()
@@ -43,6 +44,8 @@ private:
 
     void Move(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
+    float LookSensitivity=1.f;
+    bool bInvertLookY=false;
     void ToggleInventory();
     void Interact();
     void StartJump();

@@ -32,6 +32,7 @@ public:
     virtual void TickComponent(float Delta,ELevelTick Tick,FActorComponentTickFunction* Function) override;
     UFUNCTION(BlueprintCallable) bool Attack(bool Heavy=false);
     UFUNCTION(BlueprintCallable) bool Execute(AActor* Target=nullptr);
+    UFUNCTION(BlueprintCallable) bool Stun(AActor* Target=nullptr);
     UFUNCTION(BlueprintCallable) void Cancel();
     UFUNCTION(BlueprintCallable) bool Dodge(FVector Direction);
     UFUNCTION(BlueprintCallable) bool SetGuard(bool Value);
@@ -46,6 +47,7 @@ public:
     bool SwitchEquipmentInstance(FGuid Instance);
     UFUNCTION(BlueprintPure) bool Busy() const { return Action!=NAME_None; }
     UFUNCTION(BlueprintPure) bool Executing() const { return Action==TEXT("execution"); }
+    UFUNCTION(BlueprintPure) bool CanExecute() const;
     UFUNCTION(BlueprintPure) bool MovementLocked() const;
     UFUNCTION(BlueprintPure) FString Describe() const;
     UFUNCTION(BlueprintPure) TArray<AActor*> SensedTargets() const;
@@ -80,6 +82,7 @@ private:
     bool Start(FName Name,double Seconds);
     bool Visible(const AActor* From,const AActor* To) const;
     bool Eligible(UHearthwardCombatTargetComponent* T) const;
+    bool BeginExecution(AActor* Target,bool Nonlethal);
     FName WeaponKind() const;
     void Finish();
     void LaunchProjectile(FName Item,float Scale,bool Thrown);
@@ -102,5 +105,6 @@ private:
     FVector CaptivePosition; FRotator CaptiveRotation;
     uint8 CaptiveMovementMode=0;
     bool HeavyAttack=false,CarryingOnBack=false;
+    bool NonlethalExecution=false;
     bool Committing=false;
 };

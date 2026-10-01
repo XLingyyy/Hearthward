@@ -92,7 +92,17 @@ bool UHearthwardCombatComponent::Eligible(UHearthwardCombatTargetComponent* T) c
     const float Armor=T->ArmorDurability.FindRef(TEXT("body"))>0?T->Armor.FindRef(TEXT("body")):0;
     return !T->Heavy || HearthwardCombat::ArmorDamage(G()->AttackPower()*(WeaponKind()==TEXT("shortblade")?5:3),Armor)>=T->Health;
 }
-bool UHearthwardCombatComponent::Execute(AActor* Target)
+bool UHearthwardCombatComponent::CanExecute() const
+{
+    if(!Available() || Busy() || Body.IsValid()) return false;
+    const auto* Character=Cast<ACharacter>(GetOwner());
+    if(!Character || !Character->GetCharacterMovement()->IsMovingOnGround()) return false;
+    for(auto* T:Targets()) if(Eligible(T)) return true;
+    return false;
+}
+bool UHearthwardCombatComponent::Execute(AActor* Target) { return BeginExecution(Target,false); }
+bool UHearthwardCombatComponent::Stun(AActor* Target) { return BeginExecution(Target,true); }
+bool UHearthwardCombatComponent::BeginExecution(AActor* Target,bool Nonlethal)
 {
     if(!Available() || Busy()) return false;
     UHearthwardCombatTargetComponent* Best=Target?Target->FindComponentByClass<UHearthwardCombatTargetComponent>():nullptr;
@@ -104,6 +114,7 @@ bool UHearthwardCombatComponent::Execute(AActor* Target)
     }
     if(!Eligible(Best)) { Feedback=TEXT("处决需要贴近未发现你的敌人背后，重型目标须满足伤害门槛"); return false; }
     if(!Start(TEXT("execution"),3)) return false;
+    NonlethalExecution=Nonlethal;
     Captive=Best; Best->ExecutionOwner=GetOwner(); CaptivePosition=Best->GetOwner()->GetActorLocation(); CaptiveRotation=Best->GetOwner()->GetActorRotation();
     auto* Player=CastChecked<ACharacter>(GetOwner()); Player->GetCharacterMovement()->StopMovementImmediately();
     Player->SetActorRotation(FRotator(0,(CaptivePosition-StartPosition).Rotation().Yaw,0));
@@ -114,7 +125,7 @@ bool UHearthwardCombatComponent::Execute(AActor* Target)
         C->GetCharacterMovement()->StopMovementImmediately(); C->GetCharacterMovement()->DisableMovement();
     }
     if(auto* A=Cast<UHearthwardHeroAnimInstance>(Player->GetMesh()->GetAnimInstance())) A->PlayCombat(3,true);
-    Feedback=TEXT("处决中"); return true;
+    Feedback=Nonlethal?TEXT("击晕中"):TEXT("暗杀中"); return true;
 }
 void UHearthwardCombatComponent::Cancel()
 {
@@ -125,7 +136,7 @@ void UHearthwardCombatComponent::Cancel()
         if(auto* C=Cast<ACharacter>(T->GetOwner());C && T->Alive()) C->GetCharacterMovement()->SetMovementMode(EMovementMode(CaptiveMovementMode));
     }
     if(Action==TEXT("pickup")) DropBody();
-    Captive.Reset(); Feedback.Reset(); Action=NAME_None; Elapsed=Duration=0; PendingItem=NAME_None; BufferedAttack=NAME_None;
+    Captive.Reset(); Feedback.Reset(); Action=NAME_None; Elapsed=Duration=0; PendingItem=NAME_None; BufferedAttack=NAME_None; NonlethalExecution=false;
     if(auto* C=Cast<ACharacter>(GetOwner())) if(auto* A=Cast<UHearthwardHeroAnimInstance>(C->GetMesh()->GetAnimInstance())) A->StopCombat();
 }
 bool UHearthwardCombatComponent::Dodge(FVector Direction)
@@ -229,7 +240,7 @@ void UHearthwardCombatComponent::Finish()
         auto* T=Captive.Get();
         if(!Eligible(T)) { Cancel(); return; }
         TGuardValue<bool> Commit(Committing,true);
-        const float Before=T->Health; T->Health=0; G()->CommitOpponentHealth(T->Id,0,Before); T->SetCorpse(); G()->WearEquipment(TEXT("weapon"),5);
+        const float Before=T->Health; T->Health=0; T->Memory.bStunned=NonlethalExecution; G()->CommitOpponentHealth(T->Id,0,Before); T->SetCorpse(); G()->WearEquipment(TEXT("weapon"),5);
     }
     else if(Completed==TEXT("pickup")) Action=NAME_None;
     else if(Completed==TEXT("reload")) CrossbowLoaded=true;
@@ -242,7 +253,7 @@ float UHearthwardCombatComponent::MovementMultiplier() const { return Body.IsVal
 bool UHearthwardCombatComponent::CanSave() const { return !Busy() && !Body.IsValid() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy() && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Busy(); }
 FString UHearthwardCombatComponent::Describe() const
 {
-    if(Executing()) return FString::Printf(TEXT("处决 %.1f / 3.0 秒"),Elapsed);
+    if(Executing()) return FString::Printf(TEXT("%s %.1f / 3.0 秒"),NonlethalExecution?TEXT("击晕"):TEXT("暗杀"),Elapsed);
     if(Guard.Held) return TEXT("格挡中");
     if(Body.IsValid()) return TEXT("搬运尸体 · E 放下");
     if(Busy())

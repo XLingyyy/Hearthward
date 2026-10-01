@@ -11,6 +11,7 @@ struct FHearthwardCombatTargetSave
     UPROPERTY() FName Region;
     UPROPERTY() int32 Generation=1;
     UPROPERTY() float Health=0;
+    UPROPERTY() bool bStunned=false;
     UPROPERTY() FVector Position=FVector::ZeroVector;
     UPROPERTY() FRotator Rotation=FRotator::ZeroRotator;
     UPROPERTY() TMap<FName,float> ArmorDurability;

@@ -40,6 +40,7 @@ public:
     UFUNCTION(BlueprintCallable) bool CaptureUI(const FString& Name,int32 Width=1672,int32 Height=941);
     void InitializeScreen(class AHearthwardHUD* HUD);
     virtual void NativeTick(const FGeometry& Geometry,float Delta) override;
+    virtual void NativeDestruct() override;
     virtual int32 NativePaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool Enabled) const override;
     virtual FReply NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event) override;
@@ -82,6 +83,10 @@ private:
     void ComposeCrafting();
     void ComposeRepair();
     void ComposeSave();
+    void ComposeSettings();
+    bool ExecuteSettingsAction(const FString& Action);
+    void LoadSettingsDraft();
+    void ApplyMasterVolume();
     void Element(FString Type,FString Text,FVector2D Position,FVector2D Size,float Font=18,FString Action=TEXT(""),FString Asset=TEXT(""),bool Selected=false);
     FString Resolve(const FString& Bind) const;
     FLinearColor Color(const FString& Name) const;
@@ -125,6 +130,11 @@ private:
     FVector2D MapPan=FVector2D::ZeroVector;
     bool OwnPause=false,StorageToCamp=true;
     bool MenuPause=true;
+    UPROPERTY() TObjectPtr<class USoundMix> SettingsSoundMix;
+    FString SettingsSelection;
+    int32 SettingsAutoMinutes=10,SettingsFrameLimit=0,SettingsQuality=2,SettingsShadow=2;
+    int32 SettingsTexture=2,SettingsViewDistance=2,SettingsEffects=2,SettingsVolume=100,SettingsSensitivity=5;
+    bool SettingsMenuPause=true,SettingsFullscreen=true,SettingsVSync=false,SettingsInvertY=false,SettingsDirty=false;
     FGuid StorageEpoch;
     FGuid MemoryEpoch, SelectedMemory;
     int64 MemoryRevision = 0;

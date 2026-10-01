@@ -1,6 +1,9 @@
 #include "HearthwardCampaignSubsystem.h"
 #include "HearthwardCampaignActor.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Gameplay/HearthwardWorldPresentation.h"
+#include "../UI/HearthwardLoadingSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Building/HearthwardTask028CampHouse.h"
@@ -16,6 +19,7 @@
 #include "NavigationSystem.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/DirectionalLightComponent.h"
+#include "Engine/DirectionalLight.h"
 #include "Engine/StaticMesh.h"
 #include "EngineUtils.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -93,6 +97,8 @@ bool UHearthwardCampaignSubsystem::BeginTravel(FName Id)
     auto* Source=GetWorld()->SpawnActor<AActor>();StreamSource=Source;
     auto* Root=NewObject<USceneComponent>(Source);Source->AddInstanceComponent(Root);Source->SetRootComponent(Root);Root->RegisterComponent();Source->SetActorLocation(Position(Id));
     auto* Component=NewObject<UWorldPartitionStreamingSourceComponent>(Source);Source->AddInstanceComponent(Component);Component->RegisterComponent();Component->EnableStreamingSource();
+    auto* Loading=GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>();
+    if(!Loading->IsLoading()){Loading->BeginLoading();Loading->FinishSession(true);}
     Feedback=TEXT("正在准备目的地，请稍候");return true;
 }
 bool UHearthwardCampaignSubsystem::ZoneOccupied(FName Zone) const
@@ -112,10 +118,24 @@ void UHearthwardCampaignSubsystem::RefreshActors()
     if(Night!=NightApplied)
     {
         if(DayLights.IsEmpty())for(TActorIterator<AActor> It(GetWorld());It;++It)
-            if(auto* Light=It->FindComponentByClass<UDirectionalLightComponent>())DayLights.Add(Light,{Light->Intensity,Light->GetComponentRotation()});
+            if(auto* Light=It->FindComponentByClass<UDirectionalLightComponent>();Light && !It->ActorHasTag(TEXT("HearthwardNightFill")))DayLights.Add(Light,{Light->Intensity,Light->GetComponentRotation()});
         for(const auto& Pair:DayLights)if(auto* Light=Pair.Key.Get())
         {Light->SetIntensity(Night?.15f:Pair.Value.Key);Light->SetWorldRotation(Night?FRotator(-8,30,0):Pair.Value.Value);}
+        if(Night)
+        {
+            auto* Moon=GetWorld()->SpawnActor<ADirectionalLight>(FVector::ZeroVector,FRotator(-32,30,0));
+            Moon->Tags.Add(TEXT("CampaignMoonlight"));
+            auto* Light=Moon->GetComponent();
+            Light->SetMobility(EComponentMobility::Movable);
+            Light->SetAtmosphereSunLight(false);
+            Light->SetForwardShadingPriority(1);
+            Light->SetIntensity(1.5f);
+            Light->SetLightColor(FLinearColor(.56f,.70f,1.f));
+            MoonLight=Moon;
+        }
+        else if(MoonLight.IsValid()) { MoonLight->Destroy(); MoonLight.Reset(); }
         NightApplied=Night;
+        GetWorld()->GetSubsystem<UHearthwardWorldPresentation>()->SetNight(Night);
     }
     const FVector PlayerPosition=Player()->GetActorLocation();
     if(State.Phase==TEXT("prologue") && !Scenery.ContainsByPredicate([](const auto& A){return A.IsValid() && A->ActorHasTag(TEXT("CampaignPrologueHouse"));}))
@@ -280,7 +300,7 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
     for(auto& E:State.Enemies)if(E.Group==TEXT("field") && E.RefreshDue>=0 && Camp->State.Calendar>=E.RefreshDue)
     {
         const bool NearPerson=State.People.ContainsByPredicate([&](const auto& P){return P.Stage!=TEXT("arrived") && FVector::Dist2D(P.Position,E.Home)<5000;});
-        if(!NearPerson && !Actor(E.Id)){++E.Combat.Generation;E.Combat.Health=HearthwardCampaign::Health(E.Kind,E.Stage);E.Combat.Position=E.Home;E.RefreshDue=-1;}
+        if(!NearPerson && !Actor(E.Id)){++E.Combat.Generation;E.Combat.Health=HearthwardCampaign::Health(E.Kind,E.Stage);E.Combat.bStunned=false;E.Combat.Position=E.Home;E.RefreshDue=-1;}
     }
     for(auto& P:State.People)if(auto* A=Actor(P.Id);A && P.Stage==TEXT("following"))
     {

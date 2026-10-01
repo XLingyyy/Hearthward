@@ -98,7 +98,8 @@ bool HearthwardNaturalCamp::Initialize(UWorld* World, FString& Error)
     if(!Ground(World,SourcePosition,TreeActor))
     { Error=TEXT("木材采集点地形尚未就绪，请稍后重试"); return false; }
 
-    auto* Camp=Marker(World,CampPosition,FVector(1.2,1.2,.4),TEXT("营地仓储"));
+    // The engine's world font lacks CJK glyphs; localized details are already in the HUD prompt.
+    auto* Camp=Marker(World,CampPosition,FVector(1.2,1.2,.4),TEXT("R"));
     auto* Chest=Camp->FindComponentByClass<UStaticMeshComponent>();
     Chest->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Hearthward/Assets/Demo/chest/wood_chest_model.wood_chest_model")));
     Chest->SetRelativeScale3D(FVector(1.2)); Chest->SetRelativeLocation(FVector(0,0,-61.5234));
@@ -106,7 +107,7 @@ bool HearthwardNaturalCamp::Initialize(UWorld* World, FString& Error)
     Camp->AddInstanceComponent(ChestCollision); ChestCollision->SetupAttachment(Camp->GetRootComponent());
     ChestCollision->SetBoxExtent(FVector(61,69,18.5)); ChestCollision->SetRelativeLocation(FVector(0,0,-61.5));
     ChestCollision->SetCollisionProfileName(TEXT("BlockAll")); ChestCollision->RegisterComponent();
-    auto* Resource=Marker(World,SourcePosition,FVector(.7,.7,.7),TEXT("木材采集点"),!AuthoredTree);
+    auto* Resource=Marker(World,SourcePosition,FVector(.7,.7,.7),TEXT("E"),!AuthoredTree);
     Camp->Tags.Add(TEXT("Hearthward.NaturalCamp"));
     Resource->Tags.Add(TEXT("Hearthward.NaturalCamp.Resource"));
     if(AuthoredTree) Resource->Tags.Add(TEXT("Hearthward.NaturalCamp.AuthoredTree.PROTOTYPE_ONLY"));
