@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "HearthwardSaveGame.h"
+#include "HearthwardSaveCompatibility.h"
 #include "HearthwardSaveSubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHearthwardSnapshotRestored);
@@ -19,6 +20,9 @@ public:
     UFUNCTION(BlueprintCallable) bool EnablePrototype();
     UFUNCTION(BlueprintCallable) bool EnableNaturalWorld();
     UFUNCTION(BlueprintCallable) bool LoadPointIndex();
+    UFUNCTION(BlueprintCallable) bool ResolveSaveConflicts();
+    bool HasSaveConflicts() const { return !Compatibility.Summary.IsEmpty(); }
+    const FHearthwardSaveCompatibility& GetCompatibility() const { return Compatibility; }
     UFUNCTION(BlueprintCallable) bool StartNewProgress();
     UFUNCTION(BlueprintCallable) bool SavePoint(bool Manual);
     UFUNCTION(BlueprintCallable) bool LoadPoint(FGuid SaveId);
@@ -48,6 +52,8 @@ private:
     bool WritePoint(bool Manual, bool NewCampaign);
     bool Participants(class APawn*& Player, AHearthwardCompanionFixture*& Companion) const;
     FString PoolPath() const;
+    FString ReadPoolPath() const;
+    FHearthwardSaveCompatibility Compatibility;
     UPROPERTY() TObjectPtr<UHearthwardSaveGame> Pool;
     UPROPERTY() FHearthwardWorldSave InitialWorld;
     FGuid CampaignId;

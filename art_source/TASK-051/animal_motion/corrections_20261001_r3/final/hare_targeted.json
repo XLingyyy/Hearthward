@@ -1,0 +1,142 @@
+{
+  "slug": "hare",
+  "source_blend_sha256": "d8efa09d158df5975f5c5b9eb30bc5f5aa3a104cb910b20ab541d994a57c1211",
+  "skeletal_fbx_sha256": "5ebaea6cdbc3c6e5be17c6e916c414d85e95edd569a12b4cbef8257f0bdb7353",
+  "source_fbx_unchanged": true,
+  "geometry_topology_uv_preserved": true,
+  "geometry_hashes": {
+    "tripo_node_588471a5": {
+      "vertices": "171ee0b03b4eaf65a1953b7d2b9ab320a0c7fbaa73207207ad9c91df38734d16",
+      "faces": "99acf4c704eea5d0ae7386e9aac5f1421ef50dcd40a326e091dc1760ba5eba6e",
+      "uv": "e781bdf1edab353fe1eecc82435fc09c662bd71d6e22bfe65af4ed8ea91bbead"
+    }
+  },
+  "gaits": [
+    {
+      "name": "AN_hare_HopSlow",
+      "kind": "hop",
+      "segment_length_error_cm": 1.5796325886219265e-05,
+      "foot_track_error_cm": 3.4805058507983055e-05,
+      "foot_orientation_error_deg": 0.05595291023658669,
+      "max_outward_joint_cm_at_full_gait": 0.0,
+      "min_shaft_area_ratio": 0.8080241602219578,
+      "max_adjacent_rotation_deg": 22.77435355938906,
+      "fixed_root_drift_cm": 0.0,
+      "scale_error": 0.0,
+      "shaft_samples": {
+        "FL_1": 0.9964383446149097,
+        "FL_2": 0.9999997330733367,
+        "FR_1": 0.9999993482149319,
+        "FR_2": 0.99999978208031,
+        "BL_1": 0.9715791323856886,
+        "BL_2": 0.8080241602219578,
+        "BR_1": 0.9726456765257564,
+        "BR_2": 0.8403477464485792
+      },
+      "pass": true,
+      "baseline_shaft_samples_same_vertices": {
+        "FL_1": 0.9194612522430546,
+        "FL_2": 0.9456816437227633,
+        "FR_1": 0.9129796598161966,
+        "FR_2": 1.0,
+        "BL_1": 0.7539672483538311,
+        "BL_2": 0.6573468939419338,
+        "BR_1": 0.8557081420485654,
+        "BR_2": 0.8143430110770155
+      },
+      "baseline_min_shaft_area_ratio": 0.6573468939419338
+    },
+    {
+      "name": "AN_hare_BoundFast",
+      "kind": "run",
+      "segment_length_error_cm": 1.5118068226460668e-05,
+      "foot_track_error_cm": 2.2413743967549984e-05,
+      "foot_orientation_error_deg": 0.05595291023658669,
+      "max_outward_joint_cm_at_full_gait": 0.08346049061356553,
+      "min_shaft_area_ratio": 0.7829686125283092,
+      "max_adjacent_rotation_deg": 48.81650613853098,
+      "fixed_root_drift_cm": 0.0,
+      "scale_error": 0.0,
+      "shaft_samples": {
+        "FL_1": 0.9962413642484061,
+        "FL_2": 0.999999711037446,
+        "FR_1": 0.999999474329092,
+        "FR_2": 0.9999999138142341,
+        "BL_1": 0.9681280180135605,
+        "BL_2": 0.7829686125283092,
+        "BR_1": 0.9734562554921252,
+        "BR_2": 0.8287058367047864
+      },
+      "pass": true,
+      "baseline_shaft_samples_same_vertices": {
+        "FL_1": 0.9174672535044787,
+        "FL_2": 0.9444713840274106,
+        "FR_1": 0.9131610587539565,
+        "FR_2": 1.0,
+        "BL_1": 0.7284405533109534,
+        "BL_2": 0.6230315900830032,
+        "BR_1": 0.8437417283549573,
+        "BR_2": 0.7762108653609128
+      },
+      "baseline_min_shaft_area_ratio": 0.6230315900830032
+    },
+    {
+      "name": "AN_hare_StartBound",
+      "kind": "start",
+      "segment_length_error_cm": 9.83009473820573e-06,
+      "foot_track_error_cm": 2.107671672078317e-05,
+      "foot_orientation_error_deg": 0.05595291023658669,
+      "max_outward_joint_cm_at_full_gait": 0.0,
+      "min_shaft_area_ratio": 1.0,
+      "max_adjacent_rotation_deg": 55.16133048054221,
+      "fixed_root_drift_cm": 0.0,
+      "scale_error": 0.0,
+      "shaft_samples": {},
+      "pass": true
+    },
+    {
+      "name": "AN_hare_StopCrouch",
+      "kind": "stop",
+      "segment_length_error_cm": 9.83009473820573e-06,
+      "foot_track_error_cm": 2.4038949318083642e-05,
+      "foot_orientation_error_deg": 0.05595291023658669,
+      "max_outward_joint_cm_at_full_gait": 0.0,
+      "min_shaft_area_ratio": 1.0,
+      "max_adjacent_rotation_deg": 47.447134633792295,
+      "fixed_root_drift_cm": 0.0,
+      "scale_error": 0.0,
+      "shaft_samples": {},
+      "pass": true
+    }
+  ],
+  "start_stop_seams": [
+    {
+      "from": "IdleCrouch",
+      "to": "StartBound",
+      "position_cm": 2.284608499178583e-05,
+      "rotation_deg": 0.03956468205889273
+    },
+    {
+      "from": "StartBound",
+      "to": "BoundFast",
+      "position_cm": 0.0,
+      "rotation_deg": 0.03956468205889273
+    },
+    {
+      "from": "BoundFast",
+      "to": "StopCrouch",
+      "position_cm": 0.0,
+      "rotation_deg": 0.03956468205889273
+    },
+    {
+      "from": "StopCrouch",
+      "to": "IdleCrouch",
+      "position_cm": 2.284608499178583e-05,
+      "rotation_deg": 0.05595291023658669
+    }
+  ],
+  "bone_rest_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+  "gameplay_integration": "NOT_RUN",
+  "pass": true,
+  "shaft_sampling_note": "PCA area proxy of identical original vertex groups in each shaft; a local visual diagnostic, not a whole-mesh volume guarantee"
+}

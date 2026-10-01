@@ -7,6 +7,14 @@
 #include "Misc/Paths.h"
 #include "HAL/FileManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "../Campaign/HearthwardCampaignState.h"
+#include "../Save/HearthwardSaveCompatibility.h"
+#include "../Update/HearthwardUpdateSubsystem.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
+#include "Serialization/JsonSerializer.h"
+#include "Engine/GameInstance.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 namespace
@@ -253,6 +261,162 @@ bool FSaveNPCMemoryTest::RunTest(const FString& Parameters)
     }
     S.NPCStateVersion=0;
     TestFalse(TEXT("Missing version in new snapshot not silently defaulted"),HearthwardSave::Validate(*Pool));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveLegacyCampMigrationTest, "Hearthward.Save.LegacyCampMigration",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSaveLegacyCampMigrationTest::RunTest(const FString& Parameters)
+{
+    const FString Path=FPaths::ProjectSavedDir()/TEXT("LegacyCampFix/synthetic.hws");
+    IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path),true);
+    auto* Pool=NewObject<UHearthwardSaveGame>();
+    Pool->Schema=3;Pool->Points.Add(Point());
+    auto& S=Pool->Points[0].World;
+    S.NaturalWorld=true;S.Map=TEXT("L_HearthwardWilds");
+    S.Inventory.Add(TEXT("wood"),3);S.Storage.Add(TEXT("wood"),5);
+    auto WriteLegacy=[&](uint32 Magic)
+    {
+        TArray<uint8> Payload,Bytes;
+        if(!UGameplayStatics::SaveGameToMemory(Pool,Payload))return false;
+        const uint32 Header[]={Magic,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
+        Bytes.Append(reinterpret_cast<const uint8*>(Header),sizeof(Header));Bytes.Append(Payload);
+        return FFileHelper::SaveArrayToFile(Bytes,*Path);
+    };
+    TestTrue(TEXT("Write pre-economy natural-world file"),WriteLegacy(0x48575332));
+    UHearthwardSaveGame* Loaded=nullptr;FString Error;
+    TestTrue(TEXT("Pre-economy natural save migrates"),HearthwardSave::Read(Path,Loaded,Error));
+    if(Loaded)
+    {
+        TestEqual(TEXT("Player inventory preserved"),Loaded->Points[0].World.PlayerItems.Stacks.FindRef(TEXT("wood")),3);
+        TestEqual(TEXT("Storage preserved"),Loaded->Points[0].World.StorageItems.Stacks.FindRef(TEXT("wood")),5);
+        FHearthwardCampaignState Campaign;
+        TestTrue(TEXT("Legacy campaign validates"),FHearthwardCampaignState::Parse(Loaded->Points[0].World.Campaign,Campaign));
+        TestTrue(TEXT("Old progress skips new prologue"),Campaign.Legacy && Campaign.Facts.Contains(TEXT("prologue_skipped")));
+        TestTrue(TEXT("Camp position carried into campaign"),Campaign.Positions.Contains(TEXT("camp")));
+        TestTrue(TEXT("Migrated file can be saved"),HearthwardSave::Write(Path+TEXT(".roundtrip"),Loaded,Error));
+        TestTrue(TEXT("Migrated file can be continued"),HearthwardSave::Read(Path+TEXT(".roundtrip"),Loaded,Error));
+    }
+    S.CampEconomy=TEXT("{broken");
+    TestTrue(TEXT("Write damaged legacy economy"),WriteLegacy(0x48575332));
+    TestFalse(TEXT("Present but malformed economy remains rejected"),HearthwardSave::Read(Path,Loaded,Error));
+    S.CampEconomy.Reset();Pool->Schema=7;
+    TestTrue(TEXT("Write schema7 with missing economy"),WriteLegacy(0x48575337));
+    TestFalse(TEXT("Missing schema7 economy is not silently invented"),HearthwardSave::Read(Path,Loaded,Error));
+
+    // Optional real-user fixture is supplied only as a local copy, never the live pool.
+    FString Fixture;
+    if(FParse::Value(FCommandLine::Get(),TEXT("HearthwardLegacySaveFixture="),Fixture))
+    {
+        TArray<uint8> Before,After;FFileHelper::LoadFileToArray(Before,*Fixture);
+        const bool Read=HearthwardSave::Read(Fixture,Loaded,Error);
+        TestTrue(FString(TEXT("Real Demo save migrates: "))+Error,Read);
+        if(Read)
+        {
+            AddInfo(FString::Printf(TEXT("Migrated %d real save points"),Loaded->Points.Num()));
+            TestTrue(TEXT("Real migrated pool writes"),HearthwardSave::Write(Fixture+TEXT(".migrated"),Loaded,Error));
+            TestTrue(TEXT("Real migrated pool reloads"),HearthwardSave::Read(Fixture+TEXT(".migrated"),Loaded,Error));
+        }
+        FFileHelper::LoadFileToArray(After,*Fixture);
+        TestTrue(TEXT("Original fixture bytes unchanged"),Before==After);
+    }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveCompatibilityTest, "Hearthward.Save.CompatibilityPreviewAndConsent",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSaveCompatibilityTest::RunTest(const FString& Parameters)
+{
+    const FString Dir=FPaths::ProjectSavedDir()/TEXT("CompatibilityTests")/FGuid::NewGuid().ToString();
+    IFileManager::Get().MakeDirectory(*Dir,true);
+    const FString Source=Dir/TEXT("old.hws"),Destination=Dir/TEXT("new.hws");
+    auto* Pool=NewObject<UHearthwardSaveGame>();Pool->Points.Add(Point());
+    auto& S=Pool->Points[0].World;
+    S.PlayerItems.Stacks.Add(TEXT("wood"),7);
+    S.PlayerItems.Stacks.Add(TEXT("removed_item_fixture"),3);
+    S.StorageItems.Stacks.Add(TEXT("stone"),11);
+    const FGuid SaveId=Pool->Points[0].SaveId;
+    auto WriteRaw=[&]()
+    {
+        TArray<uint8> Payload,Bytes;UGameplayStatics::SaveGameToMemory(Pool,Payload);
+        const uint32 H[]={0x48575338,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
+        Bytes.Append(reinterpret_cast<const uint8*>(H),12);Bytes.Append(Payload);return FFileHelper::SaveArrayToFile(Bytes,*Source);
+    };
+    TestTrue(TEXT("Create conflicting file"),WriteRaw());
+    TArray<uint8> Before,After;FFileHelper::LoadFileToArray(Before,*Source);
+    FHearthwardSaveCompatibility Preview;UHearthwardSaveGame* Candidate=nullptr;
+    TestFalse(TEXT("Conflict requires consent"),HearthwardSave::InspectCompatibility(Source,Preview,Candidate));
+    TestTrue(TEXT("Safe repair is available"),Preview.CanRepair && Candidate);
+    TestEqual(TEXT("Exactly one specific conflict"),Preview.Changes.Num(),1);
+    TestTrue(TEXT("Conflict names item and amount"),Preview.Changes[0].Contains(TEXT("removed_item_fixture")) && Preview.Changes[0].Contains(TEXT("×3")));
+    FFileHelper::LoadFileToArray(After,*Source);
+    TestTrue(TEXT("Preview/cancel never writes source"),Before==After && !IFileManager::Get().FileExists(*Destination));
+    FString Status;
+    TestTrue(TEXT("Explicit confirmation saves compatible copy"),HearthwardSave::ResolveCompatibility(Preview,Destination,Status));
+    UHearthwardSaveGame* Read=nullptr;TestTrue(TEXT("Repaired copy loads"),HearthwardSave::Read(Destination,Read,Status));
+    if(Read)
+    {
+        TestTrue(TEXT("Save identity preserved"),Read->Points[0].SaveId==SaveId);
+        TestEqual(TEXT("Compatible personal items preserved"),Read->Points[0].World.PlayerItems.Stacks.FindRef(TEXT("wood")),7);
+        TestEqual(TEXT("Compatible shared storage preserved"),Read->Points[0].World.StorageItems.Stacks.FindRef(TEXT("stone")),11);
+        TestFalse(TEXT("Only obsolete item removed"),Read->Points[0].World.PlayerItems.Stacks.Contains(TEXT("removed_item_fixture")));
+        TestEqual(TEXT("Writer version recorded"),Read->WriterVersion,FString(HearthwardVersion::Current));
+    }
+    FFileHelper::LoadFileToArray(After,*Source);TestTrue(TEXT("Original remains byte-identical after import"),Before==After);
+    TArray<FString> Backups;IFileManager::Get().FindFiles(Backups,*(Dir/TEXT("Backups/*.hws")),true,false);
+    TestEqual(TEXT("Verified backup created"),Backups.Num(),1);
+    S.PlayerItems.Stacks[TEXT("removed_item_fixture")]=4;WriteRaw();
+    TestFalse(TEXT("Stale preview rejected"),HearthwardSave::ResolveCompatibility(Preview,Dir/TEXT("stale.hws"),Status));
+    Pool->WriterVersion=TEXT("99.0.0");WriteRaw();
+    TestFalse(TEXT("Future save requires update"),HearthwardSave::InspectCompatibility(Source,Preview,Candidate));
+    TestFalse(TEXT("Never delete progress to downgrade"),Preview.CanRepair);
+    TestTrue(TEXT("Future save gives actionable update message"),Preview.Summary.Contains(TEXT("同步更新")));
+    Pool->WriterVersion.Reset();S.PlayerItems.Stacks.Remove(TEXT("removed_item_fixture"));
+    S.CampEconomy=TEXT("{damaged");WriteRaw();
+    TestFalse(TEXT("Unrepairable structure is reported"),HearthwardSave::InspectCompatibility(Source,Preview,Candidate));
+    TestFalse(TEXT("Cannot guess structural deletion"),Preview.CanRepair);
+    TestTrue(TEXT("Affected domain identified"),Preview.Summary.Contains(TEXT("营地")));
+    S.CampEconomy.Reset();
+    S.Gameplay=NewObject<UHearthwardGameplayComponent>()->SaveSnapshot();
+    TSharedPtr<FJsonObject> G;
+    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(S.Gameplay),G);
+    G->GetObjectField(TEXT("skills"))->SetNumberField(TEXT("strong"),1);
+    G->GetObjectField(TEXT("skills"))->SetNumberField(TEXT("removed_skill_fixture"),1);
+    G->SetArrayField(TEXT("knownRecipes"),{MakeShared<FJsonValueString>(TEXT("removed_recipe_fixture"))});
+    auto Building=MakeShared<FJsonObject>();Building->SetStringField(TEXT("id"),FGuid::NewGuid().ToString());
+    Building->SetStringField(TEXT("recipe"),TEXT("removed_building_fixture"));Building->SetStringField(TEXT("position"),FVector(100,200,300).ToString());Building->SetNumberField(TEXT("yaw"),0);
+    G->SetArrayField(TEXT("buildings"),{MakeShared<FJsonValueObject>(Building)});
+    S.Gameplay.Reset();FJsonSerializer::Serialize(G.ToSharedRef(),TJsonWriterFactory<>::Create(&S.Gameplay));WriteRaw();
+    TestFalse(TEXT("Content removals require consent"),HearthwardSave::InspectCompatibility(Source,Preview,Candidate));
+    TestTrue(TEXT("Skill recipe and building repair is validated"),Preview.CanRepair && Candidate);
+    TestEqual(TEXT("Every affected content record is listed"),Preview.Changes.Num(),3);
+    if(Candidate)
+    {
+        TSharedPtr<FJsonObject> Kept;FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Candidate->Points[0].World.Gameplay),Kept);
+        TestEqual(TEXT("Compatible learned skill preserved"),Kept->GetObjectField(TEXT("skills"))->GetNumberField(TEXT("strong")),1.);
+        TestEqual(TEXT("Compatible inventory still preserved"),Candidate->Points[0].World.PlayerItems.Stacks.FindRef(TEXT("wood")),7);
+    }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FReleaseVersionTest, "Hearthward.Save.ReleaseVersionOrdering",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FReleaseVersionTest::RunTest(const FString& Parameters)
+{
+    TestTrue(TEXT("Higher patch"),HearthwardVersion::IsNewer(TEXT("v0.2.1"),TEXT("0.2.0")));
+    TestTrue(TEXT("Stable replaces preview"),HearthwardVersion::IsNewer(TEXT("v0.2.0"),HearthwardVersion::Current));
+    TestFalse(TEXT("Old demo is not an update"),HearthwardVersion::IsNewer(TEXT("v0.1.0-demo.20260924"),HearthwardVersion::Current));
+    TestFalse(TEXT("Same version is not update"),HearthwardVersion::IsNewer(HearthwardVersion::Current,HearthwardVersion::Current));
+    TestTrue(TEXT("Numeric prerelease order"),HearthwardVersion::IsNewer(TEXT("0.2.0-preview.10"),TEXT("0.2.0-preview.9")));
+    TestFalse(TEXT("Unknown tag is not falsely newer"),HearthwardVersion::IsNewer(TEXT("main"),HearthwardVersion::Current));
+    auto* Update=NewObject<UHearthwardUpdateSubsystem>(NewObject<UGameInstance>());
+    Update->CompleteCheck(200,TEXT("{\"tag_name\":\"v0.3.0\"}"),true);
+    TestTrue(TEXT("Official newer version produces update prompt"),Update->HasUpdate() && Update->GetNotice().Contains(TEXT("存在新版本，请同步更新")));
+    Update->CompleteCheck(0,TEXT(""),false);
+    TestTrue(TEXT("Offline recheck retains known newer release"),Update->HasUpdate());
+    Update->CompleteCheck(200,TEXT("{\"tag_name\":\"v0.1.0\"}"),true);
+    TestFalse(TEXT("Older release never prompts a downgrade"),Update->HasUpdate());
+    Update->CompleteCheck(403,TEXT(""),true);
+    TestTrue(TEXT("Rate limit has actionable offline fallback"),Update->GetNotice().Contains(TEXT("限流")));
+    Update->CompleteCheck(200,TEXT("{\"tag_name\":\"main\"}"),true);
+    TestTrue(TEXT("Unparseable tag is not falsely called current"),Update->GetNotice().Contains(TEXT("无法自动比较")));
     return true;
 }
 #endif

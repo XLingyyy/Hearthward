@@ -1,0 +1,300 @@
+{
+  "schema": "animal.rig.audit.r3",
+  "rig": {
+    "body": "pelvis",
+    "root": "root",
+    "chains": {
+      "FL": [
+        "bone_7",
+        "0_Left_Limb_0",
+        "0_Left_Limb_1",
+        "0_Left_Limb_2"
+      ],
+      "FR": [
+        "0_Right_Limb_0",
+        "0_Right_Limb_1",
+        "0_Right_Limb_2",
+        "0_Right_Limb_3"
+      ],
+      "BL": [
+        "1_Left_Limb_0",
+        "1_Left_Limb_1",
+        "1_Left_Limb_2",
+        "1_Left_Limb_3",
+        "1_Left_Limb_4"
+      ],
+      "BR": [
+        "1_Right_Limb_0",
+        "1_Right_Limb_1",
+        "1_Right_Limb_2",
+        "1_Right_Limb_3",
+        "1_Right_Limb_4"
+      ]
+    },
+    "spine": [
+      "Spine_0",
+      "Spine_1",
+      "Spine_2"
+    ],
+    "neck": [
+      "Head_0",
+      "Head_1"
+    ],
+    "head": "Head_1",
+    "wings": [],
+    "ears": [],
+    "tail": [],
+    "restfeet": {
+      "FL": [
+        0.3007645010948181,
+        0.07586920261383057,
+        0.015940440818667412
+      ],
+      "FR": [
+        0.3264864981174469,
+        -0.15795117616653442,
+        0.035069406032562256
+      ],
+      "BL": [
+        -0.6490994691848755,
+        0.18298481404781342,
+        0.10520823299884796
+      ],
+      "BR": [
+        -0.6159113049507141,
+        -0.24197690188884735,
+        0.09883111715316772
+      ]
+    },
+    "hip": [
+      -0.11977069824934006,
+      -0.04616221785545349,
+      0.8623870611190796
+    ],
+    "repairs": [
+      "Added fixed game root; moved deforming body pivot to anatomical hip center",
+      "Corrected spatially mismatched foot/toe weights and normalized skin influences",
+      "Rebound paw soles to contact bones; smoothed seam and shoulder weights with at most eight influences",
+      "Calibrated bind orientations to solved natural stance; rebaked all world-space joint trajectories without IK rest twist",
+      "2026-10-01 R2: neutral Head_0 yaw -58.0 deg, head-centre Y shift -16.59 cm; locally rebaked mesh and rest matrices; global-axis motion retargeted",
+      "2026-10-01 R3: measured limb rest pivots; retargeted complete library; calibrated shaft skinning; exact-length medial gait solve and restrained torso compression"
+    ],
+    "axis": {
+      "rotation_z_degrees": 39.106467883880605,
+      "scale": 1.634339786844243,
+      "target_length_m": 1.5625197887420654,
+      "forward": "+X",
+      "up": "+Z",
+      "dcc_units": "metres",
+      "engine_units": "centimetres",
+      "body_reference_length_m": 1.6,
+      "head_rebind_length_note": "Measured +X extent after local head correction; body and limb scale unchanged"
+    },
+    "bone_heads": {
+      "root": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pelvis": [
+        -0.11977070569992065,
+        -0.04616221785545349,
+        0.8623870611190796
+      ],
+      "Spine_0": [
+        -0.11149544268846512,
+        -0.05381538346409798,
+        1.0488922595977783
+      ],
+      "Spine_1": [
+        0.19810423254966736,
+        -0.0404476523399353,
+        1.0552685260772705
+      ],
+      "Spine_2": [
+        0.40594130754470825,
+        -0.002977359341457486,
+        1.1509121656417847
+      ],
+      "Head_0": [
+        0.5036532878875732,
+        0.10931763052940369,
+        1.2975659370422363
+      ],
+      "bone_5": [
+        0.507008969783783,
+        0.27665263414382935,
+        1.4123380184173584
+      ],
+      "Head_1": [
+        0.47823137044906616,
+        -0.043726131319999695,
+        1.4187140464782715
+      ],
+      "bone_7": [
+        0.19868314266204834,
+        0.1407984048128128,
+        0.8831101655960083
+      ],
+      "0_Left_Limb_0": [
+        0.21713238954544067,
+        0.09797856956720352,
+        0.5190621018409729
+      ],
+      "0_Left_Limb_1": [
+        0.23974351584911346,
+        0.07400473207235336,
+        0.16869226098060608
+      ],
+      "0_Left_Limb_2": [
+        0.3007645010948181,
+        0.07586920261383057,
+        0.015940440818667412
+      ],
+      "0_Right_Limb_0": [
+        0.2643355429172516,
+        -0.2331228405237198,
+        0.8894861936569214
+      ],
+      "0_Right_Limb_1": [
+        0.23753316700458527,
+        -0.19368226826190948,
+        0.5204458236694336
+      ],
+      "0_Right_Limb_2": [
+        0.2592551112174988,
+        -0.17343565821647644,
+        0.1713750958442688
+      ],
+      "0_Right_Limb_3": [
+        0.3264864981174469,
+        -0.15795117616653442,
+        0.035069406032562256
+      ],
+      "bone_15": [
+        -0.7041038870811462,
+        -0.042502015829086304,
+        1.0488922595977783
+      ],
+      "1_Left_Limb_0": [
+        -0.471557080745697,
+        0.14652737975120544,
+        0.8448522686958313
+      ],
+      "1_Left_Limb_1": [
+        -0.5407342314720154,
+        0.13428230583667755,
+        0.5611695051193237
+      ],
+      "1_Left_Limb_2": [
+        -0.6633015275001526,
+        0.11907682567834854,
+        0.3768148720264435
+      ],
+      "1_Left_Limb_3": [
+        -0.6490994691848755,
+        0.18298481404781342,
+        0.10520823299884796
+      ],
+      "1_Left_Limb_4": [
+        -0.5925037860870361,
+        0.20433858036994934,
+        0.02869356982409954
+      ],
+      "1_Right_Limb_0": [
+        -0.47054436802864075,
+        -0.238851860165596,
+        0.8320999145507812
+      ],
+      "1_Right_Limb_1": [
+        -0.5698168277740479,
+        -0.210493803024292,
+        0.5276490449905396
+      ],
+      "1_Right_Limb_2": [
+        -0.6497015357017517,
+        -0.20032592117786407,
+        0.3423736095428467
+      ],
+      "1_Right_Limb_3": [
+        -0.6159113049507141,
+        -0.24197690188884735,
+        0.09883111715316772
+      ],
+      "1_Right_Limb_4": [
+        -0.54507976770401,
+        -0.2583537995815277,
+        0.022316424176096916
+      ]
+    },
+    "bone_count": 27,
+    "skeleton_signature": "34effa7d5222553246530b0b98aef4c95cc83033b5fa9ecdfe19044e6aa9041c",
+    "skin_qa": {
+      "unweighted_vertices": 0,
+      "max_sum_error": 1.974069164134562e-05,
+      "max_influences": 8,
+      "weighted_vertices_per_bone": {
+        "pelvis": 16942,
+        "Spine_0": 21579,
+        "Spine_1": 29014,
+        "Spine_2": 19929,
+        "Head_0": 17594,
+        "bone_5": 3553,
+        "Head_1": 4221,
+        "bone_7": 14404,
+        "0_Left_Limb_0": 4830,
+        "0_Left_Limb_1": 2169,
+        "0_Left_Limb_2": 1564,
+        "0_Right_Limb_0": 8172,
+        "0_Right_Limb_1": 3946,
+        "0_Right_Limb_2": 1934,
+        "0_Right_Limb_3": 1349,
+        "bone_15": 4452,
+        "1_Left_Limb_0": 9011,
+        "1_Left_Limb_1": 4290,
+        "1_Left_Limb_2": 2605,
+        "1_Left_Limb_3": 1960,
+        "1_Left_Limb_4": 950,
+        "1_Right_Limb_0": 12049,
+        "1_Right_Limb_1": 4070,
+        "1_Right_Limb_2": 2777,
+        "1_Right_Limb_3": 1616,
+        "1_Right_Limb_4": 9439
+      }
+    }
+  },
+  "skin_qa": {
+    "unweighted_vertices": 0,
+    "max_sum_error": 1.974069164134562e-05,
+    "max_influences": 8,
+    "weighted_vertices_per_bone": {
+      "pelvis": 16942,
+      "Spine_0": 21579,
+      "Spine_1": 29014,
+      "Spine_2": 19929,
+      "Head_0": 17594,
+      "bone_5": 3553,
+      "Head_1": 4221,
+      "bone_7": 14404,
+      "0_Left_Limb_0": 4830,
+      "0_Left_Limb_1": 2169,
+      "0_Left_Limb_2": 1564,
+      "0_Right_Limb_0": 8172,
+      "0_Right_Limb_1": 3946,
+      "0_Right_Limb_2": 1934,
+      "0_Right_Limb_3": 1349,
+      "bone_15": 4452,
+      "1_Left_Limb_0": 9011,
+      "1_Left_Limb_1": 4290,
+      "1_Left_Limb_2": 2605,
+      "1_Left_Limb_3": 1960,
+      "1_Left_Limb_4": 950,
+      "1_Right_Limb_0": 12049,
+      "1_Right_Limb_1": 4070,
+      "1_Right_Limb_2": 2777,
+      "1_Right_Limb_3": 1616,
+      "1_Right_Limb_4": 9439
+    }
+  },
+  "source": "current rigid-shaft linear skinning"
+}

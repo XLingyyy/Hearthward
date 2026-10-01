@@ -1,0 +1,2482 @@
+{
+  "schema": "hearthward.animal.animations.v1",
+  "name": "黑熊",
+  "slug": "black_bear",
+  "source_sha256": "a099d2aad71f036926d07eeb0ac5c9612b859ecc1d3ab27147ca4b4eb6b140eb",
+  "guidance_sha256": "db975e25a76c3cbdf87b6ba86620a30212e5c8d1cd36e3e09fbacefe45cc6ee1",
+  "rig": {
+    "body": "pelvis",
+    "root": "root",
+    "chains": {
+      "FL": [
+        "0_Left_Limb_0",
+        "0_Left_Limb_1",
+        "0_Left_Limb_2",
+        "0_Left_Limb_3",
+        "0_Left_Limb_4"
+      ],
+      "FR": [
+        "0_Right_Limb_0",
+        "0_Right_Limb_1",
+        "0_Right_Limb_2",
+        "0_Right_Limb_3",
+        "0_Right_Limb_4"
+      ],
+      "BL": [
+        "1_Left_Limb_0",
+        "1_Left_Limb_1",
+        "1_Left_Limb_2",
+        "1_Left_Limb_3",
+        "1_Left_Limb_4"
+      ],
+      "BR": [
+        "1_Right_Limb_0",
+        "1_Right_Limb_1",
+        "1_Right_Limb_2",
+        "1_Right_Limb_3",
+        "1_Right_Limb_4"
+      ]
+    },
+    "spine": [
+      "Spine_0",
+      "Spine_1",
+      "Spine_2",
+      "Spine_3",
+      "Spine_4"
+    ],
+    "neck": [
+      "Head_0",
+      "Head_1"
+    ],
+    "head": "Head_1",
+    "wings": [],
+    "ears": [],
+    "tail": [],
+    "restfeet": {
+      "FL": [
+        0.39743998646736145,
+        0.254160612821579,
+        0.06654918193817139
+      ],
+      "FR": [
+        0.39758193492889404,
+        -0.22772392630577087,
+        0.06654977798461914
+      ],
+      "BL": [
+        -0.8350599408149719,
+        0.30888649821281433,
+        0.05913656949996948
+      ],
+      "BR": [
+        -0.9003617763519287,
+        -0.2549091577529907,
+        0.05913650989532471
+      ]
+    },
+    "hip": [
+      -0.16857357323169708,
+      0.008888766169548035,
+      0.9154080748558044
+    ],
+    "repairs": [
+      "Added fixed game root; moved deforming body pivot to anatomical hip center",
+      "Corrected spatially mismatched foot/toe weights and normalized skin influences",
+      "Removed leg-bone contamination in torso core and belly; rebound to nearby axial bones with smooth anatomical fades",
+      "Rebound paw soles to contact bones; smoothed seam and shoulder weights with at most eight influences",
+      "2026-10-01: smoothed thorax/upper-limb gradients; retained paw soles and original influence regions",
+      "2026-10-01 R3: measured limb rest pivots; retargeted complete library; calibrated shaft skinning; exact-length medial gait solve and restrained torso compression"
+    ],
+    "axis": {
+      "rotation_z_degrees": -30.49335971060885,
+      "scale": 2.2127668023667035,
+      "target_length_m": 2.2,
+      "forward": "+X",
+      "up": "+Z",
+      "dcc_units": "metres",
+      "engine_units": "centimetres"
+    },
+    "bone_heads": {
+      "root": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pelvis": [
+        -0.16857357323169708,
+        0.008888766169548035,
+        0.9154080748558044
+      ],
+      "Spine_0": [
+        -0.4612070322036743,
+        -0.005910585634410381,
+        1.0748006105422974
+      ],
+      "Spine_1": [
+        -0.1879335343837738,
+        0.005233271978795528,
+        1.1192822456359863
+      ],
+      "Spine_2": [
+        0.07142805308103561,
+        0.0073626781813800335,
+        1.1341094970703125
+      ],
+      "Spine_3": [
+        0.3078630566596985,
+        0.014389717020094395,
+        1.1711773872375488
+      ],
+      "Head_0": [
+        0.5277596116065979,
+        0.022552425041794777,
+        1.2008318901062012
+      ],
+      "Head_1": [
+        0.7296274304389954,
+        0.058539386838674545,
+        1.2527272701263428
+      ],
+      "bone_7": [
+        1.0402367115020752,
+        0.3230118751525879,
+        1.0748003721237183
+      ],
+      "Head_2": [
+        0.7642656564712524,
+        0.1757989227771759,
+        1.089627742767334
+      ],
+      "Head_3": [
+        0.848874032497406,
+        0.24642416834831238,
+        1.0303188562393188
+      ],
+      "bone_10": [
+        0.6492777466773987,
+        0.2435140609741211,
+        1.3935856819152832
+      ],
+      "bone_11": [
+        0.6575825214385986,
+        0.3160558342933655,
+        1.4899625778198242
+      ],
+      "bone_12": [
+        0.852493941783905,
+        -0.039625972509384155,
+        1.3861720561981201
+      ],
+      "bone_13": [
+        0.9261717796325684,
+        -0.031392212957143784,
+        1.4751359224319458
+      ],
+      "bone_14": [
+        0.31659358739852905,
+        0.18992364406585693,
+        1.134109377861023
+      ],
+      "0_Left_Limb_0": [
+        0.4177404046058655,
+        0.2594132125377655,
+        0.9265282154083252
+      ],
+      "0_Left_Limb_1": [
+        0.4690924882888794,
+        0.3034801781177521,
+        0.5855020880699158
+      ],
+      "0_Left_Limb_2": [
+        0.37047079205513,
+        0.2453475296497345,
+        0.1851670742034912
+      ],
+      "0_Left_Limb_3": [
+        0.39743998646736145,
+        0.254160612821579,
+        0.06654918193817139
+      ],
+      "bone_19": [
+        0.5369161367416382,
+        0.3010784983634949,
+        0.06654924154281616
+      ],
+      "bone_20": [
+        0.5161899328231812,
+        0.19283369183540344,
+        0.04430842399597168
+      ],
+      "0_Left_Limb_4": [
+        0.5207326412200928,
+        0.2589872479438782,
+        0.05172199010848999
+      ],
+      "bone_22": [
+        0.5049750804901123,
+        0.31988823413848877,
+        0.0591355562210083
+      ],
+      "Spine_4": [
+        0.3092826306819916,
+        -0.15851807594299316,
+        1.141523003578186
+      ],
+      "0_Right_Limb_0": [
+        0.40659648180007935,
+        -0.24163588881492615,
+        0.9413556456565857
+      ],
+      "0_Right_Limb_1": [
+        0.4724794924259186,
+        -0.3013414740562439,
+        0.6003297567367554
+      ],
+      "0_Right_Limb_2": [
+        0.36256617307662964,
+        -0.25154462456703186,
+        0.18516749143600464
+      ],
+      "0_Right_Limb_3": [
+        0.39758193492889404,
+        -0.22772392630577087,
+        0.06654977798461914
+      ],
+      "bone_28": [
+        0.5381226539611816,
+        -0.3104867935180664,
+        0.05913621187210083
+      ],
+      "0_Right_Limb_4": [
+        0.5452917218208313,
+        -0.2544834315776825,
+        0.05913621187210083
+      ],
+      "bone_30": [
+        0.5385486483573914,
+        -0.2074945569038391,
+        0.059136152267456055
+      ],
+      "bone_31": [
+        0.5216553807258606,
+        -0.16313189268112183,
+        0.05913621187210083
+      ],
+      "bone_32": [
+        -0.9878088235855103,
+        0.020281212404370308,
+        0.9932510852813721
+      ],
+      "1_Left_Limb_0": [
+        -0.7422884702682495,
+        0.15961521863937378,
+        0.896874189376831
+      ],
+      "1_Left_Limb_1": [
+        -0.7917032241821289,
+        0.21551266312599182,
+        0.40016236901283264
+      ],
+      "1_Left_Limb_2": [
+        -0.8471272587776184,
+        0.2998921573162079,
+        0.11103177070617676
+      ],
+      "1_Left_Limb_3": [
+        -0.8350599408149719,
+        0.30888649821281433,
+        0.05913656949996948
+      ],
+      "1_Left_Limb_4": [
+        -0.7192910313606262,
+        0.3009366989135742,
+        0.051722943782806396
+      ],
+      "1_Right_Limb_0": [
+        -0.7563427090644836,
+        -0.141837477684021,
+        0.896874189376831
+      ],
+      "1_Right_Limb_1": [
+        -0.8958647847175598,
+        -0.21908041834831238,
+        0.40016260743141174
+      ],
+      "1_Right_Limb_2": [
+        -0.9083191752433777,
+        -0.24379552900791168,
+        0.1184455156326294
+      ],
+      "1_Right_Limb_3": [
+        -0.9003617763519287,
+        -0.2549091577529907,
+        0.05913650989532471
+      ],
+      "1_Right_Limb_4": [
+        -0.7834569811820984,
+        -0.24632048606872559,
+        0.05913633108139038
+      ],
+      "bone_43": [
+        -0.7690480947494507,
+        0.011905649676918983,
+        0.80049729347229
+      ]
+    },
+    "bone_count": 45,
+    "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+    "skin_qa": {
+      "unweighted_vertices": 0,
+      "max_sum_error": 2.311741263838485e-05,
+      "max_influences": 8,
+      "weighted_vertices_per_bone": {
+        "pelvis": 28301,
+        "Spine_0": 20722,
+        "Spine_1": 21001,
+        "Spine_2": 24097,
+        "Spine_3": 24382,
+        "Head_0": 12878,
+        "Head_1": 10989,
+        "bone_7": 1885,
+        "Head_2": 6398,
+        "Head_3": 2500,
+        "bone_10": 3388,
+        "bone_11": 3111,
+        "bone_12": 3336,
+        "bone_13": 2808,
+        "bone_14": 11119,
+        "0_Left_Limb_0": 10278,
+        "0_Left_Limb_1": 6810,
+        "0_Left_Limb_2": 3987,
+        "0_Left_Limb_3": 3648,
+        "bone_19": 1154,
+        "bone_20": 1801,
+        "0_Left_Limb_4": 1576,
+        "bone_22": 1008,
+        "Spine_4": 16347,
+        "0_Right_Limb_0": 11217,
+        "0_Right_Limb_1": 7460,
+        "0_Right_Limb_2": 4493,
+        "0_Right_Limb_3": 3889,
+        "bone_28": 878,
+        "0_Right_Limb_4": 1497,
+        "bone_30": 830,
+        "bone_31": 906,
+        "bone_32": 4977,
+        "1_Left_Limb_0": 14153,
+        "1_Left_Limb_1": 8081,
+        "1_Left_Limb_2": 3455,
+        "1_Left_Limb_3": 4165,
+        "1_Left_Limb_4": 836,
+        "1_Right_Limb_0": 13736,
+        "1_Right_Limb_1": 7439,
+        "1_Right_Limb_2": 3487,
+        "1_Right_Limb_3": 3861,
+        "1_Right_Limb_4": 0,
+        "bone_43": 14344
+      }
+    }
+  },
+  "clips": [
+    {
+      "name": "AN_black_bear_Idle",
+      "suffix": "Idle",
+      "duration": 3.7333333333333334,
+      "fps": 30,
+      "frames": 113,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "重体站立呼吸",
+      "direction": null,
+      "kind": "idle",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4769987492282064,
+        "ground_min_cm": 0.0006223597665666603,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.16785874404997686,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Idle.fbx",
+      "sha256": "dc9034742283b91fc6c6ed75033c1c9f48b4c9a79862f6d7d3ee97fb65d1eefc",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "bd9c27562a5d9bd2eeacd3a185d6c54b1a254f57c0b91a18621e7d5bebc0f098",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_WalkHeavy",
+      "suffix": "WalkHeavy",
+      "duration": 1.3,
+      "fps": 60,
+      "frames": 79,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "跖行慢步",
+      "direction": null,
+      "kind": "walk",
+      "reference_speed_cm_s": 100.0,
+      "contact_duty": 0.68,
+      "contact_offsets": {
+        "BL": 0,
+        "FL": 0.25,
+        "BR": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 2,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.2822892588318668,
+        "ground_min_cm": 0.002208298974437639,
+        "max_stance_sliding_cm": 0.00011567371305868239,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 25.33410635470535,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 79
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.117,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.1625,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.2795,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.325,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.442,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.4875,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.6045,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.65,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.767,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.8125,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.9295,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.975,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 1.092,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 1.1375,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 1.2545,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_WalkHeavy.fbx",
+      "sha256": "7b9d6141a2895b8578bbac3d6a053802faee08de651a596f1724888bd47cb483",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "6f56df12226d9e72f0d89620d7129c48479feb3559ddfed26dfcc0c99ba6781a",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_Lope",
+      "suffix": "Lope",
+      "duration": 0.6333333333333333,
+      "fps": 60,
+      "frames": 39,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "重体快跑",
+      "direction": null,
+      "kind": "run",
+      "reference_speed_cm_s": 450.0,
+      "contact_duty": 0.24,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5375038365671587,
+        "ground_min_cm": 0.008842779061524197,
+        "max_stance_sliding_cm": 0.001057760215727626,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 31.14815565972154,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 39
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.152,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.158333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.310333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.316667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.468667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.475,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.627,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Lope.fbx",
+      "sha256": "4da918fc2eb41b4b4096ff8a6fd65bdb7c0fb4159cc083f35e65fb561ecfb41d",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.6839999999999999,
+        "swing_lift_m": 0.15125,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "48ee906abbc2652e4a4579c681adc32a5e179cda02a5a2160cad00dfd614c421",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "1f6bbfa0917f4f6c23aeeb89110080323c3cb63515e811b1f2f26627dcae195e",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_Turn_L",
+      "suffix": "Turn_L",
+      "duration": 0.9333333333333333,
+      "fps": 60,
+      "frames": 57,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右宽步转向",
+      "direction": "left",
+      "kind": "turn",
+      "reference_speed_cm_s": 100.0,
+      "contact_duty": 0.68,
+      "contact_offsets": {
+        "BL": 0,
+        "FL": 0.25,
+        "BR": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5819317696004478,
+        "ground_min_cm": -0.05604125326499343,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 7.055398395308981,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.168,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.233333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.401333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.466667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.634667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.7,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.868,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Turn_L.fbx",
+      "sha256": "fab4d4ac32e78ba46a58b66f53fdbdec37630ec137eda6b881fe5bae4c2c1939",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "a2f2c2ca118b99a74496e0a1f403b55c03c7c59e379c198fd2ac49cf3e74bf75",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_Turn_R",
+      "suffix": "Turn_R",
+      "duration": 0.9333333333333333,
+      "fps": 60,
+      "frames": 57,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右宽步转向",
+      "direction": "right",
+      "kind": "turn",
+      "reference_speed_cm_s": 100.0,
+      "contact_duty": 0.68,
+      "contact_offsets": {
+        "BL": 0,
+        "FL": 0.25,
+        "BR": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5002202311638648,
+        "ground_min_cm": -0.04104604013264179,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 8.520965764365345,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.168,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.233333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.401333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.466667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.634667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.7,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.868,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Turn_R.fbx",
+      "sha256": "9e9b8c8e00cf8b1fe0d68d8f2905796cf38d42e1d09ae33a969b4bd11f995ee2",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "cd51ab6e5692ee732622121b6c97ff1dd86f98a90dbe267b4d4709fe6c8e43cb",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_StartRun",
+      "suffix": "StartRun",
+      "duration": 0.4,
+      "fps": 60,
+      "frames": 25,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "起跑与撑停",
+      "direction": null,
+      "kind": "start",
+      "reference_speed_cm_s": 712.5,
+      "contact_duty": 0.24,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5297074036788478,
+        "ground_min_cm": 0.003782547719310969,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 38.0817214990676,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 25
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.096,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.1,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.196,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.2,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.296,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.3,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.396,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_StartRun.fbx",
+      "sha256": "1a419aec30c11861e285e44c31e4509024f25607f4ae8684da3db02d845f1349",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.6839999999999999,
+        "swing_lift_m": 0.15125,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "0d358f817694d1fa1148ba62b4dbaada396331f35aa092edf801253d948c8c52",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "bf8c19ba4afb692db1ce2405f02247b785f50e4e93fc673fe73145ccffc951e2",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_StopBrace",
+      "suffix": "StopBrace",
+      "duration": 0.65,
+      "fps": 60,
+      "frames": 40,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "起跑与撑停",
+      "direction": null,
+      "kind": "stop",
+      "reference_speed_cm_s": 438.462,
+      "contact_duty": 0.24,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5382033822456929,
+        "ground_min_cm": 0.003761218977160752,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 30.027280966388982,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 40
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.156,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.1625,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.3185,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.325,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.481,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.4875,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.6435,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_StopBrace.fbx",
+      "sha256": "c6f90ac8a3600f11a144c218ddf19542c0edeb7d7a3d7e124d570b3c6c3969cc",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.6839999999999999,
+        "swing_lift_m": 0.15125,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "33130d62ae383a30080fa6307cffa9de75051336befdbda19b62d6c634381151",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "50f68188c4d525dc94648762df2723828080bd995a3e6f5cce2420cee8c5498f",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_AlertHuff",
+      "suffix": "AlertHuff",
+      "duration": 2.1,
+      "fps": 30,
+      "frames": 64,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "低头警戒",
+      "direction": null,
+      "kind": "alert",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4809600511036132,
+        "ground_min_cm": 0.0006014038717694348,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.5020199351376388,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_AlertHuff.fbx",
+      "sha256": "c74a38e963265bda33f034bf073d3a05868f7ee28bd8fe879c80b87b2aa6bc08",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "d6fee56456384b5fbe92c3cb1f732c67d089ea125e43a8d4dd3e51837091a523",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_SwipeShort_L",
+      "suffix": "SwipeShort_L",
+      "duration": 0.45,
+      "fps": 60,
+      "frames": 28,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "即时命中后拍击回收",
+      "direction": "left",
+      "kind": "swipe",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5955188610958293,
+        "ground_min_cm": 0.0037832836824236438,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.708915577053094,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 28
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "ContactVisual",
+            "time_s": 0,
+            "kind": "visual_phase"
+          },
+          {
+            "name": "SupportRecovered",
+            "time_s": 0.45,
+            "kind": "visual_phase"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_SwipeShort_L.fbx",
+      "sha256": "bea20ac4def5e4490033afda67bcf7d6cc387bbabf4479837f1068dd8ad1935c",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Short swipe begins at contact and recovers to support"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "b9ea177795f2bb52618b612dc67bda282524907a3c98e221b7e70d1c4387ec44",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_SwipeShort_R",
+      "suffix": "SwipeShort_R",
+      "duration": 0.45,
+      "fps": 60,
+      "frames": 28,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "即时命中后拍击回收",
+      "direction": "right",
+      "kind": "swipe",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5067088276044853,
+        "ground_min_cm": 0.0037832836824236438,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 4.258551896570758,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 28
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "ContactVisual",
+            "time_s": 0,
+            "kind": "visual_phase"
+          },
+          {
+            "name": "SupportRecovered",
+            "time_s": 0.45,
+            "kind": "visual_phase"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_SwipeShort_R.fbx",
+      "sha256": "02593ec9b794e7599f3fd115d6aee3ac4eb58fca45a64d91e653dd7f38b8dd4d",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Short swipe begins at contact and recovers to support"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "6d7579592517583409751fe0444e262430df422ce5261dbf318809c6d6f7296b",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_SwipeFull_L",
+      "suffix": "SwipeFull_L",
+      "duration": 0.75,
+      "fps": 60,
+      "frames": 46,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "完整短拍击候选",
+      "direction": "left",
+      "kind": "swipe",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5955188610958293,
+        "ground_min_cm": 0.0037832836824236438,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 6.539601977858756,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 46
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "ContactVisual",
+            "time_s": 0.255,
+            "kind": "visual_phase"
+          },
+          {
+            "name": "SupportRecovered",
+            "time_s": 0.75,
+            "kind": "visual_phase"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_SwipeFull_L.fbx",
+      "sha256": "3d6f27ddfea241e45da7bfe200313066d676c7953527eacba207c24e5dabc0ae",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Windup, one-paw swipe and supported recovery"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "fc30b55493519afb34d1ecc78ec71434167cae91fbd744bec04ef761d794c283",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_SwipeFull_R",
+      "suffix": "SwipeFull_R",
+      "duration": 0.75,
+      "fps": 60,
+      "frames": 46,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "完整短拍击候选",
+      "direction": "right",
+      "kind": "swipe",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5067088276044853,
+        "ground_min_cm": 0.0037832836824236438,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 7.5005944775070885,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 46
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "ContactVisual",
+            "time_s": 0.255,
+            "kind": "visual_phase"
+          },
+          {
+            "name": "SupportRecovered",
+            "time_s": 0.75,
+            "kind": "visual_phase"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_SwipeFull_R.fbx",
+      "sha256": "ddc7fdb1764d87c816ddb1d8120df08e1a8c1ca5e680545344c116e9358daf07",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Windup, one-paw swipe and supported recovery"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "a807f5706617b8dc782a1cccf9e164f2992b929d4feddcafe6781becc1a66ce5",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_SniffForage",
+      "suffix": "SniffForage",
+      "duration": 1.9333333333333333,
+      "fps": 30,
+      "frames": 59,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "低头嗅食",
+      "direction": null,
+      "kind": "sniff",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5068154067209885,
+        "ground_min_cm": -0.026294300914742053,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.5981417959765216,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_SniffForage.fbx",
+      "sha256": "3e15a6edf5d6a537b673725f9e085eb1a9370a687c32f62a69bf146dd172aa83",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "1a0bc67aa60a8e29638d23e6273e8bafc178f6649a2207fa08302e70937ca139",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_DigVisual",
+      "suffix": "DigVisual",
+      "duration": 2.0,
+      "fps": 30,
+      "frames": 61,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "前掌刨探",
+      "direction": null,
+      "kind": "dig",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5487691392044627,
+        "ground_min_cm": -0.010896047751884907,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 8.920732021554068,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_DigVisual.fbx",
+      "sha256": "3909bf9b844590b1484705611b5cc3c668e4bcf48f9bfc53ec11f3a4a9cc71fd",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "6d73ffe4d6207fb6a86d01c80b100fa4dc165e60a884177a32d0f52a6bedf3a5",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_RearSniff_In",
+      "suffix": "RearSniff_In",
+      "duration": 0.9,
+      "fps": 30,
+      "frames": 28,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "原地站起嗅探",
+      "direction": null,
+      "kind": "rear",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.549313705679832,
+        "ground_min_cm": -0.04138893564231694,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 13.35534658525854,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 28
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_RearSniff_In.fbx",
+      "sha256": "eacd968a7fc2af7dbdb25d3e9a432ba64c49d5ce664ae92e4b90c63229b9257e",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Thorax weighting repaired; stable hind support and smaller neck extension"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "a667cadecc1cc9cccd7e0d4acf4977c9abd0b96e909bad91bbf696b72917f28d",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_RearSniff_Hold",
+      "suffix": "RearSniff_Hold",
+      "duration": 1.2,
+      "fps": 30,
+      "frames": 37,
+      "loop": true,
+      "hold": true,
+      "priority": "G",
+      "description": "原地站起嗅探",
+      "direction": null,
+      "kind": "rear",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5501250258826367,
+        "ground_min_cm": -0.021961511811241508,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.20174111091886765,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 37
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_RearSniff_Hold.fbx",
+      "sha256": "43529d698eb09bb46b763b31be5ba24a32152d4b94e639b0577f35a3f74587da",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Thorax weighting repaired; stable hind support and smaller neck extension"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "4f5c5c5ea0d944f7b4fc5add5272d9b020f72844690f2a85577c664e243f8f52",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_RearSniff_Out",
+      "suffix": "RearSniff_Out",
+      "duration": 0.8,
+      "fps": 30,
+      "frames": 25,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "原地站起嗅探",
+      "direction": null,
+      "kind": "rear",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.549313705679832,
+        "ground_min_cm": -0.041103712283074856,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 14.103258516408284,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 25
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_RearSniff_Out.fbx",
+      "sha256": "abfcca08e612d3602968608c7c00e95c9ed354ed0114f65441a54826b478a85f",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Thorax weighting repaired; stable hind support and smaller neck extension"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "5e54d13b03b3808d21dbce125b29ef6c774539bc295c7bfcbc46108ce54f4941",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_LieDown",
+      "suffix": "LieDown",
+      "duration": 1.5,
+      "fps": 30,
+      "frames": 46,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "躺卧休息三段",
+      "direction": null,
+      "kind": "lie",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5932581516284963,
+        "ground_min_cm": 0.029978156089782715,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.3341317213057837,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 46
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_LieDown.fbx",
+      "sha256": "9e0d55cc575a25d1ade86110a94e68d0b97ed5f75217a10469190981e7273029",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Folded limbs and supported rest; matching lie/rest/rise endpoints"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "5a0f526b8948307de18836fc3a41adbfb450c4f820c09006052ca3281c87c8cf",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_Rest",
+      "suffix": "Rest",
+      "duration": 4.0,
+      "fps": 30,
+      "frames": 121,
+      "loop": true,
+      "hold": false,
+      "priority": "P1",
+      "description": "躺卧休息三段",
+      "direction": null,
+      "kind": "rest",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5933796761742223,
+        "ground_min_cm": 0.029978156089782715,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.07912936529690494,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 121
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Rest.fbx",
+      "sha256": "0afe272ceeaab3f1cf1e28f79e43bf4337eb179532e6fa4dd1fe7d3c3c1d35bd",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Folded limbs and supported rest; matching lie/rest/rise endpoints"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "48e5192a272ba9fcf1ec2bffe04a71b100092a5c4efba4e0ec0b10f39f7d823a",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_GetUp",
+      "suffix": "GetUp",
+      "duration": 1.3333333333333333,
+      "fps": 30,
+      "frames": 41,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "躺卧休息三段",
+      "direction": null,
+      "kind": "up",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5931905670024038,
+        "ground_min_cm": 0.029978156089782715,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.746087700998461,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 41
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_GetUp.fbx",
+      "sha256": "03764daf61c4f2481e92edd7b6ba38ddb582bf6959daca1486d736b5cde6d301",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Folded limbs and supported rest; matching lie/rest/rise endpoints"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "5ec0025e206cce3249e79c63e93a19be808c875b46ca5f9c95762379d4ce07f9",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_Hit_L",
+      "suffix": "Hit_L",
+      "duration": 0.35,
+      "fps": 60,
+      "frames": 22,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "重体受击",
+      "direction": "left",
+      "kind": "hit",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4743560166135619,
+        "ground_min_cm": -0.008152473310474306,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.4658265981258918,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Hit_L.fbx",
+      "sha256": "81c9181adc29585844cf612db96399aea10666bf19a6c1d0de86845c53ab0148",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "e93296fa128907e32de9330cd09a624c46a019d9fc1878b58c37d388364c8b2d",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_Hit_R",
+      "suffix": "Hit_R",
+      "duration": 0.35,
+      "fps": 60,
+      "frames": 22,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "重体受击",
+      "direction": "right",
+      "kind": "hit",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4774651114615764,
+        "ground_min_cm": 0.0006245791155379266,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.675629207434245,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Hit_R.fbx",
+      "sha256": "d6d7c2f6be43ae5659c0cec1e4390fefc28f16d3162156cbe26d1138cc053c6f",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "af8d7e63991970a4c19f8ba71ad29f66aca9a9ce9e0b05d9f2dea4950794620b",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_Collapse_L",
+      "suffix": "Collapse_L",
+      "duration": 1.2,
+      "fps": 60,
+      "frames": 73,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "沉重侧倒",
+      "direction": "left",
+      "kind": "collapse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4742876239083094,
+        "ground_min_cm": 0.029977411031723022,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 5.08043495100513,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 73
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Collapse_L.fbx",
+      "sha256": "c65542a4e948db1a2b4bb0de7f42e3826629292a8c2396d5797027e155084e6b",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Legs lose support before side settling; corpse endpoint preserved"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "aba3caddd241cad03a169c680c839e276a5a9b1aff7cd64fb463a1b1d0f949fe",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_Collapse_R",
+      "suffix": "Collapse_R",
+      "duration": 1.2,
+      "fps": 60,
+      "frames": 73,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "沉重侧倒",
+      "direction": "right",
+      "kind": "collapse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4742876239083094,
+        "ground_min_cm": 0.029971636831760406,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 5.802345721059449,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 73
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_Collapse_R.fbx",
+      "sha256": "17f954bbc8c9fcf2a5ea20678acc60fb5fae5292f3c4b83cc655eeeb62091897",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Legs lose support before side settling; corpse endpoint preserved"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "75f557ec05f26a925483ecdb8dd6501888a32fa19c01498fa30277aec88a7fe3",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_CorpseHold_L",
+      "suffix": "CorpseHold_L",
+      "duration": 1.0,
+      "fps": 30,
+      "frames": 31,
+      "loop": false,
+      "hold": true,
+      "priority": "P0",
+      "description": "倒地保持",
+      "direction": "left",
+      "kind": "corpse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1654042133051994,
+        "ground_min_cm": 0.04219412803649902,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.05595291023658669,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_CorpseHold_L.fbx",
+      "sha256": "e5ba8c6a88433ef69acd49290cf74c1d3d2ceda54a5a0a4df5e64364d11e1a8b",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "162e7cd1953ed9d1814c4d4536fe3eb7e603aafa59da39b5f8173699910056be",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_black_bear_CorpseHold_R",
+      "suffix": "CorpseHold_R",
+      "duration": 1.0,
+      "fps": 30,
+      "frames": 31,
+      "loop": false,
+      "hold": true,
+      "priority": "P0",
+      "description": "倒地保持",
+      "direction": "right",
+      "kind": "corpse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1654056644592183,
+        "ground_min_cm": 0.04557967185974121,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.05595291023658669,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\clips\\AN_black_bear_CorpseHold_R.fbx",
+      "sha256": "89ccd00ed3a7c574dd4a262b4c46a935cd27d15ac26e89a820a13a5fa08b11e5",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "c15aef76dc5ae04c804ba878326f37b3064716ffe762f2d0f86e5a1cbc35c01a",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    }
+  ],
+  "status": "authored",
+  "visual_qa": "CURRENT_SOURCE_RENDERED_AND_GAIT_PHASES_REVIEWED",
+  "ue_import": "PASS",
+  "provenance": {
+    "mesh": "existing user Tripo source",
+    "motion": "species-specific authored curves and contact IK",
+    "cloud_motion": "cloud_motion.fbx is retained as an unapproved reference; not substituted for authored action coverage",
+    "license": "User-supplied/generated model; original authored motion, no third-party mocap"
+  },
+  "fbx_units": "centimetres; identity object and root scales",
+  "refinement_20261001": {
+    "backup": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\refinement_20261001\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear",
+    "revised_actions": [
+      "AN_black_bear_SwipeShort_L",
+      "AN_black_bear_SwipeShort_R",
+      "AN_black_bear_SwipeFull_L",
+      "AN_black_bear_SwipeFull_R",
+      "AN_black_bear_RearSniff_In",
+      "AN_black_bear_RearSniff_Hold",
+      "AN_black_bear_RearSniff_Out",
+      "AN_black_bear_LieDown",
+      "AN_black_bear_Rest",
+      "AN_black_bear_GetUp",
+      "AN_black_bear_Collapse_L",
+      "AN_black_bear_Collapse_R"
+    ],
+    "skin_repair": {
+      "smoothed_upper_limb_vertices": 36392
+    },
+    "baked_constraints_removed": true,
+    "cloud_credits_used": 0,
+    "vertex_topology_uv": "preserved",
+    "original_guidance_sha256": "9696fbbbe3a9f6f466847208127d310e6196492a3a3c2b14fc2070b4432c3318",
+    "rest_support": "Measured ventral support plane; folded paws solved and fully baked",
+    "updated_guidance_sha256": "d8a3503b15bcf45d78369392340e4c7d29a9eceb80b1d9b9f6e01a77daeffb57",
+    "checks": "HISTORICAL_R1_SUPERSEDED_BY_R2",
+    "historical_record": true
+  },
+  "correction_20261001_r2": {
+    "baseline_backup": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r2\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear",
+    "changed_actions": [
+      "AN_black_bear_Lope",
+      "AN_black_bear_StartRun",
+      "AN_black_bear_StopBrace"
+    ],
+    "head_bind": null,
+    "rest_limb_planes": null,
+    "cloud_credits_used": 0,
+    "baked_constraints_removed": true,
+    "checks": "PASS_CURRENT_ASSET_CHECKS",
+    "blend_sha256": "16db629d35db5bcc8d248b8005716daab0bed78f8f3355d9a3105d302f336f69",
+    "skeletal_sha256": "c9da25e098e1bb996ec22bce314835534c25712f9907c803c07c0e38c8923390",
+    "guidance_sha256": "a437b113ecf4ac545f8d96b6fa88557d9fbf09141abd957cb7ed2e12b71cb444",
+    "targeted_qa": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r2\\targeted_qa.json",
+    "native_qa": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear\\ue_import_qa.json"
+  },
+  "current_revision": "2026-10-01 R2",
+  "correction_20261001_r3": {
+    "revision": "2026-10-01 R3",
+    "baseline": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r3\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\black_bear",
+    "changed_actions": [
+      "AN_black_bear_Idle",
+      "AN_black_bear_WalkHeavy",
+      "AN_black_bear_Lope",
+      "AN_black_bear_Turn_L",
+      "AN_black_bear_Turn_R",
+      "AN_black_bear_StartRun",
+      "AN_black_bear_StopBrace",
+      "AN_black_bear_AlertHuff",
+      "AN_black_bear_SwipeShort_L",
+      "AN_black_bear_SwipeShort_R",
+      "AN_black_bear_SwipeFull_L",
+      "AN_black_bear_SwipeFull_R",
+      "AN_black_bear_SniffForage",
+      "AN_black_bear_DigVisual",
+      "AN_black_bear_RearSniff_In",
+      "AN_black_bear_RearSniff_Hold",
+      "AN_black_bear_RearSniff_Out",
+      "AN_black_bear_LieDown",
+      "AN_black_bear_Rest",
+      "AN_black_bear_GetUp",
+      "AN_black_bear_Hit_L",
+      "AN_black_bear_Hit_R",
+      "AN_black_bear_Collapse_L",
+      "AN_black_bear_Collapse_R",
+      "AN_black_bear_CorpseHold_L",
+      "AN_black_bear_CorpseHold_R"
+    ],
+    "gait_actions": [
+      "AN_black_bear_WalkHeavy",
+      "AN_black_bear_Lope",
+      "AN_black_bear_StartRun",
+      "AN_black_bear_StopBrace"
+    ],
+    "skin": {
+      "changed_vertices": 0,
+      "limbs": {
+        "FL": 0,
+        "FR": 0,
+        "BL": 0,
+        "BR": 0
+      },
+      "strength": 0.0,
+      "method": "piecewise rigid shaft; adjacent joints only; compact smoothstep blend; linear skinning",
+      "torso_reassigned_vertices": 0
+    },
+    "joint_rebind": [
+      {
+        "limb": "FL",
+        "bone": "0_Left_Limb_1",
+        "before_cm": [
+          26.77592933177948,
+          25.309592485427856,
+          58.55020880699158
+        ],
+        "after_cm": [
+          46.90924882888794,
+          30.348017811775208,
+          58.55020880699158
+        ],
+        "surface_vertices": 500
+      },
+      {
+        "limb": "FL",
+        "bone": "0_Left_Limb_2",
+        "before_cm": [
+          30.459797382354736,
+          25.72128176689148,
+          18.51670742034912
+        ],
+        "after_cm": [
+          37.047079205513,
+          24.53475296497345,
+          18.51670742034912
+        ],
+        "surface_vertices": 504
+      },
+      {
+        "limb": "FR",
+        "bone": "0_Right_Limb_1",
+        "before_cm": [
+          26.413920521736145,
+          -23.517680168151855,
+          60.03297567367554
+        ],
+        "after_cm": [
+          47.24794924259186,
+          -30.13414740562439,
+          60.03297567367554
+        ],
+        "surface_vertices": 538
+      },
+      {
+        "limb": "FR",
+        "bone": "0_Right_Limb_2",
+        "before_cm": [
+          31.261876225471497,
+          -25.512224435806274,
+          18.516749143600464
+        ],
+        "after_cm": [
+          36.256617307662964,
+          -25.154462456703186,
+          18.516749143600464
+        ],
+        "surface_vertices": 500
+      },
+      {
+        "limb": "BL",
+        "bone": "1_Left_Limb_1",
+        "before_cm": [
+          -76.70605778694153,
+          23.44282865524292,
+          40.016236901283264
+        ],
+        "after_cm": [
+          -79.17032241821289,
+          21.551266312599182,
+          40.016236901283264
+        ],
+        "surface_vertices": 582
+      },
+      {
+        "limb": "BL",
+        "bone": "1_Left_Limb_2",
+        "before_cm": [
+          -95.7216739654541,
+          32.05983340740204,
+          11.103177070617676
+        ],
+        "after_cm": [
+          -84.71272587776184,
+          29.98921573162079,
+          11.103177070617676
+        ],
+        "surface_vertices": 530
+      },
+      {
+        "limb": "BR",
+        "bone": "1_Right_Limb_1",
+        "before_cm": [
+          -80.93647360801697,
+          -18.804556131362915,
+          40.016260743141174
+        ],
+        "after_cm": [
+          -89.58647847175598,
+          -21.908041834831238,
+          40.016260743141174
+        ],
+        "surface_vertices": 477
+      },
+      {
+        "limb": "BR",
+        "bone": "1_Right_Limb_2",
+        "before_cm": [
+          -100.97429752349854,
+          -25.072109699249268,
+          11.84455156326294
+        ],
+        "after_cm": [
+          -90.83191752433777,
+          -24.379552900791168,
+          11.84455156326294
+        ],
+        "surface_vertices": 566
+      }
+    ],
+    "skeleton_rest": "limb pivots recentered on measured native skin; all paired actions rebaked",
+    "geometry_uv_materials": "unchanged",
+    "foot_tracks_contact_timing": "unchanged",
+    "cloud_credits_used": 0,
+    "gameplay_integration": "NOT_RUN",
+    "qa": "PASS",
+    "source_blend_sha256": "691cf72352c78357d01f467bdc8967197e4a8e10c96f37a69c080580ff587e39",
+    "skeletal_fbx_sha256": "e6ee1b5a6a447c7a7f7bde69be0479c1d0ad98ff6bf51981070f97098449c45e",
+    "native_core_pose_match": "PASS",
+    "supplementary_all_bone_rotation_match": "SEE_RECORDED_FOOT_SUBFRAME_DIAGNOSTICS"
+  }
+}

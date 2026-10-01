@@ -87,6 +87,9 @@ private:
     bool ExecuteSettingsAction(const FString& Action);
     void LoadSettingsDraft();
     void ApplyMasterVolume();
+    void ComposeCompatibility();
+    void ComposeUpdateNotice();
+    int32 CompatibilityScroll=0;
     void Element(FString Type,FString Text,FVector2D Position,FVector2D Size,float Font=18,FString Action=TEXT(""),FString Asset=TEXT(""),bool Selected=false);
     FString Resolve(const FString& Bind) const;
     FLinearColor Color(const FString& Name) const;

@@ -1,0 +1,29 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 4294967295"
+  ],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 4294967295,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nUHT compiled-in object format Default\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardAnimalAnimInstance.cpp, HearthwardAnimalDemo.cpp, HearthwardAnimalDemoVerification.cpp, HearthwardAnimalMotionComponent.cpp, HearthwardCombatTargetComponent.cpp, HearthwardNatureActor.cpp, HearthwardInventoryMigration.cpp, HearthwardSaveCompatibility.cpp, HearthwardSaveDebug.cpp, HearthwardSaveGame.cpp, HearthwardSaveSubsystem.cpp, AnimalMotionTests.cpp, SaveTests.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenWidget.cpp, HearthwardUpdateSubsystem.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 10 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 19.78 GB/34.46 GB committed\n  UBA Storage capacity 40 GB\n[1/10] Compile [x64] HearthwardAnimalAnimInstance.cpp\n[2/10] Compile [x64] HearthwardAnimalDemoVerification.cpp\n[3/10] Compile [x64] HearthwardAnimalDemo.cpp\n[4/10] Compile [x64] HearthwardAnimalMotionComponent.cpp\n[5/10] Compile [x64] HearthwardCombatTargetComponent.cpp\n[6/10] Compile [x64] HearthwardNatureActor.cpp\n[7/10] Compile [x64] Module.Hearthward.1.cpp\n[8/10] Link [x64] UnrealEditor-Hearthward.lib\n  正在创建库 E:/AiAgent/XLingGame/Hearthward/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.lib 和对象 E:/AiAgent/XLingGame/Hearthward/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.exp\n[9/10] Link [x64] UnrealEditor-Hearthward.dll\n[10/10] WriteMetadata HearthwardEditor.target [NoUba]\n\n",
+    "stderr": ""
+  }
+}

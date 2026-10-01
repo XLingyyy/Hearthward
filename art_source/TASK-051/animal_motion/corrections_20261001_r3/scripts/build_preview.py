@@ -1,0 +1,48 @@
+"""Build the current local review gallery from actual delivery manifests."""
+import sys,json,os
+from pathlib import Path
+from urllib.parse import quote
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from common import ROOT,REV,SLUGS,read
+
+def url(path):return quote(os.path.relpath(path,ROOT).replace('\\','/'),safe='/')
+animals=[]
+for j in read(ROOT/'jobs.json'):
+    out=Path(j['output']);m=read(out/'animation_manifest.json');changed=j['slug'] in SLUGS
+    videos=read(out/'gait_preview_r3/index.json') if changed else read(out/'loop_preview/index.json')
+    clips=[]
+    for c in m['clips']:
+        clips.append({'name':c['name'],'suffix':c['suffix'],'description':c['description'],'kind':c['kind'],'fps':c['fps'],'duration':c['duration'],'file':url(c['file']),'state':c['delivery_review']['state'],'images':[url(out/'review'/f'{c["suffix"]}_{k}.png') for k in (0,50,100)]})
+    records=[]
+    for v in videos:
+        p=Path(v['path']);suffix=next(c['suffix'] for c in m['clips'] if c['name']==v['action'])
+        poster=p.with_suffix('')/'00001.png' if changed else out/'review'/f'{suffix}_0.png'
+        records.append({'action':v['action'],'suffix':suffix,'view':v.get('view','oblique'),'url':url(p),'poster':url(poster),'fps':v.get('fps',v.get('native_fps'))})
+    animals.append({'name':j['name'],'slug':j['slug'],'changed':changed,'clips':clips,'videos':records,'guide':url(j['guidance']),'notes':url(out/'交付与接入说明.md'),'blend':url(out/f'AS_{j["slug"]}.blend'),'sk':url(out/f'SK_{j["slug"]}.fbx')})
+
+page='''<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>动物动作复核 · R3</title>
+<style>
+:root{color-scheme:dark;--bg:#171c20;--panel:#22292e;--muted:#a5b2ba;--accent:#86d9bf}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#edf2f4;font:15px/1.6 system-ui,"Microsoft YaHei",sans-serif}button,select,a{font:inherit}button,select{color:inherit;background:var(--panel);border:1px solid #45515a;border-radius:8px;padding:8px 12px}button{cursor:pointer}button:hover,a:hover{color:var(--accent)}button.active{border-color:var(--accent);background:#2c413b}a{color:#b6e9d9;text-decoration:none}header{padding:28px 4vw 20px;border-bottom:1px solid #394249}header .eyebrow{color:var(--accent);font-size:13px;letter-spacing:2px}h1{font-size:28px;margin:5px 0 10px;font-weight:600}h2{font-size:20px;margin:0 0 12px}p{margin:7px 0}.muted{color:var(--muted)}.layout{display:grid;grid-template-columns:180px minmax(0,1fr);gap:26px;max-width:1500px;margin:auto;padding:26px 4vw}aside{display:flex;flex-direction:column;gap:7px;align-self:start;position:sticky;top:20px}aside button{text-align:left;border-color:transparent}aside small{display:block;color:var(--muted);font-size:11px}.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}.toolbar select{min-width:260px}.views{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.view{margin:0;background:var(--panel);border-radius:12px;overflow:hidden}.view video{display:block;width:100%;aspect-ratio:5/4;object-fit:contain;background:#454e55}.view figcaption{padding:9px 14px;color:var(--muted)}.section{padding:22px 0;border-bottom:1px solid #394249}.pill{font-size:12px;color:var(--accent);border:1px solid #456d60;border-radius:30px;padding:3px 9px;margin-left:10px}.poses{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:15px}.poses figure{margin:0}.poses img{display:block;width:100%;background:var(--panel);border-radius:9px}.poses figcaption{color:var(--muted);text-align:center;font-size:13px;padding:5px}.links{display:flex;flex-wrap:wrap;gap:18px;margin-top:16px;font-size:13px}#clipState{font-size:13px;color:var(--muted)}footer{padding:20px 4vw;color:var(--muted);font-size:12px}button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:3px}[hidden]{display:none!important}@media(max-width:800px){.layout{grid-template-columns:1fr;gap:18px}aside{position:static;flex-direction:row;flex-wrap:wrap}aside button{font-size:13px}.views{grid-template-columns:1fr}.poses{grid-template-columns:1fr}h1{font-size:23px}}
+</style></head><body>
+<header><div class="eyebrow">动物动作资产 · 2026.10.01 R3</div><h1>收腿更自然，弯曲更有骨骼感</h1><p class="muted">8 种四足动物已修正。关节略向内收，腿段保持长度，弯曲集中在关节处。</p><div class="links"><a href="问题修正复核报告_20261001_R3.md">修正与复核报告</a><a href="制作交付说明.md">交付说明</a></div></header>
+<div class="layout"><aside id="animals" aria-label="选择动物"></aside><main>
+<section class="section"><h2><span id="animalName"></span><span id="revision" class="pill"></span></h2><p id="animalInfo" class="muted"></p><div class="toolbar"><label for="gait">连续行走预览</label><select id="gait"></select><button id="play">一起播放</button><button id="pause">暂停</button><label for="rate">速度</label><select id="rate" style="min-width:90px"><option value="1">原速</option><option value="0.5">半速</option><option value="0.25">1/4 速度</option></select></div>
+<div class="views"><figure class="view" id="frontWrap"><video id="front" muted loop playsinline controls preload="metadata"></video><figcaption id="frontCaption">正面 · 观察膝肘内收</figcaption></figure><figure class="view" id="sideWrap"><video id="side" muted loop playsinline controls preload="metadata"></video><figcaption>侧面 · 观察腿段和关节弯曲</figcaption></figure></div><p class="muted" id="gaitInfo"></p></section>
+<section class="section"><h2>完整动作库</h2><div class="toolbar"><label for="clip">选择动作</label><select id="clip"></select><a id="clipFile" download>下载动作 FBX</a></div><p id="clipState"></p><div class="poses" id="poses"></div><div class="links"><a id="blend">Blender 编辑源</a><a id="sk">配套绑定模型</a><a id="guide">动作指导</a><a id="notes">资产与接入说明</a></div></section>
+</main></div><footer>预览来自当前配套模型和烘焙动作。四足动物展示 R3，鸟类与鱼类保留已核对的原版本。游戏运行接入仍未执行；本地预览可直接打开，无外部资源依赖。</footer>
+<script>
+const DATA=__DATA__;
+const el=id=>document.getElementById(id);let current=DATA[0],syncing=false;
+const videos=[el('front'),el('side')];
+function chooseAnimal(slug){current=DATA.find(x=>x.slug===slug);document.querySelectorAll('#animals button').forEach(b=>b.classList.toggle('active',b.dataset.slug===slug));el('animalName').textContent=current.name;el('revision').textContent=current.changed?'R3 · 本次修正':'保留版本';el('animalInfo').textContent=current.changed?`${current.clips.length} 段配套动作已重新烘焙；行走、奔跑与起停均使用更新后的绑定。`:`${current.clips.length} 段动作；本轮未修改该物种。`;for(const key of ['blend','sk','guide','notes'])el(key).href=current[key];el('gait').replaceChildren();const names=[...new Set(current.videos.map(v=>v.action))];for(const name of names){const c=current.clips.find(c=>c.name===name),o=document.createElement('option');o.value=name;o.textContent=`${c.description} · ${c.suffix}`;el('gait').append(o)}const fast=names.find(n=>current.clips.find(c=>c.name===n).kind==='run');if(fast)el('gait').value=fast;el('clip').replaceChildren();for(const c of current.clips){const o=document.createElement('option');o.value=c.name;o.textContent=`${c.description} · ${c.suffix}`;el('clip').append(o)}chooseGait();chooseClip();}
+function chooseGait(){videos.forEach(v=>v.pause());const items=current.videos.filter(v=>v.action===el('gait').value),front=items.find(v=>v.view==='front')||items[0],side=items.find(v=>v.view==='side');el('sideWrap').hidden=!side;el('frontCaption').textContent=side?'正面 · 观察膝肘内收':'连续循环预览';for(const [i,item] of [[0,front],[1,side]]){const v=videos[i];if(item){v.src=item.url;v.poster=item.poster;v.playbackRate=+el('rate').value;v.load()}else{v.removeAttribute('src');v.load()}}const c=current.clips.find(c=>c.name===el('gait').value);el('gaitInfo').textContent=`${c.fps} FPS · 单周期 ${c.duration.toFixed(3)} 秒 · 连续 10 周期，可循环播放。`;}
+function chooseClip(){const c=current.clips.find(c=>c.name===el('clip').value);el('clipFile').href=c.file;el('clipState').textContent=`${c.state} · ${c.fps} FPS · ${c.duration.toFixed(3)} 秒`;el('poses').replaceChildren();c.images.forEach((src,i)=>{const f=document.createElement('figure'),img=document.createElement('img'),cap=document.createElement('figcaption');img.src=src;img.alt=`${current.name} ${c.description} ${['开始','中间','结束'][i]}姿态`;cap.textContent=['开始','中间','结束'][i];f.append(img,cap);el('poses').append(f)})}
+for(const a of DATA){const b=document.createElement('button');b.dataset.slug=a.slug;b.textContent=a.name;const s=document.createElement('small');s.textContent=a.changed?'本次四足修正':'鸟类 / 鱼类';b.append(s);b.onclick=()=>chooseAnimal(a.slug);el('animals').append(b)}
+el('gait').onchange=chooseGait;el('clip').onchange=chooseClip;el('play').onclick=()=>videos.filter(v=>v.hasAttribute('src')).forEach(v=>v.play().catch(()=>{}));el('pause').onclick=()=>videos.forEach(v=>v.pause());el('rate').onchange=()=>videos.forEach(v=>v.playbackRate=+el('rate').value);
+for(const [i,v] of videos.entries()){v.addEventListener('play',()=>{if(syncing)return;syncing=true;videos.forEach(other=>{if(other!==v&&other.hasAttribute('src')){if(Math.abs(other.currentTime-v.currentTime)>.05)other.currentTime=v.currentTime;other.play().catch(()=>{})}});syncing=false});v.addEventListener('pause',()=>{if(syncing)return;syncing=true;videos.forEach(other=>other.pause());syncing=false});v.addEventListener('seeked',()=>{if(syncing)return;syncing=true;videos.forEach(other=>{if(other!==v&&other.hasAttribute('src')&&Math.abs(other.currentTime-v.currentTime)>.07)other.currentTime=v.currentTime});syncing=false})}
+chooseAnimal(current.slug);
+</script></body></html>'''
+page=page.replace('__DATA__',json.dumps(animals,ensure_ascii=False).replace('</','<\\/'))
+(ROOT/'动物动作预览.html').write_text(page,encoding='utf-8')
+print('CURRENT_GALLERY',len(animals),sum(len(a['videos']) for a in animals),sum(len(a['clips']) for a in animals))

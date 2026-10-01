@@ -1,0 +1,2787 @@
+{
+  "schema": "hearthward.animal.animations.v1",
+  "name": "猪",
+  "slug": "pig",
+  "source_sha256": "b294ec7439340e18998f9e8d34808ac8ec872c90940730b59a6eb3b089091555",
+  "guidance_sha256": "54f928aff4ea15b1b630607566e2c857a80803a9ff8d08e31ab483b33946d942",
+  "rig": {
+    "body": "pelvis",
+    "root": "root",
+    "chains": {
+      "FL": [
+        "0_Left_Limb_0",
+        "0_Left_Limb_1",
+        "0_Left_Limb_2",
+        "0_Left_Limb_3",
+        "0_Left_Limb_4"
+      ],
+      "FR": [
+        "0_Right_Limb_0",
+        "0_Right_Limb_1",
+        "0_Right_Limb_2",
+        "0_Right_Limb_3",
+        "0_Right_Limb_4"
+      ],
+      "BL": [
+        "1_Left_Limb_0",
+        "1_Left_Limb_1",
+        "1_Left_Limb_2",
+        "1_Left_Limb_3",
+        "1_Left_Limb_4"
+      ],
+      "BR": [
+        "1_Right_Limb_0",
+        "1_Right_Limb_1",
+        "1_Right_Limb_2",
+        "1_Right_Limb_3",
+        "1_Right_Limb_4"
+      ]
+    },
+    "spine": [
+      "Spine_0",
+      "Spine_1",
+      "Spine_2",
+      "Spine_3",
+      "Spine_4",
+      "Spine_5",
+      "Spine_6"
+    ],
+    "neck": [
+      "Head_0",
+      "Head_1"
+    ],
+    "head": "Head_1",
+    "wings": [],
+    "ears": [],
+    "tail": [],
+    "restfeet": {
+      "FL": [
+        0.2990400195121765,
+        0.15606807172298431,
+        0.11478166282176971
+      ],
+      "FR": [
+        0.30753380060195923,
+        -0.14054767787456512,
+        0.10887651145458221
+      ],
+      "BL": [
+        -0.5049836039543152,
+        0.17184185981750488,
+        0.1088772863149643
+      ],
+      "BR": [
+        -0.49539172649383545,
+        -0.1591896414756775,
+        0.11478182673454285
+      ]
+    },
+    "hip": [
+      -0.03673457354307175,
+      0.02574034407734871,
+      0.7304084300994873
+    ],
+    "repairs": [
+      "Added fixed game root; moved deforming body pivot to anatomical hip center",
+      "Corrected spatially mismatched foot/toe weights and normalized skin influences",
+      "Rebound paw soles to contact bones; smoothed seam and shoulder weights with at most eight influences",
+      "Calibrated bind orientations to solved natural stance; rebaked all world-space joint trajectories without IK rest twist",
+      "2026-10-01 R3: measured limb rest pivots; retargeted complete library; calibrated shaft skinning; exact-length medial gait solve and restrained torso compression"
+    ],
+    "axis": {
+      "rotation_z_degrees": 32.79952848022561,
+      "scale": 1.6091369643072946,
+      "target_length_m": 1.6,
+      "forward": "+X",
+      "up": "+Z",
+      "dcc_units": "metres",
+      "engine_units": "centimetres"
+    },
+    "bone_heads": {
+      "root": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pelvis": [
+        -0.036734577268362045,
+        0.02574034221470356,
+        0.7304084300994873
+      ],
+      "1_Left_Limb_0": [
+        -0.4343915581703186,
+        0.18221089243888855,
+        0.8706591129302979
+      ],
+      "1_Left_Limb_1": [
+        -0.4148721992969513,
+        0.21108967065811157,
+        0.5056888461112976
+      ],
+      "1_Left_Limb_2": [
+        -0.5201313495635986,
+        0.16135922074317932,
+        0.280855268239975
+      ],
+      "1_Left_Limb_3": [
+        -0.5049836039543152,
+        0.17184185981750488,
+        0.1088772863149643
+      ],
+      "1_Left_Limb_4": [
+        -0.4755324423313141,
+        0.16974607110023499,
+        0.05572948977351189
+      ],
+      "bone_6": [
+        -0.6126475930213928,
+        -0.009944022633135319,
+        0.9179013967514038
+      ],
+      "bone_7": [
+        -0.658755898475647,
+        -0.02560761570930481,
+        0.894280195236206
+      ],
+      "bone_8": [
+        -0.7140198349952698,
+        -0.1033739447593689,
+        0.9356174468994141
+      ],
+      "bone_9": [
+        -0.7857193946838379,
+        -0.0793270468711853,
+        0.9238067269325256
+      ],
+      "bone_10": [
+        -0.7789905667304993,
+        -0.06796542555093765,
+        0.8470380306243896
+      ],
+      "bone_11": [
+        -0.7775566577911377,
+        -0.0810919851064682,
+        0.8175114393234253
+      ],
+      "Spine_0": [
+        -0.19149543344974518,
+        0.0015279700746759772,
+        0.9592385292053223
+      ],
+      "Spine_1": [
+        -0.10810332745313644,
+        -0.007958433590829372,
+        0.9415226578712463
+      ],
+      "Spine_2": [
+        -0.022946372628211975,
+        -0.00928210373967886,
+        0.9238066077232361
+      ],
+      "Spine_3": [
+        0.07213831692934036,
+        -0.004207988269627094,
+        0.9119960069656372
+      ],
+      "Spine_4": [
+        0.1753857135772705,
+        -0.0008987621404230595,
+        0.8942801356315613
+      ],
+      "Spine_5": [
+        0.2917596995830536,
+        0.003844425082206726,
+        0.8824698328971863
+      ],
+      "Spine_6": [
+        0.33455878496170044,
+        0.12275547534227371,
+        0.8588486313819885
+      ],
+      "0_Left_Limb_0": [
+        0.3511047959327698,
+        0.23879840970039368,
+        0.581299901008606
+      ],
+      "0_Left_Limb_1": [
+        0.26027143001556396,
+        0.1519814133644104,
+        0.3961382210254669
+      ],
+      "0_Left_Limb_2": [
+        0.29997768998146057,
+        0.16259199380874634,
+        0.19425000250339508
+      ],
+      "0_Left_Limb_3": [
+        0.2990400195121765,
+        0.15606807172298431,
+        0.11478166282176971
+      ],
+      "0_Left_Limb_4": [
+        0.3483472168445587,
+        0.16676783561706543,
+        0.06753931194543839
+      ],
+      "Head_0": [
+        0.4095676839351654,
+        -0.004538970533758402,
+        0.7938904166221619
+      ],
+      "Head_1": [
+        0.4684716761112213,
+        -0.008730622939765453,
+        0.7761744856834412
+      ],
+      "Head_2": [
+        0.5323394536972046,
+        -0.009723369963467121,
+        0.734837532043457
+      ],
+      "bone_27": [
+        0.657869279384613,
+        0.057122670114040375,
+        0.6108261942863464
+      ],
+      "bone_28": [
+        0.765418529510498,
+        0.021052222698926926,
+        0.6935003399848938
+      ],
+      "Head_3": [
+        0.5513125061988831,
+        0.15706093609333038,
+        0.9001855850219727
+      ],
+      "Head_4": [
+        0.6012815833091736,
+        0.2103392481803894,
+        0.9533332586288452
+      ],
+      "bone_31": [
+        0.5005711913108826,
+        -0.1566523313522339,
+        0.9119961857795715
+      ],
+      "bone_32": [
+        0.5304644703865051,
+        -0.23574255406856537,
+        0.9297119975090027
+      ],
+      "bone_33": [
+        0.722178041934967,
+        -0.020864449441432953,
+        0.640352725982666
+      ],
+      "bone_34": [
+        0.722178041934967,
+        -0.020864449441432953,
+        0.640352725982666
+      ],
+      "bone_35": [
+        0.32099097967147827,
+        -0.1178242415189743,
+        0.847038209438324
+      ],
+      "0_Right_Limb_0": [
+        0.3657757043838501,
+        -0.18731772899627686,
+        0.5694894790649414
+      ],
+      "0_Right_Limb_1": [
+        0.2833993434906006,
+        -0.10510091483592987,
+        0.3801225423812866
+      ],
+      "0_Right_Limb_2": [
+        0.3034401535987854,
+        -0.14733214676380157,
+        0.18825611472129822
+      ],
+      "0_Right_Limb_3": [
+        0.30753380060195923,
+        -0.14054767787456512,
+        0.10887651145458221
+      ],
+      "0_Right_Limb_4": [
+        0.35154634714126587,
+        -0.1543360948562622,
+        0.06753943115472794
+      ],
+      "1_Right_Limb_0": [
+        -0.4294276833534241,
+        -0.13073015213012695,
+        0.9001854062080383
+      ],
+      "1_Right_Limb_1": [
+        -0.46001675724983215,
+        -0.23250249028205872,
+        0.5436744689941406
+      ],
+      "1_Right_Limb_2": [
+        -0.5131686925888062,
+        -0.1552598774433136,
+        0.28330516815185547
+      ],
+      "1_Right_Limb_3": [
+        -0.49539172649383545,
+        -0.1591896414756775,
+        0.11478182673454285
+      ],
+      "1_Right_Limb_4": [
+        -0.47090351581573486,
+        -0.164484441280365,
+        0.05572889745235443
+      ],
+      "bone_46": [
+        -0.6222442984580994,
+        0.004947544541209936,
+        0.9001855254173279
+      ],
+      "bone_47": [
+        -0.6768462061882019,
+        -0.03024035133421421,
+        0.8942802548408508
+      ],
+      "bone_48": [
+        -0.7154536843299866,
+        -0.09024722129106522,
+        0.9474279284477234
+      ]
+    },
+    "bone_count": 50,
+    "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+    "skin_qa": {
+      "unweighted_vertices": 0,
+      "max_sum_error": 1.980483648367226e-05,
+      "max_influences": 8,
+      "weighted_vertices_per_bone": {
+        "pelvis": 19896,
+        "1_Left_Limb_0": 10780,
+        "1_Left_Limb_1": 8745,
+        "1_Left_Limb_2": 4161,
+        "1_Left_Limb_3": 2919,
+        "1_Left_Limb_4": 1042,
+        "bone_6": 3878,
+        "bone_7": 2403,
+        "bone_8": 1524,
+        "bone_9": 1304,
+        "bone_10": 1070,
+        "bone_11": 1018,
+        "Spine_0": 17625,
+        "Spine_1": 15847,
+        "Spine_2": 16752,
+        "Spine_3": 16185,
+        "Spine_4": 15003,
+        "Spine_5": 19024,
+        "Spine_6": 6171,
+        "0_Left_Limb_0": 6779,
+        "0_Left_Limb_1": 3952,
+        "0_Left_Limb_2": 2449,
+        "0_Left_Limb_3": 2393,
+        "0_Left_Limb_4": 0,
+        "Head_0": 11482,
+        "Head_1": 13342,
+        "Head_2": 10947,
+        "bone_27": 4592,
+        "bone_28": 4083,
+        "Head_3": 4842,
+        "Head_4": 3679,
+        "bone_31": 4836,
+        "bone_32": 3616,
+        "bone_33": 1811,
+        "bone_34": 1887,
+        "bone_35": 4688,
+        "0_Right_Limb_0": 6603,
+        "0_Right_Limb_1": 4328,
+        "0_Right_Limb_2": 2551,
+        "0_Right_Limb_3": 2604,
+        "0_Right_Limb_4": 114,
+        "1_Right_Limb_0": 11818,
+        "1_Right_Limb_1": 8583,
+        "1_Right_Limb_2": 4247,
+        "1_Right_Limb_3": 2706,
+        "1_Right_Limb_4": 918,
+        "bone_46": 3368,
+        "bone_47": 3590,
+        "bone_48": 11994
+      }
+    }
+  },
+  "clips": [
+    {
+      "name": "AN_pig_IdleDomestic",
+      "suffix": "IdleDomestic",
+      "duration": 3.5,
+      "fps": 30,
+      "frames": 106,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "家猪安静站立",
+      "direction": null,
+      "kind": "idle",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.025428604469153,
+        "ground_min_cm": -6.692791032492096e-06,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.11190582380822714,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_IdleDomestic.fbx",
+      "sha256": "0336837e3b6763ee531f405acdc73ae38679dc5950482840e9642fb03739d575",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "07088b9d6117c5c82a2928fee9036e91f4f611d49eb3af965b03c034852df9f9",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_IdleWild",
+      "suffix": "IdleWild",
+      "duration": 2.5,
+      "fps": 30,
+      "frames": 76,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "野猪警戒待机",
+      "direction": null,
+      "kind": "idle",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.0254333077329245,
+        "ground_min_cm": -1.8889338093686092e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.14803749444005213,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_IdleWild.fbx",
+      "sha256": "0c1778fa4234bb33076f3d4e2e437dea41a47bd41517dda1110e450880801662",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "78389b3453c2dd28c49101dd5f5c72cd4df688c97426fba4107607271046968c",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Walk",
+      "suffix": "Walk",
+      "duration": 1.1333333333333333,
+      "fps": 60,
+      "frames": 69,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "稳步行走",
+      "direction": null,
+      "kind": "walk",
+      "reference_speed_cm_s": 100.0,
+      "contact_duty": 0.68,
+      "contact_offsets": {
+        "BL": 0,
+        "FL": 0.25,
+        "BR": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 2,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.3783136051236125,
+        "ground_min_cm": 7.362107794506301e-05,
+        "max_stance_sliding_cm": 0.00010260182610214954,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 25.364083965483054,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 69
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.102,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.141667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.243667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.283333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.385333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.425,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.527,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.566667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.668667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.708333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.810333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.85,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.952,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.991667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 1.093667,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Walk.fbx",
+      "sha256": "508174f522c9c5d57e6a7ef8442d7c8534a76cafeedb53e30d69af864d9d21ae",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "9ed2249cf8c5a30299fe472f6fe028590927879ffbdff9eaba148934f4defd59",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_TrotFollow",
+      "suffix": "TrotFollow",
+      "duration": 0.7333333333333333,
+      "fps": 60,
+      "frames": 45,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "家猪跟随小跑",
+      "direction": null,
+      "kind": "trot",
+      "reference_speed_cm_s": 300.0,
+      "contact_duty": 0.5,
+      "contact_offsets": {
+        "FL": 0,
+        "BR": 0,
+        "FR": 0.5,
+        "BL": 0.5
+      },
+      "gait_cycles": 3,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4666192596142194,
+        "ground_min_cm": -1.198251879941381e-05,
+        "max_stance_sliding_cm": 0.0001024746040656759,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 30.948976586093515,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 45
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "FL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.122222,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.122222,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.122222,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.122222,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.244444,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.244444,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.244444,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.244444,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.366667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.366667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.366667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.366667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.488889,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.488889,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.488889,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.488889,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.611111,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.611111,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.611111,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.611111,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_TrotFollow.fbx",
+      "sha256": "17d7c28a64855bddf8fd367fda068b72116e35f7af8381ea1158d6f9d66751e9",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "9f1ced71744c6f65caea65aa3d5ee006629cf15cc01a4cd5b7dad23c7a6d1292",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_RunDomestic",
+      "suffix": "RunDomestic",
+      "duration": 0.6,
+      "fps": 60,
+      "frames": 37,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "家猪逃离",
+      "direction": null,
+      "kind": "run",
+      "reference_speed_cm_s": 240.0,
+      "contact_duty": 0.2,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4422599779677678,
+        "ground_min_cm": 4.569071165860805e-05,
+        "max_stance_sliding_cm": 0.0006926620096740633,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 12.792401792202934,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 37
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.12,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.15,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.27,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.3,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.42,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.45,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.57,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_RunDomestic.fbx",
+      "sha256": "70baf0a9266fc051adcfd58f60f6297ffdc1afc7d253279cd77b368aeb4e5e33",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.288,
+        "swing_lift_m": 0.08,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "208657226c5b62c0168bc86c8f4d349d9c9bb6e5a477d5df8645af3692fdb7c1",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "9010fd1f1c79a65238618e85faf7079e8f2b6eb8bf9739447d3761297d23e330",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_RunWild",
+      "suffix": "RunWild",
+      "duration": 0.5,
+      "fps": 60,
+      "frames": 31,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "野猪追近",
+      "direction": null,
+      "kind": "run",
+      "reference_speed_cm_s": 396.636,
+      "contact_duty": 0.2,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.6107002944067277,
+        "ground_min_cm": -6.655929496446333e-05,
+        "max_stance_sliding_cm": 0.0006535178567693586,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 28.499481835469258,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 31
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.1,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.125,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.225,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.25,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.35,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.375,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.475,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_RunWild.fbx",
+      "sha256": "1369c99692194833b730b319a14cf98c5354c9bbd6dc0b741e26b02b4f1c8f83",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.396636,
+        "swing_lift_m": 0.08,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "03359245121dbe31aa9adfaa6836f9b3e3b89b0c865d88df9ea23dd454189c4d",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "9fc3abee72c582df040ac58eea6737ac0353b4a4d21327aefca485bf82ff26db",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Turn_L",
+      "suffix": "Turn_L",
+      "duration": 0.8,
+      "fps": 60,
+      "frames": 49,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右撑步转向",
+      "direction": "left",
+      "kind": "turn",
+      "reference_speed_cm_s": 100.0,
+      "contact_duty": 0.68,
+      "contact_offsets": {
+        "BL": 0,
+        "FL": 0.25,
+        "BR": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 2,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1750506375028489,
+        "ground_min_cm": -2.4875302528926113e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 11.325363427932897,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.072,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.1,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.172,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.2,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.272,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.3,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.372,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.4,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.472,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.5,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.572,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.6,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.672,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.7,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.772,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Turn_L.fbx",
+      "sha256": "8e8e879000792caa4a790293bf0be2fce9028e66ab287fa6e10da0711f1337aa",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "b1b451c83fbe243f4eee8923ae26cd67e71efb4e0b9eceda6187c9e586925744",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Turn_R",
+      "suffix": "Turn_R",
+      "duration": 0.8,
+      "fps": 60,
+      "frames": 49,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右撑步转向",
+      "direction": "right",
+      "kind": "turn",
+      "reference_speed_cm_s": 100.0,
+      "contact_duty": 0.68,
+      "contact_offsets": {
+        "BL": 0,
+        "FL": 0.25,
+        "BR": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 2,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1952950638621007,
+        "ground_min_cm": -4.7560729399265256e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 8.098924157444758,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.072,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.1,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.172,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.2,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.272,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.3,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.372,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.4,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.472,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.5,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.572,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.6,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.672,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.7,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.772,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Turn_R.fbx",
+      "sha256": "01ee9d121e9707330dcbad022aa0183983e05c9f60a766c3d6679b3a9baee3e4",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "345dbfbdfb960accf796d89109f0ca50a037452d731df985fb1118124c2a3c8d",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Start",
+      "suffix": "Start",
+      "duration": 0.35,
+      "fps": 60,
+      "frames": 22,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "起步与前蹄撑停",
+      "direction": null,
+      "kind": "start",
+      "reference_speed_cm_s": 566.623,
+      "contact_duty": 0.2,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5869389294037484,
+        "ground_min_cm": -5.5549054422954214e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 26.434362052606556,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 22
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.07,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.0875,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.1575,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.175,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.245,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.2625,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.3325,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Start.fbx",
+      "sha256": "667a855977c736bdfd12e07fc37b1dc141e8a45d8e2347cf5580bf13b3161c44",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.39663600000000004,
+        "swing_lift_m": 0.08,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "322f1029d5510d91f91ee2603da77783b2ed0bd732ece3344dd3c415abb73b23",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "68cbe98e7a08096fc5aec3ed6e34a7705929152c0f281e460f0a3a3e988e4887",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Stop",
+      "suffix": "Stop",
+      "duration": 0.55,
+      "fps": 60,
+      "frames": 34,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "起步与前蹄撑停",
+      "direction": null,
+      "kind": "stop",
+      "reference_speed_cm_s": 360.578,
+      "contact_duty": 0.2,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5869389294037484,
+        "ground_min_cm": -5.5549054422954214e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 13.58400079956171,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 34
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.11,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.1375,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.2475,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.275,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.385,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.4125,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.5225,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Stop.fbx",
+      "sha256": "f74690f9c0962dc3d04686af5251a88702da39ad758c73def5c55eb1b444f70c",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.39663600000000004,
+        "swing_lift_m": 0.08,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "6542827db801097943b8801e9d778719bb22640386341cb542976be814cede86",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "4ce3019ea97d4a46456ca490aa415163033619a10ff9b2d3082154756851ca74",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_AlertWild",
+      "suffix": "AlertWild",
+      "duration": 1.7,
+      "fps": 30,
+      "frames": 52,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "低头警告",
+      "direction": null,
+      "kind": "alert",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.117364742883879,
+        "ground_min_cm": -1.2736636278987135e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.6154827463165817,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_AlertWild.fbx",
+      "sha256": "b41bae5aae063043401bf8410dc7ba050c3f7b266e5847a2f895d3f59d950196",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "20275b7494394cde4364a7e4b8587ecf4d41e0c4ecf2741a6ae09dc3bf131a99",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_SnoutStrikeShort",
+      "suffix": "SnoutStrikeShort",
+      "duration": 0.55,
+      "fps": 60,
+      "frames": 34,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "即时命中后吻部回收短版",
+      "direction": null,
+      "kind": "attack",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1757487514869043,
+        "ground_min_cm": -1.2820152051062905e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 1.4210367707178213,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_SnoutStrikeShort.fbx",
+      "sha256": "b64090155495256a49b327e4acbfd588224c626e9a32018d5cb06e6043020c85",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "b4156c53306dd3277715186f6bf87d1439d5391b75d250b29c964efc46a4ef6f",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_SnoutStrikeFull",
+      "suffix": "SnoutStrikeFull",
+      "duration": 0.95,
+      "fps": 60,
+      "frames": 58,
+      "loop": false,
+      "hold": false,
+      "priority": "G",
+      "description": "短促顶撞完整候选",
+      "direction": null,
+      "kind": "attack",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1747562049974696,
+        "ground_min_cm": -2.5156276706184144e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 9.408058251032315,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_SnoutStrikeFull.fbx",
+      "sha256": "ba673ad221976f82dab2d1da70ebc334d3946cc7a210a6e3e76c9e36b1bfcc7f",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "G接入候选",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "3ce8db6c1ba31705277189ab6e83dc0d7136598c1d350792a74628c18a77e281",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_RootSniff",
+      "suffix": "RootSniff",
+      "duration": 1.8666666666666667,
+      "fps": 30,
+      "frames": 57,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "嗅地与拱探",
+      "direction": null,
+      "kind": "sniff",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5285987313530836,
+        "ground_min_cm": -2.1776884295832133e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.7234505249645364,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_RootSniff.fbx",
+      "sha256": "32ca056d8c18872f90a0443c0e7794727ae3505f924fc7d2e3355c0fab586831",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "685726056e5fab1dadaa310e4408a0d9361225a378fac32eb39e94e4847c4574",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Eat_In",
+      "suffix": "Eat_In",
+      "duration": 0.6666666666666666,
+      "fps": 30,
+      "frames": 21,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "低头进食三段",
+      "direction": null,
+      "kind": "forage",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.492759867422227,
+        "ground_min_cm": -1.3148368793736154e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 5.99483082961726,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Eat_In.fbx",
+      "sha256": "0abedf4bb000252cba021428b8c06db8e67fd870c26d4f4e013ada24e8d55052",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "1a6a487a91749adca17abd1918f000c14a345311cd5ca15b89d26d22b91faf67",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Eat_Loop",
+      "suffix": "Eat_Loop",
+      "duration": 2.6,
+      "fps": 30,
+      "frames": 79,
+      "loop": true,
+      "hold": false,
+      "priority": "P1",
+      "description": "低头进食三段",
+      "direction": null,
+      "kind": "forage",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.506762575703418,
+        "ground_min_cm": -1.7075892344564636e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.17245846624702127,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Eat_Loop.fbx",
+      "sha256": "ffa3a36132d51859529f91e98797d857d69fc1efd057414a42b1666dd6f3be8a",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "f8dccd224fbc506d538ad62232ff69a7b2bfff907053cc6510c79b7c77429a7b",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Eat_Out",
+      "suffix": "Eat_Out",
+      "duration": 0.6666666666666666,
+      "fps": 30,
+      "frames": 21,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "低头进食三段",
+      "direction": null,
+      "kind": "forage",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.492759867422227,
+        "ground_min_cm": -1.3148368793736154e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 6.596712373516463,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Eat_Out.fbx",
+      "sha256": "8f5db3731bf1536330e4c3b0c72b66dd84e5c438184b8ad63e61b57f28a9b45a",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "52d0a381db024e379a79800e63cfe61822a27078388ab4e007e048a43bc9d1e9",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_LieDown",
+      "suffix": "LieDown",
+      "duration": 1.2,
+      "fps": 30,
+      "frames": 37,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "躺卧休息三段",
+      "direction": null,
+      "kind": "lie",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.417025923291655,
+        "ground_min_cm": 0.0299317529425025,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 4.426394377028098,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 37
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_LieDown.fbx",
+      "sha256": "47c466a7a6d8e77bb601a998b315c1b9b01add12c2fbb7c77ddbd51b7f124e0c",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Folded limbs and supported rest; matching lie/rest/rise endpoints"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "18043ecf7e4df26809a30d6e78ddd43f69d62e0326d26482ae190e1b57c869d2",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Rest",
+      "suffix": "Rest",
+      "duration": 3.5,
+      "fps": 30,
+      "frames": 106,
+      "loop": true,
+      "hold": false,
+      "priority": "P1",
+      "description": "躺卧休息三段",
+      "direction": null,
+      "kind": "rest",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.419081644089392,
+        "ground_min_cm": 0.02992575755342841,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.07912936529690494,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 106
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Rest.fbx",
+      "sha256": "66291a3c03f110041126b342b87e7b43a0bf39b8d7bfe8106771c9c2e053e04d",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Folded limbs and supported rest; matching lie/rest/rise endpoints"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "fcd07f7351c6798e659b32f4ca804478a8e92fc4cdda584ad3c9e0b18c5a4bcf",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_GetUp",
+      "suffix": "GetUp",
+      "duration": 1.1,
+      "fps": 30,
+      "frames": 34,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "躺卧休息三段",
+      "direction": null,
+      "kind": "up",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4166380624708435,
+        "ground_min_cm": 0.029921362875029445,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 4.791270945085429,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 34
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_GetUp.fbx",
+      "sha256": "15804341fbaaf970fc72fd601b2f4d562e490f6312c1672b27ad28aa2685eff0",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Folded limbs and supported rest; matching lie/rest/rise endpoints"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "b21cac03dfbcbea6791b8c12b842eed72e6a1c0ea7f7ffc79ea84565ad134b0c",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_CapturedIdle",
+      "suffix": "CapturedIdle",
+      "duration": 3.0,
+      "fps": 30,
+      "frames": 91,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "捕获后等待",
+      "direction": null,
+      "kind": "idle",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.0254203965833326,
+        "ground_min_cm": 7.45333039731122e-07,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.1251145157995564,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_CapturedIdle.fbx",
+      "sha256": "294db880fbd72c903dbd4c75eb1bba544594a55b79eef15a2c6d7367e2b2c4d2",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "fa6ae1df78e2a779fe76f0a1c81e4fa17e7aae2b443608052bd09bae451907de",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Hit_L",
+      "suffix": "Hit_L",
+      "duration": 0.3333333333333333,
+      "fps": 60,
+      "frames": 21,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右受击",
+      "direction": "left",
+      "kind": "hit",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.0403946378856348,
+        "ground_min_cm": 4.866126346314559e-06,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.021803707406163,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Hit_L.fbx",
+      "sha256": "428bbdeb27ccf9bcc70f90fb7b2a819a1f893691d9f8a9024f30323ac902b93e",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "784f4356ac9f493de777b7305893b1f440dc0e826cee0a805ed044d91227e0df",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Hit_R",
+      "suffix": "Hit_R",
+      "duration": 0.3333333333333333,
+      "fps": 60,
+      "frames": 21,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右受击",
+      "direction": "right",
+      "kind": "hit",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.0346456309228216,
+        "ground_min_cm": -4.139340035180794e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 2.8662621755014954,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Hit_R.fbx",
+      "sha256": "c12ff52f43f0f54196daf07305291fd3cb0c3f56c4c24486afa8ab7a2e014eb7",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "9f7ef37dd14fc3c87cf92a48d4cb4a80c5c68e635bb5d5eef8fd742cb1bd0cd8",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Collapse_L",
+      "suffix": "Collapse_L",
+      "duration": 1.0,
+      "fps": 60,
+      "frames": 61,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右倒地",
+      "direction": "left",
+      "kind": "collapse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.736861413473244,
+        "ground_min_cm": 0.029953359626233578,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 5.2938644167257145,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 61
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Collapse_L.fbx",
+      "sha256": "75c30560b170f3b93e159a64f11d06327f011749fa5ceb9e35661d3b1a116506",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Legs lose support before side settling; corpse endpoint preserved"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "1693324beff7d19f9981da5c5fccf53773168d5c4855f89601c4e37a29341f28",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_Collapse_R",
+      "suffix": "Collapse_R",
+      "duration": 1.0,
+      "fps": 60,
+      "frames": 61,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右倒地",
+      "direction": "right",
+      "kind": "collapse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.7368640455472348,
+        "ground_min_cm": 0.029939133673906326,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 6.2890848561349895,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 61
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_Collapse_R.fbx",
+      "sha256": "c1ef1c9f4b6fda982a9efe684ac67d2efce670416fc1c1037bae4b0156e838be",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Legs lose support before side settling; corpse endpoint preserved"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "c3cb5d60e0403f51ca205d07a4a9ff7c6dd4c9e7848e8f31973dd4eb0f342eeb",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_CorpseHold_L",
+      "suffix": "CorpseHold_L",
+      "duration": 1.0,
+      "fps": 30,
+      "frames": 31,
+      "loop": false,
+      "hold": true,
+      "priority": "P0",
+      "description": "倒地保持",
+      "direction": "left",
+      "kind": "corpse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.7357635456576501,
+        "ground_min_cm": 0.029981136322021484,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.03956468205889273,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_CorpseHold_L.fbx",
+      "sha256": "b18f8b90fa39906175ec8f8ac502bb8000dcb9eb622e398f8c773d391cc77643",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "2872dcaa9e9a1a566a4aac66539ff6939ddcde5edb1ef2bd16f1ef9256d0c182",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_pig_CorpseHold_R",
+      "suffix": "CorpseHold_R",
+      "duration": 1.0,
+      "fps": 30,
+      "frames": 31,
+      "loop": false,
+      "hold": true,
+      "priority": "P0",
+      "description": "倒地保持",
+      "direction": "right",
+      "kind": "corpse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.7357634038688006,
+        "ground_min_cm": 0.029993057250976562,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.03956468205889273,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "1c8f6d99d22158e388fe27ff19ba0d9a2adce0477647ce726b74c61cdbbb6097",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\clips\\AN_pig_CorpseHold_R.fbx",
+      "sha256": "daaf66e3fa54227f8f9d5a96de78f4a8535a5b90a98775c43d9114cc6d419536",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "cf2a8b034b9129e30af0caafd06fcad2f1b991fb3b233a84828f2b6d8d30d12d",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    }
+  ],
+  "status": "authored",
+  "visual_qa": "CURRENT_SOURCE_RENDERED_AND_GAIT_PHASES_REVIEWED",
+  "ue_import": "PASS",
+  "provenance": {
+    "mesh": "existing user Tripo source",
+    "motion": "species-specific authored curves and contact IK",
+    "cloud_motion": "cloud_motion.fbx is retained as an unapproved reference; not substituted for authored action coverage",
+    "license": "User-supplied/generated model; original authored motion, no third-party mocap"
+  },
+  "fbx_units": "centimetres; identity object and root scales",
+  "reference_pose_calibration": {
+    "reference_action": "AN_pig_IdleDomestic",
+    "world_joint_preservation_error_m": 6.505939810191461e-07,
+    "floor_correction_by_clip_m": {
+      "AN_pig_IdleDomestic": 0,
+      "AN_pig_IdleWild": 0,
+      "AN_pig_Walk": 0,
+      "AN_pig_TrotFollow": 0,
+      "AN_pig_RunDomestic": 0,
+      "AN_pig_RunWild": 0,
+      "AN_pig_Turn_L": 0,
+      "AN_pig_Turn_R": 0,
+      "AN_pig_Start": 0,
+      "AN_pig_Stop": 0,
+      "AN_pig_AlertWild": 0,
+      "AN_pig_SnoutStrikeShort": 0,
+      "AN_pig_SnoutStrikeFull": 0,
+      "AN_pig_RootSniff": 0,
+      "AN_pig_Eat_In": 0,
+      "AN_pig_Eat_Loop": 0,
+      "AN_pig_Eat_Out": 0,
+      "AN_pig_LieDown": 1.2467065360396838e-06,
+      "AN_pig_Rest": 6.186749786138272e-07,
+      "AN_pig_GetUp": 1.1714149266481137e-06,
+      "AN_pig_CapturedIdle": 0,
+      "AN_pig_Hit_L": 0,
+      "AN_pig_Hit_R": 0,
+      "AN_pig_Collapse_L": 0.0036811330795288085,
+      "AN_pig_Collapse_R": 0.011851260948181152,
+      "AN_pig_CorpseHold_L": 0.000528285789489746,
+      "AN_pig_CorpseHold_R": 4.978179931643253e-08
+    },
+    "mesh_vertices_uv_weights": "unchanged",
+    "bone_rest": "calibrated"
+  },
+  "refinement_20261001": {
+    "backup": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\refinement_20261001\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig",
+    "revised_actions": [
+      "AN_pig_LieDown",
+      "AN_pig_Rest",
+      "AN_pig_GetUp",
+      "AN_pig_Collapse_L",
+      "AN_pig_Collapse_R"
+    ],
+    "skin_repair": {},
+    "baked_constraints_removed": true,
+    "cloud_credits_used": 0,
+    "vertex_topology_uv": "preserved",
+    "original_guidance_sha256": "6fa76142374eca6bfa79d23400298f9f0597476f4699b39cde9722244fb4dc53",
+    "rest_support": "Measured ventral support plane; folded paws solved and fully baked",
+    "updated_guidance_sha256": "19817bce436d45ad26ce4c3fdf1a92dc2d65f8956e8e624d410f85efa285b9c0",
+    "checks": "HISTORICAL_R1_SUPERSEDED_BY_R2",
+    "historical_record": true
+  },
+  "correction_20261001_r2": {
+    "baseline_backup": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r2\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig",
+    "changed_actions": [
+      "AN_pig_RunDomestic",
+      "AN_pig_RunWild",
+      "AN_pig_Start",
+      "AN_pig_Stop"
+    ],
+    "head_bind": null,
+    "rest_limb_planes": null,
+    "cloud_credits_used": 0,
+    "baked_constraints_removed": true,
+    "checks": "PASS_CURRENT_ASSET_CHECKS",
+    "blend_sha256": "25d7c5a3273afe77603cdcf375496f45877b043fc191b33f73b10da1f2de80a0",
+    "skeletal_sha256": "4ca548b8d2296f926e5ba940facf5381b42269973776477822ce61d13785a974",
+    "guidance_sha256": "f06efcdc832eeb8ee3e6e4e3419209e9b632ecf6432473865ff67b97768aedda",
+    "targeted_qa": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r2\\targeted_qa.json",
+    "native_qa": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig\\ue_import_qa.json"
+  },
+  "current_revision": "2026-10-01 R2",
+  "correction_20261001_r3": {
+    "revision": "2026-10-01 R3",
+    "baseline": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r3\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig",
+    "changed_actions": [
+      "AN_pig_IdleDomestic",
+      "AN_pig_IdleWild",
+      "AN_pig_Walk",
+      "AN_pig_TrotFollow",
+      "AN_pig_RunDomestic",
+      "AN_pig_RunWild",
+      "AN_pig_Turn_L",
+      "AN_pig_Turn_R",
+      "AN_pig_Start",
+      "AN_pig_Stop",
+      "AN_pig_AlertWild",
+      "AN_pig_SnoutStrikeShort",
+      "AN_pig_SnoutStrikeFull",
+      "AN_pig_RootSniff",
+      "AN_pig_Eat_In",
+      "AN_pig_Eat_Loop",
+      "AN_pig_Eat_Out",
+      "AN_pig_LieDown",
+      "AN_pig_Rest",
+      "AN_pig_GetUp",
+      "AN_pig_CapturedIdle",
+      "AN_pig_Hit_L",
+      "AN_pig_Hit_R",
+      "AN_pig_Collapse_L",
+      "AN_pig_Collapse_R",
+      "AN_pig_CorpseHold_L",
+      "AN_pig_CorpseHold_R"
+    ],
+    "gait_actions": [
+      "AN_pig_Walk",
+      "AN_pig_TrotFollow",
+      "AN_pig_RunDomestic",
+      "AN_pig_RunWild",
+      "AN_pig_Start",
+      "AN_pig_Stop"
+    ],
+    "skin": {
+      "changed_vertices": 10318,
+      "limbs": {
+        "FL": 2825,
+        "FR": 2974,
+        "BL": 4402,
+        "BR": 4685
+      },
+      "strength": 0.2,
+      "method": "piecewise rigid shaft; adjacent joints only; compact smoothstep blend; linear skinning"
+    },
+    "joint_rebind": [
+      {
+        "limb": "FL",
+        "bone": "0_Left_Limb_1",
+        "before_cm": [
+          20.053327083587646,
+          24.379990994930267,
+          39.61382210254669
+        ],
+        "after_cm": [
+          26.027143001556396,
+          15.19814133644104,
+          39.61382210254669
+        ],
+        "surface_vertices": 585
+      },
+      {
+        "limb": "FL",
+        "bone": "0_Left_Limb_2",
+        "before_cm": [
+          28.114038705825806,
+          18.161699175834656,
+          19.425000250339508
+        ],
+        "after_cm": [
+          29.997768998146057,
+          16.259199380874634,
+          19.425000250339508
+        ],
+        "surface_vertices": 263
+      },
+      {
+        "limb": "FR",
+        "bone": "0_Right_Limb_1",
+        "before_cm": [
+          39.07065689563751,
+          -4.08872552216053,
+          38.01225423812866
+        ],
+        "after_cm": [
+          28.33993434906006,
+          -10.510091483592987,
+          38.01225423812866
+        ],
+        "surface_vertices": 580
+      },
+      {
+        "limb": "FR",
+        "bone": "0_Right_Limb_2",
+        "before_cm": [
+          33.076030015945435,
+          -11.424451321363449,
+          18.825611472129822
+        ],
+        "after_cm": [
+          30.34401535987854,
+          -14.733214676380157,
+          18.825611472129822
+        ],
+        "surface_vertices": 309
+      },
+      {
+        "limb": "BL",
+        "bone": "1_Left_Limb_1",
+        "before_cm": [
+          -45.90659141540527,
+          10.3687584400177,
+          50.56888461112976
+        ],
+        "after_cm": [
+          -41.48721992969513,
+          21.108967065811157,
+          50.56888461112976
+        ],
+        "surface_vertices": 647
+      },
+      {
+        "limb": "BL",
+        "bone": "1_Left_Limb_2",
+        "before_cm": [
+          -50.69783926010132,
+          23.64637851715088,
+          28.085526823997498
+        ],
+        "after_cm": [
+          -52.01313495635986,
+          16.135922074317932,
+          28.085526823997498
+        ],
+        "surface_vertices": 404
+      },
+      {
+        "limb": "BR",
+        "bone": "1_Right_Limb_1",
+        "before_cm": [
+          -49.2121547460556,
+          -21.160753071308136,
+          54.36744689941406
+        ],
+        "after_cm": [
+          -46.001675724983215,
+          -23.25024902820587,
+          54.36744689941406
+        ],
+        "surface_vertices": 515
+      },
+      {
+        "limb": "BR",
+        "bone": "1_Right_Limb_2",
+        "before_cm": [
+          -48.403218388557434,
+          -7.954512536525726,
+          28.330516815185547
+        ],
+        "after_cm": [
+          -51.316869258880615,
+          -15.52598774433136,
+          28.330516815185547
+        ],
+        "surface_vertices": 391
+      }
+    ],
+    "skeleton_rest": "limb pivots recentered on measured native skin; all paired actions rebaked",
+    "geometry_uv_materials": "unchanged",
+    "foot_tracks_contact_timing": "unchanged",
+    "cloud_credits_used": 0,
+    "gameplay_integration": "NOT_RUN",
+    "qa": "PASS",
+    "source_blend_sha256": "1d558cf67122195f295aaa240dae6d4bd896bc51f2a65a6e64c37cba914a3cc8",
+    "skeletal_fbx_sha256": "18b31c300d8ec4c641aa312687f65410524a84ab2df3f66e6c7511764c6dafdb",
+    "native_core_pose_match": "PASS",
+    "supplementary_all_bone_rotation_match": "PASS"
+  }
+}

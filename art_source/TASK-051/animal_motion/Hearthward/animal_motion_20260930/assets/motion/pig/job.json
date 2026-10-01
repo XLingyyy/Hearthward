@@ -1,0 +1,164 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "pig",
+  "name": "猪",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "pig",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\b52f3438-f5a5-4442-9f72-3ab9dbcbfa2b\\pig_rigged.fbx",
+  "rig_task_id": "b52f3438-f5a5-4442-9f72-3ab9dbcbfa2b",
+  "source_task_id": "0059d8b0-37bf-4db1-9336-41c0debd81e0",
+  "rig_type": "quadruped",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\05_猪_家猪与野猪_动作指导.md",
+  "guidance_sha256": "54f928aff4ea15b1b630607566e2c857a80803a9ff8d08e31ab483b33946d942",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\pig",
+  "action_rows": [
+    [
+      "`AN_pig_IdleDomestic`",
+      "家猪安静站立",
+      "3.0—4.0",
+      "循环",
+      "P0",
+      "重腹稳定、低头轻嗅；只用于domestic.pig。"
+    ],
+    [
+      "`AN_pig_IdleWild`",
+      "野猪警戒待机",
+      "2.0—3.0",
+      "循环",
+      "P0",
+      "颈部收紧、头低位定向；仍为同一家猪临时外形。"
+    ],
+    [
+      "`AN_pig_Walk`",
+      "稳步行走",
+      "1.0—1.3",
+      "循环",
+      "P0",
+      "短腿四拍落足，腹部不左右甩成气球。"
+    ],
+    [
+      "`AN_pig_TrotFollow`",
+      "家猪跟随小跑",
+      "0.6—0.85",
+      "循环",
+      "P0",
+      "覆盖300 cm/s，避免为了赶路把体型拉成长腿。"
+    ],
+    [
+      "`AN_pig_RunDomestic`",
+      "家猪逃离",
+      "0.50—0.70",
+      "循环",
+      "P0",
+      "覆盖400 cm/s，起伏较野猪追击收敛。"
+    ],
+    [
+      "`AN_pig_RunWild`",
+      "野猪追近",
+      "0.40—0.60",
+      "循环",
+      "P0",
+      "覆盖700 cm/s，只由boar现有反击状态启用。"
+    ],
+    [
+      "`AN_pig_Turn_L`<br>`AN_pig_Turn_R`",
+      "左右撑步转向",
+      "0.65—0.95",
+      "单次",
+      "P0",
+      "腹部外侧留空间，小半径不做高速横移。"
+    ],
+    [
+      "`AN_pig_Start`<br>`AN_pig_Stop`",
+      "起步与前蹄撑停",
+      "0.35 / 0.55",
+      "单次",
+      "P0",
+      "前肢承重、肩颈回收，位移归游戏逻辑。"
+    ],
+    [
+      "`AN_pig_AlertWild`",
+      "低头警告",
+      "1.4—2.0",
+      "循环",
+      "P0",
+      "只表达现有警戒；不新增怒气、獠牙或冲锋增伤。"
+    ],
+    [
+      "`AN_pig_SnoutStrikeShort`",
+      "即时命中后吻部回收短版",
+      "0.45—0.65",
+      "单次",
+      "G",
+      "匹配现有即时伤害事件，不能假装有已生效的前摇。"
+    ],
+    [
+      "`AN_pig_SnoutStrikeFull`",
+      "短促顶撞完整候选",
+      "0.8—1.1",
+      "单次",
+      "G",
+      "前摇—接触—回收，需先确定统一攻击事件，周期不超过1.4 s。"
+    ],
+    [
+      "`AN_pig_RootSniff`",
+      "嗅地与拱探",
+      "1.5—2.2",
+      "单次",
+      "P1",
+      "吻部轻探，前蹄支撑；不把根骨推进地里或生成采集收益。"
+    ],
+    [
+      "`AN_pig_Eat_In`<br>`AN_pig_Eat_Loop`<br>`AN_pig_Eat_Out`",
+      "低头进食三段",
+      "0.65 / 2.6 / 0.65",
+      "进入/循环/退出",
+      "P1",
+      "重腹保持体积，不由循环次数扣饲料。"
+    ],
+    [
+      "`AN_pig_LieDown`<br>`AN_pig_Rest`<br>`AN_pig_GetUp`",
+      "躺卧休息三段",
+      "1.2 / 3.5 / 1.1",
+      "进入/循环/退出",
+      "P1",
+      "侧腹缓落、四腿收回，退出时先建立前蹄支撑。"
+    ],
+    [
+      "`AN_pig_CapturedIdle`",
+      "捕获后等待",
+      "2.5—3.5",
+      "循环",
+      "P0",
+      "仅家猪，适配暂时等待及栏内静止。"
+    ],
+    [
+      "`AN_pig_Hit_L`<br>`AN_pig_Hit_R`",
+      "左右受击",
+      "0.25—0.40",
+      "单次",
+      "P0",
+      "家猪服从逃离/牵引取消，野猪服从既有反击状态。"
+    ],
+    [
+      "`AN_pig_Collapse_L`<br>`AN_pig_Collapse_R`",
+      "左右倒地",
+      "0.85—1.15",
+      "单次",
+      "P0",
+      "体重逐步压向侧腹，腿蹄不穿地。"
+    ],
+    [
+      "`AN_pig_CorpseHold_L`<br>`AN_pig_CorpseHold_R`",
+      "倒地保持",
+      "静态末帧",
+      "保持",
+      "P0",
+      "家猪屠宰和野猪死亡都不额外生成第二次掉落。"
+    ]
+  ],
+  "source_sha256": "b294ec7439340e18998f9e8d34808ac8ec872c90940730b59a6eb3b089091555",
+  "original_guidance_sha256": "6fa76142374eca6bfa79d23400298f9f0597476f4699b39cde9722244fb4dc53",
+  "r2_baseline_guidance_sha256": "19817bce436d45ad26ce4c3fdf1a92dc2d65f8956e8e624d410f85efa285b9c0"
+}

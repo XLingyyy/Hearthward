@@ -1,0 +1,29 @@
+{
+  "ok": false,
+  "operation": "observe.check_status",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "message": "Unreal Remote Control is not reachable",
+      "code": "UE_REMOTE_CONTROL_UNAVAILABLE",
+      "source": "remote_control"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal environment is not ready"
+  ],
+  "payload": {
+    "api_version": "v1",
+    "remote_control": {
+      "ok": false,
+      "url": "http://127.0.0.1:30031"
+    },
+    "python_execution": {
+      "checked": true,
+      "ok": true,
+      "transport": "remote_execution"
+    }
+  }
+}

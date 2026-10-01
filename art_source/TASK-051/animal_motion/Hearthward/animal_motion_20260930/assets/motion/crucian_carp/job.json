@@ -1,0 +1,138 @@
+{
+  "schema": "hearthward.animal.motion.job.v1",
+  "slug": "crucian_carp",
+  "name": "鲫鱼",
+  "game_id": "Hearthward",
+  "run_id": "animal_motion_20260930",
+  "task_id": "crucian_carp",
+  "source": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\rigged_outputs\\a87ebcaf-a4d7-412a-b10d-c7b90717dcef\\crucian_carp_rigged.fbx",
+  "rig_task_id": "a87ebcaf-a4d7-412a-b10d-c7b90717dcef",
+  "source_task_id": "e193cb21-fa34-4bb1-b522-c0198e186127",
+  "rig_type": "aquatic",
+  "guidance": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\12_鲫鱼_动作指导.md",
+  "guidance_sha256": "3a6d2a0d32ebd05a46d00727c24678675d632d2ce789c1ba3d7d4b8782b0ab82",
+  "output": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\crucian_carp",
+  "action_rows": [
+    [
+      "`AN_crucian_carp_Hover`",
+      "紧凑悬停",
+      "1.4—2.0",
+      "循环",
+      "P0/G",
+      "高体侧保持竖直稳定，小尾摆不变成大幅滚转。"
+    ],
+    [
+      "`AN_crucian_carp_SwimSlow`",
+      "缓慢短巡游",
+      "0.75—1.0",
+      "循环",
+      "P0/G",
+      "紧凑尾摆与小位移；候选0.4体长/s。"
+    ],
+    [
+      "`AN_crucian_carp_SwimCruise`",
+      "常速游动",
+      "0.50—0.70",
+      "循环",
+      "P0/G",
+      "短而稳定的尾摆，候选0.9体长/s；不是生物速度测量。"
+    ],
+    [
+      "`AN_crucian_carp_Burst`",
+      "短促逃动",
+      "0.25—0.40",
+      "单次",
+      "P0/G",
+      "后身加力，高体侧不压扁成细长鱼。"
+    ],
+    [
+      "`AN_crucian_carp_PauseGlide`",
+      "短滑行停顿",
+      "0.60—0.90",
+      "循环",
+      "P1/G",
+      "作为游动节奏变化，不是完全静止的贴图。"
+    ],
+    [
+      "`AN_crucian_carp_Turn_L`<br>`AN_crucian_carp_Turn_R`",
+      "左右短弧转向",
+      "0.4—0.65",
+      "单次",
+      "P0/G",
+      "尾部跟随转弯，腹部保持体积，不绕纵轴翻筋斗。"
+    ],
+    [
+      "`AN_crucian_carp_Brake`",
+      "减速悬停",
+      "0.30—0.50",
+      "单次",
+      "P0/G",
+      "尾摆逐步减幅，回Hover的波动相位连续。"
+    ],
+    [
+      "`AN_crucian_carp_Bite_In`",
+      "轻探鱼饵",
+      "0.25—0.40",
+      "单次",
+      "G",
+      "口/鳃盖无可靠权重时不强行做开合。"
+    ],
+    [
+      "`AN_crucian_carp_Hooked_In`",
+      "上钩短收紧",
+      "0.20—0.35",
+      "单次",
+      "P0/G",
+      "只表达当前钓鱼阶段，不能绕过抛竿耗饵确认。"
+    ],
+    [
+      "`AN_crucian_carp_Struggle`",
+      "密集短摆挣扎",
+      "0.50—0.75",
+      "循环",
+      "P0/G",
+      "比鲤鱼采用更紧凑节奏；以张力参数控制，5 s由玩法结算。"
+    ],
+    [
+      "`AN_crucian_carp_EscapeHide`",
+      "脱钩退出",
+      "0.25—0.45",
+      "单次",
+      "G",
+      "失败仅退出表现，不直接产生自由游动鱼。"
+    ],
+    [
+      "`AN_crucian_carp_LiftOut`",
+      "成功出水候选",
+      "0.40—0.65",
+      "单次",
+      "G",
+      "绑定成功上下文与承托位置，不靠根运动生成位移。"
+    ],
+    [
+      "`AN_crucian_carp_LandFlop`",
+      "侧体扑动",
+      "0.45—0.70",
+      "循环",
+      "G",
+      "高体侧可小幅侧翻再回支撑，避免穿岸和随机弹飞。"
+    ],
+    [
+      "`AN_crucian_carp_Settle`",
+      "停止扑动的收束",
+      "0.35—0.55",
+      "单次",
+      "G",
+      "收束到同侧支撑姿态，不判断死亡。"
+    ],
+    [
+      "`AN_crucian_carp_DisplayStill`",
+      "静态渔获展示",
+      "静态姿态",
+      "保持",
+      "P1/G",
+      "物品结算/显示仍由原系统控制。"
+    ]
+  ],
+  "source_sha256": "9b255e42c6d93f98be96b8d58928453fa378f94d4a68d38c82ad016c8113a200"
+}

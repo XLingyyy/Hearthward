@@ -4,10 +4,13 @@
 #ifndef OutputRoot
   #define OutputRoot "F:\HearthwardDemo\Release"
 #endif
+#ifndef AppVersion
+  #define AppVersion "0.2.0-preview.20260930.1"
+#endif
 [Setup]
 AppId=Hearthward-Demo
 AppName=Hearthward Demo
-AppVersion=0.1.0
+AppVersion={#AppVersion}
 AppPublisher=XLingyyy
 DefaultDirName={localappdata}\Programs\HearthwardDemo
 DefaultGroupName=Hearthward Demo
@@ -15,7 +18,7 @@ PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir={#OutputRoot}
-OutputBaseFilename=Hearthward-Demo-0.1.0-Windows-Setup
+OutputBaseFilename=Hearthward-Demo-{#AppVersion}-Windows-Setup
 Compression=lzma2/fast
 SolidCompression=no
 DiskSpanning=yes
@@ -25,7 +28,7 @@ WizardStyle=modern
 UninstallDisplayIcon={app}\Hearthward.exe
 DisableProgramGroupPage=yes
 [Files]
-Source: "{#PackageRoot}\*"; DestDir: "{app}"; Excludes: "*.pdb,Manifest_*.txt"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#PackageRoot}\*"; DestDir: "{app}"; Excludes: "*.pdb,Manifest_*.txt,Saved\*,*\Saved\*"; Flags: ignoreversion recursesubdirs createallsubdirs
 [Icons]
 Name: "{autodesktop}\Hearthward Demo"; Filename: "{app}\Hearthward.exe"; Parameters: "-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32"; WorkingDir: "{app}"
 Name: "{group}\Hearthward Demo"; Filename: "{app}\Hearthward.exe"; Parameters: "-HearthwardAIBackend=vulkan -HearthwardAIGpuLayers=32"; WorkingDir: "{app}"

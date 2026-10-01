@@ -1,0 +1,134 @@
+{
+  "slug": "black_bear",
+  "source_blend_sha256": "691cf72352c78357d01f467bdc8967197e4a8e10c96f37a69c080580ff587e39",
+  "skeletal_fbx_sha256": "e6ee1b5a6a447c7a7f7bde69be0479c1d0ad98ff6bf51981070f97098449c45e",
+  "source_fbx_unchanged": true,
+  "geometry_topology_uv_preserved": true,
+  "geometry_hashes": {
+    "tripo_node_7f5206d7": {
+      "vertices": "cba280b77d21fc6a6a5e385b5a4166fc91f3c716016b1c6f78d0639edbaef496",
+      "faces": "b9f902c6c4beb1e78a18b2d7580a55b479ddd0438ddc6e72093da855ea413d39",
+      "uv": "5c62bb1c0981fed96884c867c7c2609fa8d5b676640c5b888e9d7df5435c363e"
+    }
+  },
+  "gaits": [
+    {
+      "name": "AN_black_bear_WalkHeavy",
+      "kind": "walk",
+      "segment_length_error_cm": 4.48869952596187e-05,
+      "foot_track_error_cm": 0.00010373445264799601,
+      "foot_orientation_error_deg": 0.07912936529690494,
+      "max_outward_joint_cm_at_full_gait": 0.0,
+      "min_shaft_area_ratio": 0.7547284414294861,
+      "max_adjacent_rotation_deg": 25.334262091807904,
+      "fixed_root_drift_cm": 0.0,
+      "scale_error": 0.0,
+      "shaft_samples": {
+        "FL_1": 0.855790891724785,
+        "FL_2": 1.0,
+        "FR_1": 0.8400369564417967,
+        "FR_2": 1.0,
+        "BL_1": 0.8612059505019358,
+        "BR_1": 0.7547284414294861
+      },
+      "pass": true,
+      "baseline_shaft_samples_same_vertices": {
+        "FL_1": 0.7010035813404552,
+        "FL_2": 1.0,
+        "FR_1": 0.5655694791165173,
+        "FR_2": 0.6447564246533727,
+        "BL_1": 0.6354879521368508,
+        "BR_1": 0.40044537032217636
+      },
+      "baseline_min_shaft_area_ratio": 0.40044537032217636
+    },
+    {
+      "name": "AN_black_bear_Lope",
+      "kind": "run",
+      "segment_length_error_cm": 6.653870796013983e-05,
+      "foot_track_error_cm": 9.682602094193034e-05,
+      "foot_orientation_error_deg": 0.08846932034957805,
+      "max_outward_joint_cm_at_full_gait": 0.0,
+      "min_shaft_area_ratio": 0.38373865452942163,
+      "max_adjacent_rotation_deg": 31.148384617405554,
+      "fixed_root_drift_cm": 0.0,
+      "scale_error": 0.0,
+      "shaft_samples": {
+        "FL_1": 0.7273029356262203,
+        "FL_2": 0.9610333403198199,
+        "FR_1": 0.7269457885876873,
+        "FR_2": 0.9561634556900731,
+        "BL_1": 0.6813554284363862,
+        "BR_1": 0.38373865452942163
+      },
+      "pass": true,
+      "baseline_shaft_samples_same_vertices": {
+        "FL_1": 0.4540888768007737,
+        "FL_2": 0.7741708259469207,
+        "FR_1": 0.32947596394064393,
+        "FR_2": 0.4483467253766671,
+        "BL_1": 0.3617916194456266,
+        "BR_1": 0.12348881498540394
+      },
+      "baseline_min_shaft_area_ratio": 0.12348881498540394
+    },
+    {
+      "name": "AN_black_bear_StartRun",
+      "kind": "start",
+      "segment_length_error_cm": 3.5509650170295615e-05,
+      "foot_track_error_cm": 0.00010379864807633495,
+      "foot_orientation_error_deg": 0.07912936529690494,
+      "max_outward_joint_cm_at_full_gait": 0.0,
+      "min_shaft_area_ratio": 1.0,
+      "max_adjacent_rotation_deg": 38.08144933097353,
+      "fixed_root_drift_cm": 0.0,
+      "scale_error": 0.0,
+      "shaft_samples": {},
+      "pass": true
+    },
+    {
+      "name": "AN_black_bear_StopBrace",
+      "kind": "stop",
+      "segment_length_error_cm": 3.559571091216185e-05,
+      "foot_track_error_cm": 9.471326221269788e-05,
+      "foot_orientation_error_deg": 0.08846932034957805,
+      "max_outward_joint_cm_at_full_gait": 0.0,
+      "min_shaft_area_ratio": 1.0,
+      "max_adjacent_rotation_deg": 30.027544629246236,
+      "fixed_root_drift_cm": 0.0,
+      "scale_error": 0.0,
+      "shaft_samples": {},
+      "pass": true
+    }
+  ],
+  "start_stop_seams": [
+    {
+      "from": "Idle",
+      "to": "StartRun",
+      "position_cm": 6.62232566788092e-05,
+      "rotation_deg": 0.05595291023658669
+    },
+    {
+      "from": "StartRun",
+      "to": "Lope",
+      "position_cm": 4.837716543897368e-05,
+      "rotation_deg": 0.06852804019207596
+    },
+    {
+      "from": "Lope",
+      "to": "StopBrace",
+      "position_cm": 0.0,
+      "rotation_deg": 0.06852804019207596
+    },
+    {
+      "from": "StopBrace",
+      "to": "Idle",
+      "position_cm": 6.62232566788092e-05,
+      "rotation_deg": 0.05595291023658669
+    }
+  ],
+  "bone_rest_signature": "5a860be34d6768eea36c08436e211d1d88aa3538209e96cf628a6145d1aefb4a",
+  "gameplay_integration": "NOT_RUN",
+  "pass": true,
+  "shaft_sampling_note": "PCA area proxy of identical original vertex groups in each shaft; a local visual diagnostic, not a whole-mesh volume guarantee"
+}

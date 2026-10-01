@@ -1,0 +1,2062 @@
+{
+  "schema": "hearthward.animal.animations.v1",
+  "name": "野兔",
+  "slug": "hare",
+  "source_sha256": "bc49e30f0bba702c79e92324ca711226f208e564d1c1262ede68ecf20c38661c",
+  "guidance_sha256": "22948dc3370574939ce02aa2d7b5ec67b1e09691273040b8eb9fb700193e189e",
+  "rig": {
+    "body": "pelvis",
+    "root": "root",
+    "chains": {
+      "FL": [
+        "0_Left_Limb_0",
+        "0_Left_Limb_1",
+        "0_Left_Limb_2",
+        "0_Left_Limb_3"
+      ],
+      "FR": [
+        "0_Right_Limb_0",
+        "0_Right_Limb_1",
+        "0_Right_Limb_2",
+        "0_Right_Limb_3"
+      ],
+      "BL": [
+        "1_Left_Limb_0",
+        "1_Left_Limb_1",
+        "1_Left_Limb_2",
+        "1_Left_Limb_3"
+      ],
+      "BR": [
+        "1_Right_Limb_0",
+        "1_Right_Limb_1",
+        "1_Right_Limb_2",
+        "1_Right_Limb_3"
+      ]
+    },
+    "spine": [
+      "Spine_0",
+      "Spine_1"
+    ],
+    "neck": [
+      "Head_0",
+      "Head_1"
+    ],
+    "head": "Head_1",
+    "wings": [],
+    "ears": [
+      "Head_2",
+      "bone_6"
+    ],
+    "tail": [],
+    "restfeet": {
+      "FL": [
+        0.18516334891319275,
+        0.06214960664510727,
+        0.046658068895339966
+      ],
+      "FR": [
+        0.18372616171836853,
+        -0.06487978249788284,
+        0.040637701749801636
+      ],
+      "BL": [
+        -0.1566583216190338,
+        0.1386350691318512,
+        0.03160726651549339
+      ],
+      "BR": [
+        -0.16680306196212769,
+        -0.14009378850460052,
+        0.03160737454891205
+      ]
+    },
+    "hip": [
+      -0.0068487077951431274,
+      0.0022974256426095963,
+      0.33488762378692627
+    ],
+    "repairs": [
+      "Added fixed game root; moved deforming body pivot to anatomical hip center",
+      "Corrected spatially mismatched foot/toe weights and normalized skin influences",
+      "Rebound paw soles to contact bones; smoothed seam and shoulder weights with at most eight influences",
+      "Calibrated bind orientations to solved natural stance; rebaked all world-space joint trajectories without IK rest twist",
+      "2026-10-01 R3: measured limb rest pivots; retargeted complete library; calibrated shaft skinning; exact-length medial gait solve and restrained torso compression"
+    ],
+    "axis": {
+      "rotation_z_degrees": -126.97512432549155,
+      "scale": 0.7751330844018475,
+      "target_length_m": 0.65,
+      "forward": "+X",
+      "up": "+Z",
+      "dcc_units": "metres",
+      "engine_units": "centimetres"
+    },
+    "bone_heads": {
+      "root": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pelvis": [
+        -0.006848708260804415,
+        0.002297424478456378,
+        0.3056376576423645
+      ],
+      "Spine_0": [
+        -0.02687881886959076,
+        -0.004288307391107082,
+        0.3094005286693573
+      ],
+      "Spine_1": [
+        0.1404939889907837,
+        -0.0021875184029340744,
+        0.3515436351299286
+      ],
+      "Head_0": [
+        0.17843270301818848,
+        0.0031612408347427845,
+        0.3966970443725586
+      ],
+      "Head_1": [
+        0.19286192953586578,
+        -0.007702104281634092,
+        0.4809834361076355
+      ],
+      "Head_2": [
+        0.1735401153564453,
+        -0.03837103396654129,
+        0.5743005275726318
+      ],
+      "bone_6": [
+        0.18448637425899506,
+        0.021211471408605576,
+        0.5712903141975403
+      ],
+      "0_Right_Limb_0": [
+        0.15548978745937347,
+        -0.09562990069389343,
+        0.32746177911758423
+      ],
+      "0_Right_Limb_1": [
+        0.15718168020248413,
+        -0.09022167325019836,
+        0.28150123357772827
+      ],
+      "0_Right_Limb_2": [
+        0.14887967705726624,
+        -0.06292542815208435,
+        0.15105672180652618
+      ],
+      "0_Right_Limb_3": [
+        0.18372616171836853,
+        -0.06487978249788284,
+        0.040637701749801636
+      ],
+      "0_Left_Limb_0": [
+        0.15862715244293213,
+        0.09151571989059448,
+        0.3364923894405365
+      ],
+      "0_Left_Limb_1": [
+        0.17042258381843567,
+        0.08994673937559128,
+        0.2887730002403259
+      ],
+      "0_Left_Limb_2": [
+        0.14795617759227753,
+        0.05884382128715515,
+        0.1570785641670227
+      ],
+      "0_Left_Limb_3": [
+        0.18516334891319275,
+        0.06214960664510727,
+        0.046658068895339966
+      ],
+      "1_Left_Limb_0": [
+        -0.16819895803928375,
+        0.08326801657676697,
+        0.27929821610450745
+      ],
+      "1_Left_Limb_1": [
+        -0.15695421397686005,
+        0.09826274961233139,
+        0.19710737466812134
+      ],
+      "1_Left_Limb_2": [
+        -0.17922064661979675,
+        0.10830178111791611,
+        0.11776617169380188
+      ],
+      "1_Left_Limb_3": [
+        -0.1566583216190338,
+        0.1386350691318512,
+        0.03160726651549339
+      ],
+      "1_Right_Limb_0": [
+        -0.1733127236366272,
+        -0.0786731168627739,
+        0.27929818630218506
+      ],
+      "1_Right_Limb_1": [
+        -0.14572454988956451,
+        -0.08528824895620346,
+        0.19710737466812134
+      ],
+      "1_Right_Limb_2": [
+        -0.1819305717945099,
+        -0.10692942887544632,
+        0.11776617169380188
+      ],
+      "1_Right_Limb_3": [
+        -0.16680306196212769,
+        -0.14009378850460052,
+        0.03160737454891205
+      ],
+      "bone_23": [
+        -0.24480897188186646,
+        0.0015303846448659897,
+        0.2552163600921631
+      ]
+    },
+    "bone_count": 25,
+    "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+    "skin_qa": {
+      "unweighted_vertices": 0,
+      "max_sum_error": 2.6645517209544778e-05,
+      "max_influences": 8,
+      "weighted_vertices_per_bone": {
+        "pelvis": 21435,
+        "Spine_0": 19145,
+        "Spine_1": 25445,
+        "Head_0": 20503,
+        "Head_1": 16464,
+        "Head_2": 9097,
+        "bone_6": 8067,
+        "0_Right_Limb_0": 7594,
+        "0_Right_Limb_1": 4300,
+        "0_Right_Limb_2": 1689,
+        "0_Right_Limb_3": 1172,
+        "0_Left_Limb_0": 9488,
+        "0_Left_Limb_1": 5151,
+        "0_Left_Limb_2": 1752,
+        "0_Left_Limb_3": 1193,
+        "1_Left_Limb_0": 10332,
+        "1_Left_Limb_1": 6833,
+        "1_Left_Limb_2": 2402,
+        "1_Left_Limb_3": 2227,
+        "1_Right_Limb_0": 9762,
+        "1_Right_Limb_1": 6542,
+        "1_Right_Limb_2": 2686,
+        "1_Right_Limb_3": 2269,
+        "bone_23": 10405
+      }
+    }
+  },
+  "clips": [
+    {
+      "name": "AN_hare_IdleCrouch",
+      "suffix": "IdleCrouch",
+      "duration": 2.5,
+      "fps": 30,
+      "frames": 76,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "低伏呼吸",
+      "direction": null,
+      "kind": "idle",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.01443043980097,
+        "ground_min_cm": 2.434741119827777e-06,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.33571757814650166,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_IdleCrouch.fbx",
+      "sha256": "6d9dbe111db65e9ec36cabcdd8a54b2dd02554b2dcb45361a143fe36a9f6864d",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "9af507ae52ef39defe9653d62a9d8f27d0062240d5529c6f2902273e0a9a6263",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Scan",
+      "suffix": "Scan",
+      "duration": 1.4666666666666666,
+      "fps": 30,
+      "frames": 45,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "停步听察",
+      "direction": null,
+      "kind": "look",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.0977528189124595,
+        "ground_min_cm": 3.744438004105177e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 8.384729222504893,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Scan.fbx",
+      "sha256": "e9bb6cbbb6af688032d489e2e8576dbc4e09244a5e283b2aca025a9093bfe593",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Two clear gaze holds and eased neck-leading return"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "a7730236a2a002ef8a20f83e9efac64ac40c4b17dc69b7a7b344d5381aed8ff3",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_HopSlow",
+      "suffix": "HopSlow",
+      "duration": 0.9,
+      "fps": 60,
+      "frames": 55,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "低速短跳",
+      "direction": null,
+      "kind": "hop",
+      "reference_speed_cm_s": 86.667,
+      "contact_duty": 0.3,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4515067769140304,
+        "ground_min_cm": 1.1302336844210004e-05,
+        "max_stance_sliding_cm": 0.00010649900666001818,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 22.77435355938906,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 55
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.045,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.225,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.27,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.45,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.495,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.675,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.72,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_HopSlow.fbx",
+      "sha256": "88d09d9090e58279b35931d6eb3ba94f083a5d26e6c78a820017844fec741d31",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.234,
+        "swing_lift_m": 0.065,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "3f0d66f0d1daa3738c50b7fb9cdbf6a6cffee54b922a0e0da5c1e2afa67ece7e",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "6d3d41fccc41814af404a0d145841120b89eeabd3048489ee6eaea5b72a2796e",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_BoundFast",
+      "suffix": "BoundFast",
+      "duration": 0.43333333333333335,
+      "fps": 60,
+      "frames": 27,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "高速奔跃",
+      "direction": null,
+      "kind": "run",
+      "reference_speed_cm_s": 277.221,
+      "contact_duty": 0.2,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.6378871696537436,
+        "ground_min_cm": 1.4995143260421173e-05,
+        "max_stance_sliding_cm": 2.6583020053671705e-05,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 48.81627473818609,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 27
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.086667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.108333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.195,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.216667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.303333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.325,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.411667,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_BoundFast.fbx",
+      "sha256": "8113e161f7f130c7e7f3fa0cd54bf84f2ed675d111ab531625d4b4c0ac31895b",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.24025819999999998,
+        "swing_lift_m": 0.095,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "ca0ee3d536418106fc9ec2e633fb57d99cb077aad1eb27079ee9d5603f57c32d",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "bb665c6a1d3b45551e46fcdd4db57cdeb211372e6939c3b37d491d2c3c1c264b",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_TurnHop_L",
+      "suffix": "TurnHop_L",
+      "duration": 0.45,
+      "fps": 60,
+      "frames": 28,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右调整跳",
+      "direction": "left",
+      "kind": "turn",
+      "reference_speed_cm_s": 100.0,
+      "contact_duty": 0.68,
+      "contact_offsets": {
+        "BL": 0,
+        "FL": 0.25,
+        "BR": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 2,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1676189338254122,
+        "ground_min_cm": 1.2870657428720733e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 20.314013672794403,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.0405,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.05625,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.09675,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.1125,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.153,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.16875,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.20925,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.225,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.2655,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.28125,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.32175,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.3375,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.378,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.39375,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.43425,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_TurnHop_L.fbx",
+      "sha256": "0a87fa8aa4dd5909fec4f400f24bc95f72de98f0b7be458998e662ebfa5dd300",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "a354a3a4b55c1a285331f32b98d2667331f7f34a36f99e26a975dd48feea08a6",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_TurnHop_R",
+      "suffix": "TurnHop_R",
+      "duration": 0.45,
+      "fps": 60,
+      "frames": 28,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "左右调整跳",
+      "direction": "right",
+      "kind": "turn",
+      "reference_speed_cm_s": 100.0,
+      "contact_duty": 0.68,
+      "contact_offsets": {
+        "BL": 0,
+        "FL": 0.25,
+        "BR": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 2,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1338865613321454,
+        "ground_min_cm": 1.1141268885239697e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 19.1043975938666,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.0405,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.05625,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.09675,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.1125,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.153,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.16875,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.20925,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Contact",
+            "time_s": 0.225,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.2655,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.28125,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.32175,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.3375,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.378,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.39375,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.43425,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_TurnHop_R.fbx",
+      "sha256": "90b3464ab3f3a2f573a711a6f0df8812914d1bdc739a16de02e274580c4a610d",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "15766d78f464b0a9a4aed1dac81e1e824c320b6ca4a1a5407e4fe0c32baa629f",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_StartBound",
+      "suffix": "StartBound",
+      "duration": 0.26666666666666666,
+      "fps": 60,
+      "frames": 17,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "收身蹬出",
+      "direction": null,
+      "kind": "start",
+      "reference_speed_cm_s": 450.484,
+      "contact_duty": 0.2,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5732750310193746,
+        "ground_min_cm": 1.4995143260421173e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 55.16134523266586,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 17
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.053333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.066667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.12,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.133333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.186667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.2,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.253333,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_StartBound.fbx",
+      "sha256": "f2795b0d6ccc1ab7b87aa9ce0b730660897820efd90db505651b86d87b5f2ab0",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.24025819999999998,
+        "swing_lift_m": 0.095,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "4a0c38129a3a5d9a571000cb440d1ea893255b5faf34361d604d089a2b192da7",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "1e63b35096fd168fc9c73e0f86ecec05ad02d79719a2df94447c83129100987e",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_StopCrouch",
+      "suffix": "StopCrouch",
+      "duration": 0.38333333333333336,
+      "fps": 60,
+      "frames": 24,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "落足收身",
+      "direction": null,
+      "kind": "stop",
+      "reference_speed_cm_s": 313.38,
+      "contact_duty": 0.2,
+      "contact_offsets": {
+        "BL": 0.0,
+        "BR": 0.25,
+        "FL": 0.5,
+        "FR": 0.75
+      },
+      "gait_cycles": 1,
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.5732750310193746,
+        "ground_min_cm": 1.4995143260421173e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 47.44725347140243,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 24
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [
+          {
+            "name": "BL_Contact",
+            "time_s": 0.0,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BL_Lift",
+            "time_s": 0.076667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Contact",
+            "time_s": 0.095833,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FR_Lift",
+            "time_s": 0.1725,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Contact",
+            "time_s": 0.191667,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "FL_Lift",
+            "time_s": 0.268333,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Contact",
+            "time_s": 0.2875,
+            "kind": "visual_contact"
+          },
+          {
+            "name": "BR_Lift",
+            "time_s": 0.364167,
+            "kind": "visual_contact"
+          }
+        ],
+        "marker_authority": "offline visual gait phase reference; not gameplay triggers"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_StopCrouch.fbx",
+      "sha256": "eb618236747a7f10ceb1c96bfd5a6908260ad51f9ee0d5e494ac934894a638f5",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "gait_revision": {
+        "left_right_separation_cycles": 0.25,
+        "stride_m": 0.24025819999999998,
+        "swing_lift_m": 0.095,
+        "step_order": "BR → BL → FR → FL",
+        "reference_speed_usage": "constant at loop rate; start/stop use actor acceleration and amplitude envelope",
+        "independent_targets": true
+      },
+      "correction_20261001_r2": {
+        "changes": [
+          "Four separate foot trajectories with quarter-cycle left/right timing; no paired-leg lock"
+        ],
+        "baseline_fbx_sha256": "f42da3865e83031d239c04bd0d1a7951fc1e0de5a6b54d616bf0deb64f807b41",
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "fixed-length analytic connected segments; upright distal shaft and distinct proximal hinge",
+          "slight medial joint inset (3 degree design limit); sagittal forward/back swing",
+          "reduced excessive torso compression; compact calibrated shaft skinning"
+        ],
+        "baseline_fbx_sha256": "de2d33fc656b53804893da9e2ec8fd0f19b829499a8f8e90943974804ab110ca",
+        "foot_tracks_contact_timing_reference_speed": "preserved",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Alert",
+      "suffix": "Alert",
+      "duration": 1.6,
+      "fps": 30,
+      "frames": 49,
+      "loop": true,
+      "hold": false,
+      "priority": "P0",
+      "description": "紧张定向",
+      "direction": null,
+      "kind": "alert",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.0427040444291753,
+        "ground_min_cm": -1.4849803164906916e-06,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 1.1716809433957822,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Alert.fbx",
+      "sha256": "5c21c8b89aaec2a1df6b8f441d6c035f0a66a83ac97ffe66e9283bf337eb246d",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "d245b013a712a7a84ead5cde27429ae4756dfeb6b560bd3e6414e4c248795bf9",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Nibble_In",
+      "suffix": "Nibble_In",
+      "duration": 0.3333333333333333,
+      "fps": 30,
+      "frames": 11,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "低头啃食",
+      "direction": null,
+      "kind": "forage",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.510675259832898,
+        "ground_min_cm": 2.5587215901623495e-06,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 14.785530939774066,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Nibble_In.fbx",
+      "sha256": "669c539ef7977a2be984cfa9c315193b5117bf2adc7b8a76ef9f80331d0fb122",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "4fc10ab44b197aa3ae41ab41ecfd89873061f4fc7091ef771d95581b322d37b3",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Nibble_Loop",
+      "suffix": "Nibble_Loop",
+      "duration": 1.8,
+      "fps": 30,
+      "frames": 55,
+      "loop": true,
+      "hold": false,
+      "priority": "P1",
+      "description": "低头啃食",
+      "direction": null,
+      "kind": "forage",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.516914532321946,
+        "ground_min_cm": -9.319478522229474e-08,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.5188863813946806,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Nibble_Loop.fbx",
+      "sha256": "229057e6f4d89f16320ff2b74dfb7dc06d2e91cc2ef89d36354cee517ebad980",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "20e8c61b8237926aa3556e6d75b284dbb9a718474583c219a1a0cf11215825a9",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Nibble_Out",
+      "suffix": "Nibble_Out",
+      "duration": 0.3333333333333333,
+      "fps": 30,
+      "frames": 11,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "低头啃食",
+      "direction": null,
+      "kind": "forage",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.510675259832898,
+        "ground_min_cm": 2.5587215901623495e-06,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 15.838229210477733,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Nibble_Out.fbx",
+      "sha256": "c3520e1a2276485d016ac6ff3c15763ebe48013f63ee0ce70dd3c7b7ee96942f",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "744a90fd635233c7ac19f2d56f06f1d22ce585286ef4ebe5a9eb85986233f0e0",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Groom",
+      "suffix": "Groom",
+      "duration": 1.7333333333333334,
+      "fps": 30,
+      "frames": 53,
+      "loop": false,
+      "hold": false,
+      "priority": "P1",
+      "description": "舔拭与梳理",
+      "direction": null,
+      "kind": "groom",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.4738443846716152,
+        "ground_min_cm": 1.1131370314387823e-05,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 4.907352653874509,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Groom.fbx",
+      "sha256": "d7e7effd5bee45313de275c9612a9eeb8a26a7a7df37b0a75c970f16d9920b38",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "889cdad77d421b0efa6502e0151a481875b77460109e22864a9766a65d0b4cf5",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Rest",
+      "suffix": "Rest",
+      "duration": 3.0,
+      "fps": 30,
+      "frames": 91,
+      "loop": true,
+      "hold": false,
+      "priority": "P1",
+      "description": "低伏休息",
+      "direction": null,
+      "kind": "rest",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.2591208636237043,
+        "ground_min_cm": 0.029996901866979897,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.282548415393325,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 91
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Rest.fbx",
+      "sha256": "b4de2f5f015dee8c5b6bf09f28e9eeac8c07e87e406a977ce3933d8df9ee5708",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "a957a1780d404db9d446c23560d63fe9ed68f70c37be0df501e7c1afd94b215b",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Hit_L",
+      "suffix": "Hit_L",
+      "duration": 0.23333333333333334,
+      "fps": 60,
+      "frames": 15,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "侧向受击",
+      "direction": "left",
+      "kind": "hit",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.2272556764433518,
+        "ground_min_cm": -5.884108134068811e-06,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.7008864558717893,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Hit_L.fbx",
+      "sha256": "5d796d32b9289cebebafc27820f68130a5b98a804ec958acebdb647c502ba0e1",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "6a7dfbff4869817e424df92814d2acdb4f3d8392d739532e985e7af9dd8bc4c1",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Hit_R",
+      "suffix": "Hit_R",
+      "duration": 0.23333333333333334,
+      "fps": 60,
+      "frames": 15,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "侧向受击",
+      "direction": "right",
+      "kind": "hit",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.2272556764433518,
+        "ground_min_cm": -5.453422602386127e-07,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 3.5116004347135434,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Hit_R.fbx",
+      "sha256": "151b40b33aefd0aac562ec26a2017eecee5d4794e4bd433214e5445449392fbd",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "9fb0b46893e7f2c9c9c798ad16b1bb03393ae72143641e88412b4e47e027d9c5",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Collapse_L",
+      "suffix": "Collapse_L",
+      "duration": 0.6,
+      "fps": 60,
+      "frames": 37,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "失力侧倒",
+      "direction": "left",
+      "kind": "collapse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1566167834881238,
+        "ground_min_cm": 0.029993057250976562,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 4.953403450010362,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 37
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Collapse_L.fbx",
+      "sha256": "745c8742aac0e1a27824312530fac7ff66167ceb113c22e6f57ead4e7a13c52f",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Legs lose support before side settling; corpse endpoint preserved"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "a89aa829f521975d9edb73618e790f9c67f2d7be699b61ec7a57775178805ee3",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_Collapse_R",
+      "suffix": "Collapse_R",
+      "duration": 0.6,
+      "fps": 60,
+      "frames": 37,
+      "loop": false,
+      "hold": false,
+      "priority": "P0",
+      "description": "失力侧倒",
+      "direction": "right",
+      "kind": "collapse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.156618654355156,
+        "ground_min_cm": 0.029984116554260254,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 4.953245389332366,
+        "review_flags": [],
+        "mesh_sampling": "all_frames",
+        "fbx_mesh_sample_count": 37
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_Collapse_R.fbx",
+      "sha256": "937bf7f48f6d45792f3002e8da1a4c2932c27093d167d7fb858b85ea142d9d3a",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "refinement_20261001": {
+        "changes": [
+          "Legs lose support before side settling; corpse endpoint preserved"
+        ],
+        "qa": "PASS_CURRENT_ASSET_CHECKS"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "c7fbc74902cd36c3b192515659a53076c3e903b51e4b7b4f387795e65ce319b1",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_CorpseHold_L",
+      "suffix": "CorpseHold_L",
+      "duration": 1.0,
+      "fps": 30,
+      "frames": 31,
+      "loop": false,
+      "hold": true,
+      "priority": "P0",
+      "description": "倒地保持",
+      "direction": "left",
+      "kind": "corpse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.156616927494209,
+        "ground_min_cm": 0.029997527599334717,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0.05595291023658669,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_CorpseHold_L.fbx",
+      "sha256": "fa31d053634e6903e3a3cb3f5ff84cda3b316b0ac51b802bf85fc91a55e3c46c",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "cb96f13e59d36d59d7ede30d18a133b91e80fd795f161b2f4427db80dc65778e",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    },
+    {
+      "name": "AN_hare_CorpseHold_R",
+      "suffix": "CorpseHold_R",
+      "duration": 1.0,
+      "fps": 30,
+      "frames": 31,
+      "loop": false,
+      "hold": true,
+      "priority": "P0",
+      "description": "倒地保持",
+      "direction": "right",
+      "kind": "corpse",
+      "qa": {
+        "status": "PASS",
+        "revision": "2026-10-01 R3",
+        "max_skin_p99": 1.1566168014092095,
+        "ground_min_cm": 0.029984116554260254,
+        "max_stance_sliding_cm": null,
+        "fixed_root_drift_cm": 0.0,
+        "max_scale_error": 0,
+        "max_adjacent_world_rotation_deg": 0,
+        "review_flags": [],
+        "mesh_sampling": "five_times",
+        "fbx_mesh_sample_count": 5
+      },
+      "skeleton_signature": "65a4e3e0796d00cb236f048478d90c4421d4a48e216eab1e455d589abff43d12",
+      "events": {
+        "gameplay_notifies": [],
+        "damage_authority": "existing gameplay only",
+        "authored_markers": [],
+        "marker_authority": "offline visual reference; no automatic gameplay trigger"
+      },
+      "file": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\clips\\AN_hare_CorpseHold_R.fbx",
+      "sha256": "ee92163db51d7d1b539bbebbcb18990baeafe3e4f8a26a7c1d37b9ff468faadb",
+      "fbx_bind_reference_proxy": true,
+      "delivery_review": {
+        "state": "资产检查通过",
+        "reasons": [],
+        "native_source_verified": true,
+        "fbx_source_verified": true,
+        "numeric_qa": "PASS",
+        "visual_check": "current source start/middle/end renders available; gait front/side phase images reviewed; no gameplay certification"
+      },
+      "correction_20261001_r3": {
+        "changes": [
+          "original deformation retargeted to recentered limb bind; paired skin rechecked"
+        ],
+        "baseline_fbx_sha256": "feaa88f1024c4d429a53e5f8d0edce1ffb02c58d01c18f28757a5077f484195c",
+        "foot_tracks_contact_timing_reference_speed": "not a gait",
+        "qa": "PASS"
+      }
+    }
+  ],
+  "status": "authored",
+  "visual_qa": "CURRENT_SOURCE_RENDERED_AND_GAIT_PHASES_REVIEWED",
+  "ue_import": "PASS",
+  "provenance": {
+    "mesh": "existing user Tripo source",
+    "motion": "species-specific authored curves and contact IK",
+    "cloud_motion": "cloud_motion.fbx is retained as an unapproved reference; not substituted for authored action coverage",
+    "license": "User-supplied/generated model; original authored motion, no third-party mocap"
+  },
+  "fbx_units": "centimetres; identity object and root scales",
+  "reference_pose_calibration": {
+    "reference_action": "AN_hare_IdleCrouch",
+    "world_joint_preservation_error_m": 3.4142849556772706e-07,
+    "floor_correction_by_clip_m": {
+      "AN_hare_IdleCrouch": 0,
+      "AN_hare_Scan": 0,
+      "AN_hare_HopSlow": 0,
+      "AN_hare_BoundFast": 0,
+      "AN_hare_TurnHop_L": 0,
+      "AN_hare_TurnHop_R": 0,
+      "AN_hare_StartBound": 0,
+      "AN_hare_StopCrouch": 0,
+      "AN_hare_Alert": 0,
+      "AN_hare_Nibble_In": 0,
+      "AN_hare_Nibble_Loop": 0,
+      "AN_hare_Nibble_Out": 0,
+      "AN_hare_Groom": 0,
+      "AN_hare_Rest": 1.5828087925913578e-07,
+      "AN_hare_Hit_L": 0,
+      "AN_hare_Hit_R": 0,
+      "AN_hare_Collapse_L": 0.03015745668411255,
+      "AN_hare_Collapse_R": 0.0035303035259246825,
+      "AN_hare_CorpseHold_L": 0.03012701361179352,
+      "AN_hare_CorpseHold_R": 0.0035303035259246825
+    },
+    "mesh_vertices_uv_weights": "unchanged",
+    "bone_rest": "calibrated",
+    "later_pose_refinements": [
+      "AN_hare_Collapse_L",
+      "AN_hare_Collapse_R",
+      "AN_hare_CorpseHold_L",
+      "AN_hare_CorpseHold_R"
+    ]
+  },
+  "refinement_20261001": {
+    "backup": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\refinement_20261001\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare",
+    "revised_actions": [
+      "AN_hare_Scan",
+      "AN_hare_Collapse_L",
+      "AN_hare_Collapse_R"
+    ],
+    "skin_repair": {},
+    "baked_constraints_removed": true,
+    "cloud_credits_used": 0,
+    "vertex_topology_uv": "preserved",
+    "original_guidance_sha256": "f20d6d012f36563174136972492853fae888dcca31bc0bbefa95ccf155777cc1",
+    "updated_guidance_sha256": "130c0e0b595b90cdeccb0811ab58d199691d3cb4eb68685afc464b9feb9344e1",
+    "checks": "HISTORICAL_R1_SUPERSEDED_BY_R2",
+    "historical_record": true
+  },
+  "correction_20261001_r2": {
+    "baseline_backup": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r2\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare",
+    "changed_actions": [
+      "AN_hare_HopSlow",
+      "AN_hare_BoundFast",
+      "AN_hare_StartBound",
+      "AN_hare_StopCrouch"
+    ],
+    "head_bind": null,
+    "rest_limb_planes": null,
+    "cloud_credits_used": 0,
+    "baked_constraints_removed": true,
+    "checks": "PASS_CURRENT_ASSET_CHECKS",
+    "blend_sha256": "246c34519b01b3d6bf7a39963836979cfbe0f7ce297c5905631967d7357ae747",
+    "skeletal_sha256": "f5e888bd0fde76ab25d139a0c8a943b5393a033f23c1d5bde18c77256ba38de8",
+    "guidance_sha256": "71759b9af4c0f97ab0f8f16708ec0fb9916af18540eedbd19d455cd2c03206ab",
+    "targeted_qa": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r2\\targeted_qa.json",
+    "native_qa": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare\\ue_import_qa.json"
+  },
+  "current_revision": "2026-10-01 R2",
+  "correction_20261001_r3": {
+    "revision": "2026-10-01 R3",
+    "baseline": "E:\\AiAgent\\XLingGame\\Resource\\Tripo\\动物\\动作\\制作成果\\corrections_20261001_r3\\backup\\制作成果\\Hearthward\\animal_motion_20260930\\assets\\motion\\hare",
+    "changed_actions": [
+      "AN_hare_IdleCrouch",
+      "AN_hare_Scan",
+      "AN_hare_HopSlow",
+      "AN_hare_BoundFast",
+      "AN_hare_TurnHop_L",
+      "AN_hare_TurnHop_R",
+      "AN_hare_StartBound",
+      "AN_hare_StopCrouch",
+      "AN_hare_Alert",
+      "AN_hare_Nibble_In",
+      "AN_hare_Nibble_Loop",
+      "AN_hare_Nibble_Out",
+      "AN_hare_Groom",
+      "AN_hare_Rest",
+      "AN_hare_Hit_L",
+      "AN_hare_Hit_R",
+      "AN_hare_Collapse_L",
+      "AN_hare_Collapse_R",
+      "AN_hare_CorpseHold_L",
+      "AN_hare_CorpseHold_R"
+    ],
+    "gait_actions": [
+      "AN_hare_HopSlow",
+      "AN_hare_BoundFast",
+      "AN_hare_StartBound",
+      "AN_hare_StopCrouch"
+    ],
+    "skin": {
+      "changed_vertices": 5015,
+      "limbs": {
+        "FL": 3738,
+        "FR": 3485,
+        "BL": 0,
+        "BR": 0
+      },
+      "strength": 0.0,
+      "method": "piecewise rigid shaft; adjacent joints only; compact smoothstep blend; linear skinning",
+      "chain_strengths": {
+        "FL": 1.0,
+        "FR": 1.0,
+        "BL": 0.0,
+        "BR": 0.0
+      },
+      "torso_repair": {
+        "changed_vertices": 22167,
+        "full_repair_vertices": 22300,
+        "gain": 0.3,
+        "method": "30 percent measured torso reassignment; normalized at most eight influences"
+      }
+    },
+    "joint_rebind": [
+      {
+        "limb": "FL",
+        "bone": "0_Left_Limb_1",
+        "before_cm": [
+          17.39225536584854,
+          8.851663768291473,
+          28.877300024032593
+        ],
+        "after_cm": [
+          17.042258381843567,
+          8.994673937559128,
+          28.877300024032593
+        ],
+        "surface_vertices": 271
+      },
+      {
+        "limb": "FL",
+        "bone": "0_Left_Limb_2",
+        "before_cm": [
+          14.461874961853027,
+          10.364638268947601,
+          15.70785641670227
+        ],
+        "after_cm": [
+          14.795617759227753,
+          5.884382128715515,
+          15.70785641670227
+        ],
+        "surface_vertices": 266
+      },
+      {
+        "limb": "FL",
+        "bone": "0_Left_Limb_0",
+        "before_cm": [
+          15.862715244293213,
+          3.69122251868248,
+          33.64923894405365
+        ],
+        "after_cm": [
+          15.862715244293213,
+          9.151571989059448,
+          33.64923894405365
+        ],
+        "surface_vertices": 192,
+        "role": "scapular attachment recentered on upper foreleg"
+      },
+      {
+        "limb": "FR",
+        "bone": "0_Right_Limb_1",
+        "before_cm": [
+          15.787206590175629,
+          -9.031858295202255,
+          28.150123357772827
+        ],
+        "after_cm": [
+          15.718168020248413,
+          -9.022167325019836,
+          28.150123357772827
+        ],
+        "surface_vertices": 266
+      },
+      {
+        "limb": "FR",
+        "bone": "0_Right_Limb_2",
+        "before_cm": [
+          13.40102106332779,
+          -9.209126979112625,
+          15.105672180652618
+        ],
+        "after_cm": [
+          14.887967705726624,
+          -6.292542815208435,
+          15.105672180652618
+        ],
+        "surface_vertices": 249
+      },
+      {
+        "limb": "FR",
+        "bone": "0_Right_Limb_0",
+        "before_cm": [
+          15.548978745937347,
+          -3.2317347824573517,
+          32.74617791175842
+        ],
+        "after_cm": [
+          15.548978745937347,
+          -9.562990069389343,
+          32.74617791175842
+        ],
+        "surface_vertices": 148,
+        "role": "scapular attachment recentered on upper foreleg"
+      },
+      {
+        "limb": "BL",
+        "bone": "1_Left_Limb_1",
+        "before_cm": [
+          -18.265944719314575,
+          1.974194496870041,
+          17.161911725997925
+        ],
+        "after_cm": [
+          -15.695421397686005,
+          9.826274961233139,
+          19.710737466812134
+        ],
+        "surface_vertices": 344
+      },
+      {
+        "limb": "BL",
+        "bone": "1_Left_Limb_2",
+        "before_cm": [
+          -17.460747063159943,
+          15.976360440254211,
+          12.585099041461945
+        ],
+        "after_cm": [
+          -17.922064661979675,
+          10.83017811179161,
+          11.776617169380188
+        ],
+        "surface_vertices": 278
+      },
+      {
+        "limb": "BR",
+        "bone": "1_Right_Limb_1",
+        "before_cm": [
+          -15.056882798671722,
+          -18.758738040924072,
+          22.259563207626343
+        ],
+        "after_cm": [
+          -14.572454988956451,
+          -8.528824895620346,
+          19.710737466812134
+        ],
+        "surface_vertices": 389
+      },
+      {
+        "limb": "BR",
+        "bone": "1_Right_Limb_2",
+        "before_cm": [
+          -15.660420060157776,
+          -8.550724387168884,
+          10.968136042356491
+        ],
+        "after_cm": [
+          -18.19305717945099,
+          -10.692942887544632,
+          11.776617169380188
+        ],
+        "surface_vertices": 315
+      }
+    ],
+    "skeleton_rest": "limb pivots recentered on measured native skin; all paired actions rebaked",
+    "geometry_uv_materials": "unchanged",
+    "foot_tracks_contact_timing": "unchanged",
+    "cloud_credits_used": 0,
+    "gameplay_integration": "NOT_RUN",
+    "qa": "PASS",
+    "source_blend_sha256": "d8efa09d158df5975f5c5b9eb30bc5f5aa3a104cb910b20ab541d994a57c1211",
+    "skeletal_fbx_sha256": "5ebaea6cdbc3c6e5be17c6e916c414d85e95edd569a12b4cbef8257f0bdb7353",
+    "native_core_pose_match": "PASS",
+    "supplementary_all_bone_rotation_match": "PASS"
+  }
+}

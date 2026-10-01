@@ -1,4 +1,6 @@
 #include "HearthwardSaveGame.h"
+#include "HearthwardSaveCompatibility.h"
+#include "../Update/HearthwardUpdateSubsystem.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Nature/HearthwardNatureState.h"
 #include "../Gameplay/HearthwardProgression.h"
@@ -58,11 +60,15 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
     if (Bytes.Num() < sizeof(Header) || Bytes.Num() > 64 * 1024 * 1024) { Error = TEXT("存档大小无效"); return false; }
     FMemory::Memcpy(Header, Bytes.GetData(), sizeof(Header));
     const int32 Length = Bytes.Num() - sizeof(Header);
-    if ((Header[0] != Magic && Header[0]!=Schema7Magic && Header[0]!=Schema6Magic && Header[0]!=Schema5Magic && Header[0]!=LegacyMagic && Header[0]!=PreviousMagic) || Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
+    if (Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
     { Error = TEXT("存档完整性校验失败"); return false; }
+    if(Header[0]!=Magic && Header[0]!=Schema7Magic && Header[0]!=Schema6Magic && Header[0]!=Schema5Magic && Header[0]!=LegacyMagic && Header[0]!=PreviousMagic)
+    {Error=TEXT("此存档格式不受当前版本支持。请同步更新；不要删除进度，原档已保留。");return false;}
     TArray<uint8> Payload;
     Payload.Append(Bytes.GetData() + sizeof(Header), Length);
     Out = Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
+    if(Out && HearthwardVersion::IsNewer(Out->WriterVersion,HearthwardVersion::Current))
+    {Error=FString::Printf(TEXT("此进度由较新版本 %s 保存，请同步更新后继续；原档已保留。"),*Out->WriterVersion);Out=nullptr;return false;}
 
     if(Out && Header[0]==Schema7Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=7;
     if(Out && Header[0]==Schema6Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=6;
@@ -76,6 +82,10 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
 
     if(Out && Header[0]==PreviousMagic && Out->Schema==HearthwardSave::CurrentSchema
         && !Out->Points.ContainsByPredicate([](const auto& P){return P.World.SurvivalVersion!=0;})) Out->Schema=3;
+
+    // Before schema 6, the camp was stored as gameplay origin/tier and building
+    // actors. Preserve that restore path; absence is not a damaged economy blob.
+    const bool LegacyCampFormat = Out && Header[0]!=Magic && Out->Schema>=1 && Out->Schema<=5;
 
     if(Out && Header[0]==LegacyMagic && Out->Schema==1)
     {
@@ -154,7 +164,26 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
         {
             if(!P.World.NaturalWorld)continue;
             FHearthwardCampState Camp;
-            if(!FHearthwardCampState::Parse(P.World.CampEconomy,Camp) || Camp.Camps.IsEmpty()){Error=TEXT("旧营地快照无效");Out=nullptr;return false;}
+            if(LegacyCampFormat && P.World.CampEconomy.IsEmpty())
+            {
+                TSharedPtr<FJsonObject> Gameplay;
+                FVector Position=P.World.Player.GetLocation();
+                if(!P.World.Gameplay.IsEmpty())
+                {
+                    if(!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(P.World.Gameplay),Gameplay) || !Gameplay
+                        || !Position.InitFromString(HearthwardData::Text(Gameplay,TEXT("origin"))))
+                    {Error=TEXT("旧营地位置无效，原文件已保留");Out=nullptr;return false;}
+                    Position+=HearthwardData::Position(HearthwardData::Find(TEXT("locations"),TEXT("camp")));
+                    Camp.Tier=int32(HearthwardData::Number(Gameplay,TEXT("campTier"),1));
+                }
+                Camp.Calendar=P.World.CalendarMinutes;
+                Camp.AddCamp(TEXT("camp"),Position);
+                if(!Camp.Validate()){Error=FString::Printf(TEXT("存档点 %s 的旧营地等级、位置或世界时间不符合当前规则；原档已保留，请更新或恢复备份。"),*P.SaveId.ToString());Out=nullptr;return false;}
+                // Keep CampEconomy absent: Restore rebuilds legacy facilities from
+                // their saved actors with zero paid cost, without inventing refunds.
+            }
+            else if(!FHearthwardCampState::Parse(P.World.CampEconomy,Camp) || Camp.Camps.IsEmpty())
+            {Error=FString::Printf(TEXT("存档点 %s 的营地经济记录缺失或损坏，无法安全恢复营地、设施与生产队列；原档已保留，请更新或恢复备份。"),*P.SaveId.ToString());Out=nullptr;return false;}
             FHearthwardCampaignState Campaign;Campaign.Initialize(true,Camp.Hometown);
             for(const auto& Site:Camp.Camps)Campaign.Positions.Add(Site.Id,Site.Position);
             for(FName Id:Camp.Rescued)
@@ -168,7 +197,7 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
         }
         Out->Schema=8;
     }
-    if (!Out || !HearthwardSave::Validate(*Out)) { Error = TEXT("存档版本或快照状态无效"); Out = nullptr; return false; }
+    if (!Out || !HearthwardSave::Validate(*Out)) { Error = Out?HearthwardSave::Diagnose(*Out):TEXT("存档无法解析，请恢复备份；原档已保留。"); Out = nullptr; return false; }
     return true;
 }
 }
@@ -275,14 +304,21 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
 
 bool HearthwardSave::Read(const FString& Path, UHearthwardSaveGame*& Out, FString& Error)
 {
+    Out=nullptr;
     TArray<uint8> Bytes;
     if (!FFileHelper::LoadFileToArray(Bytes, *Path)) { Error = TEXT("无法读取存档池"); return false; }
     return Decode(Bytes,Out,Error);
 }
+bool HearthwardSave::ReadBytes(const TArray<uint8>& Bytes,UHearthwardSaveGame*& Out,FString& Error)
+{ Out=nullptr;return Decode(Bytes,Out,Error); }
 
 bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FString& Error)
 {
     if (!Pool || !Validate(*Pool)) { Error = TEXT("拒绝写入无效快照"); return false; }
+    if(HearthwardVersion::IsNewer(Pool->WriterVersion,HearthwardVersion::Current))
+    {Error=TEXT("请同步更新后保存，当前程序不能覆盖较新版本进度。");return false;}
+    Pool=DuplicateObject<UHearthwardSaveGame>(Pool,GetTransientPackage());
+    Pool->WriterVersion=HearthwardVersion::Current;
     TArray<uint8> Payload, Bytes;
     if (!UGameplayStatics::SaveGameToMemory(Pool, Payload)) { Error = TEXT("快照序列化失败"); return false; }
     const uint32 Header[] = {0x48575338, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
@@ -297,6 +333,16 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
     {
         TArray<uint8> Original;if(!FFileHelper::LoadFileToArray(Original,*Path))return false;
         uint32 Previous=0;if(Original.Num()>=4)FMemory::Memcpy(&Previous,Original.GetData(),4);
+        UHearthwardSaveGame* OriginalPool=nullptr;
+        if(Original.Num()>12)
+        {
+            TArray<uint8> OldPayload;OldPayload.Append(Original.GetData()+12,Original.Num()-12);
+            OriginalPool=Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(OldPayload));
+        }
+        // One content-addressed backup on upgrade, not one new file per autosave.
+        FString VersionBackup;
+        if((Previous!=0x48575338 || !OriginalPool || OriginalPool->WriterVersion!=HearthwardVersion::Current)
+            && !HearthwardSave::Backup(Path,VersionBackup,Error))return false;
         const FString Backup=Path+((Previous==0x48575336 || Previous==0x48575337)?TEXT(".pre-schema8"):TEXT(".pre-schema6"));
         if(Previous!=0x48575338 && !IFileManager::Get().FileExists(*Backup) && !FFileHelper::SaveArrayToFile(Original,*Backup))
         {Error=TEXT("无法保留旧存档备份，原档未替换");return false;}
