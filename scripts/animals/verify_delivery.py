@@ -24,7 +24,10 @@ def main():
     args = parser.parse_args()
     failures = []
     archive = json.loads((GAME/'docs/qa/project-progress-20261002/source_archive.json').read_text('utf-8'))
+    tracked = set(subprocess.check_output(['git','ls-files','-z'],cwd=GAME).decode('utf-8').split('\0'))
     for record in archive['files']:
+        if record['path'] not in tracked:
+            failures.append('Archived file is missing from Git: '+record['path'])
         path = (GAME/record['path']).resolve()
         if not path.is_relative_to(GAME) or not path.is_file():
             failures.append('Missing archived file: '+record['path'])
