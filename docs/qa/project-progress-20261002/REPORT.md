@@ -12,9 +12,24 @@ GameFactory的本机新增制作代码与5个已跟踪适配器差异归档为�
 
 ## 验证
 
-实现提交、当前UE构建与运行证据将在测试完成后填入此报告。提交前已执行仓库文档／范围自检、33项Python工具测试和制作包校验；制作包核对2222个归档条目、14种、303段及1358项预览引用，均通过。上述提交前检查不作为最终实现SHA的测试声明。
+最终UE受测实现提交为`dc7f34bc85dc64ebc23ca4e8d69745922e2bb749`；之后的源文件归档完整性和文档提交未改变Source、动作配置、地图、479个动物／演示资产或编译DLL，当前比对见[verification-binding.json](verification-binding.json)。Python制作包校验按其报告中的运行时HEAD单独绑定。
 
-原动物报告的199/199与6/6属于原动物分支本地指纹；更新兼容报告的Shipping／PIE属于其原受测源码。整合版使用新的构建和运行报告，不将旧结果直接称为当前PASS。
+| 检查 | 实际结果 | 证据 |
+|---|---|---|
+| UE 5.8.2 Editor Development构建 | 通过，返回码0；整合构建后重新编译迁移测试 | [build_result.json](build_result.json) |
+| 全部Hearthward原生测试 | 70/70通过，失败／未运行／跳过均0 | [regression_result.json](regression_result.json)、[automation/20261002_010839](automation/20261002_010839) |
+| D3D有渲染动物独立游戏 | 199/199通过，42张截图；14种动物速度、步态、边界、感知、伤害、死亡和重置 | [runtime_result.json](runtime_result.json)、[当前运行](runtime_c49075ee2cd3) |
+| 合并后真实Editor PIE界面 | 28/28通过；存档冲突分页、取消不写、确认备份／清理、设置8类及返回标题 | [ui-result.json](ui-result.json)、[5张截图](ui-screenshots) |
+| 制作包恢复与Git覆盖 | 2222个归档条目、14种、303段、1358项预览引用通过；所有清单条目均受Git跟踪 | [delivery-validation.json](delivery-validation.json) |
+| Python仓库工具测试 | 33/33通过 | [tool-tests.txt](tool-tests.txt) |
+| 仓库文档与任务范围 | 0错误，最新批准快照为`4e2091d207027b9bf92356dc25b082b453b88785` | [repository-check.txt](repository-check.txt)、[scope-check.txt](scope-check.txt) |
+| 当前HEAD Git LFS对象与指针 | `git lfs fsck --objects --pointers HEAD`通过 | 本次同步终端记录，最终确认另记推送结果 |
+
+初轮70项回归有1项历史断言失败：047测试要求清空旧技能，与当前已授权的兼容技能保留规则不一致。本次将其改为检查兼容技能和已知配方保留，继续保留实例身份、装备耐久及不补血／耐力的检查；没有删除或跳过测试。初轮报告保留为[regression-before-test-alignment.json](regression-before-test-alignment.json)，重新构建后70项全部通过。
+
+归档核对另发现主角制作目录原`.gitignore`排除了outputs，已移除该项并明确检查每条归档记录受Git跟踪；19个主角模型／动作／纹理和元数据文件已纳入。原本机环境与密钥忽略规则保留。WebP的LFS规则仅应用到本次新归档文件，未迁移旧预览或改写已有历史。
+
+原动物报告的199/199与6/6属于原动物分支本地指纹；更新兼容报告的历史Shipping／PIE属于其原受测源码。当前结果为上述独立整合检查。引擎初始化阶段既有`Condition failed`诊断仍保留在原生报告stdout；70项目标测试结果与初始化诊断分开记录，不声称整个引擎日志零错误。UI与动物验证使用隔离测试池，没有读写真实用户档或保存测试场景修改。
 
 ## 当前边界
 

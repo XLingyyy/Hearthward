@@ -31,3 +31,5 @@
 Owner明确要求将当前项目进度、建模、新增动作和制作说明全部打包PR同步GitHub。本次在隔离工作树使用`codex/project-progress-20261002`，基于远端main的PR #55（`e1c44c4`）整合当前未提交工作，原游戏工作区不切分支、不覆盖。动物制作源归档到`art_source/TASK-051/`，补齐的其他模型源在`art_source/TASK-004/Tripo/`；更新／存档兼容源码纳入同次授权。
 
 批准快照提交`76aaaa0c9495bb087d74c1efce544c00a6fccd66`用于范围检查。README、制作入口和项目状态随成果同步；测试SHA与归档清单、当前验证及推送记录见[同步报告](../qa/project-progress-20261002/REPORT.md)。旧章节的“未提交／未推送”是当时状态。PR评审、Owner观感验收、main合并及正式Release尚未完成。
+
+本次独立整合受测实现`dc7f34bc85dc64ebc23ca4e8d69745922e2bb749`：UE Editor构建、原生70/70、动物有渲染199/199及兼容／设置PIE28/28通过。源文件、DLL和479个动物／演示资产的SHA256匹配；当前制作包2222条记录、303段配对动作及1358项预览引用均受Git跟踪。初轮047旧测试断言已对齐当前保留兼容进度规则，失败证据保留。见同步报告与verification-binding.json。
