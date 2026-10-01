@@ -11,3 +11,5 @@ Editor构建通过，Experience／Survival／Combat原生7/7通过，渲染PIE51
 专用worktree可运行UE。现有Content／Resources二进制从本机LFS对象恢复读取，未编辑源资产、未取得新LFS编辑锁；有效Git差异仅有051允许路径。原Hearthward的027检出及未知改动保持原状。验证使用独立UserDir／测试存档池，宿主通过UEClient管理自己启动的进程；结束后停止测试进程。
 
 施工完成并提交推送后，状态保留Active等待Owner最终签收。Owner与Reviewer同为XLingyyy，没有伪造独立审查通过，无Issue、main合并或发布。本单可通过正常Git revert回滚；不要清理原027工作区或其他未交接文件。
+
+施工源码提交：591d3509b29c72fe64dc824fcae680d8ed1bf1e7。后续证据提交只绑定源码和交接元数据；本轮最后动作按授权推送任务分支。
