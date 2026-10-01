@@ -25,6 +25,6 @@ void UHearthwardCampSubsystem::RefreshQuartermasters()
         NPC->GetMesh()->SetRelativeTransform(Model->GetMesh()->GetRelativeTransform());NPC->GetMesh()->SetAnimInstanceClass(Model->GetMesh()->GetAnimClass());
         for(int32 I=0;I<Model->GetMesh()->GetNumMaterials();++I)NPC->GetMesh()->SetMaterial(I,Model->GetMesh()->GetMaterial(I));
         auto* Name=NewObject<UTextRenderComponent>(NPC);NPC->AddInstanceComponent(Name);Name->SetupAttachment(NPC->GetRootComponent());
-        Name->SetText(FText::FromString(TEXT("营地后勤员 · Tab → 行装管理")));Name->SetWorldSize(18);Name->SetRelativeLocation(FVector(0,0,120));Name->RegisterComponent();
+        Name->SetText(FText::FromString(TEXT("Tab")));Name->SetWorldSize(18);Name->SetRelativeLocation(FVector(0,0,120));Name->RegisterComponent();
     }
 }

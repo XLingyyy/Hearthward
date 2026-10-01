@@ -27,7 +27,7 @@ void UHearthwardCombatTargetComponent::CreateBodyCollision()
 }
 void UHearthwardCombatTargetComponent::SetCorpse()
 {
-    Health=0; ExecutionOwner.Reset(); Memory.Seen.Reset(); Awareness=TEXT("已清除");
+    Health=0; ExecutionOwner.Reset(); Memory.Seen.Reset(); Awareness=Memory.bStunned?TEXT("已击晕"):TEXT("已清除");
     if(auto* C=Cast<ACharacter>(GetOwner()))
     {
         C->GetCharacterMovement()->StopMovementImmediately(); C->GetCharacterMovement()->DisableMovement();

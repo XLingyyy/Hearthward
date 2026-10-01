@@ -30,6 +30,28 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
         }
         const int32 L=Layer+I*4+1;
+        if(E.LayoutId==TEXT("background") && (Page==TEXT("title") || Page==TEXT("settings")))
+        {
+            if(const FSlateBrush* Background=Brush(E.Asset))
+            {
+                FSlateBrush Cover=*Background;
+                const FVector2D View=G.GetLocalSize();
+                const float ImageAspect=Background->ImageSize.X/Background->ImageSize.Y;
+                const float ViewAspect=View.X/View.Y;
+                if(ViewAspect>ImageAspect)
+                {
+                    const float Crop=(1.f-ImageAspect/ViewAspect)*.5f;
+                    Cover.SetUVRegion(FBox2f(FVector2f(0,Crop),FVector2f(1,1-Crop)));
+                }
+                else
+                {
+                    const float Crop=(1.f-ViewAspect/ImageAspect)*.5f;
+                    Cover.SetUVRegion(FBox2f(FVector2f(Crop,0),FVector2f(1-Crop,1)));
+                }
+                FSlateDrawElement::MakeBox(Out,L,G.ToPaintGeometry(View,FSlateLayoutTransform()),&Cover,ESlateDrawEffect::None,FLinearColor::White);
+            }
+            continue;
+        }
         const FLinearColor Ink=E.Enabled ? (Focus?Color(TEXT("gold")):E.Color) : Color(TEXT("muted"));
         if(E.Type==TEXT("image") || (!E.Asset.IsEmpty() && E.Type!=TEXT("minimap") && E.Type!=TEXT("portrait")))
             if(auto* B=Brush(E.Asset))
@@ -52,9 +74,23 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                 }
                 else FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position,E.Size),B,ESlateDrawEffect::None,FLinearColor::White);
             }
-        if(E.Type==TEXT("panel") || E.Type==TEXT("notice"))
+        if(E.Type==TEXT("panel") || (E.Type==TEXT("notice") && Page!=TEXT("hud")))
         {
             Box(E.Position,E.Size,Color(TEXT("panel")),L); Frame(E.Position,E.Size,Color(TEXT("bronze")),L+1);
+        }
+        if(E.Type==TEXT("settingsTab") || E.Type==TEXT("settingsRow"))
+        {
+            if(Focus)
+            {
+                Box(E.Position,E.Size,FLinearColor(.09f,.065f,.035f,.9f),L);
+                Frame(E.Position,E.Size,Color(TEXT("gold"))*.8f,L+1);
+                Box(E.Position,FVector2D(3,E.Size.Y),Color(TEXT("gold")),L+2);
+            }
+            else
+            {
+                Box(E.Position,E.Size,FLinearColor(.018f,.015f,.011f,.46f),L);
+                Box(E.Position+FVector2D(1,E.Size.Y-1),FVector2D(E.Size.X-2,1),Color(TEXT("bronze"))*.45f,L+1);
+            }
         }
         if(E.Type==TEXT("button") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("slot") || E.Type==TEXT("node"))
         {
@@ -152,6 +188,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                 if(E.Align==TEXT("center") || E.Type==TEXT("keycap")) TextPosition.X+=(E.Size.X-TextWidth)*.5;
                 if(E.Type==TEXT("keycap")) TextPosition.Y+=(E.Size.Y-E.Font*1.3f)*.5;
                 const auto PG=Geometry(TextPosition,E.Size);
+                if(Page==TEXT("hud")) Box(TextPosition-FVector2D(4,1),FVector2D(TextWidth+8,E.Font*1.35f),FLinearColor(0,0,0,.32f),L+1);
                 if(Page==TEXT("hud")) FSlateDrawElement::MakeText(Out,L+2,Geometry(TextPosition+FVector2D(1,1),E.Size),Line,Font,ESlateDrawEffect::None,FLinearColor(0,0,0,.85f));
                 FSlateDrawElement::MakeText(Out,L+3,PG,Line,Font,ESlateDrawEffect::None,Ink);
                 P.Y+=E.Font*1.6f;

@@ -119,8 +119,8 @@ void AHearthwardTask028CampHouse::BeginPlay()
         AddVisual(*Name,Roof,FVector(X,Y,310),FVector(3.2,3.2,2.3),FRotator(0,X<0?180:0,0));
     }
     AddVisual(TEXT("RoofRidge"),Ridge,FVector(0,0,360),FVector(1.5,6.3,2.3));
-    // The single-view source mesh has holes around its underside and edges. A thin
-    // non-colliding roof liner carrying the imported roof material closes those gaps.
+    // The single-view source mesh has holes around its underside and edges. The liner
+    // closes those gaps and blocks the spring arm without changing ground visibility traces.
     auto* RoofMat=LoadObject<UMaterialInterface>(nullptr,RoofMaterial);
     if(!RoofMat) UE_LOG(LogTemp,Error,TEXT("TASK-028 missing roof material: %s"),RoofMaterial);
     for(const float X:{-140.f,140.f})
@@ -129,6 +129,9 @@ void AHearthwardTask028CampHouse::BeginPlay()
         auto* Liner=AddVisual(Name,Cube,FVector(X,0,310),FVector(3.4,6.2,.08),
                               FRotator(X<0?15:-15,0,0));
         if(RoofMat) Liner->SetMaterial(0,RoofMat);
+        Liner->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+        Liner->SetCollisionResponseToAllChannels(ECR_Ignore);
+        Liner->SetCollisionResponseToChannel(ECC_Camera,ECR_Block);
     }
     AddVisual(TEXT("Bed"),Bed,FVector(-130,-170,61),FVector(1.4));
     AddVisual(TEXT("CampChestAsset"),CampChestAsset,FVector(-155,140,80),FVector(.85));

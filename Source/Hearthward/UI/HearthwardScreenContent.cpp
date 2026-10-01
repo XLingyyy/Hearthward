@@ -537,40 +537,43 @@ void UHearthwardScreenWidget::ComposeMemory()
 void UHearthwardScreenWidget::ComposeHUD()
 {
     const auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+    const auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+    const auto* Combat=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardCombatComponent>();
     if(N->Busy())
     {
         Element(TEXT("text"),N->FishingStatus(),{380,650},{1100,60},20);
         if(N->IsFishing()){Element(TEXT("bar"),TEXT("张力"),{500,715},{650,18});Elements.Last().Value=N->FishingTension();Elements.Last().Color=N->FishingTension()>=.15 && N->FishingTension()<=.85?FLinearColor(.2f,.7f,.3f):FLinearColor(.8f,.2f,.1f);}
     }
-    if(const auto* C=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardCombatComponent>())
+    if(Combat)
     {
-        Element(TEXT("text"),C->Describe(),FVector2D(550,605),FVector2D(700,40),20);
-        if(C->Discovery>0) { Element(TEXT("bar"),TEXT("发现程度"),FVector2D(680,105),FVector2D(300,8)); Elements.Last().Value=C->Discovery; Elements.Last().Color=Color(TEXT("gold")); }
-        Element(TEXT("text"),TEXT("F / R 处决 · Alt 闪避 · 中键锁定 · V 感应"),FVector2D(680,790),FVector2D(820,32),16);
+        if(!Combat->Describe().IsEmpty()) Element(TEXT("text"),Combat->Describe(),FVector2D(1180,618),FVector2D(440,42),18);
+        if(Combat->Discovery>0) { Element(TEXT("bar"),TEXT("发现程度"),FVector2D(1180,668),FVector2D(440,8)); Elements.Last().Value=Combat->Discovery; Elements.Last().Color=Color(TEXT("gold")); }
+        if(Combat->CanExecute()) Element(TEXT("text"),TEXT("F 致命暗杀 · R 非致命击晕"),FVector2D(1180,694),FVector2D(460,32),17);
+        Element(TEXT("text"),TEXT("Alt 闪避 · 中键锁定 · V 感应"),FVector2D(1180,735),FVector2D(460,32),15);
     }
     const bool Natural=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled();
-    if(Natural && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active())
+    if(Natural && !Campaign->Active())
     {
         const FVector Camp=Gameplay()->LocationPosition(TEXT("camp")),Here=GetOwningPlayerPawn()->GetActorLocation();
         Element(TEXT("text"),TEXT("新营地 · 兄弟同行"),FVector2D(48,52),FVector2D(440,48),24);
         Elements.Last().Color=Color(TEXT("gold"));
         Element(TEXT("text"),FString::Printf(TEXT("距营地 %.0f 米"),FVector::Dist2D(Camp,Here)/100),FVector2D(48,103),FVector2D(340,34),18);
-        Element(TEXT("text"),TEXT("T 与弟弟交谈 · B 建造 · Esc 暂停 · F6 存档"),FVector2D(1030,872),FVector2D(630,35),18);
+        Element(TEXT("text"),TEXT("T 交谈 · F6 存档"),FVector2D(1350,869),FVector2D(290,30),15);
         if(const auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && B->NearbyWorkbench().IsValid())
             Element(TEXT("notice"),TEXT("E 使用工作台 · 制作 / 维修"),FVector2D(573,536),FVector2D(540,70),20);
     }
     if(const auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();B && !B->Feedback.IsEmpty())
     {
-        Element(TEXT("notice"),B->Feedback,FVector2D(500,625),FVector2D(680,55),18);
+        Element(TEXT("notice"),B->Feedback,FVector2D(1160,490),FVector2D(480,55),18);
         Elements.Last().Component=TEXT("hud.construction"); Elements.Last().LayoutId=TEXT("hud.construction.feedback");
     }
     auto* G=Gameplay();
-    if(!Natural || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active())
+    if(!Natural || Campaign->Active())
     {
     const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
     Element(TEXT("text"),TEXT("◇  ")+Text(Q,TEXT("name")),FVector2D(46,59),FVector2D(540,48),24); Elements.Last().Color=Color(TEXT("gold"));
-    Element(TEXT("text"),Text(Q,TEXT("objective")),FVector2D(90,102),FVector2D(780,135),17);
-    Element(TEXT("text"),FString::Printf(TEXT("◇  进度 %d / %.0f"),G->QuestProgress(G->TrackedQuest),Number(Q,TEXT("required"))),FVector2D(96,246),FVector2D(470,35),18);
+    Element(TEXT("text"),Text(Q,TEXT("objective")),FVector2D(72,102),FVector2D(500,100),17);
+    Element(TEXT("text"),FString::Printf(TEXT("◇  进度 %d / %.0f"),G->QuestProgress(G->TrackedQuest),Number(Q,TEXT("required"))),FVector2D(72,190),FVector2D(450,32),17);
     }
     const float V[]={G->Health,G->Hunger,G->Stamina},Max[]={G->MaxHealth(),100,G->MaxStamina()}; const FString C[]={TEXT("health"),TEXT("hunger"),TEXT("stamina")};
     for(int32 I=0;I<3;++I)
@@ -628,19 +631,26 @@ void UHearthwardScreenWidget::ComposeHUD()
     const FName Near=G->NearbyLocation();
     if(G->HasWaypoint) Element(TEXT("text"),FString::Printf(TEXT("◇  %.0f 米"),FVector::Dist2D(GetOwningPlayerPawn()->GetActorLocation(),G->Waypoint)/100),FVector2D(1370,267),FVector2D(200,35),18);
     if(!Near.IsNone()) Element(TEXT("text"),G->Activated.Contains(Near)?TEXT("M 查看地图 / 传送"):TEXT("E 激活路标"),FVector2D(1400,605),FVector2D(270,45),19);
-    Element(TEXT("text"),G->Feedback,FVector2D(1220,722),FVector2D(420,70),18);
-    const FName Bow=G->Equipment.FindRef(TEXT("ranged"));
-    if(!Bow.IsNone())
+    if(!G->Feedback.IsEmpty()) Element(TEXT("text"),G->Feedback,FVector2D(1180,565),FVector2D(460,66),17);
+    const bool Ranged=Combat && Combat->RangedSelected();
+    const FName ActiveWeapon=G->Equipment.FindRef(Ranged?FName(TEXT("ranged")):FName(TEXT("weapon")));
+    if(!ActiveWeapon.IsNone())
     {
-        Element(TEXT("image"),TEXT(""),FVector2D(717,798),FVector2D(75,95),18,TEXT(""),Text(Find(TEXT("items"),Bow.ToString()),TEXT("icon")));
-        Element(TEXT("text"),FString::Printf(TEXT("猎弓   %d\n右键 射击"),Inventory()->GetItemCount(TEXT("arrow"))),FVector2D(805,835),FVector2D(225,60),22);
+        const auto Item=Find(TEXT("items"),ActiveWeapon.ToString());
+        Element(TEXT("image"),TEXT(""),FVector2D(1335,787),FVector2D(60,70),18,TEXT(""),Text(Item,TEXT("icon")));
+        const FName Offhand=G->Equipment.FindRef(TEXT("offhand"));
+        const bool Guard=Text(Find(TEXT("items"),Offhand.ToString()),TEXT("equipmentKind"))==TEXT("shield") && G->EquippedDurability(TEXT("offhand"))>0;
+        const FString Controls=Ranged?TEXT("右键瞄准 · 左键射击"):Guard?TEXT("左键攻击 · 右键格挡"):TEXT("左键攻击");
+        const FString Count=Ranged?FString::Printf(TEXT(" · %d 箭"),Inventory()->GetItemCount(TEXT("arrow"))):FString();
+        Element(TEXT("text"),Text(Item,TEXT("name"))+Count+TEXT("\n")+Controls,FVector2D(1405,790),FVector2D(240,65),17);
     }
-    if(G->Skills.FindRef(TEXT("strong"))>0) Element(TEXT("text"),TEXT("Q 强力挥击"),FVector2D(720,744),FVector2D(260,35),19);
+    if(G->Skills.FindRef(TEXT("strong"))>0) Element(TEXT("text"),TEXT("Q 强力挥击"),FVector2D(1180,774),FVector2D(155,32),16);
     const int32 Time=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
-    Element(TEXT("text"),FString::Printf(TEXT("第 %d 天  %02d:%02d  晴"),Time/1440+1,(Time/60)%24,Time%60),FVector2D(1380,31),FVector2D(290,35),16);
+    const int32 Hour=(Time/60)%24;
+    Element(TEXT("text"),FString::Printf(TEXT("第 %d 天  %02d:%02d  %s"),Time/1440+1,Hour,Time%60,Hour<6 || Hour>=18?TEXT("夜"):TEXT("晴")),FVector2D(1380,31),FVector2D(290,35),16);
     if(const auto* S=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>())
     {
-        Element(TEXT("notice"),S->Describe(),FVector2D(560,660),FVector2D(570,50),20);
+        if(!S->Describe().IsEmpty()) Element(TEXT("notice"),S->Describe(),FVector2D(1100,450),FVector2D(540,50),18);
         if(S->State.Life==EHearthwardLife::Downed)
             Element(TEXT("text"),TEXT("等待弟弟救援 · Esc 菜单可立即放弃"),FVector2D(560,710),FVector2D(570,45),20);
     }
@@ -652,7 +662,7 @@ void UHearthwardScreenWidget::ComposeHUD()
             Element(TEXT("notice"),TEXT("靠近弟弟2米内，按 E 扶起（5秒）"),FVector2D(560,590),FVector2D(570,50),20);
         break;
     }
-    if(Natural && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active())
+    if(Natural && !Campaign->Active())
     {
         const bool Bench=G->Events.FindRef(TEXT("build:workbench"))>0;
         const bool Bed=G->Events.FindRef(TEXT("build:bed"))>0;
@@ -660,24 +670,24 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("notice"),FString::Printf(TEXT("营地小目标  %s工作台  %s绳索  %s床\nE 采集树木/石头/灌木 · R 仓储 · B 建造"),
             Bench?TEXT("✓"):TEXT("○"),Rope?TEXT("✓"):TEXT("○"),Bed?TEXT("✓"):TEXT("○")),FVector2D(1120,120),FVector2D(530,85),18);
     }
-    if(const auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->Active())
-        Element(TEXT("notice"),Campaign->Prompt(),FVector2D(920,310),FVector2D(720,115),18);
+    if(Campaign->Active() && !Campaign->Prompt().IsEmpty())
+        Element(TEXT("notice"),Campaign->Prompt(),FVector2D(1170,110),FVector2D(470,105),17);
     const auto* Workshop=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
     const bool NearWorkbench=Workshop && Workshop->NearbyWorkbench().IsValid();
     if(NearWorkbench)
     {
-        Element(TEXT("notice"),TEXT("E 使用工作台 · 制作 / 维修"),FVector2D(573,536),FVector2D(540,70),20);
+        Element(TEXT("notice"),TEXT("E 使用工作台 · 制作 / 维修"),FVector2D(1160,520),FVector2D(480,55),18);
         Elements.Last().Component=TEXT("hud.construction"); Elements.Last().LayoutId=TEXT("hud.workbench.prompt");
     }
     else if(!Near.IsNone() && !G->Activated.Contains(Near) &&
         Text(Find(TEXT("locations"),Near.ToString()),TEXT("kind"))!=TEXT("landmark"))
-        Element(TEXT("notice"),TEXT("E 激活路标"),FVector2D(573,536),FVector2D(540,70),20);
+        Element(TEXT("notice"),TEXT("E 激活路标"),FVector2D(1160,520),FVector2D(480,55),18);
     if(const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>())
     {
         if(const auto* Target=Interaction->GetNearestTarget();Target && !NearWorkbench &&
             (Near.IsNone() || G->Activated.Contains(Near) ||
              Text(Find(TEXT("locations"),Near.ToString()),TEXT("kind"))==TEXT("landmark")))
-            Element(TEXT("notice"),Target->GetInteractionPrompt(GetOwningPlayerPawn()),FVector2D(573,536),FVector2D(540,70),18);
+            Element(TEXT("notice"),Target->GetInteractionPrompt(GetOwningPlayerPawn()),FVector2D(1160,520),FVector2D(480,55),18);
         if(Interaction->GetStatus()==EHearthwardInteractionStatus::Ready)
             Element(TEXT("text"),Interaction->GetCompletionFeedback(),FVector2D(1220,765),FVector2D(410,40),18);
     }

@@ -13,6 +13,7 @@ public:
     UPROPERTY(BlueprintReadOnly) FString Feedback;
     bool Active() const { return !State.Phase.IsNone(); }
     UFUNCTION(BlueprintPure) bool Busy() const { return IntroRemaining>0 || !PendingFlag.IsNone() || !TravelDestination.IsNone(); }
+    bool IsPreparingWorld() const { return IntroRemaining>0 || !TravelDestination.IsNone(); }
     UFUNCTION(BlueprintPure) FString Describe() const { return State.Snapshot(); }
     UFUNCTION(BlueprintPure) FString Prompt() const;
     UFUNCTION(BlueprintCallable) bool Interact();
@@ -54,6 +55,7 @@ private:
     TArray<TWeakObjectPtr<AActor>> Scenery;
     TWeakObjectPtr<AActor> StreamSource;
     TMap<TWeakObjectPtr<class UDirectionalLightComponent>,TPair<float,FRotator>> DayLights;
+    TWeakObjectPtr<class ADirectionalLight> MoonLight;
     bool NightApplied=false;
     FName PendingFlag,TravelDestination;
     FVector ActionPosition=FVector::ZeroVector;

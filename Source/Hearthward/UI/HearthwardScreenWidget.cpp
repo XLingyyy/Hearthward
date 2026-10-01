@@ -6,6 +6,8 @@
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
+#include "HearthwardLoadingSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -49,27 +51,40 @@ TSharedRef<SWidget> UHearthwardScreenWidget::RebuildWidget()
 }
 void UHearthwardScreenWidget::InitializeScreen(AHearthwardHUD* HUD)
 {
-    OwnerHUD=HUD; SetIsFocusable(true); if(!Theme) LoadTheme(); OpenPage(TEXT("title"));
+    OwnerHUD=HUD; SetIsFocusable(true); if(!Theme) LoadTheme();
+    GConfig->GetInt(TEXT("Hearthward.Audio"),TEXT("MasterVolume"),SettingsVolume,GGameUserSettingsIni);
+    SettingsVolume=FMath::Clamp(SettingsVolume,0,100);
+    ApplyMasterVolume();
+    OpenPage(TEXT("title"));
     auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
     if(!Save->LoadPointIndex()) { Message=Save->GetStatus(); Refresh(); return; }
     if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)!=TEXT("L_HearthwardWilds")) return;
     const FString LoadId=GetWorld()->URL.GetOption(TEXT("HearthwardLoad="),TEXT(""));
+    auto* Loading=GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>();
     if(FCString::Strcmp(GetWorld()->URL.GetOption(TEXT("HearthwardNewGame="),TEXT("")),TEXT("1"))==0)
     {
-        if(Save->EnableNaturalWorld() && Save->StartNewProgress()) { OpenPage(TEXT("hud")); return; }
+        Loading->BeginLoading();
+        if(Save->EnableNaturalWorld() && Save->StartNewProgress()) { OpenPage(TEXT("hud"));Loading->FinishSession(true); return; }
     }
     else if(!LoadId.IsEmpty())
     {
+        Loading->BeginLoading();
         FGuid Id;
         if(FGuid::Parse(LoadId,Id) && Save->EnableNaturalWorld() && Save->LoadPoint(Id))
         {
             auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
             if(Campaign->State.Victory && Campaign->State.Facts.Contains(TEXT("home_saved")))Campaign->Record(TEXT("home_continued"));
-            OpenPage(TEXT("hud"));return;
+            OpenPage(TEXT("hud"));Loading->FinishSession(true);return;
         }
     }
     else return;
+    Loading->FinishSession(false);
     Message=Save->GetStatus(); Refresh();
+}
+void UHearthwardScreenWidget::NativeDestruct()
+{
+    if(SettingsSoundMix && GetWorld()) UGameplayStatics::PopSoundMixModifier(this,SettingsSoundMix);
+    Super::NativeDestruct();
 }
 UHearthwardGameplayComponent* UHearthwardScreenWidget::Gameplay() const
 { return GetOwningPlayerPawn() ? GetOwningPlayerPawn()->FindComponentByClass<UHearthwardGameplayComponent>() : nullptr; }
@@ -173,6 +188,12 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     Page=Name; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
     GConfig->GetBool(TEXT("Hearthward.Survival"),TEXT("MenuPause"),MenuPause,GGameUserSettingsIni);
+    if(Name==TEXT("settings") && PreviousPage!=Name)
+    {
+        Category=TEXT("游戏");
+        SettingsSelection.Reset();
+        LoadSettingsDraft();
+    }
     const bool Pause=LayoutEditing || Name==TEXT("title") || Name==TEXT("pause") || Name==TEXT("save")
         || (MenuPause && Name!=TEXT("hud") && Name!=TEXT("dialogue"));
     if (Pause && !GetWorld()->IsPaused()) OwnPause=UGameplayStatics::SetGamePaused(this,true);
@@ -245,6 +266,7 @@ void UHearthwardScreenWidget::Refresh()
     LoadComponents();
     if(P->GetBoolField(TEXT("header"))) LoadElements(Theme->GetArrayField(TEXT("header")));
     LoadElements(P->GetArrayField(TEXT("elements")));
+    if(Page==TEXT("settings")) ComposeSettings();
     if(Page==TEXT("pause") && GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled() && !Gameplay()->Enabled)
     {
         Element(TEXT("text"),TEXT("自然地图探索"),FVector2D(1096,220),FVector2D(280,36),22);
@@ -407,6 +429,7 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
         Refresh(); return FReply::Handled();
     }
     if(Key==EKeys::Escape) { ExecuteAction(TEXT("back")); return FReply::Handled(); }
+    if(Key==EKeys::R && Page==TEXT("settings")) { ExecuteAction(TEXT("settings.defaults")); return FReply::Handled(); }
     const bool HasCampaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId().IsValid();
     if(Key==EKeys::Tab && HasCampaign) { OpenPage(Page==TEXT("inventory")?TEXT("hud"):TEXT("inventory")); return FReply::Handled(); }
     if(Key==EKeys::T && Page==TEXT("dialogue")) { ExecuteAction(TEXT("back")); return FReply::Handled(); }

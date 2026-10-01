@@ -63,6 +63,7 @@ bool FCombatActionsTest::RunTest(const FString&)
     TestFalse(TEXT("Incomplete execution cannot be saved"),C->CanSave());
     Advance(2.99f); TestEqual(TEXT("Before three seconds target is alive"),T->Health,100.f);
     Advance(.011f); TestEqual(TEXT("Three seconds completes execution"),T->Health,0.f);
+    TestFalse(TEXT("F execution remains lethal"),T->Memory.bStunned);
     TestEqual(TEXT("Execution costs no stamina"),G->Stamina,0.f);
     const int32 Defeats=G->Events.FindRef(TEXT("defeat:combat_test"));
     TestEqual(TEXT("One defeat"),Defeats,1);
@@ -78,6 +79,12 @@ bool FCombatActionsTest::RunTest(const FString&)
     TestTrue(TEXT("Legacy snapshot accepted"),C->ValidateSnapshot(TEXT("")));
     TestFalse(TEXT("Bad snapshot rejected"),C->ValidateSnapshot(TEXT("{")));
     T->Health=100; Enemy->SetActorRotation(FRotator::ZeroRotator); G->Opponents[T->Id]=100;
+    TestTrue(TEXT("R stun starts through the same execution window"),C->Stun(Enemy));
+    Advance(3.001f); TestTrue(TEXT("R records nonlethal removal"),T->Memory.bStunned && T->Health==0);
+    const FString StunSnapshot=C->Snapshot();
+    T->Memory.bStunned=false; C->Restore(StunSnapshot);
+    TestTrue(TEXT("Nonlethal removal survives snapshot restore"),T->Memory.bStunned);
+    T->Health=100; G->Opponents[T->Id]=100;
     TestTrue(TEXT("Next live target execution starts"),C->Execute(Enemy));
     C->Cancel(); TestTrue(TEXT("Cancel releases target without damage"),T->CanAct() && T->Health==100);
     T->Heavy=true; T->Health=90;

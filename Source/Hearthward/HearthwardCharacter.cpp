@@ -34,6 +34,7 @@
 #include "InputMappingContext.h"
 #include "InputModifiers.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Misc/ConfigCacheIni.h"
 
 AHearthwardCharacter::AHearthwardCharacter()
 {
@@ -72,12 +73,12 @@ AHearthwardCharacter::AHearthwardCharacter()
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMesh()->SetAnimInstanceClass(UHearthwardHeroAnimInstance::StaticClass());
 
-    // TASK-028 provisional attachment until the hand socket and tool animation are integrated.
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Axe(TEXT("/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe.SM_stone_bone_axe"));
     HeldAxe=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldAxe"));
-    HeldAxe->SetupAttachment(GetRootComponent());
+    HeldAxe->SetupAttachment(GetMesh(),TEXT("hand_r"));
     HeldAxe->SetStaticMesh(Axe.Object);
-    HeldAxe->SetRelativeLocation(FVector(30,35,25));
+    HeldAxe->SetRelativeRotation(FRotator(0,0,-90));
+    HeldAxe->SetAbsolute(false,false,true);
     HeldAxe->SetRelativeScale3D(FVector(.7));
     HeldAxe->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     HeldAxe->SetVisibility(false);
@@ -86,6 +87,11 @@ AHearthwardCharacter::AHearthwardCharacter()
 void AHearthwardCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    int32 Sensitivity=5;
+    bool InvertY=false;
+    GConfig->GetInt(TEXT("Hearthward.Controls"),TEXT("LookSensitivity"),Sensitivity,GGameUserSettingsIni);
+    GConfig->GetBool(TEXT("Hearthward.Controls"),TEXT("InvertLookY"),InvertY,GGameUserSettingsIni);
+    SetLookSettings(Sensitivity,InvertY);
     Inventory->OnInventoryChanged.AddDynamic(this, &AHearthwardCharacter::UpdateCarrySpeed);
     Inventory->OnInventoryChanged.AddDynamic(this, &AHearthwardCharacter::RefreshHeldTool);
     Gameplay->OnChanged.AddDynamic(this, &AHearthwardCharacter::RefreshHeldTool);
@@ -235,8 +241,14 @@ void AHearthwardCharacter::Move(const FInputActionValue& Value)
 void AHearthwardCharacter::Look(const FInputActionValue& Value)
 {
     const FVector2D Axis = Value.Get<FVector2D>();
-    AddControllerYawInput(Axis.X);
-    AddControllerPitchInput(Axis.Y);
+    AddControllerYawInput(Axis.X*LookSensitivity);
+    AddControllerPitchInput(Axis.Y*LookSensitivity*(bInvertLookY?-1.f:1.f));
+}
+
+void AHearthwardCharacter::SetLookSettings(int32 Sensitivity,bool InvertY)
+{
+    LookSensitivity=FMath::Clamp(Sensitivity,1,10)/5.f;
+    bInvertLookY=InvertY;
 }
 
 void AHearthwardCharacter::StartJump()
@@ -319,7 +331,7 @@ void AHearthwardCharacter::Execution() { FindComponentByClass<UHearthwardCombatC
 void AHearthwardCharacter::ContextR()
 {
     auto* C=FindComponentByClass<UHearthwardCombatComponent>();
-    if(C->Execute()) return;
+    if(C->CanExecute() && C->Stun()) return;
     for(TActorIterator<AActor> It(GetWorld());It;++It)
         if(const auto* Resource=It->FindComponentByClass<UHearthwardResourceInteractionComponent>();Resource && Resource->CanAccessStorage(this))
         {

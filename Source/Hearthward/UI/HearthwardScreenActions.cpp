@@ -5,6 +5,8 @@
 #include "Misc/ConfigCacheIni.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
+#include "HearthwardLoadingSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -60,8 +62,11 @@ bool UHearthwardScreenWidget::OpenSavePoint(const FHearthwardSavePoint& Point)
     {
         if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds"))
         {
+            auto* Loading=GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>();
+            Loading->BeginLoading();
             const bool FromTitle=Page==TEXT("title");
             const bool Loaded=PrepareSession() && Save->LoadPoint(Point.SaveId);
+            Loading->FinishSession(Loaded);
             if(Loaded && FromTitle)
             {
                 auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
@@ -71,6 +76,7 @@ bool UHearthwardScreenWidget::OpenSavePoint(const FHearthwardSavePoint& Point)
         }
         const FString Options=TEXT("game=/Script/Hearthward.HearthwardGameMode?HearthwardLoad=")
             +Point.SaveId.ToString(EGuidFormats::Digits);
+        GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->BeginLoading();
         UGameplayStatics::OpenLevel(this,NaturalMap,true,Options);
         return true;
     }
@@ -79,6 +85,7 @@ bool UHearthwardScreenWidget::OpenSavePoint(const FHearthwardSavePoint& Point)
 bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
 {
     const FString Action=InAction; // Refresh can invalidate the element that supplied this string.
+    if(GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->IsLoading())return false;
     // A confirmation owns input until the player confirms or cancels it.
     if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")
         && !(ConfirmAction==TEXT("resetAgreements") && (Action==TEXT("resetPrev") || Action==TEXT("resetNext")))) return false;
@@ -88,6 +95,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action.StartsWith(TEXT("camp.")))return ExecuteCampAction(Action);
     if(Action.StartsWith(TEXT("gear.")))return ExecuteEquipmentAction(Action);
     if(Action.StartsWith(TEXT("nature.")))return ExecuteNatureAction(Action);
+    if(Action.StartsWith(TEXT("settings.")))return ExecuteSettingsAction(Action);
     if(Action==TEXT("buildPrev")){Scroll-=4;Refresh();return true;}
     if(Action==TEXT("buildNext")){Scroll+=4;Refresh();return true;}
     auto* G=Gameplay(); auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
@@ -272,10 +280,14 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     {
         if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)!=TEXT("L_HearthwardWilds"))
         {
+            GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->BeginLoading();
             UGameplayStatics::OpenLevel(this,NaturalMap,true,TEXT("game=/Script/Hearthward.HearthwardGameMode?HearthwardNewGame=1"));
             return true;
         }
+        auto* Loading=GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>();
+        Loading->BeginLoading();
         Success=PrepareSession() && Save->StartNewProgress(); Message=Save->GetStatus();
+        Loading->FinishSession(Success);
         if(Success) OpenPage(TEXT("hud"));
     }
     else if(Action==TEXT("continue"))
@@ -288,7 +300,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action==TEXT("title"))
     {
         if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds"))
-        { UGameplayStatics::OpenLevel(this,TEXT("/Game/Hearthward/Bootstrap/L_Bootstrap")); return true; }
+        { GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->BeginLoading();UGameplayStatics::OpenLevel(this,TEXT("/Game/Hearthward/Bootstrap/L_Bootstrap")); return true; }
         OpenPage(TEXT("title"));
     }
     else if(Action==TEXT("save")) { Success=Save->SavePoint(true); Message=Save->GetStatus(); }
