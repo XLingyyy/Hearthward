@@ -56,7 +56,8 @@
     "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
     "Source/Hearthward/UI/HearthwardScreenWidget.h",
     "Source/Hearthward/UI/HearthwardScreenCompatibility.cpp",
-    "scripts/release/demo.iss"
+    "scripts/release/demo.iss",
+    "Source/Hearthward/Tests/EquipmentProgressionTests.cpp"
   ],
   "forbidden_paths": [
     "Runtime/",
@@ -97,6 +98,7 @@
     "三个阶段已实现并编译；最终验证见docs/qa/TASK-051/REPORT.md。保留Active，等待Owner在实机中检查动作观感，没有指定Reviewer或代替真人验收。",
     "2026-10-01修复Owner报告的启动批处理故障：LF导致cmd截断路径，改为CRLF并用同目录.gitattributes固定检出换行。已通过原.cmd实际启动，检查到14种动物画面；C++与资产未变，见docs/qa/TASK-051/启动修复.md。",
     "2026-10-02速度调整完成：基础疾跑600cm/s，14种动物基础快速逃离630cm/s，疾跑技能同倍率加成。鱼类补独立游动参考速度和持续循环；新版构建、199/199离屏渲染实机检查、42张原生图、6/6回归通过。缓步／自然周期及原配对资产保持原成果，当前待Owner在普通窗口检查。",
-    "2026-10-02本次用户授权覆盖当前项目全部进度，包含前序存档兼容改动和仓库外制作成果归档；原始游戏工作区保持不变。本同步分支人工解合并冲突，先提交批准快照，再对实现提交执行范围及运行验证；自动化通过不替代Owner观感验收。"
+    "2026-10-02本次用户授权覆盖当前项目全部进度，包含前序存档兼容改动和仓库外制作成果归档；原始游戏工作区保持不变。本同步分支人工解合并冲突，先提交批准快照，再对实现提交执行范围及运行验证；自动化通过不替代Owner观感验收。",
+    "整合回归发现047历史测试仍要求清空旧技能，与已授权的更新兼容“保留兼容技能”规则冲突；本次同步将该断言及已知配方检查对齐当前行为，保留其余迁移／生命／耐力检查。"
   ]
 }
