@@ -1,6 +1,6 @@
 # TASK-052｜实现与验证记录
 
-2026-10-03。实现与自动化验证完成。分支`codex/TASK-052-time-integration`，调查基线`4db5789184fe38e041d62a1e68c8517338ea0b01`，Owner批准范围登记提交`275124aa0dd53314b2107c28449ec77bca60903c`。验证对应本文件所在的实现提交；完整源码SHA由紧随其后的证据绑定提交登记。Owner／Reviewer：XLingyyy，无Issue。任务保持Active等待Owner体验及正式评审，成果尚未集成main。
+2026-10-03。实现与自动化验证完成。分支`codex/TASK-052-time-integration`，调查基线`4db5789184fe38e041d62a1e68c8517338ea0b01`，Owner批准范围登记提交`275124aa0dd53314b2107c28449ec77bca60903c`。受测源码提交：`0bc1c3ee5d09cfca3f675cf657b6981f874f9138`。构建、原生和PIE运行后冻结源码并提交；其后只更新文档和证据绑定，未改变运行代码。Owner／Reviewer：XLingyyy，无Issue。任务保持Active等待Owner体验及正式评审，成果尚未集成main。
 
 ## 实现
 
@@ -28,7 +28,7 @@ schema9/HWS9保存ClockVersion和初始日／分钟。8→9保留W和旧显示�
 | 层次／检查 | 结果 | 证据 |
 |---|---|---|
 | L0 工具自测 | 33/33 PASS，退出0 | [tools-validation.txt](tools-validation.txt)；工具源码未改动 |
-| L0 仓库及正式T-002 | PASS：批准基线275124a，53份任务快照、81条改变路径、0错误、退出0 | [scope-validation.txt](scope-validation.txt) |
+| L0 仓库及正式T-002 | PASS：批准基线275124a，53份任务快照、83条改变路径、0错误、退出0 | [scope-validation.txt](scope-validation.txt) |
 | L1 Editor Development | PASS，退出0 | [build.json](build.json)、[run_build.py](run_build.py) |
 | L2 Time／Save／Camp／Nature／Campaign／Survival | 34/34 PASS，测试警告0、失败0 | [final-native.json](final-native.json)、[原始索引](native-index.json)、[run_native.py](run_native.py) |
 | L3 渲染自然图 | 82/82 PASS，启动器退出0 | [pie-results.json](pie-results.json)、[launch.json](launch.json)、[验证脚本](verify_time_pie.py) |

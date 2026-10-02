@@ -1,0 +1,122 @@
+{
+  "task": "TASK-052",
+  "source_commit": "0bc1c3ee5d09cfca3f675cf657b6981f874f9138",
+  "scope_base": "275124aa0dd53314b2107c28449ec77bca60903c",
+  "date": "2026-10-03",
+  "branch": "codex/TASK-052-time-integration",
+  "environment": {
+    "os": "Windows 11 24H2",
+    "engine": "UE 5.8.2",
+    "target": "HearthwardEditor Development",
+    "gpu": "RTX 4060 Laptop",
+    "worktree": "G:/GameFactory/Hearthward/.agent-local/task051"
+  },
+  "binding": "Tests executed on the frozen implementation contents committed at source_commit; subsequent changes are documentation only. Historical baseline/intermediate evidence is not claimed for source_commit.",
+  "build": {
+    "passed": true,
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "artifact": "build.json"
+  },
+  "native": {
+    "passed": true,
+    "counts": {
+      "tests_found": 34,
+      "tests_passed": 34,
+      "tests_succeeded": 34,
+      "tests_succeeded_with_warnings": 0,
+      "tests_failed": 0,
+      "tests_not_run": 0,
+      "tests_in_process": 0,
+      "tests_skipped": 0,
+      "tests_unknown": 0
+    },
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe",
+      "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Hearthward.uproject",
+      "-unattended",
+      "-nop4",
+      "-nosplash",
+      "-NoSound",
+      "-stdout",
+      "-FullStdOutLogOutput",
+      "-UTF8Output",
+      "-ExecCmds=Automation RunTests Hearthward.Time+Hearthward.Save+Hearthward.Camp+Hearthward.Nature+Hearthward.Campaign+Hearthward.Survival; Quit",
+      "-TestExit=Automation Test Queue Empty",
+      "-ReportExportPath=G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task052\\final",
+      "-NullRHI",
+      "-NoSound",
+      "-Culture=en",
+      "-HearthwardSaveTestPool=568888ce-57e2-50f8-a148-e670a68f472e"
+    ],
+    "artifacts": [
+      "final-native.json",
+      "native-index.json"
+    ],
+    "rendered": false,
+    "save_pool": "568888ce-57e2-50f8-a148-e670a68f472e"
+  },
+  "pie": {
+    "passed": true,
+    "checks": 82,
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Hearthward.uproject",
+      "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds",
+      "-ExecCmds=WebControl.StartServer 30010",
+      "-NoSplash",
+      "-Log",
+      "-A3GameRuntimeInputPort=30020",
+      "-ExecutePythonScript=G:\\GameFactory\\Hearthward\\.agent-local\\task051\\docs\\qa\\TASK-052\\verify_time_pie.py",
+      "-HearthwardSaveTestPool=194fceb3-00fc-41d4-99a8-1be98a10bbb9",
+      "-NoSound",
+      "-NoSplash"
+    ],
+    "rendered": true,
+    "save_pool": "194fceb3-00fc-41d4-99a8-1be98a10bbb9",
+    "artifacts": [
+      "pie-results.json",
+      "keyboard-final.json",
+      "travel-down.json",
+      "travel-stay.json",
+      "travel-blocked.json",
+      "launch.json",
+      "stop.json",
+      "prologue-night.png",
+      "after-sleep-night.png",
+      "campfire-menu.png",
+      "camp-daylight-ui.png",
+      "restored-night-ui.png"
+    ],
+    "method": "Engine NativeOnKeyDown and movement input; fixture materials/battle state/invalid ground in GUID pool; production map, facilities, save/restore and streaming travel paths."
+  },
+  "tools": {
+    "passed": 33,
+    "artifact": "tools-validation.txt",
+    "binding": "Tool sources unchanged from approved scope base"
+  },
+  "not_run": [
+    "physical keyboard/mouse full route",
+    "video",
+    "actual building/World Partition resource rediscovery route",
+    "species-by-species wildlife refresh protection",
+    "full ecology partition comparison",
+    "notification reentry/late model result injection",
+    "Shipping",
+    "ten-hour campaign",
+    "second machine",
+    "voice recording"
+  ],
+  "human_review": "Owner/reviewer XLingyyy; pending experience and formal review; task Active; not integrated into main",
+  "scope": {
+    "passed": true,
+    "changed_paths": 83,
+    "artifact": "scope-validation.txt"
+  }
+}

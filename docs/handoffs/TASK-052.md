@@ -6,7 +6,7 @@
 
 - 工作区：`G:/GameFactory/Hearthward/.agent-local/task051`；分支`codex/TASK-052-time-integration`，保留目录名。
 - 调查基线：`4db5789184fe38e041d62a1e68c8517338ea0b01`；正式T-002批准范围基线：`275124aa0dd53314b2107c28449ec77bca60903c`。
-- 当前验证对应本交接所在实现提交；完整源码SHA由随后文档绑定提交登记，见[REPORT](../qa/TASK-052/REPORT.md)。成果尚未集成main。
+- 实现及受测源码：`0bc1c3ee5d09cfca3f675cf657b6981f874f9138`；随后提交只绑定证据及更新文档，见[REPORT](../qa/TASK-052/REPORT.md)。成果尚未集成main。
 - 原工作区、其他检出和同号051动物资料保持。所需生产动物资产按LFS对象恢复，Content无差异，未编辑二进制。
 - 本单没有Issue／PR、main合并、发布、安装依赖或二进制编辑授权。
 
