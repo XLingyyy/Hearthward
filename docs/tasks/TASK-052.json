@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "id": "TASK-052",
+  "title": "实现统一时间推进和持久刷新基础",
+  "status": "Active",
+  "updated_at": "2026-10-02",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-052-time-integration",
+  "source_refs": [
+    "用户：录音先放着不管，继续做052；Owner与Reviewer均为本人，不提Issue",
+    "G:/GameFactory/Hearthward/docs/Hearthward_TASK-043-076.md：原稿TASK-054，canonical编号减2",
+    "G:/GameFactory/Hearthward/docs/Hearthward_Audit_2026-09-24.md：时间、生产、刷新和回档历史缺口",
+    "origin/main@4db5789184fe38e041d62a1e68c8517338ea0b01，已含051操作基线、动物归档及更新／存档兼容整合",
+    "TASK-043的DSGN-R01已批准D1—D6；044生存、046生产、048生态、049关卡和050伙伴批准增量继续有效",
+    "旧codex/TASK-052-world-time@bb64d67为2026-09-26未集成基础增量，只作调查参考，不沿用其schema4或授权记录",
+    "用户2026-10-02：确认052的设计，可以开始施工，完成后提交推送；批准D1—D6、CT-TASK-052 v0.2、运行路径及共享schema9迁移。"
+  ],
+  "dependencies": [
+    "TASK-043",
+    "TASK-044",
+    "TASK-046",
+    "TASK-048",
+    "TASK-049",
+    "TASK-050"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-043-world-time-persistence.md",
+    "docs/contracts/CT-TASK-052-clock-refresh.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/tasks/TASK-052.json",
+    "docs/tasks/TASK-052.md",
+    "docs/handoffs/TASK-052.md",
+    "docs/planning/TASK-052/",
+    "docs/contracts/CT-TASK-052-clock-refresh.md",
+    "docs/qa/TASK-052/",
+    "Source/Hearthward/Time/",
+    "Source/Hearthward/Save/",
+    "Source/Hearthward/Camp/",
+    "Source/Hearthward/Nature/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Survival/",
+    "Source/Hearthward/Interaction/HearthwardHarvestSubsystem.h",
+    "Source/Hearthward/Interaction/HearthwardHarvestSubsystem.cpp",
+    "Source/Hearthward/Interaction/HearthwardFurnitureInteractionComponent.h",
+    "Source/Hearthward/Interaction/HearthwardFurnitureInteractionComponent.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.h",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+    "Source/Hearthward/Tests/WorldClockTests.cpp",
+    "Source/Hearthward/Tests/HarvestRefreshTests.cpp",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "Source/Hearthward/Tests/CampEconomyTests.cpp",
+    "Source/Hearthward/Tests/NatureTests.cpp",
+    "Source/Hearthward/Tests/CampaignTests.cpp",
+    "Source/Hearthward/Tests/SurvivalTests.cpp",
+    "Resources/Data/gameplay.json"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "config/",
+    "Runtime/",
+    "art_source/",
+    "scripts/",
+    "docs/design/archive/",
+    "docs/tasks/TASK-051.json",
+    "docs/qa/TASK-051/"
+  ],
+  "acceptance": [
+    "逐项核对当前实现、043批准规则、旧052增量和当前schema8兼容链，完成052工程方案",
+    "记录唯一时钟、事件结算、资源身份、敌人代次、旅行和快照契约，提供待批准的完整施工路径",
+    "批准后覆盖零／一／多周期、暂停、睡眠／篝火、加载冻结、同档重复恢复与旧档迁移",
+    "刷新和生产去重，同一档不领取未来产出；已接通领域使用真实状态测试",
+    "明确区分文档检查、UE原生／PIE、Owner体验和未执行结果，同步README及交接"
+  ],
+  "non_goals": [
+    "本轮不制作录音，不修改051动物归档或同号历史资料",
+    "不重建库存、营地生产、生态或世界时钟，不增加未配置领域的产出",
+    "不调整已批准的配方、物种、奖励、战斗、劳动力和永久胜利规则",
+    "不编辑二进制资产，不创建Issue、PR、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-016",
+    "T-017"
+  ],
+  "permissions": {
+    "network": "granted: official engineering research, origin fetch and TASK-052 branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: user2026-10-02 TASK-052",
+    "push": "granted: user2026-10-02 TASK-052 task branch",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "Owner2026-10-02已确认052设计并授权施工、提交推送；工程契约v0.2、D1—D6及列明共享路径同时获批。",
+    "043玩法沿用；本单的篝火1/4/8小时、新档第1日20:00、06:00/18:00及30分钟光照过渡、schema9迁移获批。",
+    "复用干净专用worktree G:/GameFactory/Hearthward/.agent-local/task051，目录名保留，实际分支为TASK-052。",
+    "主干051任务元数据已由动物同步覆盖；canonical051操作成果仍在main代码及其独立分支历史中，052不替其他任务改号。",
+    "Owner与Reviewer按用户要求同为XLingyyy；不将其登记为独立审查或最终验收。",
+    "正式T-002采用本次真实Owner批准的范围登记提交为基线，不借用旧052分支。"
+  ]
+}
