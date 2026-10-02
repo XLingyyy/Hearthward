@@ -1,4 +1,5 @@
 #include "HearthwardNatureActor.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "HearthwardNatureSubsystem.h"
 #include "../Animals/HearthwardAnimalMotionComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
@@ -133,7 +134,7 @@ void AHearthwardNatureActor::Refresh()
 }
 void AHearthwardNatureActor::Tick(float Delta)
 {
-    Super::Tick(Delta);if(GetWorld()->IsPaused())return;
+    Super::Tick(Delta);if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return;
     Combat->Memory.HitRemaining=FMath::Max(0.,Combat->Memory.HitRemaining-Delta);
     auto* PC=UGameplayStatics::GetPlayerController(this,0);
     if(PC){Label->SetWorldRotation((PC->PlayerCameraManager->GetCameraLocation()-Label->GetComponentLocation()).Rotation());Label->SetVisibility(PC->GetPawn() && FVector::Dist2D(PC->GetPawn()->GetActorLocation(),GetActorLocation())<300);}
@@ -206,7 +207,7 @@ void AHearthwardNatureActor::MoveAnimal(float Delta)
         else if(TooFar){Goal=Home->Position;Speed=160;A->AlertRemaining=0;}
         else if(WanderDelay<=0)
         {
-            const double Hour=FMath::Fmod(N->State.Calendar/60,24.);const FString Active=Text(D,TEXT("active"));
+            const double Hour=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().MinuteOfDay/60;const FString Active=Text(D,TEXT("active"));
             const bool ActiveNow=Active==TEXT("night")?(Hour<6 || Hour>=18):Active==TEXT("dawn_dusk")?((Hour>=5 && Hour<8) || (Hour>=17 && Hour<20)):(Hour>=6 && Hour<18);
             WanderDelay=(4+FMath::FRand()*4)*(ActiveNow?1:3);const FVector Center=Home?Home->Position:A->Position;Goal=Center+FVector(FMath::FRandRange(-500.f,500.f),FMath::FRandRange(-500.f,500.f),0);A->Destination=Goal;
         }

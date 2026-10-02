@@ -24,6 +24,10 @@
 #include "EngineUtils.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WorldPartitionStreamingSourceComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "../Save/HearthwardSaveSubsystem.h"
+#include "../Actions/HearthwardTimedActionComponent.h"
+#include "../Building/HearthwardBuildingComponent.h"
 using namespace HearthwardData;
 bool UHearthwardCampaignSubsystem::DoesSupportWorldType(EWorldType::Type T) const {return T==EWorldType::Game || T==EWorldType::PIE;}
 bool UHearthwardCampaignSubsystem::IsTickable() const {return Active() && Player() && !GetWorld()->IsPaused();}
@@ -51,7 +55,7 @@ void UHearthwardCampaignSubsystem::ResetActors()
     if(IntroRemaining>0)if(auto* Character=Cast<ACharacter>(Player()))Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
     for(const auto& A:Actors)if(A.Value.IsValid())A.Value->Destroy();Actors.Reset();
     for(const auto& A:Scenery)if(A.IsValid())A->Destroy();Scenery.Reset();
-    if(StreamSource.IsValid())StreamSource->Destroy();StreamSource.Reset();TravelDestination=NAME_None;IntroRemaining=0;Cancel();
+    FinishTravel();IntroRemaining=0;Cancel();
 }
 void UHearthwardCampaignSubsystem::Start()
 {
@@ -80,26 +84,65 @@ void UHearthwardCampaignSubsystem::Damage(FName Id,float Health)
     if(auto* E=Enemy(Id))
     {
         E->Combat.Health=Health;
-        if(Health<=0 && E->Group==TEXT("field") && E->RefreshDue<0)E->RefreshDue=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Calendar+4*1440;
+        if(Health<=0 && E->Group==TEXT("field") && E->RefreshDue<0)E->RefreshDue=FHearthwardClockState::FieldRefreshDue(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes);
     }
 }
 bool UHearthwardCampaignSubsystem::Travel(FName Id)
 {
-    if(!Active() || State.Phase==TEXT("prologue") || !Safe() || Busy())return false;
+    auto* Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>();
+    auto* Survival=Player()?Player()->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
+    if(!Active() || State.Phase==TEXT("prologue") || !Survival || !Survival->Alive() || UHearthwardSurvivalComponent::HasFailed(GetWorld())
+        || Clock->Suspended() || Busy() || GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
+    if(auto* Building=Player()->FindComponentByClass<UHearthwardBuildingComponent>();Building && (Building->IsBuilding() || Building->IsPlacing()))return false;
     const FName From=Gameplay()->NearbyLocation();
     if(From.IsNone() || From==Id || !Gameplay()->Activated.Contains(From) || !Gameplay()->Activated.Contains(Id))return false;
+    Sync();TravelParticipants.Reset();TravelEnemies.Reset();TravelParticipants.Add(Player());
+    bool BrotherDown=false;
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+        if(const auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>())BrotherDown|=S->State.Life==EHearthwardLife::Downed;
+    // Perception stops observing a downed brother, but retains the confirmed detection.
+    const auto EngagedBrother=[&](const auto& E){return E.Combat.Health>0 && (E.Combat.Seen.Contains(TEXT("brother")) || (BrotherDown && E.Combat.Detection.FindRef(TEXT("brother"))>=1));};
+    const bool BrotherCombat=State.Enemies.ContainsByPredicate(EngagedBrother);
+    if(BrotherCombat)for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)TravelParticipants.Add(*It);
+    for(const auto& E:State.Enemies)if(E.Combat.Health>0 && (E.Combat.Seen.Contains(TEXT("player")) || (BrotherCombat && EngagedBrother(E))))TravelEnemies.Add(E.Id,E.Combat.Generation);
+    TravelEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();ScriptedTravel=false;
     return BeginTravel(Id);
 }
 bool UHearthwardCampaignSubsystem::BeginTravel(FName Id)
 {
     if(!HasLocation(Id) || !TravelDestination.IsNone())return false;
+    if(TravelParticipants.IsEmpty())
+    {
+        ScriptedTravel=true;TravelParticipants.Add(Player());
+        for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)TravelParticipants.Add(*It);
+        TravelEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    }
     TravelDestination=Id;
+    // An independent brother keeps his terrain loaded when the player's source moves away.
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+        if(!TravelParticipants.ContainsByPredicate([&](const auto& A){return A.Get()==*It;}))
+        {
+            auto* Stay=It->FindComponentByClass<UWorldPartitionStreamingSourceComponent>();
+            if(!Stay){Stay=NewObject<UWorldPartitionStreamingSourceComponent>(*It);It->AddInstanceComponent(Stay);Stay->RegisterComponent();}
+            Stay->EnableStreamingSource();
+        }
     auto* Source=GetWorld()->SpawnActor<AActor>();StreamSource=Source;
     auto* Root=NewObject<USceneComponent>(Source);Source->AddInstanceComponent(Root);Source->SetRootComponent(Root);Root->RegisterComponent();Source->SetActorLocation(Position(Id));
     auto* Component=NewObject<UWorldPartitionStreamingSourceComponent>(Source);Source->AddInstanceComponent(Component);Component->RegisterComponent();Component->EnableStreamingSource();
+    if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))Nav->RegisterNavigationInvoker(Source,4000,5000);
     auto* Loading=GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>();
     if(!Loading->IsLoading()){Loading->BeginLoading();Loading->FinishSession(true);}
     Feedback=TEXT("正在准备目的地，请稍候");return true;
+}
+void UHearthwardCampaignSubsystem::FinishTravel()
+{
+    if(StreamSource.IsValid())
+    {
+        if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))Nav->UnregisterNavigationInvoker(StreamSource.Get());
+        StreamSource->Destroy();
+    }
+    StreamSource.Reset();TravelDestination=NAME_None;
+    TravelParticipants.Reset();TravelEnemies.Reset();TravelEpoch.Invalidate();ScriptedTravel=false;
 }
 bool UHearthwardCampaignSubsystem::ZoneOccupied(FName Zone) const
 {
@@ -114,29 +157,6 @@ bool UHearthwardCampaignSubsystem::ZoneOccupied(FName Zone) const
 }
 void UHearthwardCampaignSubsystem::RefreshActors()
 {
-    const bool Night=State.Phase==TEXT("prologue");
-    if(Night!=NightApplied)
-    {
-        if(DayLights.IsEmpty())for(TActorIterator<AActor> It(GetWorld());It;++It)
-            if(auto* Light=It->FindComponentByClass<UDirectionalLightComponent>();Light && !It->ActorHasTag(TEXT("HearthwardNightFill")))DayLights.Add(Light,{Light->Intensity,Light->GetComponentRotation()});
-        for(const auto& Pair:DayLights)if(auto* Light=Pair.Key.Get())
-        {Light->SetIntensity(Night?.15f:Pair.Value.Key);Light->SetWorldRotation(Night?FRotator(-8,30,0):Pair.Value.Value);}
-        if(Night)
-        {
-            auto* Moon=GetWorld()->SpawnActor<ADirectionalLight>(FVector::ZeroVector,FRotator(-32,30,0));
-            Moon->Tags.Add(TEXT("CampaignMoonlight"));
-            auto* Light=Moon->GetComponent();
-            Light->SetMobility(EComponentMobility::Movable);
-            Light->SetAtmosphereSunLight(false);
-            Light->SetForwardShadingPriority(1);
-            Light->SetIntensity(1.5f);
-            Light->SetLightColor(FLinearColor(.56f,.70f,1.f));
-            MoonLight=Moon;
-        }
-        else if(MoonLight.IsValid()) { MoonLight->Destroy(); MoonLight.Reset(); }
-        NightApplied=Night;
-        GetWorld()->GetSubsystem<UHearthwardWorldPresentation>()->SetNight(Night);
-    }
     const FVector PlayerPosition=Player()->GetActorLocation();
     if(State.Phase==TEXT("prologue") && !Scenery.ContainsByPredicate([](const auto& A){return A.IsValid() && A->ActorHasTag(TEXT("CampaignPrologueHouse"));}))
     {
@@ -191,7 +211,7 @@ void UHearthwardCampaignSubsystem::RefreshActors()
         const auto R=V->AsObject();const auto& Bounds=R->GetArrayField(TEXT("bounds"));
         const FVector Center((Bounds[0]->AsNumber()+Bounds[2]->AsNumber())*50,(Bounds[1]->AsNumber()+Bounds[3]->AsNumber())*50,0);
         auto* Region=GetWorld()->SpawnActor<AHearthwardCombatRegion>(Center,FRotator::ZeroRotator);
-        Region->RegionId=FName(*Text(R,TEXT("id")));Region->Lighting=Night?.12f:-1.f;Region->Bounds->SetBoxExtent(FVector(12000,10000,80000));Scenery.Add(Region);
+        Region->RegionId=FName(*Text(R,TEXT("id")));Region->Lighting=-1.f;Region->Bounds->SetBoxExtent(FVector(12000,10000,80000));Scenery.Add(Region);
     }
     for(const auto& V:HearthwardCampaign::Rows(TEXT("locations")))
     {
@@ -267,19 +287,48 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
     }
     if(!TravelDestination.IsNone())
     {
+        if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) || TravelEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
+        {FinishTravel();Feedback=TEXT("旅行已中止，进度或生存状态发生变化");return;}
         FVector Floor;auto* Source=StreamSource.IsValid()?StreamSource->FindComponentByClass<UWorldPartitionStreamingSourceComponent>():nullptr;
-        if(Source && Source->IsStreamingCompleted() && Ground(Position(TravelDestination),Floor))
+        if(Source && Source->IsStreamingCompleted())
         {
-            const FVector Landing=Floor+FVector(0,0,100);
-            if(Player()->TeleportTo(Landing,Player()->GetActorRotation()))
+            TArray<FVector> Landings;bool Clear=true;
+            auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+            if(!ScriptedTravel && UNavigationSystemV1::IsNavigationBeingBuiltOrLocked(GetWorld()))return;
+            for(int32 I=0;I<TravelParticipants.Num();++I)
             {
-                for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)It->TeleportTo(Landing+FVector(0,180,0),It->GetActorRotation());
-                State.Positions.Add(TravelDestination,Landing);
+                auto* Participant=TravelParticipants[I].Get();FVector Point;FNavLocation Projected;
+                if(!Participant || !Ground(Position(TravelDestination)+FVector(0,I*180,0),Floor)) {Clear=false;break;}
+                Point=Floor+FVector(0,0,100);
+                if(!ScriptedTravel && (!Nav || !Nav->ProjectPointToNavigation(Floor,Projected,FVector(200,200,300)))) {Clear=false;break;}
+                if(!ScriptedTravel)Point=Projected.Location+FVector(0,0,100);
+                if(!GetWorld()->FindTeleportSpot(Participant,Point,Participant->GetActorRotation())) {Clear=false;break;}
+                for(const auto& Existing:Landings)if(FVector::Dist2D(Existing,Point)<100)Clear=false;
+                Landings.Add(Point);
+            }
+            if(Clear)
+            {
+                // All required landing points are checked before committing any actor or enemy health.
+                for(int32 I=0;I<TravelParticipants.Num();++I)
+                {
+                    auto* A=TravelParticipants[I].Get();A->SetActorLocation(Landings[I],false,nullptr,ETeleportType::TeleportPhysics);
+                    if(auto* Survival=A->FindComponentByClass<UHearthwardSurvivalComponent>())Survival->CancelAction();
+                    if(auto* Combat=A->FindComponentByClass<UHearthwardCombatComponent>())Combat->InterruptTravel();
+                    if(auto* Action=A->FindComponentByClass<UHearthwardTimedActionComponent>())Action->InterruptAction();
+                    if(auto* Character=Cast<ACharacter>(A))Character->GetCharacterMovement()->StopMovementImmediately();
+                    if(auto* Brother=Cast<AHearthwardCompanionFixture>(A))Brother->StopNavigation();
+                }
+                for(const auto& Pair:TravelEnemies)if(auto* E=Enemy(Pair.Key);E && E->Combat.Generation==Pair.Value && E->Combat.Health>0)
+                {
+                    E->Combat.Health=HearthwardCampaign::Health(E->Kind,E->Stage);
+                    if(auto* A=Actor(E->Id))A->Target->Health=E->Combat.Health;
+                }
+                State.Positions.Add(TravelDestination,Landings[0]);
                 const bool Opening=TravelDestination==TEXT("prologue_relic");
                 if(Opening)Record(TEXT("prologue_placed"));
                 const bool Escaped=TravelDestination==TEXT("camp") && State.Phase==TEXT("prologue");
                 if(Escaped){State.Phase=TEXT("occupied");Record(TEXT("prologue_complete"));Gameplay()->TrackedQuest=TEXT("main_01");}
-                StreamSource->Destroy();StreamSource.Reset();TravelDestination=NAME_None;Feedback=TEXT("已抵达，按 J 查看当前目标");
+                FinishTravel();Feedback=TEXT("已抵达，按 J 查看当前目标");
                 if(Escaped)ResetActors();
                 if(Opening && !State.Facts.Contains(TEXT("prologue_intro")))
                 {
@@ -289,19 +338,16 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
                     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)It->SetActorLocation(Position(TEXT("prologue_relic"))+FVector(0,140,0));
                 }
             }
+            else {FinishTravel();Feedback=TEXT("目的地落点不可通行，旅行已取消");}
         }
         return;
     }
+    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return;
     if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();
     auto* G=Gameplay();auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
     State.ResolveUntriggered();
     if(auto* Combat=Player()->FindComponentByClass<UHearthwardCombatComponent>())for(const auto& Alarm:Combat->State.Alarms)
         if(Alarm.Value>GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds)State.RegisterReinforcement(Alarm.Key);
-    for(auto& E:State.Enemies)if(E.Group==TEXT("field") && E.RefreshDue>=0 && Camp->State.Calendar>=E.RefreshDue)
-    {
-        const bool NearPerson=State.People.ContainsByPredicate([&](const auto& P){return P.Stage!=TEXT("arrived") && FVector::Dist2D(P.Position,E.Home)<5000;});
-        if(!NearPerson && !Actor(E.Id)){++E.Combat.Generation;E.Combat.Health=HearthwardCampaign::Health(E.Kind,E.Stage);E.Combat.bStunned=false;E.Combat.Position=E.Home;E.RefreshDue=-1;}
-    }
     for(auto& P:State.People)if(auto* A=Actor(P.Id);A && P.Stage==TEXT("following"))
     {
         AActor* Leader=Player();
@@ -332,5 +378,20 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
     {
         FVector Floor;if(Ground(Position(TEXT("hometown")),Floor) && Camp->ReclaimHometown(TEXT("campaign_victory"),Floor+FVector(0,0,100)))
         {State.Victory=true;State.Phase=TEXT("reclaimed");G->Discovered.Add(TEXT("hometown"));Feedback=TEXT("故乡已夺回。仓储、床位和篝火已开放；未完成的救援与旧物仍然保留。");}
+    }
+}
+
+double UHearthwardCampaignSubsystem::NextBoundary(double Calendar) const
+{
+    double Step=1440;
+    for(const auto& E:State.Enemies)if(E.Group==TEXT("field") && E.RefreshDue>Calendar+1.e-8)Step=FMath::Min(Step,E.RefreshDue-Calendar);
+    return Step;
+}
+void UHearthwardCampaignSubsystem::AdvanceBoundary(double Calendar)
+{
+    for(auto& E:State.Enemies)if(E.Group==TEXT("field") && E.RefreshDue>=0 && Calendar+1.e-8>=E.RefreshDue)
+    {
+        const bool NearPerson=State.People.ContainsByPredicate([&](const auto& P){return P.Stage!=TEXT("arrived") && FVector::Dist2D(P.Position,E.Home)<5000;});
+        if(!NearPerson && !Actor(E.Id)){++E.Combat.Generation;E.Combat.Health=HearthwardCampaign::Health(E.Kind,E.Stage);E.Combat.bStunned=false;E.Combat.Position=E.Home;E.RefreshDue=-1;}
     }
 }

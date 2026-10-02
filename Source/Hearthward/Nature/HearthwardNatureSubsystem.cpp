@@ -32,7 +32,7 @@ bool UHearthwardNatureSubsystem::IsTickable() const{return IsInitialized() && Ge
 TStatId UHearthwardNatureSubsystem::GetStatId() const{RETURN_QUICK_DECLARE_CYCLE_STAT(UHearthwardNatureSubsystem,STATGROUP_Tickables);}
 bool UHearthwardNatureSubsystem::Safe(FGuid Epoch) const
 {
-    const auto* G=Gameplay();const auto* P=Player();if(!P || !G || !G->Enabled || G->Health<=0 || G->InCombat() || Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())return false;
+    const auto* G=Gameplay();const auto* P=Player();if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy() || !P || !G || !G->Enabled || G->Health<=0 || G->InCombat() || Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())return false;
     if(ActionActor.IsValid() && ActionActor.Get()!=P)
     {
         const auto* S=ActionActor->FindComponentByClass<UHearthwardSurvivalComponent>();
@@ -89,6 +89,7 @@ bool UHearthwardNatureSubsystem::ClearPlot(FVector Point,double Radius,FGuid Ign
 }
 void UHearthwardNatureSubsystem::EnsureWorld()
 {
+    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy())return;
     if(!Gameplay() || !Gameplay()->Enabled)return;
     auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();if(Camp->State.Camps.IsEmpty())return;
     if(!State.Seed)State.Seed=int32(GetTypeHash(FGuid::NewGuid()))|1;
@@ -202,16 +203,9 @@ void UHearthwardNatureSubsystem::SyncAnimals()
     for(auto& A:State.Animals)if(auto* World=Actor(A.Id))A.Position=World->GetActorLocation();
 }
 void UHearthwardNatureSubsystem::Advance(double Minutes)
-{if(Settling || !State.Seed)return;TGuardValue<bool> Guard(Settling,true);State.Advance(Minutes);}
-void UHearthwardNatureSubsystem::Tick(float Delta)
+{if(Settling || !State.Seed)return;TGuardValue<bool> Guard(Settling,true);State.Advance(Minutes);RefreshDue();}
+void UHearthwardNatureSubsystem::RefreshDue()
 {
-    if(GetWorld()->IsPaused())return;
-    RefreshIn-=Delta;
-    if(RefreshIn<=0){RefreshIn=.5;EnsureWorld();RebuildActors();}
-    const auto* Actor=ActionActor.IsValid()?ActionActor.Get():Player();
-    if(!PendingAction.IsNone() && (!Actor || !Safe(ActionEpoch) || !Actor->GetVelocity().IsNearlyZero() || FVector::Dist(Actor->GetActorLocation(),ActionPosition)>350))Cancel();
-    if(IsFishing())TickFishing(Delta);
-    SyncAnimals();
     for(auto& S:State.Slots)if(S.Due>=0 && S.Due<=State.Calendar && Player())
     {
         bool Clear=FVector::Dist2D(Player()->GetActorLocation(),S.Position)>8000;
@@ -222,6 +216,31 @@ void UHearthwardNatureSubsystem::Tick(float Delta)
         FHearthwardAnimal A;A.Id=FGuid::NewGuid();A.Slot=S.Id;A.Definition=S.Definition;A.Position=A.Destination=S.Position;A.Health=Number(HearthwardNature::Definition(TEXT("wildlife"),A.Definition),TEXT("health"));
         S.Current=A.Id;S.Generation++;S.Due=-1;State.Animals.Add(A);
     }
+}
+double UHearthwardNatureSubsystem::NextBoundary() const
+{
+    double Step=1440;
+    for(const auto& P:State.Points)if(P.Due>State.Calendar+1.e-8)Step=FMath::Min(Step,P.Due-State.Calendar);
+    for(const auto& S:State.Slots)if(S.Due>State.Calendar+1.e-8)Step=FMath::Min(Step,S.Due-State.Calendar);
+    for(const auto& A:State.Animals)if(A.Health>0 && A.Domestic && A.Pen.IsValid())
+    {
+        if(A.FedRemaining>1.e-8)Step=FMath::Min(Step,A.FedRemaining);
+        if(A.Juvenile && A.Growth<2880-1.e-8)Step=FMath::Min(Step,2880-A.Growth);
+        if(!A.Juvenile && A.ProductMinutes<1440-1.e-8)Step=FMath::Min(Step,1440-A.ProductMinutes);
+    }
+    for(const auto& P:State.Pens)for(const auto& Pair:P.Pairs)if(Pair.Value<2880-1.e-8)Step=FMath::Min(Step,2880-Pair.Value);
+    return Step;
+}
+void UHearthwardNatureSubsystem::Tick(float Delta)
+{
+    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return;
+    RefreshIn-=Delta;
+    if(RefreshIn<=0){RefreshIn=.5;EnsureWorld();RebuildActors();}
+    const auto* Actor=ActionActor.IsValid()?ActionActor.Get():Player();
+    if(!PendingAction.IsNone() && (!Actor || !Safe(ActionEpoch) || !Actor->GetVelocity().IsNearlyZero() || FVector::Dist(Actor->GetActorLocation(),ActionPosition)>350))Cancel();
+    if(IsFishing())TickFishing(Delta);
+    SyncAnimals();
+
 }
 void UHearthwardNatureSubsystem::Restore(const FString& Json,double Calendar)
 {

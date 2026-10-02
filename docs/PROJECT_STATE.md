@@ -1,8 +1,8 @@
 # Hearthward 项目状态
 
-核对日期：2026-10-02。远端主干基线为`origin/main@4db5789184fe38e041d62a1e68c8517338ea0b01`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线和PR #56的动物／更新兼容整合。各原始测试仍绑定其报告源码，不据main合并推定重跑通过。
+核对日期：2026-10-03。远端主干基线为`origin/main@4db5789184fe38e041d62a1e68c8517338ea0b01`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线和PR #56的动物／更新兼容整合。各原始测试仍绑定其报告源码，不据main合并推定重跑通过。
 
-当前分支`codex/TASK-052-time-integration`完成[052工程方案](planning/TASK-052/PLAN.md)及任务登记，运行代码、schema9迁移和共享契约已获Owner确认，正在施工。canonical052对应原稿054；[本单交接](handoffs/TASK-052.md)记录范围及证据。固定录音按Owner要求继续暂缓。动物归档沿用051标签；052保留该资料，不覆盖此前canonical051的操作实现。
+当前分支`codex/TASK-052-time-integration`已完成批准的[052工程方案](planning/TASK-052/PLAN.md)、schema9迁移和共享契约，Editor Development、相关原生34/34、渲染PIE82/82、工具33/33通过。源码与证据绑定见[052报告](qa/TASK-052/REPORT.md)，成果尚未集成main，任务保持Active等待Owner体验及正式评审。canonical052对应原稿054；[本单交接](handoffs/TASK-052.md)记录范围及证据。固定录音按Owner要求继续暂缓。动物归档沿用051标签；052保留该资料，不覆盖此前canonical051的操作实现。
 
 ## 本次同步成果
 
@@ -33,4 +33,4 @@ TASK-026的4032米World Partition自然世界与营地已经可运行；完整�
 
 有效设计为[CURRENT](design/CURRENT.md)指向的GDD v0.3及已批准增量；未定规则继续见[OPEN_QUESTIONS](design/OPEN_QUESTIONS.md)。任务映射和早期AI标签按[TASK-041账本](planning/TASK-041-baseline-ledger.md)追溯。TASK-004源归档不等同于其余模型全部适配或整单验收。
 
-[AGENTS](../AGENTS.md)和[WORKFLOW](../WORKFLOW.md)继续约束任务范围、LFS锁、真实验证和人工合并。当前052权限见其任务JSON，候选施工范围见052工程方案；动物同步授权保留于TASK-051 JSON。Agent没有自批、合并、发布或修改远端保护的授权。真实存档、本机密钥、权重、构建二进制和生成缓存保留本地。
+[AGENTS](../AGENTS.md)和[WORKFLOW](../WORKFLOW.md)继续约束任务范围、LFS锁、真实验证和人工合并。当前052权限见其任务JSON，已批准施工范围见052工程方案；动物同步授权保留于TASK-051 JSON。Agent没有自批、合并、发布或修改远端保护的授权。真实存档、本机密钥、权重、构建二进制和生成缓存保留本地。

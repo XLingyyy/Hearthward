@@ -246,9 +246,7 @@ void UHearthwardSurvivalComponent::AdvanceContinuous(double Delta,double Calenda
     PreviousSwimming=Swimming;
     if((Resting || Treatment) && (GetOwner()->GetVelocity().Size()>5 || Swimming)) CancelAction();
     const bool Combat=InCombat();
-    const bool Running=Gameplay() && Gameplay()->IsRunning();
-    const double Recovery=(Combat?.001:(Treatment?.03:(Resting?.02:.005)))*(1+(Gameplay()?Gameplay()->Effect(TEXT("recovery")):0));
-    State.Advance(Health(),Hunger(),MaxHealth(),Delta,Calendar,StartW,((Delta>0 && (Running || Swimming || Combat))?2:1)*(1-(Gameplay()?Gameplay()->Effect(TEXT("hunger")):0)),Recovery);
+    State.Advance(Health(),Hunger(),MaxHealth(),Delta,Calendar,StartW,HungerMultiplier(Delta),RecoveryFraction());
     State.SafeSeconds=Combat?0:State.SafeSeconds+Delta;
     if(!Gameplay() && Alive() && !Swimming)
     {
@@ -258,6 +256,21 @@ void UHearthwardSurvivalComponent::AdvanceContinuous(double Delta,double Calenda
     }
     if(!Alive() && Busy()) CancelAction();
 
+}
+double UHearthwardSurvivalComponent::HungerMultiplier(double Active) const
+{
+    const auto* C=Cast<ACharacter>(GetOwner());
+    const bool Exertion=InCombat() || (Gameplay() && Gameplay()->IsRunning()) || (C && C->GetCharacterMovement()->IsSwimming());
+    return ((Active>0 && Exertion)?2:1)*(1-(Gameplay()?Gameplay()->Effect(TEXT("hunger")):0));
+}
+double UHearthwardSurvivalComponent::RecoveryFraction() const
+{
+    return (InCombat()?.001:(Treatment?.03:(Resting?.02:.005)))*(1+(Gameplay()?Gameplay()->Effect(TEXT("recovery")):0));
+}
+double UHearthwardSurvivalComponent::PreviewAdvance(double Active,double Calendar,double StartW)
+{
+    auto Preview=State;float HP=Health(),Food=Hunger();
+    return Preview.Advance(HP,Food,MaxHealth(),Active,Calendar,StartW,HungerMultiplier(Active),RecoveryFraction());
 }
 bool UHearthwardSurvivalComponent::AutomaticBehavior(float Delta)
 {

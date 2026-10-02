@@ -219,7 +219,7 @@ void UHearthwardLocalAISubsystem::ResetForSnapshot()
 
 bool UHearthwardLocalAISubsystem::StillCurrent() const
 {
-    return bPending && PendingCompanion.IsValid() && PendingCompanion->IsProposalCurrent(PendingSpeaker.Get(), Ticket);
+    return !GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy() && bPending && PendingCompanion.IsValid() && PendingCompanion->IsProposalCurrent(PendingSpeaker.Get(), Ticket);
 }
 
 bool UHearthwardLocalAISubsystem::SubmitPlayerText(AActor* Speaker, AHearthwardCompanionFixture* Companion, const FString& Text)
@@ -520,6 +520,7 @@ void UHearthwardLocalAISubsystem::Generate(const TSharedPtr<FJsonObject>& Body)
 
 void UHearthwardLocalAISubsystem::ApplyProposal()
 {
+    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return;
     if(!StillCurrent()){Fail(TEXT("请求已失效，未执行模型结果"));return;}
     bResponseReady=false;FailureCount=0;ReasonCode=HearthwardAgent::Validate(Proposal);
     const FString Normalized=HearthwardAgent::Normalize(Input);

@@ -2,7 +2,7 @@
 
 状态：**APPROVED（Owner2026-10-02确认，施工和任务分支提交推送已授权）**。版本0.2，2026-10-02。Owner／Reviewer：XLingyyy。对应[052方案D1—D6](../planning/TASK-052/PLAN.md)；父玩法为[DSGN-R01](../design/DSGN-R01-world-time-persistence.md)已批准范围。
 
-本候选覆盖当前schema8代码的接线；不沿用旧052分支的schema4契约，也不将043的公共接口草案解释为已经批准。
+本契约覆盖schema8基线到schema9的接线；旧052分支的schema4格式不进入正式兼容链。
 
 ## 1. 唯一提供者与数据所有权
 
@@ -12,9 +12,9 @@ WorldClock拥有有效实玩秒A、累计游戏分钟W和初始显示日期／M0
 
 ## 2. 请求和结果
 
-候选`RequestTimeAdvance`包含：Kind（Sleep／Campfire）、当前CampaignId、TimelineEpoch、OperationId、起始W、设施ID及选择的游戏分钟。Sleep必须480分钟；Campfire只接受Owner确认的60／240／480。普通Tick为内部调用，不需要每帧生成GUID。UI不提交产出、敌血或替代世界状态。
+`FHearthwardTimeAdvanceRequest`包含：Kind（Sleep／Campfire）、Campaign、Epoch、OperationId、StartW、Facility和Minutes。Sleep必须480分钟；Campfire只接受60／240／480。普通Tick为内部调用，不需要每帧生成GUID。UI不提交产出、敌血或替代世界状态。
 
-结果包含OperationId、起始W、实际到达W、CommittedMinutes、状态（Completed／Rejected／StoppedAtFailure）和可见原因。拒绝至少区分INVALID_DURATION、STALE_TIMELINE、STALE_REQUEST、PAUSED、LOADING、BUSY、UNSAFE、FACILITY_UNAVAILABLE、RULE_UNRESOLVED。没有推进不能笼统显示“生存失败”。
+`FHearthwardTimeAdvanceReceipt`包含OperationId、StartW、EndW、CommittedMinutes、Accepted、Completed、Status（Completed／Rejected／StoppedAtFailure）、ReasonCode和可见Reason。拒绝区分INVALID_DURATION、STALE_TIMELINE、STALE_REQUEST、PAUSED、LOADING、BUSY、UNSAFE、FACILITY_UNAVAILABLE。全部可执行规则已经获批；拒绝不显示“生存失败”。
 
 当前epoch内以OperationId记录已提交请求及结果；同ID重复返回原结果，无再次加时或产出。同ID载荷不同拒绝。恢复生成新epoch并清空会话请求缓存，旧epoch请求失效；该缓存不作为跨回档可继续执行的任务保存。恢复前的新世界请求不能写入恢复后的快照。
 
@@ -24,9 +24,9 @@ WorldClock拥有有效实玩秒A、累计游戏分钟W和初始显示日期／M0
 
 - A：double有效实玩秒；正常推进，暂停／加载／跳时不增。
 - W：double累计游戏分钟；普通1:1推进，跳时按实际CommittedMinutes推进。
-- InitialDay：正整数游戏起始日，候选新档为1。
-- InitialMinute：`0≤M0<1440`，候选新档1200（20:00），旧档迁移0。
-- ClockVersion：候选1；当前格式必须存在且等于受支持版本。
+- InitialDay：正整数游戏起始日，新档为1。
+- InitialMinute：`0≤M0<1440`，新档1200（20:00），旧档迁移0。
+- ClockVersion：1；当前格式必须存在且等于受支持版本。
 
 完整经过日数`floor(W/1440)`和显示日期`InitialDay+floor((M0+W)/1440)`分别派生。四日全局周期只使用W；昼夜、HUD、环境光照／感知使用`(M0+W)%1440`。候选time配置为：version=1、initial_day=1、initial_minute=1200、sunrise_minute=360、sunset_minute=1080、light_transition_minutes=30、campfire_wait_minutes=[60,240,480]；已获Owner确认，进入gameplay.json的唯一time段。现实日期仅用于存档文件时间。
 
@@ -61,7 +61,7 @@ WorldClock拥有有效实玩秒A、累计游戏分钟W和初始显示日期／M0
 
 新增字段在现有FHearthwardWorldSave中，复用已保存A/W、Camp、Nature、Campaign及库存；各领域只升级自身必需字段。Operation结果缓存为当前epoch会话状态，恢复时失效，不保存可重试的跨时间线请求。
 
-| 输入格式 | 候选处理 |
+| 输入格式 | 处理 |
 |---|---|
 | schema8/HWS8 | 按旧格式严格校验；保留A、W和领域结果；补ClockVersion=1、InitialDay=1、InitialMinute=0；迁移野外全局due |
 | 已支持schema1／2／3／5／6／7 | 先走当前已验证迁移链到8，再做8→9；仅确实无W的旧格式沿既有W=A逻辑 |
@@ -76,4 +76,4 @@ WorldClock拥有有效实玩秒A、累计游戏分钟W和初始显示日期／M0
 
 ## 8. 批准和验证
 
-Owner已确认PLAN的D1—D6、此契约及施工路径，任务JSON已登记批准，工程字段按本契约进入公共声明。当前未更改Source、Resources或存档文件。真实验收按[052矩阵](../qa/TASK-052/MATRIX.md)，各用例绑定实际实现SHA；本轮均NOT_RUN。
+Owner已确认PLAN的D1—D6、此契约及施工路径，任务JSON已登记批准，工程字段已进入公共声明。真实结果及源码绑定见[052报告](../qa/TASK-052/REPORT.md)，逐项覆盖见[验收矩阵](../qa/TASK-052/MATRIX.md)。

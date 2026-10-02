@@ -26,7 +26,7 @@ bool Raw(const TArray<uint8>& Bytes,UHearthwardSaveGame*& Pool,uint32& Magic,FSt
     uint32 H[3];FMemory::Memcpy(H,Bytes.GetData(),12);Magic=H[0];
     if(H[1]!=uint32(Bytes.Num()-12) || H[2]!=FCrc::MemCrc32(Bytes.GetData()+12,Bytes.Num()-12))
     {Error=TEXT("存档完整性校验失败。这是文件损坏，不是玩家操作冲突；请恢复备份。");return false;}
-    if(Magic!=0x48575331 && Magic!=0x48575332 && Magic!=0x48575335 && Magic!=0x48575336 && Magic!=0x48575337 && Magic!=0x48575338)
+    if(Magic!=0x48575331 && Magic!=0x48575332 && Magic!=0x48575335 && Magic!=0x48575336 && Magic!=0x48575337 && Magic!=0x48575338 && Magic!=0x48575339)
     {Error=TEXT("此存档格式不受当前版本支持，请同步更新。原档保留，不可通过删除记录降级。");return false;}
     TArray<uint8> Payload;Payload.Append(Bytes.GetData()+12,Bytes.Num()-12);
     Pool=Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
@@ -57,6 +57,7 @@ FString HearthwardSave::Diagnose(const UHearthwardSaveGame& Pool)
     for(const auto& P:Pool.Points)
     {
         const auto& S=P.World;TArray<FString> Areas;
+        if(S.ClockVersion!=1 || S.InitialDay<1 || !FMath::IsFinite(S.InitialMinute) || S.InitialMinute<0 || S.InitialMinute>=1440)Areas.Add(TEXT("时间起点／时钟版本"));
         FHearthwardCampState Camp;FHearthwardNatureState Nature;FHearthwardCampaignState Campaign;
         if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,Camp) || !Camp.ValidateBuildings(S.Gameplay)
             || FMath::Abs(Camp.Calendar-S.CalendarMinutes)>1.e-4))Areas.Add(TEXT("营地设施、生产队列或时间线"));

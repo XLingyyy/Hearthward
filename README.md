@@ -1,8 +1,8 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。截至2026-10-02，核对主干为`origin/main@4db5789184fe38e041d62a1e68c8517338ea0b01`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线，以及PR #56的动物动作和更新／存档兼容整合。当前`codex/TASK-052-time-integration`只新增052任务及工程方案，Owner已批准设计及施工，运行实现进行中。Windows Demo受测源码仍为`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，发行包尚未随这些合并更新。版本与验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026自然地图](docs/tasks/TASK-026.md)已形成4032米World Partition底座与营地入口，完整路线、流送、性能和Owner视觉验收仍未闭合。有效设计见[CURRENT](docs/design/CURRENT.md)及各已批准增量。
+UE 5.8.2 单人第三人称生存冒险项目。截至2026-10-03，核对主干为`origin/main@4db5789184fe38e041d62a1e68c8517338ea0b01`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线，以及PR #56的动物动作和更新／存档兼容整合。当前`codex/TASK-052-time-integration`已完成统一时间、真实设施跳时、全局刷新、旅行及schema9迁移，Editor Development、相关原生34/34、渲染PIE82/82通过；本任务成果尚未集成main，源码SHA和证据见[052报告](docs/qa/TASK-052/REPORT.md)。Windows Demo受测源码仍为`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，发行包尚未随这些合并更新。版本与验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026自然地图](docs/tasks/TASK-026.md)已形成4032米World Partition底座与营地入口，完整路线、流送、性能和Owner视觉验收仍未闭合。有效设计见[CURRENT](docs/design/CURRENT.md)及各已批准增量。
 
-[TASK-052](docs/tasks/TASK-052.md)对应原稿054，复用043已批准时间规则，统一现有生产／生态／战役的推进、刷新、旅行与回档；[D1—D6工程方案](docs/planning/TASK-052/PLAN.md)及schema9迁移已获Owner确认，当前游戏仍使用schema8。固定录音按Owner要求暂缓。最新动物归档沿用其原有051标签，本单不覆盖该任务资料。
+[TASK-052](docs/tasks/TASK-052.md)对应原稿054，复用043已批准时间规则，统一现有生产／生态／战役的推进、刷新、旅行与回档；[D1—D6工程方案](docs/planning/TASK-052/PLAN.md)及schema9迁移已获Owner确认。本分支新档从第1日20:00开始；靠近真实床可睡8小时，已建篝火的设施页可等待1／4／8小时，加载和暂停冻结时间。schema9保留旧档W及原兼容备份，完整证据与未覆盖项见[052报告](docs/qa/TASK-052/REPORT.md)。固定录音按Owner要求暂缓。最新动物归档沿用其原有051标签，本单不覆盖该任务资料。
 
 ## 当前项目成果同步（2026-10-02）
 
@@ -28,7 +28,7 @@ UE 5.8.2 单人第三人称生存冒险项目。截至2026-10-02，核对主干�
 
 [TASK-044 生存与救援](docs/tasks/TASK-044.md)按Owner批准沿用044编号实施。main已接入兄弟生存状态、3秒用药与半份药、120秒倒地／5秒扶起、严重饥饿期限、存档恢复和失败回档。靠近倒地弟弟2米内按E扶起；倒地时Esc菜单可立即放弃。背包用药会回到HUD继续计时，移动／攻击／跳跃可取消；暂停菜单可设置普通页面是否暂停。
 
-044任务分支已通过Editor构建、相关原生18/18和真实PIE 23/23检查，证据见[验证报告](docs/qa/TASK-044/REPORT.md)。已由PR #46合入main（7ce8262）；测试仍绑定报告内源码。已集成的051操作基线新增坠落／游泳参数与饥饿视觉设置；新药配方与治疗区内容仍待对应任务。main的046实现新增床八小时睡眠与有限生产／刷新状态，沿用044生存时钟。main已含049／050，当前存档为schema8，旧存档采用明确迁移；请勿用旧版本覆盖新档。
+044任务分支已通过Editor构建、相关原生18/18和真实PIE 23/23检查，证据见[验证报告](docs/qa/TASK-044/REPORT.md)。已由PR #46合入main（7ce8262）；测试仍绑定报告内源码。已集成的051操作基线新增坠落／游泳参数与饥饿视觉设置；新药配方与治疗区内容仍待对应任务。main的046实现新增床八小时睡眠与有限生产／刷新状态，沿用044生存时钟。main已含049／050并使用schema8；052分支升级schema9，旧存档采用明确迁移；请勿用旧版本覆盖新档。
 
 AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与分支证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)和[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；所选集成修正随 PR #40 合入 main，PR #41/#42 属于 TASK-031。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 

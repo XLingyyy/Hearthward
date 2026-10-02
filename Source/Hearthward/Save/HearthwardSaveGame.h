@@ -42,6 +42,10 @@ struct FHearthwardWorldSave
     UPROPERTY() double ActiveSeconds = 0;
     UPROPERTY() int32 SurvivalVersion = 0;
     UPROPERTY() double CalendarMinutes = 0;
+    UPROPERTY() int32 ClockVersion=1;
+    UPROPERTY() int64 InitialDay=1;
+    UPROPERTY() double InitialMinute=0;
+    bool Serialize(FArchive& Ar);
     UPROPERTY() FHearthwardSurvivalState PlayerSurvival;
     UPROPERTY() FHearthwardSurvivalState BrotherSurvival;
     UPROPERTY() float BrotherHealth = 100;
@@ -94,6 +98,9 @@ struct FHearthwardWorldSave
     UPROPERTY() TMap<FString,int32> HarvestedResources;
 };
 
+template<> struct TStructOpsTypeTraits<FHearthwardWorldSave> : TStructOpsTypeTraitsBase2<FHearthwardWorldSave>
+{ enum { WithSerializer=true }; };
+
 USTRUCT(BlueprintType)
 struct FHearthwardSavePoint
 {
@@ -115,14 +122,14 @@ class HEARTHWARD_API UHearthwardSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Schema = 8;
+    UPROPERTY() int32 Schema = 9;
     UPROPERTY() FString WriterVersion;
     UPROPERTY() TArray<FHearthwardSavePoint> Points;
 };
 
 namespace HearthwardSave
 {
-    constexpr int32 CurrentSchema = 8;
+    constexpr int32 CurrentSchema = 9;
     constexpr int32 NPCStateVersion = 3;
     constexpr int32 MaxPoints = 50;
     // INDEX_NONE means no capacity. An index equal to Num means append.

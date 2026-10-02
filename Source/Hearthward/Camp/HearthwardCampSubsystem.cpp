@@ -14,6 +14,7 @@
 #include "Engine/World.h"
 #include "EngineUtils.h"
 #include "../Combat/HearthwardCombatTargetComponent.h"
+#include "../Save/HearthwardSaveSubsystem.h"
 
 using namespace HearthwardData;
 namespace
@@ -33,7 +34,7 @@ void UHearthwardCampSubsystem::SyncTier()
 {if(auto* P=CampPlayer(GetWorld()))if(auto* G=P->FindComponentByClass<UHearthwardGameplayComponent>())G->CampTier=State.Tier;}
 bool UHearthwardCampSubsystem::CanManage(FGuid Epoch) const
 {
-    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy() || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Busy())return false;
+    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy() || GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy() || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Busy())return false;
     const auto* P=CampPlayer(GetWorld());const auto* G=P?P->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
     const auto* S=P?P->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
     const auto* B=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
@@ -117,13 +118,17 @@ bool UHearthwardCampSubsystem::Craft(FGuid Facility,FName Recipe,int32 Batches,F
 }
 bool UHearthwardCampSubsystem::Sleep(FGuid BedId,FGuid Epoch)
 {
-    auto* P=CampPlayer(GetWorld());auto* Builder=P?P->FindComponentByClass<UHearthwardBuildingComponent>():nullptr;
-    const auto* B=State.Facilities.FindByPredicate([&](const auto& F){return F.Id==BedId;});
-    if(!CanManage(Epoch) || !Builder || !Builder->CanUseFacility(BedId) || !B || B->Kind!=TEXT("bed"))return false;
-    for(TActorIterator<AActor> It(GetWorld());It;++It)
-        if(const auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();S && S->Enabled() && !S->SafeToSave())return false;
-    const double Advanced=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->AdvanceCalendar(480);
-    Feedback=Advanced>=480-1.e-6?TEXT("睡眠结束，日期与生产按八小时推进"):TEXT("睡眠被生存失败中止");return Advanced>0;
+    auto* Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>();
+    FHearthwardTimeAdvanceRequest R;R.Facility=BedId;R.Epoch=Epoch;R.OperationId=FGuid::NewGuid();
+    R.Campaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId();R.StartW=Clock->GetSnapshot().ElapsedCalendarMinutes;
+    const auto Result=Clock->RequestTimeAdvance(R);Feedback=Result.Reason;return Result.Accepted;
+}
+bool UHearthwardCampSubsystem::WaitAtCampfire(FGuid Id,int32 Minutes,FGuid Epoch)
+{
+    auto* Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>();
+    FHearthwardTimeAdvanceRequest R;R.Kind=EHearthwardTimeAdvanceKind::Campfire;R.Facility=Id;R.Minutes=Minutes;
+    R.Epoch=Epoch;R.OperationId=FGuid::NewGuid();R.Campaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId();R.StartW=Clock->GetSnapshot().ElapsedCalendarMinutes;
+    const auto Result=Clock->RequestTimeAdvance(R);Feedback=Result.Reason;return Result.Accepted;
 }
 double UHearthwardCampSubsystem::Efficiency(AActor* Actor,const FHearthwardCampRegion& Region) const
 {

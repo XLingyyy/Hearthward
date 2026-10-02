@@ -15,6 +15,10 @@
 #include "Engine/GameInstance.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
+#include "Serialization/MemoryReader.h"
+#include "Serialization/MemoryWriter.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
+#include "UObject/UnrealType.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 namespace
@@ -337,7 +341,7 @@ bool FSaveCompatibilityTest::RunTest(const FString& Parameters)
     auto WriteRaw=[&]()
     {
         TArray<uint8> Payload,Bytes;UGameplayStatics::SaveGameToMemory(Pool,Payload);
-        const uint32 H[]={0x48575338,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
+        const uint32 H[]={0x48575339,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
         Bytes.Append(reinterpret_cast<const uint8*>(H),12);Bytes.Append(Payload);return FFileHelper::SaveArrayToFile(Bytes,*Source);
     };
     TestTrue(TEXT("Create conflicting file"),WriteRaw());
@@ -417,6 +421,75 @@ bool FReleaseVersionTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Rate limit has actionable offline fallback"),Update->GetNotice().Contains(TEXT("限流")));
     Update->CompleteCheck(200,TEXT("{\"tag_name\":\"main\"}"),true);
     TestTrue(TEXT("Unparseable tag is not falsely called current"),Update->GetNotice().Contains(TEXT("无法自动比较")));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveClock9Test,"Hearthward.Save.Clock9OriginAndLegacyBoundary",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSaveClock9Test::RunTest(const FString&)
+{
+    struct FLegacyWorldArchive : FObjectAndNameAsStringProxyArchive
+    {
+        explicit FLegacyWorldArchive(FArchive& Inner):FObjectAndNameAsStringProxyArchive(Inner,false) {}
+        virtual bool ShouldSkipProperty(const FProperty* Property) const override
+        {
+            const FName Name=Property->GetFName();
+            return Name==TEXT("ClockVersion") || Name==TEXT("InitialDay") || Name==TEXT("InitialMinute");
+        }
+    };
+    FHearthwardWorldSave Historical;Historical.ActiveSeconds=120;Historical.CalendarMinutes=6500;
+    TArray<uint8> HistoricalBytes;FMemoryWriter HistoricalWriter(HistoricalBytes);
+    FLegacyWorldArchive OldArchive(HistoricalWriter);Historical.Serialize(OldArchive);
+    FMemoryReader HistoricalReader(HistoricalBytes);FObjectAndNameAsStringProxyArchive ReadArchive(HistoricalReader,false);
+    FHearthwardWorldSave HistoricalLoaded;HistoricalLoaded.Serialize(ReadArchive);
+    TestEqual(TEXT("Absent legacy clock metadata is not today's CDO default"),HistoricalLoaded.ClockVersion,0);
+    TestEqual(TEXT("Absent legacy origin remains detectable"),HistoricalLoaded.InitialMinute,-1.);
+    TestEqual(TEXT("Actual metadata-free tagged snapshot preserves W"),HistoricalLoaded.CalendarMinutes,6500.);
+    const FString Path=FPaths::Combine(FPaths::ProjectSavedDir(),TEXT("Task052"),FGuid::NewGuid().ToString()+TEXT(".hws"));
+    auto* Pool=NewObject<UHearthwardSaveGame>();Pool->Points.Add(Point());auto& S=Pool->Points[0].World;
+    S.ActiveSeconds=120;S.CalendarMinutes=6500;S.InitialDay=4;S.InitialMinute=1200;
+    FHearthwardCampaignState Campaign;Campaign.Initialize(true);
+    auto* E=Campaign.Enemies.FindByPredicate([](const auto& Enemy){return Enemy.Group==TEXT("field");});
+    if(!TestNotNull(TEXT("Existing field enemy fixture"),E))return false;
+    E->Combat.Health=0;E->RefreshDue=10080;const FName EnemyId=E->Id;const int32 Generation=E->Combat.Generation;S.Campaign=Campaign.Snapshot();
+    FString Error;UHearthwardSaveGame* Loaded=nullptr;
+    TestTrue(TEXT("Schema9 writes origin separately"),HearthwardSave::Write(Path,Pool,Error));
+    TestTrue(TEXT("Schema9 reads tagged snapshot"),HearthwardSave::Read(Path,Loaded,Error));
+    if(Loaded)
+    {
+        TestEqual(TEXT("Origin day round trip"),Loaded->Points[0].World.InitialDay,int64(4));
+        TestEqual(TEXT("Origin minute round trip"),Loaded->Points[0].World.InitialMinute,1200.);
+        TestEqual(TEXT("W is preserved when W exceeds A"),Loaded->Points[0].World.CalendarMinutes,6500.);
+    }
+    auto WriteEnvelope=[&](uint32 Magic)
+    {
+        TArray<uint8> Payload,Bytes;UGameplayStatics::SaveGameToMemory(Pool,Payload);
+        const uint32 H[]={Magic,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
+        Bytes.Append(reinterpret_cast<const uint8*>(H),12);Bytes.Append(Payload);FFileHelper::SaveArrayToFile(Bytes,*Path);
+    };
+    Pool->Schema=8;S.ClockVersion=0;S.InitialDay=0;S.InitialMinute=-1;WriteEnvelope(0x48575338);
+    TestTrue(TEXT("Schema8 migration succeeds"),HearthwardSave::Read(Path,Loaded,Error));
+    if(Loaded)
+    {
+        const auto& R=Loaded->Points[0].World;
+        TestEqual(TEXT("Legacy display starts at midnight"),R.InitialMinute,0.);
+        TestEqual(TEXT("Legacy elapsed W is not replaced by A"),R.CalendarMinutes,6500.);
+        FHearthwardCampaignState Migrated;FHearthwardCampaignState::Parse(R.Campaign,Migrated);
+        const auto* ME=Migrated.Enemies.FindByPredicate([&](const auto& Enemy){return Enemy.Id==EnemyId;});
+        TestTrue(TEXT("Old due becomes next global boundary"),ME && ME->RefreshDue==5760);
+        TestTrue(TEXT("Loading cannot materialize another generation"),ME && ME->Combat.Health==0 && ME->Combat.Generation==Generation);
+        TestTrue(TEXT("Repeat legacy load is stable"),HearthwardSave::Read(Path,Loaded,Error));
+        TestTrue(TEXT("Upgrade write preserves schema8 original backup"),HearthwardSave::Write(Path,Loaded,Error) && IFileManager::Get().FileExists(*(Path+TEXT(".pre-schema9"))));
+    }
+    E->RefreshDue=4000;S.Campaign=Campaign.Snapshot();WriteEnvelope(0x48575338);
+    TestFalse(TEXT("Indeterminate legacy death time cannot be guessed"),HearthwardSave::Read(Path,Loaded,Error));
+    TestTrue(TEXT("Migration gives a specific conflict"),Error.Contains(TEXT("死亡时间")));
+    Pool->Schema=9;S.Campaign.Reset();WriteEnvelope(0x48575339);
+    TestFalse(TEXT("Malformed current clock cannot use a legacy fallback"),HearthwardSave::Read(Path,Loaded,Error));
+    Pool->Schema=10;WriteEnvelope(0x48575339);
+    TestFalse(TEXT("Future schema cannot migrate as legacy"),HearthwardSave::Read(Path,Loaded,Error));
+    Pool->Schema=9;S.ClockVersion=1;S.InitialDay=1;S.InitialMinute=1200;WriteEnvelope(0x48575338);
+    TestFalse(TEXT("Schema9 clock metadata cannot be silently downgraded by a schema8 envelope"),HearthwardSave::Read(Path,Loaded,Error));
+    IFileManager::Get().Delete(*Path);IFileManager::Get().Delete(*(Path+TEXT(".pre-schema9")));
     return true;
 }
 #endif

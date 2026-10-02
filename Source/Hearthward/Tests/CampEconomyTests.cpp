@@ -9,6 +9,19 @@
 #include "../Gameplay/HearthwardGameplayComponent.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampRefreshEndpointTest,"Hearthward.Camp.SourceDueAtEndpoint",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FCampRefreshEndpointTest::RunTest(const FString&)
+{
+    FHearthwardCampState State;State.AddCamp(TEXT("camp"),FVector::ZeroVector);
+    FHearthwardCampSource Source;Source.Id=TEXT("endpoint_tree");Source.Item=TEXT("wood");Source.Capacity=12;Source.Remaining=0;Source.Due=2880;Source.RefreshMinutes=2880;
+    State.Sources.Add(Source);
+    State.Advance(2880,true,[](const auto&,const auto&){return true;});
+    TestEqual(TEXT("The exact due endpoint restores one capacity"),State.Sources[0].Remaining,12);
+    TestEqual(TEXT("The restored source clears its pending deadline"),State.Sources[0].Due,-1.);
+    State.Advance(10000,true,[](const auto&,const auto&){return true;});
+    TestEqual(TEXT("Unused capacity never accumulates across later cycles"),State.Sources[0].Remaining,12);
+    return true;
+}
 namespace
 {
 FHearthwardCampState CampForage(int32 Workers,int32 Patches)

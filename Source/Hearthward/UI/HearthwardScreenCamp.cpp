@@ -108,6 +108,13 @@ void UHearthwardScreenWidget::ComposeCamp()
             }
             else Label(TEXT("该设施当前没有已解锁的加工配方。"),570,520,850);
             if(B->Kind==TEXT("bed"))Button(TEXT("睡眠八小时"),TEXT("camp.sleep"),570,625,400);
+            if(B->Kind==TEXT("campfire"))
+            {
+                Label(TEXT("等待会消耗饱食；兄弟不计劳动力，族人继续生产。"),570,550,850);
+                Button(TEXT("等待1小时"),TEXT("camp.wait:60"),570,625,230);
+                Button(TEXT("等待4小时"),TEXT("camp.wait:240"),825,625,230);
+                Button(TEXT("等待8小时"),TEXT("camp.wait:480"),1080,625,230);
+            }
         }
         else Label(TEXT("尚无已建造设施，请先打开建造目录。"),570,260,850);
     }
@@ -171,6 +178,7 @@ bool UHearthwardScreenWidget::ExecuteCampAction(const FString& Action)
     {const FGuid Epoch=CampEpoch,Id=CampFacility;OpenPage(TEXT("hud"));Success=Action==TEXT("camp.move")?Builder->MoveFacility(Id,Epoch):Builder->UpgradeFacility(Id,Epoch);E->Feedback=Builder->Feedback;}
     else if(Action==TEXT("camp.craft"))Success=E->Craft(CampFacility,CampRecipe,1,CampEpoch);
     else if(Action==TEXT("camp.sleep")){const FGuid Epoch=CampEpoch,Id=CampFacility;OpenPage(TEXT("hud"));Success=E->Sleep(Id,Epoch);}
+    else if(Action.StartsWith(TEXT("camp.wait:"))){const FGuid Epoch=CampEpoch,Id=CampFacility;const int32 Minutes=FCString::Atoi(*Action.Mid(10));OpenPage(TEXT("hud"));Success=E->WaitAtCampfire(Id,Minutes,Epoch);}
     else if(Action==TEXT("camp.configure") && B)
     {const FName Region(*(TEXT("facility_")+B->Id.ToString()));Success=E->SelectProduction(Region,B->Id,CampRecipe,CampEpoch);if(Success){CampRegion=Region;Category=TEXT("workers");}}
     else if(Action==TEXT("camp.recipeNext") && B)
