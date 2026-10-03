@@ -6,6 +6,7 @@
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Save/HearthwardSaveSubsystem.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
@@ -81,7 +82,7 @@ FString UHearthwardHarvestTargetComponent::CompleteInteraction(AActor* Player)
 { return GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Harvest(this,Player); }
 FString UHearthwardHarvestSubsystem::Harvest(UHearthwardHarvestTargetComponent* Target,AActor* Player)
 {
-    if(Settling || !IsValid(Target) || !IsValid(Player) || Target->GetWorld()!=GetWorld() || Player->GetWorld()!=GetWorld()
+    if(Settling || GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy() || !IsValid(Target) || !IsValid(Player) || Target->GetWorld()!=GetWorld() || Player->GetWorld()!=GetWorld()
         || GetWorld()->IsPaused() || FVector::Dist(Player->GetActorLocation(),Target->GetComponentLocation())>Target->MaxDistance)
         return TEXT("目标不可用，未采集");
     auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();

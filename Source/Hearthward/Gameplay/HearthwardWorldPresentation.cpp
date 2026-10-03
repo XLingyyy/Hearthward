@@ -1,5 +1,5 @@
 #include "HearthwardWorldPresentation.h"
-#include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "Components/DirectionalLightComponent.h"
 #include "Components/SkyLightComponent.h"
 #include "Components/ExponentialHeightFogComponent.h"
@@ -63,7 +63,7 @@ void UHearthwardWorldPresentation::OnWorldBeginPlay(UWorld& World)
     P.bOverride_MotionBlurAmount=true;P.MotionBlurAmount=0;
     for(auto* Level:World.GetLevels())ConfigureSky(Level,&World);
     StreamingHandle=FWorldDelegates::LevelAddedToWorld.AddUObject(this,&UHearthwardWorldPresentation::ConfigureSky);
-    SetNight(World.GetSubsystem<UHearthwardCampaignSubsystem>()->State.Phase==TEXT("prologue"));
+    ApplyTime(World.GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().MinuteOfDay);
 }
 
 void UHearthwardWorldPresentation::ConfigureSky(ULevel* Level,UWorld* World)
@@ -77,6 +77,8 @@ void UHearthwardWorldPresentation::ConfigureSky(ULevel* Level,UWorld* World)
             // SkyAtmosphere and volumetric clouds cover every restored camera height.
             Mesh->SetVisibility(false);
         }
+    AppliedMinute=-1;AppliedSky=-1;
+    ApplyTime(World->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().MinuteOfDay);
 }
 
 void UHearthwardWorldPresentation::Deinitialize()
@@ -85,34 +87,41 @@ void UHearthwardWorldPresentation::Deinitialize()
     Super::Deinitialize();
 }
 
-void UHearthwardWorldPresentation::SetNight(bool Night)
+void UHearthwardWorldPresentation::ApplyTime(double Minute)
 {
-    if(!Grade.IsValid())return;
-    if(Night && !NightFill.IsValid())
+    if(!Grade.IsValid() || FMath::Abs(Minute-AppliedMinute)<.25)return;
+    AppliedMinute=Minute;
+    const double Day=UHearthwardWorldClockSubsystem::DaylightAt(Minute);
+    const bool Recapture=AppliedSky<0 || FMath::Abs(Day-AppliedSky)>=.05 || (Day==0 && AppliedSky!=0) || (Day==1 && AppliedSky!=1);
+    if(!NightFill.IsValid())
     {
-        auto* Fill=GetWorld()->SpawnActor<ADirectionalLight>(FVector::ZeroVector,FRotator(-55,-130,0));
-        Fill->Tags.Add(TEXT("HearthwardNightFill"));
-        auto* Light=Fill->GetComponent();
-        Light->SetMobility(EComponentMobility::Movable);
+        auto* Fill=GetWorld()->SpawnActor<ADirectionalLight>(FVector::ZeroVector,FRotator(-32,30,0));
+        Fill->Tags.Add(TEXT("HearthwardNightFill"));NightFill=Fill;
+        auto* Light=Fill->GetComponent();Light->SetMobility(EComponentMobility::Movable);
         Light->SetAtmosphereSunLight(false);Light->SetCastShadows(false);
-        Light->SetIntensity(.55f);Light->SetLightColor(FLinearColor(.48f,.64f,1.f));
-        NightFill=Fill;
+        Light->SetLightColor(FLinearColor(.56f,.70f,1.f));
     }
-    else if(!Night && NightFill.IsValid()){NightFill->Destroy();NightFill.Reset();}
+    NightFill->GetComponent()->SetIntensity(1.5f*(1-Day));
     for(TActorIterator<AActor> It(GetWorld());It;++It)
     {
-        if(auto* Sky=It->FindComponentByClass<USkyLightComponent>())
+        if(auto* Sun=It->FindComponentByClass<UDirectionalLightComponent>();Sun && !It->ActorHasTag(TEXT("HearthwardNightFill")))
         {
-            Sky->SetRealTimeCaptureEnabled(false);
-            Sky->SetIntensity(Night?.65f:1.f);
-            Sky->SetLightColor(Night?FLinearColor(.46f,.61f,1.f):FLinearColor(.91f,.96f,1.f));
-            Sky->SetLowerHemisphereColor(Night?FLinearColor(.025f,.035f,.055f):FLinearColor(.025f,.028f,.022f));
+            if(!SunIntensity.Contains(Sun))SunIntensity.Add(Sun,Sun->Intensity);
+            Sun->SetIntensity(SunIntensity.FindChecked(Sun)*Day);
+            Sun->SetWorldRotation(FRotator(-55*FMath::Sin((Minute/1440-.25)*2*PI),30,0));
+        }
+        if(auto* Sky=It->FindComponentByClass<USkyLightComponent>();Sky && Recapture)
+        {
+            Sky->SetRealTimeCaptureEnabled(false);Sky->SetIntensity(FMath::Lerp(.65f,1.f,Day));
+            Sky->SetLightColor(FMath::Lerp(FLinearColor(.46f,.61f,1.f),FLinearColor(.91f,.96f,1.f),Day));
+            Sky->SetLowerHemisphereColor(FMath::Lerp(FLinearColor(.025f,.035f,.055f),FLinearColor(.025f,.028f,.022f),Day));
             Sky->RecaptureSky();
         }
         if(auto* Fog=It->FindComponentByClass<UExponentialHeightFogComponent>())
         {
-            Fog->SetFogInscatteringColor(Night?FLinearColor(.022f,.036f,.075f):FLinearColor(.45f,.57f,.68f));
-            Fog->SetDirectionalInscatteringColor(Night?FLinearColor(.05f,.08f,.15f):FLinearColor(.75f,.65f,.48f));
+            Fog->SetFogInscatteringColor(FMath::Lerp(FLinearColor(.022f,.036f,.075f),FLinearColor(.45f,.57f,.68f),Day));
+            Fog->SetDirectionalInscatteringColor(FMath::Lerp(FLinearColor(.05f,.08f,.15f),FLinearColor(.75f,.65f,.48f),Day));
         }
     }
+    if(Recapture)AppliedSky=Day;
 }

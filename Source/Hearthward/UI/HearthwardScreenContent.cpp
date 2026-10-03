@@ -654,9 +654,10 @@ void UHearthwardScreenWidget::ComposeHUD()
         Element(TEXT("text"),Text(Item,TEXT("name"))+Count+TEXT("\n")+Controls,FVector2D(1405,790),FVector2D(240,65),17);
     }
     if(G->Skills.FindRef(TEXT("strong"))>0) Element(TEXT("text"),Key(TEXT("combat.heavyModifier"))+TEXT(" + ")+Key(TEXT("combat.attack"))+TEXT(" 重击"),FVector2D(1180,774),FVector2D(440,50),16);
-    const int32 Time=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
+    const auto Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot();
+    const int32 Time=Clock.MinuteOfDay;
     const int32 Hour=(Time/60)%24;
-    Element(TEXT("text"),FString::Printf(TEXT("第 %d 天  %02d:%02d  %s"),Time/1440+1,Hour,Time%60,Hour<6 || Hour>=18?TEXT("夜"):TEXT("晴")),FVector2D(1380,31),FVector2D(290,35),16);
+    Element(TEXT("text"),FString::Printf(TEXT("第 %lld 天  %02d:%02d  %s"),Clock.DisplayDay,Hour,Time%60,Hour<6 || Hour>=18?TEXT("夜"):TEXT("晴")),FVector2D(1380,31),FVector2D(290,35),16);
     if(const auto* S=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>())
     {
         if(!S->Describe().IsEmpty()) Element(TEXT("notice"),S->Describe(),FVector2D(1100,450),FVector2D(540,50),18);

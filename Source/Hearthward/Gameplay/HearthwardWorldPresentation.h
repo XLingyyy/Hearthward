@@ -10,7 +10,7 @@ class HEARTHWARD_API UHearthwardWorldPresentation : public UWorldSubsystem
 public:
     virtual void OnWorldBeginPlay(UWorld& World) override;
     virtual void Deinitialize() override;
-    void SetNight(bool Night);
+    void ApplyTime(double Minute);
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type Type) const override;
 private:
@@ -18,4 +18,6 @@ private:
     FDelegateHandle StreamingHandle;
     TWeakObjectPtr<class APostProcessVolume> Grade;
     TWeakObjectPtr<class ADirectionalLight> NightFill;
+    TMap<TWeakObjectPtr<class UDirectionalLightComponent>,float> SunIntensity;
+    double AppliedMinute=-1,AppliedSky=-1;
 };

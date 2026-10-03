@@ -90,6 +90,17 @@ private:
     bool ExecuteSettingsAction(const FString& Action);
     void LoadSettingsDraft();
     void ApplyMasterVolume();
+    bool CaptureBinding(FKey Key,bool Shift,bool Control,bool Alt);
+    void FinishDisplayChange(bool Keep);
+    bool InputMatches(FName Id,const FKeyEvent& Event) const;
+    FHearthwardBindings SettingsBindings;
+    FHearthwardComfortSettings SettingsComfort;
+    FName BindingCapture;
+    int32 BindingSlot=0,SettingsMode=1;
+    FIntPoint SettingsResolution=FIntPoint(1920,1080),PreviousResolution;
+    EWindowMode::Type PreviousMode=EWindowMode::Windowed;
+    double DisplayDeadline=0;
+    TMap<FName,FString> PageFocus;
     void ComposeCompatibility();
     void ComposeUpdateNotice();
     int32 CompatibilityScroll=0;

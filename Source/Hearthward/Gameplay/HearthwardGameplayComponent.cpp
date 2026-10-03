@@ -286,7 +286,7 @@ bool UHearthwardGameplayComponent::ActivateNearby()
 bool UHearthwardGameplayComponent::Travel(FName Id)
 {
     if(auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())return C->Travel(Id);
-    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
+    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy() || GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
     auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(!S->Alive() || UHearthwardSurvivalComponent::HasFailed(GetWorld())) return false;
     const FName From=NearbyLocation();
@@ -487,7 +487,7 @@ void UHearthwardGameplayComponent::SetWaypoint(FVector Position)
 void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType,FActorComponentTickFunction* Function)
 {
     Super::TickComponent(Delta,TickType,Function);
-    if (!Enabled || GetWorld()->IsPaused()) return;
+    if (!Enabled || GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended()) return;
     AttackDelay=FMath::Max(0.f,AttackDelay-Delta); CombatRemaining=FMath::Max(0.f,CombatRemaining-Delta); EnemyAttackDelay-=Delta;
     for(auto& S:Stunned) S.Value=FMath::Max(0.f,S.Value-Delta);
     // Companion policy still owns its own movement when the player is down; this allows an

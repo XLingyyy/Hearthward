@@ -1,0 +1,92 @@
+# TASK-052 / Agent read-only receipt
+Repository directory: G:\GameFactory\Hearthward\.agent-local\task051
+This local snapshot is NOT confirmation of remote ownership, permissions or locks.
+No network, installs, writes, checkout, stash, commit or push performed.
+
+Branch: codex/TASK-052-time-integration
+HEAD: 4db5789184fe38e041d62a1e68c8517338ea0b01
+Upstream ref: NO_UPSTREAM (local record; not fetched)
+
+## Working tree
+## codex/TASK-052-time-integration
+ M README.md
+ M docs/PROJECT_STATE.md
+?? docs/contracts/CT-TASK-052-clock-refresh.md
+?? docs/handoffs/TASK-052.md
+?? docs/planning/TASK-052/
+?? docs/qa/TASK-052/
+?? docs/tasks/TASK-052.json
+?? docs/tasks/TASK-052.md
+
+## Recent commits
+4db5789 Merge pull request #56 from XLingyyy/codex/project-progress-20261002
+5661849 Merge branch 'main' into codex/project-progress-20261002
+e3362b9 Merge pull request #57 from XLingyyy/codex/TASK-051-experience-baseline
+4eee05d TASK-051: bind verification evidence to implementation revision
+591d350 TASK-051: implement approved input traversal and comfort baseline
+
+## Unstaged paths
+M	README.md
+M	docs/PROJECT_STATE.md
+
+## Staged paths
+none
+
+## Task snapshot
+title: '实现统一时间推进和持久刷新基础'
+status: 'Active'
+updated_at: '2026-10-02'
+owner: 'XLingyyy'
+reviewer: 'XLingyyy'
+issue_url: None
+branch: 'codex/TASK-052-time-integration'
+dependencies: ['TASK-043', 'TASK-044', 'TASK-046', 'TASK-048', 'TASK-049', 'TASK-050']
+blocked_by: []
+source_refs: ['用户：录音先放着不管，继续做052；Owner与Reviewer均为本人，不提Issue', 'G:/GameFactory/Hearthward/docs/Hearthward_TASK-043-076.md：原稿TASK-054，canonical编号减2', 'G:/GameFactory/Hearthward/docs/Hearthward_Audit_2026-09-24.md：时间、生产、刷新和回档历史缺口', 'origin/main@4db5789184fe38e041d62a1e68c8517338ea0b01，已含051操作基线、动物归档及更新／存档兼容整合', 'TASK-043的DSGN-R01已批准D1—D6；044生存、046生产、048生态、049关卡和050伙伴批准增量继续有效', '旧codex/TASK-052-world-time@bb64d67为2026-09-26未集成基础增量，只作调查参考，不沿用其schema4或授权记录']
+contracts: ['docs/contracts/CT-TASK-043-world-time-persistence.md', 'docs/contracts/CT-TASK-052-clock-refresh.md']
+allowed_paths: ['README.md', 'docs/PROJECT_STATE.md', 'docs/tasks/TASK-052.json', 'docs/tasks/TASK-052.md', 'docs/handoffs/TASK-052.md', 'docs/planning/TASK-052/', 'docs/contracts/CT-TASK-052-clock-refresh.md', 'docs/qa/TASK-052/']
+forbidden_paths: ['Source/', 'Content/', 'Config/', 'config/', 'Resources/', 'Runtime/', 'art_source/', 'scripts/', 'docs/design/archive/', 'docs/tasks/TASK-051.json', 'docs/qa/TASK-051/']
+acceptance: ['逐项核对当前实现、043批准规则、旧052增量和当前schema8兼容链，完成052工程方案', '记录唯一时钟、事件结算、资源身份、敌人代次、旅行和快照契约，提供待批准的完整施工路径', '批准后覆盖零／一／多周期、暂停、睡眠／篝火、加载冻结、同档重复恢复与旧档迁移', '刷新和生产去重，同一档不领取未来产出；已接通领域使用真实状态测试', '明确区分文档检查、UE原生／PIE、Owner体验和未执行结果，同步README及交接']
+prototype_only: False
+prototype_approval: None
+permissions: {'network': 'granted: read-only origin fetch and official engineering research', 'install_dependencies': 'not_granted', 'commit': 'not_granted for this resumed TASK-052', 'push': 'not_granted for this resumed TASK-052', 'merge': 'not_granted'}
+required_tests: ['T-002', 'T-024', 'T-016', 'T-017']
+
+## Current branch handoff
+# TASK-052 交接
+
+2026-10-02。Owner／Reviewer：XLingyyy；无Issue。Active，调查和具体工程方案已完成，施工契约及共享路径待确认。录音按用户要求继续未制作，不改051固定对白或动物归档。
+
+## 工作区与基线
+
+- 实际目录：`G:/GameFactory/Hearthward/.agent-local/task051`，复用已完成051的干净检出，目录名保留。
+- 实际分支：`codex/TASK-052-time-integration`。
+- HEAD／基线：`4db5789184fe38e041d62a1e68c8517338ea0b01`，2026-10-02已只读fetch核实origin/main。
+- 切分支前无本检出UE进程，原工作区及其他任务未修改。新主干二进制采用跳过LFS自动下载的检出，未做全量pull；后续需要的实际资产按本地对象核实，不把LFS指针当作可运行资源。
+- Source未修改，本检出的旧DLL不作为当前main运行证据。剩余磁盘约2.8GiB是切分支前记录，施工前按真实构建／证据空间预算检查。
+
+## 已读来源和已确认事实
+
+已读AGENTS、WORKFLOW相关章节、START_HERE、PROJECT_STATE、043批准决定／契约及两个用户指定原稿；canonical052=原稿054。当前运行代码已有A/W、480分钟睡眠、046生产、048生态、049敌人代次与旅行、schema8存档和更新兼容能力。
+
+旧052分支未合入main，曾使用schema4，只作参考。当前main把动物归档也登记为051；保留该成果，不在052顺手重写同号任务历史。此前操作基线位于`codex/TASK-051-experience-baseline@4eee05df621120bed1135ac4aca5721ed0455f44`，代码已由PR #57合入main。
+
+## 具体方案与当前权限
+
+[PLAN](../planning/TASK-052/PLAN.md)提供D1—D6；[CT-TASK-052](../contracts/CT-TASK-052-clock-refresh.md)给出公共接口、事务、身份和schema9迁移；[MATRIX](../qa/TASK-052/MATRIX.md)给出施工后真实验收。任务JSON当前允许这些文档及README／PROJECT_STATE，运行路径在PLAN中候选列出。
+
+待确认项为初始1日20:00／06:00日出18:00日落、篝火1／4／8小时、统一结算与旅行接线、schema9迁移及公共／共享路径。043已批准玩法继续沿用。当前没有052提交／推送授权登记，不沿用051或旧052记录；没有main合并、发布或依赖安装授权。
+
+## 验证和下一步
+
+本轮UE构建、原生、PIE和正常输入验证全部NOT_RUN。文档／任务元数据检查记录在[REPORT](../qa/TASK-052/REPORT.md)，不能将预期矩阵写为PASS。正式T-002需要基线里存在批准的052任务快照，当前缺失；本地路径核对单独记录。
+
+Owner确认本方案、契约和范围后，在任务JSON记录实际批准及代码路径，先复现候选边界，再按PLAN施工。保持当前main的兼容预览、备份、更新逻辑及动物资源。构建和操作使用上层UEClient公开API；代码变化后重新绑定测试源码，不沿用旧DLL。
+
+本轮无二进制编辑，无LFS写锁需求，无Issue／PR，无提交、推送、合并或发布。若放弃本地方案，仅处理本单已知文档，不清理其他检出或旧任务成果。
+
+
+## Required reads (not automatically considered read)
+AGENTS.md -> docs/START_HERE.md -> docs/PROJECT_STATE.md -> task -> task-branch handoff -> contracts/design -> actual code
+Confirm task ownership and approved scope with the coordinator; inspect any linked Issue and actual LFS locks using authorized tools.
+Do not display .env, credential files or private raw model conversations in the receipt.

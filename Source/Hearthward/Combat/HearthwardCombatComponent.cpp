@@ -268,7 +268,7 @@ FString UHearthwardCombatComponent::Describe() const
 void UHearthwardCombatComponent::TickComponent(float Delta,ELevelTick Tick,FActorComponentTickFunction* Function)
 {
     Super::TickComponent(Delta,Tick,Function);
-    if(!G() || !G()->Enabled || GetWorld()->IsPaused()) return;
+    if(!G() || !G()->Enabled || GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended()) return;
     if(!GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->Alive()) { Cancel(); DropBody(); Guard.Release(); State.SenseRemaining=0; return; }
     State.SenseRemaining=FMath::Max(0.,State.SenseRemaining-Delta); State.SenseCooldown=FMath::Max(0.,State.SenseCooldown-Delta);
     if(ActionEpoch.IsValid() && ActionEpoch!=Epoch()) { Cancel(); DropBody(); DamageIds.Reset(); }
@@ -345,7 +345,7 @@ void UHearthwardCombatComponent::Perception(double Delta)
     for(TActorIterator<AActor> It(GetWorld());It;++It)
         if(*It!=GetOwner() && It->FindComponentByClass<UHearthwardSurvivalComponent>()) { Brothers.Add(TEXT("brother"),*It); break; }
     Discovery=0; TSet<FName> EngagedRegions;
-    const double Hour=FMath::Fmod(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes/60,24.);
+    const double Daylight=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().Daylight;
     for(auto* Observer:All)
     {
         Observer->Memory.HitRemaining=FMath::Max(0.,Observer->Memory.HitRemaining-Delta);
@@ -355,7 +355,7 @@ void UHearthwardCombatComponent::Perception(double Delta)
         {
             const auto* S=Brother.Value->FindComponentByClass<UHearthwardSurvivalComponent>(); if(!S || !S->Alive()) continue;
             const FVector Offset=Brother.Value->GetActorLocation()-Observer->GetOwner()->GetActorLocation();
-            double Light=Observer->Exposure>=0?FMath::Clamp(Observer->Exposure,0.f,1.f):(Hour>=6 && Hour<18?1:0);
+            double Light=Observer->Exposure>=0?FMath::Clamp(Observer->Exposure,0.f,1.f):Daylight;
             for(auto* R:Regions) if(R->Lighting>=0 && R->Contains(Brother.Value->GetActorLocation())) { Light=FMath::Clamp(R->Lighting,0.f,1.f); break; }
             const bool Seeing=Offset.Size()<=(12+13*Light)*100 && HearthwardCombat::InFront(Observer->GetOwner()->GetActorForwardVector(),Offset) && Visible(Observer->GetOwner(),Brother.Value);
             auto& P=Observer->Memory.Detection.FindOrAdd(Brother.Key);

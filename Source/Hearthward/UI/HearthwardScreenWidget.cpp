@@ -483,15 +483,15 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     {TextScroll=Key==EKeys::Home?0:Key==EKeys::End?TextScrollMaximum:FMath::Clamp(TextScroll+(Key==EKeys::PageDown?600:-600),0.f,TextScrollMaximum);Refresh();return FReply::Handled();}
     if(E.IsRepeat()) return FReply::Handled();
     const bool Confirming=!ConfirmAction.IsEmpty();
-    if(Key==EKeys::Enter && Elements.IsValidIndex(KeyboardFocus))
+    if(ConfirmAction==TEXT("compat.resolve") && (Key==EKeys::PageUp || Key==EKeys::PageDown))
+    {ExecuteAction(Key==EKeys::PageDown?TEXT("compat.next"):TEXT("compat.prev"));return FReply::Handled();}
+    if(Key==EKeys::Enter)
     {
-        if(ConfirmAction==TEXT("compat.resolve"))
-        {
-            if(Key==EKeys::PageDown)ExecuteAction(TEXT("compat.next"));
-            if(Key==EKeys::PageUp)ExecuteAction(TEXT("compat.prev"));
-        }
-        if(Key==EKeys::Escape) ExecuteAction(TEXT("cancel"));
-        if(Key==EKeys::Enter) ExecuteAction(TEXT("confirm"));
+        if(Elements.IsValidIndex(KeyboardFocus) && Elements[KeyboardFocus].Enabled && !Elements[KeyboardFocus].Hidden && !Elements[KeyboardFocus].Action.IsEmpty()
+            && (!Confirming || Elements[KeyboardFocus].Action==TEXT("confirm") || Elements[KeyboardFocus].Action==TEXT("cancel")
+                || Elements[KeyboardFocus].Action==TEXT("resetPrev") || Elements[KeyboardFocus].Action==TEXT("resetNext")))
+            ExecuteAction(Elements[KeyboardFocus].Action);
+        else if(Confirming)ExecuteAction(TEXT("confirm"));
         return FReply::Handled();
     }
     if(Key==EKeys::Escape) {ExecuteAction(Confirming?TEXT("cancel"):TEXT("back"));return FReply::Handled();}
@@ -656,7 +656,8 @@ void UHearthwardScreenWidget::ApplyReadableHUD()
     }
     for(const auto& Source:Original) if(Source.Type==TEXT("bar") && Source.Text==TEXT("发现程度"))
     {auto E=Source;E.Text.Reset();E.Position={1000,588};E.Size={620,12};Elements.Add(E);}
-    const int32 Time=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes;
+    const auto Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot();
+    const int32 Time=Clock.MinuteOfDay;
     Label(Key(TEXT("ui.inventory"))+TEXT(" 背包 · ")+Key(TEXT("ui.map"))+TEXT(" 地图 · ")+Key(TEXT("ui.save"))+TEXT(" 存档"),{1000,886},{620,55});
-    Label(FString::Printf(TEXT("第%d天 %02d:%02d"),Time/1440+1,(Time/60)%24,Time%60),{1080,42},{540,55});
+    Label(FString::Printf(TEXT("第%lld天 %02d:%02d"),Clock.DisplayDay,Time/60,Time%60),{1080,42},{540,55});
 }

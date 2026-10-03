@@ -14,6 +14,9 @@ public:
     bool Active() const { return !State.Phase.IsNone(); }
     UFUNCTION(BlueprintPure) bool Busy() const { return IntroRemaining>0 || !PendingFlag.IsNone() || !TravelDestination.IsNone(); }
     bool IsPreparingWorld() const { return IntroRemaining>0 || !TravelDestination.IsNone(); }
+    bool IsTraveling() const { return !TravelDestination.IsNone(); }
+    double NextBoundary(double Calendar) const;
+    void AdvanceBoundary(double Calendar);
     UFUNCTION(BlueprintPure) FString Describe() const { return State.Snapshot(); }
     UFUNCTION(BlueprintPure) FString Prompt() const;
     UFUNCTION(BlueprintCallable) bool Interact();
@@ -44,6 +47,7 @@ private:
     class UHearthwardGameplayComponent* Gameplay() const;
     bool Safe() const;
     bool BeginTravel(FName Destination);
+    void FinishTravel();
     void Sync();
     void RefreshActors();
     void ResetActors();
@@ -54,11 +58,12 @@ private:
     TMap<FName,TWeakObjectPtr<AHearthwardCampaignActor>> Actors;
     TArray<TWeakObjectPtr<AActor>> Scenery;
     TWeakObjectPtr<AActor> StreamSource;
-    TMap<TWeakObjectPtr<class UDirectionalLightComponent>,TPair<float,FRotator>> DayLights;
-    TWeakObjectPtr<class ADirectionalLight> MoonLight;
-    bool NightApplied=false;
     FName PendingFlag,TravelDestination;
     FVector ActionPosition=FVector::ZeroVector;
     float ActionHealth=0,FlagRemaining=0,RefreshIn=0,IntroRemaining=0;
     FGuid ActionEpoch;
+    TArray<TWeakObjectPtr<AActor>> TravelParticipants;
+    TMap<FName,int32> TravelEnemies;
+    FGuid TravelEpoch;
+    bool ScriptedTravel=false;
 };

@@ -41,7 +41,8 @@ public:
     UPROPERTY(BlueprintAssignable) FHearthwardSnapshotRestored OnSnapshotRestored;
     void RememberExchange(const FString& Speaker, const FString& Text);
     TArray<FString> RecentKnowledge() const;
-    bool IsRestoring() const { return bRestoring; }
+    // Consumers hold world mutations during loading, restore and clock settlement.
+    bool IsRestoring() const;
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type Type) const override;
 private:

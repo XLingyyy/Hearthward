@@ -26,6 +26,8 @@ public:
     UFUNCTION(BlueprintCallable) bool ReadMap(FName Item);
     void EnsureWorld();
     void Advance(double Minutes);
+    double NextBoundary() const;
+    void RefreshDue();
     void Restore(const FString& Json,double Calendar);
     bool DamageAnimal(FName Id,float Health);
     FVector Position(FGuid Id) const;

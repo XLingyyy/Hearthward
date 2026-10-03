@@ -106,6 +106,8 @@ struct FHearthwardCampState
     bool Eat(float& Hunger);
     using FExchange = TFunction<bool(const TMap<FName,int32>&,const TMap<FName,int32>&)>;
     void Advance(double Minutes,bool Sleeping,const FExchange& Exchange);
+    void RefreshDue();
+    double NextBoundary(bool Sleeping) const;
     bool Validate() const;
     bool ValidateBuildings(const FString& Gameplay) const;
     FString Snapshot() const;

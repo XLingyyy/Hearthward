@@ -1,0 +1,60 @@
+{
+  "ok": false,
+  "checks": {
+    "normal new-game entry": true,
+    "loading freezes action clock": true,
+    "loading freezes calendar": true,
+    "prologue on loaded terrain": true,
+    "new progress starts at 20:00": true,
+    "UI capture prologue-night": true,
+    "relic interaction": true,
+    "brother explicit follow": true,
+    "exit interaction": true,
+    "select bed": true,
+    "bed natural placement": true,
+    "bed construction starts": true,
+    "bed facility registered": true,
+    "select campfire": true,
+    "campfire natural placement": true,
+    "campfire construction starts": true,
+    "campfire facility registered": true
+  },
+  "method": "Rendered production map; normal campaign entry, movement input and real facilities.\nFixture inventory grants prepare construction; independent GUID save pool only.\nPhysical keyboard checks are recorded separately from these API operations.\n",
+  "stage": "time transactions",
+  "keyboard_method": "synthetic engine key events; desktop input unavailable",
+  "bed_placement_feedback": "可以建造：左键确认，Q旋转，右键取消",
+  "campfire_placement_feedback": "可以建造：左键确认，Q旋转，右键取消",
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-052/verify_time_pie.py\", line 205, in tick\n    if time.monotonic()>deadline:raise TimeoutError(\"stage \"+report[\"stage\"])\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTimeoutError: stage time transactions\n",
+  "clock": {
+    "a": 69.45276921242476,
+    "w": 69.45276921242476,
+    "day": 1,
+    "minute": 1269.4527692124248
+  },
+  "save_status": "快照已保存",
+  "feedback": "",
+  "facilities": [
+    {
+      "id": "8C9D3D124EFF09580731F7AB4696B869",
+      "kind": "bed",
+      "camp": "camp",
+      "level": 1,
+      "paid": {
+        "wood": 6,
+        "rope": 2
+      },
+      "paused": false
+    },
+    {
+      "id": "BF24D0FC4C6186A50F878A88B5F55EA6",
+      "kind": "campfire",
+      "camp": "camp",
+      "level": 1,
+      "paid": {
+        "wood": 4,
+        "stone": 4
+      },
+      "paused": false
+    }
+  ]
+}

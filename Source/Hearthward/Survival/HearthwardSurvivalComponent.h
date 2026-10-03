@@ -12,6 +12,7 @@ public:
     UHearthwardSurvivalComponent();
     virtual void BeginPlay() override;
     void AdvanceContinuous(double Active,double Calendar,double StartW);
+    double PreviewAdvance(double Active,double Calendar,double StartW);
     void CompleteBoundary(double Delta) { FinishActions(Delta); }
     static bool HasFailed(UWorld* World);
     UPROPERTY(BlueprintReadOnly) FHearthwardSurvivalState State;
@@ -50,6 +51,8 @@ private:
     class UHearthwardGameplayComponent* Gameplay() const;
     FGuid Epoch() const;
     bool InCombat() const;
+    double HungerMultiplier(double Active) const;
+    double RecoveryFraction() const;
     void FinishActions(double Delta);
     TWeakObjectPtr<UHearthwardSurvivalComponent> Rescue;
     FVector ActionOrigin=FVector::ZeroVector;

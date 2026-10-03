@@ -134,14 +134,14 @@ bool FHearthwardCampState::Eat(float& Hunger)
 }
 void FHearthwardCampState::Advance(double Minutes,bool Sleeping,const FExchange& Exchange)
 {
-    if(!FMath::IsFinite(Minutes) || Minutes<=0) return;
+    if(!FMath::IsFinite(Minutes) || Minutes<0) return;
+    RefreshDue();
     const double End=Calendar+Minutes;
     TArray<int32> Order;for(int32 I=0;I<Regions.Num();++I) Order.Add(I);
     Order.StableSort([&](int32 A,int32 B){return Regions[A].Priority<Regions[B].Priority;});
     while(Calendar<End-1.e-8)
     {
-        for(auto& S:Sources) if(S.Remaining==0 && S.Due>=0 && S.Due<=Calendar+1.e-8 && !S.Blocked)
-        { S.Remaining=S.Capacity;S.Due=-1; }
+        RefreshDue();
         TArray<double> Rates;Rates.SetNumZeroed(Regions.Num());
         for(int32 Index:Order)
         {
@@ -198,6 +198,32 @@ void FHearthwardCampState::Advance(double Minutes,bool Sleeping,const FExchange&
             if(R.BatchStopAt>0 && R.Completed>=R.BatchStopAt)R.Enabled=false;
         }
     }
+    RefreshDue();
+}
+void FHearthwardCampState::RefreshDue()
+{
+    for(auto& S:Sources) if(S.Remaining==0 && S.Due>=0 && S.Due<=Calendar+1.e-8 && !S.Blocked)
+    { S.Remaining=S.Capacity;S.Due=-1; }
+}
+double FHearthwardCampState::NextBoundary(bool Sleeping) const
+{
+    double Step=1440;
+    for(const auto& S:Sources) if(!S.Blocked && S.Remaining==0 && S.Due>Calendar+1.e-8)Step=FMath::Min(Step,S.Due-Calendar);
+    for(const auto& R:Regions)
+    {
+        if(!R.Enabled || !R.Safe || (R.BatchStopAt>0 && R.Completed>=R.BatchStopAt))continue;
+        double Rate=R.Workers.Num()+(!Sleeping?(R.Player?R.PlayerEfficiency:0)+(R.Brother?R.BrotherEfficiency:0):0);
+        const auto* F=Facilities.FindByPredicate([&](const auto& B){return B.Id==R.Facility;});
+        if(R.Facility.IsValid())
+        {
+            if(!F || F->Paused || F->Camp!=R.Camp)continue;
+            Rate*=HearthwardData::Number(HearthwardCamp::Facility(F->Kind,F->Level),TEXT("labor_speed_percent"),100)/100;
+        }
+        const double Work=R.Batch.Active?R.Batch.Work:0;
+        const double Required=R.Batch.Active?R.Batch.Required:((F || R.Job==TEXT("forage"))?360:15);
+        if(Rate>0 && Required>Work+1.e-8)Step=FMath::Min(Step,(Required-Work)/Rate);
+    }
+    return Step;
 }
 
 namespace

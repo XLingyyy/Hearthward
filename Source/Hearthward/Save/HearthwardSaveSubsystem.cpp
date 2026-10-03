@@ -26,6 +26,8 @@
 #include "Misc/App.h"
 #include "Misc/CommandLine.h"
 #include "Misc/EngineVersion.h"
+#include "../UI/HearthwardLoadingSubsystem.h"
+#include "Engine/GameInstance.h"
 #include "Misc/Parse.h"
 #include "Misc/Paths.h"
 
@@ -173,8 +175,15 @@ bool UHearthwardSaveSubsystem::EnableNaturalWorld()
     return true;
 }
 
+bool UHearthwardSaveSubsystem::IsRestoring() const
+{
+    if(bRestoring || GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy())return true;
+    const auto* GI=GetWorld()->GetGameInstance();const auto* Loading=GI?GI->GetSubsystem<UHearthwardLoadingSubsystem>():nullptr;
+    return Loading && Loading->IsLoading();
+}
 bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
+    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy()){Status=TEXT("世界时间正在结算或恢复");return false;}
     auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
     if(Campaign->Busy()){Status=TEXT("剧情动作或传送尚未完成");return false;}
     S.Campaign=Campaign->Active()?Campaign->Snapshot():FString();
@@ -223,6 +232,8 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     S.NaturalCompanion = bNaturalWorld;
     S.Map = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
     S.ActiveSeconds = GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.GetActivePlaySeconds();
+    const auto& Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock;
+    S.ClockVersion=1;S.InitialDay=Clock.GetInitialDay();S.InitialMinute=Clock.GetInitialMinute();
     S.Player = Player->GetActorTransform();
     S.View = Player->GetControlRotation();
     S.PlayerItems = Player->FindComponentByClass<UHearthwardInventoryComponent>()->Snapshot();
@@ -298,6 +309,8 @@ bool UHearthwardSaveSubsystem::SavePoint(bool Manual) { return WritePoint(Manual
 
 bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewProgress)
 {
+    auto* Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>();
+    if(Clock->Busy()){Status=TEXT("世界时间正在结算，无法恢复");return false;}
     if (S.Map != UGameplayStatics::GetCurrentLevelName(GetWorld(), true) || S.NaturalWorld != bNaturalWorld)
     { Status = TEXT("请先打开存档所属地图"); return false; }
     if (bNaturalWorld && !S.NaturalCompanion)
@@ -309,6 +322,8 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
         Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
         Upgraded.CampEconomy=S.CampEconomy;Upgraded.Nature=S.Nature;Upgraded.Campaign=S.Campaign;
+        Upgraded.ClockVersion=S.ClockVersion;Upgraded.InitialDay=S.InitialDay;Upgraded.InitialMinute=S.InitialMinute;
+        Upgraded.HarvestedResources=S.HarvestedResources;
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
         return Restore(Upgraded,bNewProgress);
     }
@@ -318,6 +333,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
     for(auto* Actor:TArray<AActor*>{Player,Companion})
         if(auto* Survival=Actor->FindComponentByClass<UHearthwardSurvivalComponent>(); Survival && Survival->Settling) return false;
     TGuardValue<bool> Guard(bRestoring, true);
+    TGuardValue<bool> ClockGuard(Clock->Restoring,true);
     if (!UHearthwardGameplayComponent::ValidateSnapshot(S.Gameplay)) { Status=TEXT("玩法快照无效"); return false; }
     FHearthwardCampState CampCheck;
     if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,CampCheck) || FMath::Abs(CampCheck.Calendar-S.CalendarMinutes)>1.e-4 || !CampCheck.ValidateBuildings(S.Gameplay))) {Status=TEXT("营地快照无效");return false;}
@@ -338,8 +354,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
     auto* Personal = Player->FindComponentByClass<UHearthwardInventoryComponent>();
     Personal->RestoreInventory(S.PlayerItems,false); Storage->State.Shared.Restore(S.StorageItems);
     if (Companion) { Companion->Bag->RestoreInventory(S.BrotherItems,false); Companion->Source->State = Inventory(S.Resource); }
-    GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.ActivePlaySeconds = S.ActiveSeconds;
-    GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Clock.CalendarMinutes = S.CalendarMinutes;
+    Clock->Install(S.ActiveSeconds,S.CalendarMinutes,S.InitialDay,S.InitialMinute);
     Knowledge = S.Knowledge; KnowledgeRevision = S.KnowledgeRevision; AutoMinutes = S.AutoMinutes; Safety = S.Safety;
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->RestoreMemory(S.NPCMemory,bNewProgress);
     Player->SetActorTransform(S.Player, false, nullptr, ETeleportType::TeleportPhysics);
@@ -400,9 +415,9 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
         Survival->BrotherHunger=S.BrotherHunger; Survival->BrotherStamina=S.BrotherStamina; Survival->ResetTransient();
     }
     GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Restore(S.Nature,S.CalendarMinutes);
+    GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Restore(S.Campaign);
     Personal->OnInventoryChanged.Broadcast();
     if (Companion) { Companion->Bag->OnInventoryChanged.Broadcast(); Companion->Source->OnInventoryChanged.Broadcast(); }
-    GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Restore(S.Campaign);
     OnSnapshotRestored.Broadcast();
     return true;
 }

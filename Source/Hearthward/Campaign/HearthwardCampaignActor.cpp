@@ -65,7 +65,7 @@ bool AHearthwardCampaignActor::WalkTo(FVector Goal,float Acceptance)
 }
 void AHearthwardCampaignActor::Tick(float Delta)
 {
-    Super::Tick(Delta);if(!Enemy || !Target->CanAct())return;
+    Super::Tick(Delta);if(!Enemy || !Target->CanAct() || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->IsTraveling())return;
     AttackIn-=Delta;if((DecisionIn-=Delta)>0)return;DecisionIn=.4f;
     auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();auto* E=C->Enemy(Identity);if(!E)return;
     if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))

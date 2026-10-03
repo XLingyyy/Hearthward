@@ -1,0 +1,97 @@
+{
+  "ok": false,
+  "checks": {
+    "menu keyboard new-game and confirmation": true,
+    "normal new-game entry": true,
+    "loading freezes action clock": true,
+    "loading freezes calendar": true,
+    "prologue on loaded terrain": true,
+    "new progress starts at 20:00": true,
+    "UI capture prologue-night": true,
+    "relic interaction": true,
+    "brother explicit follow": true,
+    "exit interaction": true,
+    "select bed": true,
+    "bed natural placement": true,
+    "bed construction starts": true,
+    "bed facility registered": true,
+    "select campfire": true,
+    "campfire natural placement": true,
+    "campfire construction starts": true,
+    "campfire facility registered": true,
+    "real bed advances eight hours": true,
+    "sleep does not consume A": true,
+    "duplicate sleep returns receipt without time": true,
+    "changed duplicate is rejected": true,
+    "UI capture after-sleep-night": true,
+    "consecutive sleep 2": true,
+    "consecutive sleep 3": true,
+    "three sleeps add 1440 without A": true,
+    "safe checkpoint write": true,
+    "campfire 60": true,
+    "campfire 240": true,
+    "campfire 480": true,
+    "invalid wait is rejected without time": true,
+    "UI capture camp-daylight": true,
+    "UI capture campfire-menu": true,
+    "menu freezes both clocks": true,
+    "paused time request rejected": true,
+    "restore real checkpoint": true,
+    "W restores without future minutes": true,
+    "old epoch request rejected after restore": true,
+    "repeat checkpoint restore": true,
+    "repeated restore does not advance W": true,
+    "UI capture restored-night": true,
+    "restore before travel down": true,
+    "real station travel starts down": false
+  },
+  "method": "Rendered production map; normal campaign entry, movement input and real facilities.\nFixture inventory grants prepare construction; independent GUID save pool only.\nPhysical keyboard checks are recorded separately from these API operations.\n",
+  "stage": "travel fixture down",
+  "keyboard_method": "synthetic engine key events; desktop input unavailable",
+  "bed_placement_feedback": "可以建造：左键确认，Q旋转，右键取消",
+  "campfire_placement_feedback": "可以建造：左键确认，Q旋转，右键取消",
+  "sleep_receipt": {
+    "accepted": true,
+    "completed": true,
+    "advanced": 480.0,
+    "reason": "已等待 480.0 游戏分钟，日期、生产和刷新已结算"
+  },
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-052/verify_time_pie.py\", line 225, in tick\n    pending=next(runner)\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-052/verify_time_pie.py\", line 183, in run\n    check(\"real station travel starts \"+mode,st[\"game\"].travel(\"route_mine\"))\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-052/verify_time_pie.py\", line 17, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: real station travel starts down\n",
+  "clock": {
+    "a": 63.797492403537035,
+    "w": 1503.797492403537,
+    "day": 2,
+    "minute": 1263.797492403537
+  },
+  "save_status": "世界与知识已恢复；旧时间线请求已废止",
+  "feedback": "",
+  "facilities": [
+    {
+      "id": "06F8F7EA4EC557EDD56F4F953943C15D",
+      "kind": "bed",
+      "camp": "camp",
+      "level": 1,
+      "paid": {
+        "wood": 6,
+        "rope": 2
+      },
+      "paused": false
+    },
+    {
+      "id": "326916DC43355FAFCAB906842604C1DB",
+      "kind": "campfire",
+      "camp": "camp",
+      "level": 1,
+      "paid": {
+        "wood": 4,
+        "stone": 4
+      },
+      "paused": false
+    }
+  ],
+  "player_position": "<Struct 'Vector' (0x000002827E1CF530) {x: -97763.192093, y: -75281.112335, z: 16216.006386}>",
+  "building_positions": [
+    "<Struct 'Vector' (0x000002827E1CF530) {x: -97760.000000, y: -75000.000000, z: 16121.116000}>",
+    "<Struct 'Vector' (0x000002827E1CF530) {x: -97977.296000, y: -75000.000000, z: 16127.328000}>"
+  ]
+}
