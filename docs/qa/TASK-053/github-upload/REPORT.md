@@ -34,3 +34,13 @@ GitHub仓库根目录对应本地 `E:\AiAgent\XLingGame\Hearthward`，不包含�
 本次仓库检查0错误、基于授权快照的路径检查0错误、33/33工具测试及暂存差异格式检查通过。暂存图片共2451个路径、去重992个LFS对象约1.135GB，全部LFS指针、大小及SHA256逐项核对通过；`delivery-manifest.json`列出快照文件与Git blob（不含清单自身及后加纯文档记录）。提交及远端核验另绑定实际实现SHA。首次资料检查发现本报告尚未创建导致四个相对链接缺失，创建报告后重跑；初次结果保留为 `preflight-*.txt`。暂存差异检查发现原始CRLF快照与编译器日志被解释成文本尾随空白；将这些只读归档按原字节保存为二进制差异，修正一份报告末尾空行后通过，问题路径保留为 `first-staged-diff-summary.json`，功能源码未改。未绕过检查、伪造评审、合并main或更新GitHub正式Release。
 
 回滚方式：关闭本轮测试窗口后检出上一受测分支／提交，并使用对应Development构建；人工测试资料继续由TestClient隔离保存。公共存档增量为可选字段，旧档回退行为和验证详见CT-004及四栏／拖放专项报告。与TASK-052组合后的保存、世界时间及安全旅行行为仍需集成验证。
+
+## 实际实现提交
+
+当前全部UI与测试端实现已提交为 `4e615af1b0cc4578e3282a034da84ef208baeda3`，共4328个变更文件（包含授权任务单），详见 `commit-verification.json`。基于已授权任务快照的提交后路径检查仍为0错误；7个根测试入口／说明／预览路径均已在实际Git树中验证存在。纯文档提交后的验证记录继续绑定该实现SHA。
+
+当前main的只读三方合并预检出现6处内容冲突：README、CampaignWorld、WorldPresentation及UI的ScreenContent、ScreenWidget.cpp、ScreenWidget.h，具体路径见 `main-integration-preview.json`。这些冲突来自TASK-052时间集成和现有UI改动的重叠；PR须保留双方改动并完成组合验证后才能合并。此次上传阶段未覆盖或合并main，也未改写本地受测游戏。
+
+## 远端上传核验
+
+实现提交 `4e615af1b0cc4578e3282a034da84ef208baeda3` 已成功推送到 `origin/codex/TASK-053-title-wheel`；`git ls-remote`返回相同完整SHA。992/992个LFS对象共1,134,721,805字节上传完成，并逐对象向GitHub LFS下载批接口确认可读取，0遗漏。记录见 `remote-upload-verification.json`。首轮本机代理无法连接存储端而停滞，使用仅本次Git命令的连接路由重试成功，未改变仓库或系统网络配置。远端正常入口、TestClient启动器及地图入口亦经GitHub连接器读取，路径与Git blob均确认。

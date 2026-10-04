@@ -2,7 +2,7 @@
 
 Owner已明确授权上传当前全部UI更新及项目根测试端，并要求PR列明仓库位置；最新授权与允许路径已单独提交为 `4f4144cbec897d956fdd5ed0f3872b0840904bb8`。交付正常入口 `启动测试版游戏.cmd`、`TestClient/`、地图入口及两份根预览、全部UI实现／美术、关联Gameplay／Survival／Save契约与测试、UI脚本和完整TASK-053验证历史。生成缓存、Profile、真实存档／设置、日志和备份保留本机。`.cmd`显式CRLF检出，避免另一台机器的Git换行设置破坏启动。
 
-正常入口调用当前UE 5.8.2 Development源码工程；克隆后取回Git LFS资源并准备UE、Python、GameFactory和本地AI，首次编译后运行，详细路径与命令已同步根README和TestClient说明。旧0.1.0发行包不是本轮最新版。当前main为 `67fb0784ca8c6d488173e587e7f95c4be0d9092a`（TASK-052时间集成），UI受测基线仍为 `4db5789184fe38e041d62a1e68c8517338ea0b01`，组合验证另行进行。上传前确认230项编译输入、282项正常游戏输入与最近成功证据完全匹配；此次没有改功能源码。后续提交SHA、远端及PR核验见[同步报告](../qa/TASK-053/github-upload/REPORT.md)。任务Active等待Owner实玩及真人评审，不自批或合并。下方记录仅证明各自历史轮次。
+正常入口调用当前UE 5.8.2 Development源码工程；克隆后取回Git LFS资源并准备UE、Python、GameFactory和本地AI，首次编译后运行，详细路径与命令已同步根README和TestClient说明。旧0.1.0发行包不是本轮最新版。当前main为 `67fb0784ca8c6d488173e587e7f95c4be0d9092a`（TASK-052时间集成），UI受测基线仍为 `4db5789184fe38e041d62a1e68c8517338ea0b01`，组合验证另行进行。上传前确认230项编译输入、282项正常游戏输入与最近成功证据完全匹配；此次没有改功能源码。UI实现已提交并推送为 `4e615af1b0cc4578e3282a034da84ef208baeda3`，992个LFS对象均完成上传及下载可用性核验。详细提交SHA、远端及PR核验见[同步报告](../qa/TASK-053/github-upload/REPORT.md)。任务Active等待Owner实玩及真人评审，不自批或合并。下方记录仅证明各自历史轮次。
 
 # TASK-053 — 历史：收集要素连续列表（2026-10-04）
 
