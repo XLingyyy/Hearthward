@@ -1,0 +1,72 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "message": "“const FEnhancedActionKeyMapping *”: 未知的大小",
+      "code": "C2036",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(105,77)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "使用了未定义类型“FEnhancedActionKeyMapping”",
+      "code": "C2027",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(105,84)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "使用了未定义类型“FEnhancedActionKeyMapping”",
+      "code": "C2027",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,100)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“UE::JSON::Private::FJsonObjectSharedStringStorage::SetStringField”: 没有重载函数接受 1 个参数",
+      "code": "C2661",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,58)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "使用了未定义类型“FEnhancedActionKeyMapping”",
+      "code": "C2027",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,151)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“UE::JSON::Private::FJsonObjectSharedStringStorage::SetBoolField”: 没有重载函数接受 1 个参数",
+      "code": "C2661",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,122)",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardCampaignWorld.cpp, HearthwardWorldPresentation.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenMenu.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenTitle.cpp, HearthwardScreenWidget.cpp, HearthwardUpdateSubsystem.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 4 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 38.6 GB/45.02 GB committed\n  UBA Storage capacity 40 GB\n[1/4] Compile [x64] HearthwardScreenCapture.cpp\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(105,77): error C2036: “const FEnhancedActionKeyMapping *”: 未知的大小\n                for(const auto& Mapping:Input->GetEnhancedActionMappingsView()) if(Mapping.Key==Key)\n                                                                            ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(105,84): error C2027: 使用了未定义类型“FEnhancedActionKeyMapping”\n                for(const auto& Mapping:Input->GetEnhancedActionMappingsView()) if(Mapping.Key==Key)\n                                                                                   ^\nE:\\UE_5.8\\Engine\\Plugins\\EnhancedInput\\Source\\EnhancedInput\\Public\\EnhancedPlayerInput.h(18,8): note: 参见“FEnhancedActionKeyMapping”的声明\nstruct FEnhancedActionKeyMapping;\n       ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,100): error C2027: 使用了未定义类型“FEnhancedActionKeyMapping”\n                {auto Row=MakeShared<FJsonObject>();Row->SetStringField(TEXT(\"action\"),GetNameSafe(Mapping.Action));Row->SetBoolField(TEXT(\"ignored\"),Mapping.bShouldBeIgnored);Mappings.Add(MakeShared<FJsonValueObject>(Row));}\n                                                                                                   ^\nE:\\UE_5.8\\Engine\\Plugins\\EnhancedInput\\Source\\EnhancedInput\\Public\\EnhancedPlayerInput.h(18,8): note: 参见“FEnhancedActionKeyMapping”的声明\nstruct FEnhancedActionKeyMapping;\n       ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,58): error C2661: “UE::JSON::Private::FJsonObjectSharedStringStorage::SetStringField”: 没有重载函数接受 1 个参数\n                {auto Row=MakeShared<FJsonObject>();Row->SetStringField(TEXT(\"action\"),GetNameSafe(Mapping.Action));Row->SetBoolField(TEXT(\"ignored\"),Mapping.bShouldBeIgnored);Mappings.Add(MakeShared<FJsonValueObject>(Row));}\n                                                         ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,58): note: 尝试匹配参数列表“(const wchar_t [7])”时\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,151): error C2027: 使用了未定义类型“FEnhancedActionKeyMapping”\n                {auto Row=MakeShared<FJsonObject>();Row->SetStringField(TEXT(\"action\"),GetNameSafe(Mapping.Action));Row->SetBoolField(TEXT(\"ignored\"),Mapping.bShouldBeIgnored);Mappings.Add(MakeShared<FJsonValueObject>(Row));}\n                                                                                                                                                      ^\nE:\\UE_5.8\\Engine\\Plugins\\EnhancedInput\\Source\\EnhancedInput\\Public\\EnhancedPlayerInput.h(18,8): note: 参见“FEnhancedActionKeyMapping”的声明\nstruct FEnhancedActionKeyMapping;\n       ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,122): error C2661: “UE::JSON::Private::FJsonObjectSharedStringStorage::SetBoolField”: 没有重载函数接受 1 个参数\n                {auto Row=MakeShared<FJsonObject>();Row->SetStringField(TEXT(\"action\"),GetNameSafe(Mapping.Action));Row->SetBoolField(TEXT(\"ignored\"),Mapping.bShouldBeIgnored);Mappings.Add(MakeShared<FJsonValueObject>(Row));}\n                                                                                                                         ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(106,122): note: 尝试匹配参数列表“(const wchar_t [8])”时\nTotal time in Unreal Build Accelerator local executor: 4.13 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 5.51 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 8.4kb\n",
+    "stderr": ""
+  }
+}

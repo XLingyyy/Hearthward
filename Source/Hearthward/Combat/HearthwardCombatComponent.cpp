@@ -74,7 +74,7 @@ bool UHearthwardCombatComponent::Attack(bool Heavy)
         if(Action==TEXT("attack") && Duration-Elapsed<=.15) { BufferedAttack=Heavy?TEXT("heavy"):TEXT("light"); BufferedUntil=Now()+.15; }
         return false;
     }
-    const FName Kind=WeaponKind(); if(Kind.IsNone() || G()->AttackPower()<=0) { Feedback=TEXT("需要可用近战武器"); return false; }
+    const FName Kind=WeaponKind(); if(Kind.IsNone() || G()->AttackPower()<=0) { SetFeedback(TEXT("需要可用近战武器")); return false; }
     Move=HearthwardCombat::Move(Kind,Heavy);
     if(!Available() || G()->Stamina<Move.Cost*Bag()->GetStaminaCostMultiplier()*FMath::Max(.1f,1-G()->Effect(TEXT("cost")))) return false;
     if(!Start(TEXT("attack"),Move.Duration())) return false;
@@ -112,7 +112,7 @@ bool UHearthwardCombatComponent::BeginExecution(AActor* Target,bool Nonlethal)
         for(auto* T:Targets()) if(Eligible(T))
         { const double N=FVector::DistSquared(GetOwner()->GetActorLocation(),T->GetOwner()->GetActorLocation()); if(N<D) { Best=T; D=N; } }
     }
-    if(!Eligible(Best)) { Feedback=TEXT("处决需要贴近未发现你的敌人背后，重型目标须满足伤害门槛"); return false; }
+    if(!Eligible(Best)) { SetFeedback(TEXT("处决需要贴近未发现你的敌人背后，重型目标须满足伤害门槛")); return false; }
     if(!Start(TEXT("execution"),3)) return false;
     NonlethalExecution=Nonlethal;
     Captive=Best; Best->ExecutionOwner=GetOwner(); CaptivePosition=Best->GetOwner()->GetActorLocation(); CaptiveRotation=Best->GetOwner()->GetActorRotation();
@@ -125,7 +125,7 @@ bool UHearthwardCombatComponent::BeginExecution(AActor* Target,bool Nonlethal)
         C->GetCharacterMovement()->StopMovementImmediately(); C->GetCharacterMovement()->DisableMovement();
     }
     if(auto* A=Cast<UHearthwardHeroAnimInstance>(Player->GetMesh()->GetAnimInstance())) A->PlayCombat(3,true);
-    Feedback=Nonlethal?TEXT("击晕中"):TEXT("暗杀中"); return true;
+    SetFeedback(Nonlethal?TEXT("击晕中"):TEXT("暗杀中")); return true;
 }
 void UHearthwardCombatComponent::Cancel()
 {
@@ -136,7 +136,7 @@ void UHearthwardCombatComponent::Cancel()
         if(auto* C=Cast<ACharacter>(T->GetOwner());C && T->Alive()) C->GetCharacterMovement()->SetMovementMode(EMovementMode(CaptiveMovementMode));
     }
     if(Action==TEXT("pickup")) DropBody();
-    Captive.Reset(); Feedback.Reset(); Action=NAME_None; Elapsed=Duration=0; PendingItem=NAME_None; BufferedAttack=NAME_None; NonlethalExecution=false;
+    Captive.Reset(); SetFeedback(FString()); Action=NAME_None; Elapsed=Duration=0; PendingItem=NAME_None; BufferedAttack=NAME_None; NonlethalExecution=false;
     if(auto* C=Cast<ACharacter>(GetOwner())) if(auto* A=Cast<UHearthwardHeroAnimInstance>(C->GetMesh()->GetAnimInstance())) A->StopCombat();
 }
 bool UHearthwardCombatComponent::Dodge(FVector Direction)
@@ -221,7 +221,7 @@ void UHearthwardCombatComponent::Sweep(double From,double To)
             if(T && !HitIds.Contains(T->Id))
             {
                 HitIds.Add(T->Id); const FName Part=T->HitPart(Hit);
-                if(Part.IsNone()) { Feedback=TEXT("目标缺少命中部位配置"); continue; }
+                if(Part.IsNone()) { SetFeedback(TEXT("目标缺少命中部位配置")); continue; }
                 if(!T->Alive())continue;
                 const float SkillScale=HeavyAttack?1+G()->Effect(TEXT("heavy_damage")):1;
                 const float KindScale=Move.Multiplier/HearthwardCombat::Move(WeaponKind(),false).Multiplier;
@@ -446,7 +446,7 @@ bool UHearthwardCombatComponent::SwitchEquipment(FName Item)
 { return SwitchEquipmentInstance(Bag()->FirstInstance(Item)); }
 bool UHearthwardCombatComponent::SwitchEquipmentInstance(FGuid Instance)
 {
-    const auto* I=Bag()->FindInstance(Instance);if(!I)return false;
+    const auto* I=Bag()->FindInstance(Instance);if(!I || !G()->CanUseItem(I->Definition))return false;
     const auto R=Find(TEXT("items"),I->Definition.ToString());
     if(Text(R,TEXT("slot")).IsEmpty() || !Start(TEXT("switch"),.4))return false;
     PendingInstance=Instance; return true;
@@ -459,14 +459,23 @@ void UHearthwardCombatComponent::Aim(bool Value)
 bool UHearthwardCombatComponent::Reload()
 {
     const auto R=Find(TEXT("items"),G()->Equipment.FindRef(TEXT("ranged")).ToString());
-    return Text(R,TEXT("combatClass"))==TEXT("crossbow") && !CrossbowLoaded && Bag()->Available(TEXT("arrow"))>0 && Start(TEXT("reload"),1.8);
+    return G()->CanUseItem(TEXT("arrow")) && Text(R,TEXT("combatClass"))==TEXT("crossbow") && !CrossbowLoaded && Bag()->Available(TEXT("arrow"))>0 && Start(TEXT("reload"),1.8);
+}
+bool UHearthwardCombatComponent::SupportsAmmo(FName Item) const
+{
+    if(Item!=TEXT("arrow") || !Bag()->EquippedInstance(TEXT("ranged")).IsValid() || G()->EquippedDurability(TEXT("ranged"))<=0) return false;
+    const FString Kind=Text(Find(TEXT("items"),G()->Equipment.FindRef(TEXT("ranged")).ToString()),TEXT("combatClass"));
+    return Kind==TEXT("bow") || Kind==TEXT("crossbow");
 }
 bool UHearthwardCombatComponent::Shoot(bool Release)
 {
+    if(!G()->CanUseItem(TEXT("arrow"))) return false;
+    if(!SupportsAmmo(TEXT("arrow"))) {SetFeedback(TEXT("箭矢需要装备可用弓"));return false;}
+    if(Bag()->Available(TEXT("arrow"))<=0) {SetFeedback(TEXT("没有可用箭矢"));return false;}
     const FName Weapon=G()->Equipment.FindRef(TEXT("ranged")); const auto R=Find(TEXT("items"),Weapon.ToString());
     if(!Available() || !Aiming || G()->EquippedDurability(TEXT("ranged"))<=0 || Bag()->Available(TEXT("arrow"))<=0) return false;
     // Ballistics are a content prerequisite, not an invented weapon tuning default.
-    if(Number(R,TEXT("projectileSpeed"))<=0 || Number(R,TEXT("projectileGravity"))<=0) { Feedback=TEXT("该远程武器尚未配置弹道参数"); return false; }
+    if(Number(R,TEXT("projectileSpeed"))<=0 || Number(R,TEXT("projectileGravity"))<=0) { SetFeedback(TEXT("该远程武器尚未配置弹道参数")); return false; }
     const bool Crossbow=Text(R,TEXT("combatClass"))==TEXT("crossbow");
     if(Crossbow) return !Release && CrossbowLoaded && Start(TEXT("crossbow"),.5);
     if(!Release) return Start(TEXT("draw"),3600);
@@ -478,9 +487,10 @@ bool UHearthwardCombatComponent::Shoot(bool Release)
 }
 bool UHearthwardCombatComponent::Throw(FName Item)
 {
+    if(!G()->CanUseItem(Item)) return false;
     const auto R=Find(TEXT("items"),Item.ToString());
     if(!R || Bag()->Available(Item)<=0 || (Number(R,TEXT("throwDamage"))<=0 && Number(R,TEXT("bait"))<=0)) return false;
-    if(Number(R,TEXT("projectileSpeed"))<=0 || Number(R,TEXT("projectileGravity"))<=0) { Feedback=TEXT("投掷物尚未配置弹道参数"); return false; }
+    if(Number(R,TEXT("projectileSpeed"))<=0 || Number(R,TEXT("projectileGravity"))<=0) { SetFeedback(TEXT("投掷物尚未配置弹道参数")); return false; }
     if(!Start(TEXT("throw"),.8)) return false; PendingItem=Item; return true;
 }
 void UHearthwardCombatComponent::LaunchProjectile(FName Item,float Scale,bool Thrown)

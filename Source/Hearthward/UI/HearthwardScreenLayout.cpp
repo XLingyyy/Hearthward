@@ -220,6 +220,7 @@ FReply UHearthwardScreenWidget::LayoutMouseDown(const FGeometry& G,const FPointe
 }
 FReply UHearthwardScreenWidget::NativeOnMouseButtonUp(const FGeometry& G,const FPointerEvent& E)
 {
+    if(!InventoryDragItem.IsNone() && E.GetEffectingButton()==EKeys::LeftMouseButton)return InventoryMouseUp(G,E);
     if(LayoutDragging) { LayoutDragging=false; return FReply::Handled().ReleaseMouseCapture(); }
     return Super::NativeOnMouseButtonUp(G,E);
 }

@@ -1,0 +1,1897 @@
+{
+  "run_id": "hud_26adea7c79fb",
+  "passed": true,
+  "checks": {
+    "isolated_new_game_action": true,
+    "new_game_receives_visible_five_second_quest": true,
+    "companion_above_received_quest": true,
+    "native_capture_received_quest": true,
+    "quest_disappears_after_five_real_seconds": true,
+    "native_capture_hidden_quest": true,
+    "journal_entry": true,
+    "quest_details_remain_in_journal": true,
+    "return_to_hud": true,
+    "return_from_journal_does_not_replay_old_quest": true,
+    "native_ten_metre_hint_checks": true,
+    "natural_world_hud": true,
+    "natural_save_world_enabled": true,
+    "select_medicine": true,
+    "native_capture_medicine": true,
+    "select_roast": true,
+    "native_capture_roast": true,
+    "select_arrow": true,
+    "native_capture_arrow": true,
+    "select_firepot": true,
+    "native_capture_firepot": true
+  },
+  "captures": [
+    "hud-task-received.png",
+    "hud-task-hidden.png",
+    "hud-medicine.png",
+    "hud-roast.png",
+    "hud-arrow.png",
+    "hud-firepot.png"
+  ],
+  "layouts": [
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "100 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.quest.heading",
+          "parent": "hud.quest",
+          "visible": true,
+          "rect": [
+            48,
+            300,
+            650,
+            42
+          ],
+          "action": "",
+          "text": "◇  带火离开",
+          "asset": ""
+        },
+        {
+          "id": "hud.quest.objective",
+          "parent": "hud.quest",
+          "visible": true,
+          "rect": [
+            72,
+            345,
+            650,
+            96
+          ],
+          "action": "",
+          "text": "从家中的遗物包拿回护符。\n叫弟弟跟上，沿后巷前往西侧撤离点。\n等兄弟会合后，一起离开故乡。",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "药草膏",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:04  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "100 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "药草膏",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:11  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "100 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "烤肉",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:12  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "100 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "箭矢",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:14  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "99 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "投掷火罐",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:15  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    }
+  ],
+  "attachments": [
+    "hint-range.json"
+  ],
+  "quest_remaining_at_receipt": 4.689200401306152,
+  "quest_remaining_after_wait": 0.0,
+  "map": "L_HearthwardWilds",
+  "player_position": "<Struct 'Vector' (0x000002A6070425E0) {x: 92000.000000, y: 53500.000000, z: 22697.801451}>"
+}

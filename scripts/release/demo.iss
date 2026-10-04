@@ -5,7 +5,7 @@
   #define OutputRoot "F:\HearthwardDemo\Release"
 #endif
 #ifndef AppVersion
-  #define AppVersion "0.2.0-preview.20260930.1"
+  #define AppVersion "0.2.0-preview.20261003.2"
 #endif
 [Setup]
 AppId=Hearthward-Demo

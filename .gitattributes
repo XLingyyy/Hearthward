@@ -11,12 +11,19 @@
 *.csv text eol=lf
 *.txt text eol=lf
 *.ps1 text eol=lf
+*.cmd text eol=crlf
 *.patch text eol=lf
 *.html text eol=lf
 **/.gitignore text eol=lf
 art_source/TASK-051/tooling/GameFactory-3A/LICENSE text eol=lf
 *.uproject text eol=lf
 *.uplugin text eol=lf
+
+# Preserve the exact bytes of archived UI verification snapshots.
+docs/qa/TASK-053/**/*.snapshot -text -diff
+docs/qa/TASK-053/**/*.original -text -diff
+docs/qa/TASK-053/**/*.executed-original -text -diff
+docs/qa/TASK-053/**/ubt-log.txt -text -diff
 
 *.uasset filter=lfs diff=lfs merge=lfs -text lockable
 *.umap filter=lfs diff=lfs merge=lfs -text lockable

@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "checks": {
+    "open_building": true,
+    "left_surface": true,
+    "right_surface": true,
+    "no_old_art": true,
+    "first_page_four": true,
+    "first_prev_disabled": true,
+    "select_workbench": true,
+    "original_name_workbench": true,
+    "original_description_workbench": true,
+    "original_build_action_workbench": true,
+    "one_selected_workbench": false
+  },
+  "captures": [],
+  "ui_captures": [],
+  "layouts": [],
+  "error": "Traceback (most recent call last):\n  File \"E:/AiAgent/XLingGame/Hearthward/docs/qa/TASK-053/building-preview/verify_building.py\", line 65, in tick\n    pending=next(iterator)\n            ^^^^^^^^^^^^^^\n  File \"E:/AiAgent/XLingGame/Hearthward/docs/qa/TASK-053/building-preview/verify_building.py\", line 48, in run\n    check('one_selected_'+b['id'],sum(x.get('selected',False) for x in r.values() if x['id'].startswith('building.list.row.'))==1)\n  File \"E:/AiAgent/XLingGame/Hearthward/docs/qa/TASK-053/building-preview/verify_building.py\", line 14, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: one_selected_workbench\n"
+}

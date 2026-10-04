@@ -1,0 +1,44 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "message": "使用了可能未初始化的局部变量“Size”",
+      "code": "C4701",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(264)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“I”的声明隐藏了上一个本地声明",
+      "code": "C4456",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(263,27)",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nUHT compiled-in object format Default\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardCampaignWorld.cpp, HearthwardWorldPresentation.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenMenu.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenTitle.cpp, HearthwardScreenWidget.cpp, HearthwardUpdateSubsystem.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 22 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 26.25 GB/36.33 GB committed\n  UBA Storage capacity 40 GB\n[1/22] Compile [x64] HearthwardCharacter.cpp\n[2/22] Compile [x64] HearthwardScreenActions.cpp\n[3/22] Compile [x64] HearthwardScreenCamp.cpp\n[4/22] Compile [x64] HearthwardScreenCapture.cpp\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenHUDTest.inl(264) : warning C4701: 使用了可能未初始化的局部变量“Size”\n   while compiling `anonymous namespace'::CaptureHUDScene\n[5/22] Compile [x64] HearthwardScreenCompatibility.cpp\n[6/22] Compile [x64] HearthwardScreenContent.cpp\n[7/22] Compile [x64] HearthwardScreenCrafting.cpp\n[8/22] Compile [x64] HearthwardScreenEquipment.cpp\n[9/22] Compile [x64] HearthwardScreenLayout.cpp\n[10/22] Compile [x64] HearthwardScreenMenu.cpp\n[11/22] Compile [x64] HearthwardScreenNature.cpp\n[12/22] Compile [x64] HearthwardScreenPaint.cpp\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(263,27): error C4456: “I”的声明隐藏了上一个本地声明\n                for(int32 I=0;I<Bands;++I)\n                          ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(41,15): note: 参见“I”的声明\n    for(int32 I=0;I<Elements.Num();++I)\n              ^\n[13/22] Compile [x64] HearthwardScreenRepair.cpp\n[14/22] Compile [x64] HearthwardScreenSettings.cpp\n[15/22] Compile [x64] HearthwardScreenTitle.cpp\n[16/22] Compile [x64] HearthwardScreenWidget.cpp\n[17/22] Compile [x64] Module.Hearthward.1.cpp\n[18/22] Compile [x64] Module.Hearthward.3.cpp\n[19/22] Compile [x64] Module.Hearthward.4.cpp\nTotal time in Unreal Build Accelerator local executor: 117.44 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 120.65 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 21.7kb\n",
+    "stderr": ""
+  }
+}

@@ -9,9 +9,16 @@
 struct FHearthwardUIElement
 {
     FString Type, Text, Asset, Action, Bind, Id, FontRole, Align, LayoutId, Component;
+    FName InventoryItem,EquipmentSlot,InventoryGroup;
+    FGuid InventoryInstance;
+    int32 InventoryPosition=INDEX_NONE,QuickSlot=INDEX_NONE;
+    FString Shortcut;
     FVector2D Position=FVector2D::ZeroVector, Size=FVector2D::ZeroVector;
     FLinearColor Color=FLinearColor::White;
     float Font=18, Value=1, TextInset=18;
+    double FeedbackUntil=0;
+    float Opacity() const
+    { return FeedbackUntil>0?float(FMath::Clamp((FeedbackUntil-FPlatformTime::Seconds())/.35,0.,1.)):1.f; }
     int32 Tracking=0;
     bool Enabled=true, Selected=false, Hidden=false;
     bool MapClipped=false;
@@ -31,6 +38,9 @@ public:
     UFUNCTION(BlueprintPure) FName GetPage() const { return Page; }
     UFUNCTION(BlueprintPure) FString GetCategory() const { return Category; }
     UFUNCTION(BlueprintPure) FString GetMessage() const { return Message; }
+    UFUNCTION(BlueprintPure) FString GetTitleSelection() const { return TitleSelection; }
+    UFUNCTION(BlueprintPure) int32 GetHUDQuickSelection() const { return HUDQuickSelection; }
+    UFUNCTION(BlueprintPure) float GetHUDQuestNoticeRemaining() const;
     UFUNCTION(BlueprintCallable) void Refresh();
     UFUNCTION(BlueprintCallable) void SetLayoutEditing(bool Editing);
     UFUNCTION(BlueprintCallable) bool SetComponentRect(const FString& Id,FVector2D Position,FVector2D Size);
@@ -39,14 +49,21 @@ public:
     UFUNCTION(BlueprintCallable) bool ReloadLayout();
     UFUNCTION(BlueprintPure) FString DescribeLayout() const;
     UFUNCTION(BlueprintPure) FString ActionAt(FVector2D Point) const;
-    UFUNCTION(BlueprintCallable) bool CaptureUI(const FString& Name,int32 Width=1672,int32 Height=941);
+    UFUNCTION(BlueprintCallable) bool CaptureUI(const FString& Name,int32 Width=1672,int32 Height=941,bool PreserveFocus=false);
+#if !UE_BUILD_SHIPPING
+    bool IsActionHighlighted(const FString& Action) const;
+    FString DescribeHUDPreview() const;
+    bool CaptureMapFogPair(const FString& Name,int32 Width,int32 Height,double TimeOffset=0);
+#endif
     void InitializeScreen(class AHearthwardHUD* HUD);
+    void ApplyInputMode();
     virtual void NativeTick(const FGeometry& Geometry,float Delta) override;
     virtual void NativeDestruct() override;
     virtual int32 NativePaint(const FPaintArgs& Args,const FGeometry& Geometry,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool Enabled) const override;
     virtual FReply NativeOnMouseButtonDown(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseMove(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseButtonUp(const FGeometry& Geometry,const FPointerEvent& Event) override;
+    virtual void NativeOnMouseCaptureLost(const FCaptureLostEvent& Event) override;
     virtual void NativeOnMouseLeave(const FPointerEvent& Event) override;
     virtual FReply NativeOnMouseWheel(const FGeometry& Geometry,const FPointerEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
@@ -63,8 +80,22 @@ private:
     void LoadTheme();
     bool PrepareSession();
     bool OpenSavePoint(const FHearthwardSavePoint& Point);
+    void BeginMapTravel();
     void LoadElements(const TArray<TSharedPtr<FJsonValue>>& Rows);
     void ComposeInventory(bool Storage);
+    void ComposeInventoryScreen();
+    FString InventoryCategory(const TSharedPtr<FJsonObject>& Item) const;
+    int32 InventoryTarget(FVector2D Point) const;
+    FReply InventoryMouseDown(const FGeometry& Geometry,const FPointerEvent& Event);
+    FReply InventoryMouseUp(const FGeometry& Geometry,const FPointerEvent& Event);
+    void CancelInventoryDrag(bool ReleaseCapture=true);
+    bool InventoryDropAllowed(const FHearthwardUIElement& Target) const;
+    FName InventoryDragItem,InventoryDragEquipment;
+    FGuid InventoryDragInstance,InventoryDragEpoch;
+    int32 InventoryDragQuick=INDEX_NONE;
+    FVector2D InventoryDragStart,InventoryDragCursor;
+    FString InventoryDragAsset,InventoryDragSource;
+    bool InventoryDragging=false;
     void ComposeEquipment();
     void ComposeNature();
     bool ExecuteNatureAction(const FString& Action);
@@ -75,21 +106,67 @@ private:
     FName EquipmentStack;
     void ComposeSkills();
     void ComposeMap();
+    FVector MapOrigin() const;
+    double MapRadius() const;
+    double MapBoundaryFraction(double Angle,double* Feather=nullptr) const;
+    FVector2D MapPoint(FVector World) const;
+    bool MapVisible(FVector World) const;
+    double MapFogTime() const;
+    void UpdateMapMarkers(bool ApplyComponent=true);
     void ComposeJournal();
-    void ComposeCodex();
+    int32 JournalPageSize() const;
+    TArray<TSharedPtr<FJsonObject>> JournalEntries() const;
+    bool JournalEntryKnown(const TSharedPtr<FJsonObject>& Entry) const;
     void ComposeDialogue();
     void ComposeMemory();
     void ComposeHUD();
+    double HUDFeedbackDeadline(FName Id,const FString& Label,uint32 Revision,bool Eligible);
+    void UpdateHUDQuestNotice();
+    UFUNCTION() void ResetHUDQuestNotice();
     void ComposeBuilding();
     void ComposeCamp();
     bool ExecuteCampAction(const FString& Action);
     void ComposeCrafting();
     void ComposeRepair();
     void ComposeSave();
+    void ComposeMenuChrome(const FString& Heading,const FString& Subtitle);
+    FHearthwardUIElement& MenuElement(FString Type,FString Text,FVector2D Position,FVector2D Size,float Font=24,FString Action=FString(),bool Selected=false);
+    int32 MenuPageSize() const;
+    float MenuRowHeight() const;
+    FGuid SaveSelection;
     void ComposeSettings();
     bool ExecuteSettingsAction(const FString& Action);
     void LoadSettingsDraft();
     void ApplyMasterVolume();
+    bool CaptureBinding(FKey Key,bool Shift,bool Control,bool Alt);
+    void FinishDisplayChange(bool Keep);
+    bool InputMatches(FName Id,const FKeyEvent& Event) const;
+    FHearthwardBindings SettingsBindings;
+    FHearthwardComfortSettings SettingsComfort;
+    FName BindingCapture;
+    int32 BindingSlot=0,SettingsMode=1;
+    FIntPoint SettingsResolution=FIntPoint(1920,1080),PreviousResolution;
+    EWindowMode::Type PreviousMode=EWindowMode::Windowed;
+    double DisplayDeadline=0;
+    TMap<FName,FString> PageFocus;
+    void ComposeTitleControls();
+    void ApplyTitleMenuWindow();
+    bool SelectTitleOption(const FString& Action);
+    bool NavigateTitle(int32 Direction);
+    FString TitleSelection=TEXT("newPrompt");
+    int32 TitleMenuFirst=0;
+    int32 HUDQuickSelection=0;
+    TSet<FName> HUDKnownQuests;
+    FName HUDQuestNotice,HUDPendingQuest;
+    double HUDQuestNoticeUntil=0;
+    bool HUDQuestsObserved=false,HUDAnnounceInitialQuest=false;
+    struct FHUDFeedbackNotice { FString Text; uint32 Revision=0; double Until=0; };
+    TMap<FName,FHUDFeedbackNotice> HUDFeedbackNotices;
+#if !UE_BUILD_SHIPPING
+    bool HUDPreviewStarted=false,MapPreviewOpened=false;
+    bool MapFogProbe=false;
+    double MapFogCaptureTime=-1;
+#endif
     void ComposeCompatibility();
     void ComposeUpdateNotice();
     int32 CompatibilityScroll=0;
@@ -99,9 +176,9 @@ private:
     FSlateBrush* Brush(const FString& Name) const;
     FVector2D CanvasPoint(const FGeometry& Geometry,const FVector2D& Screen) const;
     int32 Hit(const FVector2D& Point) const;
+    bool IsHighlighted(int32 Index) const;
     void ApplyLayout();
     void ApplyReadableLayout();
-    void ApplyReadableHUD();
     bool ReadableLayout() const;
     float TextScroll=0,TextScrollMaximum=0;
     void LoadComponents();
@@ -135,6 +212,7 @@ private:
     int32 ResetScroll=0;
     bool bResetActive=false;
     int32 Quantity=1,Scroll=0,Hover=INDEX_NONE,KeyboardFocus=INDEX_NONE;
+    bool KeyboardNavigationActive=false;
     float RefreshDelay=0,MapZoom=1;
     double MessageUntil=0;
     FVector2D MapPan=FVector2D::ZeroVector;
@@ -153,6 +231,7 @@ private:
     FName MemoryBlockedItem=TEXT("wood");
     FGuid CraftingEpoch,Workbench;
     FName SelectedRecipe;
+    FName SelectedBuilding=TEXT("workbench");
     FName SelectedRepair;
     int32 CraftingBatches=1;
     FGuid CampEpoch,CampFacility;

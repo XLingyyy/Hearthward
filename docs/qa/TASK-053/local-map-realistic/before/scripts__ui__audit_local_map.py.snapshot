@@ -1,0 +1,60 @@
+"""Check current map evidence, rendered black fog and preserved test profiles."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import numpy as np
+from PIL import Image
+
+GAME = Path(__file__).resolve().parents[2]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('run', type=Path)
+    args = parser.parse_args()
+    run = args.run.resolve()
+    output = GAME / 'docs/qa/TASK-053/local-map'
+    manifest = json.loads((run / 'source-manifest.json').read_text(encoding='utf-8'))
+    mismatches = [name for name, value in manifest['fingerprints'].items()
+                  if hashlib.sha256((GAME / name).read_bytes()).hexdigest() != value]
+    report = json.loads((run / 'report.json').read_text(encoding='utf-8'))
+    checks = {'all_native_checks_pass': report['passed'] and all(report['checks'].values()),
+              'current_source_dll_and_art_match_evidence': not mismatches}
+    image_results = {}
+    for filename in ['map-1600x1000.png', 'map-1920x1080.png', 'map-1280x720.png', 'map-ultrawide.png']:
+        pixels = np.array(Image.open(run / filename).convert('RGB'))
+        h, w, _ = pixels.shape
+        scale = min(w / 1672, h / 941)
+        yy, xx = np.mgrid[:h, :w]
+        radius = 425 * scale
+        distance = np.hypot(xx + .5 - w / 2, yy + .5 - h / 2)
+        outside = pixels[distance > radius + 2]
+        result = {'size': [w, h], 'outside_black': bool(np.all(outside == 0)), 'outside_max_rgb': int(outside.max())}
+        near = pixels[max(0, int(h / 2 - 40)):int(h / 2 + 20), max(0, int(w / 2 - 30)):int(w / 2 + 30)].astype(int)
+        result['red_flame_pixels'] = int(np.sum((near[..., 0] > 190) & (near[..., 0] > near[..., 2] * 2) & (near[..., 1] < 170)))
+        result['blue_flame_pixels'] = int(np.sum((near[..., 2] > 205) & (near[..., 0] < 130) & (near[..., 1] > 90)))
+        checks[filename + '_outside_250m_black'] = result['outside_black']
+        checks[filename + '_both_close_flames_visible'] = result['red_flame_pixels'] > 5 and result['blue_flame_pixels'] > 2
+        image_results[filename] = result
+    saved = json.loads((output / 'manual-profile-before.json').read_text(encoding='utf-8'))
+    current = {p.relative_to(GAME).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+               for p in (GAME / 'TestClient/Profile').rglob('*') if p.is_file()}
+    checks['manual_profile_unchanged'] = saved == current
+    base = output / 'before'
+    before = json.loads((base / 'interface.json.snapshot').read_text(encoding='utf-8'))
+    after = json.loads((GAME / 'Resources/UI/interface.json').read_text(encoding='utf-8'))
+    checks['other_ui_pages_preserved'] = all(before['pages'][name] == after['pages'][name] for name in before['pages'] if name != 'map')
+    before = json.loads((base / 'layout.json.snapshot').read_text(encoding='utf-8'))
+    after = json.loads((GAME / 'Resources/UI/layout.json').read_text(encoding='utf-8'))
+    checks['other_page_layouts_preserved'] = all(before['pages'][name] == after['pages'][name] for name in before['pages'] if name != 'map')
+    result = {'passed': all(checks.values()), 'checks': checks, 'native_run': run.relative_to(GAME).as_posix(),
+              'native_checks': len(report['checks']), 'fingerprints': len(manifest['fingerprints']),
+              'mismatches': mismatches, 'images': image_results}
+    (output / 'final-audit.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    raise SystemExit(0 if result['passed'] else 1)
+
+
+if __name__ == '__main__':
+    main()

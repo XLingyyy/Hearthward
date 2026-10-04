@@ -1,0 +1,29 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nUnable to build while Live Coding is active. Exit the editor and game, or press Ctrl+Alt+F11 if iterating on code in the editor or game\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 1.65 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 2.5kb\n",
+    "stderr": ""
+  }
+}

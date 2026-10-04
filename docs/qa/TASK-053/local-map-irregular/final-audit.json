@@ -1,0 +1,166 @@
+{
+  "passed": true,
+  "checks": {
+    "all_native_checks_pass": true,
+    "current_source_dll_and_art_match_evidence": true,
+    "at_least_90_percent_of_original_area_retained": true,
+    "continuous_positive_contour_inside_original_circle": true,
+    "whole_outline_is_irregular": true,
+    "native_and_image_audit_use_same_outline": true,
+    "map-1600x1000.png_opaque_smoky_viewport": true,
+    "map-1600x1000.png_both_close_flames_visible": true,
+    "map-1920x1080.png_opaque_smoky_viewport": true,
+    "map-1920x1080.png_both_close_flames_visible": true,
+    "map-1280x720.png_opaque_smoky_viewport": true,
+    "map-1280x720.png_both_close_flames_visible": true,
+    "map-ultrawide.png_opaque_smoky_viewport": true,
+    "map-ultrawide.png_both_close_flames_visible": true,
+    "fog-1600x1000_conceals_every_outside_pixel": true,
+    "fog-1600x1000_rendered_interior_connected": true,
+    "fog-1920x1080_conceals_every_outside_pixel": true,
+    "fog-1920x1080_rendered_interior_connected": true,
+    "fog-1280x720_conceals_every_outside_pixel": true,
+    "fog-1280x720_rendered_interior_connected": true,
+    "fog-ultrawide_conceals_every_outside_pixel": true,
+    "fog-ultrawide_rendered_interior_connected": true,
+    "fog-zoom-pan_conceals_every_outside_pixel": true,
+    "smoke_texture_drifts_while_world_paused": true,
+    "zoomed_lake_extends_through_viewport_margin": true,
+    "manual_profile_unchanged": true,
+    "other_ui_pages_preserved": true,
+    "other_page_layouts_preserved": true
+  },
+  "native_run": "docs/qa/TASK-053/local-map-irregular/verify_ba7eadec",
+  "native_checks": 49,
+  "fingerprints": 241,
+  "mismatches": [],
+  "images": {
+    "map-1600x1000.png": {
+      "size": [
+        1600,
+        1000
+      ],
+      "outside_luminance_mean": 19.29724486079143,
+      "outside_luminance_range": [
+        0,
+        237
+      ],
+      "entire_view_opaque": true,
+      "red_flame_pixels": 52,
+      "blue_flame_pixels": 33
+    },
+    "map-1920x1080.png": {
+      "size": [
+        1920,
+        1080
+      ],
+      "outside_luminance_mean": 19.21738166604673,
+      "outside_luminance_range": [
+        0,
+        242
+      ],
+      "entire_view_opaque": true,
+      "red_flame_pixels": 79,
+      "blue_flame_pixels": 42
+    },
+    "map-1280x720.png": {
+      "size": [
+        1280,
+        720
+      ],
+      "outside_luminance_mean": 19.215460559414467,
+      "outside_luminance_range": [
+        0,
+        243
+      ],
+      "entire_view_opaque": true,
+      "red_flame_pixels": 31,
+      "blue_flame_pixels": 20
+    },
+    "map-ultrawide.png": {
+      "size": [
+        2560,
+        1080
+      ],
+      "outside_luminance_mean": 19.793797689026785,
+      "outside_luminance_range": [
+        0,
+        244
+      ],
+      "entire_view_opaque": true,
+      "red_flame_pixels": 73,
+      "blue_flame_pixels": 44
+    }
+  },
+  "fog_opacity_pairs": {
+    "fog-1600x1000": {
+      "outside_pixels": 1118298,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 179804,
+      "disconnected_rendered_interior_pixels": 0
+    },
+    "fog-1920x1080": {
+      "outside_pixels": 1381866,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 258668,
+      "disconnected_rendered_interior_pixels": 0
+    },
+    "fog-1280x720": {
+      "outside_pixels": 612867,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 114956,
+      "disconnected_rendered_interior_pixels": 0
+    },
+    "fog-ultrawide": {
+      "outside_pixels": 2073066,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 258668,
+      "disconnected_rendered_interior_pixels": 0
+    },
+    "fog-zoom-pan": {
+      "outside_pixels": 693559,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 352426
+    }
+  },
+  "smoke_drift": {
+    "mean_absolute_rgb_difference": 5.322614067687384,
+    "changed_outside_pixels": 1099609
+  },
+  "zoomed_lake_margin_pixels": 7456,
+  "outline": {
+    "retained_area_ratio": 0.9175797656246343,
+    "area_m2": 180166.3656730622,
+    "radius_range_m": [
+      214.87466774036875,
+      248.87113412369217
+    ],
+    "control_points": [
+      0.985,
+      0.99,
+      0.975,
+      0.935,
+      0.97,
+      0.995,
+      0.975,
+      0.895,
+      0.925,
+      0.98,
+      0.99,
+      0.965,
+      0.92,
+      0.955,
+      0.985,
+      0.975,
+      0.86,
+      0.935,
+      0.98,
+      0.995,
+      0.965,
+      0.885,
+      0.955,
+      0.985
+    ]
+  },
+  "scope": "Continuous irregular contour crops the original circle; area and connected rendered interior checked. Sentinel substitution proves every outside pixel concealed in four viewports and zoom/pan."
+}

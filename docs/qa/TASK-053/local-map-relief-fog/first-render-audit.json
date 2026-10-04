@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "checks": {
+    "all_native_checks_pass": true,
+    "current_source_dll_and_art_match_evidence": true,
+    "map-1600x1000.png_opaque_smoky_viewport": true,
+    "map-1600x1000.png_both_close_flames_visible": true,
+    "map-1920x1080.png_opaque_smoky_viewport": true,
+    "map-1920x1080.png_both_close_flames_visible": true,
+    "map-1280x720.png_opaque_smoky_viewport": true,
+    "map-1280x720.png_both_close_flames_visible": true,
+    "map-ultrawide.png_opaque_smoky_viewport": true,
+    "map-ultrawide.png_both_close_flames_visible": true,
+    "fog-1600x1000_conceals_every_outside_pixel": true,
+    "fog-1920x1080_conceals_every_outside_pixel": true,
+    "fog-1280x720_conceals_every_outside_pixel": true,
+    "fog-ultrawide_conceals_every_outside_pixel": true,
+    "fog-zoom-pan_conceals_every_outside_pixel": true,
+    "smoke_texture_drifts_while_world_paused": true,
+    "manual_profile_unchanged": true,
+    "other_ui_pages_preserved": true,
+    "other_page_layouts_preserved": true
+  },
+  "native_run": "docs/qa/TASK-053/local-map-relief-fog/verify_bdb62872",
+  "native_checks": 46,
+  "fingerprints": 241,
+  "mismatches": [],
+  "images": {
+    "map-1600x1000.png": {
+      "size": [
+        1600,
+        1000
+      ],
+      "outside_luminance_mean": 19.091068631864022,
+      "outside_luminance_range": [
+        0,
+        245
+      ],
+      "entire_view_opaque": true,
+      "red_flame_pixels": 57,
+      "blue_flame_pixels": 31
+    },
+    "map-1920x1080.png": {
+      "size": [
+        1920,
+        1080
+      ],
+      "outside_luminance_mean": 18.94464470425187,
+      "outside_luminance_range": [
+        0,
+        246
+      ],
+      "entire_view_opaque": true,
+      "red_flame_pixels": 78,
+      "blue_flame_pixels": 42
+    },
+    "map-1280x720.png": {
+      "size": [
+        1280,
+        720
+      ],
+      "outside_luminance_mean": 18.94070969535018,
+      "outside_luminance_range": [
+        0,
+        241
+      ],
+      "entire_view_opaque": true,
+      "red_flame_pixels": 35,
+      "blue_flame_pixels": 16
+    },
+    "map-ultrawide.png": {
+      "size": [
+        2560,
+        1080
+      ],
+      "outside_luminance_mean": 19.804584801811764,
+      "outside_luminance_range": [
+        0,
+        245
+      ],
+      "entire_view_opaque": true,
+      "red_flame_pixels": 74,
+      "blue_flame_pixels": 43
+    }
+  },
+  "fog_opacity_pairs": {
+    "fog-1600x1000": {
+      "outside_pixels": 1075244,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 179804
+    },
+    "fog-1920x1080": {
+      "outside_pixels": 1319952,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 258668
+    },
+    "fog-1280x720": {
+      "outside_pixels": 585284,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 114956
+    },
+    "fog-ultrawide": {
+      "outside_pixels": 2011152,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 258668
+    },
+    "fog-zoom-pan": {
+      "outside_pixels": 630691,
+      "outside_max_difference": 0,
+      "sentinel_visible_in_centre_pixels": 352426
+    }
+  },
+  "smoke_drift": {
+    "mean_absolute_rgb_difference": 4.11266838038622,
+    "changed_outside_pixels": 1047014
+  },
+  "scope": "Opaque textured fog replaces flat black. Captured sentinel substitution proves unrevealed geography remains concealed; exact pixels checked in four viewports and zoom/pan."
+}

@@ -1,0 +1,585 @@
+#include "HearthwardScreenWidget.h"
+#include "Rendering/DrawElements.h"
+#include "Styling/CoreStyle.h"
+#include "Misc/Paths.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Rendering/SlateRenderer.h"
+#include "Blueprint/WidgetTree.h"
+#include "Fonts/FontMeasure.h"
+#include "../Experience/HearthwardPresentationComponent.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
+#include "Engine/GameInstance.h"
+
+int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometry& G,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool ParentEnabled) const
+{
+    if(!Theme) return Super::NativePaint(Args,G,Clip,Out,Layer,Style,ParentEnabled);
+    const float Scale=FMath::Min(G.GetLocalSize().X/DesignSize.X,G.GetLocalSize().Y/DesignSize.Y);
+    const FVector2D Offset=(G.GetLocalSize()-DesignSize*Scale)*.5;
+    const FSlateBrush* White=FCoreStyle::Get().GetBrush(TEXT("WhiteBrush"));
+    auto Geometry=[&](FVector2D P,FVector2D S){ return G.ToPaintGeometry(S,FSlateLayoutTransform(Scale,Offset+P*Scale)); };
+    auto Box=[&](FVector2D P,FVector2D S,FLinearColor C,int32 L){ FSlateDrawElement::MakeBox(Out,L,Geometry(P,S),White,ESlateDrawEffect::None,C); };
+    auto Frame=[&](FVector2D P,FVector2D S,FLinearColor C,int32 L)
+    { Box(P,FVector2D(S.X,1),C,L); Box(P+FVector2D(0,S.Y-1),FVector2D(S.X,1),C,L); Box(P,FVector2D(1,S.Y),C,L); Box(P+FVector2D(S.X-1,0),FVector2D(1,S.Y),C,L); };
+    if(Page==TEXT("pause"))
+    {
+        // Blur the live scene over the entire viewport, including aspect-ratio margins.
+        // Draw the opaque menu afterwards so text and gold rules stay crisp.
+        const FSlateRect Bounds=G.GetRenderBoundingRect();
+        const FVector2D Extent=Bounds.GetSize();
+        if(Extent.X>0 && Extent.Y>0)
+        {
+            const FPaintGeometry BlurGeometry(Bounds.GetTopLeft(),Extent,G.GetAccumulatedLayoutTransform().GetScale());
+            Out.PushClip(FSlateClippingZone(G));
+            FSlateDrawElement::MakePostProcessBlur(Out,Layer,BlurGeometry,
+                FVector4f(43.f,14.f,FMath::CeilToFloat(Extent.X/2),FMath::CeilToFloat(Extent.Y/2)),2);
+            Out.PopClip();
+        }
+        ++Layer;
+        FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(G.GetLocalSize(),FSlateLayoutTransform()),White,ESlateDrawEffect::None,FLinearColor(.008f,.011f,.014f,.30f));
+        ++Layer;
+    }
+    else if(Page==TEXT("title") || Page==TEXT("settings") || Page==TEXT("save") || Page==TEXT("inventory") || Page==TEXT("equipment") || Page==TEXT("skills") || Page==TEXT("journal") || Page==TEXT("map"))
+        FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(G.GetLocalSize(),FSlateLayoutTransform()),White,ESlateDrawEffect::None,FLinearColor::Black);
+    else if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue"))
+        Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
+    const auto& Comfort=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort;
+    const auto* Survival=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(Page==TEXT("hud") && Survival->State.Severe() && Comfort.HungerVisual>0)
+    {
+        const float Edge=FMath::Min(G.GetLocalSize().X,G.GetLocalSize().Y)*.15f;
+        for(int32 Strip=0;Strip<16;++Strip)
+        {
+            const float Alpha=.35f*(1-Strip/16.f)*Comfort.HungerVisual/100.f;
+            auto Mask=[&](FVector2D P,FVector2D Size){FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(Size,FSlateLayoutTransform(P)),White,ESlateDrawEffect::None,FLinearColor(0,0,0,Alpha));};
+            const float T=Edge/16,At=Strip*T;
+            Mask({0,At},{G.GetLocalSize().X,T});Mask({0,G.GetLocalSize().Y-At-T},{G.GetLocalSize().X,T});
+            Mask({At,Edge},{T,G.GetLocalSize().Y-2*Edge});Mask({G.GetLocalSize().X-At-T,Edge},{T,G.GetLocalSize().Y-2*Edge});
+        }
+    }
+    for(int32 I=0;I<Elements.Num();++I)
+    {
+        const auto& E=Elements[I]; const bool Focus=IsHighlighted(I);
+        const float Opacity=E.Opacity();
+        if(E.Hidden || E.TextScrollClipped || Opacity<=0) continue;
+        const bool TextClip=ReadableLayout() && !(E.Type==TEXT("image") && E.Size.X>=1600);
+        if(TextClip)
+        {
+            const float Bottom=Page==TEXT("dialogue") || Page==TEXT("memory")?770:835;
+            const FVector2D A=G.LocalToAbsolute(Offset+FVector2D(180,60)*Scale),B=G.LocalToAbsolute(Offset+FVector2D(1492,Bottom)*Scale);
+            Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
+        }
+
+        if(E.MapClipped)
+        {
+            const FVector2D A=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),FVector2D::ZeroVector)*Scale);
+            const FVector2D B=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),DesignSize)*Scale);
+            Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
+        }
+        const int32 L=Layer+I*4+1;
+        if(E.LayoutId==TEXT("background") && (Page==TEXT("title") || Page==TEXT("settings")))
+        {
+            if(const FSlateBrush* Background=Brush(E.Asset))
+            {
+                FSlateBrush Cover=*Background;
+                const FVector2D View=G.GetLocalSize();
+                const float ImageAspect=Background->ImageSize.X/Background->ImageSize.Y;
+                const float ViewAspect=View.X/View.Y;
+                if(ViewAspect>ImageAspect)
+                {
+                    const float Crop=(1.f-ImageAspect/ViewAspect)*.5f;
+                    Cover.SetUVRegion(FBox2f(FVector2f(0,Crop),FVector2f(1,1-Crop)));
+                }
+                else
+                {
+                    const float Crop=(1.f-ViewAspect/ImageAspect)*.5f;
+                    Cover.SetUVRegion(FBox2f(FVector2f(Crop,0),FVector2f(1-Crop,1)));
+                }
+                FSlateDrawElement::MakeBox(Out,L,G.ToPaintGeometry(View,FSlateLayoutTransform()),&Cover,ESlateDrawEffect::None,FLinearColor::White);
+            }
+            continue;
+        }
+        FLinearColor Ink=E.Enabled ? (Focus?Color(TEXT("gold")):E.Color) : Color(TEXT("muted"));
+        Ink.A*=Opacity;
+        if(E.Type==TEXT("mapRegion"))
+        {
+            const FSlateFontInfo Font(DisplayTypeface,FMath::RoundToInt(E.Font*.75f));
+            const FVector2D Extent=FSlateApplication::Get().GetRenderer()->GetFontMeasureService()->Measure(E.Text,Font);
+            const FVector2D P=E.Position+FVector2D((E.Size.X-Extent.X)*.5,(E.Size.Y-Extent.Y)*.5);
+            for(const FVector2D Shadow:{FVector2D(-1,-1),FVector2D(1,-1),FVector2D(-1,1),FVector2D(1,1),FVector2D(0,2)})
+                FSlateDrawElement::MakeText(Out,L,Geometry(P+Shadow,E.Size),E.Text,Font,ESlateDrawEffect::None,FLinearColor(.025f,.033f,.027f,.85f));
+            FSlateDrawElement::MakeText(Out,L+1,Geometry(P,E.Size),E.Text,Font,ESlateDrawEffect::None,FLinearColor(.94f,.94f,.85f,1));
+        }
+        else if(E.Type==TEXT("mapFlame"))
+        {
+            const auto Transform=Geometry(E.Position,E.Size).GetAccumulatedRenderTransform();
+            const auto Handle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(*White);
+            const float Flicker=FMath::Sin(FPlatformTime::Seconds()*5.5+E.Color.B*2)*.035f;
+            // Opposite tongues stay readable when the brothers stand close; their ground anchors stay exact.
+            const float Lean=E.Color.B>.5f?.24f:-.19f;
+            auto Polygon=[&](TArray<FVector2f> Points,FVector2f Center,FLinearColor Tone,int32 DrawLayer)
+            {
+                TArray<FSlateVertex> Vertices;TArray<SlateIndex> Indices;
+                Vertices.Add(FSlateVertex::Make(Transform,Center*FVector2f(E.Size),FVector2f(.5f,.5f),Tone.ToFColorSRGB()));
+                for(const auto& P:Points)Vertices.Add(FSlateVertex::Make(Transform,P*FVector2f(E.Size),FVector2f(.5f,.5f),Tone.ToFColorSRGB()));
+                for(int32 PointIndex=0;PointIndex<Points.Num();++PointIndex){Indices.Add(0);Indices.Add(PointIndex+1);Indices.Add((PointIndex+1)%Points.Num()+1);}
+                FSlateDrawElement::MakeCustomVerts(Out,DrawLayer,Handle,Vertices,Indices,nullptr,0,0);
+            };
+            TArray<FSlateVertex> Vertices;TArray<SlateIndex> Indices;
+            Vertices.Add(FSlateVertex::Make(Transform,FVector2f(E.Size.X*.5,E.Size.Y*.72),FVector2f(.5f,.5f),FLinearColor(E.Color.R,E.Color.G,E.Color.B,.36f).ToFColorSRGB()));
+            for(int32 PointIndex=0;PointIndex<=32;++PointIndex)
+            {
+                const float Angle=PointIndex*2*PI/32;
+                Vertices.Add(FSlateVertex::Make(Transform,FVector2f(E.Size.X*(.5f+.85f*FMath::Cos(Angle)),E.Size.Y*(.72f+.55f*FMath::Sin(Angle))),FVector2f(.5f,.5f),FColor(0,0,0,0)));
+                if(PointIndex>0){Indices.Add(0);Indices.Add(PointIndex);Indices.Add(PointIndex+1);}
+            }
+            FSlateDrawElement::MakeCustomVerts(Out,L,Handle,Vertices,Indices,nullptr,0,0);
+            Polygon({{.5f,.9f},{.16f,.81f},{.05f,.65f},{.10f,.48f},{.22f,.31f},{.27f,.58f},{.40f+Lean*.5f,.41f},{.55f+Lean+Flicker,.02f},{.76f+Lean*.3f,.34f},{.65f,.59f},{.88f,.44f},{.96f,.65f},{.82f,.83f}}, {.5f,.70f},E.Color,L+1);
+            const FLinearColor Inner=E.Color.B>.5f?FLinearColor(.12f,.78f,1,1):FLinearColor(1,.29f,.045f,1);
+            Polygon({{.5f,.89f},{.31f,.77f},{.34f+Lean*.3f,.61f},{.48f+Lean*.7f,.42f+Flicker},{.50f,.67f},{.66f,.55f},{.72f,.73f},{.63f,.85f}}, {.5f,.75f},Inner,L+2);
+            Polygon({{.5f,.9f},{.41f,.82f},{.49f,.69f},{.61f,.83f}}, {.5f,.83f},FLinearColor(.93f,.94f,.77f,1),L+3);
+        }
+        else if(E.Type==TEXT("mapFog"))
+        {
+            const auto Transform=Geometry(E.Position,DesignSize).GetAccumulatedRenderTransform();
+            const auto Handle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(*White);
+            TArray<FSlateVertex> Vertices;TArray<SlateIndex> Indices;
+            const float Radius=E.Size.X,Outer=DesignSize.Size()*3;
+            for(int32 Ring=0;Ring<3;++Ring)
+                for(int32 PointIndex=0;PointIndex<=128;++PointIndex)
+                {
+                    const float Angle=PointIndex*2*PI/128,R=Ring==0?FMath::Max(0.f,Radius-10):Ring==1?Radius:Outer;
+                    Vertices.Add(FSlateVertex::Make(Transform,FVector2f(FMath::Cos(Angle)*R,FMath::Sin(Angle)*R),FVector2f(.5f,.5f),FColor(0,0,0,Ring==0?0:255)));
+                    if(Ring>0 && PointIndex>0)
+                    {
+                        const int32 A=(Ring-1)*129+PointIndex-1,B=A+1,C=Ring*129+PointIndex-1,D=C+1;
+                        for(int32 Index:{A,C,D,A,D,B})Indices.Add(Index);
+                    }
+                }
+            FSlateDrawElement::MakeCustomVerts(Out,L,Handle,Vertices,Indices,nullptr,0,0);
+        }
+        if(E.Type==TEXT("mapRegion") || E.Type==TEXT("mapFlame") || E.Type==TEXT("mapFog"))
+        { if(E.MapClipped)Out.PopClip();if(TextClip)Out.PopClip();continue; }
+        if(E.Type==TEXT("skillsBackdrop") || E.Type==TEXT("journalBackdrop"))
+        {
+            // An opaque matte field covers the actual viewport, including letterbox margins.
+            const FVector2D View=G.GetLocalSize();constexpr int32 Columns=48,Rows=28;
+            const auto Transform=G.ToPaintGeometry(View,FSlateLayoutTransform()).GetAccumulatedRenderTransform();
+            TArray<FSlateVertex> Vertices;TArray<SlateIndex> Indices;
+            for(int32 Y=0;Y<=Rows;++Y) for(int32 X=0;X<=Columns;++X)
+            {
+                const float U=float(X)/Columns,V=float(Y)/Rows;
+                const float Haze=.020f*FMath::Exp(-FMath::Square((U-.3f)*2.6f)-FMath::Square((V-.38f)*2.1f))
+                    +.006f*FMath::Exp(-FMath::Square((U-.78f)*4.f)-FMath::Square((V-.7f)*3.f));
+                const float Cloud=.002f*FMath::Sin(U*19.f+V*9.f)*FMath::Sin(V*14.f-U*6.f);
+                const FLinearColor Tone(.007f+Haze+Cloud,.008f+Haze+Cloud,.009f+Haze+Cloud,1);
+                Vertices.Add(FSlateVertex::Make(Transform,FVector2f(View.X*U,View.Y*V),FVector2f(.5f,.5f),Tone.ToFColorSRGB()));
+                if(X<Columns && Y<Rows)
+                {
+                    const int32 A=Y*(Columns+1)+X,B=A+1,C=A+Columns+1,D=C+1;
+                    for(int32 Index:{A,B,D,A,D,C}) Indices.Add(Index);
+                }
+            }
+            const auto Handle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(*White);
+            FSlateDrawElement::MakeCustomVerts(Out,L,Handle,Vertices,Indices,nullptr,0,0);
+            continue;
+        }
+        if(E.Type==TEXT("skillsCounterHelix"))
+        {
+            // Counterwinding strands form a quiet engraving behind the lower-right panes.
+            Out.PushClip(FSlateClippingZone(G.GetLayoutBoundingRect()));
+            const FVector2D Start(947,1090),Axis(843,-562);
+            const FVector2D Normal(-Axis.Y,Axis.X);const FVector2D UnitNormal=Normal.GetSafeNormal();
+            constexpr int32 Segments=240;constexpr float Turns=2.65f,Radius=118.f;
+            TArray<FVector2D> Strands[2];
+            for(int32 Segment=0;Segment<=Segments;++Segment)
+            {
+                const float T=float(Segment)/Segments,Angle=2*PI*Turns*T;
+                const FVector2D Center=Start+Axis*T;
+                for(int32 StrandIndex=0;StrandIndex<2;++StrandIndex)
+                {
+                    const float Direction=StrandIndex==0?1.f:-1.f;
+                    Strands[StrandIndex].Add(Center+UnitNormal*(FMath::Sin(Direction*Angle)*Radius));
+                }
+            }
+            const FLinearColor Engraving(.12f,.135f,.13f,.13f);
+            for(int32 StrandIndex=0;StrandIndex<2;++StrandIndex)
+                FSlateDrawElement::MakeLines(Out,L,Geometry(E.Position,E.Size),Strands[StrandIndex],ESlateDrawEffect::None,Engraving,true,1.5f);
+            for(int32 Segment=4;Segment<Segments;Segment+=8)
+            {
+                const TArray<FVector2D> Rung={Strands[0][Segment],Strands[1][Segment]};
+                FSlateDrawElement::MakeLines(Out,L,Geometry(E.Position,E.Size),Rung,ESlateDrawEffect::None,FLinearColor(.12f,.135f,.13f,.085f),true,1.f);
+            }
+            Out.PopClip();
+            continue;
+        }
+        if(E.Type==TEXT("skillsSurface"))
+        {
+            const bool Detail=E.Value>0;
+            Box(E.Position,E.Size,Detail?FLinearColor(.011f,.012f,.014f,.91f):FLinearColor(.016f,.018f,.020f,.58f),L);
+            const FLinearColor Edge=Color(TEXT("bronze"))*(Detail?.48f:.25f);
+            Frame(E.Position,E.Size,Edge,L+1);
+            Box(E.Position+FVector2D(12,0),FVector2D(E.Size.X-24,1),Color(TEXT("text"))*.18f,L+2);
+            continue;
+        }
+        if((E.Type==TEXT("titleOption") || E.Type==TEXT("menuRow") || E.Type==TEXT("menuTab") || E.Type==TEXT("menuAction")) && Focus)
+        {
+            // A narrow amber glow replaces framed menu buttons; its edges fade into black.
+            constexpr int32 Columns=24,Rows=12;
+            const bool JournalCategory=Page==TEXT("journal") && E.LayoutId.StartsWith(TEXT("journal.header.tab."));
+            const float Height=JournalCategory?54:36;
+            const FSlateRenderTransform Transform=Geometry(E.Position,E.Size).GetAccumulatedRenderTransform();
+            TArray<FSlateVertex> Vertices; TArray<SlateIndex> Indices;
+            for(int32 Y=0;Y<=Rows;++Y)
+                for(int32 X=0;X<=Columns;++X)
+                {
+                    const float U=float(X)/Columns,V=float(Y)/Rows;
+                    const float Alpha=(JournalCategory?.46f:.32f)*FMath::Exp(-FMath::Square((U-.5f)*5.f)-FMath::Square((V-.5f)*4.f));
+                    const float StartY=JournalCategory?2:(E.Size.Y-Height)*.5;
+                    const FLinearColor Glow=JournalCategory?FLinearColor(.45f,.20f,.035f,Alpha):FLinearColor(.36f,.15f,.032f,Alpha);
+                    Vertices.Add(FSlateVertex::Make(Transform,FVector2f(E.Size.X*U,StartY+Height*V),FVector2f(.5f,.5f),Glow.ToFColorSRGB()));
+                    if(X<Columns && Y<Rows)
+                    {
+                        const int32 A=Y*(Columns+1)+X,B=A+1,C=A+Columns+1,D=C+1;
+                        for(int32 Index:{A,B,D,A,D,C}) Indices.Add(Index);
+                    }
+                }
+            const auto Handle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(*White);
+            FSlateDrawElement::MakeCustomVerts(Out,L,Handle,Vertices,Indices,nullptr,0,0);
+        }
+        if(E.Type==TEXT("inventorySurface"))
+        {
+            Box(E.Position-FVector2D(3,3),E.Size+FVector2D(6,6),FLinearColor(.003f,.003f,.003f,1),L);
+            Box(E.Position,E.Size,FLinearColor(.022f,.022f,.023f,1),L+1);
+            if(const auto* Texture=Brush(TEXT("darkTexture")))
+                FSlateDrawElement::MakeBox(Out,L+2,Geometry(E.Position+FVector2D(4,4),E.Size-FVector2D(8,8)),Texture,ESlateDrawEffect::None,FLinearColor(.48f,.46f,.43f,.24f));
+            for(int32 Rim=0;Rim<3;++Rim)
+                Frame(E.Position+FVector2D(Rim,Rim),E.Size-FVector2D(2*Rim,2*Rim),FLinearColor(.13f+.055f*Rim,.12f+.05f*Rim,.10f+.04f*Rim,1),L+3);
+            Box(E.Position+FVector2D(4,3),{E.Size.X-8,1},FLinearColor(.33f,.31f,.27f,1),L+3);
+            Box(E.Position+FVector2D(3,E.Size.Y-4),{E.Size.X-6,2},FLinearColor(.006f,.006f,.006f,1),L+3);
+            continue;
+        }
+        if(E.Type==TEXT("inventorySlot"))
+        {
+            Box(E.Position,E.Size,FLinearColor(.014f,.016f,.019f,1),L);
+            if(const auto* Texture=Brush(TEXT("darkTexture")))
+                FSlateDrawElement::MakeBox(Out,L+1,Geometry(E.Position,E.Size),Texture,ESlateDrawEffect::None,FLinearColor(.55f,.57f,.60f,.22f));
+            if(Focus)
+                if(const auto* Glow=Brush(TEXT("selection")))
+                    FSlateDrawElement::MakeBox(Out,L+2,Geometry(E.Position,E.Size),Glow,ESlateDrawEffect::None,FLinearColor(1.f,.85f,.6f,.5f));
+            Frame(E.Position,E.Size,Color(Focus?TEXT("gold"):TEXT("bronze"))*(Focus?.9f:.6f),L+3);
+            Frame(E.Position+FVector2D(2,2),E.Size-FVector2D(4,4),FLinearColor(.18f,.17f,.15f,1),L+3);
+            if(const auto* Art=Brush(E.Asset))
+                FSlateDrawElement::MakeBox(Out,L+3,Geometry(E.Position+FVector2D(10,6),E.Size-FVector2D(20,22)),Art,ESlateDrawEffect::None,FLinearColor(Focus?1.f:.85f,Focus?1.f:.85f,Focus?1.f:.85f,InventoryDragging && E.LayoutId==InventoryDragSource?.3f:1.f));
+            if(E.Value>0)
+                if(const auto* Mark=Brush(TEXT("equippedMark")))
+                    FSlateDrawElement::MakeBox(Out,L+3,Geometry(E.Position+FVector2D(5,E.Size.Y-18),{13,13}),Mark,ESlateDrawEffect::None,Color(TEXT("gold")));
+            if(!E.Text.IsEmpty())
+            {
+                FSlateFontInfo Font(Typeface,FMath::RoundToInt(E.Font*.75f));
+                const float Width=FSlateApplication::Get().GetRenderer()->GetFontMeasureService()->Measure(E.Text,Font).X;
+                const FVector2D P=E.Position+FVector2D(E.Size.X-Width-5,E.Size.Y-E.Font*1.1f);
+                FSlateDrawElement::MakeText(Out,L+3,Geometry(P,E.Size),E.Text,Font,ESlateDrawEffect::None,Focus?Color(TEXT("gold")):Color(TEXT("text")));
+            }
+            if(!E.Shortcut.IsEmpty())
+            {
+                const FSlateFontInfo Font(Typeface,FMath::RoundToInt(16*Comfort.TextScale/100.f));
+                const FVector2D P=E.Position+FVector2D(6,3);
+                FSlateDrawElement::MakeText(Out,L+3,Geometry(P+FVector2D(1,1),E.Size),E.Shortcut,Font,ESlateDrawEffect::None,FLinearColor::Black);
+                FSlateDrawElement::MakeText(Out,L+3,Geometry(P,E.Size),E.Shortcut,Font,ESlateDrawEffect::None,Color(TEXT("gold")));
+            }
+            if(InventoryDragging && InventoryTarget(InventoryDragCursor)==I)
+            {
+                const FLinearColor Target=InventoryDropAllowed(E)?FLinearColor(.35f,.8f,.45f,1):FLinearColor(.9f,.25f,.18f,1);
+                Frame(E.Position,E.Size,Target,L+3);Frame(E.Position+FVector2D(1,1),E.Size-FVector2D(2,2),Target,L+3);
+            }
+            continue;
+        }
+        if(E.Type==TEXT("menuSurface"))
+        {
+            Box(E.Position,E.Size,FLinearColor(.016f,.016f,.015f,1),L);
+            if(const auto* Texture=Brush(TEXT("darkTexture")))
+                FSlateDrawElement::MakeBox(Out,L+1,Geometry(E.Position,E.Size),Texture,ESlateDrawEffect::None,FLinearColor(.5f,.5f,.5f,.2f));
+            const FLinearColor Edge=Color(TEXT("bronze"))*.65f;
+            Frame(E.Position,E.Size,Edge,L+2);
+            for(const FVector2D Corner:{FVector2D(7,7),FVector2D(E.Size.X-7,7),FVector2D(7,E.Size.Y-7),E.Size-FVector2D(7,7)})
+            {
+                const float X=Corner.X<E.Size.X*.5?1:-1,Y=Corner.Y<E.Size.Y*.5?1:-1;
+                Box(E.Position+Corner+FVector2D(FMath::Min(0.f,X*20),0),{20,1},Edge,L+2);
+                Box(E.Position+Corner+FVector2D(0,FMath::Min(0.f,Y*20)),{1,20},Edge,L+2);
+            }
+        }
+        if(E.Type==TEXT("menuRow") || E.Type==TEXT("menuTab") || (Page==TEXT("pause") && E.Type==TEXT("menuAction")))
+            Box(E.Position+FVector2D(0,E.Size.Y-1),{E.Size.X,1},Color(Focus?TEXT("gold"):TEXT("bronze"))*(Focus?.65f:.3f),L+1);
+        if(E.Type==TEXT("titleArrow"))
+        {
+            const float Top=E.Action==TEXT("title.prev")?E.Size.Y:0,Bottom=E.Size.Y-Top;
+            TArray<FVector2D> Points={FVector2D(0,Top),FVector2D(E.Size.X*.5,Bottom),FVector2D(E.Size.X,Top)};
+            FSlateDrawElement::MakeLines(Out,L,Geometry(E.Position,E.Size),Points,ESlateDrawEffect::None,Focus?Color(TEXT("gold")):E.Color,true,1.3f);
+        }
+        if(E.Type==TEXT("hudQuickItem"))
+        {
+            Box(E.Position,E.Size,FLinearColor(.014f,.012f,.01f,.65f),L);
+            if(E.Selected)
+            {
+                if(const auto* Glow=Brush(TEXT("selection")))
+                    FSlateDrawElement::MakeBox(Out,L+1,Geometry(E.Position,E.Size),Glow,ESlateDrawEffect::None,FLinearColor(1.f,.85f,.6f,.38f));
+                Frame(E.Position-FVector2D(2,2),E.Size+FVector2D(4,4),FLinearColor(.45f,.24f,.07f,.5f),L);
+            }
+            Frame(E.Position,E.Size,Color(E.Selected?TEXT("gold"):TEXT("bronze"))*(E.Selected?.9f:.55f),L+1);
+            const FVector2D ArtSize(E.Size.X-16,E.Size.Y-28);
+            if(const auto* Art=Brush(E.Asset))
+                FSlateDrawElement::MakeBox(Out,L+2,Geometry(E.Position+FVector2D(8,5),ArtSize),Art,ESlateDrawEffect::None,E.Color);
+            FSlateFontInfo Font(Typeface,FMath::RoundToInt(E.Font*.75f));
+            const float Width=FSlateApplication::Get().GetRenderer()->GetFontMeasureService()->Measure(E.Text,Font).X;
+            const FVector2D P=E.Position+FVector2D(E.Size.X-Width-7,E.Size.Y-E.Font*1.3f-2);
+            FSlateDrawElement::MakeText(Out,L+2,Geometry(P+FVector2D(1,1),E.Size),E.Text,Font,ESlateDrawEffect::None,FLinearColor::Black);
+            FSlateDrawElement::MakeText(Out,L+3,Geometry(P,E.Size),E.Text,Font,ESlateDrawEffect::None,E.Selected?Color(TEXT("gold")):Color(TEXT("text"))*.8f);
+            continue;
+        }
+        if(Page==TEXT("journal") && E.LayoutId.StartsWith(TEXT("journal.header.icon.")))
+        {
+            const auto* Art=E.Selected?Brush(E.Asset+TEXT("Highlight")):nullptr;
+            if(!Art)Art=Brush(E.Asset);
+            if(Art)
+                FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position,E.Size),Art,ESlateDrawEffect::None,E.Color);
+            continue;
+        }
+        if(E.Type==TEXT("image") || (!E.Asset.IsEmpty() && E.Type!=TEXT("minimap") && E.Type!=TEXT("portrait")))
+            if(auto* B=Brush(E.Asset))
+            {
+                if(B->DrawAs==ESlateBrushDrawType::Box)
+                {
+                    // Runtime textures retain their full resolution. Slice explicitly so border
+                    // thickness follows the authored brush size, not the texture's pixel dimensions.
+                    const FBox2f UV=B->GetUVRegion(); const auto M=B->Margin;
+                    const float X[]={0,FMath::Min(float(E.Size.X*.5),M.Left*B->ImageSize.X),float(E.Size.X)-FMath::Min(float(E.Size.X*.5),M.Right*B->ImageSize.X),float(E.Size.X)};
+                    const float Y[]={0,FMath::Min(float(E.Size.Y*.5),M.Top*B->ImageSize.Y),float(E.Size.Y)-FMath::Min(float(E.Size.Y*.5),M.Bottom*B->ImageSize.Y),float(E.Size.Y)};
+                    const float U[]={UV.Min.X,UV.Min.X+UV.GetSize().X*M.Left,UV.Max.X-UV.GetSize().X*M.Right,UV.Max.X};
+                    const float V[]={UV.Min.Y,UV.Min.Y+UV.GetSize().Y*M.Top,UV.Max.Y-UV.GetSize().Y*M.Bottom,UV.Max.Y};
+                    for(int32 Row=0;Row<3;++Row) for(int32 Column=0;Column<3;++Column)
+                    {
+                        FSlateBrush Slice=*B; Slice.DrawAs=ESlateBrushDrawType::Image;
+                        Slice.SetUVRegion(FBox2f(FVector2f(U[Column],V[Row]),FVector2f(U[Column+1],V[Row+1])));
+                        FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position+FVector2D(X[Column],Y[Row]),FVector2D(X[Column+1]-X[Column],Y[Row+1]-Y[Row])),&Slice,ESlateDrawEffect::None,FLinearColor::White);
+                    }
+                }
+                else FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position,E.Size),B,ESlateDrawEffect::None,FLinearColor::White);
+            }
+        if(E.Type==TEXT("panel") || (E.Type==TEXT("notice") && Page!=TEXT("hud")))
+        {
+            Box(E.Position,E.Size,Color(TEXT("panel")),L); Frame(E.Position,E.Size,Color(TEXT("bronze")),L+1);
+        }
+        if(E.Type==TEXT("settingsTab") || E.Type==TEXT("settingsRow"))
+        {
+            if(Focus)
+            {
+                Box(E.Position,E.Size,FLinearColor(.09f,.065f,.035f,.9f),L);
+                Frame(E.Position,E.Size,Color(TEXT("gold"))*.8f,L+1);
+                Box(E.Position,FVector2D(3,E.Size.Y),Color(TEXT("gold")),L+2);
+            }
+            else
+            {
+                Box(E.Position,E.Size,FLinearColor(.018f,.015f,.011f,.46f),L);
+                Box(E.Position+FVector2D(1,E.Size.Y-1),FVector2D(E.Size.X-2,1),Color(TEXT("bronze"))*.45f,L+1);
+            }
+        }
+        if(E.Type==TEXT("button") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("slot") || E.Type==TEXT("node"))
+        {
+            if(E.Type==TEXT("tab"))
+            {
+                if(Focus) { Box(E.Position+FVector2D(10,E.Size.Y-3),FVector2D(E.Size.X-20,2),Color(TEXT("gold")),L+1); }
+            }
+            else if(E.Type==TEXT("node"))
+            {
+                if(Focus || E.Value>0)
+                {
+                    TArray<FVector2D> Circle;
+                    for(int32 N=0;N<=48;++N) { const float A=2*PI*N/48; Circle.Add(E.Size*.5+E.Size*.55*FVector2D(FMath::Cos(A),FMath::Sin(A))); }
+                    FSlateDrawElement::MakeLines(Out,L+2,Geometry(E.Position,E.Size),Circle,ESlateDrawEffect::None,Color(Focus?TEXT("gold"):TEXT("teal")),true,Focus?2.4f:1.f);
+                }
+            }
+            else if(Focus)
+            {
+                if(auto* B=Brush(TEXT("selection"))) FSlateDrawElement::MakeBox(Out,L+1,Geometry(E.Position,E.Size),B,ESlateDrawEffect::None,FLinearColor(1,1,1,.72f));
+                Frame(E.Position,E.Size,Color(TEXT("gold")),L+2);
+                Frame(E.Position-FVector2D(2,2),E.Size+FVector2D(4,4),FLinearColor(.42f,.23f,.06f,.4f),L+1);
+            }
+            else if(E.Type==TEXT("choice"))
+            { Box(E.Position,E.Size,FLinearColor(.02f,.018f,.014f,.58f),L); Frame(E.Position,E.Size,Color(TEXT("bronze")),L+1); }
+            else if(E.Type!=TEXT("button")) Frame(E.Position,E.Size,Color(TEXT("bronze"))*.55f,L+1);
+        }
+        if(E.Type==TEXT("line")) Box(E.Position,E.Size,E.Color,L);
+        if(E.Type==TEXT("keycap")) Frame(E.Position,E.Size,Color(TEXT("text")),L);
+        if(E.Type==TEXT("minimap") || E.Type==TEXT("portrait"))
+        {
+            if(const auto* B=Brush(E.Asset))
+            {
+                const FBox2f UV=B->GetUVRegion();
+                const FVector2f Center(E.Size*.5),Radius(E.Size*.5);
+                const FSlateRenderTransform Transform=Geometry(E.Position,E.Size).GetAccumulatedRenderTransform();
+                TArray<FSlateVertex> Vertices; TArray<SlateIndex> Indices; TArray<FVector2D> Outline;
+                Vertices.Add(FSlateVertex::Make(Transform,Center,UV.GetCenter(),FColor::White));
+                for(int32 N=0;N<=64;++N)
+                {
+                    const float Angle=2*PI*N/64;
+                    const FVector2f Unit(FMath::Cos(Angle),FMath::Sin(Angle));
+                    Vertices.Add(FSlateVertex::Make(Transform,Center+Unit*Radius,UV.GetCenter()+Unit*UV.GetSize()*.5f,FColor::White));
+                    Outline.Add(FVector2D(Center+Unit*Radius));
+                    if(N>0) { Indices.Add(0); Indices.Add(N); Indices.Add(N+1); }
+                }
+                const auto Handle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(*B);
+                FSlateDrawElement::MakeCustomVerts(Out,L,Handle,Vertices,Indices,nullptr,0,0);
+                FSlateDrawElement::MakeLines(Out,L+1,Geometry(E.Position,E.Size),Outline,ESlateDrawEffect::None,Color(TEXT("text")),true,1.2f);
+            }
+        }
+        if(E.Type==TEXT("arrow"))
+        {
+            const float Angle=FMath::DegreesToRadians(E.Value);
+            TArray<FVector2D> Points;
+            for(const FVector2D P:{FVector2D(0,-10),FVector2D(7,9),FVector2D(0,4),FVector2D(-7,9),FVector2D(0,-10)})
+                Points.Add(FVector2D(P.X*FMath::Cos(Angle)-P.Y*FMath::Sin(Angle),P.X*FMath::Sin(Angle)+P.Y*FMath::Cos(Angle))*E.Size/20+E.Size*.5);
+            FSlateDrawElement::MakeLines(Out,L,Geometry(E.Position,E.Size),Points,ESlateDrawEffect::None,E.Color,true,2);
+        }
+        if(E.Type==TEXT("fog")) Box(E.Position,E.Size,FLinearColor(.012f,.015f,.015f,.9f),L);
+        if(E.Type==TEXT("connection"))
+        {
+            TArray<FVector2D> Points={FVector2D::ZeroVector,FVector2D(E.Size.X*.5,E.Size.Y*.4),E.Size};
+            FSlateDrawElement::MakeLines(Out,L,Geometry(E.Position,DesignSize),Points,ESlateDrawEffect::None,E.Color,true,1.3f);
+        }
+        if(E.Type==TEXT("hudVitalBar"))
+        {
+            // Scale the bevel with the text setting; each rail keeps its own shadow and four reflective edges.
+            const float Bevel=E.Size.Y/24.f;
+            const FVector2D P=E.Position,S=E.Size;
+            Box(P+FVector2D(-2*Bevel,0),S+FVector2D(4*Bevel,2*Bevel),FLinearColor(.003f,.003f,.003f,.80f),L);
+            Box(P,S,FLinearColor(.13f,.125f,.105f,1),L+1);
+            Frame(P,S,FLinearColor(.25f,.24f,.19f,1),L+2);
+            Box(P+FVector2D(Bevel,Bevel),{S.X-2*Bevel,Bevel},FLinearColor(.63f,.60f,.47f,1),L+2);
+            Box(P+FVector2D(2*Bevel,2*Bevel),{S.X-4*Bevel,Bevel},FLinearColor(.35f,.34f,.28f,1),L+2);
+            Box(P+FVector2D(Bevel,S.Y-3*Bevel),{S.X-2*Bevel,Bevel},FLinearColor(.095f,.09f,.07f,1),L+2);
+            Box(P+FVector2D(Bevel,S.Y-2*Bevel),{S.X-2*Bevel,Bevel},FLinearColor(.43f,.42f,.33f,1),L+2);
+            Box(P+FVector2D(Bevel,2*Bevel),{Bevel,S.Y-4*Bevel},FLinearColor(.55f,.53f,.42f,1),L+2);
+            Box(P+FVector2D(2*Bevel,3*Bevel),{Bevel,S.Y-6*Bevel},FLinearColor(.29f,.28f,.22f,1),L+2);
+            Box(P+FVector2D(S.X-2*Bevel,2*Bevel),{Bevel,S.Y-4*Bevel},FLinearColor(.49f,.48f,.38f,1),L+2);
+            Box(P+FVector2D(S.X-3*Bevel,3*Bevel),{Bevel,S.Y-6*Bevel},FLinearColor(.23f,.22f,.17f,1),L+2);
+            // Long, restrained glints across the old metal rather than an emissive frame.
+            Box(P+FVector2D(S.X*.08f,Bevel),{S.X*.76f,Bevel*.65f},FLinearColor(.83f,.79f,.66f,.35f),L+3);
+            Box(P+FVector2D(S.X*.18f,S.Y-2*Bevel),{S.X*.72f,Bevel*.65f},FLinearColor(.68f,.65f,.53f,.45f),L+3);
+            const FVector2D Inner=P+FVector2D(4*Bevel,4*Bevel),InnerSize=S-FVector2D(8*Bevel,8*Bevel);
+            Box(Inner,InnerSize,FLinearColor(.012f,.013f,.011f,.97f),L+3);
+            const float Width=InnerSize.X*FMath::Clamp(E.Value,0.f,1.f);
+            if(Width>0)
+            {
+                constexpr int32 Bands=20;
+                for(int32 Band=0;Band<Bands;++Band)
+                {
+                    const float V=(Band+.5f)/Bands,Shade=.43f+.64f*FMath::Sin(V*PI);
+                    FLinearColor Fill=E.Color*Shade;
+                    const float Reflection=.23f*FMath::Exp(-FMath::Square((V-.2f)/.16f))
+                        +.10f*FMath::Exp(-FMath::Square((V-.87f)/.10f));
+                    Fill=FMath::Lerp(Fill,FLinearColor(.90f,.87f,.76f,1),Reflection); Fill.A=1;
+                    Box(Inner+FVector2D(0,InnerSize.Y*Band/Bands),{Width,InnerSize.Y/Bands+.05f},Fill,L+4);
+                }
+                Box(Inner+FVector2D(0,Bevel),{Width,Bevel*.7f},FLinearColor(1,.98f,.88f,.18f),L+5);
+                Box(Inner+FVector2D(0,InnerSize.Y-2*Bevel),{Width,Bevel*.65f},FLinearColor(1,.98f,.88f,.15f),L+5);
+                const float Cap=FMath::Min(Bevel*1.3f,Width*.5f);
+                Box(Inner,{Cap,InnerSize.Y},FLinearColor(1,.96f,.83f,.22f),L+5);
+                Box(Inner+FVector2D(Width-Cap,0),{Cap,InnerSize.Y},FLinearColor(1,.96f,.83f,.36f),L+5);
+            }
+            continue;
+        }
+        if(E.Type==TEXT("bar"))
+        {
+            Box(E.Position,E.Size,Color(TEXT("panel")),L); Frame(E.Position,E.Size,Color(TEXT("bronze")),L+1);
+            Box(E.Position+FVector2D(1,1),FVector2D(FMath::Max(0.f,float(E.Size.X-2)*FMath::Clamp(E.Value,0.f,1.f)),E.Size.Y-2),E.Color,L+2);
+        }
+        if(!E.Text.IsEmpty())
+        {
+            const bool Display=E.FontRole==TEXT("display") || (E.FontRole.IsEmpty() && E.Font>=30);
+            FSlateFontInfo Font(Display?DisplayTypeface:Typeface,FMath::RoundToInt(E.Font*.75f)); Font.LetterSpacing=E.Tracking;
+            TArray<FString> SourceLines,Lines; E.Text.ParseIntoArrayLines(SourceLines,false);
+            const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+            for(FString Line:SourceLines)
+            {
+                while((E.Type==TEXT("text") || E.Type==TEXT("button") || E.Type==TEXT("titleOption") || E.Type==TEXT("menuAction") || E.Type==TEXT("menuTab")) && Line.Len()>1 && Measure->Measure(Line,Font).X>E.Size.X)
+                {
+                    const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,E.Size.X)+1,1,Line.Len());
+                    Lines.Add(Line.Left(Count)); Line=Line.Mid(Count);
+                }
+                Lines.Add(Line);
+            }
+            FVector2D P=E.Position;
+            if(E.Type==TEXT("button") || E.Type==TEXT("titleOption") || E.Type==TEXT("titleUtility") || E.Type==TEXT("menuAction") || E.Type==TEXT("menuTab") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("notice")) P+=FVector2D(E.TextInset,FMath::Max(0.f,float(E.Size.Y-E.Font*1.3f)*.5f));
+            if(E.Type==TEXT("slot") || E.Type==TEXT("node")) P+=FVector2D(FMath::Max(4.,E.Size.X-E.Text.Len()*E.Font*.6-6),E.Size.Y-E.Font*1.3f);
+            const int32 MaximumLines=Page==TEXT("hud")?FMath::Max(1,FMath::FloorToInt((E.Size.Y+E.Font*.3f)/(E.Font*1.6f))):Lines.Num();
+            if(Lines.Num()>MaximumLines) {Lines.SetNum(MaximumLines);Lines.Last()=Lines.Last().LeftChop(FMath::Min(2,Lines.Last().Len()))+TEXT("…");}
+            for(const auto& Line:Lines)
+            {
+                FVector2D TextPosition=P;
+                // Slate rounds glyph advances at the final layout scale, including viewport DPI.
+                const float FontScale=Scale*G.GetAccumulatedLayoutTransform().GetScale();
+                const float TextWidth=Measure->Measure(Line,Font,FontScale).X/FontScale;
+                if(E.Align==TEXT("right")) TextPosition.X+=E.Size.X-TextWidth;
+                if(E.Align==TEXT("center") || E.Type==TEXT("keycap")) TextPosition.X+=(E.Size.X-TextWidth)*.5;
+                if(E.Type==TEXT("keycap")) TextPosition.Y+=(E.Size.Y-E.Font*1.3f)*.5;
+                const auto PG=Geometry(TextPosition,E.Size);
+                if(Page==TEXT("hud")) FSlateDrawElement::MakeText(Out,L+2,Geometry(TextPosition+FVector2D(1,1),E.Size),Line,Font,ESlateDrawEffect::None,FLinearColor(0,0,0,.85f*Opacity));
+                FSlateDrawElement::MakeText(Out,L+3,PG,Line,Font,ESlateDrawEffect::None,Ink);
+                P.Y+=E.Font*1.6f;
+            }
+        }
+        if(E.MapClipped) Out.PopClip();
+        if(TextClip) Out.PopClip();
+    }
+    int32 ContentLayer=Layer+Elements.Num()*4+5;
+    const FString Subtitle=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardPresentationComponent>()->GetSubtitle();
+    if(!Subtitle.IsEmpty() && ConfirmAction.IsEmpty() && (Page==TEXT("hud") || Page==TEXT("dialogue")))
+    {
+        const float FontSize=Comfort.SubtitleSize*941.f/1080;
+        FSlateFontInfo Font(Typeface,FMath::RoundToInt(FontSize*.75f));
+        const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+        const bool LargeHUD=Page==TEXT("hud") && Comfort.TextScale>100;
+        const float Width=LargeHUD?860:1100,Left=LargeHUD?740:286,Bottom=LargeHUD?850:680;
+        TArray<FString> Lines;FString Rest=Subtitle;
+        while(!Rest.IsEmpty())
+        {
+            const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Rest),Font,Width)+1,1,Rest.Len());
+            Lines.Add(Rest.Left(Count));Rest=Rest.Mid(Count);
+        }
+        const float Height=Lines.Num()*FontSize*1.6f+22;
+        Box({Left-18,Bottom-Height},{Width+36,Height},FLinearColor(0,0,0,Comfort.SubtitleBackground/100.f),ContentLayer);
+        for(int32 I=0;I<Lines.Num();++I) FSlateDrawElement::MakeText(Out,ContentLayer+1,Geometry({Left,Bottom+11-Height+I*FontSize*1.6f},{Width,FontSize*1.6f}),Lines[I],Font,ESlateDrawEffect::None,FLinearColor::White);
+    }
+    if(Page==TEXT("inventory") && InventoryDragging)
+    {
+        const FVector2D P=InventoryDragCursor+FVector2D(12,12),Size(72,72);
+        Box(P,Size,FLinearColor(.012f,.014f,.018f,.9f),ContentLayer+1);
+        Frame(P,Size,Color(TEXT("gold")),ContentLayer+2);
+        if(const auto* Art=Brush(InventoryDragAsset))FSlateDrawElement::MakeBox(Out,ContentLayer+3,Geometry(P+FVector2D(6,6),Size-FVector2D(12,12)),Art,ESlateDrawEffect::None,FLinearColor::White);
+        ContentLayer+=4;
+    }
+    if(LayoutEditing)
+    {
+        const FLinearColor Cyan(.15f,.85f,.95f);
+        if(const auto* B=LayoutBounds.Find(LayoutSelection))
+        {
+            Frame(B->Position,B->Size,Cyan,ContentLayer+1);
+            Box(B->Position+B->Size-FVector2D(7,7),FVector2D(14,14),Cyan,ContentLayer+2);
+        }
+        Box(FVector2D(0,0),FVector2D(1672,76),FLinearColor(.008f,.014f,.02f,.96f),ContentLayer+3);
+        FString Caption=TEXT("布局编辑 · ")+Page.ToString()+TEXT("  |  拖动组件 · Alt 单独选图层 · 右下角缩放 · Tab 切换组件\nF10/Esc 退出 · Ctrl+S 保存 · Ctrl+Z 撤销 · Delete 隐藏/显示 · Home 重置此页 · PgUp/PgDn 切页");
+        if(!LayoutSelection.IsEmpty())
+        {
+            const auto* B=LayoutBounds.Find(LayoutSelection);
+            if(B) Caption+=FString::Printf(TEXT("\n%s  [%.0f, %.0f, %.0f, %.0f]  %s"),*LayoutSelection,B->Position.X,B->Position.Y,B->Size.X,B->Size.Y,B->Hidden?TEXT("已隐藏"):TEXT(""));
+        }
+        if(!LayoutStatus.IsEmpty()) Caption+=TEXT("  ")+LayoutStatus;
+        FSlateFontInfo Font(Typeface,11);
+        FSlateDrawElement::MakeText(Out,ContentLayer+4,Geometry(FVector2D(16,7),FVector2D(1640,65)),Caption,Font,ESlateDrawEffect::None,Cyan);
+        return ContentLayer+5;
+    }
+    // SObjectWidget paints children before NativePaint. Keep the editable field above the illustration.
+    if((Page==TEXT("dialogue") || Page==TEXT("memory")) && WidgetTree && WidgetTree->RootWidget)
+        return WidgetTree->RootWidget->TakeWidget()->Paint(Args,G,Clip,Out,ContentLayer,Style,ParentEnabled);
+    return Super::NativePaint(Args,G,Clip,Out,ContentLayer,Style,ParentEnabled);
+}

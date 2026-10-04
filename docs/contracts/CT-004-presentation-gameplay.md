@@ -9,3 +9,15 @@ Resources/UI下保存视觉布局、主题、美术和字体。Resources/Data/ga
 装备引用必须是个人库存中实际拥有的物品；消费与转移后重新校验。任务条件源于真实库存变化、操作事件、发现与技能，不由UI页面访问直接判定完成。奖励已领取状态与经验、技能、探索同边界保存。
 
 伙伴等待/跟随/进攻与自定义地图标记同快照保存；药品、投掷和修理均消费真实库存。图鉴以发现、交流、任务及击败事件解锁，收集历史以collected:<item-id>事件记录，取得后消费或入库不抹去历史。
+
+用户2026-10-03批准四栏道具增量：Gameplay拥有四个固定角色（药品、食物、弹药、投掷）的实际物品引用，提供QuickItem／AssignQuickItem／UseQuickItem及CanUseItem公开查询和命令；UI只保留所选栏位。药品按healing>0、食物按food>0验证，不依据笼统category。Gameplay快照可选quickItems数组严格校验四个角色；旧档缺字段保留medicine／roast／arrow／firepot默认引用。
+
+Survival拥有用药及进食的3个有效秒动作和持续药效，提供ActiveConsumable查询。进食需完成才扣除预留的真实库存并记消费事件，取消不扣食物；玩家使用其他道具由Gameplay与Combat共同校验互斥。新增可选Survival属性FoodItem／FoodRemaining／HotItem随既有FHearthwardSurvivalState保存，旧档取空／零，不复制结构或更改旧档封装。用户已明确确认进食3秒；伙伴自动进食延续原即刻行为。
+
+用户2026-10-03本轮批准背包拖放增量：UI仅保存一次拖动的临时源物品／实际实例／起始坐标／时间线，Gameplay公开InventoryTab、InventorySlots、MoveInventoryItem、SetBackpackEquipment查询与命令。Gameplay拥有稀疏物品格位置，按稳定物品ID和原四类区分，同类堆叠继续显示真实数量；实际装备继续由Inventory实例ID管理。空格移动或占用格交换不转移、不复制、不消费库存，也不重置动作预留。装备拖入匹配槽立即装备，拖出卸下并刷新公开属性；错误槽、进行中动作、物品消失及旧时间线拒绝，拖出背包网格不视为丢弃。
+
+Gameplay JSON新增可选inventoryPositions对象（物品ID→整数格子序号0至499），已知ID、同分类位置唯一且范围严格校验；旧档缺字段按原展示顺序排列。排列与快捷配置随既有世界快照一起恢复，不改存档封装。UI页面／分类切换、读档及销毁取消拖动，释放鼠标捕获；材料页30格，消耗品和工具页展示四个固定角色槽，仍由FitsQuickSlot校验。healing物品文本类别改为药品，食物和药品合并显示于消耗品导航。
+
+快捷栏拖出可清空引用（NAME_None），可选quickItems接受该空值，使用空栏提示未配置；格子页翻动可以在拖动期间通过背包滚轮完成，HUD滚轮规则不变。角色资料增加头／胸与腿／脚减伤查询，使用Combat原护甲计算公式，并不新增防御机制；手部和工具实际装备槽一起展示，覆盖已有装备类别。
+
+用户2026-10-04批准下栏装备去重及行装管理视觉适配：Gameplay公开BackpackItemCount查询下方格子中的未穿戴数量，InventorySlots默认排除全数穿戴的图标并保留该位置为空；内部完整布局可通过IncludeEquipped查询供移位／卸下使用，穿戴状态不改变库存所有权、重量、实例GUID或耐久。UI装备详情仍可选择上方装备，同定义备用数量只来自未穿戴实例。投掷作用优先归工具导航。行装管理继续通过既有Gameplay、Inventory和Workshop公开接口执行操作，仅视觉改为背包同款不透明炭灰三栏，不改变转交／维修／升级条件。

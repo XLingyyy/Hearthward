@@ -1,0 +1,37 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "message": "无法解析的外部符号 \"__declspec(dllimport) public: static class IPlatformInputDeviceMapper & __cdecl IPlatformInputDeviceMapper::Get(void)\" (__imp_?Get@IPlatformInputDeviceMapper@@SAAEAV1@XZ)，函数 \"public: __cdecl `void __cdecl `anonymous namespace'::VerifyHUDPreview(class UWorld *)'::`7'::<lambda_7>::operator()(struct FKey)const \" (??R<lambda_7>@?6??VerifyHUDPreview@?A0xd00d94c5@@YAXPEAVUWorld@@@Z@QEBA@UFKey@@@Z) 中引用了该符号",
+      "code": "LNK2019",
+      "file": "HearthwardScreenCapture.cpp.obj",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardCampaignWorld.cpp, HearthwardWorldPresentation.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenMenu.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenTitle.cpp, HearthwardScreenWidget.cpp, HearthwardUpdateSubsystem.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 4 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 38.43 GB/45.35 GB committed\n  UBA Storage capacity 40 GB\n[1/4] Compile [x64] HearthwardScreenCapture.cpp\n[2/4] Link [x64] UnrealEditor-Hearthward.lib\n  正在创建库 E:/AiAgent/XLingGame/Hearthward/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.lib 和对象 E:/AiAgent/XLingGame/Hearthward/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.exp\n[3/4] Link [x64] UnrealEditor-Hearthward.dll\nHearthwardScreenCapture.cpp.obj : error LNK2019: 无法解析的外部符号 \"__declspec(dllimport) public: static class IPlatformInputDeviceMapper & __cdecl IPlatformInputDeviceMapper::Get(void)\" (__imp_?Get@IPlatformInputDeviceMapper@@SAAEAV1@XZ)，函数 \"public: __cdecl `void __cdecl `anonymous namespace'::VerifyHUDPreview(class UWorld *)'::`7'::<lambda_7>::operator()(struct FKey)const \" (??R<lambda_7>@?6??VerifyHUDPreview@?A0xd00d94c5@@YAXPEAVUWorld@@@Z@QEBA@UFKey@@@Z) 中引用了该符号\n  已定义且可能匹配的符号上的提示:\n    \"__declspec(dllimport) public: static class ISlateStyle const & __cdecl FAppStyle::Get(void)\" (__imp_?Get@FAppStyle@@SAAEBVISlateStyle@@XZ)\n    \"__declspec(dllimport) public: static class FAutomationTestFramework & __cdecl FAutomationTestFramework::Get(void)\" (__imp_?Get@FAutomationTestFramework@@SAAEAV1@XZ)\n    \"__declspec(dllimport) public: static wchar_t const * __cdecl FCommandLine::Get(void)\" (__imp_?Get@FCommandLine@@SAPEB_WXZ)\n    \"__declspec(dllimport) public: static class FHttpModule & __cdecl FHttpModule::Get(void)\" (__imp_?Get@FHttpModule@@SAAEAV1@XZ)\n    \"__declspec(dllimport) public: static class FObjectInitializer & __cdecl FObjectInitializer::Get(void)\" (__imp_?Get@FObjectInitializer@@SAAEAV1@XZ)\n    \"__declspec(dllimport) public: static struct FThreadStatsPool & __cdecl FThreadStatsPool::Get(void)\" (__imp_?Get@FThreadStatsPool@@SAAEAU1@XZ)\n    \"__declspec(dllimport) public: class UObject * __cdecl FWeakObjectPtr::Get(void)const \" (__imp_?Get@FWeakObjectPtr@@QEBAPEAVUObject@@XZ)\n    \"__declspec(dllimport) public: class UObject * __cdecl FWeakObjectPtr::Get(bool)const \" (__imp_?Get@FWeakObjectPtr@@QEBAPEAVUObject@@_N@Z)\n    \"__declspec(dllimport) public: static class IFileManager & __cdecl IFileManager::Get(void)\" (__imp_?Get@IFileManager@@SAAEAV1@XZ)\n    \"__declspec(dllimport) public: static class ISocketSubsystem * __cdecl ISocketSubsystem::Get(class FName const &)\" (__imp_?Get@ISocketSubsystem@@SAPEAV1@AEBVFName@@@Z)\n    \"__declspec(dllimport) public: static struct FStreamingManagerCollection & __cdecl IStreamingManager::Get(void)\" (__imp_?Get@IStreamingManager@@SAAEAUFStreamingManagerCollection@@XZ)\nE:\\AiAgent\\XLingGame\\Hearthward\\Binaries\\Win64\\UnrealEditor-Hearthward.dll : fatal error LNK1120: 1 个无法解析的外部命令\nTotal time in Unreal Build Accelerator local executor: 14.00 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 15.55 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 9.1kb\n",
+    "stderr": ""
+  }
+}

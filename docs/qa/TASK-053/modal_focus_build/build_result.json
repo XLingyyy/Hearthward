@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "operation": "build.project",
+  "artifacts": [
+    {
+      "type": "unreal_build",
+      "path": "E:\\AiAgent\\XLingGame\\Hearthward",
+      "state": "ready"
+    }
+  ],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 0,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nUHT compiled-in object format Default\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCampaignWorld.cpp, HearthwardWorldPresentation.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenMenu.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenTitle.cpp, HearthwardScreenWidget.cpp, HearthwardUpdateSubsystem.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 22 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 26 GB/34.71 GB committed\n  UBA Storage capacity 40 GB\n[1/22] Compile [x64] HearthwardScreenActions.cpp\n[2/22] Compile [x64] HearthwardScreenCamp.cpp\n[3/22] Compile [x64] HearthwardScreenCapture.cpp\n[4/22] Compile [x64] HearthwardScreenCompatibility.cpp\n[5/22] Compile [x64] HearthwardScreenContent.cpp\n[6/22] Compile [x64] HearthwardScreenCrafting.cpp\n[7/22] Compile [x64] HearthwardScreenEquipment.cpp\n[8/22] Compile [x64] HearthwardScreenLayout.cpp\n[9/22] Compile [x64] HearthwardScreenMenu.cpp\n[10/22] Compile [x64] HearthwardScreenNature.cpp\n[11/22] Compile [x64] HearthwardScreenPaint.cpp\n[12/22] Compile [x64] HearthwardScreenRepair.cpp\n[13/22] Compile [x64] HearthwardScreenSettings.cpp\nUbaSessionServer - Killed process HearthwardUpdateSubsystem.cpp (Compile [x64]) (235ms) - Low on memory (38.7gb/39.8gb). Kill threshold is 37.8gb\n[14/22] Compile [x64] HearthwardScreenTitle.cpp\n[15/22] Compile [x64] HearthwardScreenWidget.cpp\n[16/22] Compile [x64] HearthwardUpdateSubsystem.cpp\n[17/22] Compile [x64] Module.Hearthward.1.cpp\n[18/22] Compile [x64] Module.Hearthward.3.cpp\n[19/22] Compile [x64] Module.Hearthward.4.cpp\n[20/22] Link [x64] UnrealEditor-Hearthward.dll\n[21/22] Link [x64] UnrealEditor-Hearthward.lib\n  正在创建库 E:/AiAgent/XLingGame/Hearthward/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.lib 和对象 E:/AiAgent/XLingGame/Hearthward/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.exp\n[22/22] WriteMetadata HearthwardEditor.target [NoUba]\n\nTotal time in Unreal Build Accelerator local executor: 134.20 seconds\nOutput binary: E:\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe\n\nResult: Succeeded\nTotal execution time: 137.24 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 24.5kb\n",
+    "stderr": ""
+  }
+}

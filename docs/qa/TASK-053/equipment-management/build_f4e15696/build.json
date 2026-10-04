@@ -1,0 +1,37 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "message": "“SelectedItem”的声明隐藏了类成员",
+      "code": "C4458",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenEquipment.cpp(85,17)",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nUHT compiled-in object format Default\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardBuildingComponent.cpp, HearthwardBuildingEconomy.cpp, HearthwardBuildingTests.cpp, HearthwardCrafting.cpp, HearthwardRepair.cpp, HearthwardCampaignQuests.cpp, HearthwardCampaignWorld.cpp, HearthwardCombatComponent.cpp, HearthwardTraversalComponent.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, HearthwardWorldPresentation.cpp, HearthwardInputBindings.cpp, HearthwardSaveGame.cpp, HearthwardSurvivalComponent.cpp, CombatTests.cpp, ExperienceTests.cpp, GameplayTests.cpp, SurvivalTests.cpp, HearthwardLoadingSubsystem.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenInventoryDrag.cpp, HearthwardScreenLayout.cpp, HearthwardScreenMenu.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenTitle.cpp, HearthwardScreenWidget.cpp, HearthwardUpdateSubsystem.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 35 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 47.13 GB/47.83 GB committed\n  UBA Storage capacity 40 GB\n[1/35] Compile [x64] CombatTests.cpp\n[2/35] Compile [x64] ExperienceTests.cpp\n[3/35] Compile [x64] GameplayTests.cpp\n[4/35] Compile [x64] HearthwardBuildingComponent.cpp\n[5/35] Compile [x64] HearthwardBuildingEconomy.cpp\n[6/35] Compile [x64] HearthwardBuildingTests.cpp\n[7/35] Compile [x64] HearthwardCampaignQuests.cpp\n[8/35] Compile [x64] HearthwardCampaignWorld.cpp\n[9/35] Compile [x64] HearthwardCharacter.cpp\n[10/35] Compile [x64] HearthwardCombatComponent.cpp\n[11/35] Compile [x64] HearthwardCrafting.cpp\n[12/35] Compile [x64] HearthwardEquipment.cpp\n[13/35] Compile [x64] HearthwardGameplayComponent.cpp\n[14/35] Compile [x64] HearthwardRepair.cpp\n[15/35] Compile [x64] HearthwardSaveGame.cpp\n[16/35] Compile [x64] HearthwardScreenActions.cpp\n[17/35] Compile [x64] HearthwardScreenCapture.cpp\n[18/35] Compile [x64] HearthwardScreenContent.cpp\n[19/35] Compile [x64] HearthwardScreenEquipment.cpp\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenEquipment.cpp(85,17): error C4458: “SelectedItem”的声明隐藏了类成员\n    const FName SelectedItem=Selected?Selected->Definition:EquipmentStack;\n                ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.h(196,11): note: 参见“UHearthwardScreenWidget::SelectedItem”的声明\n    FName SelectedItem=TEXT(\"axe\"),SelectedSkill=TEXT(\"strong\"),SelectedQuest=TEXT(\"ember\"),SelectedLocation=TEXT(\"camp\");\n          ^\n[20/35] Compile [x64] HearthwardScreenInventoryDrag.cpp\n[21/35] Compile [x64] HearthwardScreenMenu.cpp\n[22/35] Compile [x64] HearthwardScreenNature.cpp\n[23/35] Compile [x64] HearthwardScreenPaint.cpp\n[24/35] Compile [x64] HearthwardScreenRepair.cpp\n[25/35] Compile [x64] HearthwardScreenWidget.cpp\n[26/35] Compile [x64] HearthwardSurvivalComponent.cpp\n[27/35] Compile [x64] HearthwardTraversalComponent.cpp\n[28/35] Compile [x64] Module.Hearthward.1.cpp\n[29/35] Compile [x64] Module.Hearthward.2.cpp\n[30/35] Compile [x64] Module.Hearthward.3.cpp\n[31/35] Compile [x64] SurvivalTests.cpp\n[32/35] Compile [x64] Module.Hearthward.4.cpp\nTotal time in Unreal Build Accelerator local executor: 231.80 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 236.76 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 36.6kb\n",
+    "stderr": ""
+  }
+}

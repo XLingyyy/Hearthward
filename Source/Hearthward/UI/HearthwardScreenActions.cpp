@@ -1,7 +1,9 @@
+#include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "HearthwardScreenWidget.h"
+#include "../HearthwardCharacter.h"
 #include "Misc/ConfigCacheIni.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardHUD.h"
@@ -80,16 +82,25 @@ bool UHearthwardScreenWidget::OpenSavePoint(const FHearthwardSavePoint& Point)
         }
         const FString Options=TEXT("game=/Script/Hearthward.HearthwardGameMode?HearthwardLoad=")
             +Point.SaveId.ToString(EGuidFormats::Digits);
-        GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->BeginLoading();
+        BeginMapTravel();
         UGameplayStatics::OpenLevel(this,NaturalMap,true,Options);
         return true;
     }
     return PrepareSession() && Save->LoadPoint(Point.SaveId);
 }
+void UHearthwardScreenWidget::BeginMapTravel()
+{
+    GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->BeginLoading();
+    if(OwnPause)UGameplayStatics::SetGamePaused(this,false);
+    OwnPause=false;
+    if(auto* Character=Cast<AHearthwardCharacter>(GetOwningPlayerPawn()))Character->ResetHeldInput();
+}
 bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
 {
     const FString Action=InAction; // Refresh can invalidate the element that supplied this string.
     if(GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->IsLoading())return false;
+    if(Action==TEXT("title.prev") || Action==TEXT("title.next"))
+        return NavigateTitle(Action==TEXT("title.next")?1:-1);
     // A confirmation owns input until the player confirms or cancels it.
     if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")
         && !(ConfirmAction==TEXT("compat.resolve") && (Action==TEXT("compat.next") || Action==TEXT("compat.prev") || Action==TEXT("compat.folder") || Action==TEXT("update.open")))
@@ -99,12 +110,36 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(ConfirmAction==TEXT("settings.display") && (Action==TEXT("confirm") || Action==TEXT("cancel")))
     {FinishDisplayChange(Action==TEXT("confirm"));return true;}
     MessageUntil=FPlatformTime::Seconds()+4;
+    if(Action.StartsWith(TEXT("hud.quick.")))
+    {
+        if(Page!=TEXT("hud")) return false;
+        const int32 Count=Theme->GetObjectField(TEXT("inventory"))->GetArrayField(TEXT("quickSlots")).Num();
+        if(Count<=0) return false;
+        int32 Selection=HUDQuickSelection;
+        if(Action.StartsWith(TEXT("hud.quick.select:"))) Selection=FCString::Atoi(*Action.Mid(17));
+        else return false;
+        if(Selection<0 || Selection>=Count) return false;
+        // Selection is UI state. A different slot also cancels a pending bow release.
+        if(Selection!=HUDQuickSelection) if(auto* C=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardCombatComponent>()) C->Aim(false);
+        HUDQuickSelection=Selection; Refresh(); return true;
+    }
     if(Action.StartsWith(TEXT("camp.")))return ExecuteCampAction(Action);
     if(Action.StartsWith(TEXT("gear.")))return ExecuteEquipmentAction(Action);
     if(Action.StartsWith(TEXT("nature.")))return ExecuteNatureAction(Action);
     if(Action.StartsWith(TEXT("settings.")))return ExecuteSettingsAction(Action);
-    if(Action==TEXT("buildPrev")){Scroll-=4;Refresh();return true;}
-    if(Action==TEXT("buildNext")){Scroll+=4;Refresh();return true;}
+    if(Action==TEXT("buildPrev") || Action==TEXT("buildNext"))
+    {
+        const auto& Buildings=Rows(TEXT("buildings"));
+        Scroll=FMath::Clamp(Scroll+(Action==TEXT("buildPrev")?-4:4),0,FMath::Max(0,Buildings.Num()-4));
+        if(Buildings.IsValidIndex(Scroll))SelectedBuilding=FName(*Text(Buildings[Scroll]->AsObject(),TEXT("id")));
+        Refresh();return true;
+    }
+    if(Action.StartsWith(TEXT("building.select:")))
+    {
+        const FString Id=Action.Mid(16);
+        if(!Find(TEXT("buildings"),Id))return false;
+        SelectedBuilding=FName(*Id);Refresh();return true;
+    }
     auto* G=Gameplay(); auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
     if(Action==TEXT("update.open"))
     {GetGameInstance()->GetSubsystem<UHearthwardUpdateSubsystem>()->OpenReleasePage();return true;}
@@ -280,7 +315,10 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         return ExecuteAction(Save->GetCampaignId().IsValid()?TEXT("ask:")+Target:Target);
     }
     if(Action==TEXT("back"))
-    { return ExecuteAction(TEXT("page:")+(ReturnPages.IsEmpty()?(Page==TEXT("title")?FString(TEXT("title")):FString(TEXT("hud"))):ReturnPages.Last().ToString())); }
+    {
+        if(Page==TEXT("equipment"))return ExecuteAction(TEXT("page:inventory"));
+        return ExecuteAction(TEXT("page:")+(ReturnPages.IsEmpty()?(Page==TEXT("title")?FString(TEXT("title")):FString(TEXT("hud"))):ReturnPages.Last().ToString()));
+    }
     if(Action.StartsWith(TEXT("ask:"))) { ConfirmAction=Action.Mid(4); Refresh(); return true; }
     if(Action==TEXT("cancel")) { ConfirmAction.Reset(); Refresh(); return true; }
     if(Action==TEXT("confirm")) { const FString Confirmed=ConfirmAction; ConfirmAction.Reset(); return ExecuteAction(Confirmed); }
@@ -310,7 +348,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     {
         if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)!=TEXT("L_HearthwardWilds"))
         {
-            GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->BeginLoading();
+            BeginMapTravel();
             UGameplayStatics::OpenLevel(this,NaturalMap,true,TEXT("game=/Script/Hearthward.HearthwardGameMode?HearthwardNewGame=1"));
             return true;
         }
@@ -318,7 +356,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         Loading->BeginLoading();
         Success=PrepareSession() && Save->StartNewProgress(); Message=Save->GetStatus();
         Loading->FinishSession(Success);
-        if(Success) OpenPage(TEXT("hud"));
+        if(Success) { HUDAnnounceInitialQuest=true; OpenPage(TEXT("hud")); }
     }
     else if(Action==TEXT("continue"))
     {
@@ -330,9 +368,11 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action==TEXT("title"))
     {
         if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds"))
-        { GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->BeginLoading();UGameplayStatics::OpenLevel(this,TEXT("/Game/Hearthward/Bootstrap/L_Bootstrap")); return true; }
+        { BeginMapTravel();UGameplayStatics::OpenLevel(this,TEXT("/Game/Hearthward/Bootstrap/L_Bootstrap")); return true; }
         OpenPage(TEXT("title"));
     }
+    else if((Action==TEXT("save.prev") || Action==TEXT("save.next")) && Page==TEXT("save"))
+    { if(!ConfirmAction.IsEmpty()) return false;Scroll=FMath::Max(0,Scroll+(Action==TEXT("save.next")?MenuPageSize():-MenuPageSize())); }
     else if(Action==TEXT("save")) { Success=Save->SavePoint(true); Message=Save->GetStatus(); }
     else if(Action.StartsWith(TEXT("load:")))
     {
@@ -349,8 +389,58 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action==TEXT("fullscreen"))
     { auto* S=GEngine->GetGameUserSettings(); S->SetFullscreenMode(S->GetFullscreenMode()==EWindowMode::Windowed?EWindowMode::WindowedFullscreen:EWindowMode::Windowed); S->ApplyResolutionSettings(false); S->SaveSettings(); }
     else if(Action==TEXT("quit")) UKismetSystemLibrary::QuitGame(this,GetOwningPlayer(),EQuitPreference::Quit,false);
-    else if(Action.StartsWith(TEXT("item:"))) SelectedItem=FName(*Action.Mid(5));
-    else if(Action.StartsWith(TEXT("filter:")) || Action.StartsWith(TEXT("category:"))) { Category=Action.Mid(Action.Find(TEXT(":"))+1); Scroll=0; Hover=KeyboardFocus=INDEX_NONE; }
+    else if(Action.StartsWith(TEXT("item:")))
+    {
+        SelectedItem=FName(*Action.Mid(5));
+        if(Page==TEXT("inventory"))
+        {
+            const FString ItemCategory=InventoryCategory(Find(TEXT("items"),SelectedItem.ToString()));
+            if(Category!=ItemCategory) { Category=ItemCategory;Scroll=0; }
+        }
+    }
+    else if(Action.StartsWith(TEXT("filter:")) || Action.StartsWith(TEXT("category:")))
+    {
+        FString Requested=Action.Mid(Action.Find(TEXT(":"))+1);
+        if(Page==TEXT("inventory") && Requested==TEXT("食物"))Requested=TEXT("消耗品");
+        CancelInventoryDrag();
+        if(Page==TEXT("inventory") && Requested!=TEXT("装备") && Requested!=TEXT("材料") && Requested!=TEXT("消耗品") && Requested!=TEXT("工具")) return false;
+        if(Page==TEXT("journal") && Requested!=TEXT("main") && Requested!=TEXT("side") && Requested!=TEXT("world") && Requested!=TEXT("people") && Requested!=TEXT("factions") && Requested!=TEXT("collection")) return false;
+        Category=Requested; Scroll=0; Hover=KeyboardFocus=INDEX_NONE;
+        if(Page==TEXT("journal")) { Message.Reset();PageFocus.Remove(Page); }
+    }
+    else if(Action==TEXT("journal.category.prev") || Action==TEXT("journal.category.next"))
+    {
+        if(Page!=TEXT("journal")) return false;
+        const TArray<FString> Categories={TEXT("main"),TEXT("side"),TEXT("world"),TEXT("people"),TEXT("factions"),TEXT("collection")};
+        const int32 Current=FMath::Max(0,Categories.IndexOfByKey(Category));
+        Category=Categories[(Current+(Action==TEXT("journal.category.next")?1:5))%6];Scroll=0;Hover=KeyboardFocus=INDEX_NONE;Message.Reset();PageFocus.Remove(Page);
+    }
+    else if(Action.StartsWith(TEXT("journal.list.")))
+    {
+        if(Page!=TEXT("journal")) return false;
+        if(Action==TEXT("journal.list.first")) Scroll=0;
+        else if(Action==TEXT("journal.list.last")) Scroll=FMath::Max(0,JournalEntries().Num()-JournalPageSize());
+        else if(Action==TEXT("journal.list.prev") || Action==TEXT("journal.list.next")) Scroll=FMath::Max(0,Scroll+(Action==TEXT("journal.list.next")?JournalPageSize():-JournalPageSize()));
+        else return false;
+    }
+    else if(Action==TEXT("journal.entry.prev") || Action==TEXT("journal.entry.next"))
+    {
+        if(Page!=TEXT("journal")) return false;
+        const bool Quests=Category==TEXT("main") || Category==TEXT("side");const auto Entries=JournalEntries();
+        FName& Selection=Quests?SelectedQuest:SelectedCodex;const int32 Current=Entries.IndexOfByPredicate([&](const auto& R){return FName(*Text(R,TEXT("id")))==Selection;});
+        const int32 Direction=Action==TEXT("journal.entry.next")?1:-1;
+        for(int32 EntryIndex=Current+Direction;Entries.IsValidIndex(EntryIndex);EntryIndex+=Direction)
+            if(JournalEntryKnown(Entries[EntryIndex]))
+            {
+                Selection=FName(*Text(Entries[EntryIndex],TEXT("id")));Scroll=FMath::Clamp(Scroll,EntryIndex-JournalPageSize()+1,EntryIndex);
+                Hover=KeyboardFocus=INDEX_NONE;PageFocus.Add(Page,(Quests?TEXT("quest:"):TEXT("codex:"))+Selection.ToString());break;
+            }
+    }
+    else if(Action==TEXT("inventory.prev") || Action==TEXT("inventory.next"))
+    {
+        if(Page!=TEXT("inventory")) return false;
+        Scroll=FMath::Max(0,Scroll+(Action==TEXT("inventory.next")?1:-1)*(Category==TEXT("材料")?6:3));
+    }
     else if(Action.StartsWith(TEXT("deposit:"))) { SelectedItem=FName(*Action.Mid(8)); StorageToCamp=true; Quantity=1; }
     else if(Action.StartsWith(TEXT("withdraw:"))) { SelectedItem=FName(*Action.Mid(9)); StorageToCamp=false; Quantity=1; }
     else if(Action.StartsWith(TEXT("quantity:"))) Quantity=FMath::Clamp(Quantity+FCString::Atoi(*Action.Mid(9)),1,9999);
@@ -369,6 +459,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         MenuPause=!MenuPause;
         GConfig->SetBool(TEXT("Hearthward.Survival"),TEXT("MenuPause"),MenuPause,GGameUserSettingsIni);
         GConfig->Flush(false,GGameUserSettingsIni);
+        ApplyInputMode();
     }
     else if(Action==TEXT("giveUp")) { GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>()->GiveUp(); OpenPage(TEXT("save")); }
     else if(Action==TEXT("cancelSurvival")) { GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction(); }
@@ -384,7 +475,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     {
         const FName UsedItem=SelectedItem;
         const auto Item=Find(TEXT("items"),UsedItem.ToString());
-        if(Number(Item,TEXT("healing"))>0 || !Text(Item,TEXT("slot")).IsEmpty() || Number(Item,TEXT("throwDamage"))>0) OpenPage(TEXT("hud"));
+        if(Number(Item,TEXT("healing"))>0 || Number(Item,TEXT("food"))>0 || !Text(Item,TEXT("slot")).IsEmpty() || Number(Item,TEXT("throwDamage"))>0) OpenPage(TEXT("hud"));
         Success=G->UseItem(UsedItem); Message=G->Feedback;
     }
     else if(Action==TEXT("repair"))
@@ -394,9 +485,20 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     }
     else if(Action.StartsWith(TEXT("quick:")))
     {
-        const auto& Slots=Theme->GetObjectField(TEXT("inventory"))->GetArrayField(TEXT("quickSlots"));
+        if(Page!=TEXT("hud")) return false;
         const int32 SlotIndex=FCString::Atoi(*Action.Mid(6));
-        Success=Slots.IsValidIndex(SlotIndex) && G->UseItem(FName(*Slots[SlotIndex]->AsString())); Message=G->Feedback;
+        if(SlotIndex<0 || SlotIndex>=4) return false;
+        if(HUDQuickSelection!=SlotIndex)
+        {
+            if(auto* C=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardCombatComponent>()) C->Aim(false);
+            HUDQuickSelection=SlotIndex;
+        }
+        else if(SlotIndex!=2) {Success=G->UseQuickItem(SlotIndex);Message=G->Feedback;}
+    }
+    else if(Action.StartsWith(TEXT("quick.assign:")))
+    {
+        if(Page!=TEXT("inventory")) return false;
+        Success=G->AssignQuickItem(FCString::Atoi(*Action.Mid(13)),SelectedItem);Message=G->Feedback;
     }
     else if(Action==TEXT("drop")) { Success=G->Drop(SelectedItem,Quantity); Message=G->Feedback; }
     else if(Action.StartsWith(TEXT("skill:"))) SelectedSkill=FName(*Action.Mid(6));
@@ -406,12 +508,15 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action.StartsWith(TEXT("codex:"))) SelectedCodex=FName(*Action.Mid(6));
     else if(Action==TEXT("questMap"))
     {
+        if(Page==TEXT("journal") && (Category!=TEXT("main") && Category!=TEXT("side") || SelectedQuest.IsNone())) return false;
         const FName Location(*Text(Find(TEXT("quests"),SelectedQuest.ToString()),TEXT("location")));
         if(G->Discovered.Contains(Location)) { SelectedLocation=Location; OpenPage(TEXT("map")); }
         else { Success=false; Message=TEXT("任务地点尚未发现，请先探索"); }
     }
-    else if(Action==TEXT("track")) { Success=G->Track(SelectedQuest); Message=G->Feedback; }
-    else if(Action==TEXT("claim")) { Success=G->Claim(SelectedQuest); Message=G->Feedback; }
+    else if(Action==TEXT("track"))
+    { if(Page==TEXT("journal") && (Category!=TEXT("main") && Category!=TEXT("side") || SelectedQuest.IsNone())) return false;Success=G->Track(SelectedQuest);Message=G->Feedback; }
+    else if(Action==TEXT("claim"))
+    { if(Page==TEXT("journal") && (Category!=TEXT("main") && Category!=TEXT("side") || SelectedQuest.IsNone())) return false;Success=G->Claim(SelectedQuest);Message=G->Feedback; }
     else if(Action.StartsWith(TEXT("location:"))) SelectedLocation=FName(*Action.Mid(9));
     else if(Action==TEXT("mapFilter")) { Category=Category==TEXT("travel")?TEXT(""):TEXT("travel"); Message=Category.IsEmpty()?TEXT("显示全部已发现地点"):TEXT("仅显示传送路标"); }
     else if(Action==TEXT("travel")) { Success=G->Travel(SelectedLocation); Message=G->Feedback; if(Success) OpenPage(TEXT("hud")); }

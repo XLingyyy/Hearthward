@@ -1,0 +1,61 @@
+"""Launch the current game from its title using a persistent, project-local test profile."""
+import argparse
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import uuid
+
+GAME = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(GAME / 'scripts/animals'))
+from paths import configure_factory, ue_root
+configure_factory()
+from engine_adapters.ue5 import UEClient
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--fresh-profile', action='store_true', help='Use a new disposable run; keep the regular test profile')
+    args = parser.parse_args()
+    root = GAME / 'TestClient'
+    root.mkdir(exist_ok=True)
+    state_path = root / 'client.json'
+    state = json.loads(state_path.read_text(encoding='utf-8')) if state_path.is_file() else {}
+    if state.get('process_id'):
+        pid = int(state['process_id'])
+        probe = subprocess.run(['powershell.exe', '-NoProfile', '-Command',
+            f"$p = Get-CimInstance Win32_Process -Filter 'ProcessId = {pid}'; "
+            "[bool]($p -and $p.Name -eq 'UnrealEditor.exe' -and $p.CommandLine -like '*Hearthward.uproject*' -and $p.CommandLine -like '*TestClient*')"],
+            capture_output=True, text=True)
+        if probe.stdout.strip() == 'True':
+            print('项目测试端已在运行，请使用该游戏窗口；关闭后可重新启动。', flush=True)
+            return
+    pool = state.setdefault('save_pool', str(uuid.uuid4()))
+    profile = root / 'Profile'
+    if args.fresh_profile:
+        pool = str(uuid.uuid4())
+        profile = root / 'Runs' / pool
+    profile.mkdir(parents=True, exist_ok=True)
+    logs = root / 'Logs'
+    logs.mkdir(exist_ok=True)
+    if not (GAME / 'Binaries/Win64/UnrealEditor-Hearthward.dll').is_file():
+        raise FileNotFoundError('请先构建 HearthwardEditor Development。')
+    client = UEClient(project_path=GAME / 'Hearthward.uproject', ue_root=ue_root(), port=30151, runtime_port=30152)
+    launch = client.runtime.launch_editor(map_path='/Game/Hearthward/Bootstrap/L_Bootstrap', extra_args=[
+        '-game', '-CoreLimit=4', '-windowed', '-ResX=1600', '-ResY=1000', '-WinX=80', '-WinY=80',
+        '-UserDir=' + str(profile), '-HearthwardSaveTestPool=' + pool,
+        '-abslog=' + str(logs / ('game-' + uuid.uuid4().hex[:8] + '.log'))])
+    (logs / 'latest-launch.json').write_text(json.dumps(launch, ensure_ascii=False, indent=2), encoding='utf-8')
+    if not launch['ok']:
+        print(json.dumps(launch, ensure_ascii=False, indent=2), flush=True)
+        raise SystemExit(1)
+    state['process_id'] = int(launch['payload']['process_id'])
+    state['profile'] = str(profile)
+    state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    print('归火项目测试端已启动，从登录主界面进入。存档、设置及日志均位于项目 TestClient 内。', flush=True)
+    print('Tab 背包 / K 技能 / J 日志 / M 地图 / B 建造 / T 交流 / F6 存读档 / Esc 或 P 暂停。', flush=True)
+
+
+if __name__ == '__main__':
+    main()

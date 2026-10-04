@@ -1,0 +1,82 @@
+"""Build, observe or verify the 500 m map in a disposable project-local game."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+import uuid
+
+if __name__ == '__main__' and not sys.flags.utf8_mode:
+    os.execv(sys.executable, [sys.executable, '-X', 'utf8', __file__, *sys.argv[1:]])
+
+GAME = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(GAME / 'scripts/animals'))
+from paths import configure_factory, ue_root
+configure_factory()
+from engine_adapters.ue5 import UEClient
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--build', action='store_true')
+    group.add_argument('--observe', action='store_true')
+    group.add_argument('--verify', action='store_true')
+    args = parser.parse_args()
+    mode = 'build' if args.build else 'observe' if args.observe else 'verify' if args.verify else 'preview'
+    out = GAME / 'docs/qa/TASK-053/local-map-angular' / (mode + '_' + uuid.uuid4().hex[:8])
+    out.mkdir(parents=True)
+    client = UEClient(project_path=GAME / 'Hearthward.uproject', ue_root=ue_root(), port=30161, runtime_port=30162)
+    if args.build:
+        result = client.build.project(target='HearthwardEditor', configuration='Development', timeout=1200)
+        (out / 'build.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+        print(json.dumps(dict(ok=result['ok'], diagnostics=result['diagnostics'], evidence=str(out))), flush=True)
+        raise SystemExit(0 if result['ok'] else 1)
+    profile = GAME / 'TestClient/Runs' / out.name
+    profile.mkdir(parents=True)
+    sources = [p for p in (GAME / 'Source').rglob('*') if p.is_file()]
+    sources += [GAME / name for name in ('Resources/Data/gameplay.json', 'Resources/UI/interface.json',
+        'Resources/UI/layout.json', 'Resources/UI/Art/map-local-terrain.png', 'Resources/UI/Art/map-flames.png',
+        'Resources/UI/Art/map-surface-materials.png', 'Resources/UI/Art/map-dark-fog.png',
+        'scripts/ui/map_relief.py', 'scripts/ui/draw_local_map.py',
+        'scripts/ui/realistic_local_map.py', 'scripts/ui/launch_map_test.py', 'Binaries/Win64/UnrealEditor-Hearthward.dll')]
+    (out / 'source-manifest.json').write_text(json.dumps(dict(
+        head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=GAME, text=True).strip(),
+        fingerprints={p.relative_to(GAME).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}), indent=2), encoding='utf-8')
+    extra = ['-game', '-CoreLimit=4', '-windowed', '-ResX=1600', '-ResY=1000', '-WinX=80', '-WinY=80',
+        '-HearthwardHUDPreview', '-UserDir=' + str(profile), '-HearthwardSaveTestPool=' + str(uuid.uuid4()),
+        '-abslog=' + str(out / 'runtime.log')]
+    if args.observe or args.verify:
+        extra += ['-RenderOffscreen', '-unattended', '-nosound', '-HearthwardMapVerify=' + str(out / 'report.json')]
+        if args.observe:
+            extra += ['-HearthwardMapObserve']
+    else:
+        extra += ['-HearthwardMapPreview']
+    launch = client.runtime.launch_editor(map_path='/Game/Hearthward/Bootstrap/L_Bootstrap', extra_args=extra)
+    (out / 'launch.json').write_text(json.dumps(launch, indent=2), encoding='utf-8')
+    print(json.dumps(dict(launch_ok=launch['ok'], evidence=str(out))), flush=True)
+    if not launch['ok']:
+        raise SystemExit(1)
+    if not (args.observe or args.verify):
+        print('地图测试版已启动，加载新游戏后自动打开地图。M／Esc 返回，WASD 移动人物，X 弟弟跟随，Z 等待；M 再次查看。滚轮缩放，方向键平移。每次使用独立测试档。', flush=True)
+        return
+    try:
+        deadline = time.monotonic() + 300
+        while not (out / 'report.json').is_file() and time.monotonic() < deadline:
+            log = out / 'runtime.log'
+            if log.is_file() and 'LogWindows: Error: Fatal error!' in log.read_text(encoding='utf-8', errors='replace'):
+                raise RuntimeError('Map test client crashed; see ' + str(log))
+            time.sleep(1)
+        report = json.loads((out / 'report.json').read_text(encoding='utf-8'))
+        print(json.dumps(dict(passed=report['passed'], checks=len(report['checks']),
+            failed=[k for k, value in report['checks'].items() if not value], evidence=str(out))), flush=True)
+        raise SystemExit(0 if report['passed'] else 1)
+    finally:
+        (out / 'stop.json').write_text(json.dumps(client.runtime.stop_editor(launch['payload']['process_id']), indent=2), encoding='utf-8')
+
+
+if __name__ == '__main__':
+    main()

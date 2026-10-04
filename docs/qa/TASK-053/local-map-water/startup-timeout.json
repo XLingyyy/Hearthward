@@ -1,0 +1,10 @@
+{
+  "run": "verify_d844fab8",
+  "passed": false,
+  "process_id": 18296,
+  "report_missing_after_seconds": 300,
+  "observation": "Windows process title was 选择 E:\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe; CPU 1.65625 seconds and log remained at initial EOS plugin loading. This indicates the legacy console selection state blocked logging. No map checks completed.",
+  "cleanup": "Original UEClient stopped its own process in finally; stop.json ok=true. No other editor was stopped.",
+  "retry": "Use the UE 5.8 NewConsole command-line option via the same public launch_editor API. Locally confirmed in WindowsPlatformApplicationMisc.cpp; it selects the asynchronous FWindowsConsoleOutputDevice2. Preserve the absolute runtime log and all original test arguments.",
+  "initial_pixel_audit": "water-audit-initial.json retained: an old seam median of exactly 8 was excluded by the strict >8 baseline threshold. Corrected to >=8; new seam median 0 and 95th percentile 3 were already passing. Product pixels were unchanged between audits."
+}

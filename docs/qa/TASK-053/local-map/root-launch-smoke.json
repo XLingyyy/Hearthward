@@ -1,0 +1,52 @@
+{
+  "passed": false,
+  "checks": {
+    "root_entry_launch_ok": true,
+    "preview_uses_visible_game": true,
+    "exact_launched_process_identified": true,
+    "all_samples_responding": true,
+    "development_game_window_present": true,
+    "new_game_world_loaded": true,
+    "loading_completed_after_world_load": true,
+    "no_fatal_error": true,
+    "own_preview_stopped": false
+  },
+  "entry": "E:\\AiAgent\\XLingGame\\地图测试版.cmd",
+  "launch_record": "preview_ebbe3a9b/launch.json",
+  "process_id": 37728,
+  "samples": [
+    {
+      "Id": 37728,
+      "ProcessName": "UnrealEditor",
+      "Responding": true,
+      "MainWindowTitle": "Hearthward （64-位 Development PCD3D_SM6） "
+    },
+    {
+      "Id": 37728,
+      "ProcessName": "UnrealEditor",
+      "Responding": true,
+      "MainWindowTitle": "Hearthward （64-位 Development PCD3D_SM6） "
+    },
+    {
+      "Id": 37728,
+      "ProcessName": "UnrealEditor",
+      "Responding": true,
+      "MainWindowTitle": "Hearthward （64-位 Development PCD3D_SM6） "
+    }
+  ],
+  "stop": {
+    "ok": false,
+    "operation": "runtime.stop_editor",
+    "artifacts": [],
+    "diagnostics": [],
+    "warnings": [],
+    "errors": [
+      "UEClient can stop only Editor processes that it launched; unknown process_id: 37728"
+    ],
+    "payload": {}
+  },
+  "limitation": "Startup smoke only; no Windows physical keyboard/mouse playthrough claimed",
+  "startup_passed": true,
+  "preview_left_open": true,
+  "cleanup_note": "Launch and three responsive-window samples passed. The separate observer UEClient refused stop_editor because process ownership lives in the original launcher client. Failed stop result retained; preview left open for user inspection."
+}

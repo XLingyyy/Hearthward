@@ -1,0 +1,151 @@
+"""Check live map evidence, textured fog opacity and preserved test profiles."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import numpy as np
+from PIL import Image, ImageDraw
+
+GAME = Path(__file__).resolve().parents[2]
+
+
+def boundary_fraction(angle, outline):
+    """Periodic cubic curve, independently sampled for image and area verification."""
+    sample = np.mod(angle / (2 * np.pi), 1) * len(outline)
+    index = np.floor(sample).astype(int)
+    t = sample - index
+    a, b = outline[index % len(outline)], outline[(index + 1) % len(outline)]
+    da = (b - outline[(index - 1) % len(outline)]) / 2
+    db = (outline[(index + 2) % len(outline)] - a) / 2
+    return np.clip((2*t**3-3*t**2+1)*a + (t**3-2*t**2+t)*da
+                   + (-2*t**3+3*t**2)*b + (t**3-t**2)*db, .8, 1)
+
+
+def contour_field(w, h, outline, zoom=1, pan=(0, 0)):
+    scale = min(w / 1672, h / 941)
+    yy, xx = np.mgrid[:h, :w]
+    dx, dy = xx + .5 - w/2 - pan[0]*scale, yy + .5 - h/2 - pan[1]*scale
+    distance = np.hypot(dx, dy)
+    boundary = 425 * scale * zoom * boundary_fraction(np.arctan2(dy, dx), outline)
+    return distance, boundary
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('run', type=Path)
+    args = parser.parse_args()
+    run = args.run.resolve()
+    output = run.parent
+    manifest = json.loads((run / 'source-manifest.json').read_text(encoding='utf-8'))
+    mismatches = [name for name, value in manifest['fingerprints'].items()
+                  if hashlib.sha256((GAME / name).read_bytes()).hexdigest() != value]
+    report = json.loads((run / 'report.json').read_text(encoding='utf-8'))
+    checks = {'all_native_checks_pass': report['passed'] and all(report['checks'].values()),
+              'current_source_dll_and_art_match_evidence': not mismatches}
+    config = json.loads((GAME / 'Resources/UI/interface.json').read_text(encoding='utf-8'))['localMap']
+    initial_zoom = config['initialZoom']
+    initial_pan = tuple(config['initialPan'])
+    outline = np.array(config['outlineFractions'], dtype=float)
+    angles = np.linspace(0, 2*np.pi, 16384, endpoint=False)
+    radii = boundary_fraction(angles, outline)
+    area_ratio = float(np.mean(radii**2))
+    checks['at_least_90_percent_of_original_area_retained'] = area_ratio >= .9
+    checks['continuous_positive_contour_inside_original_circle'] = bool(np.min(radii) >= .8 and np.max(radii) <= 1)
+    checks['whole_outline_is_irregular'] = float(np.ptp(radii)) > .1
+    checks['native_and_image_audit_use_same_outline'] = report['states']['outline_fractions'] == outline.tolist()
+    image_results = {}
+    for filename in ['map-1600x1000.png', 'map-1920x1080.png', 'map-1280x720.png', 'map-ultrawide.png']:
+        pixels = np.array(Image.open(run / filename).convert('RGB'))
+        h, w, _ = pixels.shape
+        scale = min(w / 1672, h / 941)
+        yy, xx = np.mgrid[:h, :w]
+        distance, boundary = contour_field(w, h, outline, initial_zoom, initial_pan)
+        outside = pixels[distance > boundary + 2]
+        rgba = np.array(Image.open(run / filename).convert('RGBA'))
+        result = {'size': [w, h], 'outside_luminance_mean': float(outside.mean()),
+                  'outside_luminance_range': [int(outside.min()), int(outside.max())],
+                  'entire_view_opaque': bool(np.all(rgba[..., 3] == 255))}
+        cy, cx = h/2 + initial_pan[1]*scale, w/2 + initial_pan[0]*scale
+        near = pixels[max(0, int(cy - 50*scale)):int(cy + 20*scale), max(0, int(cx - 30*scale)):int(cx + 30*scale)].astype(int)
+        result['red_flame_pixels'] = int(np.sum((near[..., 0] > 190) & (near[..., 0] > near[..., 2] * 2) & (near[..., 1] < 170)))
+        result['blue_flame_pixels'] = int(np.sum((near[..., 2] > 205) & (near[..., 0] < 130) & (near[..., 1] > 90)))
+        checks[filename + '_opaque_smoky_viewport'] = bool(result['entire_view_opaque'] and np.percentile(outside, 95) - np.percentile(outside, 5) > 15)
+        checks[filename + '_both_close_flames_visible'] = result['red_flame_pixels'] > 5 and result['blue_flame_pixels'] > 2
+        image_results[filename] = result
+    # Substitute a conspicuous magenta layer beneath the fog. It must be visible in
+    # the known centre and have zero effect on every pixel outside the irregular contour.
+    pairs = {}
+    for name in ['fog-1600x1000', 'fog-1920x1080', 'fog-1280x720', 'fog-ultrawide', 'fog-zoom-pan']:
+        base = np.array(Image.open(run / (name + '-base.png')).convert('RGBA')).astype(int)
+        probe = np.array(Image.open(run / (name + '-probe.png')).convert('RGBA')).astype(int)
+        h, w, _ = base.shape
+        scale = min(w / 1672, h / 941)
+        is_default = name != 'fog-zoom-pan'
+        zoom = 1.4 if not is_default else initial_zoom
+        pan = (-30, 60) if not is_default else initial_pan
+        distance, boundary = contour_field(w, h, outline, zoom, pan)
+        outside = distance > boundary + 2
+        inner = distance < 250 * scale * zoom
+        difference = np.max(np.abs(base - probe), axis=2)
+        result = {'outside_pixels': int(outside.sum()), 'outside_max_difference': int(difference[outside].max()),
+                  'sentinel_visible_in_centre_pixels': int(np.sum((difference > 80) & inner))}
+        checks[name + '_conceals_every_outside_pixel'] = result['outside_max_difference'] == 0 and result['sentinel_visible_in_centre_pixels'] > 10000
+        if is_default:
+            # Flood every pixel affected by the sentinel: a soft edge can expose
+            # terrain below the strong-colour threshold used for the centre check.
+            # Cutting that gradient at 80 creates spurious single-pixel islands.
+            # fromarray may share a read-only buffer; Pillow floodfill silently
+            # returns on read-only PixelAccess, so use an explicitly writable copy.
+            mask = Image.fromarray(np.uint8((difference > 0) * 255)).copy()
+            seed = (w//2 + round(50*scale), h//2 + round(50*scale))
+            seed_visible = mask.getpixel(seed) == 255
+            ImageDraw.floodfill(mask, seed, 128)
+            result['disconnected_rendered_interior_pixels'] = int(np.sum(np.array(mask) == 255))
+            result['sentinel_affected_pixels'] = int(np.sum(difference > 0))
+            checks[name + '_rendered_interior_connected'] = seed_visible and result['disconnected_rendered_interior_pixels'] == 0
+        pairs[name] = result
+    first = np.array(Image.open(run / 'fog-1600x1000-base.png').convert('RGB')).astype(int)
+    later = np.array(Image.open(run / 'fog-time-later-base.png').convert('RGB')).astype(int)
+    h, w, _ = first.shape
+    yy, xx = np.mgrid[:h, :w]
+    distance, boundary = contour_field(w, h, outline, initial_zoom, initial_pan)
+    outside = distance > boundary + 2
+    drift = np.abs(first - later)[outside]
+    checks['smoke_texture_drifts_while_world_paused'] = float(drift.mean()) > .1 and int(np.sum(drift.max(axis=1) > 0)) > 10000
+    zoom_image = np.array(Image.open(run / 'map-zoom-pan.png').convert('RGB')).astype(int)
+    h, w, _ = zoom_image.shape
+    scale = min(w / 1672, h / 941)
+    yy, xx = np.mgrid[:h, :w]
+    distance, boundary = contour_field(w, h, outline, 1.4, (-30, 60))
+    margin = (yy + .5 < (h - 941 * scale) / 2) & (distance < boundary - 25)
+    # In this measured zoom/pan state the lake reaches the top aspect-ratio margin.
+    # Flat smoky margins formerly cut a straight edge through that lake at y=50.
+    water = (zoom_image[..., 2] > zoom_image[..., 0] + 8) & (zoom_image[..., 1] > zoom_image[..., 0] + 5)
+    margin_water_pixels = int(np.sum(water & margin))
+    checks['zoomed_lake_extends_through_viewport_margin'] = margin_water_pixels > 1000
+    saved = json.loads((output / 'manual-profile-before.json').read_text(encoding='utf-8'))
+    current = {p.relative_to(GAME).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+               for p in (GAME / 'TestClient/Profile').rglob('*') if p.is_file()}
+    checks['manual_profile_unchanged'] = saved == current
+    base = GAME / 'docs/qa/TASK-053/local-map/before'
+    before = json.loads((base / 'interface.json.snapshot').read_text(encoding='utf-8'))
+    after = json.loads((GAME / 'Resources/UI/interface.json').read_text(encoding='utf-8'))
+    checks['other_ui_pages_preserved'] = all(before['pages'][name] == after['pages'][name] for name in before['pages'] if name != 'map')
+    before = json.loads((base / 'layout.json.snapshot').read_text(encoding='utf-8'))
+    after = json.loads((GAME / 'Resources/UI/layout.json').read_text(encoding='utf-8'))
+    checks['other_page_layouts_preserved'] = all(before['pages'][name] == after['pages'][name] for name in before['pages'] if name != 'map')
+    result = {'passed': all(checks.values()), 'checks': checks, 'native_run': run.relative_to(GAME).as_posix(),
+              'native_checks': len(report['checks']), 'fingerprints': len(manifest['fingerprints']),
+              'mismatches': mismatches, 'images': image_results, 'fog_opacity_pairs': pairs,
+              'smoke_drift': {'mean_absolute_rgb_difference': float(drift.mean()), 'changed_outside_pixels': int(np.sum(drift.max(axis=1) > 0))},
+              'zoomed_lake_margin_pixels': margin_water_pixels,
+              'outline': {'retained_area_ratio': area_ratio, 'area_m2': float(np.pi*250**2*area_ratio),
+                          'radius_range_m': [float(radii.min()*250), float(radii.max()*250)], 'control_points': outline.tolist()},
+              'scope': 'Continuous irregular contour crops the original circle; area and connected rendered interior checked. Sentinel substitution proves every outside pixel concealed in four viewports and zoom/pan.'}
+    (output / 'final-audit.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    raise SystemExit(0 if result['passed'] else 1)
+
+
+if __name__ == '__main__':
+    main()

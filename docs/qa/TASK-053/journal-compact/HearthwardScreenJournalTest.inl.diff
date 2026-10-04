@@ -1,0 +1,79 @@
+--- before/Source/Hearthward/UI/HearthwardScreenJournalTest.inl
++++ Source/Hearthward/UI/HearthwardScreenJournalTest.inl
+@@ -101,7 +101,7 @@
+                     }
+                     if(Id.StartsWith(TEXT("journal.list.name.")) || Id.StartsWith(TEXT("journal.list.status.")) || Id.StartsWith(TEXT("journal.list.mark.")))BlankRows=false;
+                 }
+-                Check(TEXT("unrecorded_name_and_description_hidden_")+Categories[CategoryIndex],BlankRows && SeparatorRows>0 && Label(TEXT("journal.detail.name")).IsEmpty() && !Find(EmptyView,TEXT("journal.detail.icon")) && Label(TEXT("journal.detail.description")).IsEmpty() && !Find(EmptyView,TEXT("journal.detail.empty")));
++                Check(TEXT("unrecorded_name_and_description_hidden_")+Categories[CategoryIndex],BlankRows && (CategoryIndex==5?SeparatorRows==0:SeparatorRows>0) && Label(TEXT("journal.detail.name")).IsEmpty() && !Find(EmptyView,TEXT("journal.detail.icon")) && Label(TEXT("journal.detail.description")).IsEmpty() && !Find(EmptyView,TEXT("journal.detail.empty")));
+                 const FString Before=G->SaveSnapshot();
+                 Check(TEXT("codex_cannot_trigger_stale_quest_actions_")+Categories[CategoryIndex],!UI->ExecuteAction(TEXT("track")) && !UI->ExecuteAction(TEXT("claim")) && !UI->ExecuteAction(TEXT("questMap")) && G->SaveSnapshot()==Before && UI->GetPage()==TEXT("journal"));
+             }
+@@ -110,16 +110,42 @@
+         Capture(TEXT("journal-collection-unknown"));
+         Key(EKeys::E);Check(TEXT("native_e_cycles_to_main"),UI->GetCategory()==TEXT("main") && OneSelectedIcon());
+         Key(EKeys::Q);Check(TEXT("native_q_cycles_to_collection"),UI->GetCategory()==TEXT("collection") && OneSelectedIcon());
++        const FString EmptyRange=Label(TEXT("journal.list.range"));Wheel(-1);Key(EKeys::PageDown);Key(EKeys::End);Key(EKeys::Down);
++        Check(TEXT("empty_collection_has_no_blank_pages_or_selection"),EmptyRange==TEXT("0 – 0 / 0") && Label(TEXT("journal.list.range"))==EmptyRange && Label(TEXT("journal.list.count"))==TEXT("已记录 0 / 77") && Label(TEXT("journal.detail.name")).IsEmpty() && UI->ActionAt({150,820}).IsEmpty() && UI->ActionAt({600,820}).IsEmpty());
++        // Sparse catalogue indices reproduce the wood -> three empty rows -> arrows defect.
++        const TArray<FString> Recorded={TEXT("wood"),TEXT("arrow"),TEXT("axe"),TEXT("bow"),TEXT("hood"),TEXT("armor"),TEXT("gloves"),TEXT("boots"),TEXT("belt"),TEXT("shield"),TEXT("quiver")};
++        for(const auto& Id:Recorded)G->Events.Add(FName(*(TEXT("collected:")+Id)),1);
++        Bag->TryAdd(TEXT("wood"),4);Bag->TryAdd(TEXT("arrow"),24);UI->Refresh();
++        auto DenseRows=[&](const FString& Name,int32 First,int32 Count,float Pitch)
++        {
++            const auto Object=Snapshot();int32 Rows=0;bool Dense=true;
++            for(const auto& V:Object->GetArrayField(TEXT("elements")))
++            {
++                const auto E=V->AsObject();const FString Id=E->GetStringField(TEXT("id"));
++                if(!Id.StartsWith(TEXT("journal.list.entry.")))continue;
++                Dense&=Recorded.IsValidIndex(First+Rows) && Id==TEXT("journal.list.entry.")+Recorded[First+Rows] && FMath::IsNearlyEqual(E->GetNumberField(TEXT("y")),225.0+Rows*Pitch,.01)
++                    && Find(Object,TEXT("journal.list.name.")+Id.Mid(19)).IsValid() && !UI->ActionAt({100.f,float(E->GetNumberField(TEXT("y"))+20)}).IsEmpty();
++                ++Rows;
++            }
++            Check(Name,Dense && Rows==Count);
++        };
++        Check(TEXT("sparse_collection_keeps_full_catalogue_count_and_compact_range"),Label(TEXT("journal.list.count"))==TEXT("已记录 11 / 77") && Label(TEXT("journal.list.range"))==TEXT("1 – 8 / 11"));
++        DenseRows(TEXT("sparse_collection_records_adjacent_no_blank_rows"),0,8,72);Clean(TEXT("collection_compact"));Capture(TEXT("journal-collection-compact"));
++        Key(EKeys::Down);Check(TEXT("native_down_reaches_adjacent_arrow_without_scroll_gap"),Label(TEXT("journal.detail.name"))==TEXT("箭矢") && Label(TEXT("journal.list.range"))==TEXT("1 – 8 / 11"));Key(EKeys::Up);
++        UI->NativeOnMouseButtonDown(Geometry,FPointerEvent(0,FVector2D(150,317),FVector2D(150,317),TSet<FKey>{EKeys::LeftMouseButton},EKeys::LeftMouseButton,0,Modifiers));
++        Check(TEXT("native_click_selects_compacted_row_and_original_quantity"),Label(TEXT("journal.detail.name"))==TEXT("箭矢") && Label(TEXT("journal.detail.held"))==TEXT("当前持有 24 件"));Key(EKeys::Up);
+         const FString FirstRange=Label(TEXT("journal.list.range"));Wheel(-1);
+-        Check(TEXT("wheel_scrolls_entries_without_changing_selection"),Label(TEXT("journal.list.range"))!=FirstRange && Label(TEXT("journal.detail.name")).IsEmpty());
++        Check(TEXT("wheel_scrolls_entries_without_changing_selection"),Label(TEXT("journal.list.range"))==TEXT("2 – 9 / 11") && Label(TEXT("journal.detail.name"))==TEXT("木材"));
+         Key(EKeys::End);const FString LastRange=Label(TEXT("journal.list.range"));Wheel(-1);
+-        Check(TEXT("last_page_stops_and_has_no_next_target"),Label(TEXT("journal.list.range"))==LastRange && UI->ActionAt({600,820}).IsEmpty());
++        Check(TEXT("last_page_stops_and_has_no_next_target"),LastRange==TEXT("4 – 11 / 11") && Label(TEXT("journal.list.range"))==LastRange && UI->ActionAt({600,820}).IsEmpty());
++        DenseRows(TEXT("last_collection_page_contains_only_adjacent_records"),3,8,72);
+         Capture(TEXT("journal-collection-last"));Key(EKeys::Home);Wheel(1);
+         Check(TEXT("first_page_stops_and_has_no_previous_target"),Label(TEXT("journal.list.range"))==FirstRange && UI->ActionAt({150,820}).IsEmpty());
+         Key(EKeys::PageDown);Check(TEXT("native_page_down_browses_list"),Label(TEXT("journal.list.range"))!=FirstRange);Key(EKeys::PageUp);
+         Check(TEXT("native_page_up_returns_first_window"),Label(TEXT("journal.list.range"))==FirstRange);
+         UI->ExecuteAction(TEXT("ask:quit"));const FString ModalCategory=UI->GetCategory(),ModalRange=Label(TEXT("journal.list.range"));Key(EKeys::Q);Wheel(-1);
+         Check(TEXT("modal_owns_category_paging_and_clicks"),!UI->ExecuteAction(TEXT("category:world")) && !UI->ExecuteAction(TEXT("journal.list.next")) && UI->GetCategory()==ModalCategory && Label(TEXT("journal.list.range"))==ModalRange && UI->ActionAt({590,55}).IsEmpty());UI->ExecuteAction(TEXT("cancel"));
++        for(const auto& Id:Recorded)G->Events.Remove(FName(*(TEXT("collected:")+Id)));Bag->RestoreInventory(Empty);
+         G->Discovered.Add(TEXT("camp"));G->Events.Add(TEXT("talk:brother"),1);G->Events.Add(TEXT("defeat:any"),1);G->Claimed.Add(TEXT("ember"));
+         G->Events.Add(TEXT("collected:wood"),1);Check(TEXT("isolated_real_inventory_count"),Bag->TryAdd(TEXT("wood"),4)==EHearthwardInventoryResult::Success);
+         for(int32 CategoryIndex=0;CategoryIndex<6;++CategoryIndex)
+@@ -134,7 +160,7 @@
+         Check(TEXT("collection_history_survives_no_current_stock"),Label(TEXT("journal.detail.name"))==TEXT("木材") && Label(TEXT("journal.detail.held"))==TEXT("当前持有 0 件"));
+         G->Events.Add(TEXT("collected:medicine"),1);UI->Refresh();
+         const FString BeforeKeyboard=Label(TEXT("journal.detail.name"));Key(EKeys::Down);
+-        Check(TEXT("native_down_selects_next_record"),Label(TEXT("journal.detail.name"))==TEXT("药草膏") && Label(TEXT("journal.list.range"))!=FirstRange);Key(EKeys::Up);
++        Check(TEXT("native_down_selects_next_record"),Label(TEXT("journal.detail.name"))==TEXT("药草膏") && Label(TEXT("journal.list.range"))==TEXT("1 – 2 / 2") && Label(TEXT("journal.list.count"))==TEXT("已记录 2 / 77"));Key(EKeys::Up);
+         Check(TEXT("native_up_restores_previous_record"),Label(TEXT("journal.detail.name"))==BeforeKeyboard);
+         Check(TEXT("settings_entry_preserved"),UI->ExecuteAction(TEXT("page:settings")) && UI->GetPage()==TEXT("settings"));
+         Check(TEXT("settings_back_restores_journal_category"),UI->ExecuteAction(TEXT("back")) && UI->GetPage()==TEXT("journal") && UI->GetCategory()==TEXT("collection"));
+@@ -146,8 +172,12 @@
+         const int32 XPAfter=G->Experience;Check(TEXT("repeat_claim_cannot_grant_reward"),!UI->ExecuteAction(TEXT("claim")) && G->Experience==XPAfter);
+         UI->ExecuteAction(TEXT("quest:store"));Settings->Comfort.TextScale=150;UI->Refresh();Clean(TEXT("text150"));Capture(TEXT("journal-text-150"));
+         Capture(TEXT("journal-720p"),1280,720);Capture(TEXT("journal-16x10"),2560,1600);Capture(TEXT("journal-ultrawide"),2560,1080);
+-        UI->ExecuteAction(TEXT("category:collection"));Clean(TEXT("collection150"));Capture(TEXT("journal-collection-150"));
++        G->Events.Remove(TEXT("collected:medicine"));for(const auto& Id:Recorded)G->Events.Add(FName(*(TEXT("collected:")+Id)),1);
++        UI->ExecuteAction(TEXT("category:collection"));DenseRows(TEXT("large_text_collection_has_six_adjacent_records"),0,6,96);Clean(TEXT("collection150"));Capture(TEXT("journal-collection-150"));
+         Check(TEXT("large_text_stays_in_two_columns"),Find(Snapshot(),TEXT("journal.detail.surface"))->GetNumberField(TEXT("x"))==752 && Label(TEXT("journal.list.range")).StartsWith(TEXT("1 – 6 /")));
++        Capture(TEXT("journal-collection-720p"),1280,720);Capture(TEXT("journal-collection-16x10"),2560,1600);Capture(TEXT("journal-collection-ultrawide"),2560,1080);
++        Key(EKeys::End);DenseRows(TEXT("large_text_last_collection_page_has_no_blank_rows"),5,6,96);
++        Check(TEXT("large_text_last_page_paginates_only_records"),Label(TEXT("journal.list.range"))==TEXT("6 – 11 / 11") && UI->ActionAt({600,820}).IsEmpty());
+         Check(TEXT("back_returns_to_hud"),UI->ExecuteAction(TEXT("back")) && UI->GetPage()==TEXT("hud"));
+         Settings->Comfort=ComfortBefore;Bag->RestoreInventory(BagBefore);G->Restore(GameplayBefore);G->Feedback=FeedbackBefore;
+         Check(TEXT("gameplay_inventory_experience_and_receipts_restored"),G->SaveSnapshot()==GameplayBefore && Bag->DescribeInventory()==InventoryBefore);

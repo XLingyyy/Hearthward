@@ -5,12 +5,13 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 
-bool UHearthwardScreenWidget::CaptureUI(const FString& Name,int32 Width,int32 Height)
+bool UHearthwardScreenWidget::CaptureUI(const FString& Name,int32 Width,int32 Height,bool PreserveFocus)
 {
 #if UE_BUILD_SHIPPING
     return false;
 #else
-    const TGuardValue<int32> NeutralHover(Hover,INDEX_NONE),NeutralKeyboardFocus(KeyboardFocus,INDEX_NONE);
+    const TGuardValue<int32> NeutralHover(Hover,PreserveFocus?Hover:INDEX_NONE),NeutralKeyboardFocus(KeyboardFocus,PreserveFocus?KeyboardFocus:INDEX_NONE);
+    const TGuardValue<bool> NeutralInput(KeyboardNavigationActive,PreserveFocus && KeyboardNavigationActive);
     Refresh();
     FWidgetRenderer Renderer(false,true);
     UTextureRenderTarget2D* Target=NewObject<UTextureRenderTarget2D>();
@@ -32,3 +33,28 @@ bool UHearthwardScreenWidget::CaptureUI(const FString& Name,int32 Width,int32 He
     return FFileHelper::SaveArrayToFile(PNG,*(FPaths::ProjectSavedDir()/TEXT("Task020")/(FPaths::MakeValidFileName(Name)+TEXT(".png"))));
 #endif
 }
+
+#if !UE_BUILD_SHIPPING
+bool UHearthwardScreenWidget::CaptureMapFogPair(const FString& Name,int32 Width,int32 Height,double TimeOffset)
+{
+    const TGuardValue<double> FreezeFog(MapFogCaptureTime,FPlatformTime::Seconds()+TimeOffset);
+    const TGuardValue<bool> RestoreProbe(MapFogProbe,false);
+    const bool Base=CaptureUI(Name+TEXT("-base"),Width,Height);
+    MapFogProbe=true;
+    const bool Probe=CaptureUI(Name+TEXT("-probe"),Width,Height);
+    MapFogProbe=false;Refresh();
+    return Base && Probe;
+}
+#endif
+
+#include "HearthwardScreenFocusTest.inl"
+#include "HearthwardScreenHUDTest.inl"
+#include "HearthwardScreenInventoryTest.inl"
+#include "HearthwardScreenSkillsTest.inl"
+#include "HearthwardScreenJournalTest.inl"
+#include "HearthwardScreenInputTest.inl"
+#include "HearthwardScreenFeedbackTest.inl"
+
+#include "HearthwardScreenQuickTest.inl"
+#include "HearthwardScreenDragTest.inl"
+#include "HearthwardScreenMapTest.inl"

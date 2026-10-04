@@ -1,0 +1,58 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "message": "\"CountByPredicate\": 不是 \"TArray<TSharedPtr<FJsonValue,ESPMode::ThreadSafe>,FDefaultAllocator>\" 的成员",
+      "code": "C2039",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenMapTest.inl(110,41)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“Missing”: 必须初始化 const 对象",
+      "code": "C2737",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenMapTest.inl(110,21)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“I”的声明隐藏了上一个本地声明",
+      "code": "C4456",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(127,23)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“I”的声明隐藏了上一个本地声明",
+      "code": "C4456",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(146,27)",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nInvalidating makefile for HearthwardEditor (source file added)\nUHT compiled-in object format Default\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardBuildingComponent.cpp, HearthwardBuildingEconomy.cpp, HearthwardBuildingTests.cpp, HearthwardCrafting.cpp, HearthwardRepair.cpp, HearthwardCampaignQuests.cpp, HearthwardCampaignWorld.cpp, HearthwardCombatComponent.cpp, HearthwardTraversalComponent.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, HearthwardWorldPresentation.cpp, HearthwardInputBindings.cpp, HearthwardSaveGame.cpp, HearthwardSurvivalComponent.cpp, CombatTests.cpp, ExperienceTests.cpp, GameplayTests.cpp, SurvivalTests.cpp, HearthwardLoadingSubsystem.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenInventoryDrag.cpp, HearthwardScreenLayout.cpp, HearthwardScreenMap.cpp, HearthwardScreenMenu.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenTitle.cpp, HearthwardScreenWidget.cpp, HearthwardUpdateSubsystem.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 25 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 38.68 GB/45.65 GB committed\n  UBA Storage capacity 40 GB\n[1/25] Compile [x64] HearthwardCharacter.cpp\n[2/25] Compile [x64] HearthwardLoadingSubsystem.cpp\n[3/25] Compile [x64] HearthwardScreenActions.cpp\n[4/25] Compile [x64] HearthwardScreenCamp.cpp\n[5/25] Compile [x64] HearthwardScreenCapture.cpp\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenMapTest.inl(110,41): error C2039: \"CountByPredicate\": 不是 \"TArray<TSharedPtr<FJsonValue,ESPMode::ThreadSafe>,FDefaultAllocator>\" 的成员\n        const int32 Missing=Run.Heights.CountByPredicate([](const auto& V){return V->Type==EJson::Null;});\n                                        ^\nE:\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Containers\\Array.h(767,7): note: 参见“TArray<TSharedPtr<FJsonValue,ESPMode::ThreadSafe>,FDefaultAllocator>”的声明\nclass TArray\n      ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenMapTest.inl(110,21): error C2737: “Missing”: 必须初始化 const 对象\n        const int32 Missing=Run.Heights.CountByPredicate([](const auto& V){return V->Type==EJson::Null;});\n                    ^\n[6/25] Compile [x64] HearthwardScreenCompatibility.cpp\n[7/25] Compile [x64] HearthwardScreenContent.cpp\n[8/25] Compile [x64] HearthwardScreenCrafting.cpp\n[9/25] Compile [x64] HearthwardScreenEquipment.cpp\n[10/25] Compile [x64] HearthwardScreenInventoryDrag.cpp\n[11/25] Compile [x64] HearthwardScreenLayout.cpp\n[12/25] Compile [x64] HearthwardScreenMap.cpp\n[13/25] Compile [x64] HearthwardScreenMenu.cpp\n[14/25] Compile [x64] HearthwardScreenNature.cpp\n[15/25] Compile [x64] HearthwardScreenPaint.cpp\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(127,23): error C4456: “I”的声明隐藏了上一个本地声明\n            for(int32 I=0;I<=32;++I)\n                      ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(59,15): note: 参见“I”的声明\n    for(int32 I=0;I<Elements.Num();++I)\n              ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(146,27): error C4456: “I”的声明隐藏了上一个本地声明\n                for(int32 I=0;I<=128;++I)\n                          ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenPaint.cpp(59,15): note: 参见“I”的声明\n    for(int32 I=0;I<Elements.Num();++I)\n              ^\n[16/25] Compile [x64] HearthwardScreenRepair.cpp\n[17/25] Compile [x64] HearthwardScreenSettings.cpp\n[18/25] Compile [x64] HearthwardScreenTitle.cpp\n[19/25] Compile [x64] HearthwardScreenWidget.cpp\n[20/25] Compile [x64] Module.Hearthward.1.cpp\n[21/25] Compile [x64] Module.Hearthward.3.cpp\n[22/25] Compile [x64] Module.Hearthward.4.cpp\nTotal time in Unreal Build Accelerator local executor: 152.47 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 156.96 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 27.0kb\n",
+    "stderr": ""
+  }
+}

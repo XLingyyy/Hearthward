@@ -1,0 +1,44 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "message": "\"StartsWith\": 不是 \"UE::TSharedString<TCHAR>\" 的成员",
+      "code": "C2039",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(146,22)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "二进制“+”: 没有找到接受“const T”类型的左操作数的运算符(或没有可接受的转换)",
+      "code": "C2678",
+      "file": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(179,30)",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardCampaignWorld.cpp, HearthwardWorldPresentation.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenMenu.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenTitle.cpp, HearthwardScreenWidget.cpp, HearthwardUpdateSubsystem.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 6 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 32.51 GB/36.33 GB committed\n  UBA Storage capacity 40 GB\n[1/6] Compile [x64] HearthwardScreenContent.cpp\n[2/6] Compile [x64] HearthwardScreenPaint.cpp\n[3/6] Compile [x64] HearthwardScreenWidget.cpp\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(146,22): error C2039: \"StartsWith\": 不是 \"UE::TSharedString<TCHAR>\" 的成员\n        if(Entry.Key.StartsWith(TEXT(\"journalCategory\")) && Entry.Key!=TEXT(\"journalCategorymain\"))\n                     ^\nE:\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Containers\\SharedString.h(30,7): note: 参见“UE::TSharedString<TCHAR>”的声明\nclass TSharedString\n      ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(179,30): error C2678: 二进制“+”: 没有找到接受“const T”类型的左操作数的运算符(或没有可接受的转换)\n        with\n        [\n            T=UE::JSON::Private::FJsonObjectSharedStringStorage::FStringType\n        ]\n            Brushes.Add(Entry.Key+TEXT(\"Highlight\"),Selected);\n                             ^\nE:\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\ProfilingDebugging\\ResourceSize.h(142,26): note: 可能是“FResourceSizeEx operator +(FResourceSizeEx,const FResourceSizeEx &)”\nCORE_API FResourceSizeEx operator+(FResourceSizeEx InLHS, const FResourceSizeEx& InRHS);\n                         ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(179,30): note: “FResourceSizeEx operator +(FResourceSizeEx,const FResourceSizeEx &)”: 无法将参数 1 从“const T”转换为“FResourceSizeEx”\n        with\n        [\n            T=UE::JSON::Private::FJsonObjectSharedStringStorage::FStringType\n        ]\n            Brushes.Add(Entry.Key+TEXT(\"Highlight\"),Selected);\n                             ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(179,30): note: 没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符\nE:\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Memory\\MemoryView.h(258,54): note: 或    “TMemoryView<DataType> operator +(uint64,const TMemoryView<DataType> &)”\n[[nodiscard]] constexpr inline TMemoryView<DataType> operator+(uint64 Offset, const TMemoryView<DataType>& View)\n                                                     ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(179,30): note: “TMemoryView<DataType> operator +(uint64,const TMemoryView<DataType> &)”: 无法从“const wchar_t [10]”推导出“const TMemoryView<DataType> &”的 模板 参数\n            Brushes.Add(Entry.Key+TEXT(\"Highlight\"),Selected);\n                             ^\nE:\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Memory\\MemoryView.h(251,54): note: 或    “TMemoryView<DataType> operator +(const TMemoryView<DataType> &,uint64)”\n[[nodiscard]] constexpr inline TMemoryView<DataType> operator+(const TMemoryView<DataType>& View, uint64 Offset)\n                                                     ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(179,30): note: “TMemoryView<DataType> operator +(const TMemoryView<DataType> &,uint64)”: 无法从“const T”推导出“const TMemoryView<DataType> &”的 模板 参数\n        with\n        [\n            T=UE::JSON::Private::FJsonObjectSharedStringStorage::FStringType\n        ]\n            Brushes.Add(Entry.Key+TEXT(\"Highlight\"),Selected);\n                             ^\nE:\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Containers\\Array.h(197,110): note: 或    “TIndexedContainerIterator<ContainerType,ElementType,SizeType> operator +(SizeType,TIndexedContainerIterator<ContainerType,ElementType,SizeType>)”\nUE_NODEBUG [[nodiscard]] UE_FORCEINLINE_HINT TIndexedContainerIterator<ContainerType, ElementType, SizeType> operator+(SizeType Offset, TIndexedContainerIterator<ContainerType, ElementType, SizeType> RHS)\n                                                                                                             ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(179,30): note: “TIndexedContainerIterator<ContainerType,ElementType,SizeType> operator +(SizeType,TIndexedContainerIterator<ContainerType,ElementType,SizeType>)”: 无法从“const wchar_t [10]”推导出“TIndexedContainerIterator<ContainerType,ElementType,SizeType>”的 模板 参数\n            Brushes.Add(Entry.Key+TEXT(\"Highlight\"),Selected);\n                             ^\nE:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\UI\\HearthwardScreenWidget.cpp(179,30): note: 尝试匹配参数列表“(const T, const wchar_t [10])”时\n        with\n        [\n            T=UE::JSON::Private::FJsonObjectSharedStringStorage::FStringType\n        ]\nTotal time in Unreal Build Accelerator local executor: 16.47 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 17.91 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 11.2kb\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,8438 @@
+{
+  "run_id": "hud_c797e0e8ec5c",
+  "passed": true,
+  "checks": {
+    "isolated_new_game_action": true,
+    "new_game_receives_visible_five_second_quest": true,
+    "companion_above_received_quest": true,
+    "native_capture_received_quest": true,
+    "quest_disappears_after_five_real_seconds": true,
+    "native_capture_hidden_quest": true,
+    "journal_entry": true,
+    "quest_details_remain_in_journal": true,
+    "return_to_hud": true,
+    "return_from_journal_does_not_replay_old_quest": true,
+    "native_ten_metre_hint_checks": true,
+    "natural_world_hud": true,
+    "natural_save_world_enabled": true,
+    "select_medicine": true,
+    "native_capture_medicine": true,
+    "select_roast": true,
+    "native_capture_roast": true,
+    "select_arrow": true,
+    "native_capture_arrow": true,
+    "select_firepot": true,
+    "native_capture_firepot": true,
+    "inventory_entry": true,
+    "inventory_tab_0": true,
+    "native_capture_inventory-0": true,
+    "inventory_tab_1": true,
+    "native_capture_inventory-1": true,
+    "inventory_tab_2": true,
+    "native_capture_inventory-2": true,
+    "inventory_tab_3": true,
+    "native_capture_inventory-3": true,
+    "inventory_back_returns_hud": true,
+    "inventory_does_not_replay_old_quest": true
+  },
+  "captures": [
+    "hud-task-received.png",
+    "hud-task-hidden.png",
+    "hud-medicine.png",
+    "hud-roast.png",
+    "hud-arrow.png",
+    "hud-firepot.png",
+    "inventory-0.png",
+    "inventory-1.png",
+    "inventory-2.png",
+    "inventory-3.png"
+  ],
+  "layouts": [
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "100 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.quest.heading",
+          "parent": "hud.quest",
+          "visible": true,
+          "rect": [
+            48,
+            300,
+            650,
+            42
+          ],
+          "action": "",
+          "text": "◇  带火离开",
+          "asset": ""
+        },
+        {
+          "id": "hud.quest.objective",
+          "parent": "hud.quest",
+          "visible": true,
+          "rect": [
+            72,
+            345,
+            650,
+            96
+          ],
+          "action": "",
+          "text": "从家中的遗物包拿回护符。\n叫弟弟跟上，沿后巷前往西侧撤离点。\n等兄弟会合后，一起离开故乡。",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "药草膏",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:05  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "100 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "药草膏",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:12  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "100 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "烤肉",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:14  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "99 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "箭矢",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:15  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "hud",
+      "components": [
+        {
+          "id": "hud.quest",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            295,
+            690,
+            340
+          ]
+        },
+        {
+          "id": "hud.companion",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            155,
+            650,
+            180
+          ]
+        },
+        {
+          "id": "hud.vitals",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            720,
+            180
+          ]
+        },
+        {
+          "id": "hud.quickslots",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            625,
+            360,
+            316
+          ]
+        },
+        {
+          "id": "hud.minimap",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1375,
+            20,
+            297,
+            290
+          ]
+        },
+        {
+          "id": "hud.feedback",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            560,
+            20,
+            1070,
+            835
+          ]
+        },
+        {
+          "id": "hud.vitals.0.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            28,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "生命",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            33,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.0.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            66,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "饱食",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            71,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.1.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            66,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "99 / 100",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.label",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            48,
+            104,
+            84,
+            30
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.bar",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            138,
+            109,
+            260,
+            22
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.vitals.2.value",
+          "parent": "hud.vitals",
+          "visible": true,
+          "rect": [
+            412,
+            104,
+            180,
+            30
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.portrait",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            48,
+            162,
+            89,
+            87
+          ],
+          "action": "",
+          "text": "",
+          "asset": "portrait"
+        },
+        {
+          "id": "hud.companion.name",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            166,
+            370,
+            32
+          ],
+          "action": "",
+          "text": "弟弟",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.progress",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            199,
+            370,
+            30
+          ],
+          "action": "",
+          "text": "进度 0 / 3",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.bar",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            231,
+            168,
+            7
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "hud.companion.order",
+          "parent": "hud.companion",
+          "visible": true,
+          "rect": [
+            154,
+            243,
+            390,
+            32
+          ],
+          "action": "",
+          "text": "原地等待",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.firepot",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            158,
+            784,
+            104,
+            112
+          ],
+          "action": "",
+          "text": "0",
+          "asset": "firepotQuick"
+        },
+        {
+          "id": "hud.quick.name",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            72,
+            902,
+            276,
+            39
+          ],
+          "action": "",
+          "text": "投掷火罐",
+          "asset": ""
+        },
+        {
+          "id": "hud.quick.medicine",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            57,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "hud.quick.roast",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            170,
+            633,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "4",
+          "asset": "roastQuick"
+        },
+        {
+          "id": "hud.quick.arrow",
+          "parent": "hud.quickslots",
+          "visible": true,
+          "rect": [
+            283,
+            707,
+            80,
+            88
+          ],
+          "action": "",
+          "text": "24",
+          "asset": "arrowQuick"
+        },
+        {
+          "id": "hud.clock",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1260,
+            31,
+            364,
+            50
+          ],
+          "action": "",
+          "text": "第 1 天  00:17  夜",
+          "asset": ""
+        },
+        {
+          "id": "hud.gameplay.feedback",
+          "parent": "hud.feedback",
+          "visible": true,
+          "rect": [
+            1120,
+            388,
+            504,
+            90
+          ],
+          "action": "",
+          "text": "发现：家中的遗物包",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "inventory",
+      "components": [
+        {
+          "id": "inventory.header",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            1592,
+            112
+          ]
+        },
+        {
+          "id": "inventory.bag",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            140,
+            548,
+            700
+          ]
+        },
+        {
+          "id": "inventory.detail",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            600,
+            140,
+            566,
+            700
+          ]
+        },
+        {
+          "id": "inventory.stats",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1178,
+            140,
+            454,
+            700
+          ]
+        },
+        {
+          "id": "inventory.footer",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            854,
+            1592,
+            74
+          ]
+        },
+        {
+          "id": "inventory.bag.surface",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            40,
+            140,
+            548,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.surface",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            600,
+            140,
+            566,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.surface",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1178,
+            140,
+            454,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.heading",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            64,
+            36,
+            132,
+            56
+          ],
+          "action": "",
+          "text": "背包",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.装备",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            220,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:装备",
+          "text": "装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.装备",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            230,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_gear"
+        },
+        {
+          "id": "inventory.tab.材料",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:材料",
+          "text": "材料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.材料",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            422,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_material"
+        },
+        {
+          "id": "inventory.tab.食物",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            604,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:食物",
+          "text": "食物",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.食物",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            614,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_food"
+        },
+        {
+          "id": "inventory.tab.工具",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            796,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:工具",
+          "text": "工具",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.工具",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            806,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_tool"
+        },
+        {
+          "id": "inventory.header.weight",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            1048,
+            43,
+            392,
+            40
+          ],
+          "action": "",
+          "text": "负重  20.5 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.settings",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            1480,
+            31,
+            128,
+            56
+          ],
+          "action": "page:settings",
+          "text": "设置",
+          "asset": ""
+        },
+        {
+          "id": "inventory.header.rule",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            40,
+            102,
+            1592,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.message",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            64,
+            108,
+            1544,
+            28
+          ],
+          "action": "",
+          "text": "HEARTHWARD",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.heading",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            154,
+            490,
+            46
+          ],
+          "action": "",
+          "text": "当前装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.rule",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            204,
+            500,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.head.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            61,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "头部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.head",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.chest.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            160,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "胸甲",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.chest",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.legs.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            259,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "腿甲",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.legs",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.waist.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            358,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "腰部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.waist",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.feet.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            457,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "脚部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.feet",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.weapon.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            61,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "主手武器",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.weapon",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.offhand.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            160,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "副手",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.offhand",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.ranged.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            259,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "弓弩",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.ranged",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.quiver.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            358,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "箭袋",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.quiver",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.charm.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            457,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "饰品",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.charm",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.heading",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            486,
+            240,
+            44
+          ],
+          "action": "",
+          "text": "装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.range",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            334,
+            492,
+            224,
+            34
+          ],
+          "action": "",
+          "text": "1–7 / 7",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.rule",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            535,
+            500,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.item.axe",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            548,
+            84,
+            78
+          ],
+          "action": "item:axe",
+          "text": "1",
+          "asset": "axe"
+        },
+        {
+          "id": "inventory.bag.item.bow",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            548,
+            84,
+            78
+          ],
+          "action": "item:bow",
+          "text": "1",
+          "asset": "bow"
+        },
+        {
+          "id": "inventory.bag.item.hood",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            548,
+            84,
+            78
+          ],
+          "action": "item:hood",
+          "text": "1",
+          "asset": "hood"
+        },
+        {
+          "id": "inventory.bag.item.armor",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            548,
+            84,
+            78
+          ],
+          "action": "item:armor",
+          "text": "1",
+          "asset": "armor"
+        },
+        {
+          "id": "inventory.bag.item.boots",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            548,
+            84,
+            78
+          ],
+          "action": "item:boots",
+          "text": "1",
+          "asset": "boots"
+        },
+        {
+          "id": "inventory.bag.item.shield",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            634,
+            84,
+            78
+          ],
+          "action": "item:shield",
+          "text": "1",
+          "asset": "shield"
+        },
+        {
+          "id": "inventory.bag.item.leggings",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            634,
+            84,
+            78
+          ],
+          "action": "item:leggings",
+          "text": "1",
+          "asset": "armor"
+        },
+        {
+          "id": "inventory.bag.empty.7",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.8",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.9",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.10",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.11",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.12",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.13",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.14",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.prev",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            72,
+            804,
+            174,
+            34
+          ],
+          "action": "inventory.prev",
+          "text": "‹ 上一页",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.next",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            380,
+            804,
+            174,
+            34
+          ],
+          "action": "inventory.next",
+          "text": "下一页 ›",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.name",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            154,
+            518,
+            62
+          ],
+          "action": "",
+          "text": "石制战斧",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.titleRule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            220,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.category",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            238,
+            252,
+            38
+          ],
+          "action": "",
+          "text": "类型  装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.quantity",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            888,
+            238,
+            254,
+            38
+          ],
+          "action": "",
+          "text": "持有  ×1",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.art",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            754,
+            282,
+            260,
+            182
+          ],
+          "action": "",
+          "text": "",
+          "asset": "axeLarge"
+        },
+        {
+          "id": "inventory.detail.descriptionHeading",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            468,
+            518,
+            42
+          ],
+          "action": "",
+          "text": "物品说明",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.descriptionRule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            513,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.description",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            529,
+            518,
+            80
+          ],
+          "action": "",
+          "text": "可击退敌人的战斧，也可用于伐木。",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.propertiesHeading",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            630,
+            518,
+            40
+          ],
+          "action": "",
+          "text": "物品属性",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.label",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            679,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "攻击力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.value",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            894,
+            679,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "30",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.rule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            716,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.1.label",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            717,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "耐久度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.1.value",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            894,
+            717,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "80 / 80",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.1.rule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            754,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.2.label",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            755,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "单重",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.2.value",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            894,
+            755,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "3.20",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.2.rule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            792,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.heading",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            154,
+            406,
+            46
+          ],
+          "action": "",
+          "text": "角色资料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            204,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.role",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            219,
+            406,
+            43
+          ],
+          "action": "",
+          "text": "荒行者",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.flavor",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            270,
+            406,
+            33
+          ],
+          "action": "",
+          "text": "行过黑暗，守住火种。",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            330,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "等级",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            330,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "2",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            369,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            372,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "经验",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            372,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "50 / 135",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            411,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            414,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "生命值",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            414,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            453,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            456,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "饱食度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            456,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "99 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            495,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            498,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            498,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            537,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            540,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "攻击力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            540,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "0",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            579,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            582,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "全身减伤",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            582,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            621,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            624,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "重击增伤",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            624,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "+0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            663,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            666,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "耐力消耗",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            666,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "−0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            705,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            708,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "负重",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            708,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "20.5 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            747,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            750,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "移动速度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            750,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "98%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            789,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.footer.rule",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            40,
+            854,
+            1592,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.back",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            64,
+            868,
+            170,
+            50
+          ],
+          "action": "back",
+          "text": "Esc  返回",
+          "asset": ""
+        },
+        {
+          "id": "inventory.drop",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            246,
+            868,
+            170,
+            50
+          ],
+          "action": "drop",
+          "text": "R  丢弃",
+          "asset": ""
+        },
+        {
+          "id": "inventory.use",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            428,
+            868,
+            242,
+            50
+          ],
+          "action": "use",
+          "text": "F  装备 / 使用",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.manage",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            700,
+            868,
+            338,
+            50
+          ],
+          "action": "page:equipment",
+          "text": "逐件装备 · 行装管理",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "inventory",
+      "components": [
+        {
+          "id": "inventory.header",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            1592,
+            112
+          ]
+        },
+        {
+          "id": "inventory.bag",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            140,
+            548,
+            700
+          ]
+        },
+        {
+          "id": "inventory.detail",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            600,
+            140,
+            566,
+            700
+          ]
+        },
+        {
+          "id": "inventory.stats",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1178,
+            140,
+            454,
+            700
+          ]
+        },
+        {
+          "id": "inventory.footer",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            854,
+            1592,
+            74
+          ]
+        },
+        {
+          "id": "inventory.bag.surface",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            40,
+            140,
+            548,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.surface",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            600,
+            140,
+            566,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.surface",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1178,
+            140,
+            454,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.heading",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            64,
+            36,
+            132,
+            56
+          ],
+          "action": "",
+          "text": "背包",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.装备",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            220,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:装备",
+          "text": "装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.装备",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            230,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_gear"
+        },
+        {
+          "id": "inventory.tab.材料",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:材料",
+          "text": "材料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.材料",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            422,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_material"
+        },
+        {
+          "id": "inventory.tab.食物",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            604,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:食物",
+          "text": "食物",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.食物",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            614,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_food"
+        },
+        {
+          "id": "inventory.tab.工具",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            796,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:工具",
+          "text": "工具",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.工具",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            806,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_tool"
+        },
+        {
+          "id": "inventory.header.weight",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            1048,
+            43,
+            392,
+            40
+          ],
+          "action": "",
+          "text": "负重  20.5 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.settings",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            1480,
+            31,
+            128,
+            56
+          ],
+          "action": "page:settings",
+          "text": "设置",
+          "asset": ""
+        },
+        {
+          "id": "inventory.header.rule",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            40,
+            102,
+            1592,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.message",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            64,
+            108,
+            1544,
+            28
+          ],
+          "action": "",
+          "text": "HEARTHWARD",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.heading",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            154,
+            490,
+            46
+          ],
+          "action": "",
+          "text": "当前装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.rule",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            204,
+            500,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.head.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            61,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "头部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.head",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.chest.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            160,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "胸甲",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.chest",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.legs.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            259,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "腿甲",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.legs",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.waist.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            358,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "腰部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.waist",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.feet.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            457,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "脚部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.feet",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.weapon.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            61,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "主手武器",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.weapon",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.offhand.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            160,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "副手",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.offhand",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.ranged.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            259,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "弓弩",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.ranged",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.quiver.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            358,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "箭袋",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.quiver",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.charm.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            457,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "饰品",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.charm",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.heading",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            486,
+            240,
+            44
+          ],
+          "action": "",
+          "text": "材料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.range",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            334,
+            492,
+            224,
+            34
+          ],
+          "action": "",
+          "text": "0 件",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.rule",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            535,
+            500,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.0",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.1",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.2",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.3",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.4",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.5",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.6",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.7",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.8",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.9",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.10",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.11",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.12",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.13",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.14",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.emptyState",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            98,
+            659,
+            416,
+            43
+          ],
+          "action": "",
+          "text": "暂无此类物品",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.prev",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            72,
+            804,
+            174,
+            34
+          ],
+          "action": "inventory.prev",
+          "text": "‹ 上一页",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.next",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            380,
+            804,
+            174,
+            34
+          ],
+          "action": "inventory.next",
+          "text": "下一页 ›",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.name",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            154,
+            518,
+            62
+          ],
+          "action": "",
+          "text": "物品详情",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.titleRule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            220,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.emptyState",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            340,
+            518,
+            64
+          ],
+          "action": "",
+          "text": "选择左侧物品查看说明",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.heading",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            154,
+            406,
+            46
+          ],
+          "action": "",
+          "text": "角色资料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            204,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.role",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            219,
+            406,
+            43
+          ],
+          "action": "",
+          "text": "荒行者",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.flavor",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            270,
+            406,
+            33
+          ],
+          "action": "",
+          "text": "行过黑暗，守住火种。",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            330,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "等级",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            330,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "2",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            369,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            372,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "经验",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            372,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "50 / 135",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            411,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            414,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "生命值",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            414,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            453,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            456,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "饱食度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            456,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "99 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            495,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            498,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            498,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            537,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            540,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "攻击力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            540,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "0",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            579,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            582,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "全身减伤",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            582,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            621,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            624,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "重击增伤",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            624,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "+0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            663,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            666,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "耐力消耗",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            666,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "−0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            705,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            708,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "负重",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            708,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "20.5 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            747,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            750,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "移动速度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            750,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "98%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            789,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.footer.rule",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            40,
+            854,
+            1592,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.back",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            64,
+            868,
+            170,
+            50
+          ],
+          "action": "back",
+          "text": "Esc  返回",
+          "asset": ""
+        },
+        {
+          "id": "inventory.drop",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            246,
+            868,
+            170,
+            50
+          ],
+          "action": "drop",
+          "text": "R  丢弃",
+          "asset": ""
+        },
+        {
+          "id": "inventory.use",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            428,
+            868,
+            242,
+            50
+          ],
+          "action": "use",
+          "text": "F  装备 / 使用",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.manage",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            700,
+            868,
+            338,
+            50
+          ],
+          "action": "page:equipment",
+          "text": "逐件装备 · 行装管理",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "inventory",
+      "components": [
+        {
+          "id": "inventory.header",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            1592,
+            112
+          ]
+        },
+        {
+          "id": "inventory.bag",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            140,
+            548,
+            700
+          ]
+        },
+        {
+          "id": "inventory.detail",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            600,
+            140,
+            566,
+            700
+          ]
+        },
+        {
+          "id": "inventory.stats",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1178,
+            140,
+            454,
+            700
+          ]
+        },
+        {
+          "id": "inventory.footer",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            854,
+            1592,
+            74
+          ]
+        },
+        {
+          "id": "inventory.bag.surface",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            40,
+            140,
+            548,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.surface",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            600,
+            140,
+            566,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.surface",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1178,
+            140,
+            454,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.heading",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            64,
+            36,
+            132,
+            56
+          ],
+          "action": "",
+          "text": "背包",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.装备",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            220,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:装备",
+          "text": "装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.装备",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            230,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_gear"
+        },
+        {
+          "id": "inventory.tab.材料",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:材料",
+          "text": "材料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.材料",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            422,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_material"
+        },
+        {
+          "id": "inventory.tab.食物",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            604,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:食物",
+          "text": "食物",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.食物",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            614,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_food"
+        },
+        {
+          "id": "inventory.tab.工具",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            796,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:工具",
+          "text": "工具",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.工具",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            806,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_tool"
+        },
+        {
+          "id": "inventory.header.weight",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            1048,
+            43,
+            392,
+            40
+          ],
+          "action": "",
+          "text": "负重  20.5 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.settings",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            1480,
+            31,
+            128,
+            56
+          ],
+          "action": "page:settings",
+          "text": "设置",
+          "asset": ""
+        },
+        {
+          "id": "inventory.header.rule",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            40,
+            102,
+            1592,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.message",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            64,
+            108,
+            1544,
+            28
+          ],
+          "action": "",
+          "text": "HEARTHWARD",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.heading",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            154,
+            490,
+            46
+          ],
+          "action": "",
+          "text": "当前装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.rule",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            204,
+            500,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.head.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            61,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "头部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.head",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.chest.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            160,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "胸甲",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.chest",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.legs.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            259,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "腿甲",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.legs",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.waist.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            358,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "腰部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.waist",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.feet.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            457,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "脚部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.feet",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.weapon.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            61,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "主手武器",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.weapon",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.offhand.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            160,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "副手",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.offhand",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.ranged.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            259,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "弓弩",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.ranged",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.quiver.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            358,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "箭袋",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.quiver",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.charm.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            457,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "饰品",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.charm",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.heading",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            486,
+            240,
+            44
+          ],
+          "action": "",
+          "text": "食物",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.range",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            334,
+            492,
+            224,
+            34
+          ],
+          "action": "",
+          "text": "1–2 / 2",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.rule",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            535,
+            500,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.item.roast",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            548,
+            84,
+            78
+          ],
+          "action": "item:roast",
+          "text": "4",
+          "asset": "meat"
+        },
+        {
+          "id": "inventory.bag.item.medicine",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            548,
+            84,
+            78
+          ],
+          "action": "item:medicine",
+          "text": "3",
+          "asset": "medicineQuick"
+        },
+        {
+          "id": "inventory.bag.empty.2",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.3",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.4",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.5",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.6",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.7",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.8",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.9",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.10",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.11",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.12",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.13",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.14",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.prev",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            72,
+            804,
+            174,
+            34
+          ],
+          "action": "inventory.prev",
+          "text": "‹ 上一页",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.next",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            380,
+            804,
+            174,
+            34
+          ],
+          "action": "inventory.next",
+          "text": "下一页 ›",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.name",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            154,
+            518,
+            62
+          ],
+          "action": "",
+          "text": "烤肉",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.titleRule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            220,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.category",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            238,
+            252,
+            38
+          ],
+          "action": "",
+          "text": "类型  食物",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.quantity",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            888,
+            238,
+            254,
+            38
+          ],
+          "action": "",
+          "text": "持有  ×4",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.art",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            754,
+            282,
+            260,
+            182
+          ],
+          "action": "",
+          "text": "",
+          "asset": "meat"
+        },
+        {
+          "id": "inventory.detail.descriptionHeading",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            468,
+            518,
+            42
+          ],
+          "action": "",
+          "text": "物品说明",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.descriptionRule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            513,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.description",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            529,
+            518,
+            80
+          ],
+          "action": "",
+          "text": "食物。",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.propertiesHeading",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            630,
+            518,
+            40
+          ],
+          "action": "",
+          "text": "物品属性",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.label",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            679,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "饱食恢复",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.value",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            894,
+            679,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "+40",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.rule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            716,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.1.label",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            717,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "单重",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.1.value",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            894,
+            717,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "0.50",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.1.rule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            754,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.heading",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            154,
+            406,
+            46
+          ],
+          "action": "",
+          "text": "角色资料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            204,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.role",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            219,
+            406,
+            43
+          ],
+          "action": "",
+          "text": "荒行者",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.flavor",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            270,
+            406,
+            33
+          ],
+          "action": "",
+          "text": "行过黑暗，守住火种。",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            330,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "等级",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            330,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "2",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            369,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            372,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "经验",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            372,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "50 / 135",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            411,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            414,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "生命值",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            414,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            453,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            456,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "饱食度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            456,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "99 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            495,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            498,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            498,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            537,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            540,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "攻击力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            540,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "0",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            579,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            582,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "全身减伤",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            582,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            621,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            624,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "重击增伤",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            624,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "+0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            663,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            666,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "耐力消耗",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            666,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "−0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            705,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            708,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "负重",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            708,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "20.5 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            747,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            750,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "移动速度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            750,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "98%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            789,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.footer.rule",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            40,
+            854,
+            1592,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.back",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            64,
+            868,
+            170,
+            50
+          ],
+          "action": "back",
+          "text": "Esc  返回",
+          "asset": ""
+        },
+        {
+          "id": "inventory.drop",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            246,
+            868,
+            170,
+            50
+          ],
+          "action": "drop",
+          "text": "R  丢弃",
+          "asset": ""
+        },
+        {
+          "id": "inventory.use",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            428,
+            868,
+            242,
+            50
+          ],
+          "action": "use",
+          "text": "F  装备 / 使用",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.manage",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            700,
+            868,
+            338,
+            50
+          ],
+          "action": "page:equipment",
+          "text": "逐件装备 · 行装管理",
+          "asset": ""
+        }
+      ]
+    },
+    {
+      "page": "inventory",
+      "components": [
+        {
+          "id": "inventory.header",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            24,
+            1592,
+            112
+          ]
+        },
+        {
+          "id": "inventory.bag",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            140,
+            548,
+            700
+          ]
+        },
+        {
+          "id": "inventory.detail",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            600,
+            140,
+            566,
+            700
+          ]
+        },
+        {
+          "id": "inventory.stats",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            1178,
+            140,
+            454,
+            700
+          ]
+        },
+        {
+          "id": "inventory.footer",
+          "parent": "",
+          "visible": true,
+          "rect": [
+            40,
+            854,
+            1592,
+            74
+          ]
+        },
+        {
+          "id": "inventory.bag.surface",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            40,
+            140,
+            548,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.surface",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            600,
+            140,
+            566,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.surface",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1178,
+            140,
+            454,
+            700
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.heading",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            64,
+            36,
+            132,
+            56
+          ],
+          "action": "",
+          "text": "背包",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.装备",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            220,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:装备",
+          "text": "装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.装备",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            230,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_gear"
+        },
+        {
+          "id": "inventory.tab.材料",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            412,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:材料",
+          "text": "材料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.材料",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            422,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_material"
+        },
+        {
+          "id": "inventory.tab.食物",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            604,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:食物",
+          "text": "食物",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.食物",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            614,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_food"
+        },
+        {
+          "id": "inventory.tab.工具",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            796,
+            28,
+            168,
+            62
+          ],
+          "action": "filter:工具",
+          "text": "工具",
+          "asset": ""
+        },
+        {
+          "id": "inventory.tab.icon.工具",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            806,
+            42,
+            30,
+            30
+          ],
+          "action": "",
+          "text": "",
+          "asset": "category_tool"
+        },
+        {
+          "id": "inventory.header.weight",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            1048,
+            43,
+            392,
+            40
+          ],
+          "action": "",
+          "text": "负重  20.5 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.settings",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            1480,
+            31,
+            128,
+            56
+          ],
+          "action": "page:settings",
+          "text": "设置",
+          "asset": ""
+        },
+        {
+          "id": "inventory.header.rule",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            40,
+            102,
+            1592,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.message",
+          "parent": "inventory.header",
+          "visible": true,
+          "rect": [
+            64,
+            108,
+            1544,
+            28
+          ],
+          "action": "",
+          "text": "HEARTHWARD",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.heading",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            154,
+            490,
+            46
+          ],
+          "action": "",
+          "text": "当前装备",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.rule",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            204,
+            500,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.head.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            61,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "头部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.head",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.chest.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            160,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "胸甲",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.chest",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.legs.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            259,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "腿甲",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.legs",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.waist.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            358,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "腰部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.waist",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.feet.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            457,
+            212,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "脚部",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.feet",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            245,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.weapon.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            61,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "主手武器",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.weapon",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.offhand.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            160,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "副手",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.offhand",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.ranged.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            259,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "弓弩",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.ranged",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.quiver.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            358,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "箭袋",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.quiver",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.charm.label",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            457,
+            352,
+            90,
+            34
+          ],
+          "action": "",
+          "text": "饰品",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.charm",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            385,
+            84,
+            80
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.heading",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            486,
+            240,
+            44
+          ],
+          "action": "",
+          "text": "工具",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.range",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            334,
+            492,
+            224,
+            34
+          ],
+          "action": "",
+          "text": "1–1 / 1",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.rule",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            535,
+            500,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.item.arrow",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            548,
+            84,
+            78
+          ],
+          "action": "item:arrow",
+          "text": "24",
+          "asset": "arrow"
+        },
+        {
+          "id": "inventory.bag.empty.1",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.2",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.3",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.4",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            548,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.5",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.6",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.7",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.8",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.9",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            634,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.10",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            64,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.11",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            163,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.12",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            262,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.13",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            361,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.empty.14",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            460,
+            720,
+            84,
+            78
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.prev",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            72,
+            804,
+            174,
+            34
+          ],
+          "action": "inventory.prev",
+          "text": "‹ 上一页",
+          "asset": ""
+        },
+        {
+          "id": "inventory.bag.next",
+          "parent": "inventory.bag",
+          "visible": true,
+          "rect": [
+            380,
+            804,
+            174,
+            34
+          ],
+          "action": "inventory.next",
+          "text": "下一页 ›",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.name",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            154,
+            518,
+            62
+          ],
+          "action": "",
+          "text": "箭矢",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.titleRule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            220,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.category",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            238,
+            252,
+            38
+          ],
+          "action": "",
+          "text": "类型  工具",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.quantity",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            888,
+            238,
+            254,
+            38
+          ],
+          "action": "",
+          "text": "持有  ×24",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.art",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            754,
+            282,
+            260,
+            182
+          ],
+          "action": "",
+          "text": "",
+          "asset": "arrow"
+        },
+        {
+          "id": "inventory.detail.descriptionHeading",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            468,
+            518,
+            42
+          ],
+          "action": "",
+          "text": "物品说明",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.descriptionRule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            513,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.description",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            529,
+            518,
+            80
+          ],
+          "action": "",
+          "text": "工具。",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.propertiesHeading",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            630,
+            518,
+            40
+          ],
+          "action": "",
+          "text": "物品属性",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.label",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            679,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "单重",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.value",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            894,
+            679,
+            248,
+            37
+          ],
+          "action": "",
+          "text": "0.05",
+          "asset": ""
+        },
+        {
+          "id": "inventory.detail.property.0.rule",
+          "parent": "inventory.detail",
+          "visible": true,
+          "rect": [
+            624,
+            716,
+            518,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.heading",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            154,
+            406,
+            46
+          ],
+          "action": "",
+          "text": "角色资料",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            204,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.role",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            219,
+            406,
+            43
+          ],
+          "action": "",
+          "text": "荒行者",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.flavor",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            270,
+            406,
+            33
+          ],
+          "action": "",
+          "text": "行过黑暗，守住火种。",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            330,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "等级",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            330,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "2",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.0.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            369,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            372,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "经验",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            372,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "50 / 135",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.1.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            411,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            414,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "生命值",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            414,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "102 / 102",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.2.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            453,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            456,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "饱食度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            456,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "99 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.3.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            495,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            498,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "体力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            498,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "101 / 101",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.4.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            537,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            540,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "攻击力",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            540,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "0",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.5.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            579,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            582,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "全身减伤",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            582,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.6.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            621,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            624,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "重击增伤",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            624,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "+0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.7.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            663,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            666,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "耐力消耗",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            666,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "−0%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.8.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            705,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            708,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "负重",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            708,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "20.5 / 100",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.9.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            747,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.label",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            750,
+            184,
+            38
+          ],
+          "action": "",
+          "text": "移动速度",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.value",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1400,
+            750,
+            208,
+            38
+          ],
+          "action": "",
+          "text": "98%",
+          "asset": ""
+        },
+        {
+          "id": "inventory.stats.10.rule",
+          "parent": "inventory.stats",
+          "visible": true,
+          "rect": [
+            1202,
+            789,
+            406,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.footer.rule",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            40,
+            854,
+            1592,
+            1
+          ],
+          "action": "",
+          "text": "",
+          "asset": ""
+        },
+        {
+          "id": "inventory.back",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            64,
+            868,
+            170,
+            50
+          ],
+          "action": "back",
+          "text": "Esc  返回",
+          "asset": ""
+        },
+        {
+          "id": "inventory.drop",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            246,
+            868,
+            170,
+            50
+          ],
+          "action": "drop",
+          "text": "R  丢弃",
+          "asset": ""
+        },
+        {
+          "id": "inventory.use",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            428,
+            868,
+            242,
+            50
+          ],
+          "action": "use",
+          "text": "F  装备 / 使用",
+          "asset": ""
+        },
+        {
+          "id": "inventory.equipment.manage",
+          "parent": "inventory.footer",
+          "visible": true,
+          "rect": [
+            700,
+            868,
+            338,
+            50
+          ],
+          "action": "page:equipment",
+          "text": "逐件装备 · 行装管理",
+          "asset": ""
+        }
+      ]
+    }
+  ],
+  "attachments": [
+    "hint-range.json"
+  ],
+  "quest_remaining_at_receipt": 4.604275703430176,
+  "quest_remaining_after_wait": 0.0,
+  "map": "L_HearthwardWilds",
+  "player_position": "<Struct 'Vector' (0x00000233F805B800) {x: 92000.000000, y: 53500.000000, z: 22697.801451}>"
+}

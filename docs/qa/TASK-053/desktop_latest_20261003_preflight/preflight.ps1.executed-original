@@ -1,0 +1,65 @@
+$ErrorActionPreference = 'Stop'
+$gameRoot = 'C:\Users\22543\Desktop\Hearthward-20260929-9058ee2'
+$install = Join-Path $gameRoot 'Windows'
+$backup = Join-Path $gameRoot '备份-TASK053-20261003_latest_ui'
+$playerRoot = 'C:\Users\22543\AppData\Local\Hearthward\Saved'
+$evidence = 'E:\AiAgent\XLingGame\Hearthward\docs\qa\TASK-053\desktop_latest_20261003_preflight'
+if ([IO.Path]::GetFullPath($install) -ne 'C:\Users\22543\Desktop\Hearthward-20260929-9058ee2\Windows') { throw 'Unexpected installation path' }
+if (-not [IO.Path]::GetFullPath($backup).StartsWith($gameRoot + '\', [StringComparison]::OrdinalIgnoreCase)) { throw 'Backup escapes named game directory' }
+if (-not (Test-Path -LiteralPath (Join-Path $install 'Hearthward\Binaries\Win64\Hearthward-Win64-Shipping.exe'))) { throw 'Installed game identity is missing' }
+if ((Get-Item -LiteralPath $gameRoot).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Game root is a reparse point' }
+if ((Get-Item -LiteralPath $install).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Install is a reparse point' }
+if (Test-Path -LiteralPath $backup) { throw 'Preserve existing backup; choose a fresh path' }
+$running = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'Hearthward|UnrealEditor' })
+if ($running.Count) { throw 'A game or editor is running; preserve it before deployment' }
+
+function Get-Manifest([string]$root) {
+    $absolute = [IO.Path]::GetFullPath($root).TrimEnd('\')
+    if (-not (Test-Path -LiteralPath $absolute)) { return @() }
+    return @(Get-ChildItem -LiteralPath $absolute -Recurse -File | Sort-Object FullName | ForEach-Object {
+        [pscustomobject]@{ path=$_.FullName.Substring($absolute.Length+1).Replace('\','/'); bytes=$_.Length; sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
+    })
+}
+function Get-PlayerManifest([string]$root) {
+    return @(foreach ($name in @('SaveGames','Config')) {
+        foreach ($entry in @(Get-Manifest (Join-Path $root $name))) {
+            [pscustomobject]@{ path=$name+'/'+$entry.path; bytes=$entry.bytes; sha256=$entry.sha256 }
+        }
+    })
+}
+function Write-Json([string]$path, $data) {
+    [IO.File]::WriteAllText($path, ($data | ConvertTo-Json -Depth 15), [Text.UTF8Encoding]::new($false))
+}
+
+$beforeProgram = @(Get-Manifest $install)
+$beforePlayer = @(Get-PlayerManifest $playerRoot)
+$rootFiles = @(Get-ChildItem -LiteralPath $gameRoot -File | ForEach-Object {
+    [pscustomobject]@{path=$_.Name;bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash}
+})
+$shortcuts = @(Get-ChildItem -LiteralPath 'C:\Users\22543\Desktop' -Filter '*.lnk' | Where-Object { $_.Name -match 'Hearthward|归火' } | ForEach-Object {
+    [pscustomobject]@{path=$_.FullName;bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash}
+})
+$oldBuild = Get-Content -LiteralPath (Join-Path $install 'BUILD-INFO.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+if ($oldBuild.version -ne '0.2.0-preview.20261003.1') { throw 'Unexpected old version; inspect before replacing' }
+
+New-Item -ItemType Directory -Path $backup | Out-Null
+$playerBackup = Join-Path $backup 'PlayerSaved'
+$rootBackup = Join-Path $backup 'RootFiles'
+New-Item -ItemType Directory -Path $playerBackup | Out-Null
+New-Item -ItemType Directory -Path $rootBackup | Out-Null
+foreach ($name in @('SaveGames','Config')) {
+    $source = Join-Path $playerRoot $name
+    if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination $playerBackup -Recurse }
+}
+foreach ($entry in $rootFiles) {
+    Copy-Item -LiteralPath (Join-Path $gameRoot $entry.path) -Destination (Join-Path $rootBackup $entry.path)
+}
+$backupPlayer = @(Get-PlayerManifest $playerBackup)
+if (($beforePlayer | ConvertTo-Json -Depth 8 -Compress) -ne ($backupPlayer | ConvertTo-Json -Depth 8 -Compress)) { throw 'Player backup differs' }
+$before = [pscustomobject]@{
+    install=$install; backup=$backup; player_root=$playerRoot; old_version=$oldBuild.version; new_version='0.2.0-preview.20261003.2';
+    program=$beforeProgram; player=$beforePlayer; root_files=$rootFiles; shortcuts=$shortcuts; player_backup_matches=$true; running_processes=$running
+}
+Write-Json (Join-Path $evidence 'before.json') $before
+Write-Json (Join-Path $backup 'before.json') $before
+Write-Output ('Preflight complete: {0} program files fingerprinted; {1} player/config files backed up; existing game remains installed.' -f $beforeProgram.Count,$beforePlayer.Count)

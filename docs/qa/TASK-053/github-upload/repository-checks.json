@@ -1,0 +1,32 @@
+{
+  "repo-validation": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py"
+    ],
+    "exit_code": 0
+  },
+  "scope-validation": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py",
+      "--task",
+      "TASK-053",
+      "--base",
+      "4f4144cbec897d956fdd5ed0f3872b0840904bb8"
+    ],
+    "exit_code": 0
+  },
+  "diff-check": {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0
+  }
+}

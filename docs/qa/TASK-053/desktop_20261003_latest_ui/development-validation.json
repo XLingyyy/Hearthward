@@ -1,0 +1,89 @@
+{
+  "pause": {
+    "command": [
+      "scripts/ui/launch_pause_test.py",
+      "--verify"
+    ],
+    "returncode": 0,
+    "run_id": "hud_pause_96b7a61ff9b0",
+    "evidence": "docs/qa/TASK-053/pause-preview/hud_pause_96b7a61ff9b0",
+    "passed": true,
+    "checks": 24,
+    "captures": 7,
+    "fingerprints_match": {
+      "Resources/UI/interface.json": true,
+      "Resources/UI/layout.json": true,
+      "Source/Hearthward/UI/HearthwardScreenWidget.cpp": true,
+      "Source/Hearthward/UI/HearthwardScreenPaint.cpp": true,
+      "Binaries/Win64/UnrealEditor-Hearthward.dll": true
+    },
+    "report_sha256": "83beaa68425cc41415b494383e8df6f27ac821abfae91f9d8ad3a0095e97888c"
+  },
+  "building": {
+    "command": [
+      "scripts/ui/launch_building_test.py",
+      "--verify"
+    ],
+    "returncode": 0,
+    "run_id": "hud_building_82ce8ccaa4e4",
+    "evidence": "docs/qa/TASK-053/building-preview/hud_building_82ce8ccaa4e4",
+    "passed": true,
+    "checks": 63,
+    "captures": 11,
+    "fingerprints_match": {
+      "Resources/UI/interface.json": true,
+      "Resources/UI/layout.json": true,
+      "Source/Hearthward/UI/HearthwardScreenWidget.cpp": true,
+      "Source/Hearthward/UI/HearthwardScreenWidget.h": true,
+      "Source/Hearthward/UI/HearthwardScreenContent.cpp": true,
+      "Source/Hearthward/UI/HearthwardScreenActions.cpp": true,
+      "Source/Hearthward/UI/HearthwardScreenPaint.cpp": true,
+      "Resources/Data/gameplay.json": true,
+      "Binaries/Win64/UnrealEditor-Hearthward.dll": true
+    },
+    "report_sha256": "b1cf8ff8de20fc5e111aa254d937d8660c33afb1380e227354a4f64061fdfa18"
+  },
+  "loading": {
+    "command": [
+      "scripts/ui/launch_loading_test.py",
+      "--verify"
+    ],
+    "returncode": 0,
+    "run_id": "hud_loading_cbbc2506943b",
+    "evidence": "docs/qa/TASK-053/loading-preview/hud_loading_cbbc2506943b",
+    "passed": true,
+    "checks": 9,
+    "captures": 6,
+    "fingerprints_match": {
+      "Resources/UI/Art/loading-ashes.png": true,
+      "Source/Hearthward/UI/HearthwardLoadingSubsystem.cpp": true,
+      "Source/Hearthward/UI/HearthwardLoadingSubsystem.h": true,
+      "Binaries/Win64/UnrealEditor-Hearthward.dll": true
+    },
+    "report_sha256": "eb4212f12dfdf1e6844d069a2426a2fd0d8a30887de6f6562f0b12d408ce7b0b"
+  },
+  "hud": {
+    "command": [
+      "docs/qa/TASK-053/hud-gloss/launch_verify.py"
+    ],
+    "returncode": 0,
+    "run_id": "hud_gloss_84d394cb3fb1",
+    "evidence": "docs/qa/TASK-053/hud-gloss/hud_gloss_84d394cb3fb1",
+    "passed": true,
+    "checks": 61,
+    "captures": 11,
+    "fingerprints_match": {
+      "Source/Hearthward/UI/HearthwardScreenContent.cpp": true,
+      "Source/Hearthward/UI/HearthwardScreenPaint.cpp": true,
+      "Source/Hearthward/UI/HearthwardScreenHUDTest.inl": true,
+      "Source/Hearthward/UI/HearthwardScreenWidget.h": true,
+      "Resources/UI/interface.json": true,
+      "Resources/UI/layout.json": true,
+      "Resources/Data/gameplay.json": true,
+      "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp": true,
+      "scripts/ui/launch_hud_test.py": true,
+      "Binaries/Win64/UnrealEditor-Hearthward.dll": true
+    },
+    "report_sha256": "3f353ca2dba0b02e3ee909e081e0c784b91d3aa5f5e0d5647dac0828e753b3c9"
+  }
+}

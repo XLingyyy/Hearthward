@@ -56,9 +56,10 @@ const TArray<FHearthwardInputDefinition>& HearthwardInput::Definitions()
         Add(TEXT("combat.dodge"),TEXT("闪避"),EKeys::LeftAlt,TEXT("hud"),TEXT(""),false);
         Add(TEXT("combat.lock"),TEXT("锁定"),EKeys::MiddleMouseButton,TEXT("hud"),TEXT(""),false);
         Add(TEXT("combat.sense"),TEXT("感应"),EKeys::V,TEXT("hud"),TEXT(""),false);
-        Add(TEXT("combat.throw"),TEXT("快捷投掷物"),EKeys::G,TEXT("hud"),TEXT(""),false,EKeys::Four);
-        Add(TEXT("survival.medicine"),TEXT("快捷药品"),EKeys::One,TEXT("hud"),TEXT(""),false);
-        Add(TEXT("survival.food"),TEXT("快捷食物"),EKeys::Two,TEXT("hud"),TEXT(""),false);
+        Add(TEXT("combat.throw"),TEXT("投掷栏：选择／再次使用"),EKeys::Four,TEXT("hud"),TEXT(""),false);
+        Add(TEXT("combat.ammunition"),TEXT("弓箭栏：选择"),EKeys::Three,TEXT("hud"),TEXT(""),false);
+        Add(TEXT("survival.medicine"),TEXT("药品栏：选择／再次使用"),EKeys::One,TEXT("hud"),TEXT(""),false);
+        Add(TEXT("survival.food"),TEXT("食物栏：选择／再次使用"),EKeys::Two,TEXT("hud"),TEXT(""),false);
         Add(TEXT("companion.wait"),TEXT("伙伴等待"),EKeys::Z,TEXT("hud"),TEXT(""),false);
         Add(TEXT("companion.follow"),TEXT("伙伴跟随"),EKeys::X,TEXT("hud"),TEXT(""),false);
         Add(TEXT("companion.attack"),TEXT("伙伴进攻"),EKeys::C,TEXT("hud"),TEXT(""),false);
@@ -69,17 +70,19 @@ const TArray<FHearthwardInputDefinition>& HearthwardInput::Definitions()
         Add(TEXT("ui.save"),TEXT("存读档"),EKeys::F6,TEXT("hud|inventory|equipment|storage|map|skills|journal|building|camp|crafting|repairing|nature|pause|settings|save|dialogue|memory|codex"),TEXT(""),false);
         Add(TEXT("ui.pause"),TEXT("暂停／设置入口"),EKeys::P,TEXT("hud|inventory|equipment|storage|map|skills|journal|building|camp|crafting|repairing|nature|pause|settings|save|dialogue|memory|codex"),TEXT(""),true);
         Add(TEXT("companion.dialogue"),TEXT("交流"),EKeys::T,TEXT("hud|inventory|equipment|storage|map|skills|journal|building|camp|crafting|repairing|nature|pause|settings|save|dialogue|memory|codex"),TEXT(""),false);
-        Add(TEXT("building.catalogue"),TEXT("建筑目录"),EKeys::B,TEXT("hud"),TEXT(""),false);
+        Add(TEXT("building.catalogue"),TEXT("建筑目录"),EKeys::B,TEXT("hud|building"),TEXT(""),false);
         Add(TEXT("building.rotate"),TEXT("旋转预览"),EKeys::Q,TEXT("hud"),TEXT(""),false);
         Add(TEXT("inventory.use"),TEXT("使用物品"),EKeys::F,TEXT("inventory"),TEXT(""),false);
         Add(TEXT("inventory.drop"),TEXT("放下物品"),EKeys::R,TEXT("inventory"),TEXT(""),false);
         Add(TEXT("inventory.repair"),TEXT("维修物品"),EKeys::H,TEXT("inventory"),TEXT(""),false);
         Add(TEXT("crafting.commit"),TEXT("制作"),EKeys::F,TEXT("crafting"),TEXT(""),false);
-        Add(TEXT("repair.commit"),TEXT("维修"),EKeys::F,TEXT("repairing"),TEXT(""),false);
+        Add(TEXT("repair.commit"),TEXT("行装管理：全部修复选中装备"),EKeys::F,TEXT("equipment"),TEXT(""),false);
         Add(TEXT("storage.transfer"),TEXT("仓储转移"),EKeys::E,TEXT("storage"),TEXT(""),false);
         Add(TEXT("skills.learn"),TEXT("学习技能"),EKeys::F,TEXT("skills"),TEXT(""),false);
         Add(TEXT("journal.locate"),TEXT("任务地图"),EKeys::F,TEXT("journal"),TEXT(""),false);
         Add(TEXT("journal.track"),TEXT("追踪任务"),EKeys::V,TEXT("journal"),TEXT(""),false);
+        Add(TEXT("journal.category.prev"),TEXT("日志上一分类"),EKeys::Q,TEXT("journal"),TEXT(""),false);
+        Add(TEXT("journal.category.next"),TEXT("日志下一分类"),EKeys::E,TEXT("journal"),TEXT(""),false);
         Add(TEXT("settings.defaults"),TEXT("设置默认草稿"),EKeys::R,TEXT("settings"),TEXT(""),false);
         Add(TEXT("map.marker"),TEXT("地图标记"),EKeys::RightMouseButton,TEXT("map"),TEXT(""),false);
         return Rows;
@@ -92,6 +95,10 @@ FHearthwardBindings HearthwardInput::Load()
     auto Result=Defaults();
     for(auto& Pair:Result) for(int32 Slot=0;Slot<2;++Slot)
     { FString Text;if(GConfig->GetString(TEXT("Hearthward.Bindings"),*(Pair.Key.ToString()+FString::FromInt(Slot)),Text,GGameUserSettingsIni)) Pair.Value[Slot]=FHearthwardKeyBinding::Decode(Text); }
+    // Upgrade only the previous stock G / 4 pair; preserve the player's custom bindings.
+    auto& Throw=Result.FindChecked(TEXT("combat.throw"));
+    if(Throw[0].Key==EKeys::G && !Throw[0].Modifier.IsValid() && Throw[1].Key==EKeys::Four && !Throw[1].Modifier.IsValid())
+        Throw={FHearthwardKeyBinding{EKeys::Four,FKey()},FHearthwardKeyBinding{}};
     return Validate(Result).IsEmpty()?Result:Defaults();
 }
 void HearthwardInput::Save(const FHearthwardBindings& Bindings)
@@ -108,6 +115,11 @@ FString HearthwardInput::Validate(const FHearthwardBindings& Bindings)
         {
             if(!B.Key.IsValid()) continue;
             if(B.Key.IsGamepadKey() || B.Key.IsAxis1D() || B.Key.IsAxis2D() || B.Key==EKeys::Escape || B.Key==EKeys::Enter || B.Key==EKeys::F10 || B.Key==EKeys::LeftCommand || B.Key==EKeys::RightCommand) return D.Label+TEXT("使用了保留键或不支持的输入");
+            const bool MenuContext=D.Contexts.ContainsByPredicate([](FName Context){return Context!=TEXT("hud");});
+            const bool Navigation=B.Key==EKeys::Up || B.Key==EKeys::Down || B.Key==EKeys::Left || B.Key==EKeys::Right
+                || B.Key==EKeys::PageUp || B.Key==EKeys::PageDown || B.Key==EKeys::Home || B.Key==EKeys::End;
+            if(MenuContext && (Navigation || (B.Key==EKeys::Tab && (D.Id!=TEXT("ui.inventory") || B.Modifier.IsValid()))))
+                return D.Label+TEXT("与界面导航保留键冲突");
             if(B.Modifier.IsValid() && B.Modifier!=EKeys::LeftShift && B.Modifier!=EKeys::LeftControl && B.Modifier!=EKeys::LeftAlt) return TEXT("只支持一个Shift/Ctrl/Alt修饰键");
             if((B.Modifier==EKeys::LeftAlt && (B.Key==EKeys::F4 || B.Key==EKeys::Tab)) || (B.Modifier==EKeys::LeftControl && B.Key==EKeys::Escape)) return TEXT("系统快捷键不能绑定");
             for(int32 J=I+1;J<Rows.Num();++J)

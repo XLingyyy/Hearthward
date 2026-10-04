@@ -42,6 +42,7 @@ public:
     UFUNCTION(BlueprintCallable) bool Reload();
     UFUNCTION(BlueprintCallable) void Aim(bool Value);
     UFUNCTION(BlueprintCallable) bool Shoot(bool Release=false);
+    bool SupportsAmmo(FName Item) const;
     UFUNCTION(BlueprintCallable) bool Throw(FName Item);
     UFUNCTION(BlueprintCallable) bool SwitchEquipment(FName Item);
     bool SwitchEquipmentInstance(FGuid Instance);
@@ -56,6 +57,7 @@ public:
     UPROPERTY(BlueprintReadOnly) double Duration=0;
     UPROPERTY(BlueprintReadOnly) float Discovery=0;
     UPROPERTY(BlueprintReadOnly) FString Feedback;
+    uint32 GetFeedbackRevision() const { return FeedbackRevision; }
     UPROPERTY(BlueprintReadOnly) bool Aiming=false;
     UPROPERTY(BlueprintReadOnly) bool CrossbowLoaded=false;
     UPROPERTY(BlueprintReadOnly) FHearthwardCombatSave State;
@@ -74,6 +76,8 @@ public:
     TArray<UHearthwardCombatTargetComponent*> Targets() const;
     UHearthwardCombatTargetComponent* ExecutionTarget() const { return Captive.Get(); }
 private:
+    uint32 FeedbackRevision=0;
+    void SetFeedback(FString Value) { Feedback=MoveTemp(Value); ++FeedbackRevision; }
     class UHearthwardGameplayComponent* G() const;
     class UHearthwardInventoryComponent* Bag() const;
     double Now() const;

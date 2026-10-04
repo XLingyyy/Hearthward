@@ -1,0 +1,209 @@
+"""Draw a 1:1 illustrated map from the current game's collision and model export.
+
+Uses NumPy and Pillow from the bundled workspace runtime. No generated geography,
+invented landmarks or edits to the reference images. The PNG contains no text.
+"""
+import argparse
+import hashlib
+import itertools
+import json
+from pathlib import Path
+import struct
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter
+
+GAME = Path(__file__).resolve().parents[2]
+SIZE = 1800
+ORIGIN = np.array([670., 285.])
+SPAN = 500.
+
+
+def glb(path):
+    data = path.read_bytes()
+    assert data[:4] == b'glTF'
+    chunks = {}
+    offset = 12
+    while offset < len(data):
+        size, kind = struct.unpack_from('<II', data, offset)
+        chunks[kind] = data[offset + 8:offset + 8 + size]
+        offset += 8 + size
+    meta = json.loads(chunks[0x4e4f534a])
+    binary = chunks[0x004e4942]
+
+    def accessor(index):
+        a = meta['accessors'][index]
+        view = meta['bufferViews'][a['bufferView']]
+        dtype = {5121: np.dtype('u1'), 5123: np.dtype('<u2'), 5125: np.dtype('<u4'), 5126: np.dtype('<f4')}[a['componentType']]
+        count = {'SCALAR': 1, 'VEC2': 2, 'VEC3': 3, 'VEC4': 4}[a['type']]
+        start = view.get('byteOffset', 0) + a.get('byteOffset', 0)
+        stride = view.get('byteStride', count * dtype.itemsize)
+        return np.ndarray((a['count'], count), dtype=dtype, buffer=binary, offset=start, strides=(stride, dtype.itemsize)).copy()
+
+    prim = meta['meshes'][0]['primitives'][0]
+    return accessor(prim['attributes']['POSITION']), accessor(prim['indices']).reshape(-1, 3)
+
+
+def surface_levels(scene):
+    levels = np.full((SIZE, SIZE), np.nan, dtype=np.float32)
+    mappings = []
+    for actor in scene['water']:
+        name = actor['mesh'].removeprefix('SM_')
+        path = GAME / 'art_source/TASK-026/Rebuild/water' / (name + '.glb')
+        if not path.is_file():
+            raise FileNotFoundError('Actual water mesh has no source: ' + str(path))
+        verts, faces = glb(path)
+        scale = np.asarray(actor.get('scale', [1, 1, 1]))
+        target = np.asarray(actor['boundsM'])
+        candidates = []
+        # Infer the actual importer orientation from its measured world bounds.
+        for swap, sign_x, sign_y in itertools.product((False, True), (-1, 1), (-1, 1)):
+            xy = verts[:, [2, 0] if swap else [0, 2]].astype(float) * scale[:2] * [sign_x, sign_y] + [actor['x'], actor['y']]
+            bounds = np.r_[xy.min(axis=0), xy.max(axis=0)]
+            candidates.append((float(np.max(np.abs(bounds - target))), swap, sign_x, sign_y, xy))
+        error, swap, sx, sy, xy = min(candidates, key=lambda c: c[0])
+        if error > .25:
+            raise ValueError(f'{name}: source geometry disagrees with runtime bounds by {error:.3f} m')
+        # Break perfectly symmetric cases in favor of the authoring script's +Y convention.
+        matches = [c for c in candidates if c[0] <= error + .001]
+        _, swap, sx, sy, xy = min(matches, key=lambda c: int(c[1]) * 4 + int(c[2] < 0) * 2 + int(c[3] < 0))
+        mappings.append(dict(mesh=name, max_bounds_error_m=error, swap_xy=swap, signs=[sx, sy]))
+        xy = (xy - ORIGIN) / SPAN * SIZE
+        z = verts[:, 1] * scale[2] + actor['z']
+        for face in faces:
+            p = xy[face]
+            low = np.maximum(np.floor(p.min(axis=0)).astype(int), 0)
+            high = np.minimum(np.ceil(p.max(axis=0)).astype(int) + 1, SIZE)
+            if np.any(high <= low):
+                continue
+            x, y = np.meshgrid(np.arange(low[0], high[0]) + .5, np.arange(low[1], high[1]) + .5)
+            denominator = (p[1, 1] - p[2, 1]) * (p[0, 0] - p[2, 0]) + (p[2, 0] - p[1, 0]) * (p[0, 1] - p[2, 1])
+            if abs(denominator) < 1e-9:
+                continue
+            a = ((p[1, 1] - p[2, 1]) * (x - p[2, 0]) + (p[2, 0] - p[1, 0]) * (y - p[2, 1])) / denominator
+            b = ((p[2, 1] - p[0, 1]) * (x - p[2, 0]) + (p[0, 0] - p[2, 0]) * (y - p[2, 1])) / denominator
+            c = 1 - a - b
+            inside = (a >= -1e-5) & (b >= -1e-5) & (c >= -1e-5)
+            block = levels[low[1]:high[1], low[0]:high[0]]
+            height = a * z[face[0]] + b * z[face[1]] + c * z[face[2]]
+            block[inside] = height[inside]
+    return levels, mappings
+
+
+def contours(image, heights):
+    draw = ImageDraw.Draw(image)
+    lookup = {1: [(3, 0)], 2: [(0, 1)], 3: [(3, 1)], 4: [(1, 2)], 5: [(3, 0), (1, 2)],
+              6: [(0, 2)], 7: [(3, 2)], 8: [(2, 3)], 9: [(0, 2)], 10: [(0, 1), (2, 3)],
+              11: [(1, 2)], 12: [(3, 1)], 13: [(0, 1)], 14: [(3, 0)]}
+    edge_vertices = [(0, 1), (1, 2), (2, 3), (3, 0)]
+    for level in np.arange(np.floor(heights.min() / 4) * 4, heights.max() + 1, 4):
+        pattern = ((heights[:-1, :-1] >= level).astype(np.uint8) + 2 * (heights[:-1, 1:] >= level)
+                   + 4 * (heights[1:, 1:] >= level) + 8 * (heights[1:, :-1] >= level))
+        for iy, ix in np.argwhere((pattern != 0) & (pattern != 15)):
+            corners = np.array([[ix, iy], [ix + 1, iy], [ix + 1, iy + 1], [ix, iy + 1]], dtype=float)
+            values = [heights[iy, ix], heights[iy, ix + 1], heights[iy + 1, ix + 1], heights[iy + 1, ix]]
+
+            def point(edge):
+                a, b = edge_vertices[edge]
+                t = (level - values[a]) / (values[b] - values[a])
+                return tuple((corners[a] * (1 - t) + corners[b] * t) / (heights.shape[0] - 1) * SIZE)
+
+            for a, b in lookup[int(pattern[iy, ix])]:
+                p, q = point(a), point(b)
+                major = round(float(level)) % 12 == 0
+                draw.line([(p[0] + 2, p[1] + 3), (q[0] + 2, q[1] + 3)], fill=(93, 78, 50, 120 if major else 70), width=5 if major else 3)
+                draw.line([p, q], fill=(211, 203, 133, 165 if major else 92), width=2)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('scene', type=Path)
+    args = parser.parse_args()
+    scene = json.loads(args.scene.read_text(encoding='utf-8'))
+    small = np.asarray(scene['heightsM'], dtype=np.float32).reshape(scene['samples'], scene['samples'])
+    assert np.all(np.isfinite(small)), 'Missing actual terrain observations'
+    assert scene['originM'] == [670, 285] and scene['spacingM'] == 2
+    heights = np.asarray(Image.fromarray(small).resize((SIZE, SIZE), Image.Resampling.BICUBIC))
+    dy, dx = np.gradient(heights, SPAN / SIZE)
+    slope = np.hypot(dx, dy)
+    bands = np.clip(np.floor((heights - 195) / 4), 0, 15).astype(int)
+    palette = np.array([[91, 131, 102], [98, 137, 103], [107, 143, 101], [116, 149, 100],
+        [129, 155, 101], [140, 158, 101], [150, 161, 103], [160, 163, 103],
+        [170, 166, 108], [180, 171, 112], [187, 175, 121], [190, 175, 128],
+        [189, 170, 134], [183, 162, 130], [178, 155, 124], [172, 147, 116]], dtype=float)
+    land = palette[bands]
+    rock = np.clip((slope - .25) / .38, 0, 1)
+    land = land * (1 - rock[..., None] * .55) + np.array([166, 120, 78]) * rock[..., None] * .55
+    shade = np.clip(1.0 - .24 * dx - .19 * dy, .75, 1.16)
+    land *= shade[..., None]
+    # Fine paper grain is visual texture; all geographical boundaries come from the model.
+    rng = np.random.default_rng(5350920)
+    land += rng.normal(0, .7, (SIZE, SIZE, 1))
+    image = Image.fromarray(np.uint8(np.clip(land, 0, 255))).convert('RGBA')
+    overlay = Image.new('RGBA', image.size)
+    contours(overlay, small)
+    image = Image.alpha_composite(image, overlay)
+    levels, mappings = surface_levels(scene)
+    wet = np.isfinite(levels) & (heights < levels - .015)
+    depth = np.clip(np.nan_to_num(levels - heights) / 8, 0, 1)
+    water = np.array([69, 143, 150]) * (1 - depth[..., None]) + np.array([30, 89, 108]) * depth[..., None]
+    yy, xx = np.mgrid[:SIZE, :SIZE]
+    water += (1.5 * np.sin(xx / 120 + yy / 270))[..., None]
+    expanded = np.array(Image.fromarray(np.uint8(wet * 255)).filter(ImageFilter.MaxFilter(13))) > 0
+    shore = expanded & ~wet
+    pixels = np.array(image)
+    pixels[shore, :3] = np.array([174, 180, 118]) * .85 + pixels[shore, :3] * .15
+    pixels[wet, :3] = np.uint8(np.clip(water, 0, 255))[wet]
+    image = Image.fromarray(pixels)
+    waves = Image.new('RGBA', image.size)
+    wave_draw = ImageDraw.Draw(waves)
+    for y in range(48, SIZE, 90):
+        for x in range(17 + (y // 90 % 2) * 35, SIZE, 85):
+            wave_draw.arc((x, y, x + 37, y + 9), 0, 155, fill=(115, 185, 183, 55), width=2)
+    waves.putalpha(Image.fromarray(np.uint8(np.array(waves.getchannel('A')) * wet)))
+    image = Image.alpha_composite(image, waves)
+    draw = ImageDraw.Draw(image)
+
+    def pixel(row):
+        return tuple((np.array([row['x'], row['y']]) - ORIGIN) / SPAN * SIZE)
+
+    for row in scene['trees']:
+        x, y = pixel(row)
+        r = 7
+        draw.ellipse((x - r + 2, y - r + 3, x + r + 2, y + r + 3), fill=(70, 86, 55, 110))
+        draw.polygon([(x, y - r), (x + r * .8, y - 1), (x + r * .48, y + r * .76),
+            (x - r * .45, y + r), (x - r, y + 1)], fill=(77, 113, 75), outline=(60, 84, 56), width=2)
+        draw.line([(x - 3, y - 2), (x, y - 5), (x + 3, y - 1)], fill=(116, 141, 90), width=2)
+    for row in scene['rocks']:
+        x, y = pixel(row)
+        draw.polygon([(x - 4, y + 2), (x - 2, y - 4), (x + 3, y - 3), (x + 5, y + 1), (x + 2, y + 4)],
+            fill=(158, 154, 126), outline=(102, 101, 84), width=1)
+    for row in scene['houses']:
+        x, y = pixel(row)
+        rx, ry = row['halfX'] / SPAN * SIZE, row['halfY'] / SPAN * SIZE
+        draw.rectangle((x - rx + 2, y - ry + 3, x + rx + 2, y + ry + 3), fill=(80, 75, 49))
+        draw.rectangle((x - rx, y - ry, x + rx, y + ry), fill=(171, 131, 85), outline=(104, 77, 51), width=3)
+        draw.line((x - rx, y, x + rx, y), fill=(213, 177, 113), width=2)
+    # Black fog is strictly inside a fixed circular reveal. No pixels beyond 250 m contain terrain.
+    radius = np.hypot((xx + .5 - SIZE / 2) / SIZE * SPAN, (yy + .5 - SIZE / 2) / SIZE * SPAN)
+    smoke = .6 * np.sin(xx / 23 + yy / 35) + .4 * np.sin(xx / 49 - yy / 28)
+    fade = np.clip((250 - radius) / (6.8 + smoke), 0, 1)
+    fade = fade * fade * (3 - 2 * fade)
+    pixels = np.array(image)
+    pixels[..., :3] = np.uint8(pixels[..., :3] * fade[..., None])
+    pixels[radius >= 250, :3] = 0
+    pixels[..., 3] = 255
+    target = GAME / 'Resources/UI/Art/map-local-terrain.png'
+    Image.fromarray(pixels).save(target)
+    manifest = dict(scene=args.scene.resolve().as_posix(), scene_sha256=hashlib.sha256(args.scene.read_bytes()).hexdigest(),
+        output=target.relative_to(GAME).as_posix(), output_sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
+        resolution=[SIZE, SIZE], center_m=[920, 535], diameter_m=500, projection='+X right, +Y down; identical X/Y scale',
+        height_range_m=[float(small.min()), float(small.max())], water_mapping=mappings,
+        trees=len(scene['trees']), rocks=len(scene['rocks']), houses=len(scene['houses']),
+        outside_circle_all_black=bool(np.all(pixels[radius >= 250, :3] == 0)), text_in_png=False,
+        provenance='Current running Unreal collision samples and actors; source water GLB footprints checked against current actor bounds; Pillow drawing, no synthetic geography')
+    (GAME / 'docs/qa/TASK-053/local-map/cartography.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+    print(json.dumps(manifest, ensure_ascii=False, indent=2))
+
+
+if __name__ == '__main__':
+    main()

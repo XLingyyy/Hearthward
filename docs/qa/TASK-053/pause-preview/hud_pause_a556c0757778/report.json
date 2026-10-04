@@ -1,0 +1,181 @@
+{
+  "passed": true,
+  "checks": {
+    "disposable_new_game": true,
+    "pause_entry": true,
+    "world_frozen": true,
+    "original_five_actions": true,
+    "vertical_order": true,
+    "no_background_or_illustrations": true,
+    "no_quest_or_logo": true,
+    "settings_surface": true,
+    "hit_option_0": true,
+    "hit_option_1": true,
+    "hit_option_2": true,
+    "hit_option_3": true,
+    "hit_option_4": true,
+    "settings_entry": true,
+    "settings_return": true,
+    "still_paused_after_settings": true,
+    "title_confirmation": true,
+    "confirmation_can_cancel": true,
+    "resume_action": true,
+    "pause_second_angle": true,
+    "return_action": true,
+    "export_pause-720p": true,
+    "export_pause-16x10": true,
+    "export_pause-ultrawide": true
+  },
+  "captures": [
+    "world-before-pause.png",
+    "pause-world.png",
+    "world-second-angle.png",
+    "pause-second-angle.png"
+  ],
+  "layouts": [
+    [
+      {
+        "id": "pause.menu",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          546,
+          154,
+          580,
+          632
+        ]
+      },
+      {
+        "id": "pause.sheet",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          546,
+          154,
+          580,
+          632
+        ],
+        "action": "",
+        "text": "",
+        "asset": ""
+      },
+      {
+        "id": "pause.heading",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          194,
+          492,
+          52
+        ],
+        "action": "",
+        "text": "已 暂 停",
+        "asset": ""
+      },
+      {
+        "id": "pause.heading.rule",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          260,
+          492,
+          1
+        ],
+        "action": "",
+        "text": "",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.0",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          278,
+          492,
+          70
+        ],
+        "action": "page:hud",
+        "text": "继续",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.1",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          348,
+          492,
+          70
+        ],
+        "action": "continuePrompt",
+        "text": "读取最近存档",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.2",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          418,
+          492,
+          70
+        ],
+        "action": "save",
+        "text": "存档",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.3",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          488,
+          492,
+          70
+        ],
+        "action": "page:settings",
+        "text": "设置",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.4",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          558,
+          492,
+          70
+        ],
+        "action": "ask:title",
+        "text": "返回主菜单",
+        "asset": ""
+      },
+      {
+        "id": "pause.return",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          568,
+          812,
+          536,
+          36
+        ],
+        "action": "",
+        "text": "Esc  返回游戏",
+        "asset": ""
+      }
+    ]
+  ],
+  "ui_captures": [
+    "hud_pause_a556c0757778-pause-720p.png",
+    "hud_pause_a556c0757778-pause-16x10.png",
+    "hud_pause_a556c0757778-pause-ultrawide.png"
+  ]
+}

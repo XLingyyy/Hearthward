@@ -1,0 +1,103 @@
+"""Check live map evidence, textured fog opacity and preserved test profiles."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import numpy as np
+from PIL import Image
+
+GAME = Path(__file__).resolve().parents[2]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('run', type=Path)
+    args = parser.parse_args()
+    run = args.run.resolve()
+    output = GAME / 'docs/qa/TASK-053/local-map-relief-fog'
+    manifest = json.loads((run / 'source-manifest.json').read_text(encoding='utf-8'))
+    mismatches = [name for name, value in manifest['fingerprints'].items()
+                  if hashlib.sha256((GAME / name).read_bytes()).hexdigest() != value]
+    report = json.loads((run / 'report.json').read_text(encoding='utf-8'))
+    checks = {'all_native_checks_pass': report['passed'] and all(report['checks'].values()),
+              'current_source_dll_and_art_match_evidence': not mismatches}
+    image_results = {}
+    for filename in ['map-1600x1000.png', 'map-1920x1080.png', 'map-1280x720.png', 'map-ultrawide.png']:
+        pixels = np.array(Image.open(run / filename).convert('RGB'))
+        h, w, _ = pixels.shape
+        scale = min(w / 1672, h / 941)
+        yy, xx = np.mgrid[:h, :w]
+        radius = 425 * scale
+        distance = np.hypot(xx + .5 - w / 2, yy + .5 - h / 2)
+        outside = pixels[distance > radius + 2]
+        rgba = np.array(Image.open(run / filename).convert('RGBA'))
+        result = {'size': [w, h], 'outside_luminance_mean': float(outside.mean()),
+                  'outside_luminance_range': [int(outside.min()), int(outside.max())],
+                  'entire_view_opaque': bool(np.all(rgba[..., 3] == 255))}
+        near = pixels[max(0, int(h / 2 - 40)):int(h / 2 + 20), max(0, int(w / 2 - 30)):int(w / 2 + 30)].astype(int)
+        result['red_flame_pixels'] = int(np.sum((near[..., 0] > 190) & (near[..., 0] > near[..., 2] * 2) & (near[..., 1] < 170)))
+        result['blue_flame_pixels'] = int(np.sum((near[..., 2] > 205) & (near[..., 0] < 130) & (near[..., 1] > 90)))
+        checks[filename + '_opaque_smoky_viewport'] = bool(result['entire_view_opaque'] and np.percentile(outside, 95) - np.percentile(outside, 5) > 15)
+        checks[filename + '_both_close_flames_visible'] = result['red_flame_pixels'] > 5 and result['blue_flame_pixels'] > 2
+        image_results[filename] = result
+    # Substitute a conspicuous magenta layer beneath the fog. It must be visible in
+    # the known centre and have zero effect on every pixel outside the true circle.
+    pairs = {}
+    for name in ['fog-1600x1000', 'fog-1920x1080', 'fog-1280x720', 'fog-ultrawide', 'fog-zoom-pan']:
+        base = np.array(Image.open(run / (name + '-base.png')).convert('RGBA')).astype(int)
+        probe = np.array(Image.open(run / (name + '-probe.png')).convert('RGBA')).astype(int)
+        h, w, _ = base.shape
+        scale = min(w / 1672, h / 941)
+        zoom = 1.4 if name == 'fog-zoom-pan' else 1
+        pan = np.array([-30, 30]) * scale if zoom != 1 else np.zeros(2)
+        yy, xx = np.mgrid[:h, :w]
+        distance = np.hypot(xx + .5 - w / 2 - pan[0], yy + .5 - h / 2 - pan[1])
+        outside = distance > 425 * scale * zoom + 2
+        inner = distance < 250 * scale * zoom
+        difference = np.max(np.abs(base - probe), axis=2)
+        result = {'outside_pixels': int(outside.sum()), 'outside_max_difference': int(difference[outside].max()),
+                  'sentinel_visible_in_centre_pixels': int(np.sum((difference > 80) & inner))}
+        checks[name + '_conceals_every_outside_pixel'] = result['outside_max_difference'] == 0 and result['sentinel_visible_in_centre_pixels'] > 10000
+        pairs[name] = result
+    first = np.array(Image.open(run / 'fog-1600x1000-base.png').convert('RGB')).astype(int)
+    later = np.array(Image.open(run / 'fog-time-later-base.png').convert('RGB')).astype(int)
+    h, w, _ = first.shape
+    yy, xx = np.mgrid[:h, :w]
+    outside = np.hypot(xx + .5 - w / 2, yy + .5 - h / 2) > 425 * min(w / 1672, h / 941) + 2
+    drift = np.abs(first - later)[outside]
+    checks['smoke_texture_drifts_while_world_paused'] = float(drift.mean()) > .1 and int(np.sum(drift.max(axis=1) > 0)) > 10000
+    zoom_image = np.array(Image.open(run / 'map-zoom-pan.png').convert('RGB')).astype(int)
+    h, w, _ = zoom_image.shape
+    scale = min(w / 1672, h / 941)
+    yy, xx = np.mgrid[:h, :w]
+    distance = np.hypot(xx + .5 - w / 2 + 30 * scale, yy + .5 - h / 2 - 30 * scale)
+    margin = (yy + .5 < (h - 941 * scale) / 2) & (distance < 425 * scale * 1.4 - 25)
+    # In this measured zoom/pan state the lake reaches the top aspect-ratio margin.
+    # Flat smoky margins formerly cut a straight edge through that lake at y=50.
+    water = (zoom_image[..., 2] > zoom_image[..., 0] + 8) & (zoom_image[..., 1] > zoom_image[..., 0] + 5)
+    margin_water_pixels = int(np.sum(water & margin))
+    checks['zoomed_lake_extends_through_viewport_margin'] = margin_water_pixels > 1000
+    saved = json.loads((output / 'manual-profile-before.json').read_text(encoding='utf-8'))
+    current = {p.relative_to(GAME).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+               for p in (GAME / 'TestClient/Profile').rglob('*') if p.is_file()}
+    checks['manual_profile_unchanged'] = saved == current
+    base = GAME / 'docs/qa/TASK-053/local-map/before'
+    before = json.loads((base / 'interface.json.snapshot').read_text(encoding='utf-8'))
+    after = json.loads((GAME / 'Resources/UI/interface.json').read_text(encoding='utf-8'))
+    checks['other_ui_pages_preserved'] = all(before['pages'][name] == after['pages'][name] for name in before['pages'] if name != 'map')
+    before = json.loads((base / 'layout.json.snapshot').read_text(encoding='utf-8'))
+    after = json.loads((GAME / 'Resources/UI/layout.json').read_text(encoding='utf-8'))
+    checks['other_page_layouts_preserved'] = all(before['pages'][name] == after['pages'][name] for name in before['pages'] if name != 'map')
+    result = {'passed': all(checks.values()), 'checks': checks, 'native_run': run.relative_to(GAME).as_posix(),
+              'native_checks': len(report['checks']), 'fingerprints': len(manifest['fingerprints']),
+              'mismatches': mismatches, 'images': image_results, 'fog_opacity_pairs': pairs,
+              'smoke_drift': {'mean_absolute_rgb_difference': float(drift.mean()), 'changed_outside_pixels': int(np.sum(drift.max(axis=1) > 0))},
+              'zoomed_lake_margin_pixels': margin_water_pixels,
+              'scope': 'Opaque textured fog replaces flat black. Captured sentinel substitution proves unrevealed geography remains concealed; exact pixels checked in four viewports and zoom/pan.'}
+    (output / 'final-audit.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    raise SystemExit(0 if result['passed'] else 1)
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,157 @@
+{
+  "passed": false,
+  "checks": {
+    "disposable_new_game": true,
+    "pause_entry": true,
+    "world_frozen": true,
+    "original_five_actions": true,
+    "vertical_order": true,
+    "no_background_or_illustrations": true,
+    "no_quest_or_logo": true
+  },
+  "captures": [
+    "world-before-pause.png"
+  ],
+  "layouts": [
+    [
+      {
+        "id": "pause.menu",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          546,
+          154,
+          580,
+          632
+        ]
+      },
+      {
+        "id": "pause.sheet",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          546,
+          154,
+          580,
+          632
+        ],
+        "action": "",
+        "text": "",
+        "asset": ""
+      },
+      {
+        "id": "pause.heading",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          194,
+          492,
+          52
+        ],
+        "action": "",
+        "text": "已 暂 停",
+        "asset": ""
+      },
+      {
+        "id": "pause.heading.rule",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          260,
+          492,
+          1
+        ],
+        "action": "",
+        "text": "",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.0",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          278,
+          492,
+          70
+        ],
+        "action": "page:hud",
+        "text": "继续",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.1",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          348,
+          492,
+          70
+        ],
+        "action": "continuePrompt",
+        "text": "读取最近存档",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.2",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          418,
+          492,
+          70
+        ],
+        "action": "save",
+        "text": "存档",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.3",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          488,
+          492,
+          70
+        ],
+        "action": "page:settings",
+        "text": "设置",
+        "asset": ""
+      },
+      {
+        "id": "pause.option.4",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          590,
+          558,
+          492,
+          70
+        ],
+        "action": "ask:title",
+        "text": "返回主菜单",
+        "asset": ""
+      },
+      {
+        "id": "pause.return",
+        "parent": "pause.menu",
+        "visible": true,
+        "rect": [
+          568,
+          812,
+          536,
+          36
+        ],
+        "action": "",
+        "text": "Esc  返回游戏",
+        "asset": ""
+      }
+    ]
+  ],
+  "error": "Traceback (most recent call last):\n  File \"E:/AiAgent/XLingGame/Hearthward/docs/qa/TASK-053/pause-preview/verify_pause.py\", line 92, in tick\n    pending=next(iterator)\n            ^^^^^^^^^^^^^^\n  File \"E:/AiAgent/XLingGame/Hearthward/docs/qa/TASK-053/pause-preview/verify_pause.py\", line 55, in run\n    check('settings_surface',any(r['id']=='pause.sheet' and r['type']=='menuSurface' for r in rows))\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:/AiAgent/XLingGame/Hearthward/docs/qa/TASK-053/pause-preview/verify_pause.py\", line 55, in <genexpr>\n    check('settings_surface',any(r['id']=='pause.sheet' and r['type']=='menuSurface' for r in rows))\n                                                            ~^^^^^^^^\nKeyError: 'type'\n"
+}

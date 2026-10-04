@@ -1,0 +1,24 @@
+--- before/Source/Hearthward/UI/HearthwardScreenContent.cpp
++++ Source/Hearthward/UI/HearthwardScreenContent.cpp
+@@ -313,8 +313,9 @@
+     for(const auto& V:Rows(Quests?TEXT("quests"):Collection?TEXT("items"):TEXT("codex")))
+     {
+         const auto R=V->AsObject();
+-        if(Quests ? Text(R,TEXT("kind"))==Category && bool(HearthwardCampaign::Find(TEXT("quests"),FName(*Text(R,TEXT("id")))))==Campaign
+-            : Collection || Text(R,TEXT("category"))==Category) Entries.Add(R);
++        const bool InCategory=Quests ? Text(R,TEXT("kind"))==Category && bool(HearthwardCampaign::Find(TEXT("quests"),FName(*Text(R,TEXT("id")))))==Campaign
++            : Collection || Text(R,TEXT("category"))==Category;
++        if(InCategory && (!Collection || JournalEntryKnown(R))) Entries.Add(R);
+     }
+     return Entries;
+ }
+@@ -363,7 +364,8 @@
+     const auto Entries=JournalEntries();const int32 PageSize=JournalPageSize();
+     Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Entries.Num()-PageSize));
+     int32 Known=0;for(const auto& R:Entries)Known+=JournalEntryKnown(R);
+-    const FString CountLabel=Quests?FString::Printf(TEXT("已开启 %d / %d"),Known,Entries.Num()):FString::Printf(TEXT("已记录 %d / %d"),Known,Entries.Num());
++    const int32 Total=Collection?Rows(TEXT("items")).Num():Entries.Num();
++    const FString CountLabel=Quests?FString::Printf(TEXT("已开启 %d / %d"),Known,Total):FString::Printf(TEXT("已记录 %d / %d"),Known,Total);
+     Add(TEXT("journal.list.count"),TEXT("text"),CountLabel,{445,170},{235,36},16).Align=TEXT("right");
+     Add(TEXT("journal.list.rule"),TEXT("line"),TEXT(""),{64,213},{616,1}).Color=Color(TEXT("bronze"))*.45f;
+     auto Selectable=[&](const auto& R){return JournalEntryKnown(R);};

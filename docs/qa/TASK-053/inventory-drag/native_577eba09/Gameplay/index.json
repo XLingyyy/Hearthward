@@ -1,0 +1,132 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "VIOLET",
+			"instance": "D013C6CB4D7167738915DEBD6730C4BF",
+			"instanceName": "VIOLET-39652",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (25H2) [10.0.26200.9457] ",
+			"model": "Default",
+			"gPU": "Intel(R) UHD Graphics",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 32,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.03-14.44.16",
+	"succeeded": 5,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.21311800181865692,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "AtomicExchange",
+			"fullTestPath": "Hearthward.Gameplay.Crafting.AtomicExchange",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D013C6CB4D7167738915DEBD6730C4BF"
+			],
+			"duration": 0.013656497001647949,
+			"dateTime": "2026.10.03-14.44.15",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "Catalog",
+			"fullTestPath": "Hearthward.Gameplay.Crafting.Catalog",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D013C6CB4D7167738915DEBD6730C4BF"
+			],
+			"duration": 0.029926199465990067,
+			"dateTime": "2026.10.03-14.44.15",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "CatalogAndMaterialTransaction",
+			"fullTestPath": "Hearthward.Gameplay.Repair.CatalogAndMaterialTransaction",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D013C6CB4D7167738915DEBD6730C4BF"
+			],
+			"duration": 0.016394499689340591,
+			"dateTime": "2026.10.03-14.44.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "BuildingSnapshotCompatibility",
+			"fullTestPath": "Hearthward.Gameplay.BuildingSnapshotCompatibility",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D013C6CB4D7167738915DEBD6730C4BF"
+			],
+			"duration": 0.016818899661302567,
+			"dateTime": "2026.10.03-14.44.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "Progression047CurvesMigration",
+			"fullTestPath": "Hearthward.Gameplay.Progression047CurvesMigration",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D013C6CB4D7167738915DEBD6730C4BF"
+			],
+			"duration": 0.016559001058340073,
+			"dateTime": "2026.10.03-14.44.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "SnapshotValidation",
+			"fullTestPath": "Hearthward.Gameplay.SnapshotValidation",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"D013C6CB4D7167738915DEBD6730C4BF"
+			],
+			"duration": 0.11976289749145508,
+			"dateTime": "2026.10.03-14.44.16",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Duplicate item identity rejected' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\GameplayTests.cpp",
+					"lineNumber": 21,
+					"timestamp": "2026.10.03-14.44.16"
+				}
+			],
+			"warnings": 0,
+			"errors": 1,
+			"artifacts": []
+		}
+	]
+}

@@ -1,0 +1,38 @@
+{
+  "0": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py"
+    ],
+    "returncode": 0,
+    "stdout": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 53\nPASS: repository checks only; 0 error(s)\n",
+    "stderr": ""
+  },
+  "1": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py",
+      "--task",
+      "TASK-053",
+      "--base",
+      "4db5789184fe38e041d62a1e68c8517338ea0b01"
+    ],
+    "returncode": 1,
+    "stdout": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 53\nERROR: No usable approved task snapshot at base: TASK-053; approve task on baseline first\nFAIL: repository checks only; 1 error(s)\n",
+    "stderr": ""
+  },
+  "2": {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "returncode": 0,
+    "stdout": "",
+    "stderr": "warning: in the working copy of 'README.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Resources/UI/interface.json', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Resources/UI/layout.json', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenCapture.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenContent.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenPaint.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenWidget.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/Update/HearthwardUpdateSubsystem.h', CRLF will be replaced by LF the next time Git touches it\n"
+  }
+}

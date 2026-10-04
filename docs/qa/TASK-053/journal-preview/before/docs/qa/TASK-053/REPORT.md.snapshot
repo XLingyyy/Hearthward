@@ -1,0 +1,41 @@
+# TASK-053 菜单、主界面、背包与技能UI测试
+
+需求来源：2026-10-02 Owner提供登录页、设置和存档截图，以及两幅深色参考。当前范围为黑底标题、四项滚轮菜单、70%错位归火标志和宽幅设置／载入存档页；参考图的水印与其他游戏素材未使用。
+
+独立分支 `codex/TASK-053-title-wheel`，基线 `4db5789184fe38e041d62a1e68c8517338ea0b01`；尚未提交、推送、合并或公开发行。最新HUD、背包与技能改造仅在Development测试工程，本轮未进行桌面导入，入口及当前409项检查、44项真实地图验证见[技能测试报告](skills-preview/REPORT.md)。前轮HUD和背包记录只绑定当轮源码。以下三页与高亮修复的Shipping验证对应已安装的旧HUD版本。Owner已确认保留最新三页UI并授权导入桌面游戏，本机Shipping版已更新为 `0.2.0-preview.20261002.2`，见[桌面导入报告](desktop_20261002_focus/REPORT.md)。
+
+## 当前界面
+
+标题视口保持全黑；原logo通过UV分区绘制，归火相对首版70%缩放，归上移12、火下移12个设计单位，中间火苗保留。五个菜单入口每次显示四项，滚到末尾后退出游戏依次出现，首尾停止，箭头随可见窗口边界隐藏。当前五项／四行只有顶部与底部两种窗口状态。
+
+设置与存档移除复杂场景与皮革面板，采用完整黑色视口、1544宽的炭灰面板、细金线、柔和选中光带和原字体。设置顶部横排八分类，参数／主副键位对齐分栏，说明与底部操作独立。存档按保存节点、类型、保护状态和操作分栏，提供空态、页内行号和首尾分页，保留保存、载入、锁定与删除确认。
+
+默认页内最多7行，150%字号时最多4行；滚轮、分页按钮和键盘焦点适应长列表。禁用删除区拦截点击，锁定节点不会误触载入行。确认期间阻止列表分页／滚动。从标题页进入使用“载入存档”，游戏中使用“存档管理”；返回沿用既有父页面规则。
+
+退出确认框的逻辑默认取消焦点与可见键盘高亮现已分开，刷新不再反复点亮返回按钮；真实悬停、移开与键盘选中保持稳定，详见[高亮修复记录](modal-focus.md)。
+
+## 启动与截图
+
+双击 [`标题UI测试.cmd`](../../../scripts/ui/标题UI测试.cmd) 在本机启动1600×1000 Development测试窗口；依赖已有UE 5.8.2、GameFactory和Python环境，每次使用独立存档池。首轮通过原cmd入口启动的Development窗口记录见 [`launch.json`](preview_b37ce5e29cf5/launch.json)。当前正常游玩入口为桌面的“归火”快捷方式及原GPU／CPU启动cmd；修复版Shipping窗口启动验证通过，验证完成后停止自有进程。
+
+- [`preview.png`](preview.png)：登录页。
+- [`preview-settings.png`](preview-settings.png)：设置初始分类；[`preview-bindings.png`](preview-bindings.png)：键位分类。
+- [`preview-save.png`](preview-save.png)：从登录页进入的有档列表；[`preview-save-empty.png`](preview-save-empty.png)：无档列表。
+
+以上均为引擎UI层原生截图。十个存档节点来自明确启用的独立非Shipping夹具，未读取或修改玩家正式档池。
+
+## 已安装三页与高亮修复验证（HUD改造前）
+
+- 此前安装编译：UEClient公开API执行BuildCookRun，重新编译HearthwardEditor / Win64 / Development及Hearthward / Win64 / Shipping并打包成功，见[package-result.json](desktop_20261002_focus/package-result.json)。早期Editor构建保留于 [`build_result.json`](build_result.json)。
+- 真实PIE：`python -X utf8 scripts/ui/launch_title_test.py --verify`，最终运行 `verify_fb927cae9e15`，166/166项通过，37张原生UI截图，见 [`report.json`](verify_fb927cae9e15/report.json)。包括26项退出确认框原生事件高亮检查及原标题回归、八个设置分类、键位页翻页与捕获入口、存档空态／满行、首尾分页、锁定／解锁、禁用删除区、读档／删除确认取消、父页返回、字号应用与恢复。
+- 人工查看16:9、16:10、超宽和720p画面及150%字号画面：分栏文字未重叠，页脚和说明完整，视口无场景露边。最终源码／DLL／配置指纹绑定于 [`fingerprints.json`](verify_fb927cae9e15/fingerprints.json)。
+- 用户设置：验证先快照Saved/Config下GameUserSettings.ini，停止自有Editor后恢复原字节或移除测试新建文件，记录见 [`preference-restore.json`](verify_fb927cae9e15/preference-restore.json)。
+- 工具测试33/33通过，原始日志见 [`tool-tests-subpages.log`](tool-tests-subpages.log)。当时仓库自检0错误，本地范围／20项指纹通过，历史记录见 [`repository-validation.json`](repository-validation.json)；当前测试源码范围与28项指纹见 [`scope-audit.json`](scope-audit.json)。
+
+正式基线范围检查仍因053任务不在未提交基线中报告 `No usable approved task snapshot at base: TASK-053`。本地审计核对用户已批准允许路径、标题／设置／存档／HUD／背包／技能之外配置不变、其余ScreenContent、原仓储／背包组合和Gameplay成长规则不变及最终测试指纹，不替代正式基线快照检查。
+
+## 验证边界与历史
+
+检查通过Widget命令、原生事件入口和真实引擎渲染执行，物理滚轮／键盘／点击的完整实机体验未验收。本轮未恢复Windows UI自动操作。Shipping构建、包内文件一致性和实际安装启动窗口已验证；没有Shipping三页的自动截图、完整物理输入、多显示器或完整玩法回归。
+
+`verify_f88830672d66` 暴露禁用删除区点击穿透，已修复。`verify_a41e327eead6` 最后返回断言未考虑新进度夹具主动切换到HUD父页，断言已修正，并额外验证有档时从登录页进入和返回。`verify_6858da42cc46` 是标题上下文命名细化前的运行。已安装三页／高亮修复的结果以 `verify_fb927cae9e15` 为准，最新Development HUD／背包／技能结果见技能独立记录；更早标题测试为历史证据；此前最终UI运行 `verify_d26831774a8a` 保留为旧DLL证据，桌面首版verify_b5b51ab92d9e的139项为旧版本证据；本次高亮修复、版本递增后执行166项。
