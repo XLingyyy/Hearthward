@@ -1,0 +1,85 @@
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -6,7 +6,7 @@
+ 
+ [TASK-053—074整批设计](docs/planning/TASK-053-074/REVIEW.md)已于2026-10-03获Owner批准，22项对应原稿055—076，按批准依赖开始施工。053—064、066—072及074已激活工程施工或定向调查；065／073的真人验收尚未执行。根集成目录为.agent-local/task051、分支codex/TASK-053-traversal，子Agent在独立目录交付精确增量；任务状态见各单JSON。固定录音暂缓，Owner／Reviewer均为XLingyyy，无Issue；本批尚未提交推送。当前施工证据见[053交接](docs/handoffs/TASK-053.md)，依赖见[DEPENDENCIES](docs/planning/TASK-053-074/DEPENDENCIES.md)，设计核查保留于[REPORT](docs/qa/TASK-053-074/REPORT.md)。
+ 
+-2026-10-04施工接续：069地图文字缩放回归、070两件装备PBR样品磁盘重载与渲染、071成熟状态和生态到期跨进程恢复均已通过定向工程验证；068营地制作取料来源与合法补量误拒已修复，模型语义和055真实石斧动作仍在处理。完整证据与未完成出口见[施工交接](docs/handoffs/TASK-053.md)。
++2026-10-04施工接续：069地图文字缩放、070两件PBR样品及071核心／成熟批次／图箱Pending／生态／双营地独立进程往返已通过定向工程验证；最近受测快照Save13/13，真实部分领料及无回执命令版本恢复通过。055石斧动作分段与实际刃接触已GREEN，掌心握持、正常输入和许可未验收。068原话数量／材料预算、指定来源取料与多材料恢复已GREEN；No／Once限制存在独立真实RED，修复中。固定10表达的两组模型实验为7/10及8/10，完整双后端门槛未通过。完整证据与未完成出口见[施工交接](docs/handoffs/TASK-053.md)。
+ 
+ ## 当前项目成果同步（2026-10-02）
+ 
+@@ -32,7 +32,7 @@
+ 
+ [TASK-044 生存与救援](docs/tasks/TASK-044.md)按Owner批准沿用044编号实施。main已接入兄弟生存状态、3秒用药与半份药、120秒倒地／5秒扶起、严重饥饿期限、存档恢复和失败回档。靠近倒地弟弟2米内按E扶起；倒地时Esc菜单可立即放弃。背包用药会回到HUD继续计时，移动／攻击／跳跃可取消；暂停菜单可设置普通页面是否暂停。
+ 
+-044任务分支已通过Editor构建、相关原生18/18和真实PIE 23/23检查，证据见[验证报告](docs/qa/TASK-044/REPORT.md)。已由PR #46合入main（7ce8262）；测试仍绑定报告内源码。已集成的051操作基线新增坠落／游泳参数与饥饿视觉设置；新药配方与治疗区内容仍待对应任务。main的046实现新增床八小时睡眠与有限生产／刷新状态，沿用044生存时钟。main已含049／050并使用schema8；052分支升级schema9，旧存档采用明确迁移；请勿用旧版本覆盖新档。
++044任务分支已通过Editor构建、相关原生18/18和真实PIE 23/23检查，证据见[验证报告](docs/qa/TASK-044/REPORT.md)。已由PR #46合入main（7ce8262）；测试仍绑定报告内源码。已集成的051操作基线新增坠落／游泳参数与饥饿视觉设置；新药配方与治疗区内容仍待对应任务。main的046实现新增床八小时睡眠与有限生产／刷新状态，沿用044生存时钟。main已含049／050及052时间整合，使用schema9；旧存档采用明确迁移；请勿用旧版本覆盖新档。
+ 
+ AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与分支证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)和[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；所选集成修正随 PR #40 合入 main，PR #41/#42 属于 TASK-031。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
+ 
+diff --git a/docs/PROJECT_STATE.md b/docs/PROJECT_STATE.md
+--- a/docs/PROJECT_STATE.md
++++ b/docs/PROJECT_STATE.md
+@@ -6,7 +6,7 @@
+ 
+ 2026-10-03，Owner批准[053—074整批设计](planning/TASK-053-074/REVIEW.md)并授权施工。22项对应原稿055—076，设计均Approved；053—064、066—072及074已激活工程施工或定向调查；065／073真人验收尚未执行。施工根集成目录为`.agent-local/task051`、分支`codex/TASK-053-traversal`，各局部补丁使用独立工作树。尚未提交推送、合并或发行；Owner／Reviewer均为XLingyyy，无Issue。当前证据见[053交接](handoffs/TASK-053.md)，历史设计核查仍在[设计REPORT](qa/TASK-053-074/REPORT.md)。
+ 
+-2026-10-04接续：069地图125%/150%真实布局回归通过；070两样品PBR和磁盘重载通过，风格／许可／正式绑定未验收；071核心、成熟批次／宝图Pending、生态Due与Generation2跨进程读档均通过。068两来源制作回归已RED→GREEN，真实模型仍未达完整门槛；055石斧举斧与伤害窗口错位已由实际采样确认，正在修正。证据见[当前交接](handoffs/TASK-053.md)。
++2026-10-04接续：069文字缩放125%/150%真实布局、070两样品PBR与磁盘重载、071核心／成熟批次／宝图Pending／生态Due／双营地独立WRITE与READ均通过定向工程验证；最近受测快照Save13/13，命令r>1无回执及部分领取恢复通过。055石斧phase与实际Blade回归GREEN，掌心握持、正常输入／真人观感及动作许可未验收。068数量／预算／camp材料来源与多材料恢复已GREEN，No／Once真实RED修复中；固定10表达两组实验raw为7/10与8/10，完整双后端60表达、联合性能与发行门槛未通过。证据见[当前交接](handoffs/TASK-053.md)。
+ 
+ ## 本次同步成果
+ 
+diff --git a/docs/handoffs/TASK-053.md b/docs/handoffs/TASK-053.md
+--- a/docs/handoffs/TASK-053.md
++++ b/docs/handoffs/TASK-053.md
+@@ -4,13 +4,13 @@
+ 
+ ## 当前接续状态（2026-10-04）
+ 
+-最新Editor Development构建通过；仓库静态检查75份task、0错误，仅提供元数据信用，正式T-002批准快照和运行出口独立。整批仍Active。069地图125%/150%全文与滚轮分区真实Widget回归通过，实际截图已核看，见qa/TASK-069/map-readable-runtime-review.md。070两件样品已公开导入、修复实际PBR接线与线性遮罩纹理、去除查询凸包，独立编辑器磁盘重载和相同30/10lux渲染通过，见qa/TASK-070/sample-pbr-runtime-review.md；没有绑定正式玩法、批准风格或完成许可。
++最近受测快照的Editor Development构建通过；仓库静态检查75份task、0错误，仅提供元数据信用，正式T-002批准快照和运行出口独立。整批仍Active。069地图125%/150%全文与滚轮分区真实Widget回归通过，实际截图已核看，见qa/TASK-069/map-readable-runtime-review.md。070两件样品已公开导入、修复实际PBR接线与线性遮罩纹理、去除查询凸包，独立编辑器磁盘重载和相同30/10lux渲染通过，见qa/TASK-070/sample-pbr-runtime-review.md；没有绑定正式玩法、批准风格或完成许可。
+ 
+-071跨进程核心、成熟投入批次与宝图Pending、生态Due/Generation2分别已真实通过。最新生态write11484/read3548，各0错误/0警告，重复加载零增益，跨Due仅一代刷新和一批rope，见qa/TASK-071/restart-ecology-runtime-review.md。正式两营地连续流程、正常菜单与HTTP/UI迟到回调仍待运行。
++071核心、成熟投入批次／宝图Pending、生态Due／Generation2及两营地独立WRITE/READ均通过。生态write11484/read3548与两营地write18236/read31432各0错误/0警告，重复加载零增益，跨Due仅一代刷新和一批rope，见[生态报告](../qa/TASK-071/restart-ecology-runtime-review.md)和[两营地报告](../qa/TASK-071/restart-two-camps-runtime-review.md)。最近revision071-blade055-green-no-once068-red的Save13/13，真实r>1无回执往返及部分领料恢复均通过；公开诊断原因补充待定向验证。场景放置／真实事务Native不代替普通输入、菜单退出继续或HTTP/UI迟到回调。
+ 
+-068数量保真守卫22项断言通过；合法“补充：4”和“四份。”误拒已真实RED→GREEN。完整JSON提示样品实际固定10项理解7/10，明确任务6/7端到端、5/6执行；C09真实camp制作错误扣Bro库存已复现，TakeMaterials按指定camp取完整材料，两来源实际Native回归已GREEN。中性拒绝第三例实际固定10项仍raw7/10，并使消耗上限遗漏，已撤回；C09模型真实执行完整GREEN。原话预算独立校验与多材料受预留阻塞后的恢复均已真实RED：budget068-recovery068-red，预算2错误/0警告，恢复5错误/1既有警告。模型、冻结输入和预算不改，正在最小修复。
++068数量保真守卫22项断言及合法“补充：4／四份。”已GREEN；指定camp取完整材料、原话预算和多材料预留恢复均已真实RED→GREEN。budget-recovery-green055-blade-red中三项相关Native通过，制作夹具保留一条既有EnhancedInput警告。固定10表达的original-budget-guard实验raw7/10、明确端到端7/7、执行6/6；semantic-branch-budget实验raw8/10、明确端到端6/7、执行5/6，后者有明确任务回归，不能只按raw上升判整体改善。最新OriginalMaterialProhibition／OriginalOnceAuthorization两项真实RED修复中；新的System合法／非法priority与完整store示例尚待build/run。完整双后端60表达、边界及正常UI门槛未通过，raw不经守卫改写。
+ 
+-055实际石斧223个compressed pose样本已完成，21张唯一PNG已核看：当前轻击逻辑伤害窗口仍在举斧，实际劈落晚于窗口。四姿态腕pivot临时对齐实拍完成；实测几何Grip/BladeBase/BladeTip已保存既有单包并独立重载通过，正式掌心握持与动作未验收。下一步依据实拍处理握持、动作分段时序与真实刃扫掠；候选动作许可、正常战斗与真人出口保留。
++055早先223个compressed pose／21张PNG确认轻击窗口与举斧错位；现StoneAxeLightUsesClipPhaseAndPhysicalBlade五子场景已GREEN、0错误/警告，含30fps、1fps跨窗、真实Mesh前后变换、接触前零伤害、薄墙与一次GUID磨损。现有Grip/BladeBase/BladeTip单包已保存并独立重载。四张无保存palm候选近景仍见手皮肤中心轴交叉，掌心握持未验收；正常输入影片、动作观感及候选许可继续保留。
+ 
+ ## 已落地与运行证据
+ 
+@@ -44,7 +44,7 @@
+ 
+ - docs/qa/TASK-053/integrated063-baseline064-native.json：7项中063五项和Camp有限预算/口粮共6项通过；064两业务断言红，原点/已探索路线正向通过。此前combined061/064初跑064临时JSON生命周期夹具崩溃，不作为业务红；夹具已修复，本次正常报告已生成。
+ 
+-旧任务历史PASS只绑定各自原始源码。T-002正式批准快照检查、Owner体验、055真实专用动作／战斗样本、065／073真人、068真实模型批次、072联合性能和第二台机器尚未完成，整批不得标Done。录音继续暂缓。
++旧任务历史PASS只绑定各自原始源码。T-002正式批准快照检查、Owner体验、055掌心握持／正常输入／真人动作观感及许可、065／073真人、068完整双后端模型批次、072联合性能和第二台机器尚未完成，整批不得标Done。录音继续暂缓。
+ 
+ ## 后续衔接
+ 
+@@ -60,15 +60,15 @@
+ - 067：gifts067-compat055057 8/8通过，覆盖真实占旗5A秒／移动取消、全局失败、永久胜利第二营地Activated、共享几何与故乡赠送仓库。物资进度42.5%及篝火占位均有真实RED→GREEN，未通过忽略碰撞放置。
+ - 055：两个人物各21个有效实际皮肤点凸包PA已保存并绑定，仍由Owner持LFS锁。原Hero足body中心射线在踝缝实际皮肤先遇两calf控制顶点，实际先命中小腿且按腿甲结算正确；固定前脚掌ball_l目标后anatomical055-with072全部5/5通过，验证实际骨首命中、四部位已装备GUID护甲、备件不磨损及被拒伤害不扣耐久。每项有测试World清理缺EndPlay警告；未计作正常玩法或动作验收。候选动画Hero／Brother各12条只加载和关节运动通过，许可与正式动作、武器护具表现仍待落实。早先工厂根缩放胶囊、V-HACD空body及box候选失败保留于对应原报告，已由实际点凸包替换。
+ - 069：真实无焦点Enter误确认和右侧Ctrl／Shift无法激活移动Chord均已RED→GREEN。integrated069-baseline071两项UI069通过，生产EnhancedInput收到左右修饰键且松开一侧仍保持另一侧；物理主键与危险确认约定保留。正常桌面输入与全九页体验尚未验收。
+-- 071：真实旧HWS2池副本四个点NPCVersion2因历史CDO省略Schema，当前读取先落Schema9；最小选择既有schema2迁移后，四点迁移／当前格式重读且原件字节保留通过。显式schema8内容被HWS7接受的独立RED已修为Header／Schema一致性拒绝。integrated071-skin055中Save全部11/11通过，含真实CDO省略回归、合法schema8正控制及实际旧档；HWS2允许2／3、缺省历史版本路径保留。实际LoadPoint时间线回归actual-loadpoint071 1/1通过：旧ticket原先仍current，真实读盘恢复后stale，未来库存撤回，保存command保持，旧动作不结算且新委托可接受。跨进程核心往返正在准备；成熟全系统状态仍待执行。
+-- 068：真实UE完整24能力曾输入5691并CONTEXT_OVERFLOW（generation0）；目录按完整item／intent集合共享别名和去除重复说明后，两后端C01实际均3075/full_relevant、generation1、无dropped，采木入库及额外物品0通过。冷请求getter CPU116.009s、Vulkan23.441s仅为Submit→HTTP解析，不能作为暖性能或UI通过。历史RED和C01已独立保留在Saved/Task068/*-budget-red、*-compact-c01及docs/qa/TASK-068对应报告。完整Vulkan当前候选60矩阵结果为理解28/60、明确任务端到端28/40、执行22/30、确定性边界20/20、额外物品0；未达要求。原始失败独立保留vulkan-cache-mapping-red-60。当前在既有ValidLimit值域内约束Schema格式并定向复测，冻结表达和门槛不改；模型／3328／256／并发1／Vulkan16层／4线程不改。
++- 071：真实旧HWS2池副本四个点NPCVersion2因历史CDO省略Schema，当前读取先落Schema9；最小选择既有schema2迁移后，四点迁移／当前格式重读且原件字节保留通过。显式schema8内容被HWS7接受的独立RED已修为Header／Schema一致性拒绝。integrated071-skin055中Save全部11/11通过，含真实CDO省略回归、合法schema8正控制及实际旧档；HWS2允许2／3、缺省历史版本路径保留。实际LoadPoint时间线回归actual-loadpoint071 1/1通过：旧ticket原先仍current，真实读盘恢复后stale，未来库存撤回，保存command保持，旧动作不结算且新委托可接受。核心、成熟批次／图箱Pending、生态及两营地独立进程往返已通过；最新Save13/13及命令版本回归见当前接续状态。普通菜单与迟到回调仍待执行。
++- 068：真实UE完整24能力曾输入5691并CONTEXT_OVERFLOW（generation0）；目录按完整item／intent集合共享别名和去除重复说明后，两后端C01实际均3075/full_relevant、generation1、无dropped，采木入库及额外物品0通过。冷请求getter CPU116.009s、Vulkan23.441s仅为Submit→HTTP解析，不能作为暖性能或UI通过。历史RED和C01已独立保留在Saved/Task068/*-budget-red、*-compact-c01及docs/qa/TASK-068对应报告。完整Vulkan当前候选60矩阵结果为理解28/60、明确任务端到端28/40、执行22/30、确定性边界20/20、额外物品0；未达要求。原始失败独立保留vulkan-cache-mapping-red-60。Schema格式及两个完整JSON示例已定向复测，后续固定10实验和No／Once当前状态见上文；冻结表达和门槛不改；模型／3328／256／并发1／Vulkan16层／4线程不改。
+ - 072：已合入成功HTTP回复timings的最小日志和QA monotonic Submit→UE proposal/status复核耗时，保留既有getter和业务阈值。实际cache_prompt开启后59次暖请求缓存2674—3053 token，prefill约0.66—1.8秒；输出解码仍慢且语义不通过。59暖样本低于登记60，暖p95记INSUFFICIENT_SAMPLES；UI paint和联合场景仍未执行，无正式性能通过。
+ - 070／074：已整理真实装备源FBX/公开导入前置及许可事实。074修复worktree打包脚本找不到公开engine_adapters（--help已真实通过），并登记实际331条软引用所需Animals/MotionR3 AlwaysCook；尚未执行Shipping Cook。当前可运行Content二进制齐全；art_source中的未恢复源不冒充运行缺失。worktree Runtime只有跟踪说明，正式Shipping前必须准备真实本地模型及两后端bundle；原目录的非Shipping override单例不证明发行部署。许可和Cook软引用须按实际最终绑定核实，未冻结RC、未打包发布。
+ 
+-064实际地图文字回归先5断言RED，动态测高及13矩形局部修复后map064-text-green 1/1通过；两张实际PNG已核看，100%字号侧栏全文、6图例、三行任务全文与页脚不再重叠。125%/150%及剩余驻军提示另待069。059三张实际岗位工效Widget渲染已核看。
++064实际地图文字回归先5断言RED，动态测高及13矩形局部修复后map064-text-green 1/1通过；两张实际PNG已核看，100%字号侧栏全文、6图例、三行任务全文与页脚不再重叠。文字缩放125%/150%已在069布局回归通过；正式驻军提示与普通输入体验仍待验收。059三张实际岗位工效Widget渲染已核看。
+ 
+-接续顺序：修复真实模型格式和语义缺陷，定向成功后再双后端60表达；071跨进程核心往返；055真实持斧实例/模式显示及070最小样板；正常地图能力链；最后按当前候选执行072／074工程检查。065／073及其他真人、第二机器和Owner样板／许可结论保留未执行。固定录音继续暂缓。根独占引擎和共享资产，子Agent独立目录提供增量补丁；当前未提交、未推送。
++接续顺序：修复068 No／Once确定性缺口并实测待测System，再按固定门槛执行双后端60表达；055掌心与正常战斗、071普通菜单与HTTP/UI跨读档回调；正常地图能力链；最后按当前候选执行072／074工程检查。持斧实例／模式、phase／刃接触及070两PBR样品已有定向GREEN，未作Owner观感／许可／正式绑定验收。065／073及其他真人、第二机器和Owner样板／许可结论保留未执行。固定录音继续暂缓。根独占引擎和共享资产，子Agent独立目录提供增量补丁；当前未提交、未推送。
+ 
+-2026-10-04后续：055当前实例／模式持斧两真实RED已由局部RefreshHeldTool修为GREEN，held-axe055-green-restart071-write两项全部通过、0警告。071显式phase使用稳定真实地图package，独立第二进程读取进行中；先前默认Untitled包名导致地图保护拒绝是夹具失配，生产地图保护保持。068完整目录／别名／通用提示重排候选已编译，准备真实定向复测，尚无新语义通过结论。
++2026-10-04后续：055当前实例／模式持斧两真实RED已由局部RefreshHeldTool修为GREEN，held-axe055-green-restart071-write两项全部通过、0警告。071显式phase使用稳定真实地图package，后续独立进程读取已通过；先前默认Untitled包名导致地图保护拒绝是夹具失配，生产地图保护保持。068完整目录／别名及提示重排已有固定10定向结果，完整门槛未通过；新的priority／store示例候选尚待build/run。
+ 
+-071核心跨进程往返已实际通过：write19568/read21740，同节点真实读盘两次，库存／axeGUID／command／Clockorigin／NPC与operations/receipts无增益，0警告；详见docs/qa/TASK-071/restart-core-review.md。成熟后台批次、图箱Pending、双营地生态、A/W跳时分离及正常菜单退出继续仍未覆盖。
++071核心跨进程往返已实际通过：write19568/read21740，同节点真实读盘两次，库存／axeGUID／command／Clockorigin／NPC与operations/receipts无增益，0警告；详见docs/qa/TASK-071/restart-core-review.md。成熟后台批次、图箱Pending、生态Due／代次、双营地与A/W跳时分离已分别通过独立WRITE/READ；普通菜单退出继续及HTTP/UI迟到回调仍未覆盖。

@@ -1,0 +1,103 @@
+diff --git a/Source/Hearthward/Save/HearthwardSaveGame.h b/Source/Hearthward/Save/HearthwardSaveGame.h
+--- a/Source/Hearthward/Save/HearthwardSaveGame.h
++++ b/Source/Hearthward/Save/HearthwardSaveGame.h
+@@ -85,6 +85,8 @@
+     UPROPERTY() int32 Carried = 0;
+     UPROPERTY() int32 CampBatchBaseline = -1;
+     UPROPERTY() FGuid CommandId;
++    // Zero is absent historical revision metadata; recover it from an exact versioned receipt when available.
++    UPROPERTY() int64 CommandRevision=0;
+     UPROPERTY() TMap<FName,float> NPCDurability;
+     UPROPERTY() TMap<FName,int32> NPCSpent;
+     UPROPERTY() TArray<FGuid> NPCOperations;
+@@ -135,6 +137,7 @@
+     // INDEX_NONE means no capacity. An index equal to Num means append.
+     int32 SelectSlot(const TArray<FHearthwardSavePoint>& Points);
+     bool Validate(const UHearthwardSaveGame& Pool);
++    bool ResolveCommandRevision(const FHearthwardWorldSave& Snapshot,int64& Revision);
+     bool MigrateInventory(UHearthwardSaveGame& Pool,FString& Error);
+     bool Read(const FString& Path, UHearthwardSaveGame*& Out, FString& Error);
+     bool Write(const FString& Path, UHearthwardSaveGame* Pool, FString& Error);
+diff --git a/Source/Hearthward/Save/HearthwardSaveGame.cpp b/Source/Hearthward/Save/HearthwardSaveGame.cpp
+--- a/Source/Hearthward/Save/HearthwardSaveGame.cpp
++++ b/Source/Hearthward/Save/HearthwardSaveGame.cpp
+@@ -23,7 +23,7 @@
+ {
+     // An absent version must stay absent when loading historical tagged properties.
+     // nullptr defaults writes the clock metadata even when it equals today's defaults.
+-    if(Ar.IsLoading()){ClockVersion=0;InitialDay=0;InitialMinute=-1;}
++    if(Ar.IsLoading()){ClockVersion=0;InitialDay=0;InitialMinute=-1;CommandRevision=0;}
+     StaticStruct()->SerializeTaggedProperties(Ar,reinterpret_cast<uint8*>(this),StaticStruct(),nullptr);
+     return true;
+ }
+@@ -244,6 +244,30 @@
+     if (!Out || !HearthwardSave::Validate(*Out)) { Error = Out?HearthwardSave::Diagnose(*Out):TEXT("存档无法解析，请恢复备份；原档已保留。"); Out = nullptr; return false; }
+     return true;
+ }
++}
++
++bool HearthwardSave::ResolveCommandRevision(const FHearthwardWorldSave& S,int64& Revision)
++{
++    Revision=S.CommandRevision;
++    if(Revision<0)return false;
++    for(const auto& Receipt:S.NPCReceipts)
++    {
++        if(Receipt.Command!=S.CommandId)continue;
++        bool Versioned=false;
++        for(const TCHAR* Prefix:{TEXT("take:"),TEXT("craft:"),TEXT("repair:"),TEXT("deposit:"),TEXT("withdraw:"),TEXT("handoff:")})
++            if(Receipt.Payload.StartsWith(Prefix,ESearchCase::CaseSensitive)){Versioned=true;break;}
++        if(!Versioned)continue;
++        int32 Separator;
++        if(!Receipt.Payload.FindLastChar(TEXT(':'),Separator))return false;
++        const FString Suffix=Receipt.Payload.Mid(Separator+1);
++        if(!Suffix.StartsWith(TEXT("r"),ESearchCase::CaseSensitive))return false;
++        const FString Number=Suffix.Mid(1);
++        const int64 Value=FCString::Strtoi64(*Number,nullptr,10);
++        if(Value<=0 || FString::Printf(TEXT("%lld"),Value)!=Number || (Revision!=0 && Revision!=Value))return false;
++        Revision=Value;
++    }
++    if(Revision==0)Revision=1;
++    return true;
+ }
+ 
+ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
+@@ -289,6 +313,7 @@
+         Operations.Reset();if(S.NPCReceipts.Num()>512)return false;
+         for(const auto& R:S.NPCReceipts)
+         {if(!R.Id.IsValid() || R.Command!=S.CommandId || R.Payload.IsEmpty() || R.Payload.Len()>200 || Operations.Contains(R.Id))return false;Operations.Add(R.Id);}
++        int64 CommandRevision;if(!ResolveCommandRevision(S,CommandRevision))return false;
+         if(!S.Inventory.IsEmpty() || !S.Storage.IsEmpty() || !S.Bag.IsEmpty() || !S.NPCDurability.IsEmpty())return false;
+         TSet<FGuid> InstanceIds;TSet<FName> UniqueClaims;
+         for(const auto* Inventory:{&S.PlayerItems,&S.BrotherItems,&S.StorageItems})
+diff --git a/Source/Hearthward/Save/HearthwardSaveSubsystem.cpp b/Source/Hearthward/Save/HearthwardSaveSubsystem.cpp
+--- a/Source/Hearthward/Save/HearthwardSaveSubsystem.cpp
++++ b/Source/Hearthward/Save/HearthwardSaveSubsystem.cpp
+@@ -253,7 +253,7 @@
+         S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
+         S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
+         S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;S.CampBatchBaseline=Companion->CampBatchBaseline;
+-        S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability.Reset();S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
++        S.CommandId=Companion->Command.GetActive().Id;S.CommandRevision=Companion->Command.GetActive().Revision;S.NPCDurability.Reset();S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
+         S.NPCReceipts=Companion->Receipts;
+     }
+     return true;
+@@ -327,6 +327,9 @@
+         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
+         return Restore(Upgraded,bNewProgress);
+     }
++    int64 CommandRevision;
++    if(!HearthwardSave::ResolveCommandRevision(S,CommandRevision))
++    {Status=TEXT("伙伴命令回执版本不一致，原档已保留");return false;}
+     APawn* Player = nullptr;
+     AHearthwardCompanionFixture* Companion = nullptr;
+     if (!Participants(Player, Companion)) { Status = TEXT("恢复参与者缺失"); return false; }
+@@ -370,7 +373,8 @@
+         Companion->Command = FHearthwardCompanionCommand();
+         Companion->Command.ItemId = S.Item; Companion->Command.Requested = S.Requested; Companion->Command.Delivered = S.Delivered;
+         Companion->Command.bActive = S.CommandActive;
+-        Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), 1};
++        Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), CommandRevision};
++        Companion->Command.Revision=CommandRevision;
+         Companion->Command.Acquired=S.Acquired;Companion->Command.Carried=S.Carried;Companion->Command.Goal=S.AgentGoal;Companion->CampBatchBaseline=S.CampBatchBaseline;
+         Companion->Spent=S.NPCSpent;Companion->AppliedOperations=TSet<FGuid>(S.NPCOperations);
+         Companion->Receipts=S.NPCReceipts;

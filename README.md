@@ -1,8 +1,16 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险项目。截至2026-10-03，核对主干为`origin/main@4db5789184fe38e041d62a1e68c8517338ea0b01`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线，以及PR #56的动物动作和更新／存档兼容整合。当前`codex/TASK-052-time-integration`已完成统一时间、真实设施跳时、全局刷新、旅行及schema9迁移，Editor Development、相关原生34/34、渲染PIE82/82通过；本任务成果尚未集成main，受测源码`0bc1c3ee5d09cfca3f675cf657b6981f874f9138`及证据见[052报告](docs/qa/TASK-052/REPORT.md)。Windows Demo受测源码仍为`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，发行包尚未随这些合并更新。版本与验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026自然地图](docs/tasks/TASK-026.md)已形成4032米World Partition底座与营地入口，完整路线、流送、性能和Owner视觉验收仍未闭合。有效设计见[CURRENT](docs/design/CURRENT.md)及各已批准增量。
+UE 5.8.2 单人第三人称生存冒险项目。截至2026-10-03，核对主干为`origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线、PR #56的动物／更新兼容，以及PR #58的052统一时间整合。052受测源码`0bc1c3ee5d09cfca3f675cf657b6981f874f9138`通过Editor Development、相关原生34/34、渲染PIE82/82，证据见[052报告](docs/qa/TASK-052/REPORT.md)；这些结果绑定原受测源码，本轮未在合并SHA上重跑。Windows Demo受测源码仍为`8b54550b5f9d7d01c9e9e0f7444826090667f3f5`，发行包尚未随合并更新。版本与验收见[项目状态](docs/PROJECT_STATE.md)及[TASK-041账本](docs/planning/TASK-041-baseline-ledger.md)。[TASK-026自然地图](docs/tasks/TASK-026.md)已形成4032米World Partition底座与营地入口，完整路线、流送、性能和Owner视觉验收仍未闭合。有效设计见[CURRENT](docs/design/CURRENT.md)及各已批准增量。
 
-[TASK-052](docs/tasks/TASK-052.md)对应原稿054，复用043已批准时间规则，统一现有生产／生态／战役的推进、刷新、旅行与回档；[D1—D6工程方案](docs/planning/TASK-052/PLAN.md)及schema9迁移已获Owner确认。本分支新档从第1日20:00开始；靠近真实床可睡8小时，已建篝火的设施页可等待1／4／8小时，加载和暂停冻结时间。schema9保留旧档W及原兼容备份，完整证据与未覆盖项见[052报告](docs/qa/TASK-052/REPORT.md)。固定录音按Owner要求暂缓。最新动物归档沿用其原有051标签，本单不覆盖该任务资料。
+[TASK-052](docs/tasks/TASK-052.md)对应原稿054，已在main复用043时间规则，统一生产／生态／战役推进、刷新、旅行及schema9回档。新档第1日20:00开始；靠近真实床可睡8小时，已建篝火设施页可等待1／4／8小时，加载和暂停冻结时间；旧档W和兼容备份保留，方案见[052 PLAN](docs/planning/TASK-052/PLAN.md)。固定录音继续暂缓；动物归档保留原有051标签。
+
+[TASK-053—074整批设计](docs/planning/TASK-053-074/REVIEW.md)已于2026-10-03获Owner批准，22项对应原稿055—076，按批准依赖开始施工。053—064、066—072及074已激活工程施工或定向调查；065／073的真人验收尚未执行。根集成目录为.agent-local/task051、分支codex/TASK-053-traversal，子Agent在独立目录交付精确增量；任务状态见各单JSON。固定录音暂缓，Owner／Reviewer均为XLingyyy，无Issue；本批已获Owner授权提交并推送至该施工分支，提交记录见交接。当前施工证据见[053交接](docs/handoffs/TASK-053.md)，依赖见[DEPENDENCIES](docs/planning/TASK-053-074/DEPENDENCIES.md)，设计核查保留于[REPORT](docs/qa/TASK-053-074/REPORT.md)。
+
+2026-10-05施工接续：055石斧重击的时序与旧扇形误伤已真实Native RED→GREEN，重击三例及轻击回归均0错误0警告；唯一自然作物目标绑定也已RED→GREEN。068真实模型补充浇水、新采散石返营和普通钓鱼均分别取得实际成功；散石仅修订明确隔离的QA营地代理位置，生产导航不改。071首次交流Slate崩溃修复后的公共卡片/菜单跨Load96/96通过，新增真实OS键鼠读档确认/取消路线通过；069交流深底和真实中文IME组合、候选、Enter/Escape优先级局部验证通过。核心/成熟批次/图箱Pending/生态/双营地独立往返、Save13/13与真实HTTP跨读档保留既有定向证据。
+
+069正常窗口检查已修正标题／背包／暂停页脚、默认与150%背包可读性、Save行重叠及150%设置值消失；设置已实际恢复100%。34个任务目标在正常／真实受伤倒地Widget中量字通过，最多六行，正文24及时间／位置／生存按钮无交叠；原始证据见[界面报告](docs/qa/TASK-069/normal-ui-readability-runtime-review.md)。正常Settings Apply后Continue的加载输入旧快照已真实RED→GREEN，相同实际OS路径Escape／Tab及自然Quit通过；见[加载输入报告](docs/qa/TASK-069/loading-page-input-runtime-review.md)。默认地图探索文字17→24的实际Widget测宽高及进度条边界通过。
+
+068完整理解门槛仍失败：目标绑定修复前CPU60 raw34/60、歧义1/20，先前Vulkan60 raw36/60，两个全矩阵版本不同，最新补充成功不抵扣门槛；字段顺序失败实验已撤回。055完整皮肤重建通过，单个缩径/手指组合穿小指已拒绝，正式握姿/动作观感和许可未验。070两件PBR样品与三组角色/营地/地形概念图已准备，Owner风格仍待审阅。正常Bootstrap新游戏已由实际键鼠进入夜袭，手动保存后的独立重启继续恢复可见任务／伙伴／库存，确认退出自然结束；只覆盖开局局部路线。九页完整流程、真人体验、联合性能/第二机器及Shipping发行仍未通过。 072正常Standalone公共引用接入已通过，见[接入报告](docs/qa/TASK-072/standalone-reference-runtime-review.md)。 已有正常初始场景CPU/Vulkan各一请求与完整CSV，1%Low均未达60、CPUcompletion120秒超时、Vulkan候选正确；可用内存低于1GB的区间已实测，见[联合诊断](docs/qa/TASK-072/normal-new-cpu-vulkan-runtime-review.md)。 CPU原生日志已定位提示词耗时；独立Game Development构建/Cook/归档通过，正常成品Vulkan候选及该场帧分布通过（1%Low61.44），CPU仍超时且1%Low58.17未过，见[成品诊断](docs/qa/TASK-072/game-development-runtime-review.md)。独立 Shipping 工程 Build/Cook/Stage/Archive 及本机正常新游戏已通过，独立 UserDir 内手动保存后重启正常继续也已通过（同手动节点与进度 ID，完整库存核对未验），见[Shipping 工程诊断](docs/qa/TASK-072/shipping-diagnostic-runtime-review.md)。未冻结正式RC。见[正常开局／继续／退出局部证据](docs/qa/TASK-069/normal-game-os-runtime-review.md)。证据见[施工交接](docs/handoffs/TASK-053.md)。
 
 ## 当前项目成果同步（2026-10-02）
 
@@ -28,7 +36,7 @@ UE 5.8.2 单人第三人称生存冒险项目。截至2026-10-03，核对主干�
 
 [TASK-044 生存与救援](docs/tasks/TASK-044.md)按Owner批准沿用044编号实施。main已接入兄弟生存状态、3秒用药与半份药、120秒倒地／5秒扶起、严重饥饿期限、存档恢复和失败回档。靠近倒地弟弟2米内按E扶起；倒地时Esc菜单可立即放弃。背包用药会回到HUD继续计时，移动／攻击／跳跃可取消；暂停菜单可设置普通页面是否暂停。
 
-044任务分支已通过Editor构建、相关原生18/18和真实PIE 23/23检查，证据见[验证报告](docs/qa/TASK-044/REPORT.md)。已由PR #46合入main（7ce8262）；测试仍绑定报告内源码。已集成的051操作基线新增坠落／游泳参数与饥饿视觉设置；新药配方与治疗区内容仍待对应任务。main的046实现新增床八小时睡眠与有限生产／刷新状态，沿用044生存时钟。main已含049／050并使用schema8；052分支升级schema9，旧存档采用明确迁移；请勿用旧版本覆盖新档。
+044任务分支已通过Editor构建、相关原生18/18和真实PIE 23/23检查，证据见[验证报告](docs/qa/TASK-044/REPORT.md)。已由PR #46合入main（7ce8262）；测试仍绑定报告内源码。已集成的051操作基线新增坠落／游泳参数与饥饿视觉设置；新药配方与治疗区内容仍待对应任务。main的046实现新增床八小时睡眠与有限生产／刷新状态，沿用044生存时钟。main已含049／050及052时间整合，使用schema9；旧存档采用明确迁移；请勿用旧版本覆盖新档。
 
 AI NPC vNext 按 **TASK-029 AI NPC 完整交付** 验收。main 已包含自然地图伙伴接入：标题页新游戏自动创建营地伙伴、仓储和有限木材点，支持对话确认、采集入库、跟随/等待/巡营、记忆、建造工作台及 NPC 制作；世界、委托与认知共同存读档。原有自然地图存档会补建缺失的伙伴状态，保留玩家物资。接入实现与分支证据见[自然营地 AI 接入报告](docs/qa/evidence/TASK-029/natural-camp-integration/REPORT.md)和[双工作树集成报告](docs/qa/evidence/TASK-029/integrated-playable/REPORT.md)；所选集成修正随 PR #40 合入 main，PR #41/#42 属于 TASK-031。接入前的真实模型矩阵与失败记录保留在[基线复验报告](docs/qa/evidence/TASK-029/revalidation-20260923/REPORT.md)。
 
@@ -137,7 +145,7 @@ TASK-029 自然营地接入基线曾通过 UE 5.8.2 Editor Development 构建、
 
 四件 Tripo 道具源资产（石骨斧、原始鱼竿、骨肉袋、陶罐）的 FBX、参考图和预览已存入 `art_source/TASK-004/Tripo/妙妙道具`，其中石骨斧已随 TASK-028 合入 main 并按装备状态显示，手部动作联动未完成；原始鱼竿源模型仍未挂接到角色，048已接入鱼竿物品和钓鱼玩法；骨肉袋、陶罐仍未接入玩法。
 
-十五件 Tripo 动物源资产（两只雄鹿、野兔、山羊、雉鸡、猪、狼、黑熊、公羊、赤狐、母鸡、鲤鱼、鲫鱼、鲶鱼、鳗鱼）的参考图、静态 FBX、预览和带蒙皮权重的骨骼 FBX 已存入 `art_source/TASK-004/Tripo/动物`。骨架包含四足、鸟类、水生和蛇形四类；048已将14件静态网格导入Content/Hearthward/Nature，鹿使用A款、野猪暂复用猪；四种鱼已接入钓获物种表，导入的鱼模型保留作后续表现，不模拟水下鱼群。野生动物和家畜已有实际移动、伤害、掉落、捕捉与养殖行为；当前默认材质、静态姿态与简化碰撞均待精修，未制作专用动物动画。
+十五件 Tripo 动物源资产（两只雄鹿、野兔、山羊、雉鸡、猪、狼、黑熊、公羊、赤狐、母鸡、鲤鱼、鲫鱼、鲶鱼、鳗鱼）的参考图、静态 FBX、预览和带蒙皮权重的骨骼 FBX 已存入 `art_source/TASK-004/Tripo/动物`。骨架包含四足、鸟类、水生和蛇形四类；048已将14件静态网格导入Content/Hearthward/Nature，鹿使用A款、野猪暂复用猪；四种鱼已接入钓获物种表，导入的鱼模型保留作后续表现，不模拟水下鱼群。野生动物和家畜已有移动、伤害、掉落、捕捉与养殖代码；主干另有14套配对骨骼模型和303段动物动作，NatureActor已挂接动作组件。正式地图的危险兽行为与动作仲裁、狩猎闭环、专用野猪外形和实际碰撞仍按[060设计](docs/planning/TASK-053-074/TASK-060.md)及070验收；独立演示结果不外推为全部正式生态通过。
 
 已合入 main 的 [PR #33](https://github.com/XLingyyy/Hearthward/pull/33) 在 `art_source/TASK-004/Tripo/敌人` 收录短刀兵、重甲兵两件候选的参考图、静态 FBX、预览和带双足骨骼的 FBX；[逐件索引](art_source/TASK-004/Tripo/敌人/敌人模型与骨骼索引.md)记录任务 ID 与文件。049分支已导入并接入驻军，源资产和重定向说明见[049报告](docs/qa/TASK-049/REPORT.md)。武器挂接、射手专用外形和最终动作质量仍待美术验收。
 

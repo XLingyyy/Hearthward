@@ -1,0 +1,68 @@
+--- a/Source/Hearthward/Input/HearthwardInputBindings.cpp
++++ b/Source/Hearthward/Input/HearthwardInputBindings.cpp
+@@ -26,7 +26,13 @@
+ bool FHearthwardKeyBinding::Matches(FKey Pressed,bool Shift,bool Control,bool Alt) const
+ { return Key==Pressed && (!Modifier.IsValid() || (Modifier==EKeys::LeftShift && Shift) || (Modifier==EKeys::LeftControl && Control) || (Modifier==EKeys::LeftAlt && Alt)); }
+ bool FHearthwardKeyBinding::Held(const APlayerController* Player) const
+-{ return Player && Key.IsValid() && Player->IsInputKeyDown(Key) && (!Modifier.IsValid() || Player->IsInputKeyDown(Modifier)); }
++{
++    return Player && Key.IsValid() && Player->IsInputKeyDown(Key)
++        && (!Modifier.IsValid() || Player->IsInputKeyDown(Modifier)
++            || (Modifier==EKeys::LeftShift && Player->IsInputKeyDown(EKeys::RightShift))
++            || (Modifier==EKeys::LeftControl && Player->IsInputKeyDown(EKeys::RightControl))
++            || (Modifier==EKeys::LeftAlt && Player->IsInputKeyDown(EKeys::RightAlt)));
++}
+ const TArray<FHearthwardInputDefinition>& HearthwardInput::Definitions()
+ {
+     static const TArray<FHearthwardInputDefinition> Result=[]
+--- a/Source/Hearthward/HearthwardCharacter.cpp
++++ b/Source/Hearthward/HearthwardCharacter.cpp
+@@ -183,14 +183,27 @@
+     { if(B.Key.IsValid()) PhysicalAction(B.Key);if(B.Modifier.IsValid()) PhysicalAction(B.Modifier); }
+     MoveAction=NewObject<UInputAction>(this);MoveAction->ValueType=EInputActionValueType::Axis2D;
+     MoveAction->bConsumeInput=false;MoveAction->AccumulationBehavior=EInputActionAccumulationBehavior::Cumulative;
++    // Chord state unions modifier sides while physical callbacks retain their exact key.
++    TMap<FKey,UInputAction*> ChordModifiers;
+     auto MapMove=[&](const TCHAR* Id,bool Negative,bool Y)
+     {
+         for(const auto& B:Bindings.FindChecked(FName(Id))) if(B.Key.IsValid())
+         {
++            if(B.Modifier.IsValid())
++            {
++                auto*& ModifierAction=ChordModifiers.FindOrAdd(B.Modifier);
++                if(!ModifierAction)
++                {
++                    ModifierAction=NewObject<UInputAction>(this);ModifierAction->ValueType=EInputActionValueType::Boolean;ModifierAction->bConsumeInput=false;
++                    InputMapping->MapKey(ModifierAction,B.Modifier);
++                    const FKey Other=B.Modifier==EKeys::LeftShift?EKeys::RightShift:B.Modifier==EKeys::LeftControl?EKeys::RightControl:EKeys::RightAlt;
++                    InputMapping->MapKey(ModifierAction,Other);
++                }
++            }
+             auto& Mapping=InputMapping->MapKey(MoveAction,B.Key);
+             if(Negative) Mapping.Modifiers.Add(NewObject<UInputModifierNegate>(InputMapping));
+             if(Y) {auto* Swizzle=NewObject<UInputModifierSwizzleAxis>(InputMapping);Swizzle->Order=EInputAxisSwizzle::YXZ;Mapping.Modifiers.Add(Swizzle);}
+-            if(B.Modifier.IsValid()) {auto* Chord=NewObject<UInputTriggerChordAction>(InputMapping);Chord->ChordAction=Physical.FindChecked(B.Modifier);Mapping.Triggers.Add(Chord);}
++            if(B.Modifier.IsValid()) {auto* Chord=NewObject<UInputTriggerChordAction>(InputMapping);Chord->ChordAction=ChordModifiers.FindChecked(B.Modifier);Mapping.Triggers.Add(Chord);}
+         }
+     };
+     MapMove(TEXT("move.right"),false,false);MapMove(TEXT("move.left"),true,false);
+--- a/Source/Hearthward/Tests/ExperienceTests.cpp
++++ b/Source/Hearthward/Tests/ExperienceTests.cpp
+@@ -205,6 +205,17 @@
+             Send(EKeys::I,IE_Released);Send(Side,IE_Released);Process();Player->ConsumeMovementInputVector();
+             TestFalse(Label+TEXT(" release clears the production Held lookup"),Player->SemanticHeld(TEXT("move.forward")));
+         }
++        Send(Modifier.Left,IE_Pressed);Send(Modifier.Right,IE_Pressed);Process();Player->ConsumeMovementInputVector();
++        Send(EKeys::I,IE_Pressed);Process();
++        TestTrue(FString::Printf(TEXT("Both %s sides satisfy the production Held lookup"),Modifier.Label),Player->SemanticHeld(TEXT("move.forward")));
++        TestTrue(FString::Printf(TEXT("Both %s sides preserve one forward movement request"),Modifier.Label),Player->ConsumeMovementInputVector().Equals(LeftMovement,.001));
++        Send(Modifier.Left,IE_Released);Process();
++        TestTrue(FString::Printf(TEXT("Releasing left %s preserves the held right-side chord"),Modifier.Label),Player->SemanticHeld(TEXT("move.forward")));
++        TestTrue(FString::Printf(TEXT("Releasing left %s preserves Enhanced movement"),Modifier.Label),Player->ConsumeMovementInputVector().Equals(LeftMovement,.001));
++        Send(Modifier.Right,IE_Released);Process();
++        TestFalse(FString::Printf(TEXT("Releasing both %s sides clears the chord"),Modifier.Label),Player->SemanticHeld(TEXT("move.forward")));
++        TestTrue(FString::Printf(TEXT("Releasing both %s sides stops Enhanced movement"),Modifier.Label),Player->ConsumeMovementInputVector().IsNearlyZero());
++        Send(EKeys::I,IE_Released);Process();Player->ConsumeMovementInputVector();
+     }
+     Cleanup();return true;
+ }

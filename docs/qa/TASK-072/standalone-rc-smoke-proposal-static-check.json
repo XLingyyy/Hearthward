@@ -1,0 +1,46 @@
+{
+  "stage": "QA_PROPOSAL_ONLY",
+  "script": "G:\\GameFactory\\Hearthward\\.agent-local\\task062\\docs\\qa\\TASK-072\\run_standalone_rc_smoke_proposal.py",
+  "ast": "PASS",
+  "lines": 224,
+  "actual_help": {
+    "exit_code": 0,
+    "command": [
+      "G:/GameFactory/.venv/Scripts/python.exe",
+      "-X",
+      "utf8",
+      "G:\\GameFactory\\Hearthward\\.agent-local\\task062\\docs\\qa\\TASK-072\\run_standalone_rc_smoke_proposal.py",
+      "--help"
+    ],
+    "side_effects": "argparse exits before factory discovery/import, output mkdir, port selection, UE launch or HTTP"
+  },
+  "execution": {
+    "ue": "NOT_RUN",
+    "http": "NOT_RUN",
+    "bootstrap_new": "NOT_RUN",
+    "model": "NOT_RUN",
+    "csv": "NOT_RUN",
+    "performance": "NOT_RUN",
+    "shipping": "NOT_RUN"
+  },
+  "source_review": {
+    "project_remotecontrol_enabled": true,
+    "engine_version": "5.8",
+    "public_function_parameters_and_output_names": "REVIEWED",
+    "actual_actor_and_world_refs": "REQUIRED_FROM_HTTP",
+    "bootstrap_seed": "ONE_EXPLICIT_UNVERIFIED_ATTEMPT_THEN_PAWN_LEVEL_WORLD_VALIDATION",
+    "engine_world_context": "NO_ATTEMPT; Engine lacks usable GetWorld for this public context chain",
+    "process_only_http_port_override": "RemoteControl config / RemoteControlCommon.RemoteControlSettings / RemoteControlHttpServerPort",
+    "unused_websocket_auto_start": "DISABLED_FOR_THIS_PROCESS",
+    "model_invocations_in_script": 0,
+    "private_reflection_writes": 0,
+    "actor_position_changes": 0,
+    "normal_map_travel": "GetGameInstance actual reference retained; all world-owned actor refs reacquired",
+    "owned_pid": "Assigned before launch artifact write; finally only this UEClient stop_editor",
+    "process_exit": "NOT_VERIFIED_BY_UECLIENT; stop_editor terminates without wait",
+    "independent_child_review": "Public API/port/type/lifecycle review; no other blocking static defect found"
+  },
+  "hash_or_checksum_computed": false,
+  "root_source_content_git_mutations": false,
+  "awaiting": "Root review and serial real engine execution"
+}

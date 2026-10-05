@@ -1,0 +1,170 @@
+{
+  "pool": "1356d3d4-f148-41f6-b343-150ee67de779",
+  "ue_pid": 30100,
+  "model_pid_from_engine": 46992,
+  "status": "FAILED",
+  "model_request_count": 1,
+  "session": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-1356d3d4-f148-41f6-b343-150ee67de779",
+  "actual_frame_report": {
+    "total_frames": 11697,
+    "dropped_frames": 0,
+    "measured_seconds": 130.12490150000002,
+    "p99_frame_ms": 15.8573,
+    "one_percent_low_fps": 55.829268705885255,
+    "frames_over_50ms": 1,
+    "fraction_over_50ms": 8.54920064973925e-05,
+    "max_frame_ms": 57.7484,
+    "average_fps": 89.89055795750207,
+    "distribution": "raw ordered engine CSV FrameTime preserved; all captured numeric rows included without numeric frame exclusions",
+    "diagnostic_frame_target_pass": false
+  },
+  "resource_columns": {
+    "FrameTime": {
+      "min": 7.7851,
+      "max": 57.7484,
+      "min_nonzero": 7.7851,
+      "zero_frames": 0
+    },
+    "MemoryFreeMB": {
+      "min": 6.9727,
+      "max": 4104.4727,
+      "min_nonzero": 6.9727,
+      "zero_frames": 0
+    },
+    "PhysicalUsedMB": {
+      "min": 4419.7227,
+      "max": 4859.1758,
+      "min_nonzero": 4419.7227,
+      "zero_frames": 0
+    },
+    "VirtualUsedMB": {
+      "min": 6878.6641,
+      "max": 7139.4258,
+      "min_nonzero": 6878.6641,
+      "zero_frames": 0
+    },
+    "GPUMem/LocalUsedMB": {
+      "min": 0.0,
+      "max": 2409.3906,
+      "min_nonzero": 2345.3906,
+      "zero_frames": 2
+    },
+    "GPUMem/LocalBudgetMB": {
+      "min": 0.0,
+      "max": 7189.0,
+      "min_nonzero": 7189.0,
+      "zero_frames": 2
+    },
+    "GPUTime": {
+      "min": 6.3633,
+      "max": 8.9317,
+      "min_nonzero": 6.3633,
+      "zero_frames": 0
+    },
+    "GameThreadTime": {
+      "min": 7.7217,
+      "max": 58.1272,
+      "min_nonzero": 7.7217,
+      "zero_frames": 0
+    }
+  },
+  "below1024mib_frame_duration_s": 85.55767939999981,
+  "below1024mib_intervals": [
+    {
+      "begin_s": 2.386409600000003,
+      "first_frame_0": 236,
+      "minimum_mib": 164.75,
+      "end_s": 2.649806200000003,
+      "last_frame_0": 260,
+      "duration_s": 0.2633966000000001
+    },
+    {
+      "begin_s": 3.4180900000000034,
+      "first_frame_0": 334,
+      "minimum_mib": 6.9727,
+      "end_s": 7.400987899999995,
+      "last_frame_0": 703,
+      "duration_s": 3.9828978999999918
+    },
+    {
+      "begin_s": 7.672606099999996,
+      "first_frame_0": 730,
+      "minimum_mib": 661.1367,
+      "end_s": 13.90399169999999,
+      "last_frame_0": 1283,
+      "duration_s": 6.231385599999994
+    },
+    {
+      "begin_s": 53.67840040000013,
+      "first_frame_0": 4927,
+      "minimum_mib": 868.6211,
+      "end_s": 56.391668300000156,
+      "last_frame_0": 5170,
+      "duration_s": 2.7132679000000266
+    },
+    {
+      "begin_s": 56.97006760000015,
+      "first_frame_0": 5226,
+      "minimum_mib": 567.8672,
+      "end_s": 129.33679899999996,
+      "last_frame_0": 11622,
+      "duration_s": 72.36673139999981
+    }
+  ],
+  "csv_events": [
+    {
+      "frame_0": 3783,
+      "begin_s": 41.021084900000105,
+      "end_s": 41.035291900000104,
+      "event": "GC##41.047436"
+    },
+    {
+      "frame_0": 9272,
+      "begin_s": 102.12464879999997,
+      "end_s": 102.13842779999997,
+      "event": "GC##102.150887"
+    },
+    {
+      "frame_0": 11696,
+      "begin_s": 130.1134243,
+      "end_s": 130.1249015,
+      "event": "Cmd: CsvProfile STOP##130.124913"
+    }
+  ],
+  "server_log_line_count": 13,
+  "observed_prefill": [
+    {
+      "server_uptime_s": 85.854898,
+      "processed_tokens": 2048,
+      "reported_fraction": 0.65,
+      "cumulative_prompt_s": 76.88,
+      "tokens_per_s": 26.64
+    },
+    {
+      "server_uptime_s": 109.826777,
+      "processed_tokens": 2617,
+      "reported_fraction": 0.82,
+      "cumulative_prompt_s": 100.85,
+      "tokens_per_s": 25.95
+    },
+    {
+      "server_uptime_s": 111.832916,
+      "processed_tokens": 2657,
+      "reported_fraction": 0.84,
+      "cumulative_prompt_s": 102.85,
+      "tokens_per_s": 25.83
+    }
+  ],
+  "first_request_error": "Engine HTTP120.00s timeout generation→error120.001s",
+  "confirmed_slow_phase": "prompt processing at least102.85s",
+  "unknown": [
+    "CPU full prompt completion time",
+    "CPU decode start/end/tokens",
+    "final ~17.15s progress before timeout",
+    "per-model process RSS/commit and hard-faults",
+    "actual server build line not in this output",
+    "CPU thermal/throttling and cache effect"
+  ],
+  "counterfactual_execution": "NOT_RUN",
+  "model_parameter_changes": false
+}

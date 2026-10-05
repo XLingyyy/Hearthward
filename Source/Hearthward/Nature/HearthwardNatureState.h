@@ -51,6 +51,7 @@ struct FHearthwardAnimal
     UPROPERTY() double FedRemaining=0;
     UPROPERTY() double ProductMinutes=0;
     UPROPERTY() double AlertRemaining=0;
+    UPROPERTY() FName Threat;
     UPROPERTY() TMap<FName,int32> Loot;
 };
 USTRUCT()

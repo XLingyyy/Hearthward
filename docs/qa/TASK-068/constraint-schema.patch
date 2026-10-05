@@ -1,0 +1,37 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -164,6 +164,8 @@
+ FString HearthwardAgent::Schema()
+ {
+     auto Root=MakeShared<FJsonObject>(); TArray<TSharedPtr<FJsonValue>> Branches;
++    TArray<FString> RegisteredItems;for(const auto& I:HearthwardBasicItems()) RegisteredItems.Add(I.Id.ToString());
++    const FString LimitItems=TEXT("(")+FString::Join(RegisteredItems,TEXT("|"))+TEXT(")");
+     for(const auto& C:Capabilities())
+     {
+         auto B=MakeShared<FJsonObject>(),P=MakeShared<FJsonObject>();B->SetStringField(TEXT("type"),TEXT("object"));B->SetBoolField(TEXT("additionalProperties"),false);
+@@ -173,7 +175,24 @@
+         P->SetObjectField(TEXT("mode"),Enum({C.QuantityMode}));P->SetObjectField(TEXT("source"),Enum(C.Sources));
+         for(const auto& Key:{TEXT("limits"),TEXT("unresolved")})
+         {
+-            auto A=MakeShared<FJsonObject>(),S=MakeShared<FJsonObject>();A->SetStringField(TEXT("type"),TEXT("array"));A->SetNumberField(TEXT("maxItems"),4);S->SetStringField(TEXT("type"),TEXT("string"));S->SetNumberField(TEXT("maxLength"),120);A->SetObjectField(TEXT("items"),S);P->SetObjectField(Key,A);
++            auto A=MakeShared<FJsonObject>(),S=MakeShared<FJsonObject>();A->SetStringField(TEXT("type"),TEXT("array"));A->SetNumberField(TEXT("maxItems"),4);S->SetStringField(TEXT("type"),TEXT("string"));S->SetNumberField(TEXT("maxLength"),120);
++            if(FCString::Strcmp(Key,TEXT("limits"))==0)
++            {
++                A->SetNumberField(TEXT("maxItems"),C.Constraints.IsEmpty()?0:4);
++                if(!C.Constraints.IsEmpty())
++                {
++                    TArray<FString> Patterns,ItemTypes;
++                    for(const auto& Type:C.Constraints)
++                    {
++                        if(Type==TEXT("source")) Patterns.Add(TEXT("source:S1"));
++                        else if(Type==TEXT("max")) Patterns.Add(TEXT("max:")+LimitItems+TEXT(":(0|[1-9][0-9]{0,4}|100000)"));
++                        else ItemTypes.Add(Type);
++                    }
++                    if(!ItemTypes.IsEmpty()) Patterns.Add(TEXT("(")+FString::Join(ItemTypes,TEXT("|"))+TEXT("):")+LimitItems);
++                    S->SetStringField(TEXT("pattern"),TEXT("^(")+FString::Join(Patterns,TEXT("|"))+TEXT(")$"));
++                }
++            }
++            A->SetObjectField(TEXT("items"),S);P->SetObjectField(Key,A);
+         }
+         auto Line=MakeShared<FJsonObject>();Line->SetStringField(TEXT("type"),TEXT("string"));Line->SetNumberField(TEXT("maxLength"),150);P->SetObjectField(TEXT("npc_line"),Line);
+         B->SetObjectField(TEXT("properties"),P);B->SetArrayField(TEXT("required"),Strings({TEXT("intent"),TEXT("item"),TEXT("quantity"),TEXT("mode"),TEXT("source"),TEXT("limits"),TEXT("unresolved"),TEXT("npc_line")}));Branches.Add(MakeShared<FJsonValueObject>(B));

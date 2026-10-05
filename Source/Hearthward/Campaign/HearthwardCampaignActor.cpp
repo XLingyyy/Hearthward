@@ -13,7 +13,11 @@
 #include "NavigationSystem.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Animation/AnimSequence.h"
+#include "Fonts/CompositeFont.h"
+#include "Misc/Paths.h"
+#include "Widgets/Text/STextBlock.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
@@ -27,6 +31,10 @@ AHearthwardCampaignActor::AHearthwardCampaignActor()
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Target=CreateDefaultSubobject<UHearthwardCombatTargetComponent>(TEXT("CampaignTarget"));
     Target->CampaignTarget=true;
+    LaborLabel=CreateDefaultSubobject<UWidgetComponent>(TEXT("LaborLabel"));
+    LaborLabel->SetupAttachment(GetRootComponent());LaborLabel->SetRelativeLocation(FVector(0,0,120));
+    LaborLabel->SetWidgetSpace(EWidgetSpace::Screen);LaborLabel->SetDrawAtDesiredSize(true);
+    LaborLabel->SetVisibility(false);
 }
 void AHearthwardCampaignActor::Initialize(FName Id,bool Hostile)
 {
@@ -57,6 +65,26 @@ void AHearthwardCampaignActor::Initialize(FName Id,bool Hostile)
     }
     if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))Nav->RegisterNavigationInvoker(this,3500,4500);
     if(!GetController())SpawnDefaultController();
+}
+void AHearthwardCampaignActor::PresentLabor(FName Region,const FString& Status,bool Working)
+{
+    LaborRegion=Region;LaborStatus=Status;
+    if(!LaborText)
+    {
+        LaborTypeface=MakeShared<FCompositeFont>(NAME_None,FPaths::ProjectDir()/TEXT("Resources/UI/Fonts/NotoSerifCJKsc-Regular.otf"),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
+        LaborText=SNew(STextBlock).Font(FSlateFontInfo(LaborTypeface,16)).ColorAndOpacity(FLinearColor(FColor(240,220,170)));
+        LaborLabel->SetSlateWidget(LaborText);
+    }
+    LaborText->SetText(FText::FromString(Status));
+    const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
+    LaborLabel->SetVisibility(Player && FVector::Dist2D(Player->GetActorLocation(),GetActorLocation())<=1200);
+    if(!LaborPresented || LaborWorking!=Working)
+    {
+        const TCHAR* Clip=Working?TEXT("/Game/Characters/Brother/Animation/A_Brother_Dig.A_Brother_Dig")
+            :TEXT("/Game/Characters/Brother/Animation/A_Brother_Idle.A_Brother_Idle");
+        GetMesh()->PlayAnimation(LoadObject<UAnimSequence>(nullptr,Clip),true);
+    }
+    LaborPresented=true;LaborWorking=Working;
 }
 bool AHearthwardCampaignActor::WalkTo(FVector Goal,float Acceptance)
 {
@@ -112,6 +140,19 @@ void AHearthwardCampaignActor::Tick(float Delta)
         }
         return;
     }
+    const auto& Memory=Target->Memory;
+    if(Memory.InvestigationRemaining>0 && FVector::Dist2D(Memory.Investigation,E->Home)<30000)
+    {
+        if(!WalkTo(Memory.Investigation))if(auto* AI=Cast<AAIController>(GetController()))AI->StopMovement();
+        return;
+    }
+    // LastKnown survives suspicion expiry in saves; only positive detection keeps the search active.
+    for(const FName Who:{FName(TEXT("player")),FName(TEXT("brother"))})
+        if(const auto* Known=Memory.LastKnown.Find(Who);Known && Memory.Detection.FindRef(Who)>0 && FVector::Dist2D(*Known,E->Home)<30000)
+        {
+            if(!WalkTo(*Known))if(auto* AI=Cast<AAIController>(GetController()))AI->StopMovement();
+            return;
+        }
     FVector Goal=E->Home;
     TArray<FVector> Points;
     if(E->Group==TEXT("prologue"))for(const auto& Offset:{FVector(-500,-500,0),FVector(500,-500,0),FVector(500,500,0),FVector(-500,500,0)})Points.Add(E->Home+Offset);

@@ -1,0 +1,87 @@
+--- a/docs/qa/TASK-071/verify_ui_loadpoint_pie.py
++++ b/docs/qa/TASK-071/verify_ui_loadpoint_pie.py
+@@ -16,7 +16,7 @@
+ out.mkdir(parents=True, exist_ok=True)
+ report = {'ok': False, 'method': 'Public UI ActionAt / ExecuteAction with real SavePoint and LoadPoint',
+           'pool': pool, 'checks': [], 'stage': 'fixture', 'setup': {}, 'actions': [],
+-          'script_revision': 'ui-progress-only-v2',
++          'script_revision': 'ui-progress-slate-separated-v3',
+           'slate_event_replay': 'NOTRUN', 'physical_input': 'NOTRUN',
+           'model_http': 'NOTRUN: normal manual card only',
+           'npc_receipt_operation_checks': 'NOTRUN: no public Python API'}
+@@ -103,6 +103,7 @@
+ def open_page(name):
+     check('normal UI page '+name, ui_action('OpenPage '+name, 'page:'+name)
+           and str(st['ui'].get_page()) == name)
++    yield wait(lambda: True, 5)  # Resume on a later Slate post-tick; no blocking sleep.
+ 
+ 
+ def check_collect_card(name):
+@@ -121,6 +122,7 @@
+ def direct_load(save_id, name):
+     before = key(st['store'].get_timeline_epoch())
+     check(name+' real LoadPoint', operation(name+' LoadPoint', lambda: st['save'].load_point(save_id)))
++    yield wait(lambda: True, 5)
+     refresh()
+     check(name+' actual epoch changes', key(st['store'].get_timeline_epoch()) != before)
+     check(name+' actual HUD restore event', str(st['ui'].get_page()) == 'hud')
+@@ -151,17 +153,17 @@
+           and st['ai'].get_server_process_id() == 0)
+ 
+     set_stage('old_manual_card_action_across_load')
+-    open_page('dialogue')
++    yield from open_page('dialogue')
+     old_action, old_id = check_collect_card('old card')
+     report['old_candidate_id'] = list(old_id)
+     unchanged('unconfirmed old card', baseline, baseline_task)
+     check('Load starts with actual dialogue and candidate', str(st['ui'].get_page()) == 'dialogue'
+           and st['ai'].has_candidate())
+-    direct_load(baseline_id, 'dialogue old card')  # Do not navigate away and cancel it before Load.
++    yield from direct_load(baseline_id, 'dialogue old card')  # Do not navigate away and cancel it before Load.
+     unchanged('actual baseline restored', baseline, baseline_task)
+     check('old actual action rejected on HUD', not ui_action('replay old candidate', old_action))
+     unchanged('HUD old action', baseline, baseline_task)
+-    open_page('dialogue')
++    yield from open_page('dialogue')
+     check('old actual action rejected after dialogue reopens', not ui_action('replay old candidate', old_action))
+     unchanged('reopened dialogue old action', baseline, baseline_task)
+ 
+@@ -188,13 +190,13 @@
+     unchanged('quiet after fresh UI completion', completed, settled_task)
+ 
+     set_stage('normal_save_menu_old_confirmation_across_load')
+-    direct_load(baseline_id, 'prepare independent save menu')
++    yield from direct_load(baseline_id, 'prepare independent save menu')
+     unchanged('save A restored for independent route', baseline, baseline_task)
+     check('normal future inventory input', st['bag'].try_add('wood', 1) == unreal.HearthwardInventoryResult.SUCCESS)
+     future, future_task = authority(), public_task()
+     check('future B is distinct from A by exactly one player wood', count(future, 'player', 'wood') == count(baseline, 'player', 'wood')+1)
+     known = {key(p.save_id) for p in st['save'].get_points()}
+-    open_page('save')
++    yield from open_page('save')
+     save_action = action_at('normal manual save button', lambda a: a == 'save')
+     check('normal UI writes actual future SavePoint', ui_action('normal save', save_action))
+     new_nodes = [p for p in st['save'].get_points() if key(p.save_id) not in known]
+@@ -207,19 +209,20 @@
+     check('normal load A asks confirmation', ui_action('old ask load A', ask_a))
+     old_confirm = action_at('old menu confirmation', lambda a: a == 'confirm')
+     check('old save confirmation is on actual save page', str(st['ui'].get_page()) == 'save')
+-    direct_load(future_id, 'external load B while old modal open')
++    yield from direct_load(future_id, 'external load B while old modal open')
+     unchanged('actual B restored', future, future_task)
+     check('old generic confirm rejected after external Load', not ui_action('replay old menu confirm', old_confirm))
+     unchanged('old modal action cannot load A', future, future_task)
+ 
+     set_stage('fresh_normal_menu_load_positive')
+-    open_page('save')
++    yield from open_page('save')
+     fresh_ask_a = action_at('fresh normal menu ask load A', lambda a: a.startswith('ask:load:')
+                             and action_guid(a) == guid_digits(baseline_id))
+     check('fresh normal load A asks confirmation', ui_action('fresh ask load A', fresh_ask_a))
+     fresh_confirm = action_at('fresh menu confirmation', lambda a: a == 'confirm')
+     epoch = key(st['store'].get_timeline_epoch())
+     check('fresh normal menu confirm actually loads A', ui_action('fresh menu confirm', fresh_confirm))
++    yield wait(lambda: True, 5)
+     refresh()
+     check('normal menu Load changes epoch and restores HUD', key(st['store'].get_timeline_epoch()) != epoch
+           and str(st['ui'].get_page()) == 'hud')

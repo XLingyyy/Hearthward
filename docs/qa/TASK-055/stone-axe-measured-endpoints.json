@@ -1,0 +1,97 @@
+{
+  "status": "Measured geometric candidates; grip/rotation/contact acceptance pending root review and actual calibrated render",
+  "mesh_path": "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe",
+  "coordinate_space": "UE mesh local cm",
+  "source_facts": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task055\\stone-axe-single-node\\pose-and-axe-facts.json",
+  "source_vertices": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task055\\stone-axe-single-node\\stone-axe-ue-local-vertices.json",
+  "selection_evidence": "All three actual identity renders reviewed. Grip is the wrapped lower-shaft centre at Z=-27.5, using the midpoint of measured 5th/95th percentile X/Y slab coordinates. BladeBase/Tip are actual outer +Y stone cutting-edge lower/upper vertices, distinct from shaft or leather/horn decorations.",
+  "candidates": {
+    "Grip": [
+      22.647987604141235,
+      -17.993159770965576,
+      -27.5
+    ],
+    "BladeBase": [
+      -7.649685859680176,
+      14.690569877624512,
+      10.305906295776367
+    ],
+    "BladeTip": [
+      -26.873825073242188,
+      23.822595596313477,
+      39.805477142333984
+    ]
+  },
+  "grip_slab": {
+    "z_min_max_cm": [
+      -28,
+      -27
+    ],
+    "vertex_count": 476,
+    "q05_xyz_cm": [
+      16.552921295166016,
+      -22.48869752883911,
+      -27.948705196380615
+    ],
+    "q95_xyz_cm": [
+      28.743053913116455,
+      -13.497622013092041,
+      -27.06346035003662
+    ],
+    "centre_is_internal_not_surface_vertex": true
+  },
+  "blade_vertices": {
+    "BladeBase": 41603,
+    "BladeTip": 26958
+  },
+  "identity_image_projection_pixels": {
+    "Grip": {
+      "axe-local-x.png": [
+        641.9597752181869,
+        702.7699604793675
+      ],
+      "axe-local-y.png": [
+        659.454594609102,
+        702.7699604793675
+      ],
+      "axe-local-z.png": [
+        382.0402247818132,
+        364.5454053908982
+      ]
+    },
+    "BladeBase": {
+      "axe-local-x.png": [
+        414.8795256884982,
+        440.10181557530905
+      ],
+      "axe-local-y.png": [
+        448.95220322640995,
+        440.10181557530905
+      ],
+      "axe-local-z.png": [
+        609.120474311502,
+        575.04779677359
+      ]
+    },
+    "BladeTip": {
+      "axe-local-x.png": [
+        351.4319723888129,
+        235.14448723857777
+      ],
+      "axe-local-y.png": [
+        315.3865919407514,
+        235.14448723857777
+      ],
+      "axe-local-z.png": [
+        672.5680276111874,
+        708.6134080592486
+      ]
+    }
+  },
+  "limitations": [
+    "Grip interior selection is a reviewed candidate, not a solved palm transform",
+    "Current 0.7 absolute scale and existing relative rotation retained",
+    "No Content sockets authored",
+    "No native blend 0.12, root/world movement or actual target collision measured"
+  ]
+}

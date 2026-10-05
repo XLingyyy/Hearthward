@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "id": "TASK-056",
+  "title": "实现敌人AI、潜入警戒和自然地图遭遇",
+  "status": "Active",
+  "updated_at": "2026-10-03",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-056-enemy-search",
+  "source_refs": [
+    "用户2026-10-03：053及之后全部已有规划先整理设计，过目后再决定施工",
+    "docs/planning/TASK-053-074/sources/Hearthward_TASK-043-076.md：原稿TASK-058，canonical减2",
+    "docs/planning/TASK-053-074/sources/Hearthward_Audit_2026-09-24.md：历史审计，仅作缺口追溯",
+    "origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+    "docs/planning/TASK-053-074/TASK-056.md：本轮完整设计草案",
+    "用户2026-10-03：审阅通过，现在直接开始施工；批准整批D01—D08及逐单设计"
+  ],
+  "dependencies": [
+    "TASK-043",
+    "TASK-045",
+    "TASK-049",
+    "TASK-052",
+    "TASK-053",
+    "TASK-055"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-045-combat-alert.md",
+    "docs/contracts/CT-TASK-049-campaign.md",
+    "docs/contracts/CT-TASK-052-clock-refresh.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/TASK-053-074/",
+    "docs/tasks/TASK-056.json",
+    "docs/tasks/TASK-056.md",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.h",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Combat/HearthwardCombatTargetComponent.h",
+    "Source/Hearthward/Combat/HearthwardCombatTargetComponent.cpp",
+    "Source/Hearthward/Tests/CampaignAIBehaviorTests.cpp",
+    "docs/qa/TASK-056/",
+    "docs/contracts/CT-TASK-045-combat-alert.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "scripts/",
+    "docs/design/"
+  ],
+  "acceptance": [
+    "设计审阅：完成TASK-056现状、正式操作、失败和保存、建议施工范围、最小验证与出口的完整方案",
+    "施工验收：严格按docs/planning/TASK-053-074/TASK-056.md及ACCEPTANCE执行，仅在Owner下令施工后启动",
+    "不把设计检查或旧SHA的PASS登记为本单实现、真人体验或发行通过"
+  ],
+  "non_goals": [
+    "不超出逐单批准设计，不进行暂缓真人录音，不改未登记的共享资产或存档格式",
+    "不创建Issue，不自动提交推送、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-014",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "granted: official engineering research, origin inspection and authorized task-branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: Owner explicitly authorized current TASK-053-074 batch commit to codex/TASK-053-traversal",
+    "push": "granted: Owner explicitly authorized current TASK-053-074 batch push to origin/codex/TASK-053-traversal",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "设计与施工已获Owner确认，按DEPENDENCIES推进；提交推送、合并、发布权限保持原登记。",
+    "Owner和Reviewer均为XLingyyy，无Issue；不登记虚构独立审查。",
+    "完整批次施工获批；激活具体任务时登记准确写路径、专用目录和共享接口窗口。",
+    "先实施可独立复现的正式敌人调查／搜索缺口；053／055的正式依赖出口仍待集成，不能据本局部测试登记整单Done。独立写入agent audit_053，根代理保留集成与UE验证权。",
+    "056最小契约澄清：搜索沿既有Detection衰减至0退出，诱饵沿既有InvestigationRemaining 8 A秒，无新增计时字段。",
+    "Owner随后明确授权当前053—074施工成果提交并推送到codex/TASK-053-traversal；不代填待验结果，任务原状态保留。合并与发布权限未授予。"
+  ],
+  "design_status": "Approved",
+  "design_plan": "docs/planning/TASK-053-074/TASK-056.md",
+  "original_task_id": "TASK-058",
+  "proposed_implementation_paths": [
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.h",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/Combat/HearthwardCombatTargetComponent.h",
+    "Source/Hearthward/Combat/HearthwardCombatTargetComponent.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Resources/Data/gameplay.json（遭遇和现有AI字段）",
+    "Source/Hearthward/Tests/CombatTests.cpp",
+    "Source/Hearthward/Tests/CampaignTests.cpp"
+  ],
+  "implementation_authorization": "granted: user2026-10-03 TASK-053—074 approved design and construction",
+  "worktree": "G:/GameFactory/Hearthward/.agent-local/task056",
+  "integration_worktree": "G:/GameFactory/Hearthward/.agent-local/task051"
+}

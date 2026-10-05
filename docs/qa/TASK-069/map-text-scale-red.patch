@@ -1,0 +1,198 @@
+--- a/Source/Hearthward/Tests/MapGuidanceTests.cpp
++++ b/Source/Hearthward/Tests/MapGuidanceTests.cpp
+@@ -265,4 +265,195 @@
+ 
+     Screen->RemoveFromParent();Cleanup();return true;
+ }
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMapScaledGuidance069Test,
++    "Hearthward.UI069.MapScaledGuidanceKeepsCompleteText",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++
++bool FMapScaledGuidance069Test::RunTest(const FString&)
++{
++    auto* Instance=NewObject<UGameInstance>(GEngine);Instance->InitializeStandalone();
++    auto* Settings=Instance->GetSubsystem<UHearthwardPlayerSettings>();Settings->Comfort.TextScale=100;
++    auto* World=Instance->GetWorld();
++    auto* Viewport=NewObject<UGameViewportClient>(GEngine);
++    Instance->GetWorldContext()->GameViewport=Viewport;
++    Viewport->Init(*Instance->GetWorldContext(),Instance,false);
++    const TSharedRef<SViewport> SlateViewport=SNew(SViewport);
++    TSharedPtr<FSceneViewport> SceneViewport=Viewport->CreateViewport(SlateViewport);
++    const auto Cleanup=[&]()
++    {
++        SceneViewport->SetViewportClient(nullptr);SceneViewport.Reset();
++        Instance->Shutdown();GEngine->DestroyWorldContext(World);World->DestroyWorld(false);
++    };
++    auto* LocalPlayer=NewObject<ULocalPlayer>(GEngine);
++    Instance->AddLocalPlayer(LocalPlayer,FPlatformUserId::CreateFromInternalId(0));
++    auto* Controller=World->SpawnActor<APlayerController>();Controller->SetPlayer(LocalPlayer);
++    World->AddController(Controller);
++    auto* Player=World->SpawnActor<ACharacter>();Controller->Possess(Player);
++    auto* Bag=NewObject<UHearthwardInventoryComponent>(Player);
++    Player->AddInstanceComponent(Bag);Bag->RegisterComponent();
++    auto* Gameplay=NewObject<UHearthwardGameplayComponent>(Player);
++    Player->AddInstanceComponent(Gameplay);Gameplay->RegisterComponent();Gameplay->Enabled=true;
++    auto* Survival=NewObject<UHearthwardSurvivalComponent>(Player);
++    Player->AddInstanceComponent(Survival);Survival->RegisterComponent();
++    auto* Combat=NewObject<UHearthwardCombatComponent>(Player);
++    Player->AddInstanceComponent(Combat);Combat->RegisterComponent();
++    auto* Timer=NewObject<UHearthwardTimedActionComponent>(Player);
++    Player->AddInstanceComponent(Timer);Timer->RegisterComponent();
++    auto* Building=NewObject<UHearthwardBuildingComponent>(Player);
++    Player->AddInstanceComponent(Building);Building->RegisterComponent();
++    auto* Presentation=NewObject<UHearthwardPresentationComponent>(Player);
++    Player->AddInstanceComponent(Presentation);Presentation->RegisterComponent();
++    auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();
++    Campaign->State.Initialize(true);
++    bool KeptRemaining=false;
++    for(auto& Enemy:Campaign->State.Enemies)if(Enemy.Group==TEXT("base"))
++    {
++        if(!KeptRemaining)KeptRemaining=true;
++        else Enemy.Combat.Health=0;
++    }
++    if(!TestTrue(TEXT("Authored campaign enemies trigger the real remaining-garrison hint"),Campaign->State.ShowRemaining()))
++    {Cleanup();return false;}
++    Gameplay->Claimed.Add(TEXT("main_04"));
++    if(!TestTrue(TEXT("The authored fifth quest is available in the real campaign fixture"),Gameplay->QuestAvailable(TEXT("main_05"))))
++    {Cleanup();return false;}
++    Gameplay->Track(TEXT("main_05"));
++    const auto& First=HearthwardData::Catalog()->GetObjectField(TEXT("campaign"))->GetArrayField(TEXT("route_trace"))[0]->AsArray();
++    Player->SetActorLocation(FVector(First[0]->AsNumber()*100,First[1]->AsNumber()*100,90));
++    Gameplay->TickComponent(.3f,LEVELTICK_All,nullptr);
++    auto* Screen=CreateWidget<UHearthwardScreenWidget>(Controller);
++    if(!TestNotNull(TEXT("Real scaled map widget is created"),Screen)) {Cleanup();return false;}
++    Screen->SetIsFocusable(true);Screen->TakeWidget();Screen->AddToViewport();Screen->OpenPage(TEXT("map"));
++    FString ThemeText;TSharedPtr<FJsonObject> Theme;
++    if(!TestEqual(TEXT("The scaled fixture uses the normal map entry"),Screen->GetPage(),FName(TEXT("map")))
++        || !TestTrue(TEXT("The real map typography is readable"),
++            FFileHelper::LoadFileToString(ThemeText,*(FPaths::ProjectDir()/TEXT("Resources/UI/interface.json")))
++            && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(ThemeText),Theme)))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    const auto Typography=Theme->GetObjectField(TEXT("typography"));
++    const auto Typeface=MakeShared<FCompositeFont>(NAME_None,FPaths::ProjectDir()/TEXT("Resources/UI")/
++        Typography->GetStringField(TEXT("body")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
++    const auto DisplayTypeface=MakeShared<FCompositeFont>(NAME_None,FPaths::ProjectDir()/TEXT("Resources/UI")/
++        Typography->GetStringField(TEXT("display")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
++    const auto& ThemeRows=Theme->GetObjectField(TEXT("pages"))->GetObjectField(TEXT("map"))->GetArrayField(TEXT("elements"));
++    const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
++    const auto Rect=[](const TSharedPtr<FJsonObject>& Row)
++    {
++        const auto& R=Row->GetArrayField(TEXT("rect"));
++        return FVector4(R[0]->AsNumber(),R[1]->AsNumber(),R[2]->AsNumber(),R[3]->AsNumber());
++    };
++    const auto Definition=[&](const FString& Id)->TSharedPtr<FJsonObject>
++    {
++        for(const auto& Value:ThemeRows)
++            if(HearthwardData::Text(Value->AsObject(),TEXT("layoutId"))==Id)return Value->AsObject();
++        return nullptr;
++    };
++    const auto PaintedLines=[&](const TSharedPtr<FJsonObject>& Row,float& Advance)
++    {
++        const auto Authored=Definition(Row->GetStringField(TEXT("id")));
++        const float FontSize=FMath::Max(Authored?float(HearthwardData::Number(Authored,TEXT("font"),18)):24.f,24.f)*Settings->Comfort.TextScale/100.f;
++        const FString Role=Authored?HearthwardData::Text(Authored,TEXT("fontRole")):FString();
++        const bool Display=Role==TEXT("display") || (Role.IsEmpty() && FontSize>=30);
++        FSlateFontInfo Font(Display?DisplayTypeface:Typeface,FMath::RoundToInt(FontSize*.75f));
++        Font.LetterSpacing=Authored?HearthwardData::Number(Authored,TEXT("tracking"),HearthwardData::Number(Typography,TEXT("tracking"))):HearthwardData::Number(Typography,TEXT("tracking"));
++        Advance=FontSize*1.6f;
++        const auto R=Rect(Row);TArray<FString> SourceLines,Lines;Row->GetStringField(TEXT("text")).ParseIntoArrayLines(SourceLines,false);
++        for(FString Line:SourceLines)
++        {
++            while(Line.Len()>1 && Measure->Measure(Line,Font).X>R.Z)
++            {
++                const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,R.Z)+1,1,Line.Len());
++                Lines.Add(Line.Left(Count));Line=Line.Mid(Count);
++            }
++            Lines.Add(Line);
++        }
++        TArray<FVector4> Result;
++        for(int32 I=0;I<Lines.Num();++I)
++        {
++            const auto Size=Measure->Measure(Lines[I],Font);
++            Result.Add(FVector4(R.X,R.Y+I*Advance,Size.X,Size.Y));
++        }
++        return Result;
++    };
++    const auto Overlap=[](const TArray<FVector4>& A,const TArray<FVector4>& B)
++    {
++        for(const auto& X:A)for(const auto& Y:B)
++            if(X.X<Y.X+Y.Z && X.X+X.Z>Y.X && X.Y<Y.Y+Y.W && X.Y+X.W>Y.Y)return true;
++        return false;
++    };
++    const auto Capture=[&](int32 Scale)
++    {
++        if(!FParse::Param(FCommandLine::Get(),TEXT("Map064Render"))
++            || FParse::Param(FCommandLine::Get(),TEXT("NullRHI")) || !FApp::CanEverRender())return;
++        const FString Directory=FPaths::ProjectSavedDir()/TEXT("Task069/native-map-scaled");
++        IFileManager::Get().MakeDirectory(*Directory,true);
++        const FString Label=FString::Printf(TEXT("map-long-objective-remaining-%d"),Scale),Name=Label+TEXT(".png");
++        FWidgetRenderer Renderer(true);
++        auto* Target=UKismetRenderingLibrary::CreateRenderTarget2D(World,1696,954,RTF_RGBA8,FLinearColor::Black);
++        if(!Target){AddError(TEXT("Native scaled map render target unavailable"));return;}
++        Renderer.DrawWidget(Target,Screen->TakeWidget(),FVector2D(1696,954),0,false);
++        UKismetRenderingLibrary::ExportRenderTarget(World,Target,Directory,Name);
++        UKismetRenderingLibrary::ReleaseRenderTarget2D(Target);
++        if(IFileManager::Get().FileSize(*(Directory/Name))<=0)AddError(TEXT("Native scaled map PNG export failed: ")+Name);
++        FFileHelper::SaveStringToFile(Screen->DescribeLayout(),*(Directory/(Label+TEXT("-layout.json"))),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
++        FFileHelper::SaveStringToFile(FString::Printf(TEXT("{\"method\":\"native widget offscreen; explicit campaign fixture; no PIE or input acceptance\",\"width\":1696,\"height\":954,\"textScale\":%d}"),Scale),
++            *(Directory/(Label+TEXT("-method.json"))),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
++    };
++    const FString ExpectedObjective=TEXT("◎ ")+HearthwardData::Text(HearthwardData::Find(TEXT("quests"),TEXT("main_05")),TEXT("objective"));
++    for(const int32 Scale:{125,150})
++    {
++        Settings->Comfort.TextScale=Scale;Screen->Refresh();
++        TSharedPtr<FJsonObject> Layout;
++        if(!TestTrue(TEXT("The refreshed real map layout is valid"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),Layout) && Layout.IsValid()))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        TSharedPtr<FJsonObject> Description,Objective,Remaining,Canvas,Footer;TArray<TSharedPtr<FJsonObject>> Legends;
++        for(const auto& Value:Layout->GetArrayField(TEXT("components")))
++        {
++            const auto Row=Value->AsObject();const FString Id=Row->GetStringField(TEXT("id"));FString Text;
++            if(Id==TEXT("map.element.008"))Description=Row;
++            else if(Id==TEXT("map.canvas"))Canvas=Row;
++            else if(Id==TEXT("map.footer"))Footer=Row;
++            if(Row->TryGetStringField(TEXT("text"),Text))
++            {
++                if(Text.StartsWith(TEXT("◎ ")))Objective=Row;
++                else if(Text==TEXT("○ 剩余驻军的大致区域"))Remaining=Row;
++            }
++        }
++        for(const int32 Id:{12,14,16,18,20,22})
++            for(const auto& Value:Layout->GetArrayField(TEXT("components")))
++                if(Value->AsObject()->GetStringField(TEXT("id"))==FString::Printf(TEXT("map.element.%03d"),Id))Legends.Add(Value->AsObject());
++        if(!TestTrue(TEXT("The scaled map retains the real description, six legends, objective, remaining hint and boundaries"),
++            Description.IsValid() && Legends.Num()==6 && Objective.IsValid() && Remaining.IsValid() && Canvas.IsValid() && Footer.IsValid()))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        TestEqual(TEXT("Scaling retains the complete authored sidebar"),Description->GetStringField(TEXT("text")),Definition(TEXT("map.element.008"))->GetStringField(TEXT("text")));
++        TestEqual(TEXT("Scaling retains the complete authored three-line objective"),Objective->GetStringField(TEXT("text")),ExpectedObjective);
++        float DescriptionAdvance,ObjectiveAdvance,RemainingAdvance;
++        const auto DescriptionLines=PaintedLines(Description,DescriptionAdvance),ObjectiveLines=PaintedLines(Objective,ObjectiveAdvance),RemainingLines=PaintedLines(Remaining,RemainingAdvance);
++        const double DescriptionHeight=DescriptionLines.Num()*DescriptionAdvance,ObjectiveHeight=ObjectiveLines.Num()*ObjectiveAdvance;
++        const auto D=Rect(Description),O=Rect(Objective),C=Rect(Canvas),F=Rect(Footer);
++        TestTrue(FString::Printf(TEXT("%d%% sidebar reserves its complete wrapped text height"),Scale),D.W+.1>=DescriptionHeight);
++        TestTrue(FString::Printf(TEXT("%d%% first legend stays below the complete description"),Scale),Rect(Legends[0]).Y>=D.Y+DescriptionHeight+8);
++        TArray<FVector4> Previous;
++        for(const auto& Legend:Legends)
++        {
++            float Advance;const auto Lines=PaintedLines(Legend,Advance);const auto L=Rect(Legend);
++            const FString Id=Legend->GetStringField(TEXT("id"));
++            TestEqual(TEXT("Scaling retains each complete authored legend"),Legend->GetStringField(TEXT("text")),Definition(Id)->GetStringField(TEXT("text")));
++            for(const auto& Line:Lines)
++                TestTrue(FString::Printf(TEXT("%d%% %s contains its measured font bounds"),Scale,*Id),Line.Y+Line.W<=L.Y+L.W+.1);
++            TestFalse(FString::Printf(TEXT("%d%% consecutive legends keep distinct measured text lines"),Scale),Overlap(Previous,Lines));Previous=Lines;
++        }
++        TestTrue(FString::Printf(TEXT("%d%% objective reserves the complete wrapped text"),Scale),O.W+.1>=ObjectiveHeight);
++        TestTrue(FString::Printf(TEXT("%d%% objective stays above the canvas bottom and footer"),Scale),
++            O.Y+ObjectiveHeight<=C.Y+C.W-8+.1 && O.Y+ObjectiveHeight<=F.Y-8+.1);
++        for(const auto& Line:RemainingLines)
++            TestTrue(FString::Printf(TEXT("%d%% remaining-garrison hint stays inside the clipping canvas"),Scale),
++                Line.X>=C.X && Line.X+Line.Z<=C.X+C.Z+.1 && Line.Y>=C.Y && Line.Y+Line.W<=C.Y+C.W+.1);
++        TestFalse(FString::Printf(TEXT("%d%% remaining-garrison hint and tracked objective keep distinct measured text lines"),Scale),Overlap(ObjectiveLines,RemainingLines));
++        AddInfo(FString::Printf(TEXT("Map069 scale=%d descriptionLines=%d reservedHeight=%.1f rectHeight=%.1f firstLegendY=%.1f objectiveLines=%d remainingLines=%d remainingLastMeasuredBottom=%.1f"),
++            Scale,DescriptionLines.Num(),DescriptionHeight,D.W,Rect(Legends[0]).Y,ObjectiveLines.Num(),RemainingLines.Num(),RemainingLines.Last().Y+RemainingLines.Last().W));
++        Capture(Scale);
++    }
++    Screen->RemoveFromParent();Cleanup();return true;
++}
+ #endif

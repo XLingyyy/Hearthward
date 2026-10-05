@@ -1,0 +1,973 @@
+Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject -noP4 -platform=Win64 -clientconfig=Shipping -build -cook -stage -pak -iostore -archive -archivedirectory=F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Archive -prereqs -utf8output -unattended -NoLiveCoding -map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds -target=Hearthward -CookOutputDir=F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows -stagingdirectory=F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Staged -AdditionalCookerOptions=-ShaderWorkingDir=F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Shaders -nodebuginfo
+Initializing script modules...
+Total script module initialization time: 1.05 s.
+Using E:\VSC++\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject
+********** BUILD COMMAND STARTED **********
+Running: G:\UnrealEngine\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "G:\UnrealEngine\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="HearthwardEditor Win64 Development -Project=G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject" -Target="Hearthward Win64 Shipping -Project=G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject  -remoteini=\"G:\GameFactory\Hearthward\.agent-local\task051\"  " -log="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\UBA-HearthwardEditor-Win64-Development.txt"
+Log file: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\UBA-HearthwardEditor-Win64-Development.txt
+Determining max actions to execute in parallel (14 physical cores, 20 logical cores)
+  Executing up to 14 processes, one per physical core
+  Requested 1.5 GB memory per action, 15.63 GB available: limiting max parallel actions to 10
+Using 'git status' to determine working set for adaptive non-unity build (G:\GameFactory\Hearthward\.agent-local\task051).
+Creating makefile for Hearthward (no existing makefile)
+UbaServer - Listening on 0.0.0.0:1345
+Building HearthwardEditor and Hearthward...
+===== Toolchain Information =====
+HearthwardEditor Win64 Development:
+  Using ISPC compiler (G:\UnrealEngine\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (E:\VSC++\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardAgentContract.cpp, HearthwardAgentInteraction.cpp, HearthwardLocalAIRuntime.cpp, HearthwardLocalAISubsystem.cpp, HearthwardAnimalMotionComponent.cpp, HearthwardHeroAnimInstance.cpp, HearthwardBuildingComponent.cpp, HearthwardBuildingEconomy.cpp, HearthwardBuildingTests.cpp, HearthwardCrafting.cpp, HearthwardRepair.cpp, HearthwardCampState.cpp, HearthwardCampSubsystem.cpp, HearthwardQuartermaster.cpp, HearthwardCampaignActor.cpp, HearthwardCampaignInteraction.cpp, HearthwardCampaignQuests.cpp, HearthwardCampaignWorld.cpp, HearthwardCombatComponent.cpp, HearthwardProjectile.cpp, HearthwardCompanionDebug.cpp, HearthwardCompanionFixture.cpp, HearthwardCompanionNavigationComponent.cpp, HearthwardTraversalComponent.cpp, HearthwardCompanionBehavior.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, HearthwardWorldPresentation.cpp, HearthwardInputBindings.cpp, HearthwardFurnitureInteractionComponent.cpp, HearthwardHarvestSubsystem.cpp, HearthwardNatureActions.cpp, HearthwardNatureActor.cpp, HearthwardNatureFishing.cpp, HearthwardNatureState.cpp, HearthwardNatureSubsystem.cpp, HearthwardInventoryMigration.cpp, HearthwardSaveCompatibility.cpp, HearthwardSaveGame.cpp, HearthwardSaveSubsystem.cpp, HearthwardSurvivalComponent.cpp, CampaignAIBehaviorTests.cpp, CampaignEndStateTests.cpp, CampEconomyTests.cpp, CampLaborPresentationTests.cpp, CombatTests.cpp, CompanionWorkNavigationTests.cpp, CraftingPresentationTests.cpp, EquipmentPresentationTests.cpp, ExperienceTests.cpp, FarmingPresentationTests.cpp, FishingEntryTests.cpp, GameplayTests.cpp, HarvestRefreshTests.cpp, MapGuidanceTests.cpp, NatureBehaviorTests.cpp, NPCAgentTests.cpp, ProjectileBodyProtectionTests.cpp, SavePartialSettlementTests.cpp, SaveTests.cpp, SurvivalTests.cpp, TraversalTests.cpp, HearthwardHUDDialogue.cpp, HearthwardLoadingSubsystem.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenWidget.cpp
+Hearthward Win64 Shipping:
+  Using ISPC compiler (G:\UnrealEngine\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (E:\VSC++\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardAgentContract.cpp, HearthwardAgentInteraction.cpp, HearthwardLocalAIRuntime.cpp, HearthwardLocalAISubsystem.cpp, HearthwardAnimalMotionComponent.cpp, HearthwardHeroAnimInstance.cpp, HearthwardBuildingComponent.cpp, HearthwardBuildingEconomy.cpp, HearthwardBuildingTests.cpp, HearthwardCrafting.cpp, HearthwardRepair.cpp, HearthwardCampState.cpp, HearthwardCampSubsystem.cpp, HearthwardQuartermaster.cpp, HearthwardCampaignActor.cpp, HearthwardCampaignInteraction.cpp, HearthwardCampaignQuests.cpp, HearthwardCampaignWorld.cpp, HearthwardCombatComponent.cpp, HearthwardProjectile.cpp, HearthwardCompanionDebug.cpp, HearthwardCompanionFixture.cpp, HearthwardCompanionNavigationComponent.cpp, HearthwardTraversalComponent.cpp, HearthwardCompanionBehavior.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, HearthwardWorldPresentation.cpp, HearthwardInputBindings.cpp, HearthwardFurnitureInteractionComponent.cpp, HearthwardHarvestSubsystem.cpp, HearthwardNatureActions.cpp, HearthwardNatureActor.cpp, HearthwardNatureFishing.cpp, HearthwardNatureState.cpp, HearthwardNatureSubsystem.cpp, HearthwardInventoryMigration.cpp, HearthwardSaveCompatibility.cpp, HearthwardSaveGame.cpp, HearthwardSaveSubsystem.cpp, HearthwardSurvivalComponent.cpp, CampaignAIBehaviorTests.cpp, CampaignEndStateTests.cpp, CampEconomyTests.cpp, CampLaborPresentationTests.cpp, CombatTests.cpp, CompanionWorkNavigationTests.cpp, CraftingPresentationTests.cpp, EquipmentPresentationTests.cpp, ExperienceTests.cpp, FarmingPresentationTests.cpp, FishingEntryTests.cpp, GameplayTests.cpp, HarvestRefreshTests.cpp, MapGuidanceTests.cpp, NatureBehaviorTests.cpp, NPCAgentTests.cpp, ProjectileBodyProtectionTests.cpp, SavePartialSettlementTests.cpp, SaveTests.cpp, SurvivalTests.cpp, TraversalTests.cpp, HearthwardHUDDialogue.cpp, HearthwardLoadingSubsystem.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenWidget.cpp
+=================================
+Using Unreal Build Accelerator local executor to run 90 action(s)
+  CPU 14 physical cores, 20 logical cores
+  Memory 15.63 GB physical, 19.78 GB/31.26 GB committed
+  UBA Storage capacity 40 GB
+** For Hearthward-Win64-Shipping **
+[1/90] Copy Hearthward-Win64-Shipping-Default.rc2
+[2/90] Compile Resource [x64] Hearthward-Win64-Shipping-Default.rc2
+[3/90] Compile [x64] SharedPCH.Engine.Project.ValApi.ValExpApi.Cpp20.cpp
+[4/90] Compile [x64] CampEconomyTests.cpp
+[5/90] Compile [x64] CampLaborPresentationTests.cpp
+[6/90] Compile [x64] CampaignAIBehaviorTests.cpp
+[7/90] Compile [x64] CampaignEndStateTests.cpp
+[8/90] Compile [x64] CombatTests.cpp
+[9/90] Compile [x64] CompanionWorkNavigationTests.cpp
+[10/90] Compile [x64] CraftingPresentationTests.cpp
+[11/90] Compile [x64] EquipmentPresentationTests.cpp
+[12/90] Compile [x64] ExperienceTests.cpp
+[13/90] Compile [x64] FarmingPresentationTests.cpp
+[14/90] Compile [x64] FishingEntryTests.cpp
+[15/90] Compile [x64] HarvestRefreshTests.cpp
+[16/90] Compile [x64] GameplayTests.cpp
+[17/90] Compile [x64] HearthwardAgentInteraction.cpp
+[18/90] Compile [x64] HearthwardAgentContract.cpp
+[19/90] Compile [x64] HearthwardBuildingComponent.cpp
+[20/90] Compile [x64] HearthwardAnimalMotionComponent.cpp
+[21/90] Compile [x64] HearthwardBuildingEconomy.cpp
+[22/90] Compile [x64] HearthwardBuildingTests.cpp
+[23/90] Compile [x64] HearthwardCampState.cpp
+[24/90] Compile [x64] HearthwardCampSubsystem.cpp
+[25/90] Compile [x64] HearthwardCampaignInteraction.cpp
+[26/90] Compile [x64] HearthwardCampaignActor.cpp
+[27/90] Compile [x64] HearthwardCampaignQuests.cpp
+[28/90] Compile [x64] HearthwardCampaignWorld.cpp
+[29/90] Compile [x64] HearthwardCharacter.cpp
+[30/90] Compile [x64] HearthwardCompanionBehavior.cpp
+[31/90] Compile [x64] HearthwardCompanionDebug.cpp
+[32/90] Compile [x64] HearthwardCombatComponent.cpp
+[33/90] Compile [x64] HearthwardCompanionNavigationComponent.cpp
+[34/90] Compile [x64] HearthwardCrafting.cpp
+[35/90] Compile [x64] HearthwardCompanionFixture.cpp
+[36/90] Compile [x64] HearthwardFurnitureInteractionComponent.cpp
+[37/90] Compile [x64] HearthwardEquipment.cpp
+[38/90] Compile [x64] HearthwardHUDDialogue.cpp
+[39/90] Compile [x64] HearthwardGameplayComponent.cpp
+[40/90] Compile [x64] HearthwardHarvestSubsystem.cpp
+[41/90] Compile [x64] HearthwardHeroAnimInstance.cpp
+[42/90] Compile [x64] HearthwardInputBindings.cpp
+[43/90] Compile [x64] HearthwardLoadingSubsystem.cpp
+[44/90] Compile [x64] HearthwardInventoryMigration.cpp
+[45/90] Compile [x64] HearthwardLocalAIRuntime.cpp
+[46/90] Compile [x64] HearthwardNatureActions.cpp
+[47/90] Compile [x64] HearthwardLocalAISubsystem.cpp
+[48/90] Compile [x64] HearthwardNatureFishing.cpp
+[49/90] Compile [x64] HearthwardNatureActor.cpp
+[50/90] Compile [x64] HearthwardNatureState.cpp
+[51/90] Compile [x64] HearthwardNatureSubsystem.cpp
+[52/90] Compile [x64] HearthwardProjectile.cpp
+[53/90] Compile [x64] HearthwardQuartermaster.cpp
+[54/90] Compile [x64] HearthwardRepair.cpp
+[55/90] Compile [x64] HearthwardSaveCompatibility.cpp
+[56/90] Compile [x64] HearthwardSaveGame.cpp
+[57/90] Compile [x64] HearthwardSaveSubsystem.cpp
+[58/90] Compile [x64] HearthwardScreenActions.cpp
+[59/90] Compile [x64] HearthwardScreenCapture.cpp
+[60/90] Compile [x64] HearthwardScreenCamp.cpp
+[61/90] Compile [x64] HearthwardScreenCompatibility.cpp
+[62/90] Compile [x64] HearthwardScreenCrafting.cpp
+[63/90] Compile [x64] HearthwardScreenEquipment.cpp
+[64/90] Compile [x64] HearthwardScreenContent.cpp
+[65/90] Compile [x64] HearthwardScreenNature.cpp
+[66/90] Compile [x64] HearthwardScreenLayout.cpp
+[67/90] Compile [x64] HearthwardScreenRepair.cpp
+[68/90] Compile [x64] HearthwardScreenPaint.cpp
+[69/90] Compile [x64] HearthwardScreenSettings.cpp
+[70/90] Compile [x64] HearthwardSurvivalComponent.cpp
+[71/90] Compile [x64] HearthwardScreenWidget.cpp
+[72/90] Compile [x64] HearthwardWorldPresentation.cpp
+[73/90] Compile [x64] HearthwardTraversalComponent.cpp
+[74/90] Compile [x64] MapGuidanceTests.cpp
+[75/90] Compile [x64] Module.Hearthward.1.cpp
+[76/90] Compile [x64] Module.Hearthward.2.cpp
+[77/90] Compile [x64] Module.Hearthward.4.cpp
+[78/90] Compile [x64] Module.Hearthward.3.cpp
+[79/90] Compile [x64] Module.Hearthward.5.cpp
+[80/90] Compile [x64] NPCAgentTests.cpp
+[81/90] Compile [x64] NatureBehaviorTests.cpp
+[82/90] Compile [x64] Module.Hearthward.6.cpp
+[83/90] Compile [x64] SavePartialSettlementTests.cpp
+[84/90] Compile [x64] ProjectileBodyProtectionTests.cpp
+[85/90] Compile [x64] SaveTests.cpp
+[86/90] Compile [x64] SurvivalTests.cpp
+[87/90] Compile [x64] TraversalTests.cpp
+[88/90] Compile [x64] Module.A3GamePlayable.cpp
+[89/90] Link [x64] Hearthward-Win64-Shipping.exe
+  ���ڴ����� G:\GameFactory\Hearthward\.agent-local\task051\Binaries\Win64\Hearthward-Win64-Shipping.lib �Ͷ��� G:\GameFactory\Hearthward\.agent-local\task051\Binaries\Win64\Hearthward-Win64-Shipping.exp
+[90/90] WriteMetadata Hearthward-Win64-Shipping.target [NoUba]
+
+Total time in Unreal Build Accelerator local executor: 216.49 seconds
+Output binary: G:\UnrealEngine\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe
+Output binary: G:\GameFactory\Hearthward\.agent-local\task051\Binaries\Win64\Hearthward-Win64-Shipping.exe
+
+Result: Succeeded
+Total execution time: 223.12 seconds
+Trace written to file C:\Users\admin\AppData\Local\UnrealBuildTool\Trace.uba with size 49.9kb
+Took 224.69s to run dotnet.exe, ExitCode=0
+No build products were made
+Build command time: 224.72 s
+********** BUILD COMMAND COMPLETED **********
+********** COOK COMMAND STARTED **********
+HasMapsToCook /Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds
+Params.HasMapsToCook /Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds
+Running UnrealEditor Cook for project G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject
+Commandlet log file is G:\UnrealEngine\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.10.05-06.58.41.txt
+Running: G:\UnrealEngine\UE_5.8\Engine\Binaries\Win64\UnrealEditor-Cmd.exe "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject" -run=Cook -Map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds -TargetPlatform=Windows  -unversioned -outputdir="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows" -ShaderWorkingDir=F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Shaders -fileopenlog -abslog="G:\UnrealEngine\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.10.05-06.58.41.txt" -stdout -CrashForUAT -unattended -NoLogTimes
+LogInit: Display: Running engine for game: Hearthward
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.8-CL-56702186"
+LogCsvProfiler: Display: Metadata set : engineversion="5.8.2-56702186+++UE5+Release-5.8"
+LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.8.2"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (24H2) [10.0.26100.4351] "
+LogCsvProfiler: Display: Metadata set : cpu="GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+LogCsvProfiler: Display: Metadata set : compacttset="0"
+LogCsvProfiler: Display: Metadata set : commandline="" G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject -run=Cook -Map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds -TargetPlatform=Windows -unversioned -outputdir=F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows -ShaderWorkingDir=F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Shaders -fileopenlog -abslog=G:\UnrealEngine\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.10.05-06.58.41.txt -stdout -CrashForUAT -unattended -NoLogTimes""
+LogCsvProfiler: Display: Metadata set : loginid="a82aa7934b238d42e0d65a84d8c108c4"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogCsvProfiler: Display: Metadata set : zenstreaming="0"
+LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+LogAudio: Display: Audio Device Manager not initializing due to all audio being disabled. If this is not intentional, please check command line arguments for "-nosound".
+LogConfig: Display: Loading VulkanPC ini files took 0.08 seconds
+LogAssetRegistry: Display: FindShardedCacheFiles: 1 via .ref, 0 via migration fallback, 1 total
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PreLoad): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogAssetRegistry: Display: LoadCacheFiles: loading 1 cache files, memory-mapping=enabled
+LogConfig: Display: Loading Mac ini files took 0.09 seconds
+LogConfig: Display: Loading IOS ini files took 0.10 seconds
+LogConfig: Display: Loading Android ini files took 0.10 seconds
+LogConfig: Display: Loading Windows ini files took 0.11 seconds
+LogConfig: Display: Loading Unix ini files took 0.11 seconds
+LogConfig: Display: Loading TVOS ini files took 0.11 seconds
+LogConfig: Display: Loading VisionOS ini files took 0.11 seconds
+LogConfig: Display: Loading Linux ini files took 0.13 seconds
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Mode=ValidatePlatforms -OutputSDKs  -AllPlatforms  -project="G:/GameFactory/Hearthward/.agent-local/task051/Hearthward.uproject" -log="G:/GameFactory/Hearthward/.agent-local/task051/Saved/Logs/AutoSDKInfo.txt" -verbose -timestamps
+LogAssetRegistry: Display: Asset registry cache read as 121.6 MiB from ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/CachedAssetRegistry/CachedAssetRegistry_0_5E586C994A9851E0476446B2ED18E30E.bin (memory-mapped=yes)
+Log file: G:\GameFactory\Hearthward\.agent-local\task051\Saved\Logs\AutoSDKInfo.txt
+##PlatformValidate: Win64 VALID 10.0.22621.0
+##PlatformValidate: Mac INVALID 26.1.1
+##PlatformValidate: IOS INVALID 26.1.1
+##PlatformValidate: Android INVALID r27c
+##PlatformValidate: Linux INVALID v26_clang-20.1.8-rockylinux8
+##PlatformValidate: LinuxArm64 INVALID <UNKNOWN>
+##PlatformValidate: TVOS INVALID 26.1.1
+##PlatformValidate: VisionOS INVALID <UNKNOWN>
+Unable to find required SDK version 'MainVersion' for platform LinuxArm64. Check your SDK.json files
+Unable to find required SDK version 'MainVersion' for platform VisionOS. Check your SDK.json files
+Trace written to file C:\Users\admin\AppData\Local\UnrealBuildTool\Trace.uba with size 321b
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+LogAsyncCompilation: Display: MemorySharingInfo: UsedMemory=366MiB, MaxMemoryAvailable=32006MiB
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Log is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.CSV is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Horde is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Log is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.CSV is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Horde is disabled for this application
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogHAL: Display: Platform has ~ 16 GB [16780480512 / 17179869184 / 16], which maps to Larger [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+LogObj: Display: Attempting to load config data for Default__DownlinkBandwidthManagerConfig before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.16
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.16.dll
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Android'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'IOS'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Linux'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Mac'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'TVOS'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+LogTargetPlatformManager: Display: Building Assets For Windows
+LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+LogCsvProfiler: Display: Metadata set : rhiname="Null"
+LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+LogCsvProfiler: Display: Metadata set : gpu=""
+LogCsvProfiler: Display: Metadata set : gpudriver=""
+LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1679 MiB)
+LogZenServiceInstance: Display: Launching zen utility 'G:/UnrealEngine/UE_5.8/Engine/Binaries/Win64/zen.exe service status'.
+LogZenServiceInstance: Display: Writing plugin version info to 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugin_versions.json'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/admin/AppData/Local/UnrealEngine/5.8/Saved/Zen/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Installed service at 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+LogZenServiceInstance: Display: Launching executable 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\admin\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --restrict-content-types --allow-external-oidctoken-exe=false --plugins-config "C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugins_v1.json" --security-config-path "C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/security-config.json" --owner-pid 48488  --child-id Zen_48488_Startup'
+LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc. Status: OK!.
+LogDerivedDataCache: Display: C:/Users/admin/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.11ms. RandomReadSpeed=137.48MBs, RandomWriteSpeed=97.19MBs. Assigned SpeedClass 'Local'
+LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+LogShaderCompilers: Display: No distributed shader compiler controller found
+LogShaderCompilers: Display: Using 17 local workers for shader compilation
+LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+LogEditorDomain: Display: EditorDomain is Disabled
+LogAssetRegistry: Display: AssetDataGatherer spent 0.000s loading caches from ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/CachedAssetRegistry.
+LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+LogMeshReduction: Display: No distributed automatic mesh merging module available
+LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 7.186 ms
+LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+LogAudio: Display: Registering Engine Module Parameter Interfaces...
+LogSkinnedAsset: Display: 正在等待蒙皮资产就绪0/1（SK_Hero）……
+LogSkinnedAsset: Display: 正在等待蒙皮资产就绪0/1（SK_Brother）……
+LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+LogCsvProfiler: Display: Metadata set : raytracing="0"
+LogCook: Display: CookProcessCount=1. CookMultiprocess is disabled and the cooker is running as a single process.
+LogCook: Display: CookSettings for Memory:
+	MemoryMaxUsedVirtual 0MiB
+	MemoryMaxUsedPhysical 0MiB
+	MemoryMinFreeVirtual 2048MiB
+	MemoryMinFreePhysical 2048MiB
+	MemoryTriggerGCAtPressureLevel None
+	SoftGCMemoryUseTrigger disabled
+	SoftGCTimeBudgetTrigger enabled (0.05 budget, 30s min period)
+LogCook: Display: SkipOnlyEditorOnly is enabled, unsolicited packages will not be cooked unless they are referenced from the cooked version of the instigator package.
+LogCook: Display: ---- Pre Content Initialisation: End ----
+LogCook: Display: ---- Post Content Initialisation: Start ----
+LogEditorDomain: Display: Cycle detected in parents of class /Script/RigVMDeveloper.RigVMUnitNode. Allow flags for editordomain and incremental cooking will be invalid.
+LogZenStore: Display: Establishing oplog 'Hearthward.1843b38d/EditorDomain'
+LogZenStore: Display: Zen project 'Hearthward.1843b38d' already exists
+LogZenStore: Display: Zen oplog 'Hearthward.1843b38d/EditorDomain' already exists
+LogCook: Display: Waiting for Asset Registry
+LogAssetRegistry: Display: Starting OnFilesLoaded.Broadcast
+LogAssetRegistry: Display: Completed OnFilesLoaded.Broadcast: 0.040s
+LogAssetRegistry: Display: Asset registry cache written as 121.6 MiB to ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/CachedAssetRegistry/CachedAssetRegistry_*.ref
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display:   CachedAssetRegistry_0_5E586C994A9851E0476446B2ED18E30E.bin: deleted (orphaned, unreferenced by any .ref)
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 2 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 1 orphans deleted, 0 orphans locked (kept)
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogCook: Display: INCREMENTAL COOK DEPENDENCIES: Disabled. Incremental Cook Dependencies are disabled because the cooker is not using ZenStore, and we do not yet support storage of Incremental Cook dependency data with loose cooked packages. Falling back to legacy iterative cook mode.
+LogCook: Display: CalculateGlobalDependenciesHash(Windows):
+LogCook: Display: 	FGuid CookIncrementalVersion = ffa12fdc-c822-1fe2-7757-627a12f1d3a7
+LogCook: Display: 	[Editor]:CookSettings.ProjectCookIncrementalVersion = 00000000-0000-0000-0000-000000000000
+LogCook: Display: 	[Engine]:Core.System.CanStripEditorOnlyExportsAndImports = True
+LogCook: Display: 	[Engine]:Core.System.CanSkipEditorReferencedPackagesWhenCooking = False
+LogCook: Display: 	CanUseUnversionedPropertySerialization = True
+LogCook: Display: 	[Editor]:CookSettings.AutomaticOptionalInclusionAssetType = /Script/Niagara.NiagaraScript, /Script/Niagara.NiagaraEmitter, /Script/Niagara.NiagaraSystem, /Script/NiagaraEditor.NiagaraParameterDefinitions, /Script/Niagara.NiagaraEffectType, /Script/Niagara.NiagaraValidationRuleSet, /Script/OptimusCore.OptimusDeformer
+LogCook: Display: 	IsCookFlagSet(ECookInitializationFlags::Unversioned) = True
+LogCook: Display: 	FCoreRedirects::AppendHashOfGlobalRedirects = 585cca26a3cdc75e6429aaebf6e44e83b7ba1a57df64d1368584d8f9a0f23d24
+LogCook: Display: 	GlobalDependenciesHash(Windows) = 347b3354c8d2b1518815ea05de341f094084f0edd0baa356ea216265c3627def
+LogCook: Display: FULL COOK: Incremental Cook Dependencies are disabled, and -legacyiterative was not specified. Deleting previously cooked packages for platform Windows and recooking all packages discovered in the current cook.
+LogCook: Display: Sandbox cleanup took 0.082 seconds for platforms Windows
+LogCook: Display: Compiling global changed shaders for platform 'Windows'
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Global' (PCD3D_SM6-PCD3D_SM6) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 1, Unique Shadermaps: 461 (46100.00%)
+LogShaderLibrary: Display: Total Shaders: 8097, Unique Shaders: 8095 (99.98%)
+LogShaderLibrary: Display: Total Shader Size: 97.01mb, Unique Shaders Size: 97.01mb (100.00%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 3
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 530
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     2, 2, 1, 1, 1, 1, 1, 1, 1, 1
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Compute: 5931 shaders (73.27%), compressed size: 74.44 MB (12.85 KB avg per shader), uncompressed size: 98.46 MB (17.00 KB avg per shader)
+LogShaderLibrary: Display: SF_Pixel: 2025 shaders (25.02%), compressed size: 22.21 MB (11.23 KB avg per shader), uncompressed size: 29.19 MB (14.76 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 135 shaders (1.67%), compressed size: 0.35 MB (2.69 KB avg per shader), uncompressed size: 0.44 MB (3.35 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 3 shaders (0.04%), compressed size: 0.01 MB (2.15 KB avg per shader), uncompressed size: 0.01 MB (3.31 KB avg per shader)
+LogShaderLibrary: Display: SF_WorkGraphComputeNode: 1 shaders (0.01%), compressed size: 0.00 MB (2.75 KB avg per shader), uncompressed size: 0.00 MB (3.35 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../GameFactory/Hearthward/.agent-local/task051/Saved/Shaders/PCD3D_SM6-PCD3D_SM6/ShaderDebug-Global-PCD3D_SM6-PCD3D_SM6/Dump.txt'
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Global' (PCD3D_SM5-PCD3D_SM5) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 1, Unique Shadermaps: 345 (34500.00%)
+LogShaderLibrary: Display: Total Shaders: 3940, Unique Shaders: 3926 (99.64%)
+LogShaderLibrary: Display: Total Shader Size: 11.61mb, Unique Shaders Size: 11.61mb (99.96%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 3
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 309
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     3, 3, 3, 2, 2, 2, 2, 2, 2, 2
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Pixel: 1751 shaders (44.60%), compressed size: 6.68 MB (3.91 KB avg per shader), uncompressed size: 31.68 MB (18.53 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 2058 shaders (52.42%), compressed size: 4.85 MB (2.41 KB avg per shader), uncompressed size: 19.56 MB (9.73 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 115 shaders (2.93%), compressed size: 0.07 MB (0.61 KB avg per shader), uncompressed size: 0.15 MB (1.31 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.05%), compressed size: 0.00 MB (0.49 KB avg per shader), uncompressed size: 0.00 MB (1.55 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../GameFactory/Hearthward/.agent-local/task051/Saved/Shaders/PCD3D_SM5-PCD3D_SM5/ShaderDebug-Global-PCD3D_SM5-PCD3D_SM5/Dump.txt'
+LogShaderLibrary: Display: =================
+LogCook: Display: Discovering localized assets for cultures: en
+LogCook: Display: Found 0 localized assets
+LogCook: Display: ---- Post Content Initialisation: End ----
+LogCook: Display: Cooked packages 0 Packages Remain 1178 Total 1178
+LogCook: Display: Cook Diagnostics: OpenFileHandles=317, VirtualMemory=1708MiB, VirtualMemoryAvailable=11491MiB
+LogCook: Display: Garbage collection triggered (Soft). Triggered by conditions:
+  CookSettings.SoftGCTimeTrigger: Periodic triggering of SoftGC: No duration data.
+LogCookCommandlet: Display: GarbageCollection... (Periodic GC)
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[StaticMesh]！所需内存 = 0.000 MiB + 6119.359863 MiB，内存限制 = 4967.644531 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[StaticMesh]！所需内存 = 0.000 MiB + 6119.359863 MiB，内存限制 = 4967.152344 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4574.65625 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4574.65625 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4580.460938 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4580.460938 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4564.089844 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4564.089844 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4548.613281 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4548.613281 MiB
+LogCook: Display: Cooked packages 112 Packages Remain 1198 Total 1310
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4519.796875 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4519.796875 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4462.011719 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4463.261719 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4433.015625 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4433.015625 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4416.574219 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4416.574219 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4400.472656 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4399.828125 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4401.304688 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4400.4375 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4375.941406 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4375.941406 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4364.714844 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4364.714844 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4357.226562 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4357.226562 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4102.238281 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4102.78125 MiB
+LogWorldPartition: Display: [Cook] Gathering packages to cook from generators for owner object World /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds.
+LogWorldPartition: Display: WorldPartition initialize started...
+LogWorldPartition: Display: WorldPartition initialize took 49.616 ms
+LogWorldPartition: Display: GenerateStreaming for 'L_HearthwardWilds' started...
+LogWorldPartition: Display: GenerateStreaming for 'L_HearthwardWilds' took 54.700 ms
+LogWorldPartition: Display: [Cook] Gathered 294 packages to generate from 1 Generators.
+LogWorldPartition: Display: [Cook] Sending 294 packages to be generated.
+LogWorldPartition: Display: [Cook] Debug(GetGenerateList) : OwnerWorld=World /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds
+LogCook: Display: Splitting Package /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds with splitter FWorldCookPackageSplitter acting on object World /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds.
+LogWorldPartition: Display: [Cook][PopulateGeneratorPackage] Processing 294 packages
+LogWorldPartition: Display: [Cook][PopulateGeneratorPackage] Gathered 73 modified packages
+LogCook: Display: Cooked packages 199 Packages Remain 1405 Total 1604
+LogCook: Display: Cooked packages 280 Packages Remain 1352 Total 1632
+LogCook: Display: Cooked packages 488 Packages Remain 1144 Total 1632
+LogWorldPartition: Display: [Cook] Debug(TearDown): OwnerWorld=World /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds
+LogCook: Display: Cooked packages 681 Packages Remain 951 Total 1632
+LogCook: Display: Garbage collection triggered (Full). Triggered by conditions:
+  CookSettings.MemoryMinFreePhysical: Available physical memory 1766MiB is less than 2048MiB.
+LogCook: Display: Cooked packages 1218 Packages Remain 414 Total 1632
+LogCookCommandlet: Display: GarbageCollection... (Exceeded Max Memory)
+LogCook: Display: GarbageCollection Results:
+	Type: Full
+	Duration: 0.286s
+	NumObjects:
+		Capacity:           25231360
+		Before GC:            101759
+		After GC:              55995
+		Freed by GC:            45.0%
+	NumPackages:
+		Before GC:              6546
+		After GC:                966
+		Freed by GC:            85.2%
+	Virtual Memory:
+		Before GC:              5832 MB
+		After GC:               5298 MB
+		Freed by GC:             9.2%
+LogCook: Display: Cooked packages 1431 Packages Remain 201 Total 1632
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.11.dll
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.12.dll
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.15.dll
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.13.dll
+LogCook: Display: Cooked packages 1632 Packages Remain 0 Total 1632
+LogCook: Display: Cook Diagnostics: OpenFileHandles=3484, VirtualMemory=3792MiB, VirtualMemoryAvailable=9241MiB
+LogCook: Display: ---- Finalisation: Start ----
+LogAssetRegistryGenerator: Display: Saving asset registry v24.
+LogAssetRegistryGenerator: Display: Generated development asset registry F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Cooked/Windows/Hearthward/Metadata/DevelopmentAssetRegistry.bin num assets 1635, size is 1201.98kb, XxHash64[LE] = 0x42F33CC49C6D71CC, waited on hash 0.00 seconds
+LogAssetRegistryGenerator: Display: Generated asset registry num assets 1628, size is 510.23kb
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Hearthward' (PCD3D_SM6-PCD3D_SM6) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 180, Unique Shadermaps: 128 (71.11%)
+LogShaderLibrary: Display: Total Shaders: 3410, Unique Shaders: 2506 (73.49%)
+LogShaderLibrary: Display: Total Shader Size: 30.79mb, Unique Shaders Size: 25.01mb (81.25%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 13
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 984
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     33, 29, 28, 27, 24, 22, 17, 17, 17, 17
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Compute: 588 shaders (23.46%), compressed size: 10.04 MB (17.48 KB avg per shader), uncompressed size: 13.43 MB (23.39 KB avg per shader)
+LogShaderLibrary: Display: SF_Pixel: 1198 shaders (47.81%), compressed size: 9.64 MB (8.24 KB avg per shader), uncompressed size: 12.66 MB (10.82 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 597 shaders (23.82%), compressed size: 4.18 MB (7.18 KB avg per shader), uncompressed size: 5.52 MB (9.47 KB avg per shader)
+LogShaderLibrary: Display: SF_Mesh: 121 shaders (4.83%), compressed size: 1.14 MB (9.62 KB avg per shader), uncompressed size: 1.37 MB (11.62 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.08%), compressed size: 0.01 MB (5.53 KB avg per shader), uncompressed size: 0.02 MB (7.81 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../GameFactory/Hearthward/.agent-local/task051/Saved/Shaders/PCD3D_SM6-PCD3D_SM6/ShaderDebug-Hearthward-PCD3D_SM6-PCD3D_SM6/Dump.txt'
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Hearthward' (PCD3D_SM5-PCD3D_SM5) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 180, Unique Shadermaps: 127 (70.56%)
+LogShaderLibrary: Display: Total Shaders: 2211, Unique Shaders: 1497 (67.71%)
+LogShaderLibrary: Display: Total Shader Size: 6.36mb, Unique Shaders Size: 4.78mb (75.18%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 9
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 476
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     28, 22, 22, 20, 19, 16, 16, 16, 16, 12
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Pixel: 886 shaders (59.19%), compressed size: 2.71 MB (3.13 KB avg per shader), uncompressed size: 9.67 MB (11.17 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 495 shaders (33.07%), compressed size: 1.24 MB (2.58 KB avg per shader), uncompressed size: 3.75 MB (7.76 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 114 shaders (7.62%), compressed size: 0.83 MB (7.46 KB avg per shader), uncompressed size: 3.66 MB (32.87 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.13%), compressed size: 0.00 MB (1.75 KB avg per shader), uncompressed size: 0.01 MB (5.60 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../GameFactory/Hearthward/.agent-local/task051/Saved/Shaders/PCD3D_SM5-PCD3D_SM5/ShaderDebug-Hearthward-PCD3D_SM5-PCD3D_SM5/Dump.txt'
+LogShaderLibrary: Display: =================
+LogCook: Display: Dependent plugin "SteamShared" referenced by "EOS Shared" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Dependent plugin "UAF" referenced by "IK Rig" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Dependent plugin "UAFAnimGraph" referenced by "IK Rig" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Finalize package store(s)...
+LogCook: Display: Cook by the book total time in tick 17.843021s total time 28.195704
+LogCook: Display: Peak Used virtual 5627 MiB Peak Used physical 5453 MiB
+LogCook: Display: Packages Cooked: 1625, Packages Incrementally Skipped: 0, Packages Skipped by Platform: 7, Total Packages: 1632
+LogCookStats: Display: Hierarchy Timer Information:
+LogCookStats: Display:   Root: 0.000s (0)
+LogCookStats: Display:     CleanSandbox: 0.081s (1)
+LogCookStats: Display:     CollectFilesToCook: 0.032s (1)
+LogCookStats: Display:       CookModificationDelegate: 0.000s (1)
+LogCookStats: Display:     GenerateLongPackageName: 0.002s (1)
+LogCookStats: Display:     TickMainCookLoop: 17.843s (3)
+LogCookStats: Display:       PumpPollables: 0.014s (2)
+LogCookStats: Display:       PumpRequests: 0.036s (53)
+LogCookStats: Display:       LoadPackageForCooking: 3.680s (4579)
+LogCookStats: Display:       ValidateSourcePackage: 0.000s (1671)
+LogCookStats: Display:       SavingPackages: 13.346s (217)
+LogCookStats: Display:         PollPendingCookedPlatformDatas: 0.635s (7223)
+LogCookStats: Display:         PrepareSave: 1.622s (6017)
+LogCookStats: Display:         PrecachePlatformDataForNextPackage: 2.961s (1613)
+LogCookStats: Display:           PrepareSave: 2.960s (2153)
+LogCookStats: Display:         SaveCookedPackage: 7.846s (1632)
+LogCookStats: Display:           GEditorSavePackage: 7.578s (1632)
+LogCookStats: Display:             VerifyCanCookPackage: 0.010s (1625)
+LogCookStats: Display:         ClearAllCachedCookedPlatformData: 0.240s (1632)
+LogCookStats: Display:       PostLoadPackageFixup: 0.000s (3)
+LogCookStats: Display:       WaitForAsync: 0.492s (29173)
+LogCookStats: Display:     CookByTheBookFinished: 4.130s (1)
+LogCookStats: Display:       SavingCurrentIniSettings: 0.045s (1)
+LogCookStats: Display:         ProcessingAccessedStrings: 0.003s (1)
+LogCookStats: Display:       ChunkGeneration: 0.014s (1)
+LogCookStats: Display:       FinishPopulateShaderLibrary: 0.002s (1)
+LogCookStats: Display:       CalculateReferencedSet: 0.000s (1)
+LogCookStats: Display:       CookArtifacts.UpdateOplogPackages: 0.006s (1)
+LogCookStats: Display:       GeneratorPreSave: 0.000s (1)
+LogCookStats: Display:       BuildChunkManifest: 0.018s (1)
+LogCookStats: Display:         FixupPackageDependenciesForChunks: 0.007s (1)
+LogCookStats: Display:       SaveManifests: 0.000s (1)
+LogCookStats: Display:       SaveAssetRegistry: 0.068s (1)
+LogCookStats: Display:       WriteCookerOpenOrder: 0.053s (1)
+LogCookStats: Display:       WriteCookMetadata: 0.002s (1)
+LogCookStats: Display:       WriteReferencedSet: 0.002s (1)
+LogCookStats: Display:       FinalizePackageStore: 0.004s (1)
+LogCookStats: Display: Misc Cook Stats
+LogCookStats: Display: ===============
+LogCookStats: Display: Validation
+LogCookStats: Display:     Stats=[]
+LogCookStats: Display: Niagara
+LogCookStats: Display:     NiagaraScriptTranslationCount=0
+LogCookStats: Display:     NiagaraCpuScriptCompileCount=0
+LogCookStats: Display:     NiagaraCpuScriptDdcCacheHitCount=0
+LogCookStats: Display:     NiagaraCpuScriptDdcCacheMissCount=0
+LogCookStats: Display:     NiagaraGpuScriptCompileCount=0
+LogCookStats: Display:     NiagaraGpuScriptDdcCacheHitCount=0
+LogCookStats: Display:     NiagaraGpuScriptDdcCacheMissCount=0
+LogCookStats: Display:     NiagaraSystemWaitForCompilationCompleteTime=0.000000
+LogCookStats: Display: ComputeKernelShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: NiagaraShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: ShaderCompiler
+LogCookStats: Display:     BlockingTimeSec=0.000119
+LogCookStats: Display:     AsyncCompileTimeSec=0.000000
+LogCookStats: Display:     GlobalBeginCompileShaderTimeSec=0.000000
+LogCookStats: Display:     GlobalBeginCompileShaderCalls=0
+LogCookStats: Display:     ProcessAsyncResultsTimeSec=0.000228
+LogCookStats: Display: GlobalShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: Material
+LogCookStats: Display:     FinishCacheShadersSec=0.556072
+LogCookStats: Display: Cook.Profile.Params
+LogCookStats: Display:     CookProject=Hearthward
+LogCookStats: Display:     CookCultures=
+LogCookStats: Display:     CookLabel=
+LogCookStats: Display:     TargetPlatforms=Windows
+LogCookStats: Display:     IsCookAll=false
+LogCookStats: Display:     IsCookOnTheFly=false
+LogCookStats: Display:     IsIncrementalCook=false
+LogCookStats: Display:     IsIterativeCook=false
+LogCookStats: Display:     IsFastCook=false
+LogCookStats: Display:     IsUnversioned=true
+LogCookStats: Display: CookOnTheFlyServer.Package.Load
+LogCookStats: Display:     NumRequestedLoads=4129
+LogCookStats: Display:     NumPackagesLoaded=5818
+LogCookStats: Display:     NumInlineLoads=1689
+LogCookStats: Display: CookOnTheFlyServer.Package.Save
+LogCookStats: Display:     NumPackagesIncrementallySkipped=0
+LogCookStats: Display: CookOnTheFlyServer.QueueSize
+LogCookStats: Display:     PeakRequest=1380
+LogCookStats: Display:     PeakLoad=376
+LogCookStats: Display:     PeakSave=222
+LogCookStats: Display: Package.Load
+LogCookStats: Display:     LoadPackageTimeSec=5.763575
+LogCookStats: Display: Package.Save
+LogCookStats: Display:     NumPackagesSaved=1632
+LogCookStats: Display:     SavePackageTimeSec=6.863220
+LogCookStats: Display:     TagPackageExportsPresaveTimeSec=0.000000
+LogCookStats: Display:     TagPackageExportsTimeSec=0.000000
+LogCookStats: Display:     FullyLoadLoadersTimeSec=0.000000
+LogCookStats: Display:     ResetLoadersTimeSec=0.000000
+LogCookStats: Display:     TagPackageExportsGetObjectsWithOuter=0.000000
+LogCookStats: Display:     TagPackageExportsGetObjectsWithMarks=0.000000
+LogCookStats: Display:     SerializeImportsTimeSec=0.000000
+LogCookStats: Display:     SortExportsSeekfreeInnerTimeSec=0.000000
+LogCookStats: Display:     SerializeExportsTimeSec=0.000000
+LogCookStats: Display:     SerializeBulkDataTimeSec=0.015205
+LogCookStats: Display:     AsyncWriteTimeSec=0.000000
+LogCookStats: Display:     MBWritten=0.000000
+LogCookStats: Display: Package.DifferentPackagesSizeMBPerAsset
+LogCookStats: Display: Package.NumberOfDifferencesInPackagesPerAsset
+LogCookStats: Display: Package.PackageDifferencesSizeMBPerAsset
+LogCookStats: Display: Package.DiffTotal
+LogCookStats: Display:     NumberOfDifferentPackages=0
+LogCookStats: Display:     DifferentPackagesSizeMB=0.000000
+LogCookStats: Display:     NumberOfDifferencesInPackages=0
+LogCookStats: Display:     PackageDifferencesSizeMB=0.000000
+LogCookStats: Display: UnversionedProperties
+LogCookStats: Display:     SavedStructs=0
+LogCookStats: Display:     SavedMB=0
+LogCookStats: Display:     EquivalentTaggedMB=0
+LogCookStats: Display:     CompressionRatio=-nan(ind)
+LogCookStats: Display:     BitfieldWasteKB=0
+LogCookStats: Display:
+LogCookStats: Display: Cook Profile
+LogCookStats: Display: ============
+LogCookStats: Display:  0.CookWallTimeSec=66.199419
+LogCookStats: Display:  0. 0.StartupWallTimeSec=37.827166
+LogCookStats: Display:  0. 1.CookProcessingTime=28.372253
+LogCookStats: Display:  0. 1. 1.StartCookByTheBookTimeSec=6.072369
+LogCookStats: Display:  0. 1. 1. 0.BlockOnAssetRegistryTimeSec=1.641485
+LogCookStats: Display:  0. 1. 1. 1.GameCookModificationDelegateTimeSec=0.000073
+LogCookStats: Display:  0. 1. 2.TickCookOnTheSideTimeSec=14.885515
+LogCookStats: Display:  0. 1. 2. 0.TickCookOnTheSideLoadPackagesTimeSec=3.680732
+LogCookStats: Display:  0. 1. 2. 1.TickCookOnTheSideSaveCookedPackageTimeSec=7.846711
+LogCookStats: Display:  0. 1. 2. 1. 0.TickCookOnTheSideResolveRedirectorsTimeSec=0.000000
+LogCookStats: Display:  0. 1. 2. 2.TickCookOnTheSidePrepareSaveTimeSec=4.582106
+LogCookStats: Display:  0. 1. 3.TickLoopGCTimeSec=0.312370
+LogCookStats: Display:  0. 1. 4.TickLoopRecompileShaderRequestsTimeSec=0.000000
+LogCookStats: Display:  0. 1. 5.TickLoopShaderProcessAsyncResultsTimeSec=0.000013
+LogCookStats: Display:  0. 1. 6.TickLoopProcessDeferredCommandsTimeSec=0.000006
+LogCookStats: Display:  0. 1. 7.TickLoopTickCommandletStatsTimeSec=0.000001
+LogCookStats: Display:  0. 1. 8.TickLoopFlushRenderingCommandsTimeSec=0.014059
+LogCookStats: Display:  0. 1. 9.ShaderFlushTimeSec=0.000000
+LogCookStats: Display:  0. 1. 10.ValidationTimeSec=0.000667
+LogCookStats: Display:
+LogCookStats: Display: DDC Summary Stats
+LogCookStats: Display: =================
+LogCookStats: Display: BackEnd         = Installed
+LogCookStats: Display: HasLocalCache   =      true
+LogCookStats: Display: HasSharedCache  =     false
+LogCookStats: Display: HasCloudCache   =     false
+LogCookStats: Display: HasZenCache     =      true
+LogCookStats: Display: TotalGetHits    =      8622
+LogCookStats: Display: TotalGetMisses  =         0
+LogCookStats: Display: TotalGets       =      8622
+LogCookStats: Display: TotalGetHitPct  =  1.000000
+LogCookStats: Display: GetMissPct      =  0.000000
+LogCookStats: Display: TotalPutHits    =         0
+LogCookStats: Display: TotalPutMisses  =         0
+LogCookStats: Display: TotalPuts       =         0
+LogCookStats: Display: TotalPutHitPct  =  0.000000
+LogCookStats: Display: PutMissPct      =  0.000000
+LogCookStats: Display: LocalGetHits    =      7064
+LogCookStats: Display: LocalGetMisses  =         0
+LogCookStats: Display: LocalGetTotal   =      7064
+LogCookStats: Display: LocalGetHitPct  =  1.000000
+LogCookStats: Display: SharedGetHits   =         0
+LogCookStats: Display: SharedGetTotal  =         0
+LogCookStats: Display: SharedGetHitPct =  0.000000
+LogCookStats: Display: ZenLocalGetHits =      7064
+LogCookStats: Display: ZenLocalGetTotal=      7064
+LogCookStats: Display: ZenLocalGetHitPct=  1.000000
+LogCookStats: Display: ZenRemoteGetHits=         0
+LogCookStats: Display: ZenRemoteGetTotal=         0
+LogCookStats: Display: ZenRemoteGetHitPct=  0.000000
+LogCookStats: Display: ZenRemoteReadSpeed=  0.000000
+LogCookStats: Display: ZenRemoteWriteSpeed=  0.000000
+LogCookStats: Display: ZenRemoteLatency=  0.000000
+LogCookStats: Display: CloudGetHits    =         0
+LogCookStats: Display: CloudGetTotal   =         0
+LogCookStats: Display: CloudGetHitPct  =  0.000000
+LogCookStats: Display: LocalLatency    =  1.519396
+LogCookStats: Display: LocalReadSpeed  =300.205805
+LogCookStats: Display: LocalWriteSpeed =  0.000000
+LogCookStats: Display: SharedLatency   =  0.000000
+LogCookStats: Display: SharedReadSpeed =  0.000000
+LogCookStats: Display: SharedWriteSpeed=  0.000000
+LogCookStats: Display: CloudLatency    =  0.000000
+LogCookStats: Display: CloudReadSpeed  =  0.000000
+LogCookStats: Display: CloudWriteSpeed =  0.000000
+LogCookStats: Display:
+LogCookStats: Display: DDC Resource Stats
+LogCookStats: Display: =======================================================================================================
+LogCookStats: Display: Asset Type                          Total Time (Sec)  GameThread Time (Sec)  Assets Built  MB Processed
+LogCookStats: Display: ----------------------------------  ----------------  ---------------------  ------------  ------------
+LogCookStats: Display: MaterialShader                                 14.10                   0.51             0         51.46
+LogCookStats: Display: Texture                                         7.73                   0.00             0       1237.61
+LogCookStats: Display: BulkDataList                                    2.50                   0.00             0          0.66
+LogCookStats: Display: GlobalShader                                    1.96                   1.96             0        108.15
+LogCookStats: Display: StaticMesh                                      0.52                   0.00             0        229.50
+LogCookStats: Display: BodySetup                                       0.44                   0.00             0         80.18
+LogCookStats: Display: AnimationSequence                               0.33                   0.00             0          1.77
+LogCookStats: Display: SkeletalMesh                                    0.27                   0.00             0        124.47
+LogCookStats: Display: NavCollision                                    0.25                   0.00             0          0.08
+LogCookStats: Display: CardRepresentation                              0.12                   0.00             0          0.04
+LogCookStats: Display: STREAMEDAUDIO                                   0.02                   0.00             0          0.09
+LogCookStats: Display: CKERSM                                          0.00                   0.00             0          0.16
+LogCookStats: Display: Audio                                           0.00                   0.00             0          0.08
+LogCookStats: Display:
+LogCookStats: Display: Accumulated DDC Resource Stats Per Asset Type
+LogCookStats: Display: =======================================================================================================
+LogCookStats: Display: AnimationSequence                               0.33                   0.00             0          1.77
+LogCookStats: Display: Audio                                           0.00                   0.00             0          0.08
+LogCookStats: Display: CardRepresentation                              0.12                   0.00             0          0.04
+LogCookStats: Display: DistanceField                                   0.00                   0.00             0          0.00
+LogCookStats: Display: MaterialShader                                 14.10                   0.51             0         51.46
+LogCookStats: Display: MaterialTranslation                             0.00                   0.00             0          0.00
+LogCookStats: Display: NiagaraScript                                   0.00                   0.00             0          0.00
+LogCookStats: Display: SkeletalMesh                                    0.27                   0.00             0        124.47
+LogCookStats: Display: StaticMesh                                      0.52                   0.00             0        229.50
+LogCookStats: Display: Texture                                         7.73                   0.00             0       1237.61
+LogCookStats: Display: Other                                           5.18                   1.97             0        189.30
+LogPackageBuildDependencyTracker: Display: Package Accesses (135 referencing packages with a total of 742 unique accesses)
+LogConfigBuildDependencyTracker: Display: Config Accesses (980 referencing packages with a total of 1746 unique accesses). 1767 unique accesses that were not associated with a package.
+LogCook: Display: ---- Finalisation: End ----
+LogCook: Display: Done!
+LogSavePackage: Display: Took 0.002959s to verify the EDL loading graph.
+LogInit: Display:
+LogInit: Display: Success - 0 error(s), 0 warning(s)
+LogInit: Display:
+
+Execution of commandlet took:  28.38 seconds, PeakPhysMemoryMB=5453 MB, PeakVirtMemoryMB=5627 MB
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogStreaming: Display: ============ Loader Stats ============
+LogStreaming: Display: Unique Partial Flushes: 0
+LogStreaming: Display: ============ Loader Stats End ============
+LogShaderCompilers: Display: Exiting ShaderCompilingThread
+Took 71.29s to run UnrealEditor-Cmd.exe, ExitCode=0
+Cook command time: 71.39 s
+********** COOK COMMAND COMPLETED **********
+********** STAGE COMMAND STARTED **********
+Creating Staging Manifest...
+Patching bootstrap executable; G:\GameFactory\Hearthward\.agent-local\task051\Intermediate\Staging\Hearthward.exe
+Begin update resource 'G:\GameFactory\Hearthward\.agent-local\task051\Intermediate\Staging\Hearthward.exe' (0)
+Add resource 101, length 104 (True)
+Add resource 1, length 1996 (True)
+Add resource 2, length 2447 (True)
+Add resource 3, length 2535 (True)
+Add resource 4, length 3037 (True)
+Add resource 5, length 3244 (True)
+Add resource 6, length 3531 (True)
+Add resource 7, length 6931 (True)
+Add resource 201, length 112 (True)
+Add resource 202, length 22 (True)
+Add resource 205, length 2 (True)
+End update resource (True/0)
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\WordCount.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\Category.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\RepairData.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\Editor.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\Keywords.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\WindowsEditorPerProjectUserSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BasePakFileRules.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseSourceControlSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEditor.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\PortableObjectImport.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\ConsoleVariables.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEditorSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\ToolTips.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\Engine.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\PortableObjectExport.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\WindowsEditorSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseUnrealInsightsSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEditorKeyBindings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseLightmass.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\PropertyNames.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEditorPerProjectUserSettings.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseGame.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEngine.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\WindowsInput.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\WindowsGame.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseScalability.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseRuntimeOptions.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseInput.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseHardware.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseGameUserSettings.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\BaseWindowsGame.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\BaseWindowsEngine.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\DataDrivenPlatformInfo.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\BaseWindowsInput.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseDeviceProfiles.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseCompat.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Base.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseInstallBundle.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\VulkanPC\DataDrivenPlatformInfo.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseMaterialExpressions.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\ConfigRedirects.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Layouts\UE4ClassicLayout.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Layouts\DefaultLayout.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\PluginBase.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultGameUserSettings.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultScalability.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultGame.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultInput.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultEngine.ini
+Cleaning Stage Directory: F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Staged\Windows
+Creating pak using staging manifest.
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PrePak_Windows_NonUFSFiles.txt, NumItems: 135
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PrePak_Windows_NonUFSFilesDebug.txt, NumItems: 3
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PrePak_Windows_UFSFiles.txt, NumItems: 5279
+No matching platform for PakFileRules for Section ExcludeContentForMobile : Windows
+Using 0 pak order files:
+Running UnrealPak with arguments: "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject"  -cryptokeys="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json" -unattended -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken  -platform=Windows  -CreateMultiple="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PakCommands.txt"
+Running: G:\UnrealEngine\UE_5.8\Engine\Binaries\Win64\UnrealPak.exe "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject"  -cryptokeys="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json" -unattended -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken  -platform=Windows  -CreateMultiple="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PakCommands.txt"
+OodleDataCompression: Display: Oodle v2.9.16 format for pak/iostore with method=Kraken, level=4=Normal
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogPakFile: Display: ProjectDir: ../../../../../GameFactory/Hearthward/.agent-local/task051/
+LogPakFile: Display: Parsing crypto keys from a crypto key cache file
+LogPakFile: Display: CompressionFormats in priority order: Oodle, Zlib
+LogPakFile: Display: Oodle enabled on 'NoPluginCompression' files
+LogPakFile: Display: Loading response file G:\UnrealEngine\UE_5.8\Engine\Programs\AutomationTool\Saved\ResponseFiles\PakList_Hearthward-Windows.txt
+LogPakFile: Display: Added 1742 entries to add to pak file.
+LogPakFile: Display: Collecting files to add to pak file...
+LogPakFile: Display: Collected 1742 files in 0.00s.
+LogPakFile: Display: Creating pak F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Staged/Windows/Hearthward/Content/Paks/Hearthward-Windows.pak.
+LogPakFile: Display: Created pak file: F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Staged/Windows/Hearthward/Content/Paks/Hearthward-Windows.pak
+LogPakFile: Display: CompressionFormat 0 [Oodle] : 403 files, 27835479 -> 9753676 bytes
+LogPakFile: Display: CompressionFormat 2 [None] : 1339 files, 785813 -> 785813 bytes
+LogPakFile: Display: Added 1742 files, 11211268 bytes total
+LogPakFile: Display: PrimaryIndex size: 24238 bytes
+LogPakFile: Display: PathHashIndex size: 54811 bytes
+LogPakFile: Display: FullDirectoryIndex size: 58015 bytes
+LogPakFile: Display: Compression summary: 35.04% of original size. Compressed Size 9753676 bytes, Original Size 27835479 bytes.
+LogPakFile: Display: Encryption - DISABLED
+LogPakFile: Display:
+LogPakFile: Display: Writer and Compression Threads exited.
+LogPakFile: Display: UnrealPak executed in 0.329352 seconds
+Took 0.92s to run UnrealPak.exe, ExitCode=0
+Running UnrealPak with arguments: "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject" G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject -CreateGlobalContainer="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Staged\Windows\Hearthward\Content\Paks\global.utoc" -PackageStoreManifest="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\packagestore.manifest" -CookedDirectory="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows" -Commands="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\IoStoreCommands.txt" -ScriptObjects="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\scriptobjects.bin" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken   -cryptokeys="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json" -compressionMinBytesSaved=1024 -compressionMinPercentSaved=5 -WriteBackMetadataToAssetRegistry=Disabled -platform=Windows  -unattended
+Running: G:\UnrealEngine\UE_5.8\Engine\Binaries\Win64\UnrealPak.exe "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject" G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject -CreateGlobalContainer="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Staged\Windows\Hearthward\Content\Paks\global.utoc" -PackageStoreManifest="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\packagestore.manifest" -CookedDirectory="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows" -Commands="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\IoStoreCommands.txt" -ScriptObjects="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\scriptobjects.bin" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken   -cryptokeys="F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json" -compressionMinBytesSaved=1024 -compressionMinPercentSaved=5 -WriteBackMetadataToAssetRegistry=Disabled -platform=Windows  -unattended
+OodleDataCompression: Display: Oodle v2.9.16 format for pak/iostore with method=Kraken, level=4=Normal
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogPakFile: Display: ProjectDir: ../../../../../GameFactory/Hearthward/.agent-local/task051/
+LogIoStore: Display: ==================== IoStore Utils ====================
+LogIoStore: Display: Parsing crypto keys from a crypto key cache file 'F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json'
+LogIoStore: Display: Container signing - DISABLED
+LogIoStore: Display: Directory index - ENABLED
+LogIoStore: Display: Using compression format 'Oodle'
+LogConfig: Display: Read in platform Windows ini files took 0.04 seconds
+LogIoStore: Display: Using memory mapping alignment '16384'
+LogIoStore: Display: Using compression block size '65536'
+LogIoStore: Display: Using compression block alignment '2048'
+LogIoStore: Display: Using compression min bytes saved '1024'
+LogIoStore: Display: Using compression min percent saved '5'
+LogIoStore: Display: Using max partition size '0'
+LogIoStore: Display: Not using DDC for compression
+LogIoStore: Display: Container metadata disabled
+LogIoStore: Display: Using command list file: 'C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\IoStoreCommands.txt'
+LogIoStore: Display: Selected Oodle level 4 (Normal) from command line for shaders
+LogIoStore: Display: Fetched 1632 oplog items from Manifest in 0.00 seconds
+LogIoStore: Display: Parsed 1632 oplog items 0.00 seconds, 1908 chunks
+LogIoStore: Display: Using input asset registry: F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Cooked/Windows/Hearthward/Metadata/DevelopmentAssetRegistry.bin
+LogIoStore: Display: Loaded 283 chunk hashes from AssetRegistry in 0.03 seconds, 283 hashes updated in 0.00 seconds
+LogIoStore: Display: Searching for cooked assets in folder 'F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Cooked\Windows'
+LogIoStore: Display: Found '3541' files
+LogIoStore: Display: Creating container targets...
+LogIoStore: Display: Parsing packages...
+LogIoStore: Display: Reading package assets...
+LogIoStore: Display: Reading 1000/1625: 'F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Cooked/Windows/Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/Empty.uasset'
+LogIoStore: Display: Packages read 1,625 files in 0.04 seconds, 4,046,336 total bytes, 97,934,161 bytes per second
+LogIoStore: Display: Processing shader libraries, compressing with Oodle Mermaid, level 4 (Normal)
+LogIoStore: Display: Shader library chunk override is disabled
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 203 groups (80 of them didn't need new indices), average uncompressed size 88274 bytes, min 502 bytes, max 971733 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Hearthward-PCD3D_SM5(PCD3D_SM5): Recompressed 1497 shaders as 203 groups. Library size changed from 4899 KB (3.57 : 1 ratio) to 2062 KB (8.48 : 1 ratio), 42.10% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Hearthward-PCD3D_SM5-PCD3D_SM5' with ChunkId '57c76f866b9ed67400000008' for target file 'F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Cooked/Windows/Hearthward/Content/ShaderArchive-Hearthward-PCD3D_SM5-PCD3D_SM5.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 553 groups (182 of them didn't need new indices), average uncompressed size 242890 bytes, min 1249 bytes, max 1036717 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Global-PCD3D_SM6(PCD3D_SM6): Recompressed 8095 shaders as 553 groups. Library size changed from 99337 KB (1.32 : 1 ratio) to 58984 KB (2.22 : 1 ratio), 59.38% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Global-PCD3D_SM6-PCD3D_SM6' with ChunkId '1680bae1ae38d5b900000008' for target file 'F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Cooked/Windows/Hearthward/Content/ShaderArchive-Global-PCD3D_SM6-PCD3D_SM6.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 382 groups (158 of them didn't need new indices), average uncompressed size 141073 bytes, min 249 bytes, max 1038208 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Global-PCD3D_SM5(PCD3D_SM5): Recompressed 3926 shaders as 382 groups. Library size changed from 11885 KB (4.43 : 1 ratio) to 5220 KB (10.08 : 1 ratio), 43.93% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Global-PCD3D_SM5-PCD3D_SM5' with ChunkId 'c3fad98e7ca0cc3100000008' for target file 'F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Cooked/Windows/Hearthward/Content/ShaderArchive-Global-PCD3D_SM5-PCD3D_SM5.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 236 groups (68 of them didn't need new indices), average uncompressed size 146626 bytes, min 2378 bytes, max 1023759 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Hearthward-PCD3D_SM6(PCD3D_SM6): Recompressed 2506 shaders as 236 groups. Library size changed from 25613 KB (1.32 : 1 ratio) to 16264 KB (2.08 : 1 ratio), 63.50% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Hearthward-PCD3D_SM6-PCD3D_SM6' with ChunkId '8c46efb1098300af00000008' for target file 'F:/uagent-task-temp/task072-shipping-diagnostic-20261005/Cooked/Windows/Hearthward/Content/ShaderArchive-Hearthward-PCD3D_SM6-PCD3D_SM6.ushaderbytecode'
+LogIoStore: Display: Shaders processed in 1.11 seconds
+LogIoStore: Display: Initialized WriteRequestManager with MaxConcurrentSourceReads=10 (20 cores), MaxSourceBufferMemory=3072MiB
+LogIoStore: Display: Processing redirects...
+LogIoStore: Display: Creating disk layout...
+LogIoStore: Display: Ordered 1625 packages using fallback bundle order
+LogIoStore: Display: Disabled WriteRequestManager memory throttling, MaxConcurrentSourceReads=10 (20 cores)
+LogIoStore: Display: Writing container(s)...
+LogIoStore: Display: Writing chunks 3047/3288... [1678 compressed] [7032 compression tasks] [Scheduled: 1808 MiB] [Physical: 3005 MiB, Virtual: 5574 MiB]
+LogIoStore: Display: Writing chunks 3181/3288... [1845 compressed] [1721 compression tasks] [Scheduled: 847 MiB] [Physical: 2488 MiB, Virtual: 4268 MiB]
+LogIoStore: Display: Writing and compressing took 5.83 seconds, writes to disk took 4.68 seconds for 1,572,492,848 bytes @ 336,188,640 bytes per second.
+LogIoStore: Display: global: Found perfect hashmap for 1 items.
+LogIoStore: Display: Hearthward-Windows: Found perfect hashmap for 3287 items.
+LogIoStore: Display: Finalize took 0.1 seconds for 2 writers to write 846,731 bytes, 8,942,921 bytes per second
+LogIoStore: Display: Writing tocs... [Physical: 2171 MiB, Virtual: 3825 MiB]
+LogIoStore: Display: 283 / 3,288 hashes were loaded from the hash database, by type:
+LogIoStore: Display:     BulkData                   283
+LogIoStore: Display: 1,908 / 3,288 chunks attempted to compress, by type:
+LogIoStore: Display:     ExportBundleData           1,625 / 1,625
+LogIoStore: Display:     BulkData                   283 / 283
+LogIoStore: Display:     ScriptObjects              0 / 1
+LogIoStore: Display:     ContainerHeader            0 / 1
+LogIoStore: Display:     ShaderCodeLibrary          0 / 4
+LogIoStore: Display:     ShaderCode                 0 / 1,374
+LogIoStore: Display: Source bytes read:
+LogIoStore: Display:     Zen:                                  0
+LogIoStore: Display:     Loose File:               3,629,785,367
+LogIoStore: Display:         ExportBundleData       1,224,392,250 bytes over 3,250 reads
+LogIoStore: Display:         BulkData               2,405,393,117 bytes over 283 reads
+LogIoStore: Display:     Memory:                     169,914,676
+LogIoStore: Display:         ShaderCodeLibrary           888,512 bytes over 8 reads
+LogIoStore: Display:         ShaderCode              169,026,164 bytes over 2,748 reads
+LogIoStore: Display: Calculating stats...
+LogIoStore: Display:
+LogIoStore: Display: Container Summary
+LogIoStore: Display: ==================
+LogIoStore: Display:
+LogIoStore: Display:            Container      Flags      Chunk(s) #       TOC (KiB)       Raw Size (MiB)           Size (MiB)
+LogIoStore: Display: ---------------------------------------------------------------------------------------------------------
+LogIoStore: Display:               global  -/-/-/-/-               1            0.78                 3.12                 3.12 -
+LogIoStore: Display:   Hearthward-Windows  C/-/-/I/-            3287          826.11              2964.03              1496.53 (49.51% Oodle)
+LogIoStore: Display: ---------------------------------------------------------------------------------------------------------
+LogIoStore: Display:                Total                       3288          826.89              2967.15              1499.65
+LogIoStore: Display:
+LogIoStore: Display: ** Flags: (C)ompressed / (E)ncrypted / (S)igned) / (I)ndexed) / (O)nDemand **
+LogIoStore: Display:
+LogIoStore: Display: Compression block padding:     2.65 MiB
+LogIoStore: Display:
+LogIoStore: Display: Container Directory Index
+LogIoStore: Display: ==========================
+LogIoStore: Display:
+LogIoStore: Display:            Container      Size (KiB)
+LogIoStore: Display: ------------------------------------
+LogIoStore: Display:               global            0.00
+LogIoStore: Display:   Hearthward-Windows           87.17
+LogIoStore: Display:
+LogIoStore: Display: Container Patch Report
+LogIoStore: Display: ========================
+LogIoStore: Display:
+LogIoStore: Display:            Container          Total #       Modified #          Added #   Modified (MiB)      Added (MiB)
+LogIoStore: Display: ---------------------------------------------------------------------------------------------------------
+LogIoStore: Display:               global                1                0                0             0.00             0.00
+LogIoStore: Display:   Hearthward-Windows             3287                0             3287             0.00          1493.87
+LogIoStore: Display: ---------------------------------------------------------------------------------------------------------
+LogIoStore: Display:
+LogIoStore: Display: PackageStore
+LogIoStore: Display: =============
+LogIoStore: Display:
+LogIoStore: Display:            Container      Size (KiB)      Packages #     Localized #
+LogIoStore: Display: --------------------------------------------------------------------
+LogIoStore: Display:   Hearthward-Windows              57            1625               0
+LogIoStore: Display: --------------------------------------------------------------------
+LogIoStore: Display:                Total              57            1625               0
+LogIoStore: Display:
+LogIoStore: Display:
+LogIoStore: Display: Input:      1625 Packages
+LogIoStore: Display: Input:    583.84 MiB UExp
+LogIoStore: Display: Input:      3.86 MiB UAsset
+LogIoStore: Display: Input:      2.24 GiB UBulk
+LogIoStore: Display: Input:     62.70 MiB for 935 Global shaders
+LogIoStore: Display: Input:      2.21 MiB for 198 Shared shaders
+LogIoStore: Display: Input:         0   B for 0 Unique shaders
+LogIoStore: Display: Input:     15.69 MiB for 241 Inline shaders
+LogIoStore: Display:
+LogIoStore: Display: Output:    15810 Name map entries
+LogIoStore: Display: Output:     3654 Imported package entries
+LogIoStore: Display: Output:      603 Packages without imports
+LogIoStore: Display: Output:        0 Public runtime script objects
+LogIoStore: Display: Output:     2.49 MiB HeaderData
+LogIoStore: Display: Output:     3.12 MiB InitialLoadData
+LogIoStore: Display:
+LogIoStore: Display: Success
+LogPakFile: Display: UnrealPak executed in 7.608574 seconds
+Took 8.44s to run UnrealPak.exe, ExitCode=0
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\FinalCopyWin64_UFSFiles.txt, NumItems: 5280
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\FinalCopyWin64_NonUFSFiles.txt, NumItems: 135
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\FinalCopyWin64_NonUFSFilesDebug.txt, NumItems: 3
+Copying NonUFSFiles to staging directory: F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Staged\Windows
+Stage command time: 31.29 s
+********** STAGE COMMAND COMPLETED **********
+********** ARCHIVE COMMAND STARTED **********
+Archiving to F:\uagent-task-temp\task072-shipping-diagnostic-20261005\Archive
+Archive command time: 31.47 s
+********** ARCHIVE COMMAND COMPLETED **********
+BuildCookRun time: 360.83 s
+BUILD SUCCESSFUL
+AutomationTool executed for 0h 6m 12s
+AutomationTool exiting with ExitCode=0 (Success)

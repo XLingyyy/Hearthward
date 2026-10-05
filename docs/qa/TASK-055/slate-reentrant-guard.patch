@@ -1,0 +1,31 @@
+--- a/docs/qa/TASK-055/sample_stone_axe_hero_pose.py
++++ b/docs/qa/TASK-055/sample_stone_axe_hero_pose.py
+@@ -264,6 +264,7 @@
+ unreal.EditorPythonScripting.set_keep_python_script_alive(True)
+ FLOW = run()
+ PENDING = None
++IN_TICK = False
+ DEADLINE = time.monotonic() + 240
+ 
+ 
+@@ -277,7 +278,10 @@
+ 
+ 
+ def tick(delta):
+-    global PENDING
++    global PENDING, IN_TICK
++    if IN_TICK:
++        return
++    IN_TICK = True
+     try:
+         if time.monotonic() > DEADLINE:
+             raise TimeoutError(STAGE)
+@@ -289,6 +293,8 @@
+     except Exception:
+         REPORT["error"] = traceback.format_exc()
+         finish()
++    finally:
++        IN_TICK = False
+ 
+ 
+ HANDLE = unreal.register_slate_post_tick_callback(tick)

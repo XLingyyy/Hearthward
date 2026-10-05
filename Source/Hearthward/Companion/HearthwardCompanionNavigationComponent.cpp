@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NavigationSystem.h"
+#include "NavigationPath.h"
 #include "Navigation/PathFollowingComponent.h"
 
 UHearthwardCompanionNavigationComponent::UHearthwardCompanionNavigationComponent()
@@ -40,6 +41,7 @@ void UHearthwardCompanionNavigationComponent::Stop()
     Location=FVector::ZeroVector;
     Acceptance=0;
     RetryAt=0;
+    Status.Reset();
 }
 
 bool UHearthwardCompanionNavigationComponent::IsRetryReady() const
@@ -54,6 +56,7 @@ bool UHearthwardCompanionNavigationComponent::MoveToActor(AActor* Other,float Sp
     if(!Character || !AI || !IsValid(Other) || Other->IsActorBeingDestroyed())
     {
         Stop();
+        Status=TEXT("通行目标已失效");
         return false;
     }
 
@@ -68,8 +71,15 @@ bool UHearthwardCompanionNavigationComponent::MoveToActor(AActor* Other,float Sp
     }
 
     auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-    if(Nav && Nav->IsNavigationBuildInProgress())return true;
-    if(AI->GetMoveStatus()!=EPathFollowingStatus::Idle)return true;
+    if(AI->GetMoveStatus()!=EPathFollowingStatus::Idle)
+    {
+        const auto Path=AI->GetPathFollowingComponent()->GetPath();
+        Status=Path.IsValid() && Path->IsPartial()?TEXT("沿附近路线前进，等待后续导航"):FString();
+        return true;
+    }
+    FNavLocation Local;
+    if(Nav && Nav->IsNavigationBuildInProgress() && !Nav->ProjectPointToNavigation(Character->GetActorLocation(),Local,FVector(80,80,200)))
+    {Status=TEXT("正在准备脚下导航，请稍候");return true;}
     if(!IsRetryReady())return false;
 
     EPathFollowingRequestResult::Type Result;
@@ -88,14 +98,17 @@ bool UHearthwardCompanionNavigationComponent::MoveToActor(AActor* Other,float Sp
     }
     else
     {
-        Result=AI->MoveToActor(Other,AcceptanceRadius,false,true,false,nullptr,false);
+        Result=AI->MoveToActor(Other,AcceptanceRadius,false,true,false,nullptr,true);
     }
 
     if(Result==EPathFollowingRequestResult::Failed)
     {
         RetryAt=GetWorld()->GetTimeSeconds()+0.5;
+        Status=TEXT("附近没有可通行路线，正在重试");
         return false;
     }
+    const auto Path=AI->GetPathFollowingComponent()->GetPath();
+    Status=Path.IsValid() && Path->IsPartial()?TEXT("沿附近路线前进，等待后续导航"):FString();
     return true;
 }
 
@@ -106,6 +119,7 @@ bool UHearthwardCompanionNavigationComponent::MoveToLocation(const FVector& Dest
     if(!Character || !AI || Destination.ContainsNaN())
     {
         Stop();
+        Status=TEXT("通行落点已失效");
         return false;
     }
 
@@ -121,22 +135,33 @@ bool UHearthwardCompanionNavigationComponent::MoveToLocation(const FVector& Dest
     }
 
     auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-    if(Nav && Nav->IsNavigationBuildInProgress())return true;
-    if(AI->GetMoveStatus()!=EPathFollowingStatus::Idle)return true;
+    if(AI->GetMoveStatus()!=EPathFollowingStatus::Idle)
+    {
+        const auto Path=AI->GetPathFollowingComponent()->GetPath();
+        Status=Path.IsValid() && Path->IsPartial()?TEXT("沿附近路线前进，等待后续导航"):FString();
+        return true;
+    }
+    FNavLocation Local;
+    if(Nav && Nav->IsNavigationBuildInProgress() && !Nav->ProjectPointToNavigation(Character->GetActorLocation(),Local,FVector(80,80,200)))
+    {Status=TEXT("正在准备脚下导航，请稍候");return true;}
     if(!IsRetryReady())return false;
 
     FNavLocation Projected;
     if(!Nav || !Nav->ProjectPointToNavigation(Destination,Projected,FVector(80,80,200)))
     {
         RetryAt=GetWorld()->GetTimeSeconds()+0.5;
+        Status=TEXT("落点导航尚不可用，请稍候重试");
         return false;
     }
 
-    const auto Result=AI->MoveToLocation(Projected.Location,AcceptanceRadius,false,true,false,false,nullptr,false);
+    const auto Result=AI->MoveToLocation(Projected.Location,AcceptanceRadius,false,true,false,false,nullptr,true);
     if(Result==EPathFollowingRequestResult::Failed)
     {
         RetryAt=GetWorld()->GetTimeSeconds()+0.5;
+        Status=TEXT("附近没有可通行路线，正在重试");
         return false;
     }
+    const auto Path=AI->GetPathFollowingComponent()->GetPath();
+    Status=Path.IsValid() && Path->IsPartial()?TEXT("沿附近路线前进，等待后续导航"):FString();
     return true;
 }

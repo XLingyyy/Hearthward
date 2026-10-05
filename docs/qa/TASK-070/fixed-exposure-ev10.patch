@@ -1,0 +1,47 @@
+--- a/docs/qa/TASK-070/render_imported_weapons.py
++++ b/docs/qa/TASK-070/render_imported_weapons.py
+@@ -5,6 +5,7 @@
+ """
+ from datetime import datetime, timezone
+ import json
++import math
+ from pathlib import Path
+ import re
+ import sys
+@@ -94,7 +95,13 @@
+     settings.set_editor_property("override_auto_exposure_method", True)
+     settings.set_editor_property("auto_exposure_method", unreal.AutoExposureMethod.AEM_MANUAL)
+     settings.set_editor_property("override_auto_exposure_apply_physical_camera_exposure", True)
+-    settings.set_editor_property("auto_exposure_apply_physical_camera_exposure", False)
++    settings.set_editor_property("auto_exposure_apply_physical_camera_exposure", True)
++    settings.set_editor_property("override_depth_of_field_fstop", True)
++    settings.set_editor_property("depth_of_field_fstop", 4.0)
++    settings.set_editor_property("override_camera_shutter_speed", True)
++    settings.set_editor_property("camera_shutter_speed", 64.0)
++    settings.set_editor_property("override_camera_iso", True)
++    settings.set_editor_property("camera_iso", 100.0)
+     settings.set_editor_property("override_auto_exposure_bias", True)
+     settings.set_editor_property("auto_exposure_bias", 0.0)
+     settings.set_editor_property("override_bloom_intensity", True)
+@@ -102,7 +109,20 @@
+     settings.set_editor_property("override_motion_blur_amount", True)
+     settings.set_editor_property("motion_blur_amount", 0.0)
+     capture.set_editor_property("post_process_settings", settings)
+-    REPORT["exposure"] = {"method": "manual", "apply_physical_camera_exposure": False, "bias": 0.0, "bloom": 0.0, "motion_blur": 0.0}
++    actual = capture.get_editor_property("post_process_settings")
++    REPORT["exposure"] = {
++        "method": str(actual.get_editor_property("auto_exposure_method")),
++        "apply_physical_camera_exposure": bool(actual.get_editor_property("auto_exposure_apply_physical_camera_exposure")),
++        "aperture_fstop": float(actual.get_editor_property("depth_of_field_fstop")),
++        "shutter_reciprocal_seconds": float(actual.get_editor_property("camera_shutter_speed")),
++        "iso": float(actual.get_editor_property("camera_iso")),
++        "bias": float(actual.get_editor_property("auto_exposure_bias")),
++        "ev100_from_physical_settings": math.log2(actual.get_editor_property("depth_of_field_fstop") ** 2 * actual.get_editor_property("camera_shutter_speed") * 100 / actual.get_editor_property("camera_iso")),
++        "gain_relative_to_same_fixture_manual_ev0": 1.0 / 1024.0,
++        "post_process_blend_weight": float(capture.get_editor_property("post_process_blend_weight")),
++        "bloom": float(actual.get_editor_property("bloom_intensity")),
++        "motion_blur": float(actual.get_editor_property("motion_blur_amount")),
++    }
+     subsystem = unreal.get_editor_subsystem(unreal.StaticMeshEditorSubsystem)
+     weapon = fixture_actor(actors, unreal.StaticMeshActor, "weapon")
+     component = weapon.get_component_by_class(unreal.StaticMeshComponent)

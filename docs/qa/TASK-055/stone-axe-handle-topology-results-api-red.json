@@ -1,0 +1,73 @@
+{
+  "captured_utc": "2026-10-04T02:31:00.484065+00:00",
+  "engine_version": "5.8.2-56702186+++UE5+Release-5.8",
+  "project_dir": "../../../../../GameFactory/Hearthward/.agent-local/task051/",
+  "command_line": "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation -ExecCmds=\"WebControl.StartServer 30010\" -NoSplash -Log -A3GameRuntimeInputPort=30020 -ExecutePythonScript=G:\\GameFactory\\Hearthward\\.agent-local\\task051\\docs\\qa\\TASK-055\\sample_stone_axe_hero_pose.py -NoSound -NoSplash -culture=en -Unattended -RenderOffscreen -Task055HandleTopology",
+  "method": "Unsaved editor fixture, actual Hero constructor/held axe, SingleNode SetPosition(false), editor ticks, compressed AnimPose pose verification and SceneCapture next-tick PNG export",
+  "sampling_complete": false,
+  "clips": {},
+  "images": [],
+  "stone_axe_light_move_source": "Source/Hearthward/Combat/HearthwardCombatRules.h blunt light",
+  "move": {
+    "windup_seconds": 0.35,
+    "active_seconds": 0.18,
+    "recovery_seconds": 0.47,
+    "duration_seconds": 1.0
+  },
+  "old031_actual_source_window_seconds": [
+    1.3333333655248714,
+    2.2500000543232206
+  ],
+  "asset_mutations": [],
+  "limitations": [
+    "Single-node pose excludes native graph blend and normal input/action clock",
+    "Height peak is not a contact event",
+    "No damage/collision acceptance measured",
+    "No sockets or grip alignment changed"
+  ],
+  "mode": "actual_handle_source_topology_read_only",
+  "world": {
+    "path": "/Temp/Untitled_1.Untitled",
+    "class": "World"
+  },
+  "lights": [
+    {
+      "actor": {
+        "path": "/Temp/Untitled_1.Untitled:PersistentLevel.DirectionalLight_0",
+        "class": "DirectionalLight"
+      },
+      "intensity_lux": 30.0,
+      "rotation": "<Struct 'Rotator' (0x000002D699F6BBC0) {pitch: -35.000000, yaw: -45.000000, roll: -0.000000}>"
+    },
+    {
+      "actor": {
+        "path": "/Temp/Untitled_1.Untitled:PersistentLevel.DirectionalLight_1",
+        "class": "DirectionalLight"
+      },
+      "intensity_lux": 10.0,
+      "rotation": "<Struct 'Rotator' (0x000002D699F6BC10) {pitch: -20.000000, yaw: 135.000000, roll: 0.000000}>"
+    }
+  ],
+  "sky_light": {
+    "cubemap": {
+      "path": "/Engine/MapTemplates/Sky/DaylightAmbientCubemap.DaylightAmbientCubemap",
+      "class": "TextureCube"
+    },
+    "intensity": 1.0,
+    "source_type": "<SkyLightSourceType.SLS_SPECIFIED_CUBEMAP: 1>"
+  },
+  "exposure": {
+    "method": "<AutoExposureMethod.AEM_MANUAL: 2>",
+    "physical": true,
+    "aperture_fstop": 4.0,
+    "shutter_reciprocal_seconds": 64.0,
+    "iso": 100.0,
+    "bias": 0.0,
+    "ev100": 10.0,
+    "post_process_blend_weight": 1.0
+  },
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-055/sample_stone_axe_hero_pose.py\", line 393, in tick\n    PENDING = next(FLOW)\n              ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-055/sample_stone_axe_hero_pose.py\", line 141, in run\n    REPORT[\"actual_handle_topology\"] = yield from export_handle_topology(axe_asset, OUT)\n                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"G:\\GameFactory\\Hearthward\\.agent-local\\task051\\docs\\qa\\TASK-055\\export_stone_axe_handle_topology.py\", line 38, in export_handle_topology\n    raise RuntimeError(\"Actual axe triangle has a non-three corner result\")\nRuntimeError: Actual axe triangle has a non-three corner result\n",
+  "finished_utc": "2026-10-04T02:31:01.647977+00:00",
+  "stage": "setup",
+  "quit_requested": true
+}

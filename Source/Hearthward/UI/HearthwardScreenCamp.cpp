@@ -47,12 +47,22 @@ void UHearthwardScreenWidget::ComposeCamp()
         Label(TEXT("满足条件、提交共享仓储材料后升阶；建筑等级独立。"),180,295);
         if(State.Tier<8)
         {
-            Label(TEXT("下一阶材料：")+CampCost(HearthwardCamp::Counts(HearthwardCamp::Tier(State.Tier+1),TEXT("cost"))),180,360,1260,80);
-            const FString Reason=State.UpgradeReason();Label(Reason.IsEmpty()?TEXT("发展条件已满足；仍需足额材料"):Reason,180,460);
+            const auto Next=HearthwardCamp::Tier(State.Tier+1);
+            Label(FString::Printf(TEXT("下一阶半径 %.0f 米；两兄弟各获累计生命 +%.0f、耐力 +%.0f"),
+                Number(Next,TEXT("radius_m")),Number(Next,TEXT("cumulative_hp_bonus")),Number(Next,TEXT("cumulative_stamina_bonus"))),180,345);
+            Label(TEXT("下一阶材料：")+CampCost(HearthwardCamp::Counts(Next,TEXT("cost"))),180,395,1260,70);
+            const FString Reason=State.UpgradeReason();Label(Reason.IsEmpty()?TEXT("发展条件已满足；仍需足额材料"):Reason,180,475);
             Button(TEXT("提交材料升阶"),TEXT("camp.upgrade"),180,535,300);
         }
-        Label(TEXT("首次工作台需木材72；建造优先用背包，差额从共享仓储预留。"),180,620);
-        Button(TEXT("打开建造目录"),TEXT("page:building"),180,680,300);
+        Button(TEXT("打开建造目录"),TEXT("page:building"),540,535,300);
+        FString Tiers=TEXT("营地阶级表 · 半径／两兄弟各自累计属性\n");
+        for(int32 Tier=1;Tier<=8;++Tier)
+        {
+            const auto Row=HearthwardCamp::Tier(Tier);
+            Tiers+=FString::Printf(TEXT("S%d  %.0f米  生命+%.0f  耐力+%.0f%s"),Tier,Number(Row,TEXT("radius_m")),
+                Number(Row,TEXT("cumulative_hp_bonus")),Number(Row,TEXT("cumulative_stamina_bonus")),Tier%2?TEXT("        "):TEXT("\n"));
+        }
+        Label(Tiers,180,605,1260,165);
     }
     if(Category==TEXT("workers"))
     {
@@ -60,8 +70,15 @@ void UHearthwardScreenWidget::ComposeCamp()
         auto* R=State.Regions.FindByPredicate([&](const auto& Entry){return Entry.Id==CampRegion;});if(!R){CampRegion=State.Regions[0].Id;R=&State.Regions[0];}
         Label(RegionName(*R),180,235);Button(TEXT("切换生产区域"),TEXT("camp.regionNext"),1050,225,320);
         FString People;for(int32 P:R->Workers)People+=FString::Printf(TEXT("族人%d  "),P+1);if(R->Player)People+=TEXT("主角  ");if(R->Brother)People+=TEXT("弟弟");
-        Label(TEXT("岗位（最多5人）：")+(People.IsEmpty()?TEXT("未分配"):People),180,295);
-        Label(TEXT("选中人员：")+(CampPerson==30?TEXT("主角，劳动等效3人"):CampPerson==31?TEXT("弟弟，劳动等效3人"):FString::Printf(TEXT("族人%d"),CampPerson+1)),180,350);
+        const auto* Facility=State.Facilities.FindByPredicate([&](const auto& F){return F.Id==R->Facility;});
+        const bool Available=R->Enabled && R->Safe && (!R->Facility.IsValid() || (Facility && !Facility->Paused));
+        const int32 Bodies=R->Workers.Num()+int32(R->Player)+int32(R->Brother);
+        const double Efficiency=Available?R->Workers.Num()+(R->Player?R->PlayerEfficiency:0)+(R->Brother?R->BrotherEfficiency:0):0;
+        Label(FString::Printf(TEXT("身体岗位 %d / 5 · 有效工效 %.1f\n岗位人员："),Bodies,Efficiency)+(People.IsEmpty()?TEXT("未分配"):People),180,285,1100,60);
+        const FString Person=CampPerson==30?TEXT("主角"):CampPerson==31?TEXT("弟弟"):FString::Printf(TEXT("族人%d"),CampPerson+1);
+        const double PersonalEfficiency=!Available?0:CampPerson==30?(R->Player?R->PlayerEfficiency:0)
+            :CampPerson==31?(R->Brother?R->BrotherEfficiency:0):R->Workers.Contains(CampPerson)?1:0;
+        Label(TEXT("选中人员：")+Person+FString::Printf(TEXT(" · 占1格 · 当前工效 %.1f"),PersonalEfficiency),180,350);
         Button(TEXT("上一人"),TEXT("camp.personPrev"),750,340,170);Button(TEXT("下一人"),TEXT("camp.personNext"),950,340,170);Button(TEXT("分配 / 移出"),TEXT("camp.assign"),1150,340,210);
         Button(R->Enabled?TEXT("暂停生产"):TEXT("开始生产"),TEXT("camp.toggle"),180,410,240);
         Button(R->ToRations?TEXT("产物入粮：开"):TEXT("产物入粮：关"),TEXT("camp.rationToggle"),450,410,260);
@@ -92,19 +109,42 @@ void UHearthwardScreenWidget::ComposeCamp()
         if(!B && !State.Facilities.IsEmpty()){CampFacility=State.Facilities[0].Id;B=&State.Facilities[0];}
         if(B)
         {
-            Label(TEXT("升级费用：")+CampCost(HearthwardCamp::BuildCost(B->Kind,B->Level+1)),570,235,820,75);
-            Button(TEXT("靠近后升级"),TEXT("camp.facilityUpgrade"),570,320,240);Button(TEXT("免费移动"),TEXT("camp.move"),840,320,230);Button(TEXT("拆除…"),TEXT("camp.demolishAsk"),1100,320,220);
-            Label(TEXT("拆除返还：")+CampCost(HearthwardCamp::Refund(B->Paid)),570,390,830,85);
+            const auto Facility=HearthwardCamp::Facility(B->Kind,B->Level);
+            const FString Camp=B->Camp==TEXT("hometown")?TEXT("故乡"):B->Camp.IsNone()?TEXT("营地范围外"):TEXT("首营");
+            FString Info=Camp+FString::Printf(TEXT(" · %d级"),B->Level);
+            if(Facility)Info+=FString::Printf(TEXT(" · 劳动速度 %.0f%%"),Number(Facility,TEXT("labor_speed_percent"),100));
+            Label(Info,570,230,850);
+            const auto Next=HearthwardCamp::Facility(B->Kind,B->Level+1);
+            if(Next)
+            {
+                Label(FString::Printf(TEXT("升至%d级需营地S%d："),B->Level+1,HearthwardCamp::RequiredTier(B->Kind,B->Level+1))
+                    +CampCost(HearthwardCamp::BuildCost(B->Kind,B->Level+1)),570,275,850);
+                Button(TEXT("靠近后升级"),TEXT("camp.facilityUpgrade"),570,325,240);
+            }
+            else Label(Facility?TEXT("已达最高等级III"):TEXT("该设施不提供升阶"),570,275,850);
+            Button(TEXT("免费移动"),TEXT("camp.move"),840,325,230);Button(TEXT("拆除…"),TEXT("camp.demolishAsk"),1100,325,220);
+            Label(TEXT("拆除返还：")+CampCost(HearthwardCamp::Refund(B->Paid)),570,385,830,55);
+            const auto* Region=State.Regions.FindByPredicate([&](const auto& Entry){return Entry.Facility==B->Id;});
+            FString Queue=TEXT("工作区尚未设置");
+            if(Region)
+            {
+                const int32 Bodies=Region->Workers.Num()+int32(Region->Player)+int32(Region->Brother);
+                Queue=FString::Printf(TEXT("工作区 %d / 5人 · %s · %s"),Bodies,Region->Enabled?TEXT("已启用"):TEXT("已暂停"),*Region->Status);
+                if(Region->Batch.Active)Queue+=FString::Printf(TEXT("\n本批劳动 %.1f / %.1f；已投入："),Region->Batch.Work,Region->Batch.Required)+CampCost(Region->Batch.Inputs);
+                else Queue+=TEXT("\n当前无已开始批次");
+                Queue+=Region->BatchStopAt>0?FString::Printf(TEXT(" · 剩余 %d 批"),FMath::Max(0,Region->BatchStopAt-Region->Completed)):TEXT(" · 持续生产队列");
+            }
+            Label(Queue,570,440,850,85);
             TArray<TSharedPtr<FJsonObject>> Recipes;
             for(const auto& V:HearthwardCamp::Table()->GetArrayField(TEXT("recipes")))if(Text(V->AsObject(),TEXT("facility"))==B->Kind.ToString() && Number(V->AsObject(),TEXT("level"))<=B->Level)Recipes.Add(V->AsObject());
             if(!Recipes.IsEmpty())
             {
                 auto Selected=Recipes.FindByPredicate([&](const auto& R){return Text(R,TEXT("id"))==CampRecipe.ToString();});
                 const auto Recipe=Selected?*Selected:Recipes[0];CampRecipe=FName(*Text(Recipe,TEXT("id")));
-                Label(TEXT("配方：")+CampCost(HearthwardCamp::Counts(Recipe,TEXT("outputs"))),570,490,850);
-                Label(TEXT("每批投入：")+CampCost(HearthwardCamp::Counts(Recipe,TEXT("inputs"))),570,545,850);
-                Button(TEXT("切换配方"),TEXT("camp.recipeNext"),570,605,240);Button(TEXT("即时加工1批"),TEXT("camp.craft"),840,605,320);
-                Button(TEXT("设为本营地后台生产"),TEXT("camp.configure"),570,675,590);
+                Label(TEXT("配方：")+CampCost(HearthwardCamp::Counts(Recipe,TEXT("outputs"))),570,530,850);
+                Label(TEXT("每批投入：")+CampCost(HearthwardCamp::Counts(Recipe,TEXT("inputs"))),570,575,850);
+                Button(TEXT("切换配方"),TEXT("camp.recipeNext"),570,625,240);Button(TEXT("即时加工1批"),TEXT("camp.craft"),840,625,320);
+                Button(TEXT("设为本营地后台生产"),TEXT("camp.configure"),570,685,590);
             }
             else Label(TEXT("该设施当前没有已解锁的加工配方。"),570,520,850);
             if(B->Kind==TEXT("bed"))Button(TEXT("睡眠八小时"),TEXT("camp.sleep"),570,625,400);

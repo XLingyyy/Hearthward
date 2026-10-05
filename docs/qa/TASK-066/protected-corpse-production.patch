@@ -1,0 +1,20 @@
+--- a/Source/Hearthward/Combat/HearthwardCombatComponent.cpp
++++ b/Source/Hearthward/Combat/HearthwardCombatComponent.cpp
+@@ -403,7 +403,7 @@
+         if(Engaged) { Observer->Memory.ReportingBody=NAME_None; Observer->Memory.ReportRemaining=0; continue; }
+         UHearthwardCombatTargetComponent* Corpse=nullptr;
+         for(auto* BodyTarget:All)
+-            if(BodyTarget->Health<=0 && !BodyTarget->Memory.BroadcastRegions.Contains(Observer->Region)
++            if(!BodyTarget->Protected && BodyTarget->Health<=0 && !BodyTarget->Memory.BroadcastRegions.Contains(Observer->Region)
+                 && FVector::Dist(Observer->GetOwner()->GetActorLocation(),BodyTarget->GetOwner()->GetActorLocation())<=2500
+                 && HearthwardCombat::InFront(Observer->GetOwner()->GetActorForwardVector(),BodyTarget->GetOwner()->GetActorLocation()-Observer->GetOwner()->GetActorLocation())
+                 && Visible(Observer->GetOwner(),BodyTarget->GetOwner())) { Corpse=BodyTarget; break; }
+@@ -435,7 +435,7 @@
+     if(Body.IsValid()) { DropBody(); return true; }
+     if(!Available() || Busy()) return false;
+     double Best=FMath::Square(150.); UHearthwardCombatTargetComponent* Found=nullptr;
+-    for(auto* T:Targets()) if(T->Health<=0 && !T->Carrier.IsValid() && Visible(GetOwner(),T->GetOwner()))
++    for(auto* T:Targets()) if(!T->Protected && T->Health<=0 && !T->Carrier.IsValid() && Visible(GetOwner(),T->GetOwner()))
+     { const double D=FVector::DistSquared(GetOwner()->GetActorLocation(),T->GetOwner()->GetActorLocation()); if(D<Best) { Found=T; Best=D; } }
+     if(!Found || !Start(TEXT("pickup"),.5)) return false;
+     Body=Found; Found->Carrier=GetOwner(); CarryingOnBack=Back; return true;

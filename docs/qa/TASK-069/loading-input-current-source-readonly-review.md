@@ -1,0 +1,14 @@
+# TASK-069 Loading输入补丁当前Source只读复核
+
+结论：当前正式Screen入口未发现实际遗漏或新增恢复顺序回归。只读核对以下三文件当前修改及现有调用，不调用Git获取diff，不运行UE，不改Source。修复后原Apply→Title→Continue的实际OS验证仍由Root执行。
+
+- LoadingSubsystem.h:16仅增加InputModeChanged声明，无存档格式变更。
+- LoadingSubsystem.cpp:121–128在遮罩所持Viewport有效时采集当前页面已建立的IgnoreInput作为恢复目标，再禁输入；不会在普通未加载页操作输入门。Hide164–168仍按原顺序移除遮罩、恢复最新目标、清空Viewport/Screen及加载状态。
+- ScreenWidget.cpp:228位于GameOnly221与UIOnly226两个分支之后，每次实际OpenPage模式建立统一通知一次；前置条件失败、未发生切页的早退不会伪造新模式。
+- BeginLoading89–94对同Viewport重复调用保留已有恢复目标，避免将遮罩自己的true误存为目标；新Viewport仍按原方式采样。单纯travel没有page change时维持原快照，已在Native中覆盖。
+- 跨图New/Load初始化在Widget79/89先建立HUD，再FinishSession(true)。同世界读档HUDDialogue44的SnapshotRestored也经OpenPage(hud)通知；同世界new在Actions332 FinishSession(true)后333 OpenPage(hud)，成功Finish只释放AwaitingSession不立即Hide，所以目标仍在淡出前更新。失败FinishSession(false)即时Hide，不新增页面切换。
+- 返回Title的跨图入口Actions345仍由新HUD InitializeScreen69建立Title模式并通知；CampaignWorld138的BeginLoading→FinishSession(true)没有额外模式切换，恢复原输入门语义。
+
+额外现有mode writes已只读核对：Character.SetupPlayerInputComponent159的初始GameOnly；HUDSave/Storage/Dialogue的旧Widget模式。正常Screen菜单入口先转发Screen并return，旧Widget关闭路径又以具体旧Widget存在为前置；原Apply路径的RebuildInputBindings不会调用SetupPlayerInputComponent重新改模式。当前没有证据要求扩大通知接入到这些旧路径，不添加推测fallback。
+
+运行边界：Loading Native初稿fixture遗漏Traversal导致CRASH，Root补齐真实组件后本项1/1 PASS；同一混合报告仍有Map Font17独立RED。该Native通过覆盖最新HUD、回UI、无切页travel三种状态，尚不能替代Root接下来原Apply路径的OS回放。

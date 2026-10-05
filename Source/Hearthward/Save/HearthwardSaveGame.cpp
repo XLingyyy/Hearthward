@@ -23,7 +23,7 @@ bool FHearthwardWorldSave::Serialize(FArchive& Ar)
 {
     // An absent version must stay absent when loading historical tagged properties.
     // nullptr defaults writes the clock metadata even when it equals today's defaults.
-    if(Ar.IsLoading()){ClockVersion=0;InitialDay=0;InitialMinute=-1;}
+    if(Ar.IsLoading()){ClockVersion=0;InitialDay=0;InitialMinute=-1;CommandRevision=0;}
     StaticStruct()->SerializeTaggedProperties(Ar,reinterpret_cast<uint8*>(this),StaticStruct(),nullptr);
     return true;
 }
@@ -79,12 +79,20 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
     if(Out && HearthwardVersion::IsNewer(Out->WriterVersion,HearthwardVersion::Current))
     {Error=FString::Printf(TEXT("此进度由较新版本 %s 保存，请同步更新后继续；原档已保留。"),*Out->WriterVersion);Out=nullptr;return false;}
 
-    if(Out && Header[0]==Schema8Magic && Out->Schema==HearthwardSave::CurrentSchema)
-    {
-        if(Out->Points.ContainsByPredicate([](const auto& P){return P.World.ClockVersion!=0 || P.World.InitialDay!=0 || P.World.InitialMinute!=-1;}))
-        {Error=TEXT("存档封装与时间格式不一致，原档已保留；请同步更新或恢复备份");Out=nullptr;return false;}
-        Out->Schema=8;
-    }
+    // A missing historical Schema property loads the current class default; explicit older versions must match the envelope.
+    if(Out && Out->Schema!=HearthwardSave::CurrentSchema
+        && !((Header[0]==LegacyMagic && Out->Schema==1)
+            || (Header[0]==PreviousMagic && (Out->Schema==2 || Out->Schema==3))
+            || (Header[0]==Schema5Magic && Out->Schema==5)
+            || (Header[0]==Schema6Magic && Out->Schema==6)
+            || (Header[0]==Schema7Magic && Out->Schema==7)
+            || (Header[0]==Schema8Magic && Out->Schema==8)))
+    {Error=TEXT("存档封装与数据版本不一致，原档已保留；请同步更新或恢复备份");Out=nullptr;return false;}
+
+    if(Out && Header[0]!=Magic && Out->Schema==HearthwardSave::CurrentSchema
+        && Out->Points.ContainsByPredicate([](const auto& P){return P.World.ClockVersion!=0 || P.World.InitialDay!=0 || P.World.InitialMinute!=-1;}))
+    {Error=TEXT("存档封装与时间格式不一致，原档已保留；请同步更新或恢复备份");Out=nullptr;return false;}
+    if(Out && Header[0]==Schema8Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=8;
     if(Out && Header[0]==Schema7Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=7;
     if(Out && Header[0]==Schema6Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=6;
     if(Out && Header[0]==Schema5Magic && Out->Schema==HearthwardSave::CurrentSchema)Out->Schema=5;
@@ -96,7 +104,8 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
         Out->Schema=1;
 
     if(Out && Header[0]==PreviousMagic && Out->Schema==HearthwardSave::CurrentSchema
-        && !Out->Points.ContainsByPredicate([](const auto& P){return P.World.SurvivalVersion!=0;})) Out->Schema=3;
+        && !Out->Points.ContainsByPredicate([](const auto& P){return P.World.SurvivalVersion!=0;}))
+        Out->Schema=!Out->Points.IsEmpty() && !Out->Points.ContainsByPredicate([](const auto& P){return P.World.NPCStateVersion!=2;})?2:3;
 
     // Before schema 6, the camp was stored as gameplay origin/tier and building
     // actors. Preserve that restore path; absence is not a damaged economy blob.
@@ -237,6 +246,30 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
 }
 }
 
+bool HearthwardSave::ResolveCommandRevision(const FHearthwardWorldSave& S,int64& Revision)
+{
+    Revision=S.CommandRevision;
+    if(Revision<0)return false;
+    for(const auto& Receipt:S.NPCReceipts)
+    {
+        if(Receipt.Command!=S.CommandId)continue;
+        bool Versioned=false;
+        for(const TCHAR* Prefix:{TEXT("take:"),TEXT("craft:"),TEXT("repair:"),TEXT("deposit:"),TEXT("withdraw:"),TEXT("handoff:")})
+            if(Receipt.Payload.StartsWith(Prefix,ESearchCase::CaseSensitive)){Versioned=true;break;}
+        if(!Versioned)continue;
+        int32 Separator;
+        if(!Receipt.Payload.FindLastChar(TEXT(':'),Separator))return false;
+        const FString Suffix=Receipt.Payload.Mid(Separator+1);
+        if(!Suffix.StartsWith(TEXT("r"),ESearchCase::CaseSensitive))return false;
+        const FString Number=Suffix.Mid(1);
+        const int64 Value=FCString::Strtoi64(*Number,nullptr,10);
+        if(Value<=0 || FString::Printf(TEXT("%lld"),Value)!=Number || (Revision!=0 && Revision!=Value))return false;
+        Revision=Value;
+    }
+    if(Revision==0)Revision=1;
+    return true;
+}
+
 bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
 {
     if (Pool.Schema != CurrentSchema || Pool.Points.Num() > MaxPoints) return false;
@@ -280,6 +313,7 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
         Operations.Reset();if(S.NPCReceipts.Num()>512)return false;
         for(const auto& R:S.NPCReceipts)
         {if(!R.Id.IsValid() || R.Command!=S.CommandId || R.Payload.IsEmpty() || R.Payload.Len()>200 || Operations.Contains(R.Id))return false;Operations.Add(R.Id);}
+        int64 CommandRevision;if(!ResolveCommandRevision(S,CommandRevision))return false;
         if(!S.Inventory.IsEmpty() || !S.Storage.IsEmpty() || !S.Bag.IsEmpty() || !S.NPCDurability.IsEmpty())return false;
         TSet<FGuid> InstanceIds;TSet<FName> UniqueClaims;
         for(const auto* Inventory:{&S.PlayerItems,&S.BrotherItems,&S.StorageItems})

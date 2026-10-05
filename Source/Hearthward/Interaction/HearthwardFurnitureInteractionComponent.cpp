@@ -15,13 +15,13 @@ FString UHearthwardFurnitureInteractionComponent::CompleteInteraction(AActor* In
     if(!IsValid(Interactor) || GetWorld()!=Interactor->GetWorld() || GetWorld()->IsPaused()
         || FVector::Dist(Interactor->GetActorLocation(),GetComponentLocation())>MaxDistance) return TEXT("设施不可用");
     auto* G=Interactor->FindComponentByClass<UHearthwardGameplayComponent>();
-    if(!G || !G->Enabled || G->Health<=0 || G->InCombat()) return TEXT("请在安全处使用设施");
+    if(!G || !G->Enabled || G->Health<=0 || G->InCombat() || UHearthwardSurvivalComponent::HasFailed(GetWorld())) return TEXT("请在安全处使用设施");
     if(Kind==TEXT("bed") || Kind==TEXT("medical_area"))
     {
         auto* S=Interactor->FindComponentByClass<UHearthwardSurvivalComponent>();
-        S->CancelAction(); S->Resting=true;S->Treatment=Kind==TEXT("medical_area");
-        G->Record(TEXT("rest"),TEXT("bed"));
-        return TEXT("正在休息；移动离开，零饱食时停止自然恢复");
+        if(!S->BeginRest(this)) return TEXT("设施已不可用于休息");
+        G->Record(TEXT("rest"),Kind);
+        return S->Status+TEXT("；零饱食时停止自然恢复");
     }
     if(Kind==TEXT("campfire"))
     {

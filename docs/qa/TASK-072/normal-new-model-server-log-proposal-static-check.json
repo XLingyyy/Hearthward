@@ -1,0 +1,27 @@
+{
+  "root_baseline": "current Root 473-line QA host; source read-only",
+  "changed_lines_added": 3,
+  "parser": "ast.parse PASS",
+  "new_runtime_execution": "NOT_RUN",
+  "no_source_or_model_parameter_change": true,
+  "runtime_logging_env": "LLAMA_ARG_LOG_FILE",
+  "public_sources": [
+    "https://github.com/ggml-org/llama.cpp/blob/b10964/common/arg.cpp#L3758-L3764",
+    "https://github.com/ggml-org/llama.cpp/blob/b10964/tools/server/server-context.cpp#L534-L605"
+  ],
+  "verification_required": "Actual next CPU local-ai.log existence and slot-stage coverage; file logging not full stdout guarantee",
+  "env_load_order": "b10964 common/arg.cpp726-749 env parsed before CLI; Runtime current CLI does not override log-file",
+  "log_coverage": {
+    "prefill_info": "cumulative prompt >=3s, emitted on completed batches",
+    "decode_info": "n_gen>=100, last print>=3s",
+    "normal_final": "prompt/eval/total timings at normal completion",
+    "not_guaranteed": [
+      "all stdout/stderr",
+      "TRACE slot prompt/context",
+      "DEBUG per-token record",
+      "final timings after cancellation",
+      "unflushed async queue tail after TerminateProc"
+    ]
+  },
+  "actual_logging_runtime_validation": "NOT_RUN"
+}

@@ -1,8 +1,16 @@
 # Hearthward 项目状态
 
-核对日期：2026-10-03。远端主干基线为`origin/main@4db5789184fe38e041d62a1e68c8517338ea0b01`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线和PR #56的动物／更新兼容整合。各原始测试仍绑定其报告源码，不据main合并推定重跑通过。
+核对日期：2026-10-03。远端主干基线为`origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线、PR #56的动物／更新兼容及PR #58的052时间整合。各原始测试仍绑定其报告源码，不据main合并推定重跑通过。
 
-当前分支`codex/TASK-052-time-integration`已完成批准的[052工程方案](planning/TASK-052/PLAN.md)、schema9迁移和共享契约，Editor Development、相关原生34/34、渲染PIE82/82、工具33/33通过。受测源码`0bc1c3ee5d09cfca3f675cf657b6981f874f9138`与证据绑定见[052报告](qa/TASK-052/REPORT.md)，成果尚未集成main，任务保持Active等待Owner体验及正式评审。canonical052对应原稿054；[本单交接](handoffs/TASK-052.md)记录范围及证据。固定录音按Owner要求继续暂缓。动物归档沿用051标签；052保留该资料，不覆盖此前canonical051的操作实现。
+052已由Owner通过PR #58合入main，包含批准的[工程方案](planning/TASK-052/PLAN.md)、schema9迁移和共享契约。Editor Development、相关原生34/34、渲染PIE82/82、工具33/33仍绑定受测源码`0bc1c3ee5d09cfca3f675cf657b6981f874f9138`，见[052报告](qa/TASK-052/REPORT.md)；任务元数据保持Active，不代填Owner体验／最终验收。canonical052对应原稿054；[交接](handoffs/TASK-052.md)保留本单证据。固定录音继续暂缓，动物051标签不改。
+
+2026-10-03，Owner批准[053—074整批设计](planning/TASK-053-074/REVIEW.md)并授权施工。22项对应原稿055—076，设计均Approved；053—064、066—072及074已激活工程施工或定向调查；065／073真人验收尚未执行。施工根集成目录为`.agent-local/task051`、分支`codex/TASK-053-traversal`，各局部补丁使用独立工作树。本批已获Owner授权提交并推送至该施工分支，尚未合并或发行；Owner／Reviewer均为XLingyyy，无Issue。当前证据见[053交接](handoffs/TASK-053.md)，历史设计核查仍在[设计REPORT](qa/TASK-053-074/REPORT.md)。
+
+2026-10-05施工接续：055石斧重击的时序与旧扇形误伤已真实Native RED→GREEN，重击三例及轻击回归均0错误0警告；唯一自然作物目标绑定也已RED→GREEN。068真实模型补充浇水、新采散石返营和普通钓鱼均分别取得实际成功；散石仅修订明确隔离的QA营地代理位置，生产导航不改。071首次交流Slate崩溃修复后的公共卡片/菜单跨Load96/96通过，新增真实OS键鼠读档确认/取消路线通过；069交流深底和真实中文IME组合、候选、Enter/Escape优先级局部验证通过。核心/成熟批次/图箱Pending/生态/双营地独立往返、Save13/13与真实HTTP跨读档保留既有定向证据。
+
+069正常窗口检查已修正标题／背包／暂停页脚、默认与150%背包可读性、Save行重叠及150%设置值消失；设置已实际恢复100%。34个任务目标在正常／真实受伤倒地Widget中量字通过，最多六行，正文24及时间／位置／生存按钮无交叠；原始证据见[界面报告](qa/TASK-069/normal-ui-readability-runtime-review.md)。正常Settings Apply后Continue的加载输入旧快照已真实RED→GREEN，相同实际OS路径Escape／Tab及自然Quit通过；见[加载输入报告](qa/TASK-069/loading-page-input-runtime-review.md)。默认地图探索文字17→24的实际Widget测宽高及进度条边界通过。
+
+068完整理解门槛仍失败：目标绑定修复前CPU60 raw34/60、歧义1/20，先前Vulkan60 raw36/60，两个全矩阵版本不同，最新补充成功不抵扣门槛；字段顺序失败实验已撤回。055完整皮肤重建通过，单个缩径/手指组合穿小指已拒绝，正式握姿/动作观感和许可未验。070两件PBR样品与三组角色/营地/地形概念图已准备，Owner风格仍待审阅。正常Bootstrap新游戏已由实际键鼠进入夜袭，手动保存后的独立重启继续恢复可见任务／伙伴／库存，确认退出自然结束；只覆盖开局局部路线。九页完整流程、真人体验、联合性能/第二机器及Shipping发行仍未通过。 072正常Standalone公共引用接入已通过，见[接入报告](qa/TASK-072/standalone-reference-runtime-review.md)。 已有正常初始场景CPU/Vulkan各一请求与完整CSV，1%Low均未达60、CPUcompletion120秒超时、Vulkan候选正确；可用内存低于1GB的区间已实测，见[联合诊断](qa/TASK-072/normal-new-cpu-vulkan-runtime-review.md)。 CPU原生日志已定位提示词耗时；独立Game Development构建/Cook/归档通过，正常成品Vulkan候选及该场帧分布通过（1%Low61.44），CPU仍超时且1%Low58.17未过，见[成品诊断](qa/TASK-072/game-development-runtime-review.md)。独立 Shipping 工程 Build/Cook/Stage/Archive 及本机正常新游戏已通过，独立 UserDir 内手动保存后重启正常继续也已通过（同手动节点与进度 ID，完整库存核对未验），见[Shipping 工程诊断](qa/TASK-072/shipping-diagnostic-runtime-review.md)。未冻结正式RC。见[正常开局／继续／退出局部证据](qa/TASK-069/normal-game-os-runtime-review.md)。证据见[当前交接](handoffs/TASK-053.md)。
 
 ## 本次同步成果
 
@@ -33,4 +41,4 @@ TASK-026的4032米World Partition自然世界与营地已经可运行；完整�
 
 有效设计为[CURRENT](design/CURRENT.md)指向的GDD v0.3及已批准增量；未定规则继续见[OPEN_QUESTIONS](design/OPEN_QUESTIONS.md)。任务映射和早期AI标签按[TASK-041账本](planning/TASK-041-baseline-ledger.md)追溯。TASK-004源归档不等同于其余模型全部适配或整单验收。
 
-[AGENTS](../AGENTS.md)和[WORKFLOW](../WORKFLOW.md)继续约束任务范围、LFS锁、真实验证和人工合并。当前052权限见其任务JSON，已批准施工范围见052工程方案；动物同步授权保留于TASK-051 JSON。Agent没有自批、合并、发布或修改远端保护的授权。真实存档、本机密钥、权重、构建二进制和生成缓存保留本地。
+[AGENTS](../AGENTS.md)和[WORKFLOW](../WORKFLOW.md)继续约束任务范围、LFS锁、真实验证和人工合并。052及动物施工授权保留在各原任务；053—074整批设计及施工已获Owner批准；激活任务按JSON中的准确源码路径施工，尚未登记的资产和共享文件先补精确范围。Agent没有自批、合并、发布或修改远端保护的授权。真实存档、本机密钥、权重、构建二进制和生成缓存保留本地。

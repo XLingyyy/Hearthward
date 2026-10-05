@@ -129,24 +129,29 @@ bool UHearthwardBuildingComponent::CheckPlacement(FString& Reason) const
     { Reason=TEXT("该设施只能建在营地范围内"); return false; }
     if(FVector::Dist2D(Placement,GetOwner()->GetActorLocation())>Tuning(TEXT("reach")))
     { Reason=TEXT("建造位置过远"); return false; }
-    const FVector Half=Extent(R); const FQuat Rotation(FRotator(0,Yaw,0));
     FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardBuild),false);
     Query.AddIgnoredActor(Preview.Get());
     Query.AddIgnoredActor(ResolveFacility(Editing));
+    if(!CheckGeometry(R,Placement,Yaw,Query,Reason))return false;
+    if(!HasMaterials()) { Reason=TEXT("背包与共享仓储材料不足，或材料已被其他操作预留"); return false; }
+    Reason=TEXT("可以建造：左键确认，Q旋转，右键取消"); return true;
+}
+bool UHearthwardBuildingComponent::CheckGeometry(const TSharedPtr<FJsonObject>& Recipe,FVector Position,float RotationDegrees,const FCollisionQueryParams& Query,FString& Reason) const
+{
+    const FVector Half=Extent(Recipe); const FQuat Rotation(FRotator(0,RotationDegrees,0));
     // Sample the centre and all footprint corners: a single ray would allow a bench over a ledge.
     for(const FVector Offset:{FVector::ZeroVector,FVector(Half.X,Half.Y,0),FVector(-Half.X,Half.Y,0),FVector(Half.X,-Half.Y,0),FVector(-Half.X,-Half.Y,0)})
     {
-        const FVector P=Placement+Rotation.RotateVector(Offset); FHitResult Hit;
+        const FVector P=Position+Rotation.RotateVector(Offset); FHitResult Hit;
         if(!GetWorld()->LineTraceSingleByChannel(Hit,P+FVector(0,0,30),P-FVector(0,0,30),ECC_Visibility,Query)
             || Cast<APawn>(Hit.GetActor()) || Hit.GetActor()->Tags.Contains(TEXT("Hearthward.Building.Completed"))
-            || Hit.ImpactNormal.Z<Tuning(TEXT("minNormalZ")) || FMath::Abs(Hit.ImpactPoint.Z-Placement.Z)>Tuning(TEXT("supportTolerance")))
+            || Hit.ImpactNormal.Z<Tuning(TEXT("minNormalZ")) || FMath::Abs(Hit.ImpactPoint.Z-Position.Z)>Tuning(TEXT("supportTolerance")))
         { Reason=TEXT("需要平整地面，边缘不能悬空或叠在建筑上"); return false; }
     }
     FCollisionObjectQueryParams Objects; Objects.AddObjectTypesToQuery(ECC_WorldStatic); Objects.AddObjectTypesToQuery(ECC_WorldDynamic); Objects.AddObjectTypesToQuery(ECC_Pawn);
-    if(GetWorld()->OverlapAnyTestByObjectType(Placement+FVector(0,0,Half.Z+2),Rotation,Objects,FCollisionShape::MakeBox(Half-FVector(1,1,1)),Query))
+    if(GetWorld()->OverlapAnyTestByObjectType(Position+FVector(0,0,Half.Z+2),Rotation,Objects,FCollisionShape::MakeBox(Half-FVector(1,1,1)),Query))
     { Reason=TEXT("该位置被建筑、障碍或角色占用"); return false; }
-    if(!HasMaterials()) { Reason=TEXT("背包与共享仓储材料不足，或材料已被其他操作预留"); return false; }
-    Reason=TEXT("可以建造：左键确认，Q旋转，右键取消"); return true;
+    return true;
 }
 void UHearthwardBuildingComponent::TickComponent(float Delta,ELevelTick Type,FActorComponentTickFunction* Function)
 {

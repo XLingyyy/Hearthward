@@ -1,0 +1,53 @@
+--- a/Source/Hearthward/Tests/MapGuidanceTests.cpp
++++ b/Source/Hearthward/Tests/MapGuidanceTests.cpp
+@@ -381,13 +381,13 @@
+             if(X.X<Y.X+Y.Z && X.X+X.Z>Y.X && X.Y<Y.Y+Y.W && X.Y+X.W>Y.Y)return true;
+         return false;
+     };
+-    const auto Capture=[&](int32 Scale)
++    const auto Capture=[&](int32 Scale,const TCHAR* Suffix)
+     {
+         if(!FParse::Param(FCommandLine::Get(),TEXT("Map064Render"))
+             || FParse::Param(FCommandLine::Get(),TEXT("NullRHI")) || !FApp::CanEverRender())return;
+         const FString Directory=FPaths::ProjectSavedDir()/TEXT("Task069/native-map-scaled");
+         IFileManager::Get().MakeDirectory(*Directory,true);
+-        const FString Label=FString::Printf(TEXT("map-long-objective-remaining-%d"),Scale),Name=Label+TEXT(".png");
++        const FString Label=FString::Printf(TEXT("map-long-objective-remaining-%d"),Scale)+Suffix,Name=Label+TEXT(".png");
+         FWidgetRenderer Renderer(true);
+         auto* Target=UKismetRenderingLibrary::CreateRenderTarget2D(World,1696,954,RTF_RGBA8,FLinearColor::Black);
+         if(!Target){AddError(TEXT("Native scaled map render target unavailable"));return;}
+@@ -452,7 +452,33 @@
+         TestFalse(FString::Printf(TEXT("%d%% remaining-garrison hint and tracked objective keep distinct measured text lines"),Scale),Overlap(ObjectiveLines,RemainingLines));
+         AddInfo(FString::Printf(TEXT("Map069 scale=%d descriptionLines=%d reservedHeight=%.1f rectHeight=%.1f firstLegendY=%.1f objectiveLines=%d remainingLines=%d remainingLastMeasuredBottom=%.1f"),
+             Scale,DescriptionLines.Num(),DescriptionHeight,D.W,Rect(Legends[0]).Y,ObjectiveLines.Num(),RemainingLines.Num(),RemainingLines.Last().Y+RemainingLines.Last().W));
+-        Capture(Scale);
++        Capture(Scale,TEXT(""));
++        Screen->NativeOnKeyDown(FGeometry(),FKeyEvent(EKeys::End,FModifierKeysState(),0,false,0,0));
++        TSharedPtr<FJsonObject> Tail;
++        if(!TestTrue(TEXT("End exposes a real scrollable map layout"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),Tail) && Tail.IsValid()))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        TSharedPtr<FJsonObject> Travel,Sidebar;
++        for(const auto& Value:Tail->GetArrayField(TEXT("components")))
++        {
++            const auto Row=Value->AsObject();FString Action;
++            if(Row->GetStringField(TEXT("id"))==TEXT("map.sidebar"))Sidebar=Row;
++            if(Row->TryGetStringField(TEXT("action"),Action) && Action==TEXT("travel"))Travel=Row;
++        }
++        if(!TestTrue(TEXT("Scrolled sidebar retains its actual camp action"),Travel.IsValid() && Sidebar.IsValid()))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        const auto T=Rect(Travel),S=Rect(Sidebar);
++        TestTrue(FString::Printf(TEXT("%d%% End makes the complete camp action visible inside its sidebar"),Scale),
++            Travel->GetBoolField(TEXT("visible")) && T.Y>=S.Y+16-.1 && T.Y+T.W<=S.Y+S.W-8+.1);
++        TestEqual(TEXT("The visible scrolled camp button keeps its actual hit target"),Screen->ActionAt(FVector2D(T.X+T.Z*.5,T.Y+T.W*.5)),FString(TEXT("travel")));
++        Capture(Scale,TEXT("-sidebar-end"));
++        Screen->NativeOnKeyDown(FGeometry(),FKeyEvent(EKeys::Home,FModifierKeysState(),0,false,0,0));
++        TSharedPtr<FJsonObject> Home;
++        if(!TestTrue(TEXT("Home restores a real map layout"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),Home) && Home.IsValid()))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        for(const auto& Value:Home->GetArrayField(TEXT("components")))
++            if(Value->AsObject()->GetStringField(TEXT("id"))==TEXT("map.element.008"))
++                TestEqual(TEXT("Home restores the top description position without changing the map page"),Rect(Value->AsObject()).Y,D.Y);
++        TestEqual(TEXT("Reading the sidebar retains the actual map page"),Screen->GetPage(),FName(TEXT("map")));
+     }
+     Screen->RemoveFromParent();Cleanup();return true;
+ }

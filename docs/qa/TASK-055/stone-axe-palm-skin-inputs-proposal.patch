@@ -1,0 +1,77 @@
+--- a/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
++++ b/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
+@@ -267,6 +267,13 @@
+             for(double N:{Q.X,Q.Y,Q.Z,Q.W})Rotation.Add(MakeShared<FJsonValueNumber>(N));
+             Result->SetArrayField(TEXT("rotation_quat_xyzw"),Rotation);return Result;
+         };
++        const auto MatrixJson=[](const FMatrix44f& Matrix)
++        {
++            TArray<TSharedPtr<FJsonValue>> Result;
++            for(int32 Row=0;Row<4;++Row)for(int32 Column=0;Column<4;++Column)
++                Result.Add(MakeShared<FJsonValueNumber>(Matrix.M[Row][Column]));
++            return Result;
++        };
+         const FTransform MeshWorld=Mesh->GetComponentTransform(),HandWorld=Mesh->GetSocketTransform(TEXT("hand_r"));
+         TSet<int32> HandBones;TArray<TSharedPtr<FJsonValue>> Bones;
+         for(int32 Bone=0;Bone<Mesh->GetNumBones();++Bone)
+@@ -279,7 +286,7 @@
+             Entry->SetStringField(TEXT("name"),Name);Entry->SetObjectField(TEXT("actual_world"),TransformJson(Mesh->GetSocketTransform(*Name)));
+             Bones.Add(MakeShared<FJsonValueObject>(Entry));
+         }
+-        TArray<TSharedPtr<FJsonValue>> Vertices;TSet<uint32> Selected;
++        TArray<TSharedPtr<FJsonValue>> Vertices;TSet<uint32> Selected;TSet<int32> UsedSkinningBones;
+         for(int32 SectionIndex=0;SectionIndex<LOD.RenderSections.Num();++SectionIndex)
+         {
+             const auto& Section=LOD.RenderSections[SectionIndex];
+@@ -297,6 +304,7 @@
+                 Entry->SetNumberField(TEXT("section_index"),SectionIndex);Entry->SetStringField(TEXT("dominant_bone"),Mesh->GetBoneName(Global).ToString());
+                 Entry->SetNumberField(TEXT("raw_weight_sum"),Total);
+                 const FVector Component(Positions[Vertex].Position),WorldPosition=MeshWorld.TransformPosition(Component);
++                Entry->SetArrayField(TEXT("source_reference_mesh_cm"),VectorJson(FVector(LOD.StaticVertexBuffers.PositionVertexBuffer.VertexPosition(Vertex))));
+                 Entry->SetArrayField(TEXT("skinned_component_cm"),VectorJson(Component));
+                 Entry->SetArrayField(TEXT("skinned_world_cm"),VectorJson(WorldPosition));
+                 Entry->SetArrayField(TEXT("actual_hand_r_local"),VectorJson(HandWorld.InverseTransformPosition(WorldPosition)));
+@@ -306,7 +314,7 @@
+                     const uint16 Raw=W.InfluenceWeights[Influence];if(!Raw)continue;
+                     const int32 Local=W.InfluenceBones[Influence];
+                     if(!Section.BoneMap.IsValidIndex(Local)) {RestoreAnimation();Cleanup();AddError(TEXT("Actual skin influence is outside its section BoneMap"));return false;}
+-                    const int32 Bone=Section.BoneMap[Local];auto Weight=MakeShared<FJsonObject>();
++                    const int32 Bone=Section.BoneMap[Local];UsedSkinningBones.Add(Bone);auto Weight=MakeShared<FJsonObject>();
+                     Weight->SetNumberField(TEXT("section_bone_index"),Local);Weight->SetNumberField(TEXT("mesh_bone_index"),Bone);
+                     Weight->SetStringField(TEXT("bone_name"),Mesh->GetBoneName(Bone).ToString());Weight->SetNumberField(TEXT("raw_uint16_weight"),Raw);
+                     Influences.Add(MakeShared<FJsonValueObject>(Weight));
+@@ -321,7 +329,34 @@
+             TArray<TSharedPtr<FJsonValue>> Triangle;for(int32 Corner=0;Corner<3;++Corner)Triangle.Add(MakeShared<FJsonValueNumber>(Indices[I+Corner]));
+             Triangles.Add(MakeShared<FJsonValueArray>(Triangle));
+         }
++        TArray<int32> UsedIndices=UsedSkinningBones.Array();UsedIndices.Sort();
++        TArray<FBoneIndexType> ExtraRequiredBones;for(const int32 Bone:UsedIndices)ExtraRequiredBones.Add(FBoneIndexType(Bone));
++        const auto LocalTransforms=Mesh->GetBoneSpaceTransforms();
++        const auto& ComponentTransforms=Mesh->GetComponentSpaceTransforms();
++        const auto& InvRef=Mesh->GetSkeletalMeshAsset()->GetRefBasesInvMatrix();
++        const auto& Reference=Mesh->GetSkeletalMeshAsset()->GetRefSkeleton();
++        TArray<FMatrix44f> RefToLocal;Mesh->GetCurrentRefToLocalMatrices(RefToLocal,0,&ExtraRequiredBones);
++        TArray<TSharedPtr<FJsonValue>> SkinningBones;
++        for(const int32 Bone:UsedIndices)
++        {
++            if(!TestTrue(TEXT("Every actual influence has complete sampled skinning inputs"),
++                LocalTransforms.IsValidIndex(Bone) && ComponentTransforms.IsValidIndex(Bone)
++                && InvRef.IsValidIndex(Bone) && RefToLocal.IsValidIndex(Bone)))
++            {RestoreAnimation();Cleanup();return false;}
++            auto Entry=MakeShared<FJsonObject>();Entry->SetNumberField(TEXT("mesh_bone_index"),Bone);
++            Entry->SetStringField(TEXT("name"),Mesh->GetBoneName(Bone).ToString());
++            const int32 Parent=Reference.GetParentIndex(Bone);Entry->SetNumberField(TEXT("parent_mesh_bone_index"),Parent);
++            Entry->SetStringField(TEXT("parent_name"),Parent!=INDEX_NONE?Mesh->GetBoneName(Parent).ToString():FString());
++            Entry->SetObjectField(TEXT("actual_local"),TransformJson(LocalTransforms[Bone]));
++            Entry->SetObjectField(TEXT("actual_component"),TransformJson(ComponentTransforms[Bone]));
++            Entry->SetArrayField(TEXT("inverse_reference_matrix_row_major"),MatrixJson(InvRef[Bone]));
++            Entry->SetArrayField(TEXT("actual_ref_to_local_matrix_row_major"),MatrixJson(RefToLocal[Bone]));
++            SkinningBones.Add(MakeShared<FJsonValueObject>(Entry));
++        }
+         auto Report=MakeShared<FJsonObject>();Report->SetStringField(TEXT("method"),TEXT("Normal GUID Equip; actual attack SingleNode .55; public GetCPUSkinnedVertices LOD0 with actual component SkinWeightBuffer"));
++        Report->SetArrayField(TEXT("all_used_influence_bone_skinning_inputs"),SkinningBones);
++        Report->SetStringField(TEXT("skinning_matrix_convention"),TEXT("FMatrix44f M[row][column], flattened row-major; homogeneous row vector [x,y,z,1] * matrix. Reference-to-component skinning is InvRef * current component ToMatrixWithScale; actual rendering RefToLocal is also recorded independently."));
++        Report->SetStringField(TEXT("source_reference_position_meaning"),TEXT("Original LOD0 StaticVertexBuffers.PositionVertexBuffer positions before skinning, indexed by original render vertex ID, in reference mesh centimetres."));
+         Report->SetStringField(TEXT("meaning"),TEXT("Measured dominant hand/finger skin surface; no palm-centre or grip-fit acceptance"));
+         Report->SetStringField(TEXT("hero_mesh"),Mesh->GetSkeletalMeshAsset()->GetPathName());Report->SetStringField(TEXT("attack_clip"),Clip->GetPathName());
+         Report->SetNumberField(TEXT("actual_asset_morph_target_count"),Mesh->GetSkeletalMeshAsset()->GetMorphTargets().Num());

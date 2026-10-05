@@ -22,6 +22,14 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     { Box(P,FVector2D(S.X,1),C,L); Box(P+FVector2D(0,S.Y-1),FVector2D(S.X,1),C,L); Box(P,FVector2D(1,S.Y),C,L); Box(P+FVector2D(S.X-1,0),FVector2D(1,S.Y),C,L); };
     if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue"))
         Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
+    if(Page==TEXT("dialogue"))
+        Box(FVector2D::ZeroVector,DesignSize,Color(TEXT("panel")),Layer);
+    if(Page==TEXT("inventory") && ReadableLayout())
+        Box(FVector2D::ZeroVector,DesignSize,Color(TEXT("panel")),Layer);
+    if(Page==TEXT("inventory") && !ReadableLayout())
+        for(const TCHAR* Id:{TEXT("inventory.header"),TEXT("inventory.footer"),TEXT("inventory.bag"),TEXT("inventory.stats")})
+            if(const auto* Bounds=LayoutBounds.Find(Id);Bounds && !Bounds->Hidden)
+                Box(Bounds->Position,Bounds->Size,Color(TEXT("panel")),Layer);
     const auto& Comfort=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort;
     const auto* Survival=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(Page==TEXT("hud") && Survival->State.Severe() && Comfort.HungerVisual>0)
@@ -40,11 +48,18 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     {
         const auto& E=Elements[I]; const bool Focus=I==Hover || I==KeyboardFocus || E.Selected;
         if(E.Hidden || E.TextScrollClipped) continue;
-        const bool TextClip=ReadableLayout() && !(E.Type==TEXT("image") && E.Size.X>=1600);
+        const bool MapSidebar=ReadableLayout() && Page==TEXT("map") && E.Component==TEXT("map.sidebar");
+        const bool TextClip=MapSidebar || (ReadableLayout() && Page!=TEXT("map") && !(E.Type==TEXT("image") && E.Size.X>=1600));
         if(TextClip)
         {
             const float Bottom=Page==TEXT("dialogue") || Page==TEXT("memory")?770:835;
-            const FVector2D A=G.LocalToAbsolute(Offset+FVector2D(180,60)*Scale),B=G.LocalToAbsolute(Offset+FVector2D(1492,Bottom)*Scale);
+            FVector2D Min(180,60),Max(1492,Bottom);
+            if(MapSidebar)
+            {
+                const auto& Sidebar=LayoutBounds.FindChecked(TEXT("map.sidebar"));
+                Min=Sidebar.Position+FVector2D(0,16);Max=Sidebar.Position+Sidebar.Size-FVector2D(0,8);
+            }
+            const FVector2D A=G.LocalToAbsolute(Offset+Min*Scale),B=G.LocalToAbsolute(Offset+Max*Scale);
             Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
         }
 
@@ -201,7 +216,8 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                 Lines.Add(Line);
             }
             FVector2D P=E.Position;
-            if(E.Type==TEXT("button") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("notice")) P+=FVector2D(E.TextInset,FMath::Max(0.f,float(E.Size.Y-E.Font*1.3f)*.5f));
+            if(E.Type==TEXT("button") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("notice"))
+                P+=FVector2D(E.TextInset,FMath::Max(0.f,float(E.Size.Y-(MapSidebar?Lines.Num()*E.Font*1.6f:E.Font*1.3f))*.5f));
             if(E.Type==TEXT("slot") || E.Type==TEXT("node")) P+=FVector2D(FMath::Max(4.,E.Size.X-E.Text.Len()*E.Font*.6-6),E.Size.Y-E.Font*1.3f);
             const int32 MaximumLines=Page==TEXT("hud")?FMath::Max(1,FMath::FloorToInt((E.Size.Y+E.Font*.3f)/(E.Font*1.6f))):Lines.Num();
             if(Lines.Num()>MaximumLines) {Lines.SetNum(MaximumLines);Lines.Last()=Lines.Last().LeftChop(FMath::Min(2,Lines.Last().Len()))+TEXT("…");}
@@ -215,6 +231,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                 if(E.Align==TEXT("center") || E.Type==TEXT("keycap")) TextPosition.X+=(E.Size.X-TextWidth)*.5;
                 if(E.Type==TEXT("keycap")) TextPosition.Y+=(E.Size.Y-E.Font*1.3f)*.5;
                 const auto PG=Geometry(TextPosition,E.Size);
+                if(Page==TEXT("inventory") && E.Component==TEXT("inventory.equipment")) Box(TextPosition-FVector2D(4,1),FVector2D(TextWidth+8,E.Font*1.35f),Color(TEXT("panel")),L+1);
                 if(Page==TEXT("hud")) Box(TextPosition-FVector2D(4,1),FVector2D(TextWidth+8,E.Font*1.35f),FLinearColor(0,0,0,.32f),L+1);
                 if(Page==TEXT("hud")) FSlateDrawElement::MakeText(Out,L+2,Geometry(TextPosition+FVector2D(1,1),E.Size),Line,Font,ESlateDrawEffect::None,FLinearColor(0,0,0,.85f));
                 FSlateDrawElement::MakeText(Out,L+3,PG,Line,Font,ESlateDrawEffect::None,Ink);

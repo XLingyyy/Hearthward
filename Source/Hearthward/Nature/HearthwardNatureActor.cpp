@@ -39,7 +39,7 @@ AHearthwardNatureActor::AHearthwardNatureActor()
 void AHearthwardNatureActor::Configure(FGuid Entity,FName Type,FName Def)
 {
     Id=Entity;Kind=Type;Definition=Def;
-    Interaction->MaxDistance=Kind==TEXT("resource")?240:300;
+    Interaction->MaxDistance=Kind==TEXT("fish")?1500:Kind==TEXT("resource")?240:300;
     UStaticMesh* Mesh=nullptr;FVector Scale(.5);
     if(Kind==TEXT("animal"))
     {
@@ -128,6 +128,18 @@ void AHearthwardNatureActor::Refresh()
         if(A->Health<=0){Shape->SetCollisionEnabled(ECollisionEnabled::QueryOnly);for(const auto& Part:Parts)Part->SetCollisionEnabled(ECollisionEnabled::NoCollision);}
     }
     else SetActorLocation(N->Position(Id));
+    if(Kind==TEXT("crop"))if(const auto* Crop=N->State.Crops.FindByPredicate([&](const auto& C){return C.Id==Id;}))
+    {
+        const double Duration=Number(HearthwardNature::Definition(TEXT("crops"),Crop->Definition),TEXT("days"))*1440;
+        const double Growth=N->State.Ready(*Crop)?1.:N->State.Calendar-Crop->Planted>=Duration*.5?.65:.3;
+        // Configure creates adjacent stem/leaf pairs for each of the nine planting positions.
+        for(int32 I=0;I<Parts.Num();++I)
+        {
+            const bool Leaf=I%2==1;const int32 Plant=I/2;
+            Parts[I]->SetWorldScale3D((Leaf?FVector(.3,.25,.12):FVector(.05,.05,.5))*Growth);
+            Parts[I]->SetWorldLocation(GetActorLocation()+FVector((Plant/3-1)*60,(Plant%3-1)*60,(Leaf?45:25)*Growth));
+        }
+    }
     InteractionText=Name;
     // The world-space engine font has no CJK glyphs; the existing HUD renders the localized prompt.
     Label->SetText(FText::FromString(TEXT("E")));
@@ -142,17 +154,22 @@ void AHearthwardNatureActor::Tick(float Delta)
 }
 void AHearthwardNatureActor::MoveAnimal(float Delta)
 {
+    const FName PreviousIntent=MotionIntent;
+    MotionIntent=TEXT("idle");MotionThreat=NAME_None;
     auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();auto* A=N->State.Animals.FindByPredicate([&](const auto& X){return X.Id==Id;});
-    if(!A || A->Health<=0 || !Combat->CanAct() || N->WorkingOn(Id))return;
-    if(AnimalMotion->ControlsNatureMovement())return;
+    if(!A)return;
+    if(A->Health<=0){MotionIntent=TEXT("dead");return;}
+    A->AlertRemaining=FMath::Max(0.,A->AlertRemaining-Delta);AttackDelay-=Delta;WanderDelay-=Delta;Age+=Delta;
+    if(A->AlertRemaining<=0)A->Threat=NAME_None;
+    MotionThreat=A->Threat;
+    if(!Combat->CanAct()){MotionIntent=TEXT("hit");return;}
+    if(N->WorkingOn(Id)){MotionIntent=TEXT("working");return;}
     auto* Player=UGameplayStatics::GetPlayerPawn(this,0);if(!Player)return;
     const auto D=HearthwardNature::Definition(A->Domestic?TEXT("domestic"):TEXT("wildlife"),Definition);
-    A->AlertRemaining=FMath::Max(0.,A->AlertRemaining-Delta);AttackDelay-=Delta;WanderDelay-=Delta;Age+=Delta;
-    FVector Goal=A->Destination;double Speed=100;AActor* Threat=Player;
-    for(TActorIterator<AActor> It(GetWorld());It;++It)if(auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();S && S->Enabled() && S->Alive() && FVector::DistSquared(It->GetActorLocation(),GetActorLocation())<FVector::DistSquared(Threat->GetActorLocation(),GetActorLocation()))Threat=*It;
-    const double Distance=FVector::Dist2D(Threat->GetActorLocation(),GetActorLocation());
+    FVector Goal=A->Destination;double Speed=100;
     if(A->Domestic && A->Captured)
     {
+        MotionIntent=TEXT("captured");MotionThreat=NAME_None;
         if(A->Following)
         {
             const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();if(!G || G->InCombat() || A->AlertRemaining>0){A->Following=false;A->FollowingBrother=false;return;}
@@ -170,26 +187,53 @@ void AHearthwardNatureActor::MoveAnimal(float Delta)
             if(FVector::Dist2D(GetActorLocation(),Pen->Position)<190){A->Pen=Pen->Id;A->ReservedPen.Invalidate();A->Following=false;A->FollowingBrother=false;return;}
             if(FVector::Dist2D(Leader->GetActorLocation(),Pen->Position)<600)Goal=Pen->Position;
             else if(FVector::Dist2D(Leader->GetActorLocation(),GetActorLocation())>220)Goal=Leader->GetActorLocation();else return;
-            Speed=300;
+            Speed=300;MotionIntent=TEXT("lead");
         }
         else return;
     }
     else
     {
         const FString Behavior=A->Domestic?TEXT("flee"):Text(D,TEXT("behavior"));
-        const bool Detected=Distance<(A->Domestic?1200:Number(D,TEXT("detect_m"))*100);
+        const double DetectRadius=A->Domestic?1200:Number(D,TEXT("detect_m"))*100;
+        auto Identity=[&](const AActor* Actor){return Actor==Player?FName(TEXT("player")):FName(TEXT("brother"));};
+        auto Living=[](AActor* Actor)
+        {
+            auto* S=Actor?Actor->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
+            return S && S->Enabled() && S->Alive() && S->Health()>0;
+        };
+        auto Visible=[&](AActor* Actor)
+        {
+            FCollisionQueryParams Query(SCENE_QUERY_STAT(NatureSight),false,this);Query.AddIgnoredActor(Actor);
+            return !GetWorld()->LineTraceTestByChannel(GetActorLocation(),Actor->GetActorLocation(),ECC_Visibility,Query);
+        };
+        TArray<AActor*> Candidates;if(Living(Player))Candidates.Add(Player);
+        for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)if(Living(*It))Candidates.Add(*It);
+        AActor* Threat=nullptr;AActor* SeenThreat=nullptr;double SeenDistance=DetectRadius;
         Combat->Memory.Seen.Reset();
-        if(Detected)Combat->Memory.Seen.Add(Threat==Player?TEXT("player"):TEXT("brother"));
-        const bool Attack=!A->Domestic && (Behavior==TEXT("aggressive")?Detected || A->AlertRemaining>0:Behavior==TEXT("retaliate") && A->AlertRemaining>0);
+        for(auto* Candidate:Candidates)
+        {
+            const FName Who=Identity(Candidate);const double Distance=FVector::Dist2D(Candidate->GetActorLocation(),GetActorLocation());
+            if(A->AlertRemaining>0 && A->Threat==Who)Threat=Candidate;
+            if(Distance<DetectRadius && Visible(Candidate))
+            {
+                Combat->Memory.Seen.Add(Who);Combat->Memory.LastKnown.Add(Who,Candidate->GetActorLocation());
+                if(Distance<SeenDistance){SeenDistance=Distance;SeenThreat=Candidate;}
+            }
+        }
+        if(!Threat)Threat=SeenThreat;
+        const bool Detected=Threat && Combat->Memory.Seen.Contains(Identity(Threat));
+        const double Distance=Threat?FVector::Dist2D(Threat->GetActorLocation(),GetActorLocation()):DBL_MAX;
+        if(Detected){A->Destination=Threat->GetActorLocation();MotionThreat=Identity(Threat);MotionIntent=TEXT("alert");}
+        const bool Attack=Threat && !A->Domestic && (Behavior==TEXT("aggressive")?Detected || A->AlertRemaining>0:Behavior==TEXT("retaliate") && A->AlertRemaining>0 && A->Threat==Identity(Threat));
         const auto* Home=N->State.Slots.FindByPredicate([&](const auto& S){return S.Id==A->Slot;});
         const bool TooFar=Home && FVector::Dist2D(GetActorLocation(),Home->Position)>Number(D,TEXT("flee_m"))*100;
         if(Attack && !TooFar)
         {
-            A->AlertRemaining=15;
-            Goal=Threat->GetActorLocation();Speed=Number(D,TEXT("run_mps"))*100;
-            if(Distance<180 && AttackDelay<=0)
+            if(Detected){A->AlertRemaining=15;A->Threat=Identity(Threat);}
+            Goal=A->Destination;Speed=Number(D,TEXT("run_mps"))*100;MotionIntent=TEXT("chase");MotionThreat=A->Threat;
+            if(Detected && Distance<180 && AttackDelay<=0)
             {
-                AttackDelay=Number(D,TEXT("attack_interval_seconds"));const float Raw=100.f/.95f/7.f;
+                AttackDelay=Number(D,TEXT("attack_interval_seconds"));++AttackSequence;const float Raw=100.f/.95f/7.f;
                 if(auto* C=Threat->FindComponentByClass<UHearthwardCombatComponent>())C->Damage(Raw,TEXT("body"),GetActorLocation());
                 else if(auto* S=Threat->FindComponentByClass<UHearthwardSurvivalComponent>())
                 {
@@ -202,9 +246,15 @@ void AHearthwardNatureActor::MoveAnimal(float Delta)
                 }
             }
         }
-        else if((Detected || A->AlertRemaining>0) && Behavior==TEXT("flee") && !TooFar)
-        {Goal=GetActorLocation()+(GetActorLocation()-Threat->GetActorLocation()).GetSafeNormal2D()*600;Speed=A->Domestic?400:Number(D,TEXT("run_mps"))*100;}
-        else if(TooFar){Goal=Home->Position;Speed=160;A->AlertRemaining=0;}
+        else if(Threat && (Detected || A->AlertRemaining>0) && Behavior==TEXT("flee") && !TooFar)
+        {
+            if(Detected){A->AlertRemaining=3;A->Threat=Identity(Threat);}
+            Goal=GetActorLocation()+(GetActorLocation()-A->Destination).GetSafeNormal2D()*600;
+            const auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();
+            Speed=AnimalMotion->Ready()?AnimalMotion->EscapeSpeed():630*(1+(G?G->Effect(TEXT("sprint")):0));
+            MotionIntent=TEXT("flee");MotionThreat=A->Threat;
+        }
+        else if(TooFar){Goal=Home->Position;Speed=160;A->AlertRemaining=0;A->Threat=NAME_None;MotionIntent=TEXT("return");MotionThreat=NAME_None;}
         else if(WanderDelay<=0)
         {
             const double Hour=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().MinuteOfDay/60;const FString Active=Text(D,TEXT("active"));
@@ -212,6 +262,7 @@ void AHearthwardNatureActor::MoveAnimal(float Delta)
             WanderDelay=(4+FMath::FRand()*4)*(ActiveNow?1:3);const FVector Center=Home?Home->Position:A->Position;Goal=Center+FVector(FMath::FRandRange(-500.f,500.f),FMath::FRandRange(-500.f,500.f),0);A->Destination=Goal;
         }
     }
+    if(MotionIntent!=PreviousIntent)PathRemaining=0;
     if(FVector::Dist2D(GetActorLocation(),Goal)<70)return;
     FVector Direction=(Goal-GetActorLocation()).GetSafeNormal2D();
     PathRemaining-=Delta;
@@ -228,11 +279,12 @@ void AHearthwardNatureActor::MoveAnimal(float Delta)
     SetActorRotation(Direction.Rotation());SetActorLocation(Next,true);A->Position=GetActorLocation();
 }
 FString UHearthwardNatureInteraction::GetInteractionPrompt(AActor* Interactor) const
-{const auto* A=Cast<AHearthwardNatureActor>(GetOwner());return A?A->InteractionText+TEXT(" · E 操作"):FString();}
+{const auto* A=Cast<AHearthwardNatureActor>(GetOwner());return A?A->InteractionText+(A->Kind==TEXT("fish")?TEXT(" · E 开始钓鱼"):TEXT(" · E 操作")):FString();}
 FString UHearthwardNatureInteraction::CompleteInteraction(AActor* Interactor)
 {
     auto* A=Cast<AHearthwardNatureActor>(GetOwner());auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
     if(!A || N->Busy())return N->Feedback;
+    if(A->Kind==TEXT("fish")){N->Act(TEXT("fish"),A->Id,NAME_None,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());return N->Feedback;}
     if(A->Kind==TEXT("resource")){N->Act(TEXT("harvest"),A->Id,NAME_None,GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());return N->Feedback;}
     if(auto* PC=UGameplayStatics::GetPlayerController(this,0))if(auto* HUD=Cast<AHearthwardHUD>(PC->GetHUD());HUD && HUD->Screen)HUD->Screen->OpenNature(A->Id);
     return N->Feedback;

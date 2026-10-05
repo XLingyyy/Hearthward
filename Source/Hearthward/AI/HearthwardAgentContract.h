@@ -54,6 +54,7 @@ namespace HearthwardAgent
     FString Schema();
     bool Parse(const FString& Json,FHearthwardAgentGoal& Out);
     FString Validate(const FHearthwardAgentGoal& Goal);
+    bool OriginalQuantityMatches(const FHearthwardAgentGoal& Goal);
     bool ValidLimit(const FString& Limit);
     bool AllowsCost(const TArray<FString>& Limits,const TMap<FName,int32>& Cost,const TMap<FName,int32>& AlreadySpent);
     FString Normalize(const FString& Text);

@@ -1,0 +1,37 @@
+{
+  "source": "root Saved/Task068/vulkan/cases.jsonl, current append-only actual run",
+  "method": "actual public SubmitPlayerText PIE evidence; neither ambiguous candidate was confirmed",
+  "native_red_status": "NOT_RUN",
+  "cases": [
+    {
+      "id": "A04",
+      "input": "拿二份木材过来",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":2,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡去已知安全点采集两份木材，请确认后再执行。\"}",
+      "raw_pass": false,
+      "reason": "",
+      "candidate": true,
+      "candidate_text": "原话：拿二份木材过来\n新采集 木材 × 2 份\n来源：当前安全采集点；目的地：营地仓库",
+      "e2e_pass": false,
+      "generation_calls": 1,
+      "input_tokens": 3097,
+      "tier": "full_relevant",
+      "no_unconfirmed_world_effect": true,
+      "unearned_items": {}
+    },
+    {
+      "id": "A08",
+      "input": "新采四份木材，但别去那里",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":4,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，新采四份木材但避开原采集点，请确认路线与目标；若遇阻碍或危险将安全返营等待。\"}",
+      "raw_pass": false,
+      "reason": "",
+      "candidate": true,
+      "candidate_text": "原话：新采四份木材，但别去那里\n新采集 木材 × 4 份\n来源：当前安全采集点；目的地：营地仓库",
+      "e2e_pass": false,
+      "generation_calls": 1,
+      "input_tokens": 3102,
+      "tier": "full_relevant",
+      "no_unconfirmed_world_effect": true,
+      "unearned_items": {}
+    }
+  ]
+}

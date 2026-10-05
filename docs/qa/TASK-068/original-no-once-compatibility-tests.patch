@@ -1,0 +1,48 @@
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -200,6 +200,28 @@
+     TestFalse(TEXT("The preserved prohibition blocks the actual recipe cost"),HearthwardAgent::AllowsCost(G.Limits,Cost,{}));
+     G.Original=HearthwardAgent::GoalText(G);
+     TestTrue(TEXT("Structured GoalText keeps its explicit material prohibition"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("制作一批绳索，不要消耗药草");G.Limits={TEXT("no:herb")};
++    TestTrue(TEXT("An original prohibition of another material retains its existing alias"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("no:wood")};
++    TestFalse(TEXT("A prohibition cannot bind a different material"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("制作一批绳索，不允许使用精矿");G.Limits={TEXT("no:refined_ore")};
++    TestTrue(TEXT("The registered refined material name binds its exact item"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("制作一批绳索，不要使用refined_ore");G.Limits={TEXT("no:ore")};
++    TestFalse(TEXT("The longer refined item id cannot be reduced to ore"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("no:refined_ore")};
++    TestTrue(TEXT("The complete refined item id remains supported"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("制作一批绳索，不要消耗精炼矿石");G.Limits={TEXT("no:ore")};
++    TestFalse(TEXT("An unregistered compound cannot authorize a suffix material match"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("no:herb"),TEXT("no:wood")};G.Original=HearthwardAgent::GoalText(G);
++    TestTrue(TEXT("Canonical material prohibitions remain valid when joined as constraint labels"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("no:herb")};
++    TestFalse(TEXT("A later canonical prohibition cannot disappear after a constraint-label separator"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={};G.Original=TEXT("这次授权使用营地仓库材料制作一批绳索");G.SourceRef=TEXT("camp");
++    TestTrue(TEXT("A normal warehouse-source authorization adds no one-time material exception"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Intent=TEXT("repair");G.Item=TEXT("axe");G.QuantityMode=TEXT("one_owned");G.SourceRef=TEXT("bag");G.Original=TEXT("维修自己的石斧一件，不要用木头");
++    TestFalse(TEXT("A repair proposal also preserves an explicit original material prohibition"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("no:wood")};
++    TestTrue(TEXT("Repair accepts the existing wood alias when its prohibition is preserved"),HearthwardAgent::Validate(G).IsEmpty());
+     return true;
+ }
+ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalOnceTest,"Hearthward.NPCAgent.OriginalOnceAuthorization",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+@@ -220,6 +242,16 @@
+     TestTrue(TEXT("An explicit original one-time wood allowance remains supported"),HearthwardAgent::Validate(G).IsEmpty());
+     G.Original=HearthwardAgent::GoalText(G);
+     TestTrue(TEXT("Structured GoalText retains its explicit one-time material allowance"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("这次允许用石头，制作一批绳索");
++    TestFalse(TEXT("A one-time stone allowance cannot lift the wood prohibition"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("once:stone")};
++    TestTrue(TEXT("The explicit one-time allowance binds the actual aliased material"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("本次可以用木头，制作一批绳索");G.Limits={TEXT("once:wood")};
++    TestTrue(TEXT("An explicit current-only wood allowance supports existing wording and alias"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("不允许本次消耗木材，制作一批绳索");G.Limits={TEXT("once:wood"),TEXT("no:wood")};
++    TestFalse(TEXT("Consent cannot start inside a negated authorization even when no is retained"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("no:wood")};
++    TestTrue(TEXT("A negated current-only consumption clause retains its actual prohibition"),HearthwardAgent::Validate(G).IsEmpty());
+     TestTrue(TEXT("A one-time task never revokes the lasting rule record"),Rules.ApplicableRules(TEXT("craft")).Contains(TEXT("no:wood")));
+     return true;
+ }

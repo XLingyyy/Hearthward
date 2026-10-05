@@ -1,0 +1,23 @@
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -166,6 +166,20 @@
+     TestTrue(TEXT("The public structured GoalText retains a material budget"),HearthwardAgent::Validate(G).IsEmpty());
+     G.Original=TEXT("制作三批箭矢");
+     TestTrue(TEXT("An applicable confirmed rule can still supply an unspoken material limit"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("制作三批箭矢，消耗最多三份木材");
++    TestTrue(TEXT("Consumption before the ceiling word retains its explicit budget"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("制作三批箭矢，木材最多消耗三份");
++    TestTrue(TEXT("Material before the ceiling word retains its explicit budget"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("用你背包的材料制作三批箭矢最多消耗三份木材");
++    TestTrue(TEXT("A target before a ceiling without punctuation is not a second budget material"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("max:wood:3"),TEXT("max:stone:2")};G.Original=TEXT("制作三批箭矢，最多消耗三份木材和二份石材");
++    TestTrue(TEXT("Two different materials bind their own complete quantities in one budget clause"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("max:wood:3")};
++    TestFalse(TEXT("A second explicit material budget cannot disappear"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("max:wood:100")};G.Original=TEXT("制作三批箭矢，最多消耗一百份木材");
++    TestTrue(TEXT("A valid hundred-unit Chinese material budget is not narrowed to ninety-nine"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("max:wood:100000")};G.Original=TEXT("制作三批箭矢，最多消耗十万份木材");
++    TestTrue(TEXT("The existing maximum material budget remains valid in Chinese"),HearthwardAgent::Validate(G).IsEmpty());
+     return true;
+ }
+ 

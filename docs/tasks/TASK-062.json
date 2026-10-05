@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "id": "TASK-062",
+  "title": "实现种植、照料和个体养殖",
+  "status": "Active",
+  "updated_at": "2026-10-04",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-053-074-design",
+  "source_refs": [
+    "用户2026-10-03：053及之后全部已有规划先整理设计，过目后再决定施工",
+    "docs/planning/TASK-053-074/sources/Hearthward_TASK-043-076.md：原稿TASK-064，canonical减2",
+    "docs/planning/TASK-053-074/sources/Hearthward_Audit_2026-09-24.md：历史审计，仅作缺口追溯",
+    "origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+    "docs/planning/TASK-053-074/TASK-062.md：本轮完整设计草案",
+    "用户2026-10-03：审阅通过，现在直接开始施工；批准整批D01—D08及逐单设计"
+  ],
+  "dependencies": [
+    "TASK-048",
+    "TASK-052",
+    "TASK-058",
+    "TASK-059"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-048-nature.md",
+    "docs/contracts/CT-TASK-050-companion-activities.md",
+    "docs/contracts/CT-TASK-046-camp-economy.md",
+    "docs/contracts/CT-TASK-052-clock-refresh.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/TASK-053-074/",
+    "docs/tasks/TASK-062.json",
+    "docs/tasks/TASK-062.md",
+    "Source/Hearthward/UI/HearthwardScreenNature.cpp",
+    "Source/Hearthward/Nature/HearthwardNatureActor.cpp",
+    "Source/Hearthward/Nature/HearthwardNatureActions.cpp",
+    "Source/Hearthward/Tests/FarmingPresentationTests.cpp",
+    "docs/qa/TASK-062/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "scripts/",
+    "docs/design/",
+    "docs/contracts/"
+  ],
+  "acceptance": [
+    "设计审阅：完成TASK-062现状、正式操作、失败和保存、建议施工范围、最小验证与出口的完整方案",
+    "施工验收：严格按docs/planning/TASK-053-074/TASK-062.md及ACCEPTANCE执行，仅在Owner下令施工后启动",
+    "不把设计检查或旧SHA的PASS登记为本单实现、真人体验或发行通过"
+  ],
+  "non_goals": [
+    "不超出逐单批准设计，不进行暂缓真人录音，不改未登记的共享资产或存档格式",
+    "不创建Issue，不自动提交推送、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-016",
+    "T-004"
+  ],
+  "permissions": {
+    "network": "granted: official engineering research, origin inspection and authorized task-branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: Owner explicitly authorized current TASK-053-074 batch commit to codex/TASK-053-traversal",
+    "push": "granted: Owner explicitly authorized current TASK-053-074 batch push to origin/codex/TASK-053-traversal",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "设计与施工已获Owner确认，按DEPENDENCIES推进；提交推送、合并、发布权限保持原登记。",
+    "Owner和Reviewer均为XLingyyy，无Issue；不登记虚构独立审查。",
+    "完整批次施工获批；激活具体任务时登记准确写路径、专用目录和共享接口窗口。",
+    "062先补真实Widget与作物几何消费；现有状态数学/幼体.55/稳定ID配对/返种子已存在，不重复实现。NatureActor/Actions只按hunk保留060/061。",
+    "Owner随后明确授权当前053—074施工成果提交并推送到codex/TASK-053-traversal；不代填待验结果，任务原状态保留。合并与发布权限未授予。"
+  ],
+  "design_status": "Approved",
+  "design_plan": "docs/planning/TASK-053-074/TASK-062.md",
+  "original_task_id": "TASK-064",
+  "proposed_implementation_paths": [
+    "Source/Hearthward/Nature/",
+    "Source/Hearthward/UI/HearthwardScreenNature.cpp",
+    "Source/Hearthward/Building/HearthwardBuildingEconomy.cpp（栏舍接入）",
+    "Source/Hearthward/Camp/HearthwardCampSubsystem.cpp（真实饲料／产品）",
+    "Source/Hearthward/Save/（仅新增生态字段）",
+    "Resources/Data/gameplay.json（既有作物／栏舍绑定）",
+    "Content/Hearthward/Nature/作物与栏舍资产（按实际包登记）",
+    "Source/Hearthward/Tests/NatureTests.cpp"
+  ],
+  "implementation_authorization": "granted: user2026-10-03 TASK-053—074 approved design and construction",
+  "worktree": "G:/GameFactory/Hearthward/.agent-local/task062",
+  "integration_worktree": "G:/GameFactory/Hearthward/.agent-local/task051",
+  "implementation_writer": "/root/farm062_resume"
+}

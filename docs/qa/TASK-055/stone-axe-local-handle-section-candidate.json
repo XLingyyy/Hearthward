@@ -1,0 +1,129 @@
+{
+  "status": "One offline actual-surface-supported candidate for Root unsaved rendering; no Content or production acceptance",
+  "mesh": {
+    "path": "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe.SM_stone_bone_axe",
+    "class": "StaticMesh"
+  },
+  "source_vertices": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task055\\stone-axe-single-node\\stone-axe-ue-local-vertices.json",
+  "source_pose_seconds": 0.550000011920929,
+  "world_scale": 0.7,
+  "core_radial_factor": 0.15,
+  "geometry": {
+    "source_axis_unit": [
+      -0.5526946739461001,
+      0.2612031744596012,
+      0.7913921272314007
+    ],
+    "core_longitudinal_s_from_actual_Grip_cm": [
+      -12,
+      16
+    ],
+    "support_longitudinal_s_cm": [
+      -20,
+      26
+    ],
+    "upper_raw_z_fade_cm": [
+      -12.5,
+      0
+    ],
+    "formula": "s=dot(P-Grip,axis); radial=P-Grip-s*axis; P'=P-(1-factor)*smoothstep((s+20)/8)*smoothstep((26-s)/10)*smoothstep(-P.z/12.5)*radial",
+    "per_vertex_longitudinal_coordinate_preserved": true,
+    "all_three_authored_sockets_preserved": true,
+    "note": "Mesh core shrinks radially toward the measured shaft axis; wrapping/curve radial offsets shrink too. Original topology and UV vertex-instance correspondence retained mathematically."
+  },
+  "vertex_position_candidate_file": "G:\\GameFactory\\Hearthward\\.agent-local\\task055-combat\\docs\\qa\\TASK-055\\stone-axe-local-section-candidate-vertices.json",
+  "affected_vertex_count": 10446,
+  "temporary_grip_target_hand_r_local": [
+    -0.01688717072755536,
+    -0.03189219303661964,
+    0.012215479258258933
+  ],
+  "temporary_grip_target_hand_r_rigid_axes_cm": [
+    -3.105847750772462,
+    -5.8655358122158905,
+    2.246642343783118
+  ],
+  "relative_rotation_quat_xyzw": [
+    0.4566498119990775,
+    0.6322560898677655,
+    0.25908732567653764,
+    0.5697340991200296
+  ],
+  "grip_target_shift_from_prior_palm_cm": 1.346291201783633,
+  "all_vertex_longitudinal_coordinate_max_change_raw_cm": 7.771561172376096e-15,
+  "authored_socket_position_changes_raw_cm": {
+    "Grip": 0.0,
+    "BladeBase": 0.0,
+    "BladeTip": 0.0
+  },
+  "actual_shaft_axis_span_world_cm_before_after": [
+    83.87698876436936,
+    83.87698876436936
+  ],
+  "source_Grip_slab_outer_widths_palm_normal_cross_cm_before_after": [
+    [
+      7.6025105418635075,
+      6.137349719792766
+    ],
+    [
+      1.1403764744597984,
+      0.9206024729310376
+    ]
+  ],
+  "surface_evidence": {
+    "surface_edge_intersection_pair_count": 0,
+    "proper_non_tangent_surface_crossing_pair_count": 0,
+    "two_axis_inside_section_sample_count": 0,
+    "actual_surface_separation": {
+      "minimum_triangle_surface_separation_cm": 0.024285531684849312,
+      "skin_lod0_triangle_ids": [
+        4253,
+        4259,
+        4258
+      ],
+      "axe_source_triangle_id": 21980,
+      "skin_point_hand_r_rigid_cm": [
+        -0.23139374061075632,
+        -7.478431241891452,
+        2.8060605332885977
+      ],
+      "axe_point_hand_r_rigid_cm": [
+        -0.24420090447359152,
+        -7.484649877106624,
+        2.825735191584663
+      ],
+      "method": "All possible closest vertex-face and edge-edge features after distance lower-bound AABB pruning"
+    }
+  },
+  "render_plan": {
+    "method": "Apply actual vertex position changes to a transient/unsaved mesh fixture only, recompute normals/tangents, retain original triangles/material/UVs, set actual Held world scale .7 and measured quaternion, align unchanged actual Grip to actual hand TransformLocation(local target)",
+    "source_zero_initialization": true,
+    "source_render_seconds": 0.55,
+    "cameras": {
+      "full": "same existing fixture",
+      "palm_reverse_rigid_offset_cm": [
+        -25,
+        0,
+        -100
+      ],
+      "index_side_rigid_offset_cm": [
+        100,
+        0,
+        0
+      ],
+      "ortho_closeup_cm": 30
+    },
+    "lights_lux": [
+      30,
+      10
+    ],
+    "capture_settings": "same Root actual physical EV10 fixture, no revised exposure",
+    "assets_saved": []
+  },
+  "limitations": [
+    "Only source .55 actual hand geometry checked; full animation/blend and normal hold remain unverified.",
+    "Radial reduction is 85% in the core, giving a visually thin haft; visual material/shape plausibility must be reviewed before any asset authoring.",
+    "Minimum clearance is a computed surface gap, not a proof of full enclosed-volume separation of an open skin subset.",
+    "Actual source mesh positions/IDs are needed for unsaved application; do not rebuild topology from point cloud."
+  ]
+}

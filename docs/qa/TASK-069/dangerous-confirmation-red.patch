@@ -1,0 +1,89 @@
+--- a/Source/Hearthward/Tests/ExperienceTests.cpp
++++ b/Source/Hearthward/Tests/ExperienceTests.cpp
+@@ -3,10 +3,19 @@
+ #include "../Gameplay/HearthwardGameplayComponent.h"
+ #include "../Survival/HearthwardSurvivalComponent.h"
+ #include "../Inventory/HearthwardInventoryComponent.h"
++#include "../Inventory/HearthwardStorageSubsystem.h"
++#include "../Combat/HearthwardCombatComponent.h"
++#include "../Building/HearthwardBuildingComponent.h"
++#include "../UI/HearthwardScreenWidget.h"
+ #include "Engine/World.h"
+ #include "Engine/Engine.h"
++#include "Engine/GameInstance.h"
++#include "Engine/GameViewportClient.h"
++#include "Engine/LocalPlayer.h"
+ #include "GameFramework/Character.h"
++#include "GameFramework/PlayerController.h"
+ #include "Misc/AutomationTest.h"
++#include "Widgets/SViewport.h"
+ #if WITH_DEV_AUTOMATION_TESTS
+ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FExperienceBindingsTest,"Hearthward.Experience.BindingConflictsAndContexts",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+ bool FExperienceBindingsTest::RunTest(const FString&)
+@@ -60,4 +69,66 @@
+     S->FallImpact(FMath::Sqrt(2.f*980.f*1200.f));TestTrue(TEXT("Ground fall to zero remains rescuable"),S->State.Life==EHearthwardLife::Downed);
+     World->DestroyWorld(false);GEngine->DestroyWorldContext(World);return true;
+ }
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDangerousConfirmation069Test,
++    "Hearthward.UI069.DangerousConfirmationNeedsExplicitFocus",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++bool FDangerousConfirmation069Test::RunTest(const FString&)
++{
++    auto* Instance=NewObject<UGameInstance>(GEngine);Instance->InitializeStandalone();
++    auto* World=Instance->GetWorld();
++    auto* Viewport=NewObject<UGameViewportClient>(GEngine);
++    Instance->GetWorldContext()->GameViewport=Viewport;
++    Viewport->Init(*Instance->GetWorldContext(),Instance,false);
++    const TSharedRef<SViewport> SlateViewport=SNew(SViewport);
++    TSharedPtr<FSceneViewport> SceneViewport=Viewport->CreateViewport(SlateViewport);
++    auto* LocalPlayer=NewObject<ULocalPlayer>(GEngine);
++    Instance->AddLocalPlayer(LocalPlayer,FPlatformUserId::CreateFromInternalId(0));
++    auto* Controller=World->SpawnActor<APlayerController>();Controller->SetPlayer(LocalPlayer);
++    World->AddController(Controller);
++    auto* Player=World->SpawnActor<ACharacter>();Controller->Possess(Player);
++    auto* Bag=NewObject<UHearthwardInventoryComponent>(Player);
++    Player->AddInstanceComponent(Bag);Bag->RegisterComponent();
++    auto* Gameplay=NewObject<UHearthwardGameplayComponent>(Player);
++    Player->AddInstanceComponent(Gameplay);Gameplay->RegisterComponent();Gameplay->Enabled=true;
++    auto* Survival=NewObject<UHearthwardSurvivalComponent>(Player);
++    Player->AddInstanceComponent(Survival);Survival->RegisterComponent();
++    auto* Combat=NewObject<UHearthwardCombatComponent>(Player);
++    Player->AddInstanceComponent(Combat);Combat->RegisterComponent();
++    auto* Building=NewObject<UHearthwardBuildingComponent>(Player);
++    Player->AddInstanceComponent(Building);Building->RegisterComponent();
++    auto* Screen=CreateWidget<UHearthwardScreenWidget>(Controller);
++    const auto Cleanup=[&]()
++    {
++        if(Screen)Screen->RemoveFromParent();
++        SceneViewport->SetViewportClient(nullptr);SceneViewport.Reset();
++        Instance->Shutdown();GEngine->DestroyWorldContext(World);World->DestroyWorld(false);
++    };
++    if(!TestNotNull(TEXT("Real confirmation widget is created"),Screen)) {Cleanup();return false;}
++    Screen->SetIsFocusable(true);Screen->TakeWidget();Screen->AddToViewport();
++    const FGuid Epoch=World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
++    if(!TestTrue(TEXT("Actual damage enters rescuable downed state"),
++        Survival->ReceiveDamage(Survival->MaxHealth(),FGuid::NewGuid(),Epoch)
++        && Survival->State.Life==EHearthwardLife::Downed)) {Cleanup();return false;}
++    Screen->OpenPage(TEXT("pause"));
++    if(!TestTrue(TEXT("Actual rescue abandonment opens confirmation"),Screen->ExecuteAction(TEXT("giveUp"))))
++    {Cleanup();return false;}
++    TestEqual(TEXT("Confirmation has an actual affirmative hit target"),Screen->ActionAt({650,537}),FString(TEXT("confirm")));
++    const double Remaining=Survival->State.DownRemaining;
++    const FKeyEvent Enter(EKeys::Enter,FModifierKeysState(),0,false,0,0);
++    Screen->NativeOnPreviewKeyDown(FGeometry(),Enter);
++    const bool StillRescuable=TestTrue(TEXT("Enter without explicit focus cannot abandon rescue"),Survival->State.Life==EHearthwardLife::Downed);
++    TestEqual(TEXT("Unfocused Enter preserves the rescue deadline"),Survival->State.DownRemaining,Remaining);
++    TestEqual(TEXT("Unfocused Enter leaves the dangerous confirmation pending"),Screen->ActionAt({650,537}),FString(TEXT("confirm")));
++    if(!StillRescuable) {Cleanup();return false;}
++
++    Screen->NativeOnPreviewKeyDown(FGeometry(),FKeyEvent(EKeys::Escape,FModifierKeysState(),0,false,0,0));
++    TestTrue(TEXT("Escape cancels confirmation without abandoning rescue"),Survival->State.Life==EHearthwardLife::Downed);
++    TestNotEqual(TEXT("Escape removes the affirmative confirmation target"),Screen->ActionAt({650,537}),FString(TEXT("confirm")));
++    if(!TestTrue(TEXT("Confirmation can be reopened"),Screen->ExecuteAction(TEXT("giveUp")))) {Cleanup();return false;}
++    Screen->NativeOnKeyDown(FGeometry(),FKeyEvent(EKeys::Down,FModifierKeysState(),0,false,0,0));
++    Screen->NativeOnPreviewKeyDown(FGeometry(),Enter);
++    TestTrue(TEXT("Explicit keyboard selection allows rescue abandonment"),Survival->State.Life==EHearthwardLife::Dead);
++    TestEqual(TEXT("Accepted abandonment reaches the actual failure page"),Screen->GetPage(),FName(TEXT("save")));
++    Cleanup();return true;
++}
+ #endif

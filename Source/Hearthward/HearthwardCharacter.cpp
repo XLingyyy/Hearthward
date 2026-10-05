@@ -85,7 +85,11 @@ AHearthwardCharacter::AHearthwardCharacter(const FObjectInitializer& Initializer
     GetMesh()->SetRelativeScale3D(FVector(180.f / 97.869893f));
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
     GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
-    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    GetMesh()->SetCollisionResponseToAllChannels(ECR_Ignore);
+    GetMesh()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
+    GetMesh()->SetCanEverAffectNavigation(false);
+    GetMesh()->VisibilityBasedAnimTickOption=EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
     GetMesh()->SetAnimInstanceClass(UHearthwardHeroAnimInstance::StaticClass());
 
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Axe(TEXT("/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe.SM_stone_bone_axe"));
@@ -141,9 +145,10 @@ void AHearthwardCharacter::UpdateCarrySpeed()
 
 void AHearthwardCharacter::RefreshHeldTool()
 {
-    // The existing equipment and inventory state remain the sole source of truth.
-    const bool HoldingAxe=Gameplay->Equipment.FindRef(TEXT("weapon"))==TEXT("axe")
-        && Inventory->GetItemCount(TEXT("axe"))>0;
+    const auto* Equipped=Inventory->FindInstance(Inventory->EquippedInstance(TEXT("weapon")));
+    const auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
+    const bool HoldingAxe=Equipped && Equipped->Definition==TEXT("axe") && Equipped->Durability>0
+        && !Combat->RangedSelected();
     HeldAxe->SetVisibility(HoldingAxe);
 }
 
@@ -179,14 +184,27 @@ void AHearthwardCharacter::RebuildInputBindings()
     { if(B.Key.IsValid()) PhysicalAction(B.Key);if(B.Modifier.IsValid()) PhysicalAction(B.Modifier); }
     MoveAction=NewObject<UInputAction>(this);MoveAction->ValueType=EInputActionValueType::Axis2D;
     MoveAction->bConsumeInput=false;MoveAction->AccumulationBehavior=EInputActionAccumulationBehavior::Cumulative;
+    // Chord state unions modifier sides while physical callbacks retain their exact key.
+    TMap<FKey,UInputAction*> ChordModifiers;
     auto MapMove=[&](const TCHAR* Id,bool Negative,bool Y)
     {
         for(const auto& B:Bindings.FindChecked(FName(Id))) if(B.Key.IsValid())
         {
+            if(B.Modifier.IsValid())
+            {
+                auto*& ModifierAction=ChordModifiers.FindOrAdd(B.Modifier);
+                if(!ModifierAction)
+                {
+                    ModifierAction=NewObject<UInputAction>(this);ModifierAction->ValueType=EInputActionValueType::Boolean;ModifierAction->bConsumeInput=false;
+                    InputMapping->MapKey(ModifierAction,B.Modifier);
+                    const FKey Other=B.Modifier==EKeys::LeftShift?EKeys::RightShift:B.Modifier==EKeys::LeftControl?EKeys::RightControl:EKeys::RightAlt;
+                    InputMapping->MapKey(ModifierAction,Other);
+                }
+            }
             auto& Mapping=InputMapping->MapKey(MoveAction,B.Key);
             if(Negative) Mapping.Modifiers.Add(NewObject<UInputModifierNegate>(InputMapping));
             if(Y) {auto* Swizzle=NewObject<UInputModifierSwizzleAxis>(InputMapping);Swizzle->Order=EInputAxisSwizzle::YXZ;Mapping.Modifiers.Add(Swizzle);}
-            if(B.Modifier.IsValid()) {auto* Chord=NewObject<UInputTriggerChordAction>(InputMapping);Chord->ChordAction=Physical.FindChecked(B.Modifier);Mapping.Triggers.Add(Chord);}
+            if(B.Modifier.IsValid()) {auto* Chord=NewObject<UInputTriggerChordAction>(InputMapping);Chord->ChordAction=ChordModifiers.FindChecked(B.Modifier);Mapping.Triggers.Add(Chord);}
         }
     };
     MapMove(TEXT("move.right"),false,false);MapMove(TEXT("move.left"),true,false);

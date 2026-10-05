@@ -1,0 +1,114 @@
+--- a/Source/Hearthward/Campaign/HearthwardCampaignSubsystem.h
++++ b/Source/Hearthward/Campaign/HearthwardCampaignSubsystem.h
+@@ -61,6 +61,7 @@
+     FName PendingFlag,TravelDestination;
+     FVector ActionPosition=FVector::ZeroVector;
+     float ActionHealth=0,FlagRemaining=0,RefreshIn=0,IntroRemaining=0;
++    double FlagCompleteAt=0;
+     FGuid ActionEpoch;
+     TArray<TWeakObjectPtr<AActor>> TravelParticipants;
+     TMap<FName,int32> TravelEnemies;
+--- a/Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp
++++ b/Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp
+@@ -7,6 +7,7 @@
+ #include "../Inventory/HearthwardInventoryComponent.h"
+ #include "../Companion/HearthwardCompanionFixture.h"
+ #include "../Survival/HearthwardSurvivalComponent.h"
++#include "../Time/HearthwardWorldClockSubsystem.h"
+ #include "EngineUtils.h"
+ using namespace HearthwardData;
+ FName UHearthwardCampaignSubsystem::Nearest() const
+@@ -84,7 +85,8 @@
+         const FName Zone(*Id.ToString().RightChop(4));
+         if(State.Flags.Contains(Zone)){Feedback=TEXT("此区已控制");return true;}
+         if(!State.ZoneClear(Zone) || ZoneOccupied(Zone)){Feedback=TEXT("此区仍有敌军，暂时不能占旗");return false;}
+-        PendingFlag=Zone;ActionPosition=Player()->GetActorLocation();ActionHealth=G->Health;FlagRemaining=5;ActionEpoch=Epoch;return true;
++        PendingFlag=Zone;ActionPosition=Player()->GetActorLocation();ActionHealth=G->Health;FlagRemaining=5;ActionEpoch=Epoch;
++        FlagCompleteAt=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds+5;return true;
+     }
+     if(Id==TEXT("route_ford") || Id==TEXT("camp") || Id==TEXT("hometown"))
+     {G->Activated.Add(Id);G->Discovered.Add(Id);Feedback=TEXT("路标已激活，可从地图选择传送");return true;}
+--- a/Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp
++++ b/Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp
+@@ -50,7 +50,7 @@
+ }
+ AHearthwardCampaignActor* UHearthwardCampaignSubsystem::Actor(FName Id) const {const auto* A=Actors.Find(Id);return A?A->Get():nullptr;}
+ FHearthwardCampaignEnemy* UHearthwardCampaignSubsystem::Enemy(FName Id) {return State.Enemies.FindByPredicate([&](const auto& E){return E.Id==Id;});}
+-void UHearthwardCampaignSubsystem::Cancel(){PendingFlag=NAME_None;FlagRemaining=0;}
++void UHearthwardCampaignSubsystem::Cancel(){PendingFlag=NAME_None;FlagRemaining=0;FlagCompleteAt=0;}
+ void UHearthwardCampaignSubsystem::ResetActors()
+ {
+     if(IntroRemaining>0)if(auto* Character=Cast<ACharacter>(Player()))Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+@@ -111,7 +111,7 @@
+ }
+ bool UHearthwardCampaignSubsystem::BeginTravel(FName Id)
+ {
+-    if(!HasLocation(Id) || !TravelDestination.IsNone())return false;
++    if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) || !HasLocation(Id) || !TravelDestination.IsNone())return false;
+     if(TravelParticipants.IsEmpty())
+     {
+         ScriptedTravel=true;TravelParticipants.Add(Player());
+@@ -354,6 +354,11 @@
+ void UHearthwardCampaignSubsystem::Tick(float Delta)
+ {
+     if(!Gameplay() || !Gameplay()->Enabled)return;
++    if(UHearthwardSurvivalComponent::HasFailed(GetWorld()))
++    {
++        Cancel();if(!TravelDestination.IsNone())FinishTravel();IntroRemaining=0;
++        Feedback=TEXT("兄弟已无法继续，请载入保存节点");return;
++    }
+     if(IntroRemaining>0)
+     {
+         IntroRemaining=FMath::Max(0.f,IntroRemaining-Delta);
+@@ -366,7 +371,7 @@
+     }
+     if(!TravelDestination.IsNone())
+     {
+-        if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) || TravelEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
++        if(TravelEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
+         {FinishTravel();Feedback=TEXT("旅行已中止，进度或生存状态发生变化");return;}
+         FVector Floor;auto* Source=StreamSource.IsValid()?StreamSource->FindComponentByClass<UWorldPartitionStreamingSourceComponent>():nullptr;
+         if(Source && Source->IsStreamingCompleted())
+@@ -423,9 +428,22 @@
+         }
+         return;
+     }
+-    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return;
++    auto* Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>();
++    if(Clock->Suspended())return;
++    auto* G=Gameplay();
++    if(!PendingFlag.IsNone())
++    {
++        if(!Safe() || G->Health<ActionHealth || FVector::Dist2D(ActionPosition,Player()->GetActorLocation())>40 || ZoneOccupied(PendingFlag) || ActionEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
++        {Cancel();Feedback=TEXT("占旗已中断");}
++        else
++        {
++            const double Now=Clock->GetSnapshot().ActivePlaySeconds;
++            FlagRemaining=float(FMath::Max(0.,FlagCompleteAt-Now));
++            if(Now>=FlagCompleteAt){State.Flags.Add(PendingFlag);Cancel();Feedback=TEXT("此区已控制");}
++        }
++    }
+     if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();
+-    auto* G=Gameplay();auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
++    auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+     State.ResolveUntriggered();
+     if(auto* Combat=Player()->FindComponentByClass<UHearthwardCombatComponent>())for(const auto& Alarm:Combat->State.Alarms)
+         if(Alarm.Value>GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds)State.RegisterReinforcement(Alarm.Key);
+@@ -449,16 +467,10 @@
+         else if(!Camp->State.CampAt(A->GetActorLocation()).IsNone() && !G->InCombat())
+         {if(Camp->RecordRescue(P.Id)){P.Stage=TEXT("arrived");Feedback=TEXT("族人已安全报到，人口与救援奖励已登记");}}
+     }
+-    if(!PendingFlag.IsNone())
+-    {
+-        if(!Safe() || G->Health<ActionHealth || FVector::Dist2D(ActionPosition,Player()->GetActorLocation())>40 || ZoneOccupied(PendingFlag) || ActionEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
+-        {Cancel();Feedback=TEXT("占旗已中断");}
+-        else if((FlagRemaining-=.4f)<=0){State.Flags.Add(PendingFlag);Cancel();Feedback=TEXT("此区已控制");}
+-    }
+     if(!State.Victory && State.ReadyForVictory())
+     {
+         FVector Floor;if(Ground(Position(TEXT("hometown")),Floor) && Camp->ReclaimHometown(TEXT("campaign_victory"),Floor+FVector(0,0,100)))
+-        {State.Victory=true;State.Phase=TEXT("reclaimed");G->Discovered.Add(TEXT("hometown"));Feedback=TEXT("故乡已夺回。仓储、床位和篝火已开放；未完成的救援与旧物仍然保留。");}
++        {State.Victory=true;State.Phase=TEXT("reclaimed");G->Discovered.Add(TEXT("hometown"));G->Activated.Add(TEXT("hometown"));Feedback=TEXT("故乡已夺回。仓储、床位和篝火已开放；未完成的救援与旧物仍然保留。");}
+     }
+ }
+ 

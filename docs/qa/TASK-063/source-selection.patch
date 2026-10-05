@@ -1,0 +1,61 @@
+--- a/Source/Hearthward/Camp/HearthwardCampState.h
++++ b/Source/Hearthward/Camp/HearthwardCampState.h
+@@ -97,6 +97,7 @@
+     double Radius() const;
+     float Bonus(const TCHAR* Field) const;
+     FName CampAt(FVector Position) const;
++    int32 SourceIndex(const FHearthwardCampRegion& Region) const;
+     void AddCamp(FName Id,FVector Position);
+     bool Assign(FName Region,int32 Person); // 0..29 ordinary; 30 player; 31 brother.
+     FString UpgradeReason() const;
+--- a/Source/Hearthward/Camp/HearthwardCampState.cpp
++++ b/Source/Hearthward/Camp/HearthwardCampState.cpp
+@@ -61,6 +61,20 @@
+ {
+     for(const auto& C:Camps) if(FVector::Dist2D(Position,C.Position)<=Radius()) return C.Id;
+     return NAME_None;
++}
++int32 FHearthwardCampState::SourceIndex(const FHearthwardCampRegion& Region) const
++{
++    const FName Item=Region.Job==TEXT("forage")?FName(TEXT("wild_food")):Region.Job;
++    const int32 Yield=Region.Job==TEXT("forage")?1:2;
++    int32 Result=INDEX_NONE;
++    // Finish a partially harvested patch before switching to a newly refreshed full patch.
++    for(int32 Index=0;Index<Sources.Num();++Index)
++    {
++        const auto& Source=Sources[Index];
++        if(Source.Camp==Region.Camp && Source.Item==Item && !Source.Blocked && Source.Remaining>=Yield
++            && (Result==INDEX_NONE || Source.Remaining<Sources[Result].Remaining))Result=Index;
++    }
++    return Result;
+ }
+ void FHearthwardCampState::AddCamp(FName Id,FVector Position)
+ {
+@@ -169,10 +183,8 @@
+             {
+                 const FName Item=R.Job==TEXT("forage")?FName(TEXT("wild_food")):R.Job;
+                 const int32 Yield=R.Job==TEXT("forage")?1:2;
+-                // Finish a partially harvested patch before switching to a newly refreshed full patch.
+-                FHearthwardCampSource* Source=nullptr;
+-                for(auto& S:Sources) if(S.Camp==R.Camp && S.Item==Item && !S.Blocked && S.Remaining>=Yield
+-                    && (!Source || S.Remaining<Source->Remaining)) Source=&S;
++                const int32 Selected=SourceIndex(R);
++                FHearthwardCampSource* Source=Selected==INDEX_NONE?nullptr:&Sources[Selected];
+                 if(!Source) {R.Status=TEXT("等待可采集来源／刷新");continue;}
+                 Source->Remaining-=Yield;
+                 if(Source->Remaining==0 && Source->RefreshMinutes>0) Source->Due=Calendar+Source->RefreshMinutes;
+--- a/Source/Hearthward/Camp/HearthwardCampSubsystem.cpp
++++ b/Source/Hearthward/Camp/HearthwardCampSubsystem.cpp
+@@ -143,6 +143,12 @@
+             if(auto* Actor=Builder->ResolveFacility(Region.Facility)) {Facility=Actor;Position=Actor->GetActorLocation();return true;}
+         return false;
+     }
++    if(!Region.Batch.Active)
++    {
++        const int32 Selected=State.SourceIndex(Region);
++        if(Selected==INDEX_NONE)return false;
++        Position=State.Sources[Selected].Position;return true;
++    }
+     const FName Item=Region.Job==TEXT("forage")?FName(TEXT("wild_food")):Region.Job;
+     const FHearthwardCampSource* Closest=nullptr;double Distance=DBL_MAX;
+     for(const auto& Source:State.Sources)if(Source.Camp==Region.Camp && Source.Item==Item && !Source.Blocked)

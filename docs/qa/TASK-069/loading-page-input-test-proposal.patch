@@ -1,0 +1,86 @@
+--- a/Source/Hearthward/Tests/ExperienceTests.cpp
++++ b/Source/Hearthward/Tests/ExperienceTests.cpp
+@@ -7,6 +7,7 @@
+ #include "../Combat/HearthwardCombatComponent.h"
+ #include "../Building/HearthwardBuildingComponent.h"
+ #include "../UI/HearthwardScreenWidget.h"
++#include "../UI/HearthwardLoadingSubsystem.h"
+ #include "../HearthwardCharacter.h"
+ #include "EnhancedInputComponent.h"
+ #include "EnhancedInputSubsystems.h"
+@@ -360,4 +361,75 @@
+     AddInfo(FString::Printf(TEXT("Measured %d real catalog objectives in Alive and Downed Pause; maximum wrapped lines=%d"),QuestRows.Num(),MaximumLines));
+     Cleanup();return true;
+ }
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLoadingPageInput069Test,
++    "Hearthward.UI069.LoadingRestoresLatestPageInputMode",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++bool FLoadingPageInput069Test::RunTest(const FString&)
++{
++    auto* Instance=NewObject<UGameInstance>(GEngine);Instance->InitializeStandalone();
++    auto* World=Instance->GetWorld();
++    auto* Viewport=NewObject<UGameViewportClient>(GEngine);
++    Instance->GetWorldContext()->GameViewport=Viewport;
++    Viewport->Init(*Instance->GetWorldContext(),Instance,false);
++    const TSharedRef<SViewport> SlateViewport=SNew(SViewport);
++    TSharedPtr<FSceneViewport> SceneViewport=Viewport->CreateViewport(SlateViewport);
++    auto* LocalPlayer=NewObject<ULocalPlayer>(GEngine);
++    Instance->AddLocalPlayer(LocalPlayer,FPlatformUserId::CreateFromInternalId(0));
++    auto* Controller=World->SpawnActor<APlayerController>();Controller->SetPlayer(LocalPlayer);
++    World->AddController(Controller);
++    auto* Player=World->SpawnActor<ACharacter>();Controller->Possess(Player);
++    auto* Bag=NewObject<UHearthwardInventoryComponent>(Player);
++    Player->AddInstanceComponent(Bag);Bag->RegisterComponent();
++    auto* Gameplay=NewObject<UHearthwardGameplayComponent>(Player);
++    Player->AddInstanceComponent(Gameplay);Gameplay->RegisterComponent();Gameplay->Enabled=true;
++    auto* Survival=NewObject<UHearthwardSurvivalComponent>(Player);
++    Player->AddInstanceComponent(Survival);Survival->RegisterComponent();
++    auto* Combat=NewObject<UHearthwardCombatComponent>(Player);
++    Player->AddInstanceComponent(Combat);Combat->RegisterComponent();
++    auto* Building=NewObject<UHearthwardBuildingComponent>(Player);
++    Player->AddInstanceComponent(Building);Building->RegisterComponent();
++    auto* Screen=CreateWidget<UHearthwardScreenWidget>(Controller);
++    auto* Loading=Instance->GetSubsystem<UHearthwardLoadingSubsystem>();
++    const auto Cleanup=[&]()
++    {
++        if(Loading)Loading->FinishSession(false);
++        if(Screen)Screen->RemoveFromParent();
++        SceneViewport->SetViewportClient(nullptr);SceneViewport.Reset();
++        Instance->Shutdown();GEngine->DestroyWorldContext(World);World->DestroyWorld(false);
++    };
++    if(!TestNotNull(TEXT("Actual loading subsystem exists"),Loading)
++        || !TestNotNull(TEXT("Actual page widget exists"),Screen)
++        || !TestTrue(TEXT("Input modes have an actual Slate viewport"),Viewport->GetGameViewportWidget().IsValid()))
++    {Cleanup();return false;}
++    Screen->SetIsFocusable(true);Screen->TakeWidget();Screen->AddToViewport();
++    Screen->OpenPage(TEXT("title"));
++    if(!TestTrue(TEXT("Actual Title UIOnly starts with ignored game input"),Viewport->IgnoreInput()))
++    {Cleanup();return false;}
++
++    Loading->BeginLoading();
++    TestTrue(TEXT("Loading owns a blocking overlay"),Loading->IsLoading() && Viewport->IgnoreInput());
++    Screen->OpenPage(TEXT("hud"));
++    TestTrue(TEXT("Actual HUD GameOnly cannot release input while loading remains visible"),Viewport->IgnoreInput());
++    Loading->FinishSession(false);
++    TestFalse(TEXT("Public loading completion removes the overlay"),Loading->IsLoading());
++    TestFalse(TEXT("Completion restores the latest HUD GameOnly input instead of the old Title mode"),Viewport->IgnoreInput());
++
++    Screen->OpenPage(TEXT("title"));
++    Loading->BeginLoading();
++    Screen->OpenPage(TEXT("hud"));
++    TestTrue(TEXT("Intermediate HUD mode remains blocked by loading"),Viewport->IgnoreInput());
++    Screen->OpenPage(TEXT("pause"));
++    TestTrue(TEXT("Switching back to UI keeps input blocked during loading"),Viewport->IgnoreInput());
++    Loading->FinishSession(false);
++    TestTrue(TEXT("Completion restores the latest UIOnly mode"),Viewport->IgnoreInput());
++
++    Screen->OpenPage(TEXT("hud"));
++    TestFalse(TEXT("Actual GameOnly supplies the no-page-change travel starting state"),Viewport->IgnoreInput());
++    Loading->BeginLoading();
++    TestTrue(TEXT("Travel without a page change still blocks input while loading"),Viewport->IgnoreInput());
++    Loading->FinishSession(false);
++    TestFalse(TEXT("Travel without a page change restores its original GameOnly input"),Viewport->IgnoreInput());
++    Cleanup();return true;
++}
+ #endif

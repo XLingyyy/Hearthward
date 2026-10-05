@@ -202,7 +202,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         else { ReturnPages.Reset(); ReturnCategories.Reset(); }
     }
     if(Page!=Name) Category=RestoringParent?RestoredCategory:FString();
-    Page=Name; TextScroll=0; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
+    Page=Name; TextScroll=0; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset();GiveUpEpoch.Invalidate(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
     GConfig->GetBool(TEXT("Hearthward.Survival"),TEXT("MenuPause"),MenuPause,GGameUserSettingsIni);
     if(Name==TEXT("settings") && PreviousPage!=Name)
@@ -225,6 +225,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         SetVisibility(ESlateVisibility::Visible); FInputModeUIOnly Mode; Mode.SetWidgetToFocus(TakeWidget()); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
         Player->SetInputMode(Mode); Player->bShowMouseCursor=true; SetKeyboardFocus();
     }
+    GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->InputModeChanged();
     if (Draft)
     {
         Draft->SetVisibility(Name==TEXT("dialogue") || Name==TEXT("memory")?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
@@ -286,6 +287,7 @@ void UHearthwardScreenWidget::LoadElements(const TArray<TSharedPtr<FJsonValue>>&
         auto& E=Elements.Last(); E.Bind=Text(R,TEXT("bind")); E.Id=Text(R,TEXT("id"));
         E.LayoutId=Text(R,TEXT("layoutId")); E.Component=Text(R,TEXT("component"));
         E.TextInset=Number(R,TEXT("textInset"),18); E.Tracking=Number(R,TEXT("tracking"),E.Tracking); E.FontRole=Text(R,TEXT("fontRole"));
+        if(E.FontRole==TEXT("decorative")) E.Font=Number(R,TEXT("font"),18)*GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f;
         E.Align=Text(R,TEXT("align"));
         if(Text(R,TEXT("anchorX"))==TEXT("center")) E.Position.X+=(DesignSize.X-E.Size.X)*.5;
         const FString C=Text(R,TEXT("color")); if(!C.IsEmpty()) E.Color=Color(C);
@@ -356,7 +358,7 @@ void UHearthwardScreenWidget::Refresh()
         {
         Element(TEXT("panel"),TEXT(""),FVector2D(490,310),FVector2D(690,290));
         Element(TEXT("text"),TEXT("确认操作"),FVector2D(550,342),FVector2D(580,45),28);
-        Element(TEXT("text"),(ConfirmAction==TEXT("gear.dropConfirmed")?TEXT("这是唯一装备，放下后仅能在原地拾回。确认放到地面？"):(ConfirmAction.StartsWith(TEXT("camp.")) || ConfirmAction==TEXT("settings.display"))?ConfirmMessage:TEXT("未保存的进度可能丢失。是否继续？")),FVector2D(550,410),FVector2D(580,50),20);
+        Element(TEXT("text"),(ConfirmAction==TEXT("gear.dropConfirmed")?TEXT("这是唯一装备，放下后仅能在原地拾回。确认放到地面？"):(ConfirmAction.StartsWith(TEXT("camp.")) || ConfirmAction==TEXT("settings.display") || ConfirmAction==TEXT("giveUp"))?ConfirmMessage:TEXT("未保存的进度可能丢失。是否继续？")),FVector2D(550,410),FVector2D(580,50),20);
         Element(TEXT("button"),TEXT("确认"),FVector2D(550,510),FVector2D(240,55),22,TEXT("confirm"));
         Element(TEXT("button"),TEXT("返回"),FVector2D(850,510),FVector2D(240,55),22,TEXT("cancel"));
         }
@@ -366,7 +368,7 @@ void UHearthwardScreenWidget::Refresh()
     ApplyReadableHUD();
     if(Draft)
     {
-        FEditableTextBoxStyle Style=Draft->GetWidgetStyle();
+        FEditableTextBoxStyle& Style=Draft->WidgetStyle;
         Style.TextStyle.Font=FSlateFontInfo(Typeface,FMath::RoundToInt(18*GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f));
         Draft->SetWidgetStyle(Style);
     }
@@ -399,6 +401,12 @@ int32 UHearthwardScreenWidget::Hit(const FVector2D& P) const
         const auto& E=Elements[I]; if(E.Action.IsEmpty() || !E.Enabled || E.Hidden) continue;
         if(!ConfirmAction.IsEmpty() && E.Action!=TEXT("confirm") && E.Action!=TEXT("cancel")
             && !(ConfirmAction==TEXT("compat.resolve") && (E.Action.StartsWith(TEXT("compat.")) || E.Action==TEXT("update.open")))) continue;
+        if(Page==TEXT("map") && ReadableLayout() && E.Component==TEXT("map.sidebar"))
+        {
+            const auto& Sidebar=LayoutBounds.FindChecked(TEXT("map.sidebar"));
+            if(E.TextScrollClipped || P.X<Sidebar.Position.X || P.X>Sidebar.Position.X+Sidebar.Size.X
+                || P.Y<Sidebar.Position.Y+16 || P.Y>Sidebar.Position.Y+Sidebar.Size.Y-8)continue;
+        }
         const auto MapPoint=ComponentPoint(TEXT("map.canvas"),P,true);
         if(E.MapClipped && (MapPoint.X<407 || MapPoint.X>1517 || MapPoint.Y<95 || MapPoint.Y>855)) continue;
         if(P.X>=E.Position.X && P.Y>=E.Position.Y && P.X<E.Position.X+E.Size.X && P.Y<E.Position.Y+E.Size.Y) return I;
@@ -447,7 +455,14 @@ void UHearthwardScreenWidget::NativeOnMouseLeave(const FPointerEvent& E)
 FReply UHearthwardScreenWidget::NativeOnMouseWheel(const FGeometry& G,const FPointerEvent& E)
 {
     if(LayoutEditing) return FReply::Handled();
-    if(ReadableLayout()) {TextScroll=FMath::Clamp(TextScroll-E.GetWheelDelta()*90,0.f,TextScrollMaximum);Refresh();return FReply::Handled();}
+    if(ReadableLayout())
+    {
+        const FVector2D P=CanvasPoint(G,E.GetScreenSpacePosition());
+        const auto* Sidebar=LayoutBounds.Find(TEXT("map.sidebar"));
+        if(Page!=TEXT("map") || (P.X>=Sidebar->Position.X && P.X<=Sidebar->Position.X+Sidebar->Size.X
+            && P.Y>=Sidebar->Position.Y && P.Y<=Sidebar->Position.Y+Sidebar->Size.Y))
+        {TextScroll=FMath::Clamp(TextScroll-E.GetWheelDelta()*90,0.f,TextScrollMaximum);Refresh();return FReply::Handled();}
+    }
     if(Page==TEXT("map")) MapZoom=FMath::Clamp(MapZoom+E.GetWheelDelta()*.1f,1.f,2.f);
     else Scroll=FMath::Max(0,Scroll-(E.GetWheelDelta()>0?1:-1));
     Refresh(); return FReply::Handled();
@@ -491,7 +506,6 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
             && (!Confirming || Elements[KeyboardFocus].Action==TEXT("confirm") || Elements[KeyboardFocus].Action==TEXT("cancel")
                 || Elements[KeyboardFocus].Action==TEXT("resetPrev") || Elements[KeyboardFocus].Action==TEXT("resetNext")))
             ExecuteAction(Elements[KeyboardFocus].Action);
-        else if(Confirming)ExecuteAction(TEXT("confirm"));
         return FReply::Handled();
     }
     if(Key==EKeys::Escape) {ExecuteAction(Confirming?TEXT("cancel"):TEXT("back"));return FReply::Handled();}
@@ -513,10 +527,12 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
             if(!Item.Action.IsEmpty() && !Item.Hidden && Item.Enabled && (!Confirming || Item.Action==TEXT("confirm") || Item.Action==TEXT("cancel") || Item.Action==TEXT("resetPrev") || Item.Action==TEXT("resetNext")))
             {
                 KeyboardFocus=Candidate;PageFocus.Add(Page,Item.Action);
-                if(ReadableLayout())
+                if(ReadableLayout() && (Page!=TEXT("map") || Item.Component==TEXT("map.sidebar")))
                 {
-                    if(Item.Position.Y<70) TextScroll+=Item.Position.Y-70;
-                    else if(Item.Position.Y+Item.Size.Y>790) TextScroll+=Item.Position.Y+Item.Size.Y-790;
+                    const auto* Sidebar=LayoutBounds.Find(TEXT("map.sidebar"));
+                    const float Top=Page==TEXT("map")?Sidebar->Position.Y+16:70,Bottom=Page==TEXT("map")?Sidebar->Position.Y+Sidebar->Size.Y-8:790;
+                    if(Item.Position.Y<Top) TextScroll+=Item.Position.Y-Top;
+                    else if(Item.Position.Y+Item.Size.Y>Bottom) TextScroll+=Item.Position.Y+Item.Size.Y-Bottom;
                     TextScroll=FMath::Clamp(TextScroll,0.f,TextScrollMaximum);Refresh();
                 }
                 break;
@@ -549,10 +565,65 @@ void UHearthwardScreenWidget::DraftCommitted(const FText& TextValue,ETextCommit:
 { if(Method==ETextCommit::OnEnter) ExecuteAction(Page==TEXT("memory")?TEXT("memorySave"):TEXT("send")); }
 
 bool UHearthwardScreenWidget::ReadableLayout() const
-{ return Page!=TEXT("hud") && Page!=TEXT("map") && !LayoutEditing && ConfirmAction.IsEmpty() && GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale>100; }
+{ return Page!=TEXT("hud") && !LayoutEditing && ConfirmAction.IsEmpty() && GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale>100; }
 void UHearthwardScreenWidget::ApplyReadableLayout()
 {
     if(!ReadableLayout()) return;
+    if(Page==TEXT("map"))
+    {
+        const auto Sidebar=LayoutBounds.FindChecked(TEXT("map.sidebar"));
+        const float Top=Sidebar.Position.Y+16,Bottom=Sidebar.Position.Y+Sidebar.Size.Y-8;
+        const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+        const auto TextHeight=[&](const FHearthwardUIElement& E)
+        {
+            const bool Display=E.FontRole==TEXT("display") || (E.FontRole.IsEmpty() && E.Font>=30);
+            FSlateFontInfo Font(Display?DisplayTypeface:Typeface,FMath::RoundToInt(E.Font*.75f));Font.LetterSpacing=E.Tracking;
+            TArray<FString> SourceLines;E.Text.ParseIntoArrayLines(SourceLines,false);int32 Lines=0;
+            for(FString Line:SourceLines)
+            {
+                while(Line.Len()>1 && Measure->Measure(Line,Font).X>E.Size.X)
+                {
+                    const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,E.Size.X)+1,1,Line.Len());
+                    Line=Line.Mid(Count);++Lines;
+                }
+                ++Lines;
+            }
+            return Lines*E.Font*1.6f;
+        };
+        TArray<int32> Rows;
+        for(int32 I=0;I<Elements.Num();++I)
+            if(Elements[I].Component==TEXT("map.sidebar") && !Elements[I].Hidden
+                && (!Elements[I].Text.IsEmpty() || !Elements[I].Asset.IsEmpty() || Elements[I].Type==TEXT("bar")))Rows.Add(I);
+        Rows.StableSort([&](int32 A,int32 B){return Elements[A].Position.Y<Elements[B].Position.Y;});
+        float Y=Top;int32 Icon=INDEX_NONE;
+        for(const int32 I:Rows)
+        {
+            auto& E=Elements[I];
+            if(E.Type==TEXT("image") && E.Asset.StartsWith(TEXT("legend"))) {Icon=I;continue;}
+            if(!E.Text.IsEmpty())
+            {E.Font=FMath::Max(E.Font,24.f*GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f);E.Size.Y=TextHeight(E);}
+            if(E.Type==TEXT("button")) {E.Size.Y+=22;E.TextInset=0;E.Align=TEXT("center");}
+            E.Position.Y=Y;
+            if(Icon!=INDEX_NONE)
+            {Elements[Icon].Position.Y=Y+(E.Size.Y-Elements[Icon].Size.Y)*.5;Icon=INDEX_NONE;}
+            Y+=E.Size.Y+12;
+        }
+        TextScrollMaximum=FMath::Max(0.f,Y-Bottom);TextScroll=FMath::Clamp(TextScroll,0.f,TextScrollMaximum);
+        for(const int32 I:Rows)
+        {
+            auto& E=Elements[I];E.Position.Y-=TextScroll;
+            E.TextScrollClipped=E.Position.Y+E.Size.Y<Top || E.Position.Y>Bottom;
+            auto& B=LayoutBounds.FindChecked(E.LayoutId);B.Position=E.Position;B.Size=E.Size;B.Hidden=E.Hidden || E.TextScrollClipped;
+        }
+        const auto Footer=LayoutBounds.FindChecked(TEXT("map.footer"));
+        for(auto& E:Elements)if(E.Component==TEXT("map.footer") && !E.Text.IsEmpty())
+        {
+            E.Size.X=Footer.Size.X-2*(E.Position.X-Footer.Position.X);E.Size.Y=TextHeight(E);
+            E.Position.Y=Footer.Position.Y+(Footer.Size.Y-E.Size.Y)*.5;
+            auto& B=LayoutBounds.FindChecked(E.LayoutId);B.Position=E.Position;B.Size=E.Size;
+        }
+        return;
+    }
     if(Draft && (Page==TEXT("dialogue") || Page==TEXT("memory")))
     {auto* CanvasSlot=CastChecked<UCanvasPanelSlot>(Draft->Slot);CanvasSlot->SetPosition({190,795});CanvasSlot->SetSize({1292,90});}
     const auto Original=Elements;TArray<FHearthwardUIElement> Rows;
@@ -564,7 +635,7 @@ void UHearthwardScreenWidget::ApplyReadableLayout()
         if(Source.Type==TEXT("image") && Source.Position.IsNearlyZero() && Source.Size.X>=1600) {Rows.Add(Source);continue;}
         if(Source.Text.IsEmpty() && Source.Action.IsEmpty()) continue;
         if(Source.Action.IsEmpty() && Source.Type!=TEXT("text") && Source.Type!=TEXT("notice")) continue;
-        auto E=Source;E.Asset.Reset();E.MapClipped=false;E.FontRole.Reset();
+        auto E=Source;E.Asset.Reset();E.MapClipped=false;E.FontRole=TEXT("body");
         if(!E.Action.IsEmpty())
         {
             E.Type=TEXT("button");
@@ -582,6 +653,11 @@ void UHearthwardScreenWidget::ApplyReadableLayout()
             const bool LabelOfButton=Original.ContainsByPredicate([&](const auto& Button)
             {return !Button.Action.IsEmpty() && Source.Position.X>=Button.Position.X && Source.Position.Y>=Button.Position.Y && Source.Position.X<Button.Position.X+Button.Size.X && Source.Position.Y<Button.Position.Y+Button.Size.Y;});
             if(LabelOfButton) continue;
+            if(Page==TEXT("inventory") && Source.Component==TEXT("inventory.footer"))
+                for(const auto& Key:Original)
+                    if(Key.Type==TEXT("keycap") && Key.Component==Source.Component && FMath::Abs(Key.Position.Y-Source.Position.Y)<10
+                        && Source.Position.X>=Key.Position.X+Key.Size.X && Source.Position.X-Key.Position.X-Key.Size.X<=20)
+                    {E.Text=Key.Text+TEXT(" · ")+E.Text;break;}
         }
         E.Font=FMath::Max(24.f*GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f,E.Font);E.Align=TEXT("left");E.TextInset=20;
         FSlateFontInfo Font(Typeface,FMath::RoundToInt(E.Font*.75f));

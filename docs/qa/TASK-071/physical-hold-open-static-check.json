@@ -1,0 +1,77 @@
+{
+  "execution": "NOT_RUN: AST/compile only; no unreal or UEClient import",
+  "files": {
+    "physical_hold_open_monitor_proposal.py": {
+      "lines": 201,
+      "ast_parse": true,
+      "compile_without_execution": true
+    },
+    "run_physical_hold_open_proposal.py": {
+      "lines": 76,
+      "ast_parse": true,
+      "compile_without_execution": true
+    }
+  },
+  "hold_call_graph": {
+    "observation": [
+      "authority",
+      "bool",
+      "json.loads",
+      "key",
+      "list",
+      "refresh",
+      "st['ai'].get_generation_calls",
+      "st['ai'].get_server_process_id",
+      "st['save'].get_campaign_id",
+      "st['save'].get_points",
+      "st['save'].get_status",
+      "st['store'].get_timeline_epoch",
+      "st['ui'].describe_layout",
+      "st['ui'].get_page",
+      "str"
+    ],
+    "difference": [
+      "after.get",
+      "after.keys",
+      "before.get",
+      "before.keys",
+      "sorted"
+    ],
+    "sample": [
+      "append",
+      "count",
+      "dict",
+      "difference",
+      "observation",
+      "time.monotonic",
+      "time.time"
+    ],
+    "progress": [
+      "len",
+      "report.get",
+      "str",
+      "time.monotonic",
+      "time.time",
+      "value.update",
+      "write"
+    ],
+    "finish": [
+      "difference",
+      "progress",
+      "time.time",
+      "unreal.unregister_slate_post_tick_callback",
+      "write"
+    ]
+  },
+  "checks": {
+    "hold_functions_have_no_mutating_ui_load_model_inventory_calls": true,
+    "setup_only_player_grant": true,
+    "base_callback_unregister_present": true,
+    "base_selected_cases_empty_and_case_limit_one": true,
+    "acceptance_never_assigned_pass": true,
+    "host_900_second_default": true,
+    "host_stop_in_finally": true,
+    "host_exclusive_new_uuid_output_dir": true
+  },
+  "all_static_checks_pass": true
+}

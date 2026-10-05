@@ -35,10 +35,15 @@ void AHearthwardProjectile::Tick(float Delta)
             auto* T=Hit.GetActor()?Hit.GetActor()->FindComponentByClass<UHearthwardCombatTargetComponent>():nullptr;
             HitTarget=Hit.GetActor() && (T || Hit.GetActor()->IsA<APawn>());
             if(T && !Bait && Shooter.IsValid()) Shooter->HitTarget(T,Power,T->HitPart(Hit),Item==TEXT("arrow"),Event);
-            if(EnemyShooter.IsValid() && Hit.GetActor())
+            if(EnemyShooter.IsValid() && Hit.GetActor() && Hit.GetActor()->FindComponentByClass<UHearthwardSurvivalComponent>())
             {
-                if(auto* C=Hit.GetActor()->FindComponentByClass<UHearthwardCombatComponent>())C->Damage(Power,TEXT("body"),EnemyShooter->GetActorLocation(),false,true,Event);
-                else if(auto* S=Hit.GetActor()->FindComponentByClass<UHearthwardSurvivalComponent>())S->ReceiveDamage(Power,Event,Epoch);
+                const FName Part=HearthwardCombat::HumanoidPart(Hit.BoneName);
+                if(Part.IsNone())
+                {
+                    UE_LOG(LogTemp,Error,TEXT("Enemy projectile hit unmapped body bone %s on %s (%s)"),
+                        *Hit.BoneName.ToString(),*GetNameSafe(Hit.GetActor()),*GetNameSafe(Hit.GetComponent()));
+                }
+                else UHearthwardCombatComponent::DamageActor(Hit.GetActor(),Power,Part,EnemyShooter->GetActorLocation(),false,true,Event);
             }
         }
         else { SetActorLocation(GetActorLocation()+Move); RemainingRange-=Move.Size(); if(RemainingRange<=0) { Velocity.X=Velocity.Y=0; Power=0; } }

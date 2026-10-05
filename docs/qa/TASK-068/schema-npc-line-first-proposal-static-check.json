@@ -1,0 +1,151 @@
+{
+  "source_snapshot": "G:/GameFactory/Hearthward/.agent-local/task051/Source/Hearthward/AI/HearthwardAgentContract.cpp",
+  "proposal_applied_to_root": false,
+  "root_source_encoding": "utf-8",
+  "root_source_byte_count": 37075,
+  "root_source_line_endings": "mixed-or-LF",
+  "byte_offsets_are_zero_based_and_end_exclusive": true,
+  "original_statement": "        auto Line=MakeShared<FJsonObject>();Line->SetStringField(TEXT(\"type\"),TEXT(\"string\"));Line->SetNumberField(TEXT(\"maxLength\"),150);P->SetObjectField(TEXT(\"npc_line\"),Line);",
+  "original_statement_line_one_based": 366,
+  "original_statement_byte_start": 24365,
+  "original_statement_byte_end_including_terminator": 24545,
+  "original_statement_byte_count_including_terminator": 180,
+  "insert_before_original_line_one_based": 339,
+  "insert_before_original_byte_offset": 22266,
+  "insert_before_exact_line": "        P->SetObjectField(TEXT(\"intent\"),Enum({C.Id.ToString()}));",
+  "candidate_statement_line_one_based": 339,
+  "original_properties_order": [
+    "intent",
+    "item",
+    "quantity",
+    "mode",
+    "source",
+    "limits",
+    "unresolved",
+    "npc_line"
+  ],
+  "candidate_properties_order": [
+    "npc_line",
+    "intent",
+    "item",
+    "quantity",
+    "mode",
+    "source",
+    "limits",
+    "unresolved"
+  ],
+  "required_array_order_unchanged": [
+    "intent",
+    "item",
+    "quantity",
+    "mode",
+    "source",
+    "limits",
+    "unresolved",
+    "npc_line"
+  ],
+  "capability_ids_unchanged": [
+    "collect",
+    "nature_collect",
+    "store",
+    "retrieve",
+    "give",
+    "fetch",
+    "receive",
+    "nature_care",
+    "hunt",
+    "fish",
+    "capture",
+    "camp_batch",
+    "craft",
+    "repair",
+    "escort",
+    "companion_order",
+    "inventory",
+    "inventory_report",
+    "recall",
+    "rule_proposal",
+    "cancel",
+    "clarify",
+    "dialogue",
+    "refuse"
+  ],
+  "capability_count": 24,
+  "static_checks": {
+    "single_original_statement_match": true,
+    "single_candidate_statement_match": true,
+    "identical_statement_bytes": true,
+    "all_other_source_bytes_identical_in_memory": true,
+    "identical_total_source_byte_length": true,
+    "required_statement_bytes_identical": true,
+    "patch_one_addition_one_deletion_of_same_line": true,
+    "system_is_outside_patch": true,
+    "two_current_complete_system_examples_remain_intent_first": true
+  },
+  "unchanged_values": {
+    "object_type": "object",
+    "additionalProperties": false,
+    "fields_and_required_count": 8,
+    "intent": "enum(C.Id)",
+    "item": "enum(C.Items)",
+    "quantity": {
+      "type": "integer",
+      "minimum": "C.Writes ? 1 : 0",
+      "maximum": "C.MaxQuantity"
+    },
+    "mode": "enum(C.QuantityMode)",
+    "source": "enum(C.Sources)",
+    "limits": {
+      "maxItems": "C.Constraints.IsEmpty() ? 0 : 4; rule_proposal exactly 1",
+      "item_type": "string",
+      "item_maxLength": 120,
+      "pattern": "existing capability-specific expression"
+    },
+    "unresolved": {
+      "maxItems": "0 for C.Writes or rule_proposal, otherwise 4",
+      "item_type": "string",
+      "item_maxLength": 120
+    },
+    "npc_line": {
+      "type": "string",
+      "maxLength": 150,
+      "minLength": "absent"
+    }
+  },
+  "fixed_diagnostic_ids": [
+    "C01",
+    "C08",
+    "C09",
+    "C18",
+    "C19",
+    "C27",
+    "C40",
+    "A01",
+    "U01",
+    "U03"
+  ],
+  "fixed_clear_ids": [
+    "C01",
+    "C08",
+    "C09",
+    "C18",
+    "C19",
+    "C27",
+    "C40"
+  ],
+  "fixed_execution_ids": [
+    "C01",
+    "C08",
+    "C09",
+    "C18",
+    "C19",
+    "C27"
+  ],
+  "fixed_guarded_ids": [
+    "A01",
+    "U01",
+    "U03"
+  ],
+  "validation_status": "Static exact-byte move and source review only; runtime field order, native compatibility, model correctness, and latency untested",
+  "current_CPU60_should_use_proposal": false
+}

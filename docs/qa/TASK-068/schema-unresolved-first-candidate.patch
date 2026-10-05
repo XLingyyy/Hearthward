@@ -1,0 +1,14 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -202,7 +202,10 @@
+             A->SetObjectField(TEXT("items"),S);P->SetObjectField(Key,A);
+         }
+         auto Line=MakeShared<FJsonObject>();Line->SetStringField(TEXT("type"),TEXT("string"));Line->SetNumberField(TEXT("maxLength"),150);P->SetObjectField(TEXT("npc_line"),Line);
+-        B->SetObjectField(TEXT("properties"),P);B->SetArrayField(TEXT("required"),Strings({TEXT("intent"),TEXT("item"),TEXT("quantity"),TEXT("mode"),TEXT("source"),TEXT("limits"),TEXT("unresolved"),TEXT("npc_line")}));Branches.Add(MakeShared<FJsonValueObject>(B));
++        auto OrderedP=MakeShared<FJsonObject>();
++        for(const auto& Key:{TEXT("unresolved"),TEXT("intent"),TEXT("item"),TEXT("quantity"),TEXT("mode"),TEXT("source"),TEXT("limits"),TEXT("npc_line")})
++            OrderedP->SetField(Key,P->TryGetField(Key));
++        B->SetObjectField(TEXT("properties"),OrderedP);B->SetArrayField(TEXT("required"),Strings({TEXT("intent"),TEXT("item"),TEXT("quantity"),TEXT("mode"),TEXT("source"),TEXT("limits"),TEXT("unresolved"),TEXT("npc_line")}));Branches.Add(MakeShared<FJsonValueObject>(B));
+     }
+     Root->SetArrayField(TEXT("oneOf"),Branches);FString Out;FJsonSerializer::Serialize(Root,TJsonWriterFactory<>::Create(&Out));return Out;
+ }

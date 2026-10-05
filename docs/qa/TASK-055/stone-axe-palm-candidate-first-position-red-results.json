@@ -1,0 +1,750 @@
+{
+  "captured_utc": "2026-10-04T01:57:01.603031+00:00",
+  "engine_version": "5.8.2-56702186+++UE5+Release-5.8",
+  "project_dir": "../../../../../GameFactory/Hearthward/.agent-local/task051/",
+  "command_line": "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation -ExecCmds=\"WebControl.StartServer 30010\" -NoSplash -Log -A3GameRuntimeInputPort=30020 -ExecutePythonScript=G:\\GameFactory\\Hearthward\\.agent-local\\task051\\docs\\qa\\TASK-055\\sample_stone_axe_hero_pose.py -NoSound -NoSplash -culture=en -Unattended -RenderOffscreen -Task055PalmCandidate",
+  "method": "Unsaved editor fixture, actual Hero constructor/held axe, SingleNode SetPosition(false), editor ticks, compressed AnimPose pose verification and SceneCapture next-tick PNG export",
+  "sampling_complete": false,
+  "clips": {
+    "current_attack": {
+      "asset": {
+        "path": "/Game/Characters/Hero/AnimationV2/A_Hero_Attack.A_Hero_Attack",
+        "class": "AnimSequence"
+      },
+      "actual_length_seconds": 0.9166666865348816,
+      "single_node_play_rate": 0.0,
+      "sampling_method": "set_position then editor ticks until actual component hand/head/pelvis match separately evaluated compressed asset pose",
+      "notify_events": [],
+      "samples": [
+        {
+          "clip_time_seconds": 0.550000011920929,
+          "requested_compressed_component_pose": {
+            "hand_r": {
+              "translation_cm": [
+                2.91945426320923,
+                29.572074944186546,
+                89.93066200926667
+              ],
+              "rotation_quat_xyzw": [
+                -0.3277619715336578,
+                0.6890288537971866,
+                -0.5233942294542817,
+                0.3793027303222817
+              ],
+              "scale_xyz": [
+                99.99997220062005,
+                99.99998094296275,
+                100.00000921843957
+              ]
+            },
+            "hand_l": {
+              "translation_cm": [
+                20.585274524332817,
+                8.552275578151242,
+                95.01457735464521
+              ],
+              "rotation_quat_xyzw": [
+                0.41562965713926886,
+                -0.034025398610800645,
+                0.48078275630289824,
+                -0.771325442493403
+              ],
+              "scale_xyz": [
+                99.99997620230629,
+                99.99998737746155,
+                100.00000563839728
+              ]
+            },
+            "head": {
+              "translation_cm": [
+                4.723216806636195,
+                14.590411913842242,
+                81.904002656615
+              ],
+              "rotation_quat_xyzw": [
+                -0.6257312665548763,
+                -0.1162259142197429,
+                0.7268237155328126,
+                0.2582246871945729
+              ],
+              "scale_xyz": [
+                99.99997401946442,
+                99.99998489255029,
+                99.99998672705053
+              ]
+            },
+            "spine_03": {
+              "translation_cm": [
+                3.594353926761325,
+                7.869652202102566,
+                74.6694734597274
+              ],
+              "rotation_quat_xyzw": [
+                -0.7693283703794725,
+                -0.1836821867599159,
+                0.4823149914077411,
+                0.37652015428292646
+              ],
+              "scale_xyz": [
+                99.99998950760113,
+                99.99998012960837,
+                99.99999325473858
+              ]
+            },
+            "pelvis": {
+              "translation_cm": [
+                3.584733727325009,
+                2.1467657253641548,
+                55.352027377276286
+              ],
+              "rotation_quat_xyzw": [
+                -0.5609111569983622,
+                -0.433779600566465,
+                0.48059136593479,
+                0.5159903092853981
+              ],
+              "scale_xyz": [
+                99.99999653539378,
+                99.99999146523162,
+                99.99999871400725
+              ]
+            },
+            "foot_r": {
+              "translation_cm": [
+                -8.553230916522299,
+                -7.517394107662889,
+                8.634054657551303
+              ],
+              "rotation_quat_xyzw": [
+                -0.2607138970451586,
+                -0.5110490835239495,
+                -0.8170720244648232,
+                0.057015413704822354
+              ],
+              "scale_xyz": [
+                100.00029809225003,
+                99.9999716378595,
+                100.00020457610151
+              ]
+            },
+            "root": {
+              "translation_cm": [
+                0.5734501481056213,
+                1.7203675508499146,
+                7.148024451453239e-06
+              ],
+              "rotation_quat_xyzw": [
+                -0.5255614519119263,
+                -0.4730723202228546,
+                0.473072350025177,
+                0.5255380272865295
+              ],
+              "scale_xyz": [
+                100.0,
+                99.99999237060547,
+                100.0
+              ]
+            }
+          },
+          "last_pose_errors": {
+            "hand_r": {
+              "translation_error_cm": 49.28034197622678,
+              "quaternion_error": 1.4033237451042337,
+              "scale_error": 1.668929925813311e-06
+            },
+            "head": {
+              "translation_error_cm": 15.397979783537627,
+              "quaternion_error": 0.4421579146943061,
+              "scale_error": 1.6689299684458785e-06
+            },
+            "pelvis": {
+              "translation_error_cm": 3.0432766236412783,
+              "quaternion_error": 0.09170794426369502,
+              "scale_error": 1.6689301105544256e-06
+            }
+          }
+        }
+      ]
+    }
+  },
+  "images": [],
+  "stone_axe_light_move_source": "Source/Hearthward/Combat/HearthwardCombatRules.h blunt light",
+  "move": {
+    "windup_seconds": 0.35,
+    "active_seconds": 0.18,
+    "recovery_seconds": 0.47,
+    "duration_seconds": 1.0
+  },
+  "old031_actual_source_window_seconds": [
+    1.3333333655248714,
+    2.2500000543232206
+  ],
+  "asset_mutations": [],
+  "limitations": [
+    "Single-node pose excludes native graph blend and normal input/action clock",
+    "Height peak is not a contact event",
+    "No damage/collision acceptance measured",
+    "Unsaved HeldAxe translation/rotation changed for two measured-surface-derived candidates at scale .7; no palm/finger-fit acceptance or Content save"
+  ],
+  "mode": "temporary_palm_two_candidates_source_0_55",
+  "world": {
+    "path": "/Temp/Untitled_1.Untitled",
+    "class": "World"
+  },
+  "lights": [
+    {
+      "actor": {
+        "path": "/Temp/Untitled_1.Untitled:PersistentLevel.DirectionalLight_0",
+        "class": "DirectionalLight"
+      },
+      "intensity_lux": 30.0,
+      "rotation": "<Struct 'Rotator' (0x00000215B2F9BC60) {pitch: -35.000000, yaw: -45.000000, roll: -0.000000}>"
+    },
+    {
+      "actor": {
+        "path": "/Temp/Untitled_1.Untitled:PersistentLevel.DirectionalLight_1",
+        "class": "DirectionalLight"
+      },
+      "intensity_lux": 10.0,
+      "rotation": "<Struct 'Rotator' (0x00000215B2F9BCB0) {pitch: -20.000000, yaw: 135.000000, roll: 0.000000}>"
+    }
+  ],
+  "sky_light": {
+    "cubemap": {
+      "path": "/Engine/MapTemplates/Sky/DaylightAmbientCubemap.DaylightAmbientCubemap",
+      "class": "TextureCube"
+    },
+    "intensity": 1.0,
+    "source_type": "<SkyLightSourceType.SLS_SPECIFIED_CUBEMAP: 1>"
+  },
+  "exposure": {
+    "method": "<AutoExposureMethod.AEM_MANUAL: 2>",
+    "physical": true,
+    "aperture_fstop": 4.0,
+    "shutter_reciprocal_seconds": 64.0,
+    "iso": 100.0,
+    "bias": 0.0,
+    "ev100": 10.0,
+    "post_process_blend_weight": 1.0
+  },
+  "axe_asset": {
+    "path": "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe.SM_stone_bone_axe",
+    "class": "StaticMesh",
+    "bounds_local_cm": {
+      "origin": [
+        1.4248027801513672,
+        0.7119903564453125,
+        -0.04242134094238281
+      ],
+      "extent": [
+        36.121389389038086,
+        25.83683204650879,
+        49.91071128845215
+      ],
+      "sphere_radius": 64.08027506742447
+    },
+    "lod0_triangles": 95278,
+    "material_slots": [
+      {
+        "path": "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/tripo_mat_5ce74ca3.tripo_mat_5ce74ca3",
+        "class": "Material"
+      }
+    ]
+  },
+  "measured_endpoint_candidates": {
+    "status": "Measured geometric candidates; grip/rotation/contact acceptance pending root review and actual calibrated render",
+    "mesh_path": "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe",
+    "coordinate_space": "UE mesh local cm",
+    "source_facts": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task055\\stone-axe-single-node\\pose-and-axe-facts.json",
+    "source_vertices": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task055\\stone-axe-single-node\\stone-axe-ue-local-vertices.json",
+    "selection_evidence": "All three actual identity renders reviewed. Grip is the wrapped lower-shaft centre at Z=-27.5, using the midpoint of measured 5th/95th percentile X/Y slab coordinates. BladeBase/Tip are actual outer +Y stone cutting-edge lower/upper vertices, distinct from shaft or leather/horn decorations.",
+    "candidates": {
+      "Grip": [
+        22.647987604141235,
+        -17.993159770965576,
+        -27.5
+      ],
+      "BladeBase": [
+        -7.649685859680176,
+        14.690569877624512,
+        10.305906295776367
+      ],
+      "BladeTip": [
+        -26.873825073242188,
+        23.822595596313477,
+        39.805477142333984
+      ]
+    },
+    "grip_slab": {
+      "z_min_max_cm": [
+        -28,
+        -27
+      ],
+      "vertex_count": 476,
+      "q05_xyz_cm": [
+        16.552921295166016,
+        -22.48869752883911,
+        -27.948705196380615
+      ],
+      "q95_xyz_cm": [
+        28.743053913116455,
+        -13.497622013092041,
+        -27.06346035003662
+      ],
+      "centre_is_internal_not_surface_vertex": true
+    },
+    "blade_vertices": {
+      "BladeBase": 41603,
+      "BladeTip": 26958
+    },
+    "identity_image_projection_pixels": {
+      "Grip": {
+        "axe-local-x.png": [
+          641.9597752181869,
+          702.7699604793675
+        ],
+        "axe-local-y.png": [
+          659.454594609102,
+          702.7699604793675
+        ],
+        "axe-local-z.png": [
+          382.0402247818132,
+          364.5454053908982
+        ]
+      },
+      "BladeBase": {
+        "axe-local-x.png": [
+          414.8795256884982,
+          440.10181557530905
+        ],
+        "axe-local-y.png": [
+          448.95220322640995,
+          440.10181557530905
+        ],
+        "axe-local-z.png": [
+          609.120474311502,
+          575.04779677359
+        ]
+      },
+      "BladeTip": {
+        "axe-local-x.png": [
+          351.4319723888129,
+          235.14448723857777
+        ],
+        "axe-local-y.png": [
+          315.3865919407514,
+          235.14448723857777
+        ],
+        "axe-local-z.png": [
+          672.5680276111874,
+          708.6134080592486
+        ]
+      }
+    },
+    "limitations": [
+      "Grip interior selection is a reviewed candidate, not a solved palm transform",
+      "Current 0.7 absolute scale and existing relative rotation retained",
+      "No Content sockets authored",
+      "No native blend 0.12, root/world movement or actual target collision measured"
+    ]
+  },
+  "constructor": {
+    "hero": {
+      "path": "/Temp/Untitled_1.Untitled:PersistentLevel.HearthwardCharacter_0",
+      "class": "HearthwardCharacter"
+    },
+    "mesh_world": {
+      "translation_cm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quat_xyzw": [
+        0.0,
+        0.0,
+        -0.7071067811865475,
+        0.7071067811865476
+      ],
+      "scale_xyz": [
+        1.8391764163970947,
+        1.8391764163970947,
+        1.8391764163970947
+      ]
+    },
+    "mesh_relative": {
+      "translation_cm": [
+        0.0,
+        0.0,
+        -90.0
+      ],
+      "rotation_quat_xyzw": [
+        -0.0,
+        0.0,
+        -0.7071067811865475,
+        0.7071067811865476
+      ],
+      "scale_xyz": [
+        1.8391764163970947,
+        1.8391764163970947,
+        1.8391764163970947
+      ]
+    },
+    "held_relative": {
+      "translation_cm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation_quat_xyzw": [
+        0.7071067811865475,
+        0.0,
+        0.0,
+        0.7071067811865476
+      ],
+      "scale_xyz": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "held_absolute_scale": true,
+    "held_collision": "<CollisionEnabled.NO_COLLISION: 0>",
+    "held_was_visible": false,
+    "attach_socket": "hand_r"
+  },
+  "actual_bone_names": [
+    "root",
+    "pelvis",
+    "spine_01",
+    "spine_02",
+    "spine_03",
+    "clavicle_l",
+    "upperarm_l",
+    "lowerarm_l",
+    "hand_l",
+    "index_01_l",
+    "index_02_l",
+    "index_03_l",
+    "middle_01_l",
+    "middle_02_l",
+    "middle_03_l",
+    "pinky_01_l",
+    "pinky_02_l",
+    "pinky_03_l",
+    "ring_01_l",
+    "ring_02_l",
+    "ring_03_l",
+    "thumb_01_l",
+    "thumb_02_l",
+    "thumb_03_l",
+    "lowerarm_twist_01_l",
+    "upperarm_twist_01_l",
+    "clavicle_r",
+    "upperarm_r",
+    "lowerarm_r",
+    "hand_r",
+    "index_01_r",
+    "index_02_r",
+    "index_03_r",
+    "middle_01_r",
+    "middle_02_r",
+    "middle_03_r",
+    "pinky_01_r",
+    "pinky_02_r",
+    "pinky_03_r",
+    "ring_01_r",
+    "ring_02_r",
+    "ring_03_r",
+    "thumb_01_r",
+    "thumb_02_r",
+    "thumb_03_r",
+    "lowerarm_twist_01_r",
+    "upperarm_twist_01_r",
+    "neck_01",
+    "head",
+    "thigh_l",
+    "calf_l",
+    "calf_twist_01_l",
+    "foot_l",
+    "ball_l",
+    "thigh_twist_01_l",
+    "thigh_r",
+    "calf_r",
+    "calf_twist_01_r",
+    "foot_r",
+    "ball_r",
+    "thigh_twist_01_r"
+  ],
+  "available_right_finger_bones": [
+    "index_01_r",
+    "index_02_r",
+    "index_03_r",
+    "middle_01_r",
+    "middle_02_r",
+    "middle_03_r",
+    "pinky_01_r",
+    "pinky_02_r",
+    "pinky_03_r",
+    "ring_01_r",
+    "ring_02_r",
+    "ring_03_r",
+    "thumb_01_r",
+    "thumb_02_r",
+    "thumb_03_r"
+  ],
+  "grip_reference": {
+    "bone": "hand_r",
+    "meaning": "Wrist bone transform is the coordinate frame; candidate target uses measured palm/distal skin surfaces, not wrist pivot",
+    "target_hand_local": [
+      -0.014660568048220956,
+      -0.02609630550259209,
+      0.016092779940392793
+    ]
+  },
+  "measured_palm_candidate": {
+    "status": "Measured-surface-derived candidate only; requires actual root close-up, no palm/fit PASS",
+    "source": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task055\\stone-axe-palm-skin\\actual-hand-skin.json",
+    "source_time_seconds": 0.550000011920929,
+    "actual_hand_world": {
+      "translation_cm": [
+        54.38819736929017,
+        -5.369391021360528,
+        275.39834110934055
+      ],
+      "scale_xyz": [
+        183.9175905117455,
+        183.917606590456,
+        183.91765859404612
+      ],
+      "rotation_quat_xyzw": [
+        0.2554541662153179,
+        0.718979417301816,
+        -0.6383029016111506,
+        -0.10188803783743944
+      ]
+    },
+    "palm_face": {
+      "original_lod0_ids": [
+        4265,
+        4268,
+        4258
+      ],
+      "dominant_bones": [
+        "hand_r",
+        "hand_r",
+        "hand_r"
+      ],
+      "centroid_in_hand_r_rigid_axes_cm": [
+        -1.9288319809484953,
+        -4.1329100004466675,
+        2.3515625042230552
+      ],
+      "selection": "Positive hand-Z side toward the measured curled finger skin; all three vertices dominant hand_r. This is one actual surface face, not an average of the whole hand."
+    },
+    "nearest_middle_ring_distal_surface": {
+      "original_lod0_triangle_ids": [
+        7564,
+        7566,
+        7563
+      ],
+      "closest_point_in_hand_r_rigid_axes_cm": [
+        -3.4638407209760675,
+        -5.466230097333501,
+        3.5679303095894968
+      ],
+      "gap_cm": 2.3692920779539453
+    },
+    "grip_target": {
+      "method": "Midpoint of chosen actual palm-face centroid and closest point on actual middle/ring distal skin triangle",
+      "hand_r_local": [
+        -0.014660568048220956,
+        -0.02609630550259209,
+        0.016092779940392793
+      ],
+      "hand_r_rigid_axes_cm": [
+        -2.6963363509622815,
+        -4.799570048890084,
+        2.9597464069062758
+      ],
+      "world_cm": [
+        54.139038136622695,
+        -9.535277289941462,
+        280.0512447660847
+      ],
+      "distance_from_wrist_cm": 6.250296086180075
+    },
+    "shaft_axis_candidate": {
+      "selection": "PCA through four measured distal skin group centres, oriented pinky toward index; requires image review, not an observed grasp axis",
+      "hand_r_rigid_axes_unit": [
+        0.7945087674905795,
+        -0.5176322019971562,
+        0.3175101917044162
+      ],
+      "four_distal_skin_centres_cm": {
+        "pinky_03_r": [
+          -7.15365890465175,
+          -5.506424407443603,
+          3.1018890253910185
+        ],
+        "ring_03_r": [
+          -4.897986703147387,
+          -5.0931977189903685,
+          3.5252235652572756
+        ],
+        "middle_03_r": [
+          -3.7614820695496363,
+          -6.160463163744106,
+          4.603838592167724
+        ],
+        "index_03_r": [
+          -1.564328010666544,
+          -8.719605294213862,
+          5.152501587699958
+        ]
+      },
+      "axe_source_slab_centres": [
+        {
+          "z_cm": -32.5,
+          "actual_vertex_count": 354,
+          "q05_xyz": [
+            19.915510272979738,
+            -24.53768253326416,
+            -32.95537490844727
+          ],
+          "q95_xyz": [
+            32.14191951751709,
+            -14.48775486946106,
+            -32.04902744293213
+          ],
+          "centre": [
+            26.028714895248413,
+            -19.51271870136261,
+            -32.5
+          ]
+        },
+        {
+          "z_cm": -22.5,
+          "actual_vertex_count": 511,
+          "q05_xyz": [
+            13.791449546813965,
+            -20.470023155212402,
+            -22.95095157623291
+          ],
+          "q95_xyz": [
+            24.29832363128662,
+            -11.954308032989502,
+            -22.05976676940918
+          ],
+          "centre": [
+            19.044886589050293,
+            -16.212165594100952,
+            -22.5
+          ]
+        }
+      ],
+      "measured_axe_local_tangent_unit": [
+        -0.5526946739461,
+        0.2612031744596011,
+        0.7913921272314006
+      ],
+      "current_tangent_in_hand_r_axes": [
+        -0.5526946739461,
+        -0.7913921272314005,
+        0.2612031744596013
+      ],
+      "minimum_rotation_degrees": 86.93527979326608
+    },
+    "temporary_attachment_candidate": {
+      "relative_rotation_quat_xyzw": [
+        0.4566498186196446,
+        0.6322560793415638,
+        0.25908733040905085,
+        0.5697341033427711
+      ],
+      "relative_translation_for_actual_source_pose_and_absolute_axe_scale_0_7": [
+        0.09912769305402128,
+        -0.09076282496607219,
+        0.09320168108961646
+      ],
+      "correct_public_application": "Set relative rotation from candidate quaternion, then read actual held world Grip and actual hand socket TransformLocation(hand-local target); one SetWorldLocation of their difference. Keep hand_r attachment and absolute scale .7. Read back relative TF; this numeric relative-translation estimate is offline, not an actual readback."
+    },
+    "dimension_warning_measured": {
+      "actual_grip_slab_q05_to_q95_width_xy_raw_cm": [
+        12.19013261795044,
+        8.99107551574707
+      ],
+      "same_width_at_actual_scale_0_7_cm": [
+        8.533092832565307,
+        6.2937528610229485
+      ],
+      "interpretation": "These exterior widths exceed the selected local palm-to-distal-skin gap; translation/rotation may still penetrate the closed fingers. This one surface gap is not a complete maximal-inscribed grasp diameter. Do not change production scale from this probe alone."
+    },
+    "excluded_from_axis_centre": {
+      "vertex": {
+        "lod0_vertex_id": 2184,
+        "section_index": 0,
+        "dominant_bone": "pinky_03_r",
+        "raw_weight_sum": 65535,
+        "skinned_component_cm": [
+          0.5264196991920471,
+          14.715944290161133,
+          63.801353454589844
+        ],
+        "skinned_world_cm": [
+          27.06521768347784,
+          -0.9681786958808623,
+          227.34194460789695
+        ],
+        "actual_hand_r_local": [
+          0.18491946249348326,
+          0.21948980193012815,
+          0.09244520603210957
+        ],
+        "actual_influences": [
+          {
+            "section_bone_index": 16,
+            "mesh_bone_index": 38,
+            "bone_name": "pinky_03_r",
+            "raw_uint16_weight": 26728
+          },
+          {
+            "section_bone_index": 23,
+            "mesh_bone_index": 55,
+            "bone_name": "thigh_r",
+            "raw_uint16_weight": 26728
+          },
+          {
+            "section_bone_index": 24,
+            "mesh_bone_index": 60,
+            "bone_name": "thigh_twist_01_r",
+            "raw_uint16_weight": 9509
+          },
+          {
+            "section_bone_index": 22,
+            "mesh_bone_index": 41,
+            "bone_name": "ring_03_r",
+            "raw_uint16_weight": 2570
+          }
+        ]
+      },
+      "world_distance_to_wrist_cm": 55.45568621475374,
+      "reason": "Actual mixed pinky/thigh weighted vertex is remote from the hand and not part of a meaningful distal hand-surface group centroid; no claim about import corruption."
+    },
+    "limitations": [
+      "Source .55 single node only; normal native blend and all poses remain untested for this grip",
+      "Face centroid and skin PCA are geometric proposals; palm contact/roll/shaft clearance need true rendered inspection",
+      "No held component, socket, Content or Source mutation executed by this script"
+    ]
+  },
+  "fixture_visibility_change": "HeldAxe made visible only for sampling; no normal equip/Combat transaction executed",
+  "candidate_phase_source_boundaries_seconds": {
+    "windup_start": 0.0,
+    "windup_to_active": 0.550000011920929,
+    "active_to_recovery": 0.7333333492279053,
+    "clip_end": 0.9166666865348816
+  },
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-055/sample_stone_axe_hero_pose.py\", line 378, in tick\n    if PENDING is not None and not PENDING():\n                                   ^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-055/sample_stone_axe_hero_pose.py\", line 247, in ready\n    raise TimeoutError(\"Editor pose did not match actual requested compressed clip time: \" + STAGE)\nTimeoutError: Editor pose did not match actual requested compressed clip time: current_attack:0.55\n",
+  "finished_utc": "2026-10-04T01:57:05.611994+00:00",
+  "stage": "current_attack:0.55",
+  "quit_requested": true
+}

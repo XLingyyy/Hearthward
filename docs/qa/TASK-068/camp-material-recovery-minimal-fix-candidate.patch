@@ -1,0 +1,18 @@
+--- a/Source/Hearthward/Companion/HearthwardCompanionFixture.cpp
++++ b/Source/Hearthward/Companion/HearthwardCompanionFixture.cpp
+@@ -1561,7 +1561,14 @@
+         for(const auto& C:Cost)
+         {
+             const int32 Missing=C.Value;
+-            if(Storage->GetItemCount(C.Key)<Missing){HandleExecutionFailure(TEXT("INSUFFICIENT_MATERIAL"));return;}
++            const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCA01^FCrc::StrCrc32(*C.Key.ToString()),Ticket.Id.D);
++            const FString Payload=FString::Printf(TEXT("take:%s:%d:r%lld"),*C.Key.ToString(),Missing,Ticket.Revision);
++            if(const auto* Receipt=Receipts.FindByPredicate([&](const auto& R){return R.Id==Op;}))
++            {
++                if(Receipt->Command!=Ticket.Id || Receipt->Payload!=Payload){HandleExecutionFailure(TEXT("SETTLEMENT_FAILED"));return;}
++                continue;
++            }
++            if(Storage->Available(C.Key)<Missing){HandleExecutionFailure(TEXT("INSUFFICIENT_MATERIAL"));return;}
+             const auto* D=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==C.Key;});
+             if(!D){HandleExecutionFailure(TEXT("ITEM_UNAVAILABLE"));return;}
+             AddedWeight+=int64(Missing)*D->WeightHundredths;

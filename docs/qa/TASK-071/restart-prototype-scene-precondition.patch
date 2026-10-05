@@ -1,0 +1,57 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -11,6 +11,8 @@
+ #include "../Building/HearthwardBuildingComponent.h"
+ #include "../Camp/HearthwardCampSubsystem.h"
+ #include "../Nature/HearthwardNatureSubsystem.h"
++#include "../Combat/HearthwardCombatComponent.h"
++#include "EngineUtils.h"
+ #include "Engine/Engine.h"
+ #include "GameFramework/PlayerController.h"
+ #include "Misc/ScopeExit.h"
+@@ -138,6 +140,27 @@
+         if(!TestTrue(TEXT("Public adventure initialization creates a real camp and seeded ecology on tagged ground"),Gameplay->Enabled
+             && Economy->State.Camps.Num()==1 && !Economy->State.CampAt(Hero->GetActorLocation()).IsNone() && Nature->State.Seed!=0
+             && Nature->State.Camps.Contains(TEXT("camp")) && Supported && Ground.GetActor()==Floor && FMath::Abs(Ground.ImpactPoint.Z)<1))return false;
++        // These living arena opponents are scene fixtures; keep them outside the production camp.
++        const FVector Site=Economy->State.Camps[0].Position;int32 Relocated=0;
++        for(TActorIterator<AActor> It(World);It;++It)
++            if(auto* Target=It->FindComponentByClass<UHearthwardCombatTargetComponent>();Target && Target->PrototypeEncounter)
++            {
++                const float Health=Target->Health;const FVector Desired=Site+FVector(30000,30000+Relocated*1000,0);
++                FHitResult Support;
++                if(!TestTrue(TEXT("Each prototype opponent's explicit scene destination has real terrain support"),
++                    World->LineTraceSingleByObjectType(Support,Desired+FVector(0,0,500),Desired-FVector(0,0,500),FCollisionObjectQueryParams(ECC_WorldStatic),Query)
++                    && Support.GetActor()==Floor && Support.ImpactNormal.Z>.99))return false;
++                FVector BoundsOrigin,BoundsExtent;It->GetActorBounds(true,BoundsOrigin,BoundsExtent);
++                const double FloorOffset=It->GetActorLocation().Z-(BoundsOrigin.Z-BoundsExtent.Z)+2;
++                if(!TestTrue(TEXT("Public scene placement keeps the exact prototype target alive outside camp"),
++                    Target->Alive() && It->SetActorLocation(Support.ImpactPoint+FVector(0,0,FloorOffset),false,nullptr,ETeleportType::TeleportPhysics)
++                    && Target->Health==Health && FVector::Dist2D(It->GetActorLocation(),Site)>Economy->State.Radius()))return false;
++                ++Relocated;
++            }
++        if(!TestEqual(TEXT("Scene preparation moves only the three real prototype encounters"),Relocated,3))return false;
++        Economy->Advance(0,false);
++        if(!TestTrue(TEXT("Actual camp safety accepts the prepared world without changing enemy health"),
++            !Economy->State.Regions.ContainsByPredicate([](const auto& R){return !R.Safe;})))return false;
+     }
+     const bool Enabled=Save->EnablePrototype();
+     if(!TestTrue(FString(TEXT("Real prototype save participants initialize: "))+Save->GetStatus(),Enabled))return false;
+@@ -209,6 +232,17 @@
+             const FGuid PreviousEpoch=Store->GetTimelineEpoch();
+             if(!TestTrue(FString::Printf(TEXT("Cross-process LoadPoint pass %d: "),Pass+1)+Save->GetStatus(),Save->LoadPoint(SavedId)))return false;
+             TestTrue(TEXT("Each actual load replaces the live timeline"),Store->GetTimelineEpoch()!=PreviousEpoch);
++            int32 RestoredOpponents=0;const auto* Combat=Hero->FindComponentByClass<UHearthwardCombatComponent>();
++            for(TActorIterator<AActor> It(World);It;++It)
++                if(const auto* Target=It->FindComponentByClass<UHearthwardCombatTargetComponent>();Target && Target->PrototypeEncounter)
++                {
++                    const auto* SavedTarget=Combat->State.Targets.FindByPredicate([&](const auto& T){return T.Id==Target->Id;});
++                    TestTrue(TEXT("Normal load restores living prototype opponents at saved supported scene positions"),SavedTarget && Target->Alive()
++                        && Target->Health==SavedTarget->Health && It->GetActorLocation()==SavedTarget->Position
++                        && FVector::Dist2D(It->GetActorLocation(),Economy->State.Camps[0].Position)>Economy->State.Radius());
++                    ++RestoredOpponents;
++                }
++            TestEqual(TEXT("Repeated load retains all three living prototype encounter identities"),RestoredOpponents,3);
+             TestTrue(TEXT("Loaded real axe retains its exact write-process instance GUID"),PlayerBag->FirstInstance(TEXT("axe"))==AxeId);
+             TestEqual(TEXT("Repeated load preserves player wood without gain"),PlayerBag->GetItemCount(TEXT("wood")),Manifest->GetIntegerField(TEXT("player_wood")));
+             TestEqual(TEXT("Repeated load preserves shared wood without gain"),Store->GetItemCount(TEXT("wood")),Manifest->GetIntegerField(TEXT("shared_wood")));

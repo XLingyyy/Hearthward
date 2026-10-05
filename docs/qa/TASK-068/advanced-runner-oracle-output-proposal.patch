@@ -1,0 +1,90 @@
+--- a/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py
++++ b/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py
+@@ -16,11 +16,14 @@
+ fish_items = [row['item'] for row in catalog['nature']['fish']]
+ match = re.search(r'HearthwardAIBackend=(cpu|vulkan)', unreal.SystemLibrary.get_command_line())
+ backend = match.group(1) if match else 'cpu'
+-out = root/'Saved/Task068'/('advanced-public-api-'+backend)
++run_match = re.search(r'Task068AdvancedRun=([0-9a-fA-F-]+)', unreal.SystemLibrary.get_command_line())
++run_id = run_match.group(1) if run_match else ''
++out_label = 'advanced-public-api-'+backend+('-'+run_id if run_id else '')
++out = root/'Saved/Task068'/out_label
+ out.mkdir(parents=True, exist_ok=True)
+ levels = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
+ st = {}
+-report = {'ok': False, 'dataset': data['version'], 'backend': backend, 'cases': [],
++report = {'ok': False, 'dataset': data['version'], 'backend': backend, 'run_id': run_id, 'cases': [],
+           'method': 'Real PIE SubmitPlayerText once per input; locked production model/config. Public prototype save/load and public Nature.Act/inventory setup. Explicit temporary ground/positioning is fixture setup; no normal-input or Owner credit.',
+           'task_complete': False, 'not_covered': ['hunt', 'capture', 'camp_batch', 'escort',
+           'Owner voice', 'normal menu/input', 'frozen 60/20', 'joint performance/Shipping']}
+@@ -108,10 +111,12 @@
+     else:
+         facts = {k: t[k] for k in ('id', 'remaining', 'successes', 'pending')}
+         facts['rewards'] = sorted(nature()['rewards'])
++        facts['feedback'] = str(st['nature'].get_editor_property('feedback'))
+     return {'player': json.loads(st['bag'].describe_inventory()),
+             'brother': json.loads(c.bag.describe_inventory()),
+             'camp': {item: st['store'].get_item_count(item) for item in items},
+             'target': facts, 'requested': c.get_requested(), 'delivered': c.get_delivered(),
++            'acquired': c.get_acquired(), 'carried': c.get_carried(),
+             'phase': str(c.get_phase())}
+ 
+ 
+@@ -122,11 +127,11 @@
+ 
+ 
+ def same_unconfirmed(before, after):
+-    return all(before[k] == after[k] for k in ('player', 'brother', 'camp', 'target', 'requested', 'delivered'))
++    return all(before[k] == after[k] for k in ('player', 'brother', 'camp', 'target', 'requested', 'delivered', 'acquired', 'carried'))
+ 
+ 
+ def execution_matches(case, before, after):
+-    if after['delivered'] != 1 or after['requested'] != 1:
++    if after['delivered'] != 1 or after['requested'] != 1 or after['acquired'] != 1 or after['carried'] != 0:
+         return False
+     if case['setup'] == 'plant_greens':
+         return (not before['target']['watered'] and after['target']['watered']
+@@ -139,17 +144,36 @@
+                 and all(before['camp'][i] == after['camp'][i] for i in items if i != 'stone'))
+     rod = next(row for row in before['brother']['instances'] if row['definition'] == 'fishing_rod')
+     after_rod = next(row for row in after['brother']['instances'] if row['id'] == rod['id'])
+-    newly_rewarded = set(after['target']['rewards'])-set(before['target']['rewards'])
++    previous_rewards = set(before['target']['rewards'])
++    current_rewards = set(after['target']['rewards'])
++    newly_rewarded = current_rewards-previous_rewards
+     valid_rewards = {row['id'] for row in catalog['nature']['rewards']}
+-    bonus_items = newly_rewarded | {'rope', 'herb'} if newly_rewarded else set()
+     bonus_gains = {item: count(after, 'brother', item)-count(before, 'brother', item)
+                    for item in items if item not in fish_items and item not in ('bait', 'fishing_rod')}
+-    return (len(newly_rewarded) <= 1 and newly_rewarded <= valid_rewards
+-            and all(gain == 0 or item in bonus_items and 0 < gain <= (2 if item in ('rope', 'herb') else 1)
+-                    for item, gain in bonus_gains.items())
+-            and sum(count(after, 'brother', item)-count(before, 'brother', item) for item in fish_items) == 1
++    empty_bonus = {item: 0 for item in bonus_gains}
++    duplicate_bonus = dict(empty_bonus, rope=2, herb=2)
++    feedback = after['target']['feedback']
++    if feedback == '钓鱼成功':
++        bonus_matches = not newly_rewarded and bonus_gains == empty_bonus
++    elif feedback == '钓鱼成功并获得额外物品；装不下的部分留在鱼点，可稍后领取':
++        if len(newly_rewarded) == 1:
++            reward = next(iter(newly_rewarded))
++            direct_bonus = dict(empty_bonus, **{reward: 1})
++            bonus_matches = reward in valid_rewards and bonus_gains in (direct_bonus, duplicate_bonus)
++        else:
++            bonus_matches = not newly_rewarded and bool(previous_rewards & valid_rewards) and bonus_gains == duplicate_bonus
++    else:
++        bonus_matches = False
++    before_meta = {k: v for k, v in before['brother'].items() if k not in ('stacks', 'instances')}
++    after_meta = {k: v for k, v in after['brother'].items() if k not in ('stacks', 'instances')}
++    fish_gains = [count(after, 'brother', item)-count(before, 'brother', item) for item in fish_items]
++    return (bonus_matches and previous_rewards <= current_rewards and current_rewards <= valid_rewards
++            and before['target']['pending'] == after['target']['pending']
++            and sum(fish_gains) == 1 and all(gain >= 0 for gain in fish_gains)
+             and count(before, 'brother', 'bait')-count(after, 'brother', 'bait') == 1
+-            and after_rod['durability'] < rod['durability']
++            and count(before, 'brother', 'fishing_rod') == count(after, 'brother', 'fishing_rod')
++            and {k: v for k, v in rod.items() if k != 'durability'} == {k: v for k, v in after_rod.items() if k != 'durability'}
++            and after_rod['durability'] < rod['durability'] and before_meta == after_meta
+             and before['target']['remaining']-after['target']['remaining'] == 1
+             and after['target']['successes']-before['target']['successes'] == 1
+             and before['player'] == after['player'] and before['camp'] == after['camp'])

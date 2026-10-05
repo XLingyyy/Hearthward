@@ -1,0 +1,137 @@
+--- a/docs/qa/TASK-055/sample_stone_axe_hero_pose.py
++++ b/docs/qa/TASK-055/sample_stone_axe_hero_pose.py
+@@ -14,7 +14,11 @@
+ 
+ HERE = Path(__file__).resolve().parent
+ GRIP_CANDIDATE = "-task055gripcandidate" in unreal.SystemLibrary.get_command_line().lower()
+-OUT = Path(unreal.Paths.project_saved_dir()) / "Task055" / ("stone-axe-grip-candidate" if GRIP_CANDIDATE else "stone-axe-single-node")
++PALM_CANDIDATE = "-task055palmcandidate" in unreal.SystemLibrary.get_command_line().lower()
++SHORT_CANDIDATE = GRIP_CANDIDATE or PALM_CANDIDATE
++if GRIP_CANDIDATE and PALM_CANDIDATE:
++    raise RuntimeError("Wrist and palm evidence use separate opt-in runs")
++OUT = Path(unreal.Paths.project_saved_dir()) / "Task055" / ("stone-axe-palm-candidate" if PALM_CANDIDATE else "stone-axe-grip-candidate" if GRIP_CANDIDATE else "stone-axe-single-node")
+ OUT.mkdir(parents=True, exist_ok=True)
+ HERO_PATH = "/Game/Characters/Hero/UE5/SK_Hero"
+ AXE_PATH = "/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe"
+@@ -32,6 +36,9 @@
+ REPORT["mode"] = "temporary_grip_candidate_four_poses" if GRIP_CANDIDATE else "original_dense_pose_evidence"
+ if GRIP_CANDIDATE:
+     REPORT["limitations"][-1] = "Unsaved fixture HeldAxe relative translation changed once to place candidate Grip on hand_r wrist pivot; finger/palm fit and normal equip acceptance remain unverified"
++if PALM_CANDIDATE:
++    REPORT["mode"] = "temporary_palm_two_candidates_source_0_55"
++    REPORT["limitations"][-1] = "Unsaved HeldAxe translation/rotation changed for two measured-surface-derived candidates at scale .7; no palm/finger-fit acceptance or Content save"
+ STAGE = "setup"
+ KEEP = []
+ 
+@@ -124,7 +131,7 @@
+         raise RuntimeError("Actual stone axe mesh missing")
+     bounds = axe_asset.get_bounds()
+     REPORT["axe_asset"] = {**info(axe_asset), "bounds_local_cm": {"origin": v(bounds.origin), "extent": v(bounds.box_extent), "sphere_radius": bounds.sphere_radius}, "lod0_triangles": axe_asset.get_num_triangles(0), "material_slots": [info(axe_asset.get_material(i)) for i in range(len(axe_asset.get_editor_property("static_materials")))]}
+-    if not GRIP_CANDIDATE:
++    if not SHORT_CANDIDATE:
+         description = axe_asset.get_static_mesh_description(0)
+         if description is None:
+             raise RuntimeError("Actual stone axe LOD0 source vertices missing")
+@@ -148,10 +155,10 @@
+         endpoints = {name: unreal.Vector(*data["candidates"][name]) for name in ("Grip", "BladeBase", "BladeTip")}
+         REPORT["measured_endpoint_candidates"] = data
+     else:
+-        if GRIP_CANDIDATE:
+-            raise RuntimeError("Grip candidate mode requires measured mesh-local endpoint JSON")
++        if SHORT_CANDIDATE:
++            raise RuntimeError("Short candidate modes require measured mesh-local endpoint JSON")
+         REPORT["measured_endpoint_candidates"] = {"status": "Not yet selected from the actual imported mesh; exported vertices and actual axe transforms permit later exact world-coordinate evaluation without replay", "file_to_supply_after_selection": str(endpoints_file)}
+-    if not GRIP_CANDIDATE:
++    if not SHORT_CANDIDATE:
+         inspection = spawn(actors, unreal.StaticMeshActor, "axe_local")
+         inspection_component = inspection.get_component_by_class(unreal.StaticMeshComponent)
+         inspection_component.set_static_mesh(axe_asset)
+@@ -172,12 +179,19 @@
+         raise RuntimeError("Actual constructor stone axe attachment is different")
+     REPORT["constructor"] = {"hero": info(hero), "mesh_world": tf(mesh.get_world_transform()), "mesh_relative": tf(mesh.get_relative_transform()), "held_relative": tf(held.get_relative_transform()), "held_absolute_scale": bool(held.get_editor_property("absolute_scale")), "held_collision": str(held.get_collision_enabled()), "held_was_visible": bool(held.get_editor_property("visible")), "attach_socket": str(held.get_attach_socket_name())}
+     finger_bones = []
+-    if GRIP_CANDIDATE:
++    if SHORT_CANDIDATE:
+         names = [str(mesh.get_bone_name(index)) for index in range(mesh.get_num_bones())]
+         finger_bones = [name for name in names if name.endswith("_r") and any(part in name.lower() for part in ("thumb", "index", "middle", "ring", "pinky"))]
+         REPORT["actual_bone_names"] = names
+         REPORT["available_right_finger_bones"] = finger_bones
+         REPORT["grip_reference"] = {"bone": "hand_r", "meaning": "Actual wrist bone pivot, not a measured palm centre", "finger_selection": "Existing runtime bone names ending _r and containing thumb/index/middle/ring/pinky"}
++    palm_candidate = None
++    if PALM_CANDIDATE:
++        palm_candidate = json.loads((HERE / "stone-axe-palm-surface-candidate.json").read_text(encoding="utf-8-sig"))
++        if "requires actual root close-up" not in palm_candidate["status"] or palm_candidate["source_time_seconds"] < .54:
++            raise RuntimeError("Palm candidate must identify actual source .55 geometry evidence")
++        REPORT["measured_palm_candidate"] = palm_candidate
++        REPORT["grip_reference"] = {"bone": "hand_r", "meaning": "Wrist bone transform is the coordinate frame; candidate target uses measured palm/distal skin surfaces, not wrist pivot", "target_hand_local": palm_candidate["grip_target"]["hand_r_local"]}
+     held.set_visibility(True)
+     REPORT["fixture_visibility_change"] = "HeldAxe made visible only for sampling; no normal equip/Combat transaction executed"
+     mesh.set_animation_mode(unreal.AnimationMode.ANIMATION_SINGLE_NODE)
+@@ -190,7 +204,7 @@
+     options.set_editor_property("optional_skeletal_mesh", mesh.get_skinned_asset())
+     options.set_editor_property("should_retarget", True)
+     options.set_editor_property("extract_root_motion", False)
+-    clips = (("current_attack", ATTACK_PATH, 60),) if GRIP_CANDIDATE else (("current_attack", ATTACK_PATH, 60), ("original_chop", CHOP_PATH, 24))
++    clips = (("current_attack", ATTACK_PATH, 60),) if SHORT_CANDIDATE else (("current_attack", ATTACK_PATH, 60), ("original_chop", CHOP_PATH, 24))
+     for label, path, fps in clips:
+         STAGE = label
+         clip = unreal.load_asset(path)
+@@ -200,8 +214,8 @@
+         mesh.play_animation(clip, False)
+         mesh.set_play_rate(0.0)
+         unreal.AutomationLibrary.finish_loading_before_screenshot()
+-        if GRIP_CANDIDATE:
+-            render_times = {0.0, 0.6, 0.8, 1.0}
++        if SHORT_CANDIDATE:
++            render_times = {0.6} if PALM_CANDIDATE else {0.0, 0.6, 0.8, 1.0}
+             times = {length * normalized_time for normalized_time in render_times}
+             REPORT["candidate_phase_source_boundaries_seconds"] = {"windup_start": 0.0, "windup_to_active": length * 0.6, "active_to_recovery": length * 0.8, "clip_end": length}
+         elif label == "current_attack":
+@@ -276,13 +290,45 @@
+                 render = any(abs(action_time - t) < 0.00001 for t in render_times)
+             else:
+                 render = any(abs(sample_time - t) < 0.00001 for t in render_times)
+-            if render:
++            if render and PALM_CANDIDATE:
++                hand_transform = mesh.get_socket_transform("hand_r", unreal.RelativeTransformSpace.RTS_WORLD)
++                candidate_local = unreal.Vector(*palm_candidate["grip_target"]["hand_r_local"])
++                desired_grip = unreal.MathLibrary.transform_location(hand_transform, candidate_local)
++                original_quaternion = q(held.get_relative_transform().rotation)
++                candidates = (("translation-only", original_quaternion), ("minimum-align", palm_candidate["temporary_attachment_candidate"]["relative_rotation_quat_xyzw"]))
++                sample["temporary_palm_candidates"] = []
++                for candidate_name, quaternion in candidates:
++                    before_world = held.get_world_transform()
++                    held.set_relative_rotation(unreal.Quat(*quaternion).rotator(), False, True)
++                    rotated_world = held.get_world_transform()
++                    rotated_grip = unreal.MathLibrary.transform_location(rotated_world, endpoints["Grip"])
++                    held.set_world_location(rotated_world.translation + desired_grip - rotated_grip, False, True)
++                    yield lambda: True
++                    if not poses_match(mesh, expected, sample) or abs(mesh.get_position() - sample_time) > 0.0001:
++                        raise RuntimeError("Actual .55 pose drifted during temporary palm candidate")
++                    if held.get_attach_parent() != mesh or str(held.get_attach_socket_name()) != "hand_r" or not held.get_editor_property("absolute_scale"):
++                        raise RuntimeError("Palm candidate changed production attachment/absolute-scale contract")
++                    actual_world = held.get_world_transform()
++                    actual_hand = mesh.get_socket_transform("hand_r", unreal.RelativeTransformSpace.RTS_WORLD)
++                    actual_target = unreal.MathLibrary.transform_location(actual_hand, candidate_local)
++                    actual_grip = unreal.MathLibrary.transform_location(actual_world, endpoints["Grip"])
++                    error = (actual_grip - actual_target).length()
++                    if error > .05 or (actual_world.scale3d - unreal.Vector(.7, .7, .7)).length() > .0001:
++                        raise RuntimeError("Palm candidate alignment or actual .7 world scale differs")
++                    evidence = {"name": candidate_name, "meaning": "Temporary measured-surface-derived target, requires rendered palm/finger-fit review", "target_hand_r_local": v(candidate_local), "actual_hand_socket_world": tf(actual_hand), "actual_grip_target_world_cm": v(actual_target), "actual_grip_world_cm": v(actual_grip), "grip_to_target_distance_cm": error, "requested_relative_quaternion_xyzw": quaternion, "before_world": tf(before_world), "actual_held_axe_world": tf(actual_world), "actual_held_axe_relative": tf(held.get_relative_transform()), "actual_right_finger_world_reference": {name: tf(mesh.get_socket_transform(name, unreal.RelativeTransformSpace.RTS_WORLD)) for name in finger_bones}, "actual_endpoint_world_cm": {name: v(unreal.MathLibrary.transform_location(actual_world, local)) for name, local in endpoints.items()}}
++                    sample["temporary_palm_candidates"].append(evidence)
++                    suffix = label + "-" + f"{sample_time:.6f}".replace(".", "_") + "-palm-" + candidate_name
++                    centre = unreal.Vector(0, 0, 100)
++                    yield from photograph(world, capture_actor, capture, target, suffix + "-full", centre + unreal.Vector(350, -400, 160), centre, 400.0)
++                    eye = actual_target + unreal.MathLibrary.transform_direction(actual_hand, unreal.Vector(0, 0, 1)) * 100.0 + unreal.MathLibrary.transform_direction(actual_hand, unreal.Vector(1, 0, 0)) * 25.0
++                    yield from photograph(world, capture_actor, capture, target, suffix + "-grip", eye, actual_target, 70.0)
++            elif render:
+                 suffix = label + "-" + f"{sample_time:.6f}".replace(".", "_")
+                 centre = unreal.Vector(0, 0, 100)
+                 yield from photograph(world, capture_actor, capture, target, suffix + "-full", centre + unreal.Vector(350, -400, 160), centre, 400.0)
+                 hand = mesh.get_socket_location("hand_r")
+                 yield from photograph(world, capture_actor, capture, target, suffix + "-grip", hand + unreal.Vector(180, -220, 60), hand, 160.0)
+-    if not GRIP_CANDIDATE:
++    if not SHORT_CANDIDATE:
+         attack = REPORT["clips"]["current_attack"]["samples"]
+         chop = REPORT["clips"]["original_chop"]["samples"]
+         for label, samples, eligible in (("attack", attack, attack), ("chop_first_half", chop, [x for x in chop if 0 < x["clip_time_seconds"] < REPORT["clips"]["original_chop"]["actual_length_seconds"] / 2])):

@@ -1,0 +1,94 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -1,3 +1,12 @@
++#include "../HearthwardCharacter.h"
++#include "../AI/HearthwardLocalAISubsystem.h"
++#include "../Inventory/HearthwardInventoryComponent.h"
++#include "../Inventory/HearthwardStorageSubsystem.h"
++#include "../Time/HearthwardWorldClockSubsystem.h"
++#include "Components/SceneComponent.h"
++#include "Engine/Engine.h"
++#include "GameFramework/PlayerController.h"
++#include "Misc/ScopeExit.h"
+ #include "../Save/HearthwardSaveGame.h"
+ #include "../Save/HearthwardSaveSubsystem.h"
+ #include "Engine/World.h"
+@@ -62,6 +71,78 @@
+     const auto Context = Knowledge->RecentKnowledge();
+     TestTrue(TEXT("Full exchanges retained for save"), Knowledge->GetKnowledge().Len() > 8000);
+     TestTrue(TEXT("Prompt history bounded for 4096-token runtime"), FString::Join(Context, TEXT("\n")).Len() <= 516 && Context.Num() <= 8);
++    return true;
++}
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSaveActualLoadPointEpochTest,"Hearthward.Save.ActualLoadPointInvalidatesOldCommandTicket",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++bool FSaveActualLoadPointEpochTest::RunTest(const FString&)
++{
++    FString PoolArgument;FGuid PoolId;
++    if(!TestTrue(TEXT("Actual LoadPoint uses the runner's isolated save pool"),
++        FParse::Value(FCommandLine::Get(),TEXT("HearthwardSaveTestPool="),PoolArgument) && FGuid::Parse(PoolArgument,PoolId)))return false;
++    UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
++    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
++    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
++    ON_SCOPE_EXIT { GEngine->DestroyWorldContext(World);World->DestroyWorld(false); };
++    FActorSpawnParameters Spawn;Spawn.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
++    auto* Hero=World->SpawnActor<AHearthwardCharacter>(FVector(0,0,100),FRotator::ZeroRotator,Spawn);
++    auto* Controller=World->SpawnActor<APlayerController>();World->AddController(Controller);Controller->Possess(Hero);
++    auto* Camp=World->SpawnActor<AActor>();auto* CampRoot=NewObject<USceneComponent>(Camp);
++    Camp->AddInstanceComponent(CampRoot);Camp->SetRootComponent(CampRoot);CampRoot->RegisterComponent();
++    auto* Stock=NewObject<UHearthwardInventoryComponent>(Camp);Camp->AddInstanceComponent(Stock);Stock->RegisterComponent();
++    auto* Brother=World->SpawnActor<AHearthwardCompanionFixture>(FVector(0,200,100),FRotator::ZeroRotator,Spawn);
++    Brother->InitializeFixture(Stock,Camp);
++    auto* PlayerBag=Hero->FindComponentByClass<UHearthwardInventoryComponent>();
++    auto* Store=World->GetSubsystem<UHearthwardStorageSubsystem>();auto* Save=World->GetSubsystem<UHearthwardSaveSubsystem>();
++    auto* AI=World->GetSubsystem<UHearthwardLocalAISubsystem>();auto* Clock=World->GetSubsystem<UHearthwardWorldClockSubsystem>();
++    if(!TestTrue(TEXT("Real controlled Hero and single initialized Brother have normal stock"),
++        UGameplayStatics::GetPlayerPawn(World,0)==Hero && PlayerBag->TryAdd(TEXT("wood"),3)==EHearthwardInventoryResult::Success
++        && Stock->TryAdd(TEXT("wood"),8)==EHearthwardInventoryResult::Success))return false;
++    const bool Enabled=Save->EnablePrototype();
++    if(!TestTrue(FString(TEXT("Real prototype save participants initialize: "))+Save->GetStatus(),Enabled))return false;
++    if(!TestTrue(TEXT("Runner pool is fresh before this actual-world test"),Save->GetPoints().IsEmpty()))return false;
++    const bool Started=Save->StartNewProgress();
++    if(!TestTrue(FString(TEXT("Normal new progress writes and restores the prepared world: "))+Save->GetStatus(),Started))return false;
++    FHearthwardAgentGoal Goal;Goal.Intent=TEXT("collect");Goal.Item=TEXT("wood");Goal.Quantity=1;
++    Goal.QuantityMode=TEXT("additional_acquired");Goal.SourceRef=TEXT("S1");
++    const auto FirstTicket=Brother->Request(Hero,TEXT("Collect one wood"));
++    if(!TestTrue(TEXT("Normal goal submission succeeds before saving"),Brother->SubmitGoal(Hero,FirstTicket,Goal)==EHearthwardProposalResult::Accepted))return false;
++    const bool Saved=Save->SavePoint(true);
++    if(!TestTrue(FString(TEXT("Actual stable command snapshot saves: "))+Save->GetStatus(),Saved))return false;
++    const auto Point=Save->GetPoints().Last();const auto OldEpoch=Store->GetTimelineEpoch();
++    const auto OldTicket=Brother->Request(Hero,TEXT("Late result for another one wood"));
++    if(!TestTrue(TEXT("Old pending ticket is genuinely current before LoadPoint"),Brother->IsProposalCurrent(Hero,OldTicket)))return false;
++    if(!TestTrue(TEXT("Future inventories really differ before LoadPoint"),
++        PlayerBag->TryAdd(TEXT("wood"),2)==EHearthwardInventoryResult::Success && Store->State.Shared.Add(TEXT("wood"),4)==EHearthwardInventoryResult::Success
++        && PlayerBag->GetItemCount(TEXT("wood"))==5 && Store->GetItemCount(TEXT("wood"))==4))return false;
++    const bool Loaded=Save->LoadPoint(Point.SaveId);
++    if(!TestTrue(FString(TEXT("Public LoadPoint reads disk and restores the real world: "))+Save->GetStatus(),Loaded))return false;
++    TestTrue(TEXT("Actual LoadPoint creates a different epoch"),Store->GetTimelineEpoch()!=OldEpoch);
++    TestFalse(TEXT("Actual LoadPoint invalidates the old pending ticket"),Brother->IsProposalCurrent(Hero,OldTicket));
++    TestEqual(TEXT("Actual LoadPoint removes future player wood"),PlayerBag->GetItemCount(TEXT("wood")),3);
++    TestEqual(TEXT("Actual LoadPoint removes future shared wood"),Store->GetItemCount(TEXT("wood")),0);
++    TestTrue(TEXT("Actual LoadPoint preserves the saved active command ID"),Brother->GetCommandId()==Point.World.CommandId);
++    const int32 BeforeEvents=AI->GetMemorySnapshot().Events.Num();
++    TestTrue(TEXT("Late old goal is rejected at the real submission boundary"),Brother->SubmitGoal(Hero,OldTicket,Goal)==EHearthwardProposalResult::Stale);
++    TestEqual(TEXT("Late old goal cannot change player inventory"),PlayerBag->GetItemCount(TEXT("wood")),3);
++    TestEqual(TEXT("Late old goal cannot change shared inventory"),Store->GetItemCount(TEXT("wood")),0);
++    TestEqual(TEXT("Late old goal cannot change source inventory"),Stock->GetItemCount(TEXT("wood")),8);
++    TestEqual(TEXT("Late old goal cannot put future cargo in Brother's bag"),Brother->Bag->GetItemCount(TEXT("wood")),0);
++    TestTrue(TEXT("Late old goal cannot supersede the restored command"),Brother->GetCommandId()==Point.World.CommandId);
++    TestEqual(TEXT("Late old goal cannot change requested amount"),Brother->GetRequested(),Point.World.Requested);
++    TestEqual(TEXT("Late old goal cannot change delivered amount"),Brother->GetDelivered(),Point.World.Delivered);
++    TestEqual(TEXT("Late old goal cannot append NPC events"),AI->GetMemorySnapshot().Events.Num(),BeforeEvents);
++    TestEqual(TEXT("Load and stale submission preserve saved active time"),Clock->GetSnapshot().ActivePlaySeconds,Point.World.ActiveSeconds);
++    TestEqual(TEXT("Load and stale submission preserve saved calendar time"),Clock->GetSnapshot().ElapsedCalendarMinutes,Point.World.CalendarMinutes);
++    const bool Resaved=Save->SavePoint(true);
++    if(!TestTrue(FString(TEXT("Post-stale actual snapshot remains savable: "))+Save->GetStatus(),Resaved))return false;
++    const auto After=Save->GetPoints().Last().World;
++    TestTrue(TEXT("Late old goal cannot append settled operations"),After.NPCOperations==Point.World.NPCOperations);
++    TestEqual(TEXT("Late old goal cannot append effect receipts"),After.NPCReceipts.Num(),Point.World.NPCReceipts.Num());
++    const auto FreshTicket=Brother->Request(Hero,TEXT("Collect one wood on the restored timeline"));
++    TestTrue(TEXT("Restored world accepts a genuinely fresh ticket"),Brother->IsProposalCurrent(Hero,FreshTicket));
++    TestTrue(TEXT("Same normal goal succeeds on the new timeline"),Brother->SubmitGoal(Hero,FreshTicket,Goal)==EHearthwardProposalResult::Accepted);
+     return true;
+ }
+ 

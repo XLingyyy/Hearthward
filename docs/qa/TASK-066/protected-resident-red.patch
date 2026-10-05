@@ -1,0 +1,78 @@
+--- a/Source/Hearthward/Tests/CampaignAIBehaviorTests.cpp
++++ b/Source/Hearthward/Tests/CampaignAIBehaviorTests.cpp
+@@ -4,12 +4,14 @@
+ #include "../Gameplay/HearthwardGameplayComponent.h"
+ #include "../Inventory/HearthwardInventoryComponent.h"
+ #include "../Survival/HearthwardSurvivalComponent.h"
++#include "../Time/HearthwardWorldClockSubsystem.h"
+ #include "AIController.h"
+ #include "Components/BoxComponent.h"
+ #include "Components/CapsuleComponent.h"
+ #include "Engine/Engine.h"
+ #include "Engine/World.h"
+ #include "GameFramework/Character.h"
++#include "GameFramework/CharacterMovementComponent.h"
+ #include "GameFramework/PlayerController.h"
+ #include "Kismet/GameplayStatics.h"
+ #include "Misc/AutomationTest.h"
+@@ -221,4 +223,60 @@
+     Fixture.ExpectDestination(*this,TEXT("Expired bait resumes the authored patrol"),Fixture.PatrolGoal);
+     return true;
+ }
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampaignProtectedResident066Test,"Hearthward.Campaign066.ProtectedResidentCannotActAsCorpse",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++bool FCampaignProtectedResident066Test::RunTest(const FString&)
++{
++    for(const bool Hostile:{false,true})
++    {
++        FScopedCampaignAIWorld Fixture;
++        if(!Fixture.Ready(*this))return false;
++        FActorSpawnParameters Params;
++        Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
++        auto* Resident=Fixture.World->SpawnActor<AHearthwardCampaignActor>(Fixture.Origin+FVector(600,0,0),FRotator::ZeroRotator,Params);
++        if(!TestNotNull(TEXT("The corpse-stimulus fixture has a real campaign actor"),Resident))return false;
++        Resident->Initialize(Hostile?FName(TEXT("field_slice_02")):FName(TEXT("protected_01")),Hostile);
++        Resident->SetActorLocation(Fixture.Origin+FVector(600,0,0));
++        Fixture.Enemy->SetActorRotation(FRotator::ZeroRotator);
++        const FName Region=Fixture.Enemy->Target->Region;
++        if(Hostile)
++        {
++            Fixture.Combat->HitTarget(Resident->Target,Resident->Target->Health,TEXT("body"),false,FGuid::NewGuid());
++            if(!TestEqual(TEXT("The positive control dies through the production damage transaction"),Resident->Target->Health,0.f))return false;
++        }
++        else
++        {
++            TestTrue(TEXT("Actual non-hostile initialization protects the resident"),Resident->Target->Protected);
++            TestEqual(TEXT("Actual protected initialization does not create combat health"),Resident->Target->Health,0.f);
++        }
++        auto* Clock=Fixture.World->GetSubsystem<UHearthwardWorldClockSubsystem>();
++        const double Started=Clock->GetSnapshot().ActivePlaySeconds;
++        auto Advance=[&](float Delta){Clock->Tick(Delta);Fixture.Perception(Delta);};
++        Advance(.01f);Advance(2.99f);
++        TestTrue(TEXT("Neither stimulus may publish an alarm before the real three-second report"),Fixture.Combat->State.Alarms.IsEmpty());
++        Advance(.011f);
++        TestTrue(TEXT("The production active clock advances for the corpse-report boundary"),FMath::IsNearlyEqual(Clock->GetSnapshot().ActivePlaySeconds,Started+3.011,1.e-4));
++        TestTrue(TEXT("The reporting observer never sees the distant fixture player"),Fixture.Enemy->Target->Memory.Seen.IsEmpty());
++        if(Hostile)
++        {
++            TestTrue(TEXT("A genuine defeated enemy remains a reportable corpse"),Resident->Target->Memory.BroadcastRegions.Contains(Region));
++            TestTrue(TEXT("The completed genuine corpse report publishes the actual region alarm"),Fixture.Combat->State.Alarms.Contains(Region));
++            TestTrue(TEXT("The genuine alarm expires 120 active seconds after the report"),FMath::IsNearlyEqual(Fixture.Combat->State.Alarms.FindRef(Region),Clock->GetSnapshot().ActivePlaySeconds+120,1.e-4));
++        }
++        else
++        {
++            TestTrue(TEXT("A living protected resident is never recorded as a reported corpse"),Resident->Target->Memory.BroadcastRegions.IsEmpty());
++            TestTrue(TEXT("A living protected resident cannot publish a corpse alarm"),Fixture.Combat->State.Alarms.IsEmpty());
++            TestTrue(TEXT("A protected resident leaves no pending corpse report"),Fixture.Enemy->Target->Memory.ReportingBody.IsNone());
++            Fixture.Player->SetActorLocation(Resident->GetActorLocation()-FVector(130,0,0));
++            Fixture.Player->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
++            const bool Carried=Fixture.Combat->Carry(false);
++            TestFalse(TEXT("The production pickup entry refuses a living protected resident"),Carried);
++            TestFalse(TEXT("A protected resident is never assigned a corpse carrier"),Resident->Target->Carrier.IsValid());
++            if(Carried){Fixture.Combat->Cancel();Fixture.Combat->DropBody();}
++        }
++    }
++    return true;
++}
+ #endif

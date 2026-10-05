@@ -12,6 +12,7 @@
 #include "../Combat/HearthwardCombatRegion.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
+#include "../Experience/HearthwardTraversalComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
@@ -49,7 +50,7 @@ bool UHearthwardCampaignSubsystem::Ground(FVector Desired,FVector& Out) const
 }
 AHearthwardCampaignActor* UHearthwardCampaignSubsystem::Actor(FName Id) const {const auto* A=Actors.Find(Id);return A?A->Get():nullptr;}
 FHearthwardCampaignEnemy* UHearthwardCampaignSubsystem::Enemy(FName Id) {return State.Enemies.FindByPredicate([&](const auto& E){return E.Id==Id;});}
-void UHearthwardCampaignSubsystem::Cancel(){PendingFlag=NAME_None;FlagRemaining=0;}
+void UHearthwardCampaignSubsystem::Cancel(){PendingFlag=NAME_None;FlagRemaining=0;FlagCompleteAt=0;}
 void UHearthwardCampaignSubsystem::ResetActors()
 {
     if(IntroRemaining>0)if(auto* Character=Cast<ACharacter>(Player()))Character->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
@@ -110,13 +111,16 @@ bool UHearthwardCampaignSubsystem::Travel(FName Id)
 }
 bool UHearthwardCampaignSubsystem::BeginTravel(FName Id)
 {
-    if(!HasLocation(Id) || !TravelDestination.IsNone())return false;
+    if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) || !HasLocation(Id) || !TravelDestination.IsNone())return false;
     if(TravelParticipants.IsEmpty())
     {
         ScriptedTravel=true;TravelParticipants.Add(Player());
         for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)TravelParticipants.Add(*It);
         TravelEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     }
+    for(const auto& Participant:TravelParticipants)
+        if(auto* A=Participant.Get())
+            if(auto* Traversal=A->FindComponentByClass<UHearthwardTraversalComponent>())Traversal->CancelVault();
     TravelDestination=Id;
     // An independent brother keeps his terrain loaded when the player's source moves away.
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
@@ -158,6 +162,7 @@ bool UHearthwardCampaignSubsystem::ZoneOccupied(FName Zone) const
 void UHearthwardCampaignSubsystem::RefreshActors()
 {
     const FVector PlayerPosition=Player()->GetActorLocation();
+    const auto& Labor=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State;
     if(State.Phase==TEXT("prologue") && !Scenery.ContainsByPredicate([](const auto& A){return A.IsValid() && A->ActorHasTag(TEXT("CampaignPrologueHouse"));}))
     {
         FVector Floor;if(Ground(Position(TEXT("prologue_relic"))-FVector(150,0,0),Floor))
@@ -189,6 +194,7 @@ void UHearthwardCampaignSubsystem::RefreshActors()
     }
     if(State.Phase!=TEXT("prologue"))for(auto& P:State.People)
     {
+        if(P.Stage==TEXT("arrived") && Labor.Rescued.Contains(P.Id))continue;
         if(auto* A=Actor(P.Id))
         {if(FVector::Dist2D(PlayerPosition,A->GetActorLocation())>75000){P.Position=A->GetActorLocation();P.Stage=P.Stage==TEXT("following")?FName(TEXT("waiting")):P.Stage;A->Destroy();Actors.Remove(P.Id);}continue;}
         if(FVector::Dist2D(PlayerPosition,P.Position)>65000)continue;
@@ -235,8 +241,81 @@ void UHearthwardCampaignSubsystem::RefreshActors()
             Cloth->SetWorldScale3D(FVector(1.1,.025,.65));Cloth->SetWorldLocation(Position(Id)+FVector(52,0,225));
         }
     }
+    for(int32 Worker=0;Worker<Labor.Population();++Worker)
+    {
+        const FName Id=Worker<20?FName(*FString::Printf(TEXT("civilian_initial_%02d"),Worker+1)):Labor.Rescued[Worker-20];
+        const auto* Region=Labor.Regions.FindByPredicate([&](const auto& R){return R.Workers.Contains(Worker);});
+        auto* A=Actor(Id);
+        FName CampId=Region?Region->Camp:NAME_None;
+        if(!Region)
+        {
+            if(A)CampId=Labor.CampAt(A->GetActorLocation());
+            else if(const auto* Person=State.People.FindByPredicate([&](const auto& P){return P.Id==Id;}))CampId=Labor.CampAt(Person->Position);
+            if(CampId.IsNone())CampId=TEXT("camp");
+        }
+        const auto* Site=Labor.Camps.FindByPredicate([&](const auto& C){return C.Id==CampId;});
+        const bool Safe=Region?Region->Safe:!Labor.Regions.ContainsByPredicate([&](const auto& R){return R.Camp==CampId && !R.Safe;});
+        if(!Safe)
+        {
+            if(A){A->SetActorHiddenInGame(true);A->SetActorEnableCollision(false);}
+            continue;
+        }
+        FVector Workplace=Site?Site->Position:Position(State.Phase==TEXT("prologue")?TEXT("prologue_exit"):CampId);
+        FVector Seat=Workplace+FVector(((Worker+1)%5-2)*240,((Worker+1)/5)*260+800,0);
+        bool HasWorkplace=false;
+        FString Job,Status=TEXT("等待分配");
+        if(Region)
+        {
+            if(Region->Facility.IsValid())
+            {
+                const auto* Facility=Labor.Facilities.FindByPredicate([&](const auto& F){return F.Id==Region->Facility;});
+                if(auto* Builder=Player()->FindComponentByClass<UHearthwardBuildingComponent>();Facility && !Facility->Paused && Builder)
+                    if(auto* Building=Builder->ResolveFacility(Region->Facility)){Workplace=Building->GetActorLocation();HasWorkplace=true;}
+                Job=Text(Find(TEXT("craftingRecipes"),Region->Job.ToString()),TEXT("name"));
+            }
+            else
+            {
+                const FName Item=Region->Job==TEXT("forage")?FName(TEXT("wild_food")):Region->Job;
+                const int32 Yield=Region->Job==TEXT("forage")?1:2;
+                const FHearthwardCampSource* Source=nullptr;
+                for(const auto& S:Labor.Sources)if(S.Camp==Region->Camp && S.Item==Item && !S.Blocked && S.Remaining>=Yield
+                    && (!Source || S.Remaining<Source->Remaining))Source=&S;
+                if(!Source)Source=Labor.Sources.FindByPredicate([&](const auto& S){return S.Camp==Region->Camp && S.Item==Item && !S.Blocked;});
+                if(Source){Workplace=Source->Position;HasWorkplace=true;}
+                Job=Region->Job==TEXT("forage")?TEXT("采食"):Region->Job==TEXT("wood")?TEXT("伐木")
+                    :Region->Job==TEXT("stone")?TEXT("采石"):TEXT("采矿");
+            }
+            if(HasWorkplace)
+            {
+                const float Angle=FMath::DegreesToRadians(Region->Workers.IndexOfByKey(Worker)*72.f);
+                Seat=Workplace+FVector(FMath::Cos(Angle)*180,FMath::Sin(Angle)*180,0);
+            }
+            Status=!Region->Enabled?TEXT("暂离 · 岗位已暂停"):!HasWorkplace?TEXT("等待合法岗位")
+                :Region->Batch.Active && Region->Batch.Work<Region->Batch.Required?TEXT("工作中")
+                :Region->Status.IsEmpty()?TEXT("等待开工"):Region->Status;
+        }
+        if(FVector::Dist2D(PlayerPosition,Seat)>40000)
+        {
+            if(A){A->Destroy();Actors.Remove(Id);}continue;
+        }
+        FVector Floor;
+        if(!Ground(Seat,Floor))
+        {
+            if(A){A->SetActorHiddenInGame(true);A->SetActorEnableCollision(false);}continue;
+        }
+        const FVector At=Floor+FVector(0,0,80);
+        if(!A)A=Spawn(Id,At,false);
+        if(!A)continue;
+        A->SetActorEnableCollision(true);
+        const FRotator Facing=HasWorkplace?FRotator(0,(Workplace-Seat).Rotation().Yaw,0):A->GetActorRotation();
+        if(!A->GetActorLocation().Equals(At,1) && !A->TeleportTo(At,Facing))
+        {A->SetActorHiddenInGame(true);A->SetActorEnableCollision(false);continue;}
+        A->SetActorRotation(Facing);A->SetActorHiddenInGame(false);
+        const FString Label=FString::Printf(TEXT("族人%d · "),Worker+1)+(Job.IsEmpty()?FString():Job+TEXT(" · "))+Status;
+        A->PresentLabor(Region?Region->Id:NAME_None,Label,Region && Region->Enabled && HasWorkplace && Region->Batch.Active && Region->Batch.Work<Region->Batch.Required);
+    }
     // Protected non-combat residents never enter the hostile or rescued registries.
-    for(int32 I=1;I<=24;++I)
+    for(int32 I=21;I<=24;++I)
     {
         const bool ProtectedEnemy=I>20;
         const FName Id(*FString::Printf(TEXT("%s%02d"),ProtectedEnemy?TEXT("protected_"):TEXT("civilian_initial_"),ProtectedEnemy?I-20:I));
@@ -275,6 +354,11 @@ void UHearthwardCampaignSubsystem::RefreshActors()
 void UHearthwardCampaignSubsystem::Tick(float Delta)
 {
     if(!Gameplay() || !Gameplay()->Enabled)return;
+    if(UHearthwardSurvivalComponent::HasFailed(GetWorld()))
+    {
+        Cancel();if(!TravelDestination.IsNone())FinishTravel();IntroRemaining=0;
+        Feedback=TEXT("兄弟已无法继续，请载入保存节点");return;
+    }
     if(IntroRemaining>0)
     {
         IntroRemaining=FMath::Max(0.f,IntroRemaining-Delta);
@@ -287,7 +371,7 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
     }
     if(!TravelDestination.IsNone())
     {
-        if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) || TravelEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
+        if(TravelEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
         {FinishTravel();Feedback=TEXT("旅行已中止，进度或生存状态发生变化");return;}
         FVector Floor;auto* Source=StreamSource.IsValid()?StreamSource->FindComponentByClass<UWorldPartitionStreamingSourceComponent>():nullptr;
         if(Source && Source->IsStreamingCompleted())
@@ -311,7 +395,9 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
                 // All required landing points are checked before committing any actor or enemy health.
                 for(int32 I=0;I<TravelParticipants.Num();++I)
                 {
-                    auto* A=TravelParticipants[I].Get();A->SetActorLocation(Landings[I],false,nullptr,ETeleportType::TeleportPhysics);
+                    auto* A=TravelParticipants[I].Get();
+                    if(auto* Traversal=A->FindComponentByClass<UHearthwardTraversalComponent>())Traversal->CancelVault();
+                    A->SetActorLocation(Landings[I],false,nullptr,ETeleportType::TeleportPhysics);
                     if(auto* Survival=A->FindComponentByClass<UHearthwardSurvivalComponent>())Survival->CancelAction();
                     if(auto* Combat=A->FindComponentByClass<UHearthwardCombatComponent>())Combat->InterruptTravel();
                     if(auto* Action=A->FindComponentByClass<UHearthwardTimedActionComponent>())Action->InterruptAction();
@@ -342,9 +428,22 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
         }
         return;
     }
-    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return;
+    auto* Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>();
+    if(Clock->Suspended())return;
+    auto* G=Gameplay();
+    if(!PendingFlag.IsNone())
+    {
+        if(!Safe() || G->Health<ActionHealth || FVector::Dist2D(ActionPosition,Player()->GetActorLocation())>40 || ZoneOccupied(PendingFlag) || ActionEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
+        {Cancel();Feedback=TEXT("占旗已中断");}
+        else
+        {
+            const double Now=Clock->GetSnapshot().ActivePlaySeconds;
+            FlagRemaining=float(FMath::Max(0.,FlagCompleteAt-Now));
+            if(Now>=FlagCompleteAt){State.Flags.Add(PendingFlag);Cancel();Feedback=TEXT("此区已控制");}
+        }
+    }
     if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();
-    auto* G=Gameplay();auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+    auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
     State.ResolveUntriggered();
     if(auto* Combat=Player()->FindComponentByClass<UHearthwardCombatComponent>())for(const auto& Alarm:Combat->State.Alarms)
         if(Alarm.Value>GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds)State.RegisterReinforcement(Alarm.Key);
@@ -368,16 +467,10 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
         else if(!Camp->State.CampAt(A->GetActorLocation()).IsNone() && !G->InCombat())
         {if(Camp->RecordRescue(P.Id)){P.Stage=TEXT("arrived");Feedback=TEXT("族人已安全报到，人口与救援奖励已登记");}}
     }
-    if(!PendingFlag.IsNone())
-    {
-        if(!Safe() || G->Health<ActionHealth || FVector::Dist2D(ActionPosition,Player()->GetActorLocation())>40 || ZoneOccupied(PendingFlag) || ActionEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
-        {Cancel();Feedback=TEXT("占旗已中断");}
-        else if((FlagRemaining-=.4f)<=0){State.Flags.Add(PendingFlag);Cancel();Feedback=TEXT("此区已控制");}
-    }
     if(!State.Victory && State.ReadyForVictory())
     {
         FVector Floor;if(Ground(Position(TEXT("hometown")),Floor) && Camp->ReclaimHometown(TEXT("campaign_victory"),Floor+FVector(0,0,100)))
-        {State.Victory=true;State.Phase=TEXT("reclaimed");G->Discovered.Add(TEXT("hometown"));Feedback=TEXT("故乡已夺回。仓储、床位和篝火已开放；未完成的救援与旧物仍然保留。");}
+        {State.Victory=true;State.Phase=TEXT("reclaimed");G->Discovered.Add(TEXT("hometown"));G->Activated.Add(TEXT("hometown"));Feedback=TEXT("故乡已夺回。仓储、床位和篝火已开放；未完成的救援与旧物仍然保留。");}
     }
 }
 

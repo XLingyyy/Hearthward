@@ -1,0 +1,15 @@
+--- a/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
+@@ -297,6 +297,12 @@
+     Memory.WorkingGoal=Goal;
+     if(!ReasonCode.IsEmpty())
+     {
++        if(ReasonCode==TEXT("TARGET_REQUIRED") && (Goal.Intent==TEXT("nature_care") || Goal.Intent==TEXT("nature_collect")))
++        {
++            NPCLine=Goal.Intent==TEXT("nature_care")?TEXT("请指认要照顾的地块或栏舍，并明确要做的动作。"):
++                TEXT("请指认要采集的资源或栏舍，再核对任务卡。");
++            Status=TEXT("等待补充信息");LastAppliedIntent=TEXT("clarify");Memory.AddClarification(Input,NPCLine);return;
++        }
+         if(ReasonCode==TEXT("UNRESOLVED_COLLECTION_SOURCE") || ReasonCode==TEXT("UNRESOLVED_COLLECTION_LOCATION"))
+         {
+             NPCLine=ReasonCode==TEXT("UNRESOLVED_COLLECTION_SOURCE")?TEXT("要从哪里取得，再交到哪里？请明确是新采集还是搬运已有物品。"):

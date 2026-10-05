@@ -1,0 +1,12 @@
+--- a/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
++++ b/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
+@@ -148,6 +148,9 @@
+     auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+     GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+     const auto Cleanup=[&]() { World->EndPlay(EEndPlayReason::Quit);GEngine->DestroyWorldContext(World);World->DestroyWorld(false); };
++    World->InitializeActorsForPlay(FURL());
++    if(!TestTrue(TEXT("Normal world initialization permits actor delegate callbacks"),World->AreActorsInitialized()))
++    {Cleanup();return false;}
+     FActorSpawnParameters Params;
+     Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+     auto* Hero=World->SpawnActor<AHearthwardCharacter>(FVector(0,0,200),FRotator::ZeroRotator,Params);

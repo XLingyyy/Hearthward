@@ -1,0 +1,422 @@
+{
+  "status": "QA_ONLY_NOT_RUN",
+  "source": "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+  "baseline_origin": "saved semantic-branch-budget-candidate.patch old side; identical to saved semantic-full-json-candidate.patch new side",
+  "before_utf8_bytes": 2722,
+  "after_utf8_bytes": 2172,
+  "reported_input_budget": 3328,
+  "reports": [
+    {
+      "report": "vulkan-original-budget-guard-diagnostic-10",
+      "summary": {
+        "case_count": 10,
+        "raw_correct": 7,
+        "guarded_count": 3,
+        "guarded_raw_correct": 0,
+        "clear_count": 7,
+        "clear_e2e_correct": 7,
+        "execution_count": 6,
+        "execution_correct": 6,
+        "unearned_item_cases": 0,
+        "boundary_count": 0,
+        "boundary_correct": 0
+      },
+      "min_input_tokens": 3016,
+      "max_input_tokens": 3146,
+      "full_relevant_count": 10,
+      "single_generation_count": 10,
+      "no_drop_count": 10,
+      "case_verdicts": [
+        {
+          "id": "C01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "collect"
+        },
+        {
+          "id": "C08",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "craft"
+        },
+        {
+          "id": "C09",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "craft"
+        },
+        {
+          "id": "C18",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "store"
+        },
+        {
+          "id": "C19",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "fetch"
+        },
+        {
+          "id": "C27",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "receive"
+        },
+        {
+          "id": "C40",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "cancel"
+        },
+        {
+          "id": "A01",
+          "raw_pass": false,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "AMBIGUOUS_TARGET",
+          "intent": "collect"
+        },
+        {
+          "id": "U01",
+          "raw_pass": false,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "UNRESOLVED_CONSTRAINT",
+          "intent": "collect"
+        },
+        {
+          "id": "U03",
+          "raw_pass": false,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "UNRESOLVED_CONSTRAINT",
+          "intent": "collect"
+        }
+      ]
+    },
+    {
+      "report": "vulkan-semantic-branch-budget-diagnostic-10",
+      "summary": {
+        "case_count": 10,
+        "raw_correct": 8,
+        "guarded_count": 3,
+        "guarded_raw_correct": 2,
+        "clear_count": 7,
+        "clear_e2e_correct": 6,
+        "execution_count": 6,
+        "execution_correct": 5,
+        "unearned_item_cases": 0,
+        "boundary_count": 0,
+        "boundary_correct": 0
+      },
+      "min_input_tokens": 3057,
+      "max_input_tokens": 3187,
+      "full_relevant_count": 10,
+      "single_generation_count": 10,
+      "no_drop_count": 10,
+      "case_verdicts": [
+        {
+          "id": "C01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "collect"
+        },
+        {
+          "id": "C08",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "craft"
+        },
+        {
+          "id": "C09",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "craft"
+        },
+        {
+          "id": "C18",
+          "raw_pass": false,
+          "e2e_pass": false,
+          "execution_pass": false,
+          "reason": "UNRESOLVED_CONSTRAINT",
+          "intent": "receive"
+        },
+        {
+          "id": "C19",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "fetch"
+        },
+        {
+          "id": "C27",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "receive"
+        },
+        {
+          "id": "C40",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "cancel"
+        },
+        {
+          "id": "A01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        },
+        {
+          "id": "U01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "refuse"
+        },
+        {
+          "id": "U03",
+          "raw_pass": false,
+          "e2e_pass": false,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        }
+      ]
+    },
+    {
+      "report": "vulkan-neutral-store-priority-diagnostic-10",
+      "summary": {
+        "case_count": 10,
+        "raw_correct": 7,
+        "guarded_count": 3,
+        "guarded_raw_correct": 2,
+        "clear_count": 7,
+        "clear_e2e_correct": 5,
+        "execution_count": 6,
+        "execution_correct": 4,
+        "unearned_item_cases": 0,
+        "boundary_count": 0,
+        "boundary_correct": 0
+      },
+      "min_input_tokens": 3127,
+      "max_input_tokens": 3257,
+      "full_relevant_count": 10,
+      "single_generation_count": 10,
+      "no_drop_count": 10,
+      "case_verdicts": [
+        {
+          "id": "C01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "collect"
+        },
+        {
+          "id": "C08",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "craft"
+        },
+        {
+          "id": "C09",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "craft"
+        },
+        {
+          "id": "C18",
+          "raw_pass": false,
+          "e2e_pass": false,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        },
+        {
+          "id": "C19",
+          "raw_pass": false,
+          "e2e_pass": false,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        },
+        {
+          "id": "C27",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "receive"
+        },
+        {
+          "id": "C40",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "cancel"
+        },
+        {
+          "id": "A01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        },
+        {
+          "id": "U01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "refuse"
+        },
+        {
+          "id": "U03",
+          "raw_pass": false,
+          "e2e_pass": false,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        }
+      ]
+    },
+    {
+      "report": "vulkan-world-precondition-diagnostic-10",
+      "summary": {
+        "case_count": 10,
+        "raw_correct": 7,
+        "guarded_count": 3,
+        "guarded_raw_correct": 2,
+        "clear_count": 7,
+        "clear_e2e_correct": 5,
+        "execution_count": 6,
+        "execution_correct": 4,
+        "unearned_item_cases": 0,
+        "boundary_count": 0,
+        "boundary_correct": 0
+      },
+      "min_input_tokens": 3144,
+      "max_input_tokens": 3274,
+      "full_relevant_count": 10,
+      "single_generation_count": 10,
+      "no_drop_count": 10,
+      "case_verdicts": [
+        {
+          "id": "C01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "collect"
+        },
+        {
+          "id": "C08",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "craft"
+        },
+        {
+          "id": "C09",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "craft"
+        },
+        {
+          "id": "C18",
+          "raw_pass": false,
+          "e2e_pass": false,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        },
+        {
+          "id": "C19",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": true,
+          "reason": "",
+          "intent": "fetch"
+        },
+        {
+          "id": "C27",
+          "raw_pass": false,
+          "e2e_pass": false,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        },
+        {
+          "id": "C40",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "cancel"
+        },
+        {
+          "id": "A01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        },
+        {
+          "id": "U01",
+          "raw_pass": true,
+          "e2e_pass": true,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "refuse"
+        },
+        {
+          "id": "U03",
+          "raw_pass": false,
+          "e2e_pass": false,
+          "execution_pass": false,
+          "reason": "",
+          "intent": "clarify"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+--- a/docs/qa/TASK-070/probe_imported_weapons.py
++++ b/docs/qa/TASK-070/probe_imported_weapons.py
+@@ -222,12 +222,28 @@
+     manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8-sig"))
+     output_path = Path(output_path) if output_path else Path(unreal.Paths.project_saved_dir()) / "Task070" / "equipment-import-probe.json"
+     subsystem = unreal.get_editor_subsystem(unreal.StaticMeshEditorSubsystem)
++    world = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
++    texture_reads_before_wait = {}
++    loaded_textures = []
++    for entry in manifest["imports"]:
++        for name in ("Color", "Normal", "Roughness", "Metallic"):
++            package = entry["destination"] + "/" + name
++            texture = unreal.load_asset(package)
++            if isinstance(texture, unreal.Texture2D):
++                loaded_textures.append(texture)
++                texture_reads_before_wait[package] = [texture.blueprint_get_size_x(), texture.blueprint_get_size_y()]
++    unreal.SystemLibrary.execute_console_command(world, "Editor.AsyncTextureCompilationFinishAll")
+     report = {
+         "captured_utc": datetime.now(timezone.utc).isoformat(),
+         "engine_version": unreal.SystemLibrary.get_engine_version(),
+         "project_dir": unreal.Paths.project_dir(),
+         "method": "public Unreal Python read-only imported-asset probe; no PIE, input, hand attachment, render or Owner style acceptance",
+         "manifest": str(Path(manifest_path).resolve()),
++        "texture_compilation_wait": {
++            "method": "Editor.AsyncTextureCompilationFinishAll after preloading all eight project Texture2D objects; no property changes or asset saves",
++            "reads_before_wait": texture_reads_before_wait,
++            "note": "Blueprint_GetSize reads platform data and can return the async default placeholder before this wait; Dimensions tag records imported source logical size, built size records platform target",
++        },
+         "pieces": [],
+     }
+     for entry in manifest["imports"]:
+@@ -253,6 +269,9 @@
+                 else:
+                     record["details"] = {
+                         "size_pixels": [asset.blueprint_get_size_x(), asset.blueprint_get_size_y()],
++                        "size_read_method": "Blueprint_GetSizeX/Y after registered async texture compilation finishes",
++                        "source_dimensions_registry_tag": {str(key): str(value) for key, value in unreal.EditorAssetLibrary.get_tag_values(package).items()}.get("Dimensions"),
++                        "built_size_pixels": vector(asset.blueprint_get_built_texture_size()),
+                         "srgb": bool(asset.get_editor_property("srgb")),
+                         "compression_settings": str(asset.get_editor_property("compression_settings")),
+                         "flip_green_channel": bool(asset.get_editor_property("flip_green_channel")),

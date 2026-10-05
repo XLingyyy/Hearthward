@@ -1,0 +1,63 @@
+--- a/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
++++ b/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
+@@ -382,10 +382,10 @@
+ 
+ bool FStoneAxePhaseAndBlade055Test::RunTest(const FString&)
+ {
+-    for(const int32 Case:{0,1,2,3})
+-    {
+-        const int32 FPS=Case==0?30:1;
+-        const bool Moving=Case==2,StationaryNegative=Case==3;
++    for(const int32 Case:{0,1,2,3,4})
++    {
++        const int32 FPS=Case==0 || Case==4?30:1;
++        const bool Moving=Case==2,StationaryNegative=Case==3,BlockingWall=Case==4;
+         UWorld::InitializationValues Values;
+         Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+         auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+@@ -425,10 +425,23 @@
+         Mesh->TickAnimation(.2f,false);Mesh->RefreshBoneTransforms();
+         auto* Enemy=World->SpawnActor<AActor>();auto* Body=NewObject<UBoxComponent>(Enemy);
+         Enemy->AddInstanceComponent(Body);Enemy->SetRootComponent(Body);
+-        Body->SetBoxExtent(Case>=2?FVector(3,3,3):FVector(30,25,45));Body->ComponentTags.Add(TEXT("body"));
++        Body->SetBoxExtent(Case==2 || Case==3?FVector(3,3,3):FVector(30,25,45));Body->ComponentTags.Add(TEXT("body"));
+         Body->SetCollisionEnabled(ECollisionEnabled::QueryOnly);Body->SetCollisionResponseToAllChannels(ECR_Ignore);
+         Body->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);Body->RegisterComponent();
+-        Enemy->SetActorLocation(Case>=2?FVector(72,30,150):FVector(110,-35,125));
++        Enemy->SetActorLocation(Case==2 || Case==3?FVector(72,30,150):FVector(110,-35,125));
++        if(BlockingWall)
++        {
++            auto* Wall=World->SpawnActor<AActor>();auto* Collision=NewObject<UBoxComponent>(Wall);
++            Wall->AddInstanceComponent(Collision);Wall->SetRootComponent(Collision);
++            Collision->SetBoxExtent(FVector(1,35,65));Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
++            Collision->SetCollisionResponseToAllChannels(ECR_Ignore);Collision->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
++            Collision->RegisterComponent();Wall->SetActorLocation(FVector(74,-35,145));
++            FCollisionQueryParams Query(SCENE_QUERY_STAT(StoneAxe055ActualBlockingWall),false,Hero);
++            FHitResult WallHit;
++            TestTrue(TEXT("The fixed physical wall actually blocks visibility in front of the same body box"),
++                World->LineTraceSingleByChannel(WallHit,FVector(60,-35,145),FVector(110,-35,145),ECC_Visibility,Query)
++                && WallHit.GetActor()==Wall);
++        }
+         auto* Target=NewObject<UHearthwardCombatTargetComponent>(Enemy);Enemy->AddInstanceComponent(Target);
+         Target->Id=TEXT("stone_axe_physical_test");Target->Health=Target->MaximumHealth=100;Target->RegisterComponent();
+         Hero->Gameplay->Opponents.Add(Target->Id,Target->Health);
+@@ -452,7 +465,7 @@
+                 Mesh->TickAnimation(Delta,false);Mesh->RefreshBoneTransforms();Advanced+=Delta;
+             }
+         };
+-        if(FPS==30)
++        if(Case==0)
+         {
+             AdvanceTo(.35);
+             FTransform Expected;
+@@ -476,8 +489,8 @@
+             AdvanceTo(.55);
+         }
+         else AdvanceTo(1.);
+-        const float ExpectedHealth=InitialHealth-(StationaryNegative?0:Power);
+-        const double ExpectedWear=CurrentWear-(StationaryNegative?0:1.);
++        const float ExpectedHealth=InitialHealth-(StationaryNegative || BlockingWall?0:Power);
++        const double ExpectedWear=CurrentWear-(StationaryNegative || BlockingWall?0:1.);
+         TestTrue(FString::Printf(TEXT("Physical blade uses real pose and previous/current world movement at %dfps case%d: health=%.3f expected=%.3f actualPower=%.3f"),FPS,Case,Target->Health,ExpectedHealth,Power),
+             FMath::IsNearlyEqual(Target->Health,ExpectedHealth,.001f));
+         TestEqual(TEXT("Current weapon wear follows an actual physical contact"),Bag->FindInstance(Axes[0])->Durability,ExpectedWear);

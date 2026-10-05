@@ -287,7 +287,7 @@ void UHearthwardScreenWidget::ComposeSettings()
     {
         const FSettingRow& Row=Rows[I];
         const int32 Y=190+(I-Scroll)*78;
-        Element(TEXT("settingsRow"),TEXT(""),FVector2D(677,Y),FVector2D(674,72),18,FString(TEXT("settings.select:"))+Row.Key,TEXT(""),SettingsSelection==Row.Key);
+        Element(TEXT("settingsRow"),ReadableLayout()?Row.Label+TEXT(" · ")+Row.Value:FString(),FVector2D(677,Y),FVector2D(674,72),18,FString(TEXT("settings.select:"))+Row.Key,TEXT(""),SettingsSelection==Row.Key);
         Element(TEXT("text"),Row.Label,FVector2D(702,Y+10),FVector2D(320,61),23);
         if(Category==TEXT("键位"))
         {

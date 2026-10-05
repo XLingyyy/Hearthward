@@ -1,0 +1,265 @@
+--- a/docs/qa/TASK-072/run_standalone_rc_smoke_proposal.py
++++ b/docs/qa/TASK-072/run_standalone_rc_smoke_proposal.py
+@@ -1,5 +1,7 @@
+ """Root-only one-shot Standalone public-reference smoke. No model requests or frame credit."""
+ import argparse
++import csv
++import math
+ import json
+ import os
+ import socket
+@@ -14,12 +16,20 @@
+ parser.add_argument('--ue-root', type=Path, default=Path('G:/UnrealEngine/UE_5.8'))
+ parser.add_argument('--label', default='standalone-public-reference-smoke')
+ parser.add_argument('--timeout', type=int, default=240)
++parser.add_argument('--model-csv', action='store_true', help='Opt in to one normal-new collect request and at least 60 s of engine CSV frames.')
++parser.add_argument('--backend', choices=['cpu', 'vulkan'], default='cpu')
++parser.add_argument('--bundle', type=Path, default=Path('G:/GameFactory/Hearthward/Runtime/LocalAI'))
+ args = parser.parse_args()
+ if not 0 < args.timeout <= 300:
+     parser.error('--timeout must be 1..300 seconds')
+ project = args.project.resolve()
+ if not project.is_file():
+     parser.error('--project must name an existing .uproject')
++if args.model_csv:
++    args.bundle = args.bundle.resolve()
++    for required in [args.bundle/'models/Qwen3.5-4B-Q4_K_M.gguf', args.bundle/'bin'/args.backend/'llama-server.exe']:
++        if not required.is_file():
++            parser.error('Prepared existing bundle file is missing: '+str(required))
+ configured = os.environ.get('HEARTHWARD_FACTORY_ROOT')
+ candidates = [Path(configured)] if configured else []
+ candidates.extend(project.parent.parents)
+@@ -37,8 +47,10 @@
+     port = port_probe.getsockname()[1]
+ ue = UEClient(project_path=project, ue_root=args.ue_root, host='127.0.0.1', port=port)
+ opener = request.build_opener(request.ProxyHandler({}))
+-deadline = time.monotonic()+args.timeout
++overall_deadline = time.monotonic()+args.timeout
++deadline = overall_deadline-(10 if args.model_csv else 0)
+ pid = None
++csv_started = False
+ report = {'pool': pool, 'label': args.label, 'output': str(out), 'port': port,
+           'status': 'NOT_RUN', 'stage': 'launch', 'timeout_seconds': args.timeout,
+           'method': 'UEClient-owned UnrealEditor -game / normal Bootstrap ExecuteAction new / public RC UFUNCTIONs and HUD.Screen READ_ACCESS',
+@@ -124,6 +136,12 @@
+     '/Script/Hearthward.HearthwardSaveSubsystem': ['IsNaturalWorldEnabled', 'GetCampaignId'],
+     '/Script/Hearthward.HearthwardLocalAISubsystem': ['IsBusy', 'IsModelReady', 'GetGenerationCalls', 'GetServerProcessId'],
+ }
++if args.model_csv:
++    allowed_calls['/Script/Engine.KismetSystemLibrary'] += ['ExecuteConsoleCommand', 'GetProjectSavedDirectory', 'GetConsoleVariableStringValue']
++    allowed_calls['/Script/Engine.GameplayStatics'] += ['IsGamePaused']
++    allowed_calls['/Script/Hearthward.HearthwardCompanionFixture'] = ['CanCommunicate']
++    allowed_calls['/Script/Hearthward.HearthwardInventoryComponent'] = ['GetItemCount']
++    allowed_calls['/Script/Hearthward.HearthwardLocalAISubsystem'] += ['SubmitPlayerText', 'GetStatus', 'GetLastInput', 'GetLastStructuredResult', 'GetLastLatencySeconds', 'GetInputTokens', 'GetOutputTokens', 'GetReasonCode', 'GetLastAppliedIntent', 'HasCandidate', 'GetCandidate', 'GetLastFilteredContext']
+ policy_ini = out/'RemoteControl.ini'
+ policy_lines = ['[/Script/RemoteControlCommon.RemoteControlSettings]',
+                 'bAllowAnyRemoteFunctionCall=False', 'bAutoStartWebSocketServer=False',
+@@ -142,7 +160,10 @@
+         '-ini:RemoteControl:[/Script/RemoteControlCommon.RemoteControlSettings]:RemoteControlHttpServerPort='+str(port),
+         '-ini:RemoteControl:[/Script/RemoteControlCommon.RemoteControlSettings]:bAutoStartWebSocketServer=False',
+         '-UserDir='+str(out/'User'), '-AbsLog='+str(out/'engine.log'),
+-        '-windowed', '-ResX=1920', '-ResY=1080', '-NoSplash']+allow_args)
++        '-windowed', '-ResX=1920', '-ResY=1080', '-NoSplash']+allow_args+([
++            '-dx12', '-ForceRes', '-NoVSync', '-csvCompression=0',
++            '-HearthwardAIBackend='+args.backend, '-HearthwardAIGpuLayers=16',
++            '-HearthwardAIBundlePath='+str(args.bundle)] if args.model_csv else []))
+     pid = launch.get('payload', {}).get('process_id')
+     (out/'launch.json').write_text(json.dumps(launch, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+     report.update(process_id=pid, status='RUNNING')
+@@ -252,9 +273,190 @@
+     if report['observations']['busy'] is not False or report['observations']['ready'] is not False or report['observations']['generation_calls'] != 0 or report['observations']['server_process_id'] != 0:
+         raise RuntimeError('Fresh reference-only smoke observed unexpected model activity')
+     report.update(status='REFERENCE_SMOKE_PASS', stage='complete')
++    if args.model_csv:
++        report['stage'] = 'model_csv_preconditions'
++        probe = {'scene': 'normal_new_initial_scene_dialogue_fixed_view', 'backend_requested': args.backend,
++                 'bundle': str(args.bundle), 'gpu_layers_requested': 16, 'public_submit_calls': 0,
++                 'text': '采集1份木材送入营地仓库', 'csv_minimum_seconds': 60,
++                 'warm_p95': 'NOT_RUN', 'ttft': 'NOT_RUN', 'ui_first_paint_latency': 'NOT_RUN',
++                 'process_memory_vram_available_ram': 'NOT_RUN', 'task072_acceptance': 'NOT_EVALUATED'}
++        report['model_csv'] = probe
++        companion = report['references']['companions'][0]
++        if call('probe.can_communicate', companion, 'CanCommunicate', {'Speaker': natural['pawn']}).get('ReturnValue') is not True:
++            raise RuntimeError('Normal-new companion is not actually communicable; no fixture relocation')
++        source = ref(http('probe.public_source_read', '/remote/object/property',
++                          {'objectPath': companion, 'propertyName': 'Source', 'access': 'READ_ACCESS'}).get('Source'), 'probe.source')
++        camp = ref(http('probe.public_camp_read', '/remote/object/property',
++                        {'objectPath': companion, 'propertyName': 'Camp', 'access': 'READ_ACCESS'}).get('Camp'), 'probe.camp')
++        source_wood = call('probe.source_before', source, 'GetItemCount', {'ItemId': 'wood'}).get('ReturnValue')
++        if type(source_wood) is not int or source_wood < 1:
++            raise RuntimeError('Actual normal-new Source has no wood for the explicit request')
++        probe.update(source=source, camp=camp, source_wood_before=source_wood)
++        if call('probe.dialogue', natural['screen'], 'ExecuteAction', {'Action': 'page:dialogue'}).get('ReturnValue') is not True:
++            raise RuntimeError('Normal dialogue action rejected')
++        if call('probe.page', natural['screen'], 'GetPage').get('ReturnValue') != 'dialogue':
++            raise RuntimeError('Normal dialogue page is not open')
++        if call('probe.paused_before', gameplay, 'IsGamePaused', {'WorldContextObject': natural['pawn']}).get('ReturnValue') is not False:
++            raise RuntimeError('Normal dialogue paused the world; no meaningful joint frame sample')
++        settings = [('sg.'+name+'Quality', 3) for name in ['ViewDistance', 'AntiAliasing', 'Shadow', 'GlobalIllumination', 'Reflection', 'PostProcess', 'Texture', 'Effects', 'Foliage', 'Shading', 'Landscape']]
++        settings += [('r.ScreenPercentage', 100), ('r.DynamicRes.OperationMode', 0), ('t.MaxFPS', 0), ('r.VSync', 0), ('r.AntiAliasingMethod', 2), ('r.Shadow.Virtual.Enable', 1), ('r.Nanite', 1)]
++        probe['render_cvars'] = {}
++        for variable, expected in settings:
++            call('probe.set.'+variable, system, 'ExecuteConsoleCommand',
++                 {'WorldContextObject': natural['pawn'], 'SpecificPlayer': natural['controller'], 'Command': variable+' '+str(expected)})
++            actual = call('probe.read.'+variable, system, 'GetConsoleVariableStringValue', {'VariableName': variable}).get('ReturnValue')
++            probe['render_cvars'][variable] = actual
++            if not isinstance(actual, str) or float(actual) != expected:
++                raise RuntimeError('Approved render setting did not read back: '+variable+'='+repr(actual))
++        report['stage'] = 'model_csv_settle'
++        probe['excluded_before_capture_seconds'] = 10
++        settle_end = time.monotonic()+10
++        while time.monotonic() < settle_end:
++            if call('probe.settle.loading', loading, 'IsLoading').get('ReturnValue') is not False:
++                raise RuntimeError('Normal loading resumed before capture; sample not started')
++            time.sleep(1)
++        saved = call('probe.actual_saved_directory', system, 'GetProjectSavedDirectory').get('ReturnValue')
++        if not isinstance(saved, str) or not Path(saved).is_absolute():
++            raise RuntimeError('Public Saved directory is not an absolute path')
++        csv_path = Path(saved)/'Profiling/CSV'/('Task072-'+pool+'.csv')
++        if not csv_path.resolve().is_relative_to(out.resolve()):
++            raise RuntimeError('UserDir did not isolate the actual CSV output under this session')
++        probe['csv'] = str(csv_path)
++        report['stage'] = 'model_csv_start'
++        for command in ['CsvProfile STARTFILE=Task072-'+pool, 'CsvProfile START']:
++            call('probe.csv_command', system, 'ExecuteConsoleCommand',
++                 {'WorldContextObject': natural['pawn'], 'SpecificPlayer': natural['controller'], 'Command': command})
++        csv_started = True
++        file_start_deadline = min(deadline, time.monotonic()+10)
++        while not csv_path.is_file():
++            if time.monotonic() >= file_start_deadline:
++                raise TimeoutError('CSV START returned without creating the unique capture file')
++            time.sleep(.1)
++        capture_observed_at = time.monotonic()
++        report['stage'] = 'model_csv_single_submit'
++        submitted_at = time.monotonic()
++        probe['public_submit_calls'] = 1
++        submitted = call('probe.single_submit', ai, 'SubmitPlayerText',
++                         {'Speaker': natural['pawn'], 'Companion': companion, 'Text': probe['text']}).get('ReturnValue')
++        probe['submit_returned_after_seconds'] = time.monotonic()-submitted_at
++        if submitted is not True:
++            raise RuntimeError('Actual public SubmitPlayerText rejected; no retries or replacement request')
++        report['stage'] = 'model_csv_joint_sample'
++        ready_observed_at = None
++        terminal_observed_at = None
++        busy_observed = False
++        while True:
++            state = {field: call('probe.poll.'+field, ai, function).get('ReturnValue')
++                     for field, function in [('busy', 'IsBusy'), ('ready', 'IsModelReady'), ('generation_calls', 'GetGenerationCalls'), ('status', 'GetStatus')]}
++            observed_at = time.monotonic()
++            if type(state['busy']) is not bool or type(state['ready']) is not bool or type(state['generation_calls']) is not int:
++                raise RuntimeError('Public AI progress getter returned an unexpected type')
++            if state['generation_calls'] > 1:
++                raise RuntimeError('More than one actual generation observed for the single request')
++            busy_observed = busy_observed or state['busy']
++            if state['ready'] and ready_observed_at is None:
++                ready_observed_at = observed_at
++            if not state['busy'] and terminal_observed_at is None:
++                terminal_observed_at = observed_at
++            state.update(submission_elapsed_seconds=observed_at-submitted_at, capture_elapsed_seconds=observed_at-capture_observed_at)
++            with (out/'model-progress.jsonl').open('a', encoding='utf-8') as journal:
++                journal.write(json.dumps(state, ensure_ascii=False)+'\n')
++            report['model_request_count'] = state['generation_calls']
++            if call('probe.poll.loading', loading, 'IsLoading').get('ReturnValue') is not False:
++                raise RuntimeError('Loading occurred inside the joint sample; no silent frame exclusion')
++            if call('probe.poll.page', natural['screen'], 'GetPage').get('ReturnValue') != 'dialogue':
++                raise RuntimeError('Scene page changed during sample')
++            if call('probe.poll.paused', gameplay, 'IsGamePaused', {'WorldContextObject': natural['pawn']}).get('ReturnValue') is not False:
++                raise RuntimeError('World became paused during joint sample')
++            if terminal_observed_at is not None and observed_at-capture_observed_at >= 61:
++                break
++            time.sleep(1)
++        probe.update(busy_observed=busy_observed,
++                     cold_ready_observed_seconds=None if ready_observed_at is None else ready_observed_at-submitted_at,
++                     full_ue_terminal_observed_seconds=terminal_observed_at-submitted_at,
++                     poll_interval_seconds=1, model_request_count=state['generation_calls'])
++        report['stage'] = 'model_csv_stop'
++        call('probe.csv_stop', system, 'ExecuteConsoleCommand',
++             {'WorldContextObject': natural['pawn'], 'SpecificPlayer': natural['controller'], 'Command': 'CsvProfile STOP'})
++        csv_started = False
++        file_end_deadline = min(deadline, time.monotonic()+30)
++        while True:
++            try:
++                content = csv_path.read_text(encoding='utf-8-sig')
++            except PermissionError:
++                content = ''
++            if '[hasheaderrowatend]' in content.lower():
++                break
++            if time.monotonic() >= file_end_deadline:
++                raise TimeoutError('CSV STOP has not completed final metadata/header; no partial-file frame credit')
++            time.sleep(.5)
++        report['stage'] = 'model_csv_terminal_results'
++        terminal = {field: call('probe.terminal.'+field, ai, function).get('ReturnValue')
++                    for field, function in [('last_input', 'GetLastInput'), ('raw', 'GetLastStructuredResult'), ('submission_to_response_seconds', 'GetLastLatencySeconds'), ('input_tokens', 'GetInputTokens'), ('output_tokens', 'GetOutputTokens'), ('reason', 'GetReasonCode'), ('applied_intent', 'GetLastAppliedIntent'), ('has_candidate', 'HasCandidate'), ('candidate', 'GetCandidate'), ('filtered_context', 'GetLastFilteredContext'), ('server_process_id', 'GetServerProcessId')]}
++        probe['terminal'] = terminal
++        candidate = terminal['candidate'] if isinstance(terminal['candidate'], dict) else {}
++        probe['expected_collect_candidate'] = (terminal['has_candidate'] is True and terminal['reason'] == '' and terminal['applied_intent'] == 'proposal'
++                                               and candidate.get('Intent') == 'collect' and candidate.get('Item') == 'wood'
++                                               and candidate.get('Quantity') == 1 and candidate.get('QuantityMode') == 'additional_acquired' and candidate.get('SourceRef') == 'S1')
++        probe['source_wood_after'] = call('probe.source_after', source, 'GetItemCount', {'ItemId': 'wood'}).get('ReturnValue')
++        probe['unconfirmed_source_unchanged'] = probe['source_wood_after'] == source_wood
++        rows = list(csv.reader(content.splitlines()))
++        frame_index = rows[0].index('FrameTime')
++        frames = []
++        for row_number, row in enumerate(rows[1:], 1):
++            if not row:
++                continue
++            if row[0] == 'EVENTS' and row[:len(rows[0])] == rows[0]:
++                continue
++            if row_number == len(rows)-1 and row[:3] == ['[HasHeaderRowAtEnd]', '1', '[EventTimestamps]'] and len(row) >= 4 and row[3] in ('0', '1'):
++                continue
++            if len(row) <= frame_index:
++                raise ValueError('Final CSV data row is missing FrameTime; no silent frame exclusion')
++            value = float(row[frame_index])
++            if not math.isfinite(value) or value < 0:
++                raise ValueError('Final CSV has an invalid numeric FrameTime; no silent numeric frame exclusion')
++            frames.append(value)
++        samples = sorted(frames)
++        if not samples:
++            raise ValueError('Final engine CSV has no numeric FrameTime samples')
++        p99 = samples[min(len(samples)-1, int((len(samples)-1)*.99))]
++        slowest = samples[-max(1, len(samples)//100):]
++        one_percent_low = 1000/(sum(slowest)/len(slowest))
++        hitch_fraction = sum(value > 50 for value in samples)/len(samples)
++        frame_report = {'total_frames': len(samples), 'dropped_frames': 0, 'measured_seconds': sum(samples)/1000,
++                        'p99_frame_ms': p99, 'one_percent_low_fps': one_percent_low,
++                        'frames_over_50ms': sum(value > 50 for value in samples), 'fraction_over_50ms': hitch_fraction,
++                        'max_frame_ms': max(samples), 'average_fps': 1000/(sum(samples)/len(samples)),
++                        'distribution': 'raw ordered engine CSV FrameTime preserved; all captured numeric rows included without numeric frame exclusions',
++                        'diagnostic_frame_target_pass': p99 <= 16.67 and one_percent_low >= 60 and hitch_fraction <= .001}
++        probe['frame_report'] = frame_report
++        (out/'frame-report.json').write_text(json.dumps(frame_report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
++        if frame_report['measured_seconds'] < 60:
++            raise RuntimeError('Engine CSV contains less than 60 actual seconds; host wall time is insufficient evidence')
++        if state['generation_calls'] != 1 or ready_observed_at is None or not busy_observed:
++            raise RuntimeError('Joint capture did not observe exactly one actual generation with real busy/ready state')
++        if terminal['last_input'] != probe['text'] or not terminal['raw']:
++            raise RuntimeError('Single actual generation did not produce a parsed reply bound to this original request')
++        if not probe['unconfirmed_source_unchanged']:
++            raise RuntimeError('Source changed before any confirmation; preserve actual probe failure')
++        report.update(status='MODEL_CSV_CAPTURE_COMPLETE', performance='ONE_SCENE_DIAGNOSTIC_ONLY', stage='complete')
+ except Exception as exc:
+     report.update(status='FAILED', error=repr(exc))
+ finally:
++    deadline = overall_deadline
++    if args.model_csv and report['references'].get('natural'):
++        context = report['references']['natural']
++        if csv_started:
++            try:
++                call('cleanup.csv_stop', system, 'ExecuteConsoleCommand',
++                     {'WorldContextObject': context['pawn'], 'SpecificPlayer': context['controller'], 'Command': 'CsvProfile STOP'})
++            except Exception as exc:
++                report['cleanup_csv_stop_error'] = repr(exc)
++        try:
++            report['normal_quit_return'] = call('cleanup.normal_quit', context['screen'], 'ExecuteAction', {'Action': 'quit'})
++        except Exception as exc:
++            report['normal_quit_error'] = repr(exc)
++        time.sleep(1)
+     stopped = {'ok': False, 'reason': 'No owned launched PID'}
+     if pid:
+         try:
+@@ -266,4 +468,4 @@
+     report['process_exit_verified'] = 'NOT_VERIFIED_BY_UECLIENT'
+     write_report()
+     print(json.dumps(report, ensure_ascii=False), flush=True)
+-raise SystemExit(0 if report['status'] == 'REFERENCE_SMOKE_PASS' and report['stop_request_ok'] else 1)
++raise SystemExit(0 if report['status'] in ('REFERENCE_SMOKE_PASS', 'MODEL_CSV_CAPTURE_COMPLETE') and report['stop_request_ok'] else 1)

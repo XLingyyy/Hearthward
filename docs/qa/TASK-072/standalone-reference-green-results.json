@@ -1,0 +1,114 @@
+{
+  "pool": "1d8b6d41-3f2e-450f-aa59-7db42d2b1815",
+  "label": "standalone-reference-saved-array",
+  "output": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-1d8b6d41-3f2e-450f-aa59-7db42d2b1815",
+  "port": 63289,
+  "status": "REFERENCE_SMOKE_PASS",
+  "stage": "complete",
+  "timeout_seconds": 240,
+  "method": "UEClient-owned UnrealEditor -game / normal Bootstrap ExecuteAction new / public RC UFUNCTIONs and HUD.Screen READ_ACCESS",
+  "acceptance": "NOT_EVALUATED",
+  "performance": "NOT_RUN",
+  "model_request_count": 0,
+  "model_parameter_changes": false,
+  "actor_position_changes": false,
+  "bootstrap_seed_attempt": {
+    "path": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap",
+    "source": "requested map asset object path; unverified until actual pawn/world returned",
+    "validated": true,
+    "engine_path_attempt": null
+  },
+  "references": {
+    "bootstrap": {
+      "pawn": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.HearthwardCharacter_0",
+      "level": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel",
+      "world": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap",
+      "current_level": "L_Bootstrap",
+      "controller": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.PlayerController_0",
+      "hud": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.HearthwardHUD_0",
+      "screen": "/Engine/Transient.GameEngine_0:GameInstance_0.HearthwardScreenWidget_0"
+    },
+    "game_instance": "/Engine/Transient.GameEngine_0:GameInstance_0",
+    "natural": {
+      "pawn": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCharacter_0",
+      "level": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel",
+      "world": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds",
+      "current_level": "L_HearthwardWilds",
+      "controller": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.PlayerController_0",
+      "hud": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardHUD_0",
+      "screen": "/Engine/Transient.GameEngine_0:GameInstance_0.HearthwardScreenWidget_1"
+    },
+    "loading": "/Engine/Transient.GameEngine_0:GameInstance_0.HearthwardLoadingSubsystem_0",
+    "players": [
+      "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCharacter_0"
+    ],
+    "companions": [
+      "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCompanionFixture_0"
+    ],
+    "local_ai": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:HearthwardLocalAISubsystem_0",
+    "save": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:HearthwardSaveSubsystem_0"
+  },
+  "observations": {
+    "campaign_id": {
+      "A": 130457627,
+      "B": 1314225907,
+      "C": -1242232645,
+      "D": -1533497542
+    },
+    "busy": false,
+    "ready": false,
+    "generation_calls": 0,
+    "server_process_id": 0
+  },
+  "remote_function_policy": {
+    "allow_any": false,
+    "exact_rules": {
+      "/Script/Engine.KismetSystemLibrary": [
+        "IsValid",
+        "GetOuterObject",
+        "GetPathName"
+      ],
+      "/Script/Engine.GameplayStatics": [
+        "GetPlayerPawn",
+        "GetCurrentLevelName",
+        "GetPlayerController",
+        "GetGameInstance",
+        "GetAllActorsOfClass"
+      ],
+      "/Script/Hearthward.HearthwardCharacter": [
+        "GetLevel"
+      ],
+      "/Script/Engine.PlayerController": [
+        "GetHUD"
+      ],
+      "/Script/Engine.SubsystemBlueprintLibrary": [
+        "GetGameInstanceSubsystem",
+        "GetWorldSubsystem"
+      ],
+      "/Script/Hearthward.HearthwardScreenWidget": [
+        "GetPage",
+        "ExecuteAction"
+      ],
+      "/Script/Hearthward.HearthwardLoadingSubsystem": [
+        "IsLoading"
+      ],
+      "/Script/Hearthward.HearthwardSaveSubsystem": [
+        "IsNaturalWorldEnabled",
+        "GetCampaignId"
+      ],
+      "/Script/Hearthward.HearthwardLocalAISubsystem": [
+        "IsBusy",
+        "IsModelReady",
+        "GetGenerationCalls",
+        "GetServerProcessId"
+      ]
+    },
+    "child_classes": false,
+    "scope": "owned Saved session ini only",
+    "file": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-1d8b6d41-3f2e-450f-aa59-7db42d2b1815\\RemoteControl.ini",
+    "unlisted_readonly_control": "EXPECTED_400_FUNCTION_NOT_ALLOWED"
+  },
+  "process_id": 37560,
+  "stop_request_ok": true,
+  "process_exit_verified": "NOT_VERIFIED_BY_UECLIENT"
+}

@@ -1,0 +1,191 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -4,6 +4,13 @@
+ #include "../Inventory/HearthwardStorageSubsystem.h"
+ #include "../Time/HearthwardWorldClockSubsystem.h"
+ #include "Components/SceneComponent.h"
++#include "Components/BoxComponent.h"
++#include "GameFramework/CharacterMovementComponent.h"
++#include "GameFramework/WorldSettings.h"
++#include "../Actions/HearthwardTimedActionComponent.h"
++#include "../Building/HearthwardBuildingComponent.h"
++#include "../Camp/HearthwardCampSubsystem.h"
++#include "../Nature/HearthwardNatureSubsystem.h"
+ #include "Engine/Engine.h"
+ #include "GameFramework/PlayerController.h"
+ #include "Misc/ScopeExit.h"
+@@ -92,7 +99,7 @@
+     auto* World=UWorld::CreateWorld(EWorldType::Game,false,WorldName,FixturePackage,true,ERHIFeatureLevel::Num,&Values);
+     GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+     if(!RestartPhase.IsEmpty())TestEqual(TEXT("Explicit restart fixture has a stable actual map package"),UGameplayStatics::GetCurrentLevelName(World,true),FString(TEXT("Task071RestartFixture")));
+-    ON_SCOPE_EXIT { GEngine->DestroyWorldContext(World);World->DestroyWorld(false); };
++    ON_SCOPE_EXIT { if(World->HasBegunPlay())World->EndPlay(EEndPlayReason::Quit);GEngine->DestroyWorldContext(World);World->DestroyWorld(false); };
+     FActorSpawnParameters Spawn;Spawn.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+     auto* Hero=World->SpawnActor<AHearthwardCharacter>(FVector(0,0,100),FRotator::ZeroRotator,Spawn);
+     auto* Controller=World->SpawnActor<APlayerController>();World->AddController(Controller);Controller->Possess(Hero);
+@@ -107,6 +114,31 @@
+     if(!TestTrue(TEXT("Real controlled Hero and single initialized Brother have normal stock"),
+         UGameplayStatics::GetPlayerPawn(World,0)==Hero && PlayerBag->TryAdd(TEXT("wood"),3)==EHearthwardInventoryResult::Success
+         && Stock->TryAdd(TEXT("wood"),8)==EHearthwardInventoryResult::Success))return false;
++    auto* Gameplay=Hero->FindComponentByClass<UHearthwardGameplayComponent>();
++    auto* Building=Hero->FindComponentByClass<UHearthwardBuildingComponent>();
++    auto* Timer=Hero->FindComponentByClass<UHearthwardTimedActionComponent>();
++    auto* Economy=World->GetSubsystem<UHearthwardCampSubsystem>();auto* Nature=World->GetSubsystem<UHearthwardNatureSubsystem>();
++    if(!RestartPhase.IsEmpty())
++    {
++        auto* Floor=World->SpawnActor<AActor>();Floor->Tags.Add(TEXT("Hearthward.NatureGround"));
++        auto* Box=NewObject<UBoxComponent>(Floor);Floor->AddInstanceComponent(Box);Floor->SetRootComponent(Box);
++        Box->SetBoxExtent(FVector(80000,80000,10));Box->SetCollisionObjectType(ECC_WorldStatic);
++        Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);Box->SetCollisionResponseToAllChannels(ECR_Block);
++        Box->RegisterComponent();Floor->SetActorLocation(FVector(0,0,-10));
++        World->InitializeActorsForPlay(FURL(),false);World->GetWorldSettings()->NotifyBeginPlay();
++        if(!TestTrue(TEXT("Mature fixture initializes actors and real building/timer lifecycle"),World->AreActorsInitialized()
++            && World->HasBegunPlay() && Building->HasBegunPlay() && Timer->HasBegunPlay()))return false;
++        for(int32 I=0;I<80 && (!Hero->GetCharacterMovement()->IsMovingOnGround() || !Brother->GetCharacterMovement()->IsMovingOnGround());++I)
++            World->Tick(LEVELTICK_All,.025f);
++        if(!TestTrue(TEXT("Both actual character capsules settle on the fixture's collision terrain"),
++            Hero->GetCharacterMovement()->IsMovingOnGround() && Brother->GetCharacterMovement()->IsMovingOnGround()))return false;
++        Gameplay->EnableAdventure();Nature->EnsureWorld();FHitResult Ground;
++        FCollisionQueryParams Query(SCENE_QUERY_STAT(Task071Terrain),false,Hero);
++        const bool Supported=World->LineTraceSingleByObjectType(Ground,FVector(0,0,500),FVector(0,0,-500),FCollisionObjectQueryParams(ECC_WorldStatic),Query);
++        if(!TestTrue(TEXT("Public adventure initialization creates a real camp and seeded ecology on tagged ground"),Gameplay->Enabled
++            && Economy->State.Camps.Num()==1 && !Economy->State.CampAt(Hero->GetActorLocation()).IsNone() && Nature->State.Seed!=0
++            && Nature->State.Camps.Contains(TEXT("camp")) && Supported && Ground.GetActor()==Floor && FMath::Abs(Ground.ImpactPoint.Z)<1))return false;
++    }
+     const bool Enabled=Save->EnablePrototype();
+     if(!TestTrue(FString(TEXT("Real prototype save participants initialize: "))+Save->GetStatus(),Enabled))return false;
+     if(RestartPhase==TEXT("read"))
+@@ -142,6 +174,33 @@
+             && Expected.NPCMemory.LastConversationCalendar==Manifest->GetNumberField(TEXT("last_contact")));
+         TestEqual(TEXT("Persisted knowledge revision matches write process"),Expected.KnowledgeRevision,int64(Manifest->GetNumberField(TEXT("knowledge_revision"))));
+         TestEqual(TEXT("Persisted exact exchange matches write process"),FString::Join(Expected.Knowledge,TEXT("\n")),Manifest->GetStringField(TEXT("knowledge")));
++        TestEqual(TEXT("Persisted camp snapshot matches the actual write-process state"),Expected.CampEconomy,Manifest->GetStringField(TEXT("camp_economy")));
++        TestEqual(TEXT("Persisted nature snapshot matches the actual write-process state"),Expected.Nature,Manifest->GetStringField(TEXT("nature")));
++        FGuid WorkbenchId,TreasureId;const FName RegionId(*Manifest->GetStringField(TEXT("production_region")));
++        FHearthwardCampState ExpectedCamp;FHearthwardNatureState ExpectedNature;
++        if(!TestTrue(TEXT("Write manifest identifies real saved workbench, queue and treasure GUIDs"),
++            FGuid::Parse(Manifest->GetStringField(TEXT("workbench_id")),WorkbenchId)
++            && FGuid::Parse(Manifest->GetStringField(TEXT("treasure_id")),TreasureId)
++            && FHearthwardCampState::Parse(Expected.CampEconomy,ExpectedCamp) && FHearthwardNatureState::Parse(Expected.Nature,ExpectedNature)))return false;
++        const auto* ExpectedRegion=ExpectedCamp.Regions.FindByPredicate([&](const auto& R){return R.Id==RegionId && R.Facility==WorkbenchId;});
++        const auto* ExpectedFacility=ExpectedCamp.Facilities.FindByPredicate([&](const auto& F){return F.Id==WorkbenchId;});
++        const auto* ExpectedTreasure=ExpectedNature.Points.FindByPredicate([&](const auto& P){return P.Id==TreasureId;});
++        if(!TestTrue(TEXT("Disk node contains a genuinely invested partial batch and unclaimed instance reward"),ExpectedRegion && ExpectedFacility && ExpectedTreasure
++            && ExpectedRegion->Batch.Active && ExpectedRegion->Batch.Work>0 && ExpectedRegion->Batch.Work<ExpectedRegion->Batch.Required
++            && ExpectedRegion->Batch.Inputs.FindRef(TEXT("wood"))==2 && ExpectedRegion->Batch.Outputs.FindRef(TEXT("rope"))==1
++            && ExpectedRegion->Workers==TArray<int32>{0} && ExpectedTreasure->Kind==TEXT("treasure")
++            && !ExpectedTreasure->Pending.Instances.IsEmpty() && !ExpectedNature.Opened.Contains(ExpectedTreasure->Definition)))return false;
++        const auto CheckInventory=[&](const TCHAR* Label,const FHearthwardInventorySnapshot& Actual,const FHearthwardInventorySnapshot& Saved)
++        {
++            TestTrue(Label,Actual.Version==Saved.Version && Actual.BackpackRank==Saved.BackpackRank
++                && Actual.Stacks.OrderIndependentCompareEqual(Saved.Stacks) && Actual.Equipped.OrderIndependentCompareEqual(Saved.Equipped)
++                && Actual.Instances.Num()==Saved.Instances.Num());
++            for(const auto& Item:Saved.Instances)
++            {
++                const auto* Loaded=Actual.Instances.FindByPredicate([&](const auto& I){return I.Id==Item.Id;});
++                TestTrue(Label,Loaded && Loaded->Definition==Item.Definition && Loaded->Durability==Item.Durability && Loaded->UniqueClaim==Item.UniqueClaim);
++            }
++        };
+         if(!TestTrue(TEXT("Read fixture starts with different inventories"),PlayerBag->TryAdd(TEXT("wood"),2)==EHearthwardInventoryResult::Success
+             && Store->Adjust({},{{FName(TEXT("wood")),4}}) && Stock->TryRemove(TEXT("wood"),1)==EHearthwardInventoryResult::Success
+             && Brother->Bag->TryAdd(TEXT("wood"),1)==EHearthwardInventoryResult::Success && !PlayerBag->FirstInstance(TEXT("axe")).IsValid()))return false;
+@@ -187,12 +246,34 @@
+             TestTrue(TEXT("Conversation clock flags and last contact survive restart"),Memory.ConversationClockStarted==Expected.NPCMemory.ConversationClockStarted
+                 && Memory.ConversationClockAwaitingFirstMeeting==Expected.NPCMemory.ConversationClockAwaitingFirstMeeting && Memory.LastConversationCalendar==Expected.NPCMemory.LastConversationCalendar);
+             TestEqual(TEXT("Repeated load restores exact exchanges"),Save->GetKnowledge(),FString::Join(Expected.Knowledge,TEXT("\n")));
++            const auto* Region=Economy->State.Regions.FindByPredicate([&](const auto& R){return R.Id==RegionId;});
++            const auto* Facility=Economy->State.Facilities.FindByPredicate([&](const auto& F){return F.Id==WorkbenchId;});
++            if(!TestTrue(TEXT("Actual load rebuilds the original workbench actor and invested region"),Region && Facility && Building->ResolveFacility(WorkbenchId)))return false;
++            TestTrue(TEXT("Repeated load preserves queue, worker and paid facility identity"),Region->Facility==ExpectedRegion->Facility
++                && Region->Camp==ExpectedRegion->Camp && Region->Job==ExpectedRegion->Job && Region->Workers==ExpectedRegion->Workers
++                && Region->Enabled==ExpectedRegion->Enabled && Region->Completed==ExpectedRegion->Completed && Region->BatchStopAt==ExpectedRegion->BatchStopAt
++                && Facility->Kind==ExpectedFacility->Kind && Facility->Level==ExpectedFacility->Level && Facility->Camp==ExpectedFacility->Camp
++                && Facility->Paid.OrderIndependentCompareEqual(ExpectedFacility->Paid));
++            TestTrue(TEXT("Repeated load retains batch input/output without new debit or output credit"),Region->Batch.Active==ExpectedRegion->Batch.Active
++                && Region->Batch.ToRations==ExpectedRegion->Batch.ToRations && Region->Batch.Work==ExpectedRegion->Batch.Work && Region->Batch.Required==ExpectedRegion->Batch.Required
++                && Region->Batch.Inputs.OrderIndependentCompareEqual(ExpectedRegion->Batch.Inputs) && Region->Batch.Outputs.OrderIndependentCompareEqual(ExpectedRegion->Batch.Outputs));
++            const auto* Treasure=Nature->State.Points.FindByPredicate([&](const auto& P){return P.Id==TreasureId;});
++            if(!TestTrue(TEXT("Actual load rebuilds the original unclaimed treasure identity"),Treasure && Nature->Actor(TreasureId)))return false;
++            TestTrue(TEXT("Repeated load retains map and unclaimed reward ledger"),Treasure->Key==ExpectedTreasure->Key && Treasure->Kind==ExpectedTreasure->Kind
++                && Treasure->Definition==ExpectedTreasure->Definition && Treasure->Position==ExpectedTreasure->Position
++                && Nature->State.Maps.Contains(Treasure->Definition) && Nature->State.Rewards.Contains(Treasure->Definition) && !Nature->State.Opened.Contains(Treasure->Definition));
++            CheckInventory(TEXT("Every unclaimed stack and instance GUID survives without claim replay"),Treasure->Pending,ExpectedTreasure->Pending);
++            CheckInventory(TEXT("Player full inventory has zero gain from repeated mature load"),PlayerBag->Snapshot(),Expected.PlayerItems);
++            CheckInventory(TEXT("Brother full inventory has zero gain from repeated mature load"),Brother->Bag->Snapshot(),Expected.BrotherItems);
++            CheckInventory(TEXT("Shared full inventory has zero gain from repeated mature load"),Store->InventorySnapshot(),Expected.StorageItems);
+         }
+         if(!TestTrue(TEXT("Restored state still captures through public SavePoint"),Save->SavePoint(true)))return false;
+         const auto After=Save->GetPoints().Last().World;
+         TestTrue(TEXT("Repeated loads cannot create NPC effect operations"),After.NPCOperations==Expected.NPCOperations);
+         TestEqual(TEXT("Repeated loads cannot create NPC effect receipts"),After.NPCReceipts.Num(),Expected.NPCReceipts.Num());
+         TestTrue(TEXT("Resave retains exact clock origin and knowledge revision"),After.InitialDay==Expected.InitialDay && After.InitialMinute==Expected.InitialMinute && After.KnowledgeRevision==Expected.KnowledgeRevision);
++        TestEqual(TEXT("Resave preserves invested camp state without batch settlement"),After.CampEconomy,Expected.CampEconomy);
++        TestEqual(TEXT("Resave preserves pending nature claims without reward settlement"),After.Nature,Expected.Nature);
+         AddInfo(FString::Printf(TEXT("TASK071 restart READ pid=%u writer=%u save=%s, two actual LoadPoint passes"),FPlatformProcess::GetCurrentProcessId(),uint32(Manifest->GetNumberField(TEXT("writer_pid"))),*SavedId.ToString()));
+         return true;
+     }
+@@ -201,11 +282,45 @@
+     if(!TestTrue(FString(TEXT("Normal new progress writes and restores the prepared world: "))+Save->GetStatus(),Started))return false;
+     if(RestartPhase==TEXT("write"))
+     {
+-        Clock->Tick(7.0f);
+-        if(!TestTrue(TEXT("Write phase creates real nonzero elapsed clock state"),Clock->GetSnapshot().ActivePlaySeconds==7 && Clock->GetSnapshot().ElapsedCalendarMinutes==7))return false;
+         if(!TestTrue(TEXT("Write phase uses public inventory operations and a real instance"),PlayerBag->TryAdd(TEXT("axe"),1)==EHearthwardInventoryResult::Success
+             && PlayerBag->FirstInstance(TEXT("axe")).IsValid() && Store->Adjust({},{{FName(TEXT("wood")),6}})
+             && Brother->Bag->TryAdd(TEXT("wood"),2)==EHearthwardInventoryResult::Success))return false;
++        // Existing three personal and six shared wood plus this supply fund workbench72 and one rope input2.
++        if(!TestTrue(TEXT("Fixture grants exact real construction and single-batch materials"),Store->Adjust({},{{FName(TEXT("wood")),65}})))return false;
++        Controller->SetControlRotation(FRotator::ZeroRotator);
++        if(!TestTrue(TEXT("Public selection accepts the real first-tier workbench"),Building->SelectBuilding(TEXT("workbench"))))return false;
++        Building->TickComponent(.01f,LEVELTICK_All,nullptr);
++        if(!TestTrue(FString(TEXT("Actual terrain and occupancy accept the workbench preview: "))+Building->Feedback,Building->ValidPlacement)
++            || !TestTrue(FString(TEXT("Public ConfirmPlacement starts real five-second construction: "))+Building->Feedback,Building->ConfirmPlacement()))return false;
++        const auto BeforeBuild=Clock->GetSnapshot();Clock->Tick(5.f);Timer->TickComponent(5.f,LEVELTICK_All,nullptr);
++        if(!TestTrue(TEXT("Real timer completes one paid workbench without movement or state injection"),!Building->IsBuilding() && !Building->IsPlacing()
++            && Building->BuildingCount()==1 && Economy->State.Facilities.Num()==1 && Economy->State.Facilities[0].Kind==TEXT("workbench")
++            && Economy->State.Facilities[0].Paid.FindRef(TEXT("wood"))==72 && PlayerBag->GetItemCount(TEXT("wood"))==0 && Store->GetItemCount(TEXT("wood"))==2
++            && FMath::IsNearlyEqual(Clock->GetSnapshot().ActivePlaySeconds,BeforeBuild.ActivePlaySeconds+5,1.e-6)))return false;
++        if(!TestTrue(TEXT("Fixture grants one real treasure map"),PlayerBag->TryAdd(TEXT("treasure_map_1"),1)==EHearthwardInventoryResult::Success)
++            || !TestTrue(FString(TEXT("Public ReadMap consumes it and creates actual pending loot: "))+Nature->Feedback,Nature->ReadMap(TEXT("treasure_map_1"))))return false;
++        const auto* Treasure=Nature->State.Points.FindByPredicate([](const auto& P){return P.Kind==TEXT("treasure") && P.Definition==TEXT("treasure_map_1");});
++        if(!TestTrue(TEXT("Real map transaction keeps bow instance and eight ingots unclaimed"),Treasure && Treasure->Id.IsValid()
++            && Treasure->Pending.Instances.Num()==1 && Treasure->Pending.Instances[0].Id.IsValid() && Treasure->Pending.Instances[0].Definition==TEXT("bow_2")
++            && Treasure->Pending.Stacks.FindRef(TEXT("metal_ingot"))==8 && PlayerBag->GetItemCount(TEXT("treasure_map_1"))==0
++            && Nature->State.Maps.Contains(TEXT("treasure_map_1")) && Nature->State.Rewards.Contains(TEXT("treasure_map_1")) && !Nature->State.Opened.Contains(TEXT("treasure_map_1"))))return false;
++        const auto BeforeAdvance=Clock->GetSnapshot();Clock->Tick(7.f);
++        if(!TestTrue(TEXT("Seven active seconds follow the actual preparation boundary"),
++            FMath::IsNearlyEqual(Clock->GetSnapshot().ActivePlaySeconds,BeforeAdvance.ActivePlaySeconds+7,1.e-6)
++            && FMath::IsNearlyEqual(Clock->GetSnapshot().ElapsedCalendarMinutes,BeforeAdvance.ElapsedCalendarMinutes+7,1.e-6)))return false;
++        const FGuid WorkbenchId=Economy->State.Facilities[0].Id;
++        const auto* Region=Economy->State.Regions.FindByPredicate([&](const auto& R){return R.Facility==WorkbenchId;});
++        if(!TestNotNull(TEXT("Real building completion publishes its processing region"),Region))return false;
++        const FName RegionId=Region->Id;const FGuid Epoch=Store->GetTimelineEpoch();
++        if(!TestTrue(TEXT("Normal known rope selection succeeds"),Economy->SelectProduction(RegionId,WorkbenchId,TEXT("rope"),Epoch))
++            || !TestTrue(TEXT("Normal initial-population worker zero joins the queue"),Economy->AssignWorker(RegionId,0,Epoch))
++            || !TestTrue(TEXT("Normal production control enables the real rope queue"),Economy->SetProduction(RegionId,true,false,Epoch)))return false;
++        Clock->Tick(.5f);
++        Region=Economy->State.Regions.FindByPredicate([&](const auto& R){return R.Id==RegionId;});
++        if(!TestTrue(TEXT("Real clock debits one input and leaves a partial uncredited rope batch"),Region && Region->Batch.Active && Region->Batch.Work>0
++            && Region->Batch.Work<Region->Batch.Required && Region->Batch.Required==360 && Region->Workers==TArray<int32>{0}
++            && Region->Batch.Inputs.FindRef(TEXT("wood"))==2 && Region->Batch.Outputs.FindRef(TEXT("rope"))==1
++            && Store->GetItemCount(TEXT("wood"))==0 && Store->GetItemCount(TEXT("rope"))==0))return false;
+         if(!TestTrue(TEXT("Write phase records an actual player agreement"),AI->PutPlayerMemory(Hero,Brother,FGuid(),TEXT("agreement"),TEXT("Task071 restart agreement"))))return false;
+         Save->RememberExchange(TEXT("Player"),TEXT("Task071 restart exchange"));
+     }
+@@ -238,6 +353,16 @@
+         Manifest->SetArrayField(TEXT("event_ids"),EventIds);Manifest->SetBoolField(TEXT("conversation_started"),S.NPCMemory.ConversationClockStarted);
+         Manifest->SetBoolField(TEXT("awaiting_meeting"),S.NPCMemory.ConversationClockAwaitingFirstMeeting);Manifest->SetNumberField(TEXT("last_contact"),S.NPCMemory.LastConversationCalendar);
+         Manifest->SetStringField(TEXT("knowledge"),FString::Join(S.Knowledge,TEXT("\n")));
++        FHearthwardCampState WrittenCamp;FHearthwardNatureState WrittenNature;
++        if(!TestTrue(TEXT("Actual saved mature domains validate before manifest publication"),FHearthwardCampState::Parse(S.CampEconomy,WrittenCamp)
++            && FHearthwardNatureState::Parse(S.Nature,WrittenNature)))return false;
++        const auto* Region=WrittenCamp.Regions.FindByPredicate([](const auto& R){return R.Job==TEXT("rope") && R.Batch.Active;});
++        const auto* Treasure=WrittenNature.Points.FindByPredicate([](const auto& P){return P.Kind==TEXT("treasure") && P.Definition==TEXT("treasure_map_1");});
++        if(!TestTrue(TEXT("Manifest publishes actual saved invested batch and pending reward identities"),Region && Treasure
++            && Region->Facility.IsValid() && Region->Batch.Work>0 && !Treasure->Pending.Instances.IsEmpty()))return false;
++        Manifest->SetStringField(TEXT("workbench_id"),Region->Facility.ToString());Manifest->SetStringField(TEXT("production_region"),Region->Id.ToString());
++        Manifest->SetStringField(TEXT("treasure_id"),Treasure->Id.ToString());Manifest->SetStringField(TEXT("camp_economy"),S.CampEconomy);
++        Manifest->SetStringField(TEXT("nature"),S.Nature);
+         FString Json;FJsonSerializer::Serialize(Manifest,TJsonWriterFactory<>::Create(&Json));
+         if(!TestTrue(TEXT("Write process persists the isolated QA manifest"),IFileManager::Get().MakeDirectory(*FPaths::GetPath(ManifestPath),true)
+             && FFileHelper::SaveStringToFile(Json,*ManifestPath,FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)))return false;

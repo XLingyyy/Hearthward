@@ -1,0 +1,442 @@
+{
+  "method": "Read-only actual CPU/Vulkan CSV; no new runtime/process sampling; intervals sum captured frame durations and reused engine statistics, not finer memory resolution",
+  "process_rss_scope": "PhysicalUsedMB/VirtualUsedMB refer to UE PID, not llama server; MemoryFreeMB system available minus UE development-memory reservation; no process RAM credit for missing samples",
+  "records": [
+    {
+      "backend": "cpu",
+      "pool": "7ae656be-42d4-4667-9573-33c5799cdbcb",
+      "actual_session": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-7ae656be-42d4-4667-9573-33c5799cdbcb",
+      "csv_frames": 11727,
+      "csv_frame_duration_s": 131.24672410000042,
+      "field_units": "memory/GPU columns engine-named MB are MiB; FrameTime/thread/GPU times ms",
+      "threshold_mib": 1024,
+      "minimum_available": {
+        "frame_0": 265,
+        "begin_s": 2.7806664,
+        "end_s": 2.7926539,
+        "mib": 149.3516
+      },
+      "below_1024mib_frame_count": 6056,
+      "below_1024mib_csv_frame_duration_s": 68.94406280000037,
+      "below_1024mib_intervals": [
+        {
+          "begin_s": 2.5038566,
+          "first_frame_0": 241,
+          "min_available_mib": 149.3516,
+          "end_s": 2.860336500000001,
+          "last_frame_0": 270,
+          "duration_s": 0.35647990000000096
+        },
+        {
+          "begin_s": 3.4345343000000006,
+          "first_frame_0": 322,
+          "min_available_mib": 326.6094,
+          "end_s": 17.640906600000047,
+          "last_frame_0": 1595,
+          "duration_s": 14.206372300000046
+        },
+        {
+          "begin_s": 74.42025860000003,
+          "first_frame_0": 6760,
+          "min_available_mib": 988.6328,
+          "end_s": 75.06489010000004,
+          "last_frame_0": 6814,
+          "duration_s": 0.6446315000000169
+        },
+        {
+          "begin_s": 75.62160050000007,
+          "first_frame_0": 6861,
+          "min_available_mib": 1007.7461,
+          "end_s": 76.22382230000005,
+          "last_frame_0": 6912,
+          "duration_s": 0.602221799999981
+        },
+        {
+          "begin_s": 76.79294500000005,
+          "first_frame_0": 6963,
+          "min_available_mib": 1013.5625,
+          "end_s": 77.50451330000004,
+          "last_frame_0": 7024,
+          "duration_s": 0.7115682999999962
+        },
+        {
+          "begin_s": 77.51479170000005,
+          "first_frame_0": 7026,
+          "min_available_mib": 1023.9961,
+          "end_s": 77.54034790000004,
+          "last_frame_0": 7027,
+          "duration_s": 0.02555619999999692
+        },
+        {
+          "begin_s": 77.80001070000002,
+          "first_frame_0": 7051,
+          "min_available_mib": 1017.0742,
+          "end_s": 78.33820529999997,
+          "last_frame_0": 7099,
+          "duration_s": 0.5381945999999544
+        },
+        {
+          "begin_s": 78.51319149999998,
+          "first_frame_0": 7116,
+          "min_available_mib": 1022.5625,
+          "end_s": 78.70975459999997,
+          "last_frame_0": 7132,
+          "duration_s": 0.19656309999999166
+        },
+        {
+          "begin_s": 78.75416729999996,
+          "first_frame_0": 7137,
+          "min_available_mib": 791.7188,
+          "end_s": 130.41664240000034,
+          "last_frame_0": 11651,
+          "duration_s": 51.66247510000038
+        }
+      ],
+      "columns": {
+        "FrameTime": {
+          "min": 7.6711,
+          "max": 75.5412,
+          "min_nonzero": 7.6711,
+          "zero_frames": 0
+        },
+        "MemoryFreeMB": {
+          "min": 149.3516,
+          "max": 4185.5117,
+          "min_nonzero": 149.3516,
+          "zero_frames": 0
+        },
+        "PhysicalUsedMB": {
+          "min": 4061.2539,
+          "max": 4860.6797,
+          "min_nonzero": 4061.2539,
+          "zero_frames": 0
+        },
+        "VirtualUsedMB": {
+          "min": 6811.3477,
+          "max": 7136.5195,
+          "min_nonzero": 6811.3477,
+          "zero_frames": 0
+        },
+        "GPUMem/LocalUsedMB": {
+          "min": 0.0,
+          "max": 2409.1406,
+          "min_nonzero": 2313.1406,
+          "zero_frames": 3
+        },
+        "GPUMem/LocalBudgetMB": {
+          "min": 0.0,
+          "max": 7189.0,
+          "min_nonzero": 7189.0,
+          "zero_frames": 3
+        },
+        "GPUMem/SystemUsedMB": {
+          "min": 0.0,
+          "max": 193.4141,
+          "min_nonzero": 193.4141,
+          "zero_frames": 3
+        },
+        "GameThreadTime": {
+          "min": 7.6307,
+          "max": 76.7445,
+          "min_nonzero": 7.6307,
+          "zero_frames": 0
+        },
+        "RenderThreadTime": {
+          "min": 3.5792,
+          "max": 37.2767,
+          "min_nonzero": 3.5792,
+          "zero_frames": 0
+        },
+        "GPUTime": {
+          "min": 6.4046,
+          "max": 9.772,
+          "min_nonzero": 6.4046,
+          "zero_frames": 0
+        }
+      },
+      "frames_over_50ms": [
+        {
+          "frame_0": 913,
+          "begin_s": 10.02218980000001,
+          "end_s": 10.073243200000011,
+          "FrameTime": 51.0534,
+          "MemoryFreeMB": 610.1602,
+          "PhysicalUsedMB": 4432.3594,
+          "VirtualUsedMB": 7127.7227,
+          "GPUMem/LocalUsedMB": 2409.1406,
+          "GPUMem/LocalBudgetMB": 7189.0,
+          "GPUMem/SystemUsedMB": 193.4141,
+          "GameThreadTime": 11.583,
+          "RenderThreadTime": 5.3894,
+          "GPUTime": 7.4278
+        },
+        {
+          "frame_0": 3810,
+          "begin_s": 41.35441529999997,
+          "end_s": 41.41217499999997,
+          "FrameTime": 57.7597,
+          "MemoryFreeMB": 1248.3203,
+          "PhysicalUsedMB": 4368.2656,
+          "VirtualUsedMB": 7117.3711,
+          "GPUMem/LocalUsedMB": 2409.1406,
+          "GPUMem/LocalBudgetMB": 7189.0,
+          "GPUMem/SystemUsedMB": 193.4141,
+          "GameThreadTime": 14.2291,
+          "RenderThreadTime": 4.9482,
+          "GPUTime": 7.1664
+        },
+        {
+          "frame_0": 9248,
+          "begin_s": 102.46254979999992,
+          "end_s": 102.51464879999992,
+          "FrameTime": 52.099,
+          "MemoryFreeMB": 988.6328,
+          "PhysicalUsedMB": 4188.6367,
+          "VirtualUsedMB": 6811.5977,
+          "GPUMem/LocalUsedMB": 2313.1406,
+          "GPUMem/LocalBudgetMB": 7189.0,
+          "GPUMem/SystemUsedMB": 193.4141,
+          "GameThreadTime": 11.3718,
+          "RenderThreadTime": 5.048,
+          "GPUTime": 7.1997
+        },
+        {
+          "frame_0": 11650,
+          "begin_s": 130.32633600000034,
+          "end_s": 130.40187720000034,
+          "FrameTime": 75.5412,
+          "MemoryFreeMB": 942.6562,
+          "PhysicalUsedMB": 4061.3672,
+          "VirtualUsedMB": 6812.6875,
+          "GPUMem/LocalUsedMB": 2313.1406,
+          "GPUMem/LocalBudgetMB": 7189.0,
+          "GPUMem/SystemUsedMB": 193.4141,
+          "GameThreadTime": 76.7445,
+          "RenderThreadTime": 5.6882,
+          "GPUTime": 7.1376
+        }
+      ],
+      "actual_model_summary": {
+        "cold_ready_observed_seconds": 11.013297800003784,
+        "full_ue_terminal_observed_seconds": 131.1971695999964,
+        "model_request_count": 1,
+        "terminal": {
+          "last_input": "采集1份木材送入营地仓库",
+          "raw": "",
+          "submission_to_response_seconds": 0,
+          "input_tokens": 3173,
+          "output_tokens": 0,
+          "reason": "MODEL_UNAVAILABLE",
+          "applied_intent": "",
+          "has_candidate": false,
+          "candidate": {
+            "Intent": "None",
+            "Item": "None",
+            "Quantity": 0,
+            "QuantityMode": "",
+            "SourceRef": "",
+            "Limits": [],
+            "Unresolved": [],
+            "Line": "",
+            "Original": "",
+            "Station": {
+              "A": 0,
+              "B": 0,
+              "C": 0,
+              "D": 0
+            },
+            "EquipmentId": {
+              "A": 0,
+              "B": 0,
+              "C": 0,
+              "D": 0
+            },
+            "RuleRevision": 0,
+            "CapabilityVersion": 2
+          },
+          "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":false,\"camp_distance_cm\":229532.328125,\"collection_source_distance_cm\":226261.640625,\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"execution_action\":\"None\"},\"own_bag\":{\"arrow\":24,\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"roast\":4,\"medicine\":3,\"leggings\":1},\"companion_state\":{\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":0,\"preferred_directive\":\"None\",\"confidence\":0,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=仅限玩家明确授权共享仓库材料；未知地点不可绑定S1\",\"capabilities_version\":\"npc-v2\"}",
+          "server_process_id": 0
+        }
+      }
+    },
+    {
+      "backend": "vulkan",
+      "pool": "29dd5b02-c8e5-44d6-a84d-385afca4ee94",
+      "actual_session": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-29dd5b02-c8e5-44d6-a84d-385afca4ee94",
+      "csv_frames": 5890,
+      "csv_frame_duration_s": 61.601223000000026,
+      "field_units": "memory/GPU columns engine-named MB are MiB; FrameTime/thread/GPU times ms",
+      "threshold_mib": 1024,
+      "minimum_available": {
+        "frame_0": 329,
+        "begin_s": 3.4153685,
+        "end_s": 3.4268352,
+        "mib": 189.7695
+      },
+      "below_1024mib_frame_count": 689,
+      "below_1024mib_csv_frame_duration_s": 7.8989797000000355,
+      "below_1024mib_intervals": [
+        {
+          "begin_s": 3.246040399999999,
+          "first_frame_0": 314,
+          "min_available_mib": 189.7695,
+          "end_s": 3.4905483,
+          "last_frame_0": 335,
+          "duration_s": 0.24450790000000078
+        },
+        {
+          "begin_s": 7.898221299999996,
+          "first_frame_0": 696,
+          "min_available_mib": 469.7422,
+          "end_s": 15.197789100000016,
+          "last_frame_0": 1331,
+          "duration_s": 7.29956780000002
+        },
+        {
+          "begin_s": 15.213292600000015,
+          "first_frame_0": 1333,
+          "min_available_mib": 1019.2188,
+          "end_s": 15.238409800000015,
+          "last_frame_0": 1334,
+          "duration_s": 0.025117200000000395
+        },
+        {
+          "begin_s": 32.37912300000006,
+          "first_frame_0": 2937,
+          "min_available_mib": 1003.0391,
+          "end_s": 32.70890980000007,
+          "last_frame_0": 2965,
+          "duration_s": 0.32978680000001503
+        }
+      ],
+      "columns": {
+        "FrameTime": {
+          "min": 7.4985,
+          "max": 44.984,
+          "min_nonzero": 7.4985,
+          "zero_frames": 0
+        },
+        "MemoryFreeMB": {
+          "min": 189.7695,
+          "max": 2304.457,
+          "min_nonzero": 189.7695,
+          "zero_frames": 0
+        },
+        "PhysicalUsedMB": {
+          "min": 4567.6133,
+          "max": 4836.7031,
+          "min_nonzero": 4567.6133,
+          "zero_frames": 0
+        },
+        "VirtualUsedMB": {
+          "min": 6910.6758,
+          "max": 7129.5,
+          "min_nonzero": 6910.6758,
+          "zero_frames": 0
+        },
+        "GPUMem/LocalUsedMB": {
+          "min": 0.0,
+          "max": 2409.3906,
+          "min_nonzero": 2377.3906,
+          "zero_frames": 1
+        },
+        "GPUMem/LocalBudgetMB": {
+          "min": 0.0,
+          "max": 7189.0,
+          "min_nonzero": 7189.0,
+          "zero_frames": 1
+        },
+        "GPUMem/SystemUsedMB": {
+          "min": 0.0,
+          "max": 185.0703,
+          "min_nonzero": 185.0703,
+          "zero_frames": 1
+        },
+        "GameThreadTime": {
+          "min": 7.51,
+          "max": 44.4651,
+          "min_nonzero": 7.51,
+          "zero_frames": 0
+        },
+        "RenderThreadTime": {
+          "min": 3.3938,
+          "max": 15.2614,
+          "min_nonzero": 3.3938,
+          "zero_frames": 0
+        },
+        "GPUTime": {
+          "min": 6.3457,
+          "max": 14.1894,
+          "min_nonzero": 6.3457,
+          "zero_frames": 0
+        }
+      },
+      "frames_over_50ms": [],
+      "actual_model_summary": {
+        "cold_ready_observed_seconds": 13.685062599994126,
+        "full_ue_terminal_observed_seconds": 40.905366899998626,
+        "model_request_count": 1,
+        "terminal": {
+          "last_input": "采集1份木材送入营地仓库",
+          "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡去已知安全点采集1份木材并返营入库，请确认；若途中缺料或遇险将安全返营等待。\"}",
+          "submission_to_response_seconds": 40.034408397972584,
+          "input_tokens": 3173,
+          "output_tokens": 69,
+          "reason": "",
+          "applied_intent": "proposal",
+          "has_candidate": true,
+          "candidate": {
+            "Intent": "collect",
+            "Item": "wood",
+            "Quantity": 1,
+            "QuantityMode": "additional_acquired",
+            "SourceRef": "S1",
+            "Limits": [],
+            "Unresolved": [],
+            "Line": "哥，这张卡去已知安全点采集1份木材并返营入库，请确认；若途中缺料或遇险将安全返营等待。",
+            "Original": "采集1份木材送入营地仓库",
+            "Station": {
+              "A": 0,
+              "B": 0,
+              "C": 0,
+              "D": 0
+            },
+            "EquipmentId": {
+              "A": 0,
+              "B": 0,
+              "C": 0,
+              "D": 0
+            },
+            "RuleRevision": 1,
+            "CapabilityVersion": 2
+          },
+          "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":false,\"camp_distance_cm\":229532.328125,\"collection_source_distance_cm\":226261.640625,\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"execution_action\":\"None\"},\"own_bag\":{\"arrow\":24,\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"roast\":4,\"medicine\":3,\"leggings\":1},\"companion_state\":{\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":0,\"preferred_directive\":\"None\",\"confidence\":0,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=仅限玩家明确授权共享仓库材料；未知地点不可绑定S1\",\"capabilities_version\":\"npc-v2\"}",
+          "server_process_id": 36688
+        }
+      },
+      "existing_resource_snapshot": {
+        "host_monotonic": 102231.2490604,
+        "pool": "standalone-rc-smoke-29dd5b02-c8e5-44d6-a84d-385afca4ee94",
+        "ue_pid": 48548,
+        "model_starts": [
+          [
+            "36688",
+            "vulkan"
+          ]
+        ],
+        "memory_query_ok": true,
+        "physical_total_bytes": 16780480512,
+        "physical_available_bytes": 1147817984,
+        "memory_load_percent": 93,
+        "commit_limit_bytes": 33560961024,
+        "available_commit_bytes": 3352653824,
+        "cpu_temperature": "NOT_AVAILABLE",
+        "gpu": {
+          "exit_code": 0,
+          "global_temperature_C_power_W_used_MiB_total_MiB": "86, 83.53, 5505, 8188"
+        },
+        "process_query_error": "ModuleNotFoundError(\"No module named 'psutil'\")"
+      }
+    }
+  ]
+}

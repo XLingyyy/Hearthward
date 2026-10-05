@@ -1,0 +1,5 @@
+# TASK-068 field-order actual diagnostic
+
+Root ran the unchanged frozen ten expressions with the unchanged model, prompt, token budgets and Vulkan 16-layer configuration. Only schema properties order changed; actual first raw key was unresolved in all ten responses, confirming order affected generation. Raw correctness regressed from 5/10 to 0/10, clear E2E 1/7 and execution 0/6; unearned item cases remained zero. The model invented unresolved conditions even for explicit quantities and known recipes. All raw outputs and lifecycle records are preserved in Saved/Task068/vulkan-unresolved-first-diagnostic-10 and matching QA JSONs; editor closed successfully.
+
+The order-only candidate is rejected and production properties order restored. The next isolated candidate aligns schema with existing Validate: writing branches and rule_proposal forbid unresolved entries; rule_proposal requires exactly one limit. This narrows grammar to already valid business outputs and does not change Parse, semantic guards, the frozen dataset or performance gates. Actual model validation is pending.

@@ -1,0 +1,23 @@
+# TASK071 第三版HTTP夹具公开前置只读复核
+
+本次仅核对现有Source与既有QA；未改HTTP实现、集成文档或Source，未运行UE/build/model/HTTP/Git。第三版实际运行仍待Root执行。
+
+## 前置与正常调用路径
+
+- TASK068 verify_model_matrix_pie.py299–305正常order_companion(wait)后EnablePrototype/StartNewProgress。GameplayComponent402–415走Preview→ApplyCompanionDirective；376–398的Apply调用Companion.Cancel。CompanionFixture238–248取消内部pending/active、重置execution、停止导航并把Phase设Cancelled；没有承诺Idle。第二次HTTP运行实际具体枚举未记录，不能补填；源码确认该合法准备路径允许Cancelled。
+- EnablePrototype137–148 Capture当前真实InitialWorld；StartNewProgress307→WritePoint265–302使用InitialWorld并实际Restore；Restore371保存Phase原值，373–378恢复Command计数、Goal和版本。RestoreExecutionPlan320–327先重置Execution，若命令不current或Goal.Intent为空就返回，不把Phase强改Idle。因此第三版不依据Phase名称判断材料委托的处理正确。
+- CompanionFixture.h41–49公开GetPhase/GetRequested/GetDelivered/GetAcquired/GetCarried/GetGoal/GetCommandId分别返回真实Command字段。Command.h91–99默认Acquired/Carried/Requested/Delivered全0、Goal默认构造，AgentContract.h6–18中Goal Intent/Item为空且Quantity0；字段为公开BlueprintReadOnly。第三版正常get_goal结果属性读取不需要protected World或私有schema helper。
+- 第三版在检查之前保存Phase、CommandId、上述四数量及Goal intent/item/quantity/mode/source。四数量0且Goal intent/item为空、Quantity0准确表示该全新夹具没有材料目标；它是测试fixture前置，不能用作所有正常存档的“没有活动命令”通用判定。真实已完成命令可保留非零历史计数/Goal，不在该前置承诺内，也无需添加兼容fallback。
+- Restore对原无效CommandId会正常补新FGuid（376），因此第三版仅记录CommandId而不要求无效。Serial/epoch及旧票据失效仍由真实Load和确认ID检查，不通过新增Request干预真实模型ticket。
+- 125秒watch使用既有公开same_world的双方背包/实例GUID耐久、仓储/来源、Requested/Delivered及高层指令检查；baseline不要求Phase恒定。quiet/final真实SavePoint后还核对Acquired/Carried。fresh确认后等待实际Completed和Delivered1属于正控制，有真实执行完成契约依据。
+
+没有发现需要再修改第三版的具体接口或前置语义缺口。动态GetGoal属性、实际baseline值与HTTP业务结果仍需Root第三次运行确认；静态复核不计新的运行PASS。
+
+## 信用边界
+
+前两次HTTP尝试均夹具阶段停止、实际model请求0：首次protected World读取；第二次错误Idle前置。第三版取消全部protected World/receipt/operation读取，按公开Goal/任务量判断。Python回执／operation核对显式NOTRUN，原生Save13幂等信用独立。公开GetGenerationCalls/status/busy只能证明UE实际HTTP dispatch；旧成功200迟到回调是否实际进入handler、正常菜单/physical input/旧Slate控件仍各自NOTRUN。脚本没有合成旧成功响应。
+
+
+## 第三版Root实际运行更新
+
+第三版已实际通过，674检查0 fail，旧HTTP dispatch后观察125.438秒；实际baseline为CANCELLED、Goal none、四任务量0。详见http-loadpoint-runtime-review.md及独立pool3a5bc510结果。前两次fixture失败0模型请求保持；强制迟到成功响应、普通菜单/physical input/旧Slate/Python回执字段检查仍NOTRUN。此前“第三版待运行”均为当时状态，不作为当前结论。

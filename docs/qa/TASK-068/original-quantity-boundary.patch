@@ -1,0 +1,118 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.h
++++ b/Source/Hearthward/AI/HearthwardAgentContract.h
+@@ -54,6 +54,7 @@
+     FString Schema();
+     bool Parse(const FString& Json,FHearthwardAgentGoal& Out);
+     FString Validate(const FHearthwardAgentGoal& Goal);
++    bool OriginalQuantityMatches(const FHearthwardAgentGoal& Goal);
+     bool ValidLimit(const FString& Limit);
+     bool AllowsCost(const TArray<FString>& Limits,const TMap<FName,int32>& Cost,const TMap<FName,int32>& AlreadySpent);
+     FString Normalize(const FString& Text);
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -5,6 +5,7 @@
+ #include "../Inventory/HearthwardInventoryState.h"
+ #include "../Gameplay/HearthwardGameData.h"
+ #include "Dom/JsonObject.h"
++#include "Internationalization/Regex.h"
+ #include "Misc/FileHelper.h"
+ #include "Misc/Paths.h"
+ #include "Serialization/JsonReader.h"
+@@ -50,6 +51,47 @@
+     FString Out=Text.ToLower();
+     for(const auto& A:PolicyData()->GetObjectField(TEXT("aliases"))->Values) Out.ReplaceInline(*A.Key,*A.Value->AsString());
+     return Out;
++}
++bool HearthwardAgent::OriginalQuantityMatches(const FHearthwardAgentGoal& Goal)
++{
++    const FString Text=Normalize(Goal.Original),Item=Normalize(ItemText(Goal.Item));
++    FString Chinese;
++    if(Goal.Quantity>=0 && Goal.Quantity<=99)
++    {
++        const FString Digits=TEXT("零一二三四五六七八九");
++        if(Goal.Quantity<10)Chinese=Digits.Mid(Goal.Quantity,1);
++        else Chinese=(Goal.Quantity>=20?Digits.Mid(Goal.Quantity/10,1):FString())+TEXT("十")
++            +(Goal.Quantity%10?Digits.Mid(Goal.Quantity%10,1):FString());
++    }
++    FRegexMatcher Number(FRegexPattern(TEXT("(数量[为是： ]*)?(?<![-−负.．点0-9零〇一二两三四五六七八九十百千万亿])([0-9]+|[零〇一二两三四五六七八九十百千万亿]+)(?![.．点0-9零〇一二两三四五六七八九十百千万亿])\\s*(份|个|根|单位|块|件|批)?")),Text);
++    const int32 Supplement=Text.Find(TEXT("\n补充："),ESearchCase::CaseSensitive,ESearchDir::FromEnd);
++    bool Found=false;
++    while(Number.FindNext())
++    {
++        const FString Unit=Number.GetCaptureGroup(3);
++        if(Goal.Intent==TEXT("craft")?Unit!=TEXT("批"):Unit==TEXT("批"))continue;
++        if(Unit.IsEmpty() && Number.GetCaptureGroup(1).IsEmpty())continue;
++        const int32 Begin=Number.GetMatchBeginning(),End=Number.GetMatchEnding();
++        int32 ClauseStart=Begin;
++        while(ClauseStart>0 && !FString(TEXT("，,。；;\n")).Contains(Text.Mid(ClauseStart-1,1)))--ClauseStart;
++        const FString Prefix=Text.Mid(ClauseStart,Begin-ClauseStart);
++        if(Prefix.Contains(TEXT("耗")) || Prefix.Contains(TEXT("最多")) || Prefix.Contains(TEXT("至多")) || Prefix.Contains(TEXT("不超过")))continue;
++        FString Before=Text.Left(Begin).TrimEnd();
++        if(Before.EndsWith(TEXT("×")))Before=Before.LeftChop(1).TrimEnd();
++        const FString After=Text.Mid(End).TrimStart();
++        const bool Clarification=Supplement!=INDEX_NONE && Begin>=Supplement+4
++            && Text.Mid(Supplement+4,Begin-Supplement-4).TrimStartAndEnd().IsEmpty()
++            && After.TrimStartAndEnd().IsEmpty() && Text.Left(Supplement).Contains(Item);
++        if(Goal.Intent!=TEXT("craft") && !After.StartsWith(Item) && !After.StartsWith(Goal.Item.ToString())
++            && !Before.EndsWith(Item) && !Before.EndsWith(Goal.Item.ToString())
++            && !(Number.GetCaptureGroup(1).Len()>0 && Text.Contains(Item)) && !Clarification)continue;
++        FString Token=Number.GetCaptureGroup(2);Token.ReplaceInline(TEXT("两"),TEXT("二"));Token.ReplaceInline(TEXT("〇"),TEXT("零"));
++        while(Token.Len()>1 && Token[0]==TEXT('0'))Token.RightChopInline(1);
++        const bool Matches=Token.IsNumeric()?Token==FString::FromInt(Goal.Quantity):!Chinese.IsEmpty() && Token==Chinese;
++        if(!Matches || Found)return false;
++        Found=true;
++    }
++    return Found;
+ }
+ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
+ {
+--- a/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
+@@ -254,6 +254,8 @@
+             NPCLine=TEXT("需要多少？请明确数量，我再准备任务卡。");Status=TEXT("等待补充信息");LastAppliedIntent=TEXT("clarify");ReasonCode=TEXT("AMBIGUOUS_TARGET");
+             Memory.AddClarification(Input,NPCLine);return;
+         }
++        if(!HearthwardAgent::OriginalQuantityMatches(Goal))
++            Goal.Unresolved.AddUnique(TEXT("原话的目标数量或单位与提案不一致，请明确目标量；消耗上限不能代替目标数量"));
+     }
+     for(const auto& U:Memory.WorkingGoal.Unresolved)
+     {
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -118,6 +118,36 @@
+     TestFalse(TEXT("Real crafting materials"),HearthwardWorkshop::Materials(TEXT("craft"),TEXT("arrows"),1).IsEmpty());
+     return true;
+ }
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalQuantityTest,"Hearthward.NPCAgent.OriginalQuantityBoundary",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
++bool FNPCAgentOriginalQuantityTest::RunTest(const FString&)
++{
++    FHearthwardAgentGoal G;G.Intent=TEXT("collect");G.Item=TEXT("wood");G.Quantity=32;
++    G.QuantityMode=TEXT("additional_acquired");G.SourceRef=TEXT("S1");
++    G.Original=TEXT("新采三十三份木材带回仓库");
++    TestFalse(TEXT("Explicit Chinese 33 cannot become a legal 32-unit proposal"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("新采33份木材带回仓库");TestFalse(TEXT("ASCII 33 cannot become 32"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("新采132份木材带回仓库");TestFalse(TEXT("32 is not a substring quantity of 132"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("新采一百三十二份木材");TestFalse(TEXT("A large Chinese token is not reduced to its suffix"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("新采三十二份木材带回仓库");TestTrue(TEXT("The exact supported Chinese target remains valid"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("新采32份木材带回仓库");TestTrue(TEXT("The exact ASCII target remains valid"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Quantity=2;G.Original=TEXT("新采十二份木材");TestFalse(TEXT("Two is not the suffix of twelve"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("新采两份木头");TestTrue(TEXT("Existing item alias and Chinese two remain supported"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=HearthwardAgent::GoalText(G);TestTrue(TEXT("Structured GoalText item-times-quantity remains supported"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Quantity=3;G.Original=TEXT("采些木材，最多消耗三份木材");TestFalse(TEXT("Consumption quantity cannot fill a missing target"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("采些木材\n补充：三份");TestTrue(TEXT("Explicit quantity clarification fills the known item"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("请采木材，数量为三");TestTrue(TEXT("Existing explicit quantity statement remains supported"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("新采二份木材\n补充：三份");TestFalse(TEXT("Conflicting original and clarification quantities need review"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("新采二份木材，再采三份木材");TestFalse(TEXT("Multiple target quantities cannot be silently selected"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Intent=TEXT("craft");G.Item=TEXT("arrows");G.QuantityMode=TEXT("batches");G.SourceRef=TEXT("bag");
++    G.Original=TEXT("制作三批箭矢，最多消耗三份木材");
++    TestTrue(TEXT("Craft batches and a same-valued material limit are distinct slots"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("制作三批箭矢，最多消耗五份木材");TestTrue(TEXT("A different material limit does not replace the target batches"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Quantity=5;TestFalse(TEXT("The material budget cannot become five craft batches"),HearthwardAgent::OriginalQuantityMatches(G));G.Quantity=3;
++    G.Original=TEXT("制作些箭矢，最多消耗三份木材");TestFalse(TEXT("Only a consumption number supplies no craft batches"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("制作三支箭矢");TestFalse(TEXT("Product pieces cannot be relabeled as batches"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=HearthwardAgent::GoalText(G);TestTrue(TEXT("Structured craft GoalText preserves exact batches"),HearthwardAgent::OriginalQuantityMatches(G));
++    return true;
++}
+ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentReceiptTest,"Hearthward.NPCAgent.EffectReceiptsAndProgress",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+ bool FNPCAgentReceiptTest::RunTest(const FString&)
+ {

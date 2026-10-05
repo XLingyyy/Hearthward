@@ -1,0 +1,49 @@
+{
+  "version": "task068-advanced-public-api-v1",
+  "status": "proposal_NOT_RUN",
+  "scope": "Independent supplemental execution cases; does not amend or replace frozen cases.json 60/20.",
+  "cases": [
+    {
+      "id": "ADV-N01",
+      "text": "请给我指认的这块野菜浇水一次",
+      "setup": "plant_greens",
+      "expected": {
+        "intent": "nature_care",
+        "item": "water",
+        "quantity": 1,
+        "mode": "action_count",
+        "source": "known_target",
+        "limits": [],
+        "unresolved": []
+      }
+    },
+    {
+      "id": "ADV-N02",
+      "text": "从我指认的这处散石堆新采一份石材，并带回营地仓库",
+      "setup": "loose_stones",
+      "expected": {
+        "intent": "nature_collect",
+        "item": "stone",
+        "quantity": 1,
+        "mode": "additional_acquired",
+        "source": "known_target",
+        "limits": [],
+        "unresolved": []
+      }
+    },
+    {
+      "id": "ADV-F01",
+      "text": "我与你同行，请在我指认的这个鱼点钓一条鱼，渔获留在你背包",
+      "setup": "fish",
+      "expected": {
+        "intent": "fish",
+        "item": "fish",
+        "quantity": 1,
+        "mode": "one_catch",
+        "source": "known_target",
+        "limits": [],
+        "unresolved": []
+      }
+    }
+  ]
+}

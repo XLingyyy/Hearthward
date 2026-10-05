@@ -1,0 +1,14 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -383,6 +383,11 @@
+     if(!C || G.CapabilityVersion!=2 || !C->Items.Contains(G.Item)) return TEXT("UNSUPPORTED_CAPABILITY");
+     if(G.Quantity<(C->Writes?1:0) || G.Quantity>C->MaxQuantity || G.QuantityMode!=C->QuantityMode || !C->Sources.Contains(G.SourceRef)) return TEXT("AMBIGUOUS_TARGET");
+     if(G.Limits.Num()>4 || G.Unresolved.Num()>4) return TEXT("UNRESOLVED_CONSTRAINT");
++    if(C->Writes && !G.Original.IsEmpty())
++    {
++        FRegexMatcher InvalidQuantity(FRegexPattern(TEXT("[-−负]\\s*[0-9一二两三四五六七八九十]|[0-9]+[.．][0-9]+|[零一二两三四五六七八九十]+点[零一二两三四五六七八九十]+")),G.Original);
++        if(InvalidQuantity.FindNext())return TEXT("UNRESOLVED_CONSTRAINT");
++    }
+     if(G.Intent==TEXT("nature_care") && G.Item!=TEXT("deposit_feed") && G.Quantity!=1)return TEXT("AMBIGUOUS_TARGET");
+     for(const auto& L:G.Limits)
+     {

@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "id": "TASK-068",
+  "title": "验收伙伴角色表达和长程协作可靠性",
+  "status": "Active",
+  "updated_at": "2026-10-05",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-053-074-design",
+  "source_refs": [
+    "用户2026-10-03：053及之后全部已有规划先整理设计，过目后再决定施工",
+    "docs/planning/TASK-053-074/sources/Hearthward_TASK-043-076.md：原稿TASK-070，canonical减2",
+    "docs/planning/TASK-053-074/sources/Hearthward_Audit_2026-09-24.md：历史审计，仅作缺口追溯",
+    "origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+    "docs/planning/TASK-053-074/TASK-068.md：本轮完整设计草案",
+    "用户2026-10-03：审阅通过，现在直接开始施工；批准整批D01—D08及逐单设计"
+  ],
+  "dependencies": [
+    "TASK-050",
+    "TASK-060",
+    "TASK-061",
+    "TASK-062",
+    "TASK-063",
+    "TASK-065",
+    "TASK-066",
+    "TASK-067"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-002-companion-command.md",
+    "docs/contracts/CT-TASK-050-companion-activities.md",
+    "docs/contracts/CT-TASK-052-clock-refresh.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/TASK-053-074/",
+    "docs/tasks/TASK-068.json",
+    "docs/tasks/TASK-068.md",
+    "docs/qa/TASK-068/",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/AI/HearthwardAgentContract.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Tests/CraftingPresentationTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "scripts/",
+    "docs/design/",
+    "docs/contracts/"
+  ],
+  "acceptance": [
+    "设计审阅：完成TASK-068现状、正式操作、失败和保存、建议施工范围、最小验证与出口的完整方案",
+    "施工验收：严格按docs/planning/TASK-053-074/TASK-068.md及ACCEPTANCE执行，仅在Owner下令施工后启动",
+    "不把设计检查或旧SHA的PASS登记为本单实现、真人体验或发行通过"
+  ],
+  "non_goals": [
+    "不超出逐单批准设计，不进行暂缓真人录音，不改未登记的共享资产或存档格式",
+    "不创建Issue，不自动提交推送、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-020",
+    "T-010",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "granted: official engineering research, origin inspection and authorized task-branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: Owner explicitly authorized current TASK-053-074 batch commit to codex/TASK-053-traversal",
+    "push": "granted: Owner explicitly authorized current TASK-053-074 batch push to origin/codex/TASK-053-traversal",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "设计与施工已获Owner确认，按DEPENDENCIES推进；提交推送、合并、发布权限保持原登记。",
+    "Owner和Reviewer均为XLingyyy，无Issue；不登记虚构独立审查。",
+    "完整批次施工获批；激活具体任务时登记准确写路径、专用目录和共享接口窗口。",
+    "真实CPU/Vulkan与已登记3328预算已复现，复用原目录实际AIBundlePath；后续生产Source窗口以准确allowed_paths为准，Runtime保持不改。",
+    "2026-10-04：真实UE5691 token CONTEXT_OVERFLOW后登记两cpp最小窗口：完整24能力的item/intent对应按集合分组共享别名，缩短重复描述和固定System；不改注册表值域/Schema/Parse/Validate/模型/3328预算/权限/确认。最终scoped sourceprobe2570仅调查，真实UE预算及双后端矩阵仍待执行。",
+    "精确施工路径已按整批批准设计登记；移除与allowed_paths自身冲突的宽泛禁止前缀，未列出的路径继续不在允许范围：Source/",
+    "2026-10-04：真实60表达Vulkan批次28/60理解、28/40明确任务端到端、22/30执行，20/20确定性边界、额外物品0，未达门槛。C08模型生成craft:arrows=3等字符串被既有ValidLimit拒绝，故在既已登记AgentContract.cpp内将limits的Schema对齐现有每能力约束类型与规范语法；未改变协议合法值、Parse、Validate、世界权限、阈值或冻结表达。定向case-ids诊断保留原数据顺序和全批验收门槛，不算60项通过。",
+    "2026-10-04：真实模型Schema数组对齐诊断仍5/10；U03实际把明确33改32生成候选，登记既有interaction/contract头及NPCAgentTests数量一致性guard与对应回归窗口；不改模型raw、冻表达/expected或预算。原Describe测试assert旧arrows=箭矢格式已实际RED，随中文[id]格式适配。",
+    "2026-10-04实际C09 raw正确而camp授权制作扣弟弟材料；根单写WorkshopTick的TakeMaterials严格来源，两行最小修复和实际原生回归；整批材料授权设计内精确登记。",
+    "2026-10-04：实际模型C08遗漏原话max预算可确认、三材料预留解除后恢复失败均已Native RED；原登记Contract.cpp/CompanionFixture.cpp内精确修复预算一致性与同Command/Payload领取回执，保留模型raw与材料来源授权。",
+    "2026-10-04：revision071-blade055-green-no-once068-red中原话“不要消耗木材”被raw遗漏、泛化“这次制作”被once:wood用作例外各真实1错误；既有Contract.cpp/NPCAgentTests.cpp窗口最小保留材料禁耗和材料明确本次授权，模型raw/长期规则不改。",
+    "2026-10-04重启续作：OriginalQuantityBoundary／MaterialBudget／MaterialProhibition／OnceAuthorization四项实际PASS0E0W，完整材料后缀RED已最小修复。neutral-store与world前置试验均明确5/7、执行4/6，未采纳；已按存档patch精确恢复原两正例System，保留全部UE guards，下一步完整Vulkan60，不修改冻结表达／raw／参数／预算／门槛。",
+    "2026-10-04当前两正例完整Vulkan60实际raw36/60、歧义拒绝1/20、明确38/40、执行30/30、边界20/20、额外物品0；未达语言门槛。A04来源含糊与A08负向地点遗漏均形成未确认错误卡，C39禁耗被模型写为禁采规则卡；登记现有Contract/NPCAgentTests/Interaction内精确原话来源和规则限制一致性RED窗口，模型raw/协议/阈值不改。",
+    "2026-10-04：完整 Vulkan60 修复前实测raw36/60、歧义raw1/20、明确E2E38/40、执行30/30、确定性20/20、额外物品0；门槛失败，非模型理解通过。A04/A08新采来源/排除地点及C39No→ban三候选真实Native RED→GREEN；额外五条口语/否定/历史货物兼容真实5 errors RED→GREEN，最新8项Original全PASS、0错误0警告。实际模型三条修复后路线及CPU60待测；见QA068/original-collection-candidate-runtime-review.md。",
+    "2026-10-05：当前两正例/intent-first版完整CPU60+20已实际完成；raw34/60、guard raw1/20、明确E2E36/40、执行28/30、det20/20、额外0，error=null且Editor关闭成功，正式门槛未过。登记现有Contract.cpp Schema中同一npc_line语句移至intent之前的单变量固定10实验；8字段/24分支/值域/required/Parser/System/模型参数保持，不抵扣raw或降低门槛，若明确任务退化或歧义不改善则撤回。",
+    "2026-10-05：npc_line-first单行Schema实验实际固定10 raw5/10、明确4/7、执行3/6，出现C01/C08/C18退化，已撤回并停止该候选。登记独立nature_care/nature_collect的TARGET_REQUIRED澄清窗口：既有CraftingPresentation真实World中公开SetStructuredGoal +16行RED，不访问私有Stage；实际原话A09报告已显示缺目标误报设施不可用，仅在RED后改Interaction同原因/同两能力局部澄清。PERSON_NOT_CONTACTED与合法GUID的其他失败保持既有行为。",
+    "2026-10-05：缺自然目标最窄 Native RED 恰好两业务错误；Interaction +6分支编译后相同 WarehouseMaterialsPresentation 1/1 GREEN、0错误、1既有夹具警告，WorkingGoal和原因保留，TARGET_REQUIRED转clarify并记录一轮，未计作模型raw或OS输入通过。见 missing-nature-target-runtime-review.md。",
+    "2026-10-05：advanced真实N01 fixture/raw均正确而唯一已知crop不绑定，定位deposit_feed for内部nearest-else；在现有CraftingPresentation公API仅water阳性/feed对照Native RED窗口，生产候选仅Interaction +4 braces，必须实际RED后修复。N02仅QA代理营地放源同侧，公开ground/nav/同camp校验，不改生产导航、真实点stock和效果oracle。",
+    "2026-10-05：advanced N01 raw/fixture正确但唯一crop TARGET_REQUIRED定位nearest-else；公开water阳性/feed对照真实Native恰好1业务RED，Interaction只+4 braces后GREEN 0错误/1既有fixture警告；模型raw未改，实际N01/N02同oracle复测另记录。",
+    "2026-10-05：真实advanced N01水作物和N02散石补充用例均分别PASS fixture/raw/execution/E2E，一次模型无未确认副作用；N01watered false→true、N02真实8→7/source和camp stone0→1，5.142米公开完整导航/同camp代理，均Completed/交付1。首次F01普通钓鱼先前也实际PASS。N02两QA前置错误GetCapsuleComponent未反射/全局nav build超时均保存；现只公开CapsuleComponent查询和局部有效非partial路径等待，不改生产Nav/oracle。见 advanced-public-api-successful-runtime-review.md；不抵扣full60/20门槛失败。",
+    "2026-10-05：冻结CPU60独立只读分层：raw34/60、歧义越权1/20仍失败，明确E2E36/40恰达90%；28/30两例先raw/候选失败，没有确认后结算bug。U01原raw负三被来源问题提前转clarify、A03两自有维修实例被refuse两项反馈缺口已明确；准确生产窗口现有Contract/Interaction文件仅拒绝优先级及合法多实例维修澄清，保留量/来源契约错误和零实例拒绝，先同Native RED后修复。现NPCAgentTests及CraftingPresentationTests写路径已登记；A03 public StructuredGoal会canonical覆盖Original，不冒称free_text模型回放，不提升raw旧门槛。",
+    "2026-10-05：两反馈问题定向Native真实RED2项/3断言→GREEN2/2/0错误/1既有EnhancedInput夹具警告，Editor构建成功。U01复用既有负数/小数谓词提前拒绝，正量及缺来源对照保持；A03仅契约有效/repair/未GUID/多件自有/实际Preview歧义时澄清，错误quantity、零实例继续拒绝，显式/唯一GUID继续接受，库存无未确认影响。QA068/negative-repair-feedback-runtime-review.md；StructuredGoal canonical原话边界说明，无新增公开API，不计raw模型通过。",
+    "Owner随后明确授权当前053—074施工成果提交并推送到codex/TASK-053-traversal；不代填待验结果，任务原状态保留。合并与发布权限未授予。"
+  ],
+  "design_status": "Approved",
+  "design_plan": "docs/planning/TASK-053-074/TASK-068.md",
+  "original_task_id": "TASK-070",
+  "proposed_implementation_paths": [
+    "docs/qa/TASK-068/",
+    "docs/handoffs/TASK-068.md",
+    "Source/Hearthward/AI/（有真实缺陷才登记具体文件）",
+    "config/npc-agent.policy.json及Source/Hearthward/AI/HearthwardAgentContract.cpp（实际角色提示／能力）",
+    "config/local-ai.lock.json（仅明确批准的版本修复）",
+    "README.md"
+  ],
+  "implementation_authorization": "granted: user2026-10-03 TASK-053—074 approved design and construction",
+  "integration_worktree": "G:/GameFactory/Hearthward/.agent-local/task051",
+  "implementation_writer": "/root; integration Source and serial UE build authority"
+}

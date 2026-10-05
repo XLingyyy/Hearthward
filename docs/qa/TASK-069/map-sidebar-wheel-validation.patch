@@ -1,0 +1,42 @@
+--- a/Source/Hearthward/Tests/MapGuidanceTests.cpp
++++ b/Source/Hearthward/Tests/MapGuidanceTests.cpp
+@@ -471,6 +471,39 @@
+             Travel->GetBoolField(TEXT("visible")) && T.Y>=S.Y+16-.1 && T.Y+T.W<=S.Y+S.W-8+.1);
+         TestEqual(TEXT("The visible scrolled camp button keeps its actual hit target"),Screen->ActionAt(FVector2D(T.X+T.Z*.5,T.Y+T.W*.5)),FString(TEXT("travel")));
+         Capture(Scale,TEXT("-sidebar-end"));
++        const auto WheelLayout=[&](FVector4& Terrain,FVector4& Description)
++        {
++            TSharedPtr<FJsonObject> State;
++            if(!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),State) || !State.IsValid())return false;
++            bool FoundTerrain=false,FoundDescription=false;
++            for(const auto& Value:State->GetArrayField(TEXT("components")))
++            {
++                const auto Row=Value->AsObject();FString Asset;
++                if(Row->TryGetStringField(TEXT("asset"),Asset) && Asset==TEXT("mapTerrain")) {Terrain=Rect(Row);FoundTerrain=true;}
++                if(Row->GetStringField(TEXT("id"))==TEXT("map.element.008")) {Description=Rect(Row);FoundDescription=true;}
++            }
++            return FoundTerrain && FoundDescription;
++        };
++        const FGeometry Geometry=FGeometry::MakeRoot(FVector2D(1696,954),FSlateLayoutTransform(1.25f,FVector2D(40,30)));
++        const FVector2D Design(1672,941);
++        const float PaintScale=FMath::Min(Geometry.GetLocalSize().X/Design.X,Geometry.GetLocalSize().Y/Design.Y);
++        const FVector2D Offset=(Geometry.GetLocalSize()-Design*PaintScale)*.5;
++        const FVector2D SidebarPointer=Geometry.LocalToAbsolute(Offset+FVector2D(S.X+S.Z*.5,S.Y+S.W*.5)*PaintScale);
++        const FVector2D CanvasPointer=Geometry.LocalToAbsolute(Offset+FVector2D(C.X+C.Z*.5,C.Y+C.W*.5)*PaintScale);
++        FVector4 TerrainBefore,DescriptionBefore,TerrainSide,DescriptionSide,TerrainCanvas,DescriptionCanvas;
++        if(!TestTrue(TEXT("Wheel baseline resolves actual terrain and description"),WheelLayout(TerrainBefore,DescriptionBefore)))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        Screen->NativeOnMouseWheel(Geometry,FPointerEvent(0,SidebarPointer,SidebarPointer,TSet<FKey>(),EKeys::Invalid,1.f,FModifierKeysState()));
++        if(!TestTrue(TEXT("Sidebar wheel exposes actual refreshed layout"),WheelLayout(TerrainSide,DescriptionSide)))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        TestTrue(FString::Printf(TEXT("%d%% sidebar wheel moves description toward the top of its content"),Scale),DescriptionSide.Y>DescriptionBefore.Y+.1);
++        TestTrue(TEXT("Sidebar wheel keeps the real map terrain rectangle unchanged"),TerrainSide==TerrainBefore);
++        Screen->NativeOnMouseWheel(Geometry,FPointerEvent(0,CanvasPointer,CanvasPointer,TSet<FKey>(),EKeys::Invalid,1.f,FModifierKeysState()));
++        if(!TestTrue(TEXT("Canvas wheel exposes actual refreshed layout"),WheelLayout(TerrainCanvas,DescriptionCanvas)))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        TestTrue(FString::Printf(TEXT("%d%% canvas wheel enlarges the real map terrain range"),Scale),TerrainCanvas.Z>TerrainSide.Z+.1 && TerrainCanvas.W>TerrainSide.W+.1);
++        TestTrue(TEXT("Canvas wheel keeps the scrolled sidebar rectangle unchanged"),DescriptionCanvas==DescriptionSide);
++        Screen->NativeOnMouseWheel(Geometry,FPointerEvent(0,CanvasPointer,CanvasPointer,TSet<FKey>(),EKeys::Invalid,-1.f,FModifierKeysState()));
+         Screen->NativeOnKeyDown(FGeometry(),FKeyEvent(EKeys::Home,FModifierKeysState(),0,false,0,0));
+         TSharedPtr<FJsonObject> Home;
+         if(!TestTrue(TEXT("Home restores a real map layout"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),Home) && Home.IsValid()))

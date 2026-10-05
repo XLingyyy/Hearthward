@@ -13,6 +13,7 @@ public:
     virtual void Deinitialize() override;
     void BeginLoading();
     void FinishSession(bool Success);
+    void InputModeChanged();
     UFUNCTION(BlueprintPure) bool IsLoading() const { return Loading; }
 private:
     void BeforeMap(const FString& Map);

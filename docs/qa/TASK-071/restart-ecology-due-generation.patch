@@ -1,0 +1,248 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -11,6 +11,9 @@
+ #include "../Building/HearthwardBuildingComponent.h"
+ #include "../Camp/HearthwardCampSubsystem.h"
+ #include "../Nature/HearthwardNatureSubsystem.h"
++#include "../Nature/HearthwardNatureActor.h"
++#include "../Survival/HearthwardSurvivalComponent.h"
++#include "Components/CapsuleComponent.h"
+ #include "../Combat/HearthwardCombatComponent.h"
+ #include "EngineUtils.h"
+ #include "Engine/GameInstance.h"
+@@ -96,6 +99,8 @@
+     FString RestartPhase;
+     if(FParse::Value(FCommandLine::Get(),TEXT("Hearthward071RestartPhase="),RestartPhase)
+         && !TestTrue(TEXT("Explicit restart phase is write or read"),RestartPhase==TEXT("write") || RestartPhase==TEXT("read")))return false;
++    const bool RestartEcology=FParse::Param(FCommandLine::Get(),TEXT("Hearthward071RestartEcology"));
++    if(RestartEcology && !TestFalse(TEXT("Ecology requires an explicit restart phase"),RestartPhase.IsEmpty()))return false;
+     const FString ManifestPath=FPaths::ProjectSavedDir()/TEXT("Task071")/PoolId.ToString(EGuidFormats::Digits)/TEXT("manifest.json");
+     UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+     const FName WorldName=RestartPhase.IsEmpty()?FName():FName(TEXT("Task071RestartFixture"));
+@@ -183,6 +188,37 @@
+     }
+     const bool Enabled=Save->EnablePrototype();
+     if(!TestTrue(FString(TEXT("Real prototype save participants initialize: "))+Save->GetStatus(),Enabled))return false;
++    FGuid EcologyFire,EcologyAnimal,EcologyFirstCorpse;FName EcologySlot;FString EcologySource;
++    const auto MoveEcologyPlayer=[&](FVector At)
++    {
++        FHitResult Hit;FCollisionQueryParams Query(SCENE_QUERY_STAT(Task071EcologyPlacement),false,Hero);
++        if(!TestTrue(TEXT("Explicit ecology placement uses actual tagged terrain"),World->LineTraceSingleByObjectType(Hit,
++            FVector(At.X,At.Y,500),FVector(At.X,At.Y,-500),FCollisionObjectQueryParams(ECC_WorldStatic),Query)
++            && Hit.GetActor() && Hit.GetActor()->ActorHasTag(TEXT("Hearthward.NatureGround"))))return false;
++        if(!TestTrue(TEXT("Public scene placement accepts the actual capsule height"),Hero->SetActorLocation(
++            Hit.ImpactPoint+FVector(0,0,Hero->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()+3),false,nullptr,ETeleportType::TeleportPhysics)))return false;
++        Hero->GetCharacterMovement()->TickComponent(.025f,LEVELTICK_All,nullptr);
++        return TestTrue(TEXT("Ecology capsule stands naturally on queried terrain"),Hero->GetCharacterMovement()->IsMovingOnGround());
++    };
++    const auto WaitEcology=[&](double Minutes)
++    {
++        for(auto* Survival:{Hero->FindComponentByClass<UHearthwardSurvivalComponent>(),Brother->FindComponentByClass<UHearthwardSurvivalComponent>()})
++        {
++            if(!TestTrue(TEXT("Actual participants are alive and safe before paid waiting"),Survival && Survival->SafeToSave()))return false;
++            while(Survival->Hunger()<80)
++                if(!TestTrue(FString(TEXT("Actual food consumption prepares eight-hour waiting: "))+Survival->Status,Survival->Eat(TEXT("wild_food"))))return false;
++        }
++        const auto Before=Clock->GetSnapshot();FHearthwardTimeAdvanceRequest Request;
++        Request.Kind=EHearthwardTimeAdvanceKind::Campfire;Request.Facility=EcologyFire;Request.Minutes=Minutes;
++        Request.Campaign=Save->GetCampaignId();Request.Epoch=Store->GetTimelineEpoch();Request.OperationId=FGuid::NewGuid();Request.StartW=Before.ElapsedCalendarMinutes;
++        const auto Receipt=Clock->RequestTimeAdvance(Request);
++        if(!TestTrue(FString(TEXT("Real paid campfire request completes: "))+Receipt.Reason,Receipt.Accepted && Receipt.Completed
++            && Receipt.Status==EHearthwardTimeAdvanceStatus::Completed && Receipt.CommittedMinutes==Minutes))return false;
++        TestEqual(TEXT("Campfire waiting adds no active seconds"),Clock->GetSnapshot().ActivePlaySeconds,Before.ActivePlaySeconds);
++        TestEqual(TEXT("Campfire waiting commits exactly the requested calendar minutes"),Clock->GetSnapshot().ElapsedCalendarMinutes,Before.ElapsedCalendarMinutes+Minutes);
++        Nature->Tick(.5f);
++        return true;
++    };
+     if(RestartPhase==TEXT("read"))
+     {
+         FString ManifestText;TSharedPtr<FJsonObject> Manifest;
+@@ -232,6 +268,26 @@
+             && ExpectedRegion->Batch.Inputs.FindRef(TEXT("wood"))==2 && ExpectedRegion->Batch.Outputs.FindRef(TEXT("rope"))==1
+             && ExpectedRegion->Workers==TArray<int32>{0} && ExpectedTreasure->Kind==TEXT("treasure")
+             && !ExpectedTreasure->Pending.Instances.IsEmpty() && !ExpectedNature.Opened.Contains(ExpectedTreasure->Definition)))return false;
++        const FHearthwardWildSlot* ExpectedSlot=nullptr;const FHearthwardAnimal* ExpectedAnimal=nullptr;
++        const FHearthwardAnimal* ExpectedFirstCorpse=nullptr;const FHearthwardCampSource* ExpectedSource=nullptr;
++        if(RestartEcology)
++        {
++            EcologySlot=FName(*Manifest->GetStringField(TEXT("ecology_slot")));EcologySource=Manifest->GetStringField(TEXT("ecology_source"));
++            if(!TestTrue(TEXT("Ecology read requires actual paid-facility and animal identities from write"),Manifest->GetBoolField(TEXT("ecology"))
++                && FGuid::Parse(Manifest->GetStringField(TEXT("ecology_fire")),EcologyFire)
++                && FGuid::Parse(Manifest->GetStringField(TEXT("ecology_animal")),EcologyAnimal)
++                && FGuid::Parse(Manifest->GetStringField(TEXT("ecology_first_corpse")),EcologyFirstCorpse)))return false;
++            ExpectedSlot=ExpectedNature.Slots.FindByPredicate([&](const auto& S){return S.Id==EcologySlot;});
++            ExpectedAnimal=ExpectedNature.Animals.FindByPredicate([&](const auto& A){return A.Id==EcologyAnimal;});
++            ExpectedFirstCorpse=ExpectedNature.Animals.FindByPredicate([&](const auto& A){return A.Id==EcologyFirstCorpse;});
++            ExpectedSource=ExpectedCamp.Sources.FindByPredicate([&](const auto& S){return S.Id==EcologySource;});
++            if(!TestTrue(TEXT("Disk node contains genuinely exhausted source and second-generation death with future Due"),
++                ExpectedSlot && ExpectedAnimal && ExpectedFirstCorpse && ExpectedSource
++                && ExpectedSlot->Generation==2 && ExpectedSlot->Current==EcologyAnimal && ExpectedSlot->Due>Expected.CalendarMinutes
++                && ExpectedAnimal->Health==0 && ExpectedAnimal->Rewarded && !ExpectedAnimal->Loot.IsEmpty()
++                && ExpectedFirstCorpse->Health==0 && ExpectedFirstCorpse->Rewarded && !ExpectedFirstCorpse->Loot.IsEmpty()
++                && ExpectedSource->Remaining==0 && ExpectedSource->Due>Expected.CalendarMinutes && !ExpectedSource->Blocked))return false;
++        }
+         const auto CheckInventory=[&](const TCHAR* Label,const FHearthwardInventorySnapshot& Actual,const FHearthwardInventorySnapshot& Saved)
+         {
+             TestTrue(Label,Actual.Version==Saved.Version && Actual.BackpackRank==Saved.BackpackRank
+@@ -316,6 +372,26 @@
+                 && Treasure->Definition==ExpectedTreasure->Definition && Treasure->Position==ExpectedTreasure->Position
+                 && Nature->State.Maps.Contains(Treasure->Definition) && Nature->State.Rewards.Contains(Treasure->Definition) && !Nature->State.Opened.Contains(Treasure->Definition));
+             CheckInventory(TEXT("Every unclaimed stack and instance GUID survives without claim replay"),Treasure->Pending,ExpectedTreasure->Pending);
++            if(RestartEcology)
++            {
++                const auto* Slot=Nature->State.Slots.FindByPredicate([&](const auto& S){return S.Id==EcologySlot;});
++                const auto* Animal=Nature->State.Animals.FindByPredicate([&](const auto& A){return A.Id==EcologyAnimal;});
++                const auto* First=Nature->State.Animals.FindByPredicate([&](const auto& A){return A.Id==EcologyFirstCorpse;});
++                const auto* Source=Economy->Source(EcologySource);const auto* Fire=Economy->State.Facilities.FindByPredicate([&](const auto& F){return F.Id==EcologyFire;});
++                if(!TestTrue(TEXT("Load restores actual ecology identities and paid usable fire"),Slot && Animal && First && Source
++                    && Fire && Fire->Kind==TEXT("campfire") && Fire->Paid.FindRef(TEXT("wood"))==4 && Fire->Paid.FindRef(TEXT("stone"))==4
++                    && Building->ResolveFacility(EcologyFire) && Building->CanUseFacility(EcologyFire) && Nature->Actor(EcologyAnimal) && Nature->Actor(EcologyFirstCorpse)))return false;
++                TestTrue(TEXT("Repeated load cannot advance animal generation or rebase its Due"),Slot->Current==ExpectedSlot->Current
++                    && Slot->Generation==ExpectedSlot->Generation && Slot->Due==ExpectedSlot->Due && Slot->Position==ExpectedSlot->Position && Slot->Definition==ExpectedSlot->Definition);
++                TestTrue(TEXT("Repeated load preserves both unclaimed corpses without reward replay"),Animal->Health==ExpectedAnimal->Health
++                    && Animal->Rewarded==ExpectedAnimal->Rewarded && Animal->Loot.OrderIndependentCompareEqual(ExpectedAnimal->Loot)
++                    && First->Health==ExpectedFirstCorpse->Health && First->Rewarded==ExpectedFirstCorpse->Rewarded && First->Loot.OrderIndependentCompareEqual(ExpectedFirstCorpse->Loot));
++                TestTrue(TEXT("Repeated load preserves exhausted source and exact remaining calendar Due"),Source->Remaining==ExpectedSource->Remaining
++                    && Source->Capacity==ExpectedSource->Capacity && Source->RefreshMinutes==ExpectedSource->RefreshMinutes && Source->Due==ExpectedSource->Due
++                    && Source->Blocked==ExpectedSource->Blocked && Source->Camp==ExpectedSource->Camp && Source->Position==ExpectedSource->Position);
++                TestEqual(TEXT("Repeated load grants no duplicate hunting experience"),double(Gameplay->Experience),Manifest->GetNumberField(TEXT("ecology_experience")));
++                TestTrue(TEXT("All restored ecology domains share the actual saved calendar"),Economy->State.Calendar==Expected.CalendarMinutes && Nature->State.Calendar==Expected.CalendarMinutes);
++            }
+             CheckInventory(TEXT("Player full inventory has zero gain from repeated mature load"),PlayerBag->Snapshot(),Expected.PlayerItems);
+             CheckInventory(TEXT("Brother full inventory has zero gain from repeated mature load"),Brother->Bag->Snapshot(),Expected.BrotherItems);
+             CheckInventory(TEXT("Shared full inventory has zero gain from repeated mature load"),Store->InventorySnapshot(),Expected.StorageItems);
+@@ -327,6 +403,43 @@
+         TestTrue(TEXT("Resave retains exact clock origin and knowledge revision"),After.InitialDay==Expected.InitialDay && After.InitialMinute==Expected.InitialMinute && After.KnowledgeRevision==Expected.KnowledgeRevision);
+         TestEqual(TEXT("Resave preserves invested camp state without batch settlement"),After.CampEconomy,Expected.CampEconomy);
+         TestEqual(TEXT("Resave preserves pending nature claims without reward settlement"),After.Nature,Expected.Nature);
++        if(RestartEcology)
++        {
++            if(!TestTrue(TEXT("Only after noGain checks does public cancellation release the active command for paid waiting"),Brother->Cancel(Hero)
++                && !Brother->EquipmentBusy() && !Gameplay->InCombat()))return false;
++            const double BeforeExperience=Gameplay->Experience;const int32 BeforeRope=Store->GetItemCount(TEXT("rope"));
++            const int32 BeforeCompleted=Economy->State.Regions.FindByPredicate([&](const auto& R){return R.Id==RegionId;})->Completed;
++            const double LastDue=FMath::Max(ExpectedSlot->Due,ExpectedSource->Due);
++            if(!TestTrue(TEXT("The saved future Due fits within one two-day calendar preparation"),LastDue>Clock->GetSnapshot().ElapsedCalendarMinutes
++                && LastDue-Clock->GetSnapshot().ElapsedCalendarMinutes<=2880))return false;
++            for(int32 I=0;I<6;++I)if(!WaitEcology(480))return false;
++            const auto* Slot=Nature->State.Slots.FindByPredicate([&](const auto& S){return S.Id==EcologySlot;});
++            const auto* Source=Economy->Source(EcologySource);const auto* Region=Economy->State.Regions.FindByPredicate([&](const auto& R){return R.Id==RegionId;});
++            if(!TestTrue(TEXT("Paid calendar crossing materializes exactly one live third generation and refreshes source once"),Slot && Source && Region
++                && Slot->Generation==3 && Slot->Current!=EcologyAnimal && Slot->Due==-1 && Nature->Actor(Slot->Current)
++                && Source->Remaining==Source->Capacity && Source->Due==-1))return false;
++            const FGuid ThirdId=Slot->Current;const auto* Third=Nature->State.Animals.FindByPredicate([&](const auto& A){return A.Id==ThirdId;});
++            TestTrue(TEXT("The actual replacement is alive and has no pre-earned loot"),Third && Third->Health>0 && !Third->Rewarded && Third->Loot.IsEmpty());
++            TestTrue(TEXT("Only the saved invested rope batch settles, without another wood debit"),Region->Completed==BeforeCompleted+1
++                && !Region->Batch.Active && Store->GetItemCount(TEXT("rope"))==BeforeRope+1 && Store->GetItemCount(TEXT("wood"))==0);
++            TestEqual(TEXT("Ecology refresh grants no duplicate hunting experience"),double(Gameplay->Experience),BeforeExperience);
++            if(!WaitEcology(60))return false;
++            Slot=Nature->State.Slots.FindByPredicate([&](const auto& S){return S.Id==EcologySlot;});Source=Economy->Source(EcologySource);
++            Region=Economy->State.Regions.FindByPredicate([&](const auto& R){return R.Id==RegionId;});
++            TestTrue(TEXT("Later calendar boundary cannot accumulate a new living generation, resource stock or rope output"),
++                Slot && Source && Region && Slot->Generation==3 && Slot->Current==ThirdId && Slot->Due==-1
++                && Source->Remaining==Source->Capacity && Source->Due==-1 && Region->Completed==BeforeCompleted+1
++                && Store->GetItemCount(TEXT("rope"))==BeforeRope+1 && Store->GetItemCount(TEXT("wood"))==0);
++            for(FGuid Id:{EcologyFirstCorpse,EcologyAnimal})
++            {
++                const auto* Corpse=Nature->State.Animals.FindByPredicate([&](const auto& A){return A.Id==Id;});
++                const auto* Saved=ExpectedNature.Animals.FindByPredicate([&](const auto& A){return A.Id==Id;});
++                TestTrue(TEXT("Paid time does not replay or erase unclaimed earlier corpse loot"),Corpse && Saved && Corpse->Health==0
++                    && Corpse->Rewarded && Corpse->Loot.OrderIndependentCompareEqual(Saved->Loot));
++            }
++            TestEqual(TEXT("Subsequent paid waiting grants no ecology reward"),double(Gameplay->Experience),BeforeExperience);
++            AddInfo(FString::Printf(TEXT("TASK071 ecology READ slot=%s generation=3 source=%s, exact single refresh and rope completion"),*EcologySlot.ToString(),*EcologySource));
++        }
+         AddInfo(FString::Printf(TEXT("TASK071 restart READ pid=%u writer=%u save=%s, two actual LoadPoint passes"),FPlatformProcess::GetCurrentProcessId(),uint32(Manifest->GetNumberField(TEXT("writer_pid"))),*SavedId.ToString()));
+         return true;
+     }
+@@ -350,6 +463,69 @@
+             && Building->BuildingCount()==1 && Economy->State.Facilities.Num()==1 && Economy->State.Facilities[0].Kind==TEXT("workbench")
+             && Economy->State.Facilities[0].Paid.FindRef(TEXT("wood"))==72 && PlayerBag->GetItemCount(TEXT("wood"))==0 && Store->GetItemCount(TEXT("wood"))==2
+             && FMath::IsNearlyEqual(Clock->GetSnapshot().ActivePlaySeconds,BeforeBuild.ActivePlaySeconds+5,1.e-6)))return false;
++        if(RestartEcology)
++        {
++            if(!TestTrue(TEXT("Ecology fixture supplies actual campfire cost and food for both participants"),PlayerBag->TryAdd(TEXT("wood"),4)==EHearthwardInventoryResult::Success
++                && PlayerBag->TryAdd(TEXT("stone"),4)==EHearthwardInventoryResult::Success && PlayerBag->TryAdd(TEXT("wild_food"),12)==EHearthwardInventoryResult::Success
++                && Brother->Bag->TryAdd(TEXT("wild_food"),12)==EHearthwardInventoryResult::Success))return false;
++            Controller->SetControlRotation(FRotator(0,180,0));
++            if(!TestTrue(TEXT("Public selection starts paid campfire construction on the opposite clear footprint"),Building->SelectBuilding(TEXT("campfire"))))return false;
++            Building->TickComponent(.01f,LEVELTICK_All,nullptr);
++            if(!TestTrue(FString(TEXT("Real campfire support and occupancy accept placement: "))+Building->Feedback,Building->ValidPlacement && Building->ConfirmPlacement()))return false;
++            Clock->Tick(5.f);Timer->TickComponent(5.f,LEVELTICK_All,nullptr);
++            const auto* Fire=Economy->State.Facilities.FindByPredicate([](const auto& F){return F.Kind==TEXT("campfire");});
++            if(!TestTrue(TEXT("Real five-second construction publishes one fully paid usable campfire"),Fire && !Building->IsBuilding() && !Building->IsPlacing()
++                && Fire->Paid.FindRef(TEXT("wood"))==4 && Fire->Paid.FindRef(TEXT("stone"))==4 && Building->CanUseFacility(Fire->Id)
++                && PlayerBag->GetItemCount(TEXT("wood"))==0 && PlayerBag->GetItemCount(TEXT("stone"))==0 && Store->GetItemCount(TEXT("wood"))==2))return false;
++            EcologyFire=Fire->Id;
++            auto* Combat=Hero->FindComponentByClass<UHearthwardCombatComponent>();
++            if(!TestTrue(TEXT("Actual owned axe enters the normal equipment switch action"),Gameplay->EquipInstance(PlayerBag->FirstInstance(TEXT("axe")))))return false;
++            Clock->Tick(.4f);Combat->TickComponent(.4f,LEVELTICK_All,nullptr);
++            if(!TestTrue(TEXT("Normal switch completion makes actual axe attack power available"),!Combat->Busy() && Gameplay->AttackPower()>0
++                && PlayerBag->EquippedInstance(TEXT("weapon"))==PlayerBag->FirstInstance(TEXT("axe"))))return false;
++            const auto* Slot=Nature->State.Slots.FindByPredicate([](const auto& S){return S.Definition==TEXT("hare");});
++            if(!TestTrue(TEXT("Seeded actual hare begins at first generation"),Slot && Slot->Generation==1 && Slot->Due==-1 && Nature->Actor(Slot->Current)))return false;
++            EcologySlot=Slot->Id;EcologyFirstCorpse=Slot->Current;
++            const auto KillActualHare=[&](FGuid Id)
++            {
++                auto* Actor=Nature->Actor(Id);auto* Target=Actor?Actor->FindComponentByClass<UHearthwardCombatTargetComponent>():nullptr;
++                if(!TestTrue(TEXT("Damage fixture uses the actual living natural target"),Target && Target->Alive() && Target->NaturalTarget))return false;
++                for(int32 Hit=0;Hit<8 && Target->Alive();++Hit)
++                    Combat->HitTarget(Target,Gameplay->AttackPower(),TEXT("body"),false,FGuid::NewGuid(),Hero);
++                const auto* Animal=Nature->State.Animals.FindByPredicate([&](const auto& A){return A.Id==Id;});
++                const auto* Current=Nature->State.Slots.FindByPredicate([&](const auto& S){return S.Id==EcologySlot;});
++                if(!TestTrue(TEXT("Production death transaction creates unpaid corpse loot and future animal Due"),Animal && Current && !Target->Alive()
++                    && Animal->Health==0 && Animal->Rewarded && !Animal->Loot.IsEmpty() && Current->Due==Nature->State.Calendar+2880))return false;
++                Clock->Tick(3.f);Gameplay->TickComponent(3.f,LEVELTICK_All,nullptr);
++                return TestFalse(TEXT("Normal active update ends actual three-second combat cooldown"),Gameplay->InCombat());
++            };
++            if(!KillActualHare(EcologyFirstCorpse))return false;
++            for(TActorIterator<AActor> It(World);It;++It)
++                if(It->FindComponentByClass<UHearthwardSurvivalComponent>() && !TestTrue(TEXT("Actual survival participant is outside wildlife's eighty-meter refresh exclusion"),
++                    FVector::Dist2D(It->GetActorLocation(),Slot->Position)>8000))return false;
++            for(int32 I=0;I<6;++I)if(!WaitEcology(480))return false;
++            Slot=Nature->State.Slots.FindByPredicate([&](const auto& S){return S.Id==EcologySlot;});
++            if(!TestTrue(TEXT("Paid waiting naturally creates one actual second-generation identity"),Slot && Slot->Generation==2
++                && Slot->Current!=EcologyFirstCorpse && Slot->Due==-1 && Nature->Actor(Slot->Current)))return false;
++            EcologyAnimal=Slot->Current;
++            if(!KillActualHare(EcologyAnimal))return false;
++            const auto* Herb=Nature->State.Points.FindByPredicate([](const auto& P){return P.Kind==TEXT("resource") && P.Definition==TEXT("herb_patch");});
++            if(!TestNotNull(TEXT("Seeded world exposes a real hand-harvest herb point"),Herb))return false;
++            EcologySource=Herb->Key.ToString();const FGuid HerbId=Herb->Id;
++            if(!MoveEcologyPlayer(Herb->Position+FVector(180,0,0)))return false;
++            const int32 BeforeHerb=PlayerBag->GetItemCount(TEXT("herb"));
++            for(int32 I=0;I<2;++I)
++            {
++                if(!TestTrue(FString(TEXT("Normal harvest begins on actual herb source: "))+Nature->Feedback,Nature->Act(TEXT("harvest"),HerbId,NAME_None,Store->GetTimelineEpoch())))return false;
++                Clock->Tick(5.f);Timer->TickComponent(5.f,LEVELTICK_All,nullptr);
++                if(!TestFalse(TEXT("Real five-active-second harvest action completes"),Nature->Busy()))return false;
++            }
++            const auto* Source=Economy->Source(EcologySource);
++            if(!TestTrue(TEXT("Actual harvests consume four herbs and leave future resource Due"),Source && Source->Remaining==0 && Source->Capacity==4
++                && Source->Due==Nature->State.Calendar+2880 && PlayerBag->GetItemCount(TEXT("herb"))==BeforeHerb+4))return false;
++            if(!MoveEcologyPlayer(Economy->State.Camps[0].Position))return false;
++            Controller->SetControlRotation(FRotator::ZeroRotator);
++        }
+         if(!TestTrue(TEXT("Fixture grants one real treasure map"),PlayerBag->TryAdd(TEXT("treasure_map_1"),1)==EHearthwardInventoryResult::Success)
+             || !TestTrue(FString(TEXT("Public ReadMap consumes it and creates actual pending loot: "))+Nature->Feedback,Nature->ReadMap(TEXT("treasure_map_1"))))return false;
+         const auto* Treasure=Nature->State.Points.FindByPredicate([](const auto& P){return P.Kind==TEXT("treasure") && P.Definition==TEXT("treasure_map_1");});
+@@ -416,6 +592,20 @@
+         Manifest->SetStringField(TEXT("workbench_id"),Region->Facility.ToString());Manifest->SetStringField(TEXT("production_region"),Region->Id.ToString());
+         Manifest->SetStringField(TEXT("treasure_id"),Treasure->Id.ToString());Manifest->SetStringField(TEXT("camp_economy"),S.CampEconomy);
+         Manifest->SetStringField(TEXT("nature"),S.Nature);
++        if(RestartEcology)
++        {
++            const auto* Slot=WrittenNature.Slots.FindByPredicate([&](const auto& V){return V.Id==EcologySlot;});
++            const auto* Animal=WrittenNature.Animals.FindByPredicate([&](const auto& V){return V.Id==EcologyAnimal;});
++            const auto* Source=WrittenCamp.Sources.FindByPredicate([&](const auto& V){return V.Id==EcologySource;});
++            TSharedPtr<FJsonObject> WrittenGameplay;
++            if(!TestTrue(TEXT("Actual saved ecology validates nondefault generation and future Due before manifest"),Slot && Animal && Source
++                && Slot->Generation==2 && Slot->Current==EcologyAnimal && Slot->Due>S.CalendarMinutes && Animal->Health==0 && Animal->Rewarded && !Animal->Loot.IsEmpty()
++                && Source->Remaining==0 && Source->Due>S.CalendarMinutes && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(S.Gameplay),WrittenGameplay)))return false;
++            Manifest->SetBoolField(TEXT("ecology"),true);Manifest->SetStringField(TEXT("ecology_fire"),EcologyFire.ToString());
++            Manifest->SetStringField(TEXT("ecology_slot"),EcologySlot.ToString());Manifest->SetStringField(TEXT("ecology_animal"),EcologyAnimal.ToString());
++            Manifest->SetStringField(TEXT("ecology_first_corpse"),EcologyFirstCorpse.ToString());Manifest->SetStringField(TEXT("ecology_source"),EcologySource);
++            Manifest->SetNumberField(TEXT("ecology_experience"),WrittenGameplay->GetNumberField(TEXT("experience")));
++        }
+         FString Json;FJsonSerializer::Serialize(Manifest,TJsonWriterFactory<>::Create(&Json));
+         if(!TestTrue(TEXT("Write process persists the isolated QA manifest"),IFileManager::Get().MakeDirectory(*FPaths::GetPath(ManifestPath),true)
+             && FFileHelper::SaveStringToFile(Json,*ManifestPath,FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)))return false;

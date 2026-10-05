@@ -140,6 +140,7 @@ private:
     FName SelectedItem=TEXT("axe"),SelectedSkill=TEXT("strong"),SelectedQuest=TEXT("ember"),SelectedLocation=TEXT("camp");
     FName SelectedCodex;
     FString Category,Message,ConfirmAction,ConfirmMessage;
+    FGuid GiveUpEpoch;
     TArray<FString> ResetItems;
     FGuid ResetEpoch,ResetCommand,ResetCandidate;
     int64 ResetRevision=0;

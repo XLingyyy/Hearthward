@@ -1,0 +1,18 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -336,6 +336,7 @@
+     for(const auto& C:Capabilities())
+     {
+         auto B=MakeShared<FJsonObject>(),P=MakeShared<FJsonObject>();B->SetStringField(TEXT("type"),TEXT("object"));B->SetBoolField(TEXT("additionalProperties"),false);
++        auto Line=MakeShared<FJsonObject>();Line->SetStringField(TEXT("type"),TEXT("string"));Line->SetNumberField(TEXT("maxLength"),150);P->SetObjectField(TEXT("npc_line"),Line);
+         P->SetObjectField(TEXT("intent"),Enum({C.Id.ToString()}));
+         TArray<FString> Items;for(FName I:C.Items) Items.Add(I.ToString());P->SetObjectField(TEXT("item"),Enum(Items));
+         auto Q=MakeShared<FJsonObject>();Q->SetStringField(TEXT("type"),TEXT("integer"));Q->SetNumberField(TEXT("minimum"),C.Writes?1:0);Q->SetNumberField(TEXT("maximum"),C.MaxQuantity);P->SetObjectField(TEXT("quantity"),Q);
+@@ -363,7 +364,6 @@
+             }
+             A->SetObjectField(TEXT("items"),S);P->SetObjectField(Key,A);
+         }
+-        auto Line=MakeShared<FJsonObject>();Line->SetStringField(TEXT("type"),TEXT("string"));Line->SetNumberField(TEXT("maxLength"),150);P->SetObjectField(TEXT("npc_line"),Line);
+         B->SetObjectField(TEXT("properties"),P);B->SetArrayField(TEXT("required"),Strings({TEXT("intent"),TEXT("item"),TEXT("quantity"),TEXT("mode"),TEXT("source"),TEXT("limits"),TEXT("unresolved"),TEXT("npc_line")}));Branches.Add(MakeShared<FJsonValueObject>(B));
+     }
+     Root->SetArrayField(TEXT("oneOf"),Branches);FString Out;FJsonSerializer::Serialize(Root,TJsonWriterFactory<>::Create(&Out));return Out;

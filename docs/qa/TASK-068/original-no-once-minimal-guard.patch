@@ -1,0 +1,65 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -80,6 +80,52 @@
+             Found=true;
+         }
+         if(!Found)return false;
++    }
++    return true;
++}
++bool OriginalMaterialPermissionsMatch(const FHearthwardAgentGoal& Goal)
++{
++    const FString Text=HearthwardAgent::Normalize(Goal.Original);
++    const auto BindMaterials=[](FString Tail,TSet<FName>& Items)
++    {
++        for(;;)
++        {
++            Tail.TrimStartInline();FName Material;int32 BestLength=0;bool Ambiguous=false;
++            for(const auto& Item:HearthwardBasicItems())
++            {
++                const FString Name=HearthwardAgent::Normalize(HearthwardAgent::ItemText(Item.Id)),Id=Item.Id.ToString();int32 Length=0;
++                for(const auto& Word:{Name,Id})
++                {
++                    if(Word.IsEmpty() || !Tail.StartsWith(Word))continue;
++                    if(Word==Id && Tail.Len()>Word.Len() && Tail[Word.Len()]<128
++                        && (FChar::IsAlnum(Tail[Word.Len()]) || Tail[Word.Len()]==TEXT('_')))continue;
++                    Length=FMath::Max(Length,Word.Len());
++                }
++                if(Length>BestLength){Material=Item.Id;BestLength=Length;Ambiguous=false;}
++                else if(Length>0 && Length==BestLength && Material!=Item.Id)Ambiguous=true;
++            }
++            if(Material.IsNone() || Ambiguous)return false;
++            Items.Add(Material);Tail=Tail.Mid(BestLength).TrimStart();bool Joined=false;
++            for(const auto* Join:{TEXT("和"),TEXT("与"),TEXT("及"),TEXT("、")})
++                if(Tail.StartsWith(Join)){Tail=Tail.Mid(FCString::Strlen(Join));Joined=true;break;}
++            if(!Joined)return true;
++        }
++    };
++    TSet<FName> Prohibited;
++    FRegexMatcher No(FRegexPattern(TEXT("(?:(?:不允许|不得|禁止|不能|不要|不许|不准|别|不)\\s*(?:(?:仅)?(?:这次|本次)\\s*)?(?:消耗|使用|耗费|耗|用)|禁耗)\\s*([^，,。；;\\n]*?)(?=、(?:不得消耗|仅本次允许消耗|累计最多消耗)|[，,。；;\\n]|$)")),Text);
++    while(No.FindNext())if(!BindMaterials(No.GetCaptureGroup(1),Prohibited))return false;
++    for(FName Item:Prohibited)if(!Goal.Limits.Contains(TEXT("no:")+Item.ToString()))return false;
++    if(Goal.Limits.ContainsByPredicate([](const auto& L){return L.StartsWith(TEXT("once:"));}))
++    {
++        TSet<FName> Authorized;
++        FRegexMatcher Once(FRegexPattern(TEXT("(?:^|[，,。；;：:、\\n])\\s*(?:(?:仅)?(?:这次|本次)\\s*(?:允许|可以|可|准许|同意|授权)|(?:允许|准许|同意|授权)\\s*(?:仅)?(?:这次|本次))\\s*(?:消耗|使用|耗费|耗|用)\\s*([^，,。；;\\n]*?)(?=、(?:不得消耗|仅本次允许消耗|累计最多消耗)|[，,。；;\\n]|$)")),Text);
++        while(Once.FindNext())
++        {
++            TSet<FName> Materials;
++            if(BindMaterials(Once.GetCaptureGroup(1),Materials))for(FName Item:Materials)Authorized.Add(Item);
++        }
++        for(const auto& L:Goal.Limits)
++            if(L.StartsWith(TEXT("once:")) && !Authorized.Contains(FName(*L.RightChop(5))))return false;
+     }
+     return true;
+ }
+@@ -344,7 +390,8 @@
+         if(!ValidLimit(L) || !C->Constraints.Contains(Type)) return TEXT("UNRESOLVED_CONSTRAINT");
+         if(Type==TEXT("ban") && Rest==G.Item.ToString() && (G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect"))) return TEXT("POLICY_CONFLICT");
+     }
+-    if((G.Intent==TEXT("craft") || G.Intent==TEXT("repair")) && !OriginalMaterialBudgetsMatch(G))return TEXT("UNRESOLVED_CONSTRAINT");
++    if((G.Intent==TEXT("craft") || G.Intent==TEXT("repair"))
++        && (!OriginalMaterialBudgetsMatch(G) || !OriginalMaterialPermissionsMatch(G)))return TEXT("UNRESOLVED_CONSTRAINT");
+     if(C->Writes && !G.Unresolved.IsEmpty()) return TEXT("UNRESOLVED_CONSTRAINT");
+     if(G.Intent==TEXT("rule_proposal") && (G.Limits.Num()!=1 || !G.Unresolved.IsEmpty())) return TEXT("UNRESOLVED_CONSTRAINT");
+     return {};

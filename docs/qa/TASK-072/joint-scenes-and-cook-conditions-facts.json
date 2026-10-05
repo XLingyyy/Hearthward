@@ -1,0 +1,90 @@
+{
+  "review_date": "2026-10-05",
+  "generated_utc": "2026-10-04T20:23:36.117392+00:00",
+  "authority_tree": "G:/GameFactory/Hearthward/.agent-local/task051",
+  "method": "Read approved design/source/metadata; old performance --help only; no UE/model/UAT/build/Git/hash/move/delete",
+  "current_cook_status": "NOT_RUN",
+  "disk_failure_evidence": null,
+  "disk_failure_claim": "Root confirmed no current Cook was executed; capacity is risk only",
+  "disk_free_bytes": {
+    "C": 28931342336,
+    "F": 90376437760,
+    "G": 5063753728
+  },
+  "content_metadata": {
+    "files": 2481,
+    "logical_bytes": 3714747913
+  },
+  "runtime_metadata": {
+    "files": 4,
+    "logical_bytes": 15795,
+    "model_and_server_present": false
+  },
+  "joint_status": "NOT_RUN",
+  "shipping_second_machine_status": "NOT_RUN",
+  "rc_frozen": false,
+  "old_performance_help": {
+    "exit_code": 1,
+    "error": "ModuleNotFoundError: No module named engine_adapters",
+    "file": "docs/qa/fix2/run_performance.py",
+    "line": 14,
+    "ue_started": false
+  },
+  "shipping_csv_default": {
+    "enabled": false,
+    "debug_flags_enabled": false,
+    "project_target_override": false
+  },
+  "normal_ui_constraints": [
+    "Leaving dialogue calls CancelPending",
+    "Camp UI may pause World through MenuPause",
+    "Stage/Apply waits while paused"
+  ],
+  "proposal": {
+    "status": "READ_ONLY_NOT_RUN",
+    "scene_conditions": [
+      "camp_day",
+      "camp_night",
+      "prologue",
+      "three_actual_combatants",
+      "walking_route_streaming",
+      "camp_management_with_world_tick"
+    ],
+    "backends": [
+      "cpu",
+      "vulkan"
+    ],
+    "initial_diagnostic_valid_seconds_per_condition": 60,
+    "minimum_complete_overlapping_generations": 1,
+    "warm_p95_acceptance_credit": false,
+    "private_setters": false,
+    "model_parameter_changes": false,
+    "new_production_helper": false,
+    "standalone_public_remote_control": "Source-supported candidate only; runtime object references and calls require actual smoke; search handlers are NotSupported"
+  },
+  "target_metrics": {
+    "p99_frame_ms_max": 16.67,
+    "one_percent_low_fps_min": 60,
+    "frames_over_50ms_fraction_max": 0.001
+  },
+  "model_latency_is_frame_time": false,
+  "external_f_paths_authorized_by_current_task_metadata": false,
+  "technically_supported_existing_uat_options": [
+    "CookOutputDir=<approved>/Cooked/Windows",
+    "stagingdirectory=<approved>/Staged",
+    "archive_dir=<approved>/Archive",
+    "AdditionalCookerOptions=-ShaderWorkingDir=<approved>/Shaders",
+    "process-local TMP/TEMP"
+  ],
+  "cook_peak_bytes_measured": null,
+  "external_gates": [
+    "Root serial UE window after UI verification",
+    "Actual scenario checkpoints/conditions",
+    "Standalone public-call smoke",
+    "Exact external F and Runtime write windows",
+    "Current bundle deployment",
+    "Cook/Build peak space",
+    "073 acceptance and RC freeze",
+    "Independent second machine"
+  ]
+}

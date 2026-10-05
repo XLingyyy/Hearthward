@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "id": "TASK-069",
+  "title": "收尾全流程UI、设置和操作可访问性",
+  "status": "Active",
+  "updated_at": "2026-10-05",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-053-074-design",
+  "source_refs": [
+    "用户2026-10-03：053及之后全部已有规划先整理设计，过目后再决定施工",
+    "docs/planning/TASK-053-074/sources/Hearthward_TASK-043-076.md：原稿TASK-071，canonical减2",
+    "docs/planning/TASK-053-074/sources/Hearthward_Audit_2026-09-24.md：历史审计，仅作缺口追溯",
+    "origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+    "docs/planning/TASK-053-074/TASK-069.md：本轮完整设计草案",
+    "用户2026-10-03：审阅通过，现在直接开始施工；批准整批D01—D08及逐单设计"
+  ],
+  "dependencies": [
+    "TASK-051",
+    "TASK-054",
+    "TASK-064",
+    "TASK-067"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-004-presentation-gameplay.md",
+    "docs/contracts/CT-TASK-051-input-traversal.md",
+    "docs/contracts/CT-003-save-load.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/TASK-053-074/",
+    "docs/tasks/TASK-069.json",
+    "docs/tasks/TASK-069.md",
+    "Source/Hearthward/Tests/ExperienceTests.cpp",
+    "docs/qa/TASK-069/",
+    "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
+    "Source/Hearthward/Input/HearthwardInputBindings.cpp",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/Tests/MapGuidanceTests.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/UI/HearthwardScreenSettings.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+    "Source/Hearthward/UI/HearthwardLoadingSubsystem.cpp",
+    "Source/Hearthward/UI/HearthwardLoadingSubsystem.h"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "config/",
+    "Runtime/",
+    "art_source/",
+    "scripts/",
+    "docs/design/",
+    "docs/contracts/"
+  ],
+  "acceptance": [
+    "设计审阅：完成TASK-069现状、正式操作、失败和保存、建议施工范围、最小验证与出口的完整方案",
+    "施工验收：严格按docs/planning/TASK-053-074/TASK-069.md及ACCEPTANCE执行，仅在Owner下令施工后启动",
+    "不把设计检查或旧SHA的PASS登记为本单实现、真人体验或发行通过"
+  ],
+  "non_goals": [
+    "不超出逐单批准设计，不进行暂缓真人录音，不改未登记的共享资产或存档格式",
+    "不创建Issue，不自动提交推送、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-025",
+    "T-012"
+  ],
+  "permissions": {
+    "network": "granted: official engineering research, origin inspection and authorized task-branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: Owner explicitly authorized current TASK-053-074 batch commit to codex/TASK-053-traversal",
+    "push": "granted: Owner explicitly authorized current TASK-053-074 batch push to origin/codex/TASK-053-traversal",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "设计与施工已获Owner确认，按DEPENDENCIES推进；提交推送、合并、发布权限保持原登记。",
+    "Owner和Reviewer均为XLingyyy，无Issue；不登记虚构独立审查。",
+    "完整批次施工获批；激活具体任务时登记准确写路径、专用目录和共享接口窗口。",
+    "2026-10-04：先只读审计及真实Native输入红测，方向已批准；共享UI生产修复在真实RED后按准确文件登记。",
+    "危险确认真RED见Saved/Task053/baseline069-confirmation：无焦点Enter直接将Downed变Dead并清除120秒期限；准确生产窗口仅删除无焦点自动confirm分支，保留明确焦点/方向选择/鼠标确认和Escape。",
+    "2026-10-04：render062-baseline069modifier真实输入RED确认右Ctrl/Shift的Held、SemanticHeld与Enhanced Move均失败；修复窗口仅InputBindings.cpp语义修饰查询及Character.cpp相同动作双侧Chord映射，保留既有053/055改动。",
+    "精确施工路径已按整批批准设计登记；移除与allowed_paths自身冲突的宽泛禁止前缀，未列出的路径继续不在允许范围：Source/",
+    "2026-10-04：登记既有MapGuidanceTests.cpp内独立125/150真实地图字体/剩余驻军glyph测试与QA069截图，原100测试保持；只用DescribeLayout/PlayerSettings内存与生产状态，不加setter，不计作九页正常输入验收。",
+    "2026-10-04：实际地图125%/150%字号Native测试27错误并核看两张PNG，登记既有Content/Widget/Paint三文件局部复用字体测高及文本滚动/clip修复侧栏、目标和剩余提示；不截文字、不降低字号、不新建框架。",
+    "2026-10-04：正常首次 dialogue 打开后的真实 Slate prepass 连续崩溃已复现；独立审阅确认 Refresh 把栈上 FEditableTextBoxStyle 地址经 UE 5.8 setter 交给 Slate 持有。准确生产修复窗口仅 HearthwardScreenWidget.cpp 的 Refresh 样式声明，引用 Draft 自身持久 WidgetStyle；保持现有 Paint 与 UI 行为，并用同一分帧公共 UI/Load 路线复测。",
+    "2026-10-04：Refresh 样式持久引用单行修复编译通过，同一分帧公共 UI route 实际96/96 PASS，无原生崩溃；旧卡、旧菜单确认跨 Load 失效，新卡真实执行与新菜单 Load 恢复正确。该回调重放未使用物理输入或直接 Slate 事件；详见QA071/ui-loadpoint-persistent-style-runtime-review.md。",
+    "2026-10-05：actualOS pool8618582c交流亮灰地面正文低对比已复现；interface背景空/组无asset、实际layout无surface且Paint排除dialogue底层已读证。批准原069可读性范围内登记ScreenPaint两行仅dialogue现Color(panel)深底候选，不改运行/暂停/主题资产/Draft持久引用，必须真实OS合成视口复测；不凭CaptureUI离屏透明图判PASS。",
+    "2026-10-05：两行仅dialogue现panel色深底构建PASS；pool7df06175实际OS观察亮地面合成清晰，真实n/i输入法候选+Space提交你、再次n/i Return仅提交组合保持dialogue且generation0、e/r组合第一Esc取消/第二Esc回HUD；350采样final_difference_from_future={}，21fixture通过，PID44548已关闭。原始3截图与报告QA069/dialogue-contrast-and-ime-runtime-review.md；局部IME通过，正常新游戏/九页/右mods/全部分辨率仍未验。",
+    "2026-10-05：登记QA069公共UEClient bounded正常Bootstrap -game host，唯一UUID存档池；不执行Python夹具/console CreateTest/Actor定位/物资授予。Root仅实际OS点主菜单新游戏/导航UI/保存/退出，区分Editor -game uncooked与Shipping、人类Owner、全部能力验收；原声音测试未执行。",
+    "2026-10-05：正常Bootstrap -game无夹具actualOS新游戏/E遗物/X跟随/Tab/F6手动保存已观察；首次host600秒TIMEOUT清理，无正常Quit信用。相同pool第二次实际Continue恢复任务2/3、Follow、等级2/50/135、amulet1、axe80/80、负重20.5，实际Pause→返回主菜单确认→退出确认，UGameEngine::HandleExitCommand正常退出，host0/stop_ok。仅可见状态比较，非完整权威存档比较/Shipping/音频/Owner。",
+    "2026-10-05：正常OS实际Title/Inventory/Pause页脚文字越底、键帽重叠、背包亮木地面低对比及Save安全/政策同位重叠均有原始JPEG RED。依据已批准069布局/可读性方案，新增准确Resource窗口仅Resources/UI/interface.json，现有Widget/Content/Paint窗口仅有限装饰fontRole沿现有字段、固定100正文24键帽几何、实际装备label宽度、深色局部面板及Save分行；125/150既有读取布局路径保持，map/body24不降字号。未列出Resource文件不允许，未新增系统/依赖。",
+    "2026-10-05：独立只读审证发现125/150通用reflow用Typeface测量后FontRole.Reset使>=30绘制选DisplayTypeface，与量字不一致；现准确修复窗口将重排文本明确body角色保持测绘相同，map专用分支保持。Inventory重排时全panel深底覆盖实际rows、footer标签沿当前相邻keycap拼接保留功能键；不将默认100改成泛用重排，不减少字号。需真实OS100与最大150抽查，其他分辨率仍未验。",
+    "2026-10-05：actualOS150%设置列表只保留行标签，当前值被generic LabelOfButton过滤，normal-settings-150-value-red-os.jpg真实RED。按已批准069最大字号/状态可见性范围登记ScreenSettings.cpp准确窗口：仅ReadableLayout的settingsRow自身文字沿现有Row.Label和Row.Value组合，100%原布局保持；不改保存/设置语义/全局重排架构。",
+    "2026-10-05：normal-pause-red-os.jpg真实Pause目标溢出；只读审阅确认bind延后使objective保留17而非正文24。本次准确interface.json窗口将Pause目标显式24、宽332/六行236，并将时间/位置沿原组改成同行标签和值（552/598），图标和山景局部让位，640/705/765生存动作保持；正文不截断、不缩字号，不扩成全Bind全页重构。全部现34任务单段最长22字，六行留容；正常夜袭目标仍需实际OS验证。",
+    "2026-10-05：Pause局部Font24修复在正常cold windowed Continue/真实Escape后已核看三段目标全文且time/location分离。all34目标实际FontMeasure仍需证据，登记既有DescribeLayout仅四个实际字段font/tracking/fontRole/bind用于定向Native测高，现调用消费者忽略额外诊断字段；不新增API/全量元素框架。Settings150当前值实际可见，OS已Apply恢复100。另Title设置Apply→borderless→Continue后的按键无响应观察独立留证，尚未归因，不以host0替代正常Quit。",
+    "2026-10-05：真实OS按键无响应及cold复查已留证；首个可检验Source链为Loading在Title/UIOnly保存IgnoreInput=true，HUD先GameOnly=false，Hide随后恢复旧true。精确新增LoadingSubsystem.cpp诊断窗口仅现有Begin/Hide日志记录前后值，先运行相同正常流程确认RED，不先改焦点或恢复语义。",
+    "2026-10-05：all34真实catalog目标在Alive和实际ReceiveDamage→Downed两状态的Widget/Slate FontMeasure单项通过，最大6行、全文Height容纳、与time/location及真实giveUp/cancelSurvival/menuPause按钮无碰撞、实际giveUp hit目标保留；0错误、1既有EnhancedInput fixture初始化警告。第六正常Continue诊断before=0/saved=0，host300秒超时前未完成载入后按键对照；先前旧true覆盖推断未获确认，输入语义未修改。",
+    "2026-10-05：原Apply路径第七次actualOS RED已确定：Settings Apply100→Title→Continue保存IgnoreInput1，加载Hide before0/saved1，遮罩end后实际Escape与Tab无效、HUD时钟推进。精确登记LoadingSubsystem.h及cpp窗口：仅页面SetInputMode后通知加载遮罩保存最新desired IgnoreInput并在loading期间重新临时true，Hide恢复最新；无pagechange travel初始状态保持。Widget在现有SetInputMode分支后单点通知，禁止在FinishSession盲取遮罩自身true；不改焦点框架/Save/Config。截图及logs见QA069/loading-after-settings-input-red。",
+    "2026-10-05：Loading回归补齐实际Traversal夹具后1/1通过、0业务错误/1既有EnhancedInput初始化警告，覆盖Title→HUD结束false、最新Pause→true、无切页travel恢复false。复用100% Map原生测试新增实际font/tracking/完整测宽高与bar几何断言，真实font17 RED（其余几何通过）；精确interface窗口仅map.element.007 font17→24，现bar先保持。Inventory raw16因非空模板早经Element实际夹24无需改动；不改全bind/125/150专用重排。",
+    "2026-10-05：原Apply100→Title→Continue第八正常OS路径复测通过，Hide before1/saved0后Escape开Pause、Tab开Inventory，返回Title保留UI输入；Quit确认后PID43112及游戏窗口自然消失再写finish，host0/stop_ok。Map默认探索17→24定向Native1/1成功、0错误/1既有EnhancedInput警告，145×28、bottom222/barY223。报告QA069/loading-page-input-runtime-review.md与map-exploration-font-runtime-review.md；全部九页/声音/Owner/Shipping仍未验。",
+    "Owner随后明确授权当前053—074施工成果提交并推送到codex/TASK-053-traversal；不代填待验结果，任务原状态保留。合并与发布权限未授予。"
+  ],
+  "design_status": "Approved",
+  "design_plan": "docs/planning/TASK-053-074/TASK-069.md",
+  "original_task_id": "TASK-071",
+  "proposed_implementation_paths": [
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Input/",
+    "Source/Hearthward/Experience/HearthwardPlayerSettings.cpp",
+    "Resources/UI/（仅实际布局／标签／状态）",
+    "Source/Hearthward/Tests/（现有设置／输入定向用例）",
+    "docs/qa/TASK-069/"
+  ],
+  "implementation_authorization": "granted: user2026-10-03 TASK-053—074 approved design and construction",
+  "integration_worktree": "G:/GameFactory/Hearthward/.agent-local/task051",
+  "implementation_writer": "/root"
+}

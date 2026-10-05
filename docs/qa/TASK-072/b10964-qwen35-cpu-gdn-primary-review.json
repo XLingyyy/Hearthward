@@ -1,0 +1,53 @@
+{
+  "scope": "Read-only primary upstream issue/PR/source investigation; no execution or parameter/dependency change",
+  "locked_runtime": "b10964 official Windows CPU x64",
+  "model": "Qwen3.5-4B Q4_K_M",
+  "threads": 4,
+  "batch_threads": 4,
+  "parallel": 1,
+  "context": 4096,
+  "cpu_gpu_layers": 0,
+  "finding": "No confirmed b10964/WindowsCPU/Qwen3.5-4B/4thread-prefill-specific upstream defect identified",
+  "topics": [
+    {
+      "pr": "https://github.com/ggml-org/llama.cpp/pull/19504",
+      "included_in": "b8233 and present in b10964",
+      "current_source": "https://github.com/ggml-org/llama.cpp/blob/b10964/ggml/src/ggml-cpu/ops.cpp#L10967",
+      "fact": "Parallel work is head*sequence; tokens recur serially inside each work item; nth*4 is partition count multiplier, no special nth==4 branch",
+      "limit": "No operator profile for this run; benchmark from other model/thread count is not current CPU-prefill proof"
+    },
+    {
+      "pr": "https://github.com/ggml-org/llama.cpp/pull/20443",
+      "merged": "2026-03-13",
+      "included_in_current": true,
+      "current_source": "https://github.com/ggml-org/llama.cpp/blob/b10964/ggml/src/ggml-cpu/ops.cpp#L10999",
+      "fact": "Contiguous state rows and SIMD/vector dot/mad/dot are present",
+      "limit": "Published regression example is Metal, not this Windows CPU case"
+    },
+    {
+      "pr": "https://github.com/ggml-org/llama.cpp/pull/27133",
+      "affected_old_releases": "b10429-b10446",
+      "fixed_release": "b10447",
+      "included_in_current": true,
+      "current_source": "https://github.com/ggml-org/llama.cpp/blob/b10964/tools/server/server-queue.cpp#L222",
+      "fact": "work executes directly on current thread",
+      "limit": "No evidence that current CPU25t/s is this old regression"
+    }
+  ],
+  "default_fused_gdn": {
+    "ar": true,
+    "ch": true,
+    "auto_fgdn": false,
+    "source": "https://github.com/ggml-org/llama.cpp/blob/b10964/src/llama-context.cpp#L232"
+  },
+  "actual_backend_dll_selection": "UNKNOWN; ISA variants present but runtime selection not recorded at current log level",
+  "upstream_source_verification": "Direct read of official tag raw text; ops.cpp12164 lines, delta-net-base.cpp606; search cached raw version differed, direct source used; no checksum",
+  "unknowns": [
+    "operator time breakdown",
+    "CPU frequency",
+    "hard faults",
+    "full process memory trajectory",
+    "whether any thread change improves performance"
+  ],
+  "new_experiments": "NOT_RUN"
+}

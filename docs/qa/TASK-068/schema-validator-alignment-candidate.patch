@@ -1,0 +1,14 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -183,9 +183,11 @@
+         for(const auto& Key:{TEXT("limits"),TEXT("unresolved")})
+         {
+             auto A=MakeShared<FJsonObject>(),S=MakeShared<FJsonObject>();A->SetStringField(TEXT("type"),TEXT("array"));A->SetNumberField(TEXT("maxItems"),4);S->SetStringField(TEXT("type"),TEXT("string"));S->SetNumberField(TEXT("maxLength"),120);
++            if(FCString::Strcmp(Key,TEXT("unresolved"))==0 && (C.Writes || C.Id==TEXT("rule_proposal"))) A->SetNumberField(TEXT("maxItems"),0);
+             if(FCString::Strcmp(Key,TEXT("limits"))==0)
+             {
+                 A->SetNumberField(TEXT("maxItems"),C.Constraints.IsEmpty()?0:4);
++                if(C.Id==TEXT("rule_proposal")){A->SetNumberField(TEXT("minItems"),1);A->SetNumberField(TEXT("maxItems"),1);}
+                 if(!C.Constraints.IsEmpty())
+                 {
+                     TArray<FString> Patterns,ItemTypes;

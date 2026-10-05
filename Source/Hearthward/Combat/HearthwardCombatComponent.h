@@ -66,6 +66,7 @@ public:
     bool CanSave() const;
     void InterruptTravel() { Cancel(); DropBody(); Guard.Release(); Aiming=false; }
     bool Damage(float Raw,FName Part,FVector Source,bool Heavy=false,bool Projectile=false,FGuid Event=FGuid());
+    static bool DamageActor(AActor* Target,float Raw,FName Part,FVector Source,bool Heavy=false,bool Projectile=false,FGuid Event=FGuid());
     void HitTarget(UHearthwardCombatTargetComponent* Target,float Raw,FName Part,bool Projectile,FGuid Event,AActor* Source=nullptr);
     void ObserveDamage(UHearthwardCombatTargetComponent* Target,AActor* Source=nullptr);
     FString Snapshot() const;
@@ -99,6 +100,8 @@ private:
     FGuid ActionEpoch,ActionId,ActionInstance,PendingInstance;
     float ActionPower=0;
     bool ChargedWear=false;
+    bool StoneAxeBlocked=false;
+    FTransform PreviousAttackMeshWorld;
     TSet<FGuid> DamageIds;
     FName ActionWeapon,PendingItem,BufferedAttack;
     double BufferedUntil=0,LostLock=0,StartedAt=0;

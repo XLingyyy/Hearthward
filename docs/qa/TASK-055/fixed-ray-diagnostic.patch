@@ -1,0 +1,73 @@
+--- a/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
++++ b/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
+@@ -17,6 +17,8 @@
+ #include "GameFramework/WorldSettings.h"
+ #include "Kismet/GameplayStatics.h"
+ #include "Misc/AutomationTest.h"
++#include "PhysicsEngine/BodyInstance.h"
++#include "PhysicsEngine/ConvexElem.h"
+ #include "PhysicsEngine/PhysicsAsset.h"
+ #include "PhysicsEngine/SkeletalBodySetup.h"
+ 
+@@ -24,7 +26,6 @@
+ #include "Misc/CommandLine.h"
+ #include "Misc/PackageName.h"
+ #include "Misc/Parse.h"
+-#include "PhysicsEngine/ConvexElem.h"
+ #include "Rendering/SkeletalMeshRenderData.h"
+ #include "Rendering/SkinWeightVertexBuffer.h"
+ #include "UObject/Package.h"
+@@ -150,6 +151,44 @@
+         // Joint pivots lie on region boundaries; sample the generated physical body's center.
+         const FVector Aim=Body->AggGeom.CalcAABB(Mesh->GetBoneTransform(Mesh->GetBoneIndex(Bone))).GetCenter();
+         const FVector Start=Aim-FVector(300,0,0),End=Aim+FVector(300,0,0);
++        if(Bone==TEXT("foot_l"))for(const FName DiagnosticBone:{FName(TEXT("calf_l")),FName(TEXT("foot_l"))})
++        {
++            const int32 Index=Mesh->GetBoneIndex(DiagnosticBone),DiagnosticBody=Physics->FindBodyIndex(DiagnosticBone);
++            const auto* Instance=Mesh->GetBodyInstance(DiagnosticBone);
++            FHitResult BodyHit;
++            const bool BodyTraced=Instance && Instance->LineTrace(BodyHit,Start,End,false);
++            Test.AddInfo(FString::Printf(TEXT("FixedRay055 %s body=%s hit=%d distance=%.6f impact=%s"),
++                *Character->GetName(),*DiagnosticBone.ToString(),BodyTraced,BodyHit.Distance,*BodyHit.ImpactPoint.ToString()));
++            if(Index==INDEX_NONE || DiagnosticBody==INDEX_NONE)continue;
++            const FTransform Current=Mesh->GetBoneTransform(Index);
++            const FTransform Reference=FTransform(Mesh->GetSkeletalMeshAsset()->GetRefBasesInvMatrix()[Index].Inverse())*Mesh->GetComponentTransform();
++            Test.AddInfo(FString::Printf(TEXT("Pose055 %s bone=%s current=%s reference=%s locationDelta=%.6f rotationDelta=%.6f"),
++                *Character->GetName(),*DiagnosticBone.ToString(),*Current.ToString(),*Reference.ToString(),
++                FVector::Distance(Current.GetLocation(),Reference.GetLocation()),Current.GetRotation().AngularDistance(Reference.GetRotation())));
++            for(const auto& Convex:Physics->SkeletalBodySetups[DiagnosticBody]->AggGeom.ConvexElems)
++            {
++                TArray<FPlane> Planes;Convex.GetPlanes(Planes);
++                const FTransform LocalToWorld=Convex.GetTransform()*Current;
++                const FVector LocalStart=LocalToWorld.InverseTransformPosition(Start),LocalEnd=LocalToWorld.InverseTransformPosition(End);
++                double Enter=0.,Exit=1.,MaxOutside=0.,MaxSupportGap=0.;int32 OutsidePlanes=0;
++                bool Intersects=!Planes.IsEmpty();
++                for(const auto& Plane:Planes)
++                {
++                    double MaxPhi=-DBL_MAX;
++                    for(const auto& Vertex:Convex.VertexData)MaxPhi=FMath::Max(MaxPhi,Plane.PlaneDot(Vertex));
++                    MaxOutside=FMath::Max(MaxOutside,MaxPhi);MaxSupportGap=FMath::Max(MaxSupportGap,-MaxPhi);
++                    OutsidePlanes+=MaxPhi>1.e-5;
++                    const double Phi=Plane.PlaneDot(LocalStart),Delta=Plane.PlaneDot(LocalEnd)-Phi;
++                    if(FMath::Abs(Delta)<1.e-12){if(Phi>0.)Intersects=false;continue;}
++                    const double Crossing=-Phi/Delta;
++                    if(Delta>0.)Exit=FMath::Min(Exit,Crossing);else Enter=FMath::Max(Enter,Crossing);
++                }
++                Intersects=Intersects && Enter<=Exit;
++                Test.AddInfo(FString::Printf(TEXT("CookedRay055 %s bone=%s inputPoints=%d planes=%d outsidePlanes=%d maxOutside=%.9f maxSupportGap=%.9f intersects=%d enter=%.9f exit=%.9f enterWorld=%s exitWorld=%s"),
++                    *Character->GetName(),*DiagnosticBone.ToString(),Convex.VertexData.Num(),Planes.Num(),OutsidePlanes,MaxOutside,MaxSupportGap,
++                    Intersects,Enter,Exit,*(Start+(End-Start)*Enter).ToString(),*(Start+(End-Start)*Exit).ToString()));
++            }
++        }
+         Enemy->SetActorLocation(Start-FVector(50,0,0));
+         FCollisionQueryParams Query(SCENE_QUERY_STAT(Projectile055ArmorBody),false,Enemy);
+         const bool Traced=World->LineTraceSingleByChannel(Hit,Start,End,ECC_Visibility,Query);
+@@ -373,7 +412,7 @@
+         if(!Test.TestTrue(FString::Printf(TEXT("Author055 %s %s cooks a valid real-point Chaos hull"),
+             Role,*Fit.Physics->SkeletalBodySetups[Body]->BoneName.ToString()),!!Cooked->AggGeom.ConvexElems[0].GetChaosConvexMesh()))return false;
+         Convex=Cooked->AggGeom.ConvexElems[0];
+-        Test.AddInfo(FString::Printf(TEXT("Author055 fit %s bone=%s points=%d hullPoints=%d localCenter=%s localSize=%s"),
++        Test.AddInfo(FString::Printf(TEXT("Author055 fit %s bone=%s points=%d inputPoints=%d localCenter=%s localSize=%s"),
+             Role,*Fit.Physics->SkeletalBodySetups[Body]->BoneName.ToString(),PointCounts[Body],Convex.VertexData.Num(),*Bounds[Body].GetCenter().ToString(),*Size.ToString()));
+     }
+     return true;

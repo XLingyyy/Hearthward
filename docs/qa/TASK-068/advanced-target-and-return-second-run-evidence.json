@@ -1,0 +1,339 @@
+{
+  "source": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task068\\advanced-public-api-vulkan-ae971106-7078-491c-9ee5-7ffa8c2a2a96\\cases.jsonl",
+  "subagent_method": "read-only actual journal/source; no UE execution",
+  "cases": [
+    {
+      "id": "ADV-N01",
+      "fixture_pass": true,
+      "raw_pass": true,
+      "execution_pass": false,
+      "e2e_pass": false,
+      "raw": "{\"intent\":\"nature_care\",\"item\":\"water\",\"quantity\":1,\"mode\":\"action_count\",\"source\":\"known_target\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡指认的野菜浇水一次，请确认；若指认地块非已知安全目标或需明确交付，我将无法执行。\"}",
+      "reason": "TARGET_REQUIRED",
+      "input_tokens": 3009,
+      "generation_calls": 1,
+      "tier": "full_relevant",
+      "dropped": [
+        "own_bag_optional"
+      ],
+      "before": {
+        "target": {
+          "id": "8288DF644E9043B0EC6307B6A386768C",
+          "definition": "greens",
+          "watered": false,
+          "fertilized": false
+        },
+        "requested": 0,
+        "acquired": 0,
+        "delivered": 0,
+        "carried": 0,
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "diagnostics": {
+          "player_position": {
+            "x": -440.875,
+            "y": -720.0,
+            "z": 92.15000534057617
+          },
+          "brother_position": {
+            "x": -250.0,
+            "y": -720.0,
+            "z": 82.14999961853027
+          },
+          "camp_position": {
+            "x": 300.0,
+            "y": 200.0,
+            "z": 92.15000200271606
+          },
+          "target_position": {
+            "x": -350,
+            "y": -600,
+            "z": -50
+          },
+          "player_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "brother_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+          "execution_action": "None",
+          "block_reason": "",
+          "navigation_status": "",
+          "nature_feedback": "操作完成",
+          "nature_busy": false,
+          "plant_ground_expected": {
+            "front_query": {
+              "x": -190.875,
+              "y": -720.0,
+              "z": 92.15000534057617
+            },
+            "flat_normal_minimum": 0.966,
+            "requires_camp_and_clear_plot": true,
+            "temporary_cube_top_z": -50
+          }
+        }
+      },
+      "after_model": {
+        "target": {
+          "id": "8288DF644E9043B0EC6307B6A386768C",
+          "definition": "greens",
+          "watered": false,
+          "fertilized": false
+        },
+        "requested": 0,
+        "acquired": 0,
+        "delivered": 0,
+        "carried": 0,
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "diagnostics": {
+          "player_position": {
+            "x": -440.875,
+            "y": -720.0,
+            "z": 92.15000534057617
+          },
+          "brother_position": {
+            "x": -250.0,
+            "y": -720.0,
+            "z": 82.14999961853027
+          },
+          "camp_position": {
+            "x": 300.0,
+            "y": 200.0,
+            "z": 92.15000200271606
+          },
+          "target_position": {
+            "x": -350,
+            "y": -600,
+            "z": -50
+          },
+          "player_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "brother_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+          "execution_action": "None",
+          "block_reason": "",
+          "navigation_status": "",
+          "nature_feedback": "操作完成",
+          "nature_busy": false,
+          "plant_ground_expected": {
+            "front_query": {
+              "x": -190.875,
+              "y": -720.0,
+              "z": 92.15000534057617
+            },
+            "flat_normal_minimum": 0.966,
+            "requires_camp_and_clear_plot": true,
+            "temporary_cube_top_z": -50
+          }
+        }
+      }
+    },
+    {
+      "id": "ADV-N02",
+      "fixture_pass": true,
+      "raw_pass": true,
+      "execution_pass": false,
+      "e2e_pass": false,
+      "raw": "{\"intent\":\"nature_collect\",\"item\":\"stone\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"known_target\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡去你指认的散石堆新采一份石材，安全返营入库；请确认后再执行。\"}",
+      "reason": "",
+      "input_tokens": 3145,
+      "generation_calls": 1,
+      "tier": "full_relevant",
+      "dropped": [
+        "own_bag_optional"
+      ],
+      "confirmed": true,
+      "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py\", line 313, in run\n    yield wait(lambda: st['brother'].get_phase() == unreal.HearthwardCompanionPhase.COMPLETED, 90)\nTimeoutError: real runtime stage deadline\n",
+      "failure_diagnostics": {
+        "player_position": {
+          "x": -403.2312643500743,
+          "y": 2736.40500397711,
+          "z": 42.150000395127016
+        },
+        "brother_position": {
+          "x": -569.9999996943272,
+          "y": 198.42216906825703,
+          "z": 32.150001145067826
+        },
+        "camp_position": {
+          "x": 300.0,
+          "y": 200.0,
+          "z": 92.15000200271606
+        },
+        "target_position": null,
+        "player_movement": "<MovementMode.MOVE_WALKING: 1>",
+        "brother_movement": "<MovementMode.MOVE_WALKING: 1>",
+        "phase": "<HearthwardCompanionPhase.HOLDING_SAFELY: 10>",
+        "execution_action": "Recovery:Camp",
+        "block_reason": "RETURN_UNREACHABLE：返营路线受阻，保留物资；会合后可重试",
+        "navigation_status": "",
+        "nature_feedback": "操作完成",
+        "nature_busy": false,
+        "plant_ground_expected": {
+          "front_query": {
+            "x": -153.2312643500743,
+            "y": 2736.40500397711,
+            "z": 42.150000395127016
+          },
+          "flat_normal_minimum": 0.966,
+          "requires_camp_and_clear_plot": true,
+          "temporary_cube_top_z": -50
+        }
+      },
+      "before": {
+        "target": {
+          "id": "camp_048_loose_stones0",
+          "item": "stone",
+          "remaining": 8,
+          "blocked": false
+        },
+        "requested": 0,
+        "acquired": 0,
+        "delivered": 0,
+        "carried": 0,
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "diagnostics": {
+          "player_position": {
+            "x": -403.2312643500743,
+            "y": 2736.40500397711,
+            "z": 42.150000395127016
+          },
+          "brother_position": {
+            "x": -183.2312643500743,
+            "y": 2736.40500397711,
+            "z": 32.150001145067826
+          },
+          "camp_position": {
+            "x": 300.0,
+            "y": 200.0,
+            "z": 92.15000200271606
+          },
+          "target_position": {
+            "x": -283.23126435007435,
+            "y": 2856.40500397711,
+            "z": -50
+          },
+          "player_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "brother_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+          "execution_action": "None",
+          "block_reason": "",
+          "navigation_status": "",
+          "nature_feedback": "操作完成",
+          "nature_busy": false,
+          "plant_ground_expected": {
+            "front_query": {
+              "x": -153.2312643500743,
+              "y": 2736.40500397711,
+              "z": 42.150000395127016
+            },
+            "flat_normal_minimum": 0.966,
+            "requires_camp_and_clear_plot": true,
+            "temporary_cube_top_z": -50
+          }
+        }
+      },
+      "after_model": {
+        "target": {
+          "id": "camp_048_loose_stones0",
+          "item": "stone",
+          "remaining": 8,
+          "blocked": false
+        },
+        "requested": 0,
+        "acquired": 0,
+        "delivered": 0,
+        "carried": 0,
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "diagnostics": {
+          "player_position": {
+            "x": -403.2312643500743,
+            "y": 2736.40500397711,
+            "z": 42.150000395127016
+          },
+          "brother_position": {
+            "x": -183.2312643500743,
+            "y": 2736.40500397711,
+            "z": 32.150001145067826
+          },
+          "camp_position": {
+            "x": 300.0,
+            "y": 200.0,
+            "z": 92.15000200271606
+          },
+          "target_position": {
+            "x": -283.23126435007435,
+            "y": 2856.40500397711,
+            "z": -50
+          },
+          "player_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "brother_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+          "execution_action": "None",
+          "block_reason": "",
+          "navigation_status": "",
+          "nature_feedback": "操作完成",
+          "nature_busy": false,
+          "plant_ground_expected": {
+            "front_query": {
+              "x": -153.2312643500743,
+              "y": 2736.40500397711,
+              "z": 42.150000395127016
+            },
+            "flat_normal_minimum": 0.966,
+            "requires_camp_and_clear_plot": true,
+            "temporary_cube_top_z": -50
+          }
+        }
+      },
+      "after_error": {
+        "target": {
+          "id": "camp_048_loose_stones0",
+          "item": "stone",
+          "remaining": 7,
+          "blocked": false
+        },
+        "requested": 1,
+        "acquired": 1,
+        "delivered": 0,
+        "carried": 1,
+        "phase": "<HearthwardCompanionPhase.HOLDING_SAFELY: 10>",
+        "diagnostics": {
+          "player_position": {
+            "x": -403.2312643500743,
+            "y": 2736.40500397711,
+            "z": 42.150000395127016
+          },
+          "brother_position": {
+            "x": -569.9999996943272,
+            "y": 198.42216906825703,
+            "z": 32.150001145067826
+          },
+          "camp_position": {
+            "x": 300.0,
+            "y": 200.0,
+            "z": 92.15000200271606
+          },
+          "target_position": {
+            "x": -283.23126435007435,
+            "y": 2856.40500397711,
+            "z": -50
+          },
+          "player_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "brother_movement": "<MovementMode.MOVE_WALKING: 1>",
+          "phase": "<HearthwardCompanionPhase.HOLDING_SAFELY: 10>",
+          "execution_action": "Recovery:Camp",
+          "block_reason": "RETURN_UNREACHABLE：返营路线受阻，保留物资；会合后可重试",
+          "navigation_status": "",
+          "nature_feedback": "操作完成",
+          "nature_busy": false,
+          "plant_ground_expected": {
+            "front_query": {
+              "x": -153.2312643500743,
+              "y": 2736.40500397711,
+              "z": 42.150000395127016
+            },
+            "flat_normal_minimum": 0.966,
+            "requires_camp_and_clear_plot": true,
+            "temporary_cube_top_z": -50
+          }
+        }
+      }
+    }
+  ]
+}

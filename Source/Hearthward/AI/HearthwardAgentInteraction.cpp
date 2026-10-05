@@ -173,13 +173,17 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
                     Targets.Add(Pen.Id);
         }
         else if(Goal.Item==TEXT("deposit_feed"))
+        {
             for(const auto& P:Nature->State.Pens)
                 if(FVector::Dist2D(PendingSpeaker->GetActorLocation(),P.Position)<=300)Targets.Add(P.Id);
+        }
         else
+        {
             for(const auto& C:Nature->State.Crops)
                 if(FVector::Dist2D(PendingSpeaker->GetActorLocation(),C.Position)<=300
                     && (Goal.Item==TEXT("water")&&!C.Watered || Goal.Item==TEXT("fertilize")&&!C.Fertilized
                         || Goal.Item==TEXT("harvest")&&Nature->State.Ready(C)))Targets.Add(C.Id);
+        }
         if(Targets.Num()==1)Goal.Station=Targets[0];
     }
     if(!Memory.WorkingGoal.Original.IsEmpty())Goal.Original=Memory.WorkingGoal.Original+TEXT("\n补充：")+Input;
@@ -254,6 +258,8 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
             NPCLine=TEXT("需要多少？请明确数量，我再准备任务卡。");Status=TEXT("等待补充信息");LastAppliedIntent=TEXT("clarify");ReasonCode=TEXT("AMBIGUOUS_TARGET");
             Memory.AddClarification(Input,NPCLine);return;
         }
+        if(!HearthwardAgent::OriginalQuantityMatches(Goal))
+            Goal.Unresolved.AddUnique(TEXT("原话的目标数量或单位与提案不一致，请明确目标量；消耗上限不能代替目标数量"));
     }
     for(const auto& U:Memory.WorkingGoal.Unresolved)
     {
@@ -273,6 +279,7 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
     if(Goal.Original.Len()>1000 || Goal.Unresolved.Num()>4 || Goal.Limits.Num()>4)
     {ReasonCode=TEXT("CONTEXT_OVERFLOW");NPCLine=TEXT("本次条件超出任务卡容量，请保留全部要求重新整理。草稿仍保留。");Status=NPCLine;LastAppliedIntent=TEXT("refuse");return;}
     ReasonCode=HearthwardAgent::Validate(Goal);
+    const bool ContractValid=ReasonCode.IsEmpty();
     if(Goal.WritesWorld())
     {
         if(Goal.Intent==TEXT("craft") || Goal.Intent==TEXT("repair"))
@@ -295,6 +302,24 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
     Memory.WorkingGoal=Goal;
     if(!ReasonCode.IsEmpty())
     {
+        if(ContractValid && ReasonCode==TEXT("AMBIGUOUS_TARGET") && Goal.Intent==TEXT("repair")
+            && !Goal.EquipmentId.IsValid() && PendingCompanion->Bag->GetItemCount(Goal.Item)>1)
+        {
+            NPCLine=TEXT("我有多件同类装备，请明确要维修哪一件；不能替你选定实例。");
+            Status=TEXT("等待补充信息");LastAppliedIntent=TEXT("clarify");Memory.AddClarification(Input,NPCLine);return;
+        }
+        if(ReasonCode==TEXT("TARGET_REQUIRED") && (Goal.Intent==TEXT("nature_care") || Goal.Intent==TEXT("nature_collect")))
+        {
+            NPCLine=Goal.Intent==TEXT("nature_care")?TEXT("请指认要照顾的地块或栏舍，并明确要做的动作。"):
+                TEXT("请指认要采集的资源或栏舍，再核对任务卡。");
+            Status=TEXT("等待补充信息");LastAppliedIntent=TEXT("clarify");Memory.AddClarification(Input,NPCLine);return;
+        }
+        if(ReasonCode==TEXT("UNRESOLVED_COLLECTION_SOURCE") || ReasonCode==TEXT("UNRESOLVED_COLLECTION_LOCATION"))
+        {
+            NPCLine=ReasonCode==TEXT("UNRESOLVED_COLLECTION_SOURCE")?TEXT("要从哪里取得，再交到哪里？请明确是新采集还是搬运已有物品。"):
+                TEXT("需要避开哪个地点？当前任务卡无法保留这个地点限制，请明确后再安排。");
+            Status=TEXT("等待补充信息");LastAppliedIntent=TEXT("clarify");Memory.AddClarification(Input,NPCLine);return;
+        }
         NPCLine=ReasonCode==TEXT("POLICY_CONFLICT")?TEXT("这项任务与已确认的规则冲突，请先修改规则或任务。"):
             ReasonCode==TEXT("UNRESOLVED_CONSTRAINT")?TEXT("还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。"):
             ReasonCode==TEXT("AMBIGUOUS_TARGET")?TEXT("没有找到我自己持有的唯一目标，不能代用你的装备。"):

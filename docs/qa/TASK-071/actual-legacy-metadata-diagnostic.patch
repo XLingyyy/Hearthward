@@ -1,0 +1,33 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -313,7 +313,29 @@
+     {
+         TArray<uint8> Before,After;FFileHelper::LoadFileToArray(Before,*Fixture);
+         const bool Read=HearthwardSave::Read(Fixture,Loaded,Error);
+-        TestTrue(FString(TEXT("Real Demo save migrates: "))+Error,Read);
++        if(!Read && Before.Num()>12)
++        {
++            TArray<uint8> Payload;Payload.Append(Before.GetData()+12,Before.Num()-12);
++            const auto* Raw=Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
++            if(Raw)
++            {
++                AddInfo(FString::Printf(TEXT("Legacy071 raw schema=%d points=%d writerPresent=%d"),Raw->Schema,Raw->Points.Num(),!Raw->WriterVersion.IsEmpty()));
++                for(int32 Index=0;Index<Raw->Points.Num();++Index)
++                {
++                    const auto& P=Raw->Points[Index];const auto& W=P.World;
++                    const bool Acquisition=W.Acquired>=0 && W.Carried>=0 && W.Acquired>=W.Delivered
++                        && W.Acquired<=W.Requested && W.Carried==W.Acquired-W.Delivered;
++                    AddInfo(FString::Printf(TEXT("Legacy071 point=%d survivalVersion=%d npcVersion=%d clockVersion=%d originDay=%lld originMinute=%.3f natural=%d companion=%d active=%.3f calendar=%.3f"),
++                        Index,W.SurvivalVersion,W.NPCStateVersion,W.ClockVersion,W.InitialDay,W.InitialMinute,W.NaturalWorld,W.NaturalCompanion,W.ActiveSeconds,W.CalendarMinutes));
++                    AddInfo(FString::Printf(TEXT("Legacy071 point=%d idsValid=%d memoryCampaignMatches=%d memoryValid=%d knowledgeCount=%d knowledgeRevision=%lld mapPresent=%d transformsValid=%d safety=%d phase=%d command=%d commandIdValid=%d goalValid=%d requested=%d delivered=%d acquired=%d carried=%d acquisitionValid=%d operations=%d receipts=%d"),
++                        Index,P.SaveId.IsValid() && P.CampaignId.IsValid(),W.NPCMemory.Campaign==P.CampaignId,W.NPCMemory.IsValid(W.ActiveSeconds),
++                        W.Knowledge.Num(),W.KnowledgeRevision,!W.Map.IsEmpty(),W.Player.IsValid() && W.Companion.IsValid() && W.Camp.IsValid() && W.Source.IsValid(),
++                        W.Safety.CanSave(),int32(W.Phase),W.CommandActive,W.CommandId.IsValid(),W.AgentGoal.Intent.IsNone() || HearthwardAgent::Validate(W.AgentGoal).IsEmpty(),
++                        W.Requested,W.Delivered,W.Acquired,W.Carried,Acquisition,W.NPCOperations.Num(),W.NPCReceipts.Num()));
++                }
++            }
++        }
++        TestTrue(FString(TEXT("Real historical save migrates: "))+Error,Read);
+         if(Read)
+         {
+             AddInfo(FString::Printf(TEXT("Migrated %d real save points"),Loaded->Points.Num()));

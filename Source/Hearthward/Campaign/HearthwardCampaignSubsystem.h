@@ -61,6 +61,7 @@ private:
     FName PendingFlag,TravelDestination;
     FVector ActionPosition=FVector::ZeroVector;
     float ActionHealth=0,FlagRemaining=0,RefreshIn=0,IntroRemaining=0;
+    double FlagCompleteAt=0;
     FGuid ActionEpoch;
     TArray<TWeakObjectPtr<AActor>> TravelParticipants;
     TMap<FName,int32> TravelEnemies;

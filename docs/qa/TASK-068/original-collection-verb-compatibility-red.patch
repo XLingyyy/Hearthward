@@ -1,0 +1,30 @@
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -218,6 +218,27 @@
+     return true;
+ }
+ 
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalCollectionVerbTest,"Hearthward.NPCAgent.OriginalCollectionVerbCompatibility",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
++bool FNPCAgentOriginalCollectionVerbTest::RunTest(const FString&)
++{
++    FHearthwardAgentGoal G;
++    if(!TestTrue(TEXT("The model-shaped collection contract parses before checking the original wording"),HearthwardAgent::Parse(
++        TEXT("{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":2,\"mode\":\"additional_acquired\",\"source\":\"S1\",")
++        TEXT("\"limits\":[],\"unresolved\":[],\"npc_line\":\"请核对任务卡。\"}"),G)))return false;
++    G.Original=TEXT("帮忙采两份木材并送入仓库");
++    TestTrue(TEXT("An explicit collection request using help remains valid"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("给我采两份木材送入仓库");
++    TestTrue(TEXT("An explicit collection request for the speaker remains valid"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("请勿采两份木材");
++    TestFalse(TEXT("A negative collection request cannot authorize fresh collection"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("请把你采集好的二份木材送入仓库");
++    if(!TestTrue(TEXT("The existing acquired cargo has an exact target quantity"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
++    TestFalse(TEXT("Collection describing acquired cargo cannot authorize another new harvest"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("新采二份木材，别往那里走");
++    TestFalse(TEXT("An omitted excluded direction cannot default to the current safe source"),HearthwardAgent::Validate(G).IsEmpty());
++    return true;
++}
++
+ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalNoLimitTest,"Hearthward.NPCAgent.OriginalMaterialProhibition",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+ bool FNPCAgentOriginalNoLimitTest::RunTest(const FString&)
+ {

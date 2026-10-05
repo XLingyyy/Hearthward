@@ -1,0 +1,141 @@
+diff --git a/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp b/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
+--- a/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
++++ b/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
+@@ -19,6 +19,17 @@
+ #include "Misc/AutomationTest.h"
+ #include "PhysicsEngine/PhysicsAsset.h"
+ #include "PhysicsEngine/SkeletalBodySetup.h"
++
++#if WITH_DEV_AUTOMATION_TESTS && WITH_EDITOR
++#include "Misc/CommandLine.h"
++#include "Misc/PackageName.h"
++#include "Misc/Parse.h"
++#include "PhysicsEngine/BoxElem.h"
++#include "Rendering/SkeletalMeshRenderData.h"
++#include "Rendering/SkinWeightVertexBuffer.h"
++#include "UObject/Package.h"
++#include "UObject/SavePackage.h"
++#endif
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+ namespace
+@@ -281,4 +292,119 @@
+     Fixture.CheckRejectedHit(*this,Fixture.Brother,TEXT("Brother"));
+     return true;
+ }
++#if WITH_EDITOR
++namespace
++{
++struct FCombatPhysicsFit055
++{
++    USkeletalMesh* Mesh=nullptr;
++    UPhysicsAsset* Physics=nullptr;
++    TArray<FKBoxElem> Boxes;
++};
++
++bool PrepareCombatPhysicsFit055(FAutomationTestBase& Test,const TCHAR* Role,FCombatPhysicsFit055& Fit)
++{
++    const FString MeshPath=FString::Printf(TEXT("/Game/Characters/%s/UE5/SK_%s.SK_%s"),Role,Role,Role);
++    Fit.Mesh=LoadObject<USkeletalMesh>(nullptr,*MeshPath);
++    if(!Test.TestNotNull(FString::Printf(TEXT("Author055 loads current %s mesh"),Role),Fit.Mesh))return false;
++    Fit.Physics=Fit.Mesh->GetPhysicsAsset();
++    const FString PhysicsPath=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-055/Physics/PA_%sCombat.PA_%sCombat"),Role,Role);
++    if(!Test.TestNotNull(TEXT("Author055 requires the existing assigned PhysicsAsset"),Fit.Physics)
++        || !Test.TestEqual(TEXT("Author055 only writes the locked combat PhysicsAsset"),Fit.Physics->GetPathName(),PhysicsPath)
++        || !Test.TestTrue(TEXT("Author055 retains existing body topology"),Fit.Physics->SkeletalBodySetups.Num()>0))return false;
++    for(const FName Bone:{FName(TEXT("head")),FName(TEXT("spine_03")),FName(TEXT("calf_l")),FName(TEXT("foot_l"))})
++        if(!Test.TestTrue(FString::Printf(TEXT("Author055 %s already has body %s"),Role,*Bone.ToString()),Fit.Physics->FindBodyIndex(Bone)!=INDEX_NONE))return false;
++
++    const auto* RenderData=Fit.Mesh->GetResourceForRendering();
++    if(!Test.TestTrue(TEXT("Author055 requires the actual LOD0 render data"),RenderData && RenderData->LODRenderData.IsValidIndex(0)))return false;
++    const auto& LOD=RenderData->LODRenderData[0];
++    const auto& Positions=LOD.StaticVertexBuffers.PositionVertexBuffer;
++    const auto& Skin=LOD.SkinWeightVertexBuffer;
++    if(!Test.TestTrue(TEXT("Author055 requires retained CPU vertex and skin data without changing the Mesh"),
++        Positions.GetAllowCPUAccess() && Skin.GetNeedsCPUAccess() && Positions.GetNumVertices()>0))return false;
++    TArray<FSkinWeightInfo> Weights;Skin.GetSkinWeights(Weights);
++    if(!Test.TestEqual(TEXT("Author055 skin weights match actual LOD0 vertices"),Weights.Num(),int32(Positions.GetNumVertices())))return false;
++    const auto& Ref=Fit.Mesh->GetRefSkeleton();
++    const auto& InvRef=static_cast<const USkeletalMesh*>(Fit.Mesh)->GetRefBasesInvMatrix();
++    TArray<int32> BodyBones,PointCounts;
++    TArray<FBox> Bounds;
++    Bounds.Init(FBox(ForceInit),Fit.Physics->SkeletalBodySetups.Num());
++    PointCounts.Init(0,Bounds.Num());
++    for(const auto& Body:Fit.Physics->SkeletalBodySetups)
++    {
++        if(!Test.TestNotNull(TEXT("Author055 requires an existing skeletal body"),Body.Get()))return false;
++        const int32 Bone=Ref.FindBoneIndex(Body->BoneName);
++        if(!Test.TestTrue(TEXT("Author055 body belongs to the actual reference skeleton"),InvRef.IsValidIndex(Bone)))return false;
++        BodyBones.Add(Bone);
++    }
++    for(const auto& Section:LOD.RenderSections)
++    {
++        for(uint32 SectionVertex=0;SectionVertex<Section.NumVertices;++SectionVertex)
++        {
++            const uint32 Vertex=Section.BaseVertexIndex+SectionVertex;
++            if(!Test.TestTrue(TEXT("Author055 section addresses a real LOD0 vertex"),Weights.IsValidIndex(Vertex)))return false;
++            const auto& Weight=Weights[Vertex];
++            uint16 Maximum=0;int32 Dominant=INDEX_NONE;
++            for(int32 Influence=0;Influence<MAX_TOTAL_INFLUENCES;++Influence)
++                if(Weight.InfluenceWeights[Influence]>Maximum)
++                {Maximum=Weight.InfluenceWeights[Influence];Dominant=Weight.InfluenceBones[Influence];}
++            if(!Test.TestTrue(TEXT("Author055 vertex has a positive dominant weight in its actual section"),Maximum>0 && Section.BoneMap.IsValidIndex(Dominant)))return false;
++            const int32 Bone=Section.BoneMap[Dominant];
++            // Preserve the asset's bone hierarchy: unbodied child vertices belong to their real controlling body.
++            const int32 Body=Fit.Physics->FindControllingBodyIndex(Fit.Mesh,Bone);
++            if(!Test.TestTrue(TEXT("Author055 dominant bone has an existing controlling body"),BodyBones.IsValidIndex(Body)))return false;
++            const FVector3f Local=InvRef[BodyBones[Body]].TransformPosition(Positions.VertexPosition(Vertex));
++            if(!Test.TestTrue(TEXT("Author055 bone-local source vertex is finite"),!Local.ContainsNaN()))return false;
++            Bounds[Body]+=FVector(Local);++PointCounts[Body];
++        }
++    }
++    for(int32 Body=0;Body<Bounds.Num();++Body)
++    {
++        const FVector Size=Bounds[Body].GetSize();
++        if(!Test.TestTrue(FString::Printf(TEXT("Author055 %s %s has a real nondegenerate skin envelope (%d vertices)"),
++            Role,*Fit.Physics->SkeletalBodySetups[Body]->BoneName.ToString(),PointCounts[Body]),
++            Bounds[Body].IsValid && PointCounts[Body]>0 && !Size.ContainsNaN() && Size.GetMin()>SMALL_NUMBER))return false;
++        // The factory also allows 1% relative padding; no fixed bone-local minimum inflates the imported rig.
++        FKBoxElem Box(float(Size.X*1.01),float(Size.Y*1.01),float(Size.Z*1.01));
++        Box.Center=Bounds[Body].GetCenter();Fit.Boxes.Add(Box);
++        Test.AddInfo(FString::Printf(TEXT("Author055 fit %s bone=%s points=%d localCenter=%s localSize=%s"),
++            Role,*Fit.Physics->SkeletalBodySetups[Body]->BoneName.ToString(),PointCounts[Body],*Box.Center.ToString(),*Size.ToString()));
++    }
++    return true;
++}
++}
++
++IMPLEMENT_COMPLEX_AUTOMATION_TEST(FAuthorCombatPhysicsFromSkin055Test,"Hearthward.AssetAuthoring055.FitCombatPhysicsFromActualSkin",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++void FAuthorCombatPhysicsFromSkin055Test::GetTests(TArray<FString>& Names,TArray<FString>& Commands) const
++{
++    if(FParse::Param(FCommandLine::Get(),TEXT("Hearthward055AuthorPhysics")))
++    {Names.Add(TEXT("HeroAndBrother"));Commands.Add(TEXT("HeroAndBrother"));}
++}
++bool FAuthorCombatPhysicsFromSkin055Test::RunTest(const FString&)
++{
++    TArray<FCombatPhysicsFit055> Fits;Fits.SetNum(2);
++    if(!PrepareCombatPhysicsFit055(*this,TEXT("Hero"),Fits[0])
++        || !PrepareCombatPhysicsFit055(*this,TEXT("Brother"),Fits[1]))return false;
++    // Both complete candidate sets have been validated before either persistent asset is changed.
++    for(auto& Fit:Fits)
++    {
++        Fit.Physics->Modify();
++        for(int32 Body=0;Body<Fit.Boxes.Num();++Body)
++        {
++            auto* Setup=Fit.Physics->SkeletalBodySetups[Body].Get();
++            Setup->Modify();Setup->RemoveSimpleCollision();Setup->AggGeom.BoxElems.Add(Fit.Boxes[Body]);
++            Setup->InvalidatePhysicsData();Setup->CreatePhysicsMeshes();
++        }
++        Fit.Physics->UpdateBoundsBodiesArray();Fit.Physics->PostEditChange();Fit.Physics->MarkPackageDirty();
++        auto* Package=Fit.Physics->GetOutermost();
++        const FString Filename=FPackageName::LongPackageNameToFilename(Package->GetName(),FPackageName::GetAssetPackageExtension());
++        FSavePackageArgs Args;Args.TopLevelFlags=RF_Public|RF_Standalone;Args.bSlowTask=false;
++        if(!TestTrue(TEXT("Author055 saves only the existing combat PhysicsAsset package"),UPackage::SavePackage(Package,Fit.Physics,*Filename,Args)))return false;
++        AddInfo(FString::Printf(TEXT("Author055 wrote %s from %s (%d fitted bodies); fresh-process Combat055 projectile tests remain required"),
++            *Fit.Physics->GetPathName(),*Fit.Mesh->GetPathName(),Fit.Boxes.Num()));
++    }
++    return true;
++}
+ #endif
++#endif

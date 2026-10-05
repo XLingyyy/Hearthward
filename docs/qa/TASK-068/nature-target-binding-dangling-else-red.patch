@@ -1,0 +1,53 @@
+--- a/Source/Hearthward/Tests/CraftingPresentationTests.cpp
++++ b/Source/Hearthward/Tests/CraftingPresentationTests.cpp
+@@ -11,6 +11,8 @@
+ #include "../AI/HearthwardLocalAISubsystem.h"
+ #include "../Camp/HearthwardCampSubsystem.h"
+ #include "../Interaction/HearthwardHarvestSubsystem.h"
++#include "../Nature/HearthwardNatureSubsystem.h"
++#include "../Nature/HearthwardNatureActor.h"
+ #include "Components/BoxComponent.h"
+ #include "Components/SceneComponent.h"
+ #include "Engine/Engine.h"
+@@ -199,6 +201,41 @@
+     TestEqual(TEXT("The manual draft retains its canonical original in working memory"),AI->GetMemorySnapshot().WorkingGoal.Original,HearthwardAgent::GoalText(MissingTarget));
+     TestEqual(TEXT("Missing-target clarification does not change the brother inventory"),Brother->Bag->DescribeInventory(),MissingTargetBag);
+ 
++    auto* Nature=World->GetSubsystem<UHearthwardNatureSubsystem>();
++    FHearthwardCrop IdentifiedCrop;IdentifiedCrop.Id=FGuid::NewGuid();IdentifiedCrop.Definition=TEXT("greens");
++    IdentifiedCrop.Position=Player->GetActorLocation()-FVector(0,0,90);IdentifiedCrop.Planted=Nature->State.Calendar;
++    Nature->State.Crops.Add(IdentifiedCrop);
++    FHearthwardPen IdentifiedPen;IdentifiedPen.Id=FGuid::NewGuid();IdentifiedPen.Definition=TEXT("goat");
++    IdentifiedPen.Position=IdentifiedCrop.Position+FVector(100,0,0);Nature->State.Pens.Add(IdentifiedPen);Nature->RebuildActors();
++    FHearthwardAgentGoal Care;Care.Intent=TEXT("nature_care");Care.Item=TEXT("water");Care.Quantity=1;
++    Care.QuantityMode=TEXT("action_count");Care.SourceRef=TEXT("known_target");Care.Station=IdentifiedCrop.Id;
++    if(!TestNotNull(TEXT("Identified crop owns a real Nature actor"),Nature->Actor(IdentifiedCrop.Id))
++        || !TestNotNull(TEXT("Identified pen owns a real Nature actor"),Nature->Actor(IdentifiedPen.Id))
++        || !TestTrue(TEXT("The correctly bound water target satisfies the actual preview"),Brother->PreviewGoal(Care).IsEmpty()))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    Care.Station.Invalidate();
++    const FString IdentifiedNature=Nature->Describe();const FString BeforeWaterBag=Brother->Bag->DescribeInventory();
++    const bool WaterStaged=AI->SetStructuredGoal(Player,Brother,Care);
++    TestTrue(TEXT("A unique nearby unwatered crop stages through the public entry without a supplied station"),WaterStaged);
++    if(WaterStaged)TestEqual(TEXT("The water candidate binds the actual identified crop GUID"),AI->GetCandidate().Station,IdentifiedCrop.Id);
++    TestEqual(TEXT("Unconfirmed water staging changes no actual Nature state"),Nature->Describe(),IdentifiedNature);
++    TestEqual(TEXT("Unconfirmed water staging changes no brother inventory"),Brother->Bag->DescribeInventory(),BeforeWaterBag);
++    AI->CancelPending();
++    if(!TestEqual(TEXT("Feed control uses an actual public inventory grant"),Brother->Bag->TryAdd(TEXT("feed"),1),EHearthwardInventoryResult::Success))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    Care.Item=TEXT("deposit_feed");Care.Station=IdentifiedPen.Id;
++    if(!TestTrue(TEXT("The correctly bound feed target satisfies the actual preview"),Brother->PreviewGoal(Care).IsEmpty()))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    Care.Station.Invalidate();const FString BeforeFeedBag=Brother->Bag->DescribeInventory();
++    const bool FeedStaged=AI->SetStructuredGoal(Player,Brother,Care);
++    TestTrue(TEXT("A unique nearby pen still stages the feed branch without a supplied station"),FeedStaged);
++    if(FeedStaged)TestEqual(TEXT("The feed candidate binds the actual identified pen GUID"),AI->GetCandidate().Station,IdentifiedPen.Id);
++    TestEqual(TEXT("Unconfirmed feed staging changes no actual Nature state"),Nature->Describe(),IdentifiedNature);
++    TestEqual(TEXT("Unconfirmed feed staging consumes no actual feed"),Brother->Bag->DescribeInventory(),BeforeFeedBag);
++    AI->CancelPending();Brother->Bag->TryRemove(TEXT("feed"),1);
++    Nature->State.Crops.RemoveAll([&](const auto& C){return C.Id==IdentifiedCrop.Id;});
++    Nature->State.Pens.RemoveAll([&](const auto& P){return P.Id==IdentifiedPen.Id;});Nature->RebuildActors();
++
+     for(const FString& SourceRef:{FString(TEXT("camp")),FString(TEXT("bag"))})
+     {
+         const bool CampSource=SourceRef==TEXT("camp");

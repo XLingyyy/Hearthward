@@ -11,16 +11,21 @@ using namespace HearthwardData;
 bool UHearthwardNatureSubsystem::StartFishing(FGuid Id,FGuid Epoch)
 {
     auto* P=State.Points.FindByPredicate([&](const auto& X){return X.Id==Id && X.Kind==TEXT("fish");});
-    if(!P || P->Remaining<=0 || !Near(Id) || Bag()->Available(TEXT("bait"))<1)
-    {Feedback=TEXT("请靠近有库存的鱼点，并准备鱼饵");return false;}
-    FishingRod.Invalidate();
-    for(const auto& I:Bag()->Snapshot().Instances)if(I.Durability>0 && Text(Find(TEXT("items"),I.Definition.ToString()),TEXT("toolKind"))==TEXT("fishing_rod")){FishingRod=I.Id;break;}
-    if(!FishingRod.IsValid()){Feedback=TEXT("需要完好的鱼竿和鱼饵");return false;}
+    if(!P || P->Remaining<=0 || !Near(Id,1500) || Bag()->Available(TEXT("bait"))<1)
+    {Feedback=TEXT("请在有库存的鱼点十五米内准备鱼饵");return false;}
+    const auto* Rod=Bag()->FindInstance(Bag()->EquippedInstance(TEXT("tool")));
+    if(!Rod || Rod->Durability<=0 || Text(Find(TEXT("items"),Rod->Definition.ToString()),TEXT("toolKind"))!=TEXT("fishing_rod"))
+    {Feedback=TEXT("请在工具槽装备完好的鱼竿");return false;}
+    FishingRod=Rod->Id;
     FRandomStream Random(HashCombineFast(uint32(State.Seed),HashCombineFast(FCrc::StrCrc32(*P->Key.ToString()),uint32(P->Successes))));
     Fishing={};Fishing.Bite=Random.FRandRange(2,4);int32 Roll=Random.RandRange(1,100);
     for(const auto& V:HearthwardNature::Rows(TEXT("fish")))
     {const auto D=V->AsObject();Roll-=Number(D,TEXT("pool_weight"));if(Roll<=0){FishingSpecies=FName(Text(D,TEXT("id")));Fishing.Required=Number(D,TEXT("struggle_seconds"));break;}}
-    FishingId=Id;ActionEpoch=Epoch;ActionPosition=Player()->GetActorLocation();LineHeld=false;Feedback=TEXT("抛竿中");return true;
+    FHearthwardInventoryState Check;
+    const FName Item(*Text(HearthwardNature::Definition(TEXT("fish"),FishingSpecies),TEXT("item")));
+    if(!PrepareBag({{TEXT("bait"),1}},{{Item,1}},Check))
+    {Feedback=TEXT("背包空间不足，无法容纳本次渔获");return false;}
+    FishingId=Id;ActionEpoch=Epoch;ActionPosition=(ActionActor.IsValid()?ActionActor.Get():Player())->GetActorLocation();LineHeld=false;Feedback=TEXT("抛竿中");return true;
 }
 bool UHearthwardNatureSubsystem::CatchCompanion(APawn* Actor,FGuid Id,FGuid Epoch,FName& CaughtItem)
 {
@@ -64,9 +69,12 @@ FString UHearthwardNatureSubsystem::FishingStatus() const
 void UHearthwardNatureSubsystem::TickFishing(double Delta)
 {
     const auto* Rod=Bag()?Bag()->FindInstance(FishingRod):nullptr;
-    if(!Safe(ActionEpoch) || !Near(FishingId) || !Rod || Rod->Durability<=0 || FVector::Dist(Player()->GetActorLocation(),ActionPosition)>100){Cancel();return;}
+    if(!Rod || Rod->Durability<=0 || Bag()->EquippedInstance(TEXT("tool"))!=FishingRod)
+    {Cancel();Feedback=TEXT("鱼竿装备或耐久已改变，钓鱼取消");return;}
+    if(!Near(FishingId,1500)){Cancel();Feedback=TEXT("投钩距离超过十五米，钓鱼取消");return;}
+    const auto* Actor=ActionActor.IsValid()?ActionActor.Get():Player();
+    if(!Safe(ActionEpoch) || FVector::Dist(Actor->GetActorLocation(),ActionPosition)>100){Cancel();return;}
     const bool WasCast=Fishing.Cast;
-    const auto* PC=Cast<APlayerController>(Player()->GetController());
     Fishing.Advance(Delta,LineHeld);
     if(!WasCast && Fishing.Cast)
     {
@@ -82,7 +90,8 @@ void UHearthwardNatureSubsystem::FinishFishing()
     TGuardValue<bool> Guard(Settling,true);
     auto* P=State.Points.FindByPredicate([&](const auto& X){return X.Id==FishingId;});
     const auto D=HearthwardNature::Definition(TEXT("fish"),FishingSpecies);FHearthwardInventoryState Next;
-    if(!P || P->Remaining<=0 || !D || !PrepareBag({},{{FName(Text(D,TEXT("item"))),1}},Next)
+    if(!Safe(ActionEpoch) || !Near(FishingId,1500) || Bag()->EquippedInstance(TEXT("tool"))!=FishingRod
+        || !P || P->Remaining<=0 || !D || !PrepareBag({},{{FName(Text(D,TEXT("item"))),1}},Next)
         || !Next.Wear(FishingRod,1/(1+Gameplay()->Effect(TEXT("durability")))))
     {FishingId.Invalidate();Feedback=TEXT("背包容量不足或鱼竿不可用，本次未结算渔获");return;}
     const FName Reward=HearthwardNature::Reward(State.Seed,P->Key,P->Successes);

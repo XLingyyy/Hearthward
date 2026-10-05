@@ -1,0 +1,84 @@
+diff --git a/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp b/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
+--- a/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
++++ b/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
+@@ -24,7 +24,7 @@
+ #include "Misc/CommandLine.h"
+ #include "Misc/PackageName.h"
+ #include "Misc/Parse.h"
+-#include "PhysicsEngine/BoxElem.h"
++#include "PhysicsEngine/ConvexElem.h"
+ #include "Rendering/SkeletalMeshRenderData.h"
+ #include "Rendering/SkinWeightVertexBuffer.h"
+ #include "UObject/Package.h"
+@@ -299,7 +299,7 @@
+ {
+     USkeletalMesh* Mesh=nullptr;
+     UPhysicsAsset* Physics=nullptr;
+-    TArray<FKBoxElem> Boxes;
++    TArray<FKConvexElem> Convexes;
+ };
+ 
+ bool PrepareCombatPhysicsFit055(FAutomationTestBase& Test,const TCHAR* Role,FCombatPhysicsFit055& Fit)
+@@ -329,7 +329,7 @@
+     TArray<int32> BodyBones,PointCounts;
+     TArray<FBox> Bounds;
+     Bounds.Init(FBox(ForceInit),Fit.Physics->SkeletalBodySetups.Num());
+-    PointCounts.Init(0,Bounds.Num());
++    PointCounts.Init(0,Bounds.Num());Fit.Convexes.SetNum(Bounds.Num());
+     for(const auto& Body:Fit.Physics->SkeletalBodySetups)
+     {
+         if(!Test.TestNotNull(TEXT("Author055 requires an existing skeletal body"),Body.Get()))return false;
+@@ -355,7 +355,7 @@
+             if(!Test.TestTrue(TEXT("Author055 dominant bone has an existing controlling body"),BodyBones.IsValidIndex(Body)))return false;
+             const FVector3f Local=InvRef[BodyBones[Body]].TransformPosition(Positions.VertexPosition(Vertex));
+             if(!Test.TestTrue(TEXT("Author055 bone-local source vertex is finite"),!Local.ContainsNaN()))return false;
+-            Bounds[Body]+=FVector(Local);++PointCounts[Body];
++            Bounds[Body]+=FVector(Local);++PointCounts[Body];Fit.Convexes[Body].VertexData.AddUnique(FVector(Local));
+         }
+     }
+     for(int32 Body=0;Body<Bounds.Num();++Body)
+@@ -364,11 +364,17 @@
+         if(!Test.TestTrue(FString::Printf(TEXT("Author055 %s %s has a real nondegenerate skin envelope (%d vertices)"),
+             Role,*Fit.Physics->SkeletalBodySetups[Body]->BoneName.ToString(),PointCounts[Body]),
+             Bounds[Body].IsValid && PointCounts[Body]>0 && !Size.ContainsNaN() && Size.GetMin()>SMALL_NUMBER))return false;
+-        // The factory also allows 1% relative padding; no fixed bone-local minimum inflates the imported rig.
+-        FKBoxElem Box(float(Size.X*1.01),float(Size.Y*1.01),float(Size.Z*1.01));
+-        Box.Center=Bounds[Body].GetCenter();Fit.Boxes.Add(Box);
+-        Test.AddInfo(FString::Printf(TEXT("Author055 fit %s bone=%s points=%d localCenter=%s localSize=%s"),
+-            Role,*Fit.Physics->SkeletalBodySetups[Body]->BoneName.ToString(),PointCounts[Body],*Box.Center.ToString(),*Size.ToString()));
++        auto& Convex=Fit.Convexes[Body];Convex.UpdateElemBox();
++        if(!Test.TestTrue(TEXT("Author055 convex has at least four distinct real source points"),Convex.VertexData.Num()>=4))return false;
++        // Cook every candidate on a transient setup before either existing PhysicsAsset is changed.
++        auto* Cooked=NewObject<USkeletalBodySetup>(GetTransientPackage());
++        Cooked->CollisionTraceFlag=Fit.Physics->SkeletalBodySetups[Body]->CollisionTraceFlag;
++        Cooked->AggGeom.ConvexElems.Add(Convex);Cooked->InvalidatePhysicsData();Cooked->CreatePhysicsMeshes();
++        if(!Test.TestTrue(FString::Printf(TEXT("Author055 %s %s cooks a valid real-point Chaos hull"),
++            Role,*Fit.Physics->SkeletalBodySetups[Body]->BoneName.ToString()),!!Cooked->AggGeom.ConvexElems[0].GetChaosConvexMesh()))return false;
++        Convex=Cooked->AggGeom.ConvexElems[0];
++        Test.AddInfo(FString::Printf(TEXT("Author055 fit %s bone=%s points=%d hullPoints=%d localCenter=%s localSize=%s"),
++            Role,*Fit.Physics->SkeletalBodySetups[Body]->BoneName.ToString(),PointCounts[Body],Convex.VertexData.Num(),*Bounds[Body].GetCenter().ToString(),*Size.ToString()));
+     }
+     return true;
+ }
+@@ -390,10 +396,10 @@
+     for(auto& Fit:Fits)
+     {
+         Fit.Physics->Modify();
+-        for(int32 Body=0;Body<Fit.Boxes.Num();++Body)
++        for(int32 Body=0;Body<Fit.Convexes.Num();++Body)
+         {
+             auto* Setup=Fit.Physics->SkeletalBodySetups[Body].Get();
+-            Setup->Modify();Setup->RemoveSimpleCollision();Setup->AggGeom.BoxElems.Add(Fit.Boxes[Body]);
++            Setup->Modify();Setup->RemoveSimpleCollision();Setup->AggGeom.ConvexElems.Add(Fit.Convexes[Body]);
+             Setup->InvalidatePhysicsData();Setup->CreatePhysicsMeshes();
+         }
+         Fit.Physics->UpdateBoundsBodiesArray();Fit.Physics->PostEditChange();Fit.Physics->MarkPackageDirty();
+@@ -402,7 +408,7 @@
+         FSavePackageArgs Args;Args.TopLevelFlags=RF_Public|RF_Standalone;Args.bSlowTask=false;
+         if(!TestTrue(TEXT("Author055 saves only the existing combat PhysicsAsset package"),UPackage::SavePackage(Package,Fit.Physics,*Filename,Args)))return false;
+         AddInfo(FString::Printf(TEXT("Author055 wrote %s from %s (%d fitted bodies); fresh-process Combat055 projectile tests remain required"),
+-            *Fit.Physics->GetPathName(),*Fit.Mesh->GetPathName(),Fit.Boxes.Num()));
++            *Fit.Physics->GetPathName(),*Fit.Mesh->GetPathName(),Fit.Convexes.Num()));
+     }
+     return true;
+ }

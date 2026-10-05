@@ -1,0 +1,125 @@
+diff --git a/Source/Hearthward/Tests/SavePartialSettlementTests.cpp b/Source/Hearthward/Tests/SavePartialSettlementTests.cpp
+--- a/Source/Hearthward/Tests/SavePartialSettlementTests.cpp
++++ b/Source/Hearthward/Tests/SavePartialSettlementTests.cpp
+@@ -9,6 +9,8 @@
+ #include "../Gameplay/HearthwardGameplayComponent.h"
+ #include "../Inventory/HearthwardInventoryComponent.h"
+ #include "../Save/HearthwardSaveSubsystem.h"
++#include "../Save/HearthwardSaveCompatibility.h"
++#include "UObject/UnrealType.h"
+ #include "Components/BoxComponent.h"
+ #include "Components/SceneComponent.h"
+ #include "Engine/Engine.h"
+@@ -77,6 +79,27 @@
+         if(!TestTrue(TEXT("The real disk-backed save pool publishes the new point"),New!=nullptr))return false;
+         Out=*New;return true;
+     };
++    const auto ReadHistoricalRevisionArchive=[&](const FHearthwardSavePoint& Point,UHearthwardSaveGame*& Out)
++    {
++        auto* Pool=NewObject<UHearthwardSaveGame>();Pool->Points={Point};
++        auto* Property=FindFProperty<FInt64Property>(FHearthwardWorldSave::StaticStruct(),GET_MEMBER_NAME_CHECKED(FHearthwardWorldSave,CommandRevision));
++        if(!TestNotNull(TEXT("Historical archive fixture locates the actual tagged revision field"),Property))return false;
++        TArray<uint8> Payload,Bytes;
++        bool Written=false;
++        {
++            const bool WasTransient=Property->HasAnyPropertyFlags(CPF_Transient);
++            Property->SetPropertyFlags(CPF_Transient);
++            ON_SCOPE_EXIT { if(!WasTransient)Property->ClearPropertyFlags(CPF_Transient); };
++            Written=UGameplayStatics::SaveGameToMemory(Pool,Payload);
++        }
++        if(!TestTrue(TEXT("Standard SaveGame writer creates an archive with the revision tag absent"),Written))return false;
++        const uint32 Header[]={0x48575339,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
++        Bytes.Append(reinterpret_cast<const uint8*>(Header),sizeof(Header));Bytes.Append(Payload);
++        FString Error;
++        const bool Read=HearthwardSave::ReadBytes(Bytes,Out,Error);
++        if(!TestTrue(TEXT("Standard HWS9 reader accepts the genuine absent-tag archive fixture"),Read)){AddInfo(Error);return false;}
++        return TestTrue(TEXT("Missing historical revision tag remains the explicit zero sentinel"),Out && Out->Points.Num()==1 && Out->Points[0].World.CommandRevision==0);
++    };
+     for(const bool LoadBeforeResume:{false,true})
+     {
+         const FString Label=LoadBeforeResume?TEXT("LoadPoint recovery"):TEXT("Live recovery positive control");
+@@ -96,6 +119,29 @@
+         const auto Ticket=Brother->Request(Player,Goal.Original);
+         if(!TestTrue(*(Label+TEXT(" obtains a genuine later command revision")),Ticket.Id.IsValid() && Ticket.Revision>1)
+             || !TestEqual(*(Label+TEXT(" accepts through the production goal interface")),Brother->SubmitGoal(Player,Ticket,Goal),EHearthwardProposalResult::Accepted))return false;
++        // The first real MoveToCamp tick reaches TakeMaterials before any material effect or receipt.
++        Brother->Tick(.01f);
++        if(!TestTrue(*(Label+TEXT(" reaches a genuine unstarted material action")),Brother->GetPhase()==EHearthwardCompanionPhase::TakingMaterials))return false;
++        FHearthwardSavePoint BeforeTake;
++        if(!SaveActualPoint(BeforeTake))return false;
++        if(!TestTrue(*(Label+TEXT(" persists the actual later revision before any receipt exists")),
++            BeforeTake.World.CommandRevision==Ticket.Revision && BeforeTake.World.CommandActive && BeforeTake.World.NPCReceipts.IsEmpty()))return false;
++        if(LoadBeforeResume)
++        {
++            if(!TestTrue(TEXT("Actual LoadPoint restores the no-receipt later revision"),Save->LoadPoint(BeforeTake.SaveId)))return false;
++            FHearthwardSavePoint NoReceiptRoundTrip;
++            if(!SaveActualPoint(NoReceiptRoundTrip))return false;
++            if(!TestTrue(TEXT("Actual capture after load retains exact later revision and no invented receipt"),
++                NoReceiptRoundTrip.World.CommandId==Ticket.Id && NoReceiptRoundTrip.World.CommandRevision==Ticket.Revision
++                && NoReceiptRoundTrip.World.CommandActive && NoReceiptRoundTrip.World.NPCReceipts.IsEmpty()))return false;
++            const auto Next=Brother->Request(Player,Goal.Original);
++            TestTrue(TEXT("A new public request after LoadPoint advances beyond the restored command revision"),Next.Id.IsValid() && Next.Revision>Ticket.Revision);
++            Brother->DiscardProposal(Next);
++            UHearthwardSaveGame* Historical=nullptr;int64 Revision;
++            if(!ReadHistoricalRevisionArchive(BeforeTake,Historical))return false;
++            TestTrue(TEXT("Historical no-receipt archive retains the existing revision1 default"),
++                HearthwardSave::ResolveCommandRevision(Historical->Points[0].World,Revision) && Revision==1);
++        }
+         TStrongObjectPtr<UHearthwardSavePartialSettlementFixture> Observer(NewObject<UHearthwardSavePartialSettlementFixture>(Storage));
+         Observer->Storage=Storage;Observer->Materials=Cost;Observer->Command=Ticket.Id;Observer->Reservation=FGuid::NewGuid();
+         Storage->OnTransferred.AddDynamic(Observer.Get(),&UHearthwardSavePartialSettlementFixture::OnTransferred);
+@@ -106,6 +152,7 @@
+             || !TestEqual(*(Label+TEXT(" has not produced any firepot before recovery")),Storage->GetItemCount(TEXT("firepot")),0))return false;
+         FHearthwardSavePoint Partial;
+         if(!SaveActualPoint(Partial))return false;
++        TestEqual(*(Label+TEXT(" partial snapshot keeps the actual accepted revision")),Partial.World.CommandRevision,Ticket.Revision);
+         const FString TakePayload=FString::Printf(TEXT("take:%s:%d:r%lld"),*Observer->FirstTaken.ToString(),Cost.FindChecked(Observer->FirstTaken),Ticket.Revision);
+         const FGuid TakeOp(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCA01^FCrc::StrCrc32(*Observer->FirstTaken.ToString()),Ticket.Id.D);
+         if(!TestTrue(*(Label+TEXT(" saves the unchanged command and actual successful versioned receipt")),
+@@ -118,6 +165,38 @@
+             TestEqual(*(Label+TEXT(" saves exactly the still-unclaimed camp input")),Partial.World.StorageItems.Stacks.FindRef(Input.Key),AlreadyTaken?0:Input.Value);
+             TestEqual(*(Label+TEXT(" saves exactly the already-claimed held input")),Partial.World.BrotherItems.Stacks.FindRef(Input.Key),AlreadyTaken?Input.Value:0);
+         }
++        if(LoadBeforeResume)
++        {
++            UHearthwardSaveGame* Historical=nullptr;int64 Revision;
++            if(!ReadHistoricalRevisionArchive(Partial,Historical))return false;
++            const auto& Legacy=Historical->Points[0].World;
++            TestTrue(TEXT("Historical later revision is recovered from the unchanged real take receipt"),
++                HearthwardSave::ResolveCommandRevision(Legacy,Revision) && Revision==Ticket.Revision
++                && Legacy.NPCReceipts.Num()==1 && Legacy.NPCReceipts[0].Id==TakeOp && Legacy.NPCReceipts[0].Command==Ticket.Id && Legacy.NPCReceipts[0].Payload==TakePayload);
++            auto* Check=NewObject<UHearthwardSaveGame>();Check->Points={Partial};
++            TestTrue(TEXT("Current explicit revision agrees with the actual receipt"),HearthwardSave::Validate(*Check));
++            Check->Points[0].World.CommandRevision=Ticket.Revision+1;
++            TestFalse(TEXT("Explicit revision inconsistent with the actual receipt rejects the complete snapshot"),HearthwardSave::Validate(*Check));
++            Check->Points[0].World=Partial.World;Check->Points[0].World.CommandRevision=0;
++            FHearthwardAgentReceipt Mixed;Mixed.Id=FGuid::NewGuid();Mixed.Command=Ticket.Id;
++            Mixed.Payload=FString::Printf(TEXT("craft:firepot:1:r%lld"),Ticket.Revision+1);
++            Check->Points[0].World.NPCReceipts.Add(Mixed);
++            TestFalse(TEXT("Absent-metadata archive with conflicting receipt revisions rejects the complete snapshot"),HearthwardSave::Validate(*Check));
++            for(const TCHAR* Invalid:{TEXT("0"),TEXT("-2"),TEXT("02"),TEXT("2junk"),TEXT("9223372036854775808")})
++            {
++                Check->Points[0].World=Partial.World;Check->Points[0].World.CommandRevision=0;
++                Check->Points[0].World.NPCReceipts[0].Payload=FString::Printf(TEXT("take:%s:%d:r%s"),*Observer->FirstTaken.ToString(),Cost.FindChecked(Observer->FirstTaken),Invalid);
++                TestFalse(TEXT("Noncanonical or overflowing versioned receipt rejects the complete snapshot"),HearthwardSave::Validate(*Check));
++            }
++            Check->Points[0].World=BeforeTake.World;Check->Points[0].World.CommandRevision=-1;
++            TestFalse(TEXT("Negative explicit revision rejects the complete snapshot"),HearthwardSave::Validate(*Check));
++            for(const TCHAR* Unversioned:{TEXT("acquire:wood:1:0"),TEXT("nature:harvest:00000000000000000000000000000000:1:0")})
++            {
++                auto Snapshot=Partial.World;Snapshot.NPCReceipts[0].Payload=Unversioned;
++                TestTrue(TEXT("Existing unversioned receipt family does not override explicit revision metadata"),
++                    HearthwardSave::ResolveCommandRevision(Snapshot,Revision) && Revision==Ticket.Revision);
++            }
++        }
+         Storage->Release(Observer->Reservation);
+         if(LoadBeforeResume && !TestTrue(TEXT("Actual LoadPoint restores the partial command"),Save->LoadPoint(Partial.SaveId)))
+         {AddInfo(Save->GetStatus());return false;}
+@@ -139,6 +218,7 @@
+         }
+         FHearthwardSavePoint Finished;
+         if(!SaveActualPoint(Finished))return false;
++        TestEqual(*(Label+TEXT(" final actual capture keeps the same accepted revision")),Finished.World.CommandRevision,Ticket.Revision);
+         const FString CommitPayload=FString::Printf(TEXT("craft:firepot:1:r%lld"),Ticket.Revision);
+         TestEqual(*(Label+TEXT(" records one real craft settlement with the original command revision")),
+             Finished.World.NPCReceipts.FilterByPredicate([&](const auto& R){return R.Command==Ticket.Id && R.Payload==CommitPayload;}).Num(),1);

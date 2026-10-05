@@ -216,11 +216,17 @@ bool UHearthwardNatureSubsystem::ReadMap(FName Item)
     FHearthwardNaturePoint P;P.Id=FGuid::NewGuid();P.Key=Item;P.Kind=TEXT("treasure");P.Definition=Item;P.Position=At;P.Pending=Loot.Snapshot();State.Points.Add(P);
     State.Rewards.Add(Item);State.Maps.Add(Item);PublishBag(Next);Gameplay()->SetWaypoint(At);RebuildActors();Feedback=TEXT("藏宝地点已标记");return true;
 }
-bool UHearthwardNatureSubsystem::DamageAnimal(FName Target,float Health)
+bool UHearthwardNatureSubsystem::DamageAnimal(FName Target,float Health,AActor* Source)
 {
     FGuid Id;if(!FGuid::Parse(Target.ToString(),Id))return false;
     auto* A=State.Animals.FindByPredicate([&](const auto& X){return X.Id==Id;});if(!A)return false;
-    const float Before=A->Health;A->Health=FMath::Clamp(Health,0.f,Before);A->AlertRemaining=15;A->Following=false;A->FollowingBrother=false;
+    const float Before=A->Health;A->Health=FMath::Clamp(Health,0.f,Before);A->Following=false;A->FollowingBrother=false;
+    if(Before>A->Health)
+    {
+        A->AlertRemaining=15;
+        A->Threat=Source==Player()?FName(TEXT("player")):Cast<AHearthwardCompanionFixture>(Source)?FName(TEXT("brother")):NAME_None;
+        if(!A->Threat.IsNone())A->Destination=Source->GetActorLocation();
+    }
     if(!A->Domestic && Before>A->Health)Gameplay()->NotifyCombat();
     if(Before>0 && A->Health<=0 && !A->Rewarded)
     {

@@ -1,0 +1,1463 @@
+{
+  "revision": "physical-passive-proposal-v1",
+  "pool": "8618582c-c61b-4686-b19f-0e80f6f8a7ba",
+  "label": "root-os-keyboard-mouse",
+  "stage": "recording_finished",
+  "recording_complete": true,
+  "acceptance": "NOT_EVALUATED",
+  "physical_input": "Root OS keyboard/mouse; sampler cannot certify input provenance",
+  "owner_acceptance": "NOT_EVALUATED",
+  "normal_new_game": "NOT_TESTED",
+  "fixture_checks": [
+    {
+      "name": "public prototype capture",
+      "passed": true
+    },
+    {
+      "name": "new campaign",
+      "passed": true
+    },
+    {
+      "name": "actual inventory removal wood",
+      "passed": true
+    },
+    {
+      "name": "actual inventory grant axe",
+      "passed": true
+    },
+    {
+      "name": "actual inventory grant wood",
+      "passed": true
+    },
+    {
+      "name": "actual inventory grant wood",
+      "passed": true
+    },
+    {
+      "name": "select actual workbench",
+      "passed": true
+    },
+    {
+      "name": "start actual workbench",
+      "passed": true
+    },
+    {
+      "name": "actual inventory grant wood",
+      "passed": true
+    },
+    {
+      "name": "real baseline warehouse wood",
+      "passed": true
+    },
+    {
+      "name": "actual inventory grant stone",
+      "passed": true
+    },
+    {
+      "name": "real baseline warehouse stone",
+      "passed": true
+    },
+    {
+      "name": "actual inventory grant herb",
+      "passed": true
+    },
+    {
+      "name": "real baseline warehouse herb",
+      "passed": true
+    },
+    {
+      "name": "public baseline save",
+      "passed": true
+    },
+    {
+      "name": "single baseline node",
+      "passed": true
+    },
+    {
+      "name": "baseline A exists",
+      "passed": true
+    },
+    {
+      "name": "zero model calls and no model server before hold",
+      "passed": true
+    },
+    {
+      "name": "future player wood grant succeeds",
+      "passed": true
+    },
+    {
+      "name": "only inventory change is player wood +1",
+      "passed": true
+    },
+    {
+      "name": "future is not a new save or epoch",
+      "passed": true
+    }
+  ],
+  "sample_count": 1451,
+  "event_count": 6,
+  "layout_count": 230,
+  "model_calls_observed_nonzero": false,
+  "server_process_observed_nonzero": false,
+  "model_requests_by_sampler": 0,
+  "sampling_interval_seconds": 0.5,
+  "sampling_limit": "Public snapshots at Slate post-tick; transient changes between samples may be missed",
+  "setup_disclosure": {
+    "source": "Dormant TASK068 live prototype fixture, not normal new game",
+    "floor": "StaticMesh Cube at (0,0,-100), scale (1600,1600,1), BlockAll, Hearthward.NatureGround tag",
+    "combat_targets": "All actors with CombatTargetComponent moved to (150000+i*1000,150000,100), including any qualifying animals",
+    "source_safe": "Existing base fixture public source_safe field set True; source wood granted 80",
+    "companion": "CreateTest console fixture, axe 1, participant/source/camp positioning; gameplay component tick disabled",
+    "storage": "CreateTestAccess console fixture; public transfers wood/stone/herb 20 each",
+    "building": "Public workbench placement from granted materials",
+    "save": "Public EnablePrototype / StartNewProgress / SavePoint(True) in unique UUID test pool",
+    "selected_cases": [],
+    "case_limit": 1,
+    "private_setters": false
+  },
+  "baseline_a": {
+    "save_id": [
+      -1518529271,
+      1081819954,
+      -1307164225,
+      -1830303466
+    ],
+    "public_state": {
+      "page": "hud",
+      "authority": {
+        "camp": {
+          "wood": 20,
+          "stone": 20,
+          "ore": 0,
+          "meat": 0,
+          "arrow": 0,
+          "axe": 0,
+          "bow": 0,
+          "hood": 0,
+          "armor": 0,
+          "gloves": 0,
+          "boots": 0,
+          "belt": 0,
+          "shield": 0,
+          "quiver": 0,
+          "amulet": 0,
+          "roast": 0,
+          "herb": 20,
+          "hide": 0,
+          "rope": 0,
+          "flower": 0,
+          "medicine": 0,
+          "firepot": 0,
+          "medicine_half": 0,
+          "wild_food": 0,
+          "cooked_food": 0,
+          "full_meal": 0,
+          "metal_ingot": 0,
+          "refined_ore": 0,
+          "steel_ingot": 0,
+          "shortblade": 0,
+          "longblade": 0,
+          "spear": 0,
+          "leggings": 0,
+          "pickaxe": 0,
+          "shortblade_2": 0,
+          "longblade_2": 0,
+          "spear_2": 0,
+          "blunt_2": 0,
+          "bow_2": 0,
+          "crossbow_2": 0,
+          "head_2": 0,
+          "chest_2": 0,
+          "legs_2": 0,
+          "feet_2": 0,
+          "shield_2": 0,
+          "pickaxe_2": 0,
+          "shortblade_3": 0,
+          "longblade_3": 0,
+          "spear_3": 0,
+          "blunt_3": 0,
+          "bow_3": 0,
+          "crossbow_3": 0,
+          "head_3": 0,
+          "chest_3": 0,
+          "legs_3": 0,
+          "feet_3": 0,
+          "shield_3": 0,
+          "pickaxe_3": 0,
+          "fishing_rod": 0,
+          "bow_rare": 0,
+          "blueprint_hunter_bow": 0,
+          "hearth_blade": 0,
+          "grain": 0,
+          "bait": 0,
+          "feed": 0,
+          "seed_greens": 0,
+          "seed_grain": 0,
+          "seed_herb": 0,
+          "fish_carp": 0,
+          "fish_crucian_carp": 0,
+          "fish_catfish": 0,
+          "fish_eel": 0,
+          "treasure_map_1": 0,
+          "treasure_map_2": 0,
+          "treasure_map_3": 0,
+          "egg": 0,
+          "milk": 0
+        },
+        "brother": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [
+            {
+              "id": "328C40BE4FE7E96B441006869B13E67D",
+              "definition": "axe",
+              "durability": 80,
+              "uniqueClaim": "None"
+            }
+          ],
+          "equipped": {}
+        },
+        "player": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        },
+        "source": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {
+            "wood": 80
+          },
+          "instances": [],
+          "equipped": {}
+        },
+        "requested": 0,
+        "delivered": 0,
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "order": "wait",
+        "routine": false
+      },
+      "epoch": [
+        -72613663,
+        1130406825,
+        -1963222622,
+        1663076391
+      ],
+      "campaign_id": [
+        -517848665,
+        1188830745,
+        1409167750,
+        -1294016968
+      ],
+      "savepoints": [
+        {
+          "save_id": [
+            109853400,
+            1217138721,
+            -1354914893,
+            -2090961403
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": false,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        },
+        {
+          "save_id": [
+            -1518529271,
+            1081819954,
+            -1307164225,
+            -1830303466
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": true,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        }
+      ],
+      "save_status": "快照已保存",
+      "generation_calls": 0,
+      "server_process_id": 0
+    }
+  },
+  "future": {
+    "public_state": {
+      "page": "hud",
+      "authority": {
+        "camp": {
+          "wood": 20,
+          "stone": 20,
+          "ore": 0,
+          "meat": 0,
+          "arrow": 0,
+          "axe": 0,
+          "bow": 0,
+          "hood": 0,
+          "armor": 0,
+          "gloves": 0,
+          "boots": 0,
+          "belt": 0,
+          "shield": 0,
+          "quiver": 0,
+          "amulet": 0,
+          "roast": 0,
+          "herb": 20,
+          "hide": 0,
+          "rope": 0,
+          "flower": 0,
+          "medicine": 0,
+          "firepot": 0,
+          "medicine_half": 0,
+          "wild_food": 0,
+          "cooked_food": 0,
+          "full_meal": 0,
+          "metal_ingot": 0,
+          "refined_ore": 0,
+          "steel_ingot": 0,
+          "shortblade": 0,
+          "longblade": 0,
+          "spear": 0,
+          "leggings": 0,
+          "pickaxe": 0,
+          "shortblade_2": 0,
+          "longblade_2": 0,
+          "spear_2": 0,
+          "blunt_2": 0,
+          "bow_2": 0,
+          "crossbow_2": 0,
+          "head_2": 0,
+          "chest_2": 0,
+          "legs_2": 0,
+          "feet_2": 0,
+          "shield_2": 0,
+          "pickaxe_2": 0,
+          "shortblade_3": 0,
+          "longblade_3": 0,
+          "spear_3": 0,
+          "blunt_3": 0,
+          "bow_3": 0,
+          "crossbow_3": 0,
+          "head_3": 0,
+          "chest_3": 0,
+          "legs_3": 0,
+          "feet_3": 0,
+          "shield_3": 0,
+          "pickaxe_3": 0,
+          "fishing_rod": 0,
+          "bow_rare": 0,
+          "blueprint_hunter_bow": 0,
+          "hearth_blade": 0,
+          "grain": 0,
+          "bait": 0,
+          "feed": 0,
+          "seed_greens": 0,
+          "seed_grain": 0,
+          "seed_herb": 0,
+          "fish_carp": 0,
+          "fish_crucian_carp": 0,
+          "fish_catfish": 0,
+          "fish_eel": 0,
+          "treasure_map_1": 0,
+          "treasure_map_2": 0,
+          "treasure_map_3": 0,
+          "egg": 0,
+          "milk": 0
+        },
+        "brother": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [
+            {
+              "id": "328C40BE4FE7E96B441006869B13E67D",
+              "definition": "axe",
+              "durability": 80,
+              "uniqueClaim": "None"
+            }
+          ],
+          "equipped": {}
+        },
+        "player": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {
+            "wood": 1
+          },
+          "instances": [],
+          "equipped": {}
+        },
+        "source": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {
+            "wood": 80
+          },
+          "instances": [],
+          "equipped": {}
+        },
+        "requested": 0,
+        "delivered": 0,
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "order": "wait",
+        "routine": false
+      },
+      "epoch": [
+        -72613663,
+        1130406825,
+        -1963222622,
+        1663076391
+      ],
+      "campaign_id": [
+        -517848665,
+        1188830745,
+        1409167750,
+        -1294016968
+      ],
+      "savepoints": [
+        {
+          "save_id": [
+            109853400,
+            1217138721,
+            -1354914893,
+            -2090961403
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": false,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        },
+        {
+          "save_id": [
+            -1518529271,
+            1081819954,
+            -1307164225,
+            -1830303466
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": true,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        }
+      ],
+      "save_status": "快照已保存",
+      "generation_calls": 0,
+      "server_process_id": 0
+    },
+    "difference_from_baseline": {
+      "authority": {
+        "before": {
+          "camp": {
+            "wood": 20,
+            "stone": 20,
+            "ore": 0,
+            "meat": 0,
+            "arrow": 0,
+            "axe": 0,
+            "bow": 0,
+            "hood": 0,
+            "armor": 0,
+            "gloves": 0,
+            "boots": 0,
+            "belt": 0,
+            "shield": 0,
+            "quiver": 0,
+            "amulet": 0,
+            "roast": 0,
+            "herb": 20,
+            "hide": 0,
+            "rope": 0,
+            "flower": 0,
+            "medicine": 0,
+            "firepot": 0,
+            "medicine_half": 0,
+            "wild_food": 0,
+            "cooked_food": 0,
+            "full_meal": 0,
+            "metal_ingot": 0,
+            "refined_ore": 0,
+            "steel_ingot": 0,
+            "shortblade": 0,
+            "longblade": 0,
+            "spear": 0,
+            "leggings": 0,
+            "pickaxe": 0,
+            "shortblade_2": 0,
+            "longblade_2": 0,
+            "spear_2": 0,
+            "blunt_2": 0,
+            "bow_2": 0,
+            "crossbow_2": 0,
+            "head_2": 0,
+            "chest_2": 0,
+            "legs_2": 0,
+            "feet_2": 0,
+            "shield_2": 0,
+            "pickaxe_2": 0,
+            "shortblade_3": 0,
+            "longblade_3": 0,
+            "spear_3": 0,
+            "blunt_3": 0,
+            "bow_3": 0,
+            "crossbow_3": 0,
+            "head_3": 0,
+            "chest_3": 0,
+            "legs_3": 0,
+            "feet_3": 0,
+            "shield_3": 0,
+            "pickaxe_3": 0,
+            "fishing_rod": 0,
+            "bow_rare": 0,
+            "blueprint_hunter_bow": 0,
+            "hearth_blade": 0,
+            "grain": 0,
+            "bait": 0,
+            "feed": 0,
+            "seed_greens": 0,
+            "seed_grain": 0,
+            "seed_herb": 0,
+            "fish_carp": 0,
+            "fish_crucian_carp": 0,
+            "fish_catfish": 0,
+            "fish_eel": 0,
+            "treasure_map_1": 0,
+            "treasure_map_2": 0,
+            "treasure_map_3": 0,
+            "egg": 0,
+            "milk": 0
+          },
+          "brother": {
+            "version": 1,
+            "backpackRank": 1,
+            "stacks": {},
+            "instances": [
+              {
+                "id": "328C40BE4FE7E96B441006869B13E67D",
+                "definition": "axe",
+                "durability": 80,
+                "uniqueClaim": "None"
+              }
+            ],
+            "equipped": {}
+          },
+          "player": {
+            "version": 1,
+            "backpackRank": 1,
+            "stacks": {},
+            "instances": [],
+            "equipped": {}
+          },
+          "source": {
+            "version": 1,
+            "backpackRank": 1,
+            "stacks": {
+              "wood": 80
+            },
+            "instances": [],
+            "equipped": {}
+          },
+          "requested": 0,
+          "delivered": 0,
+          "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+          "order": "wait",
+          "routine": false
+        },
+        "after": {
+          "camp": {
+            "wood": 20,
+            "stone": 20,
+            "ore": 0,
+            "meat": 0,
+            "arrow": 0,
+            "axe": 0,
+            "bow": 0,
+            "hood": 0,
+            "armor": 0,
+            "gloves": 0,
+            "boots": 0,
+            "belt": 0,
+            "shield": 0,
+            "quiver": 0,
+            "amulet": 0,
+            "roast": 0,
+            "herb": 20,
+            "hide": 0,
+            "rope": 0,
+            "flower": 0,
+            "medicine": 0,
+            "firepot": 0,
+            "medicine_half": 0,
+            "wild_food": 0,
+            "cooked_food": 0,
+            "full_meal": 0,
+            "metal_ingot": 0,
+            "refined_ore": 0,
+            "steel_ingot": 0,
+            "shortblade": 0,
+            "longblade": 0,
+            "spear": 0,
+            "leggings": 0,
+            "pickaxe": 0,
+            "shortblade_2": 0,
+            "longblade_2": 0,
+            "spear_2": 0,
+            "blunt_2": 0,
+            "bow_2": 0,
+            "crossbow_2": 0,
+            "head_2": 0,
+            "chest_2": 0,
+            "legs_2": 0,
+            "feet_2": 0,
+            "shield_2": 0,
+            "pickaxe_2": 0,
+            "shortblade_3": 0,
+            "longblade_3": 0,
+            "spear_3": 0,
+            "blunt_3": 0,
+            "bow_3": 0,
+            "crossbow_3": 0,
+            "head_3": 0,
+            "chest_3": 0,
+            "legs_3": 0,
+            "feet_3": 0,
+            "shield_3": 0,
+            "pickaxe_3": 0,
+            "fishing_rod": 0,
+            "bow_rare": 0,
+            "blueprint_hunter_bow": 0,
+            "hearth_blade": 0,
+            "grain": 0,
+            "bait": 0,
+            "feed": 0,
+            "seed_greens": 0,
+            "seed_grain": 0,
+            "seed_herb": 0,
+            "fish_carp": 0,
+            "fish_crucian_carp": 0,
+            "fish_catfish": 0,
+            "fish_eel": 0,
+            "treasure_map_1": 0,
+            "treasure_map_2": 0,
+            "treasure_map_3": 0,
+            "egg": 0,
+            "milk": 0
+          },
+          "brother": {
+            "version": 1,
+            "backpackRank": 1,
+            "stacks": {},
+            "instances": [
+              {
+                "id": "328C40BE4FE7E96B441006869B13E67D",
+                "definition": "axe",
+                "durability": 80,
+                "uniqueClaim": "None"
+              }
+            ],
+            "equipped": {}
+          },
+          "player": {
+            "version": 1,
+            "backpackRank": 1,
+            "stacks": {
+              "wood": 1
+            },
+            "instances": [],
+            "equipped": {}
+          },
+          "source": {
+            "version": 1,
+            "backpackRank": 1,
+            "stacks": {
+              "wood": 80
+            },
+            "instances": [],
+            "equipped": {}
+          },
+          "requested": 0,
+          "delivered": 0,
+          "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+          "order": "wait",
+          "routine": false
+        }
+      }
+    },
+    "saved": false
+  },
+  "status": {
+    "sample": 1451,
+    "unix": 1791141520.916758,
+    "monotonic": 93065.14,
+    "page": "hud",
+    "epoch": [
+      -363885754,
+      1227348193,
+      1117489030,
+      154284595
+    ],
+    "campaign_id": [
+      -517848665,
+      1188830745,
+      1409167750,
+      -1294016968
+    ],
+    "savepoints": [
+      {
+        "save_id": [
+          109853400,
+          1217138721,
+          -1354914893,
+          -2090961403
+        ],
+        "campaign_id": [
+          -517848665,
+          1188830745,
+          1409167750,
+          -1294016968
+        ],
+        "manual": false,
+        "locked": false,
+        "location": "L_GrayboxValidation",
+        "stage": "PROTOTYPE_ONLY / companion fixture"
+      },
+      {
+        "save_id": [
+          -1518529271,
+          1081819954,
+          -1307164225,
+          -1830303466
+        ],
+        "campaign_id": [
+          -517848665,
+          1188830745,
+          1409167750,
+          -1294016968
+        ],
+        "manual": true,
+        "locked": false,
+        "location": "L_GrayboxValidation",
+        "stage": "PROTOTYPE_ONLY / companion fixture"
+      },
+      {
+        "save_id": [
+          -1292579605,
+          1334066674,
+          -1000020301,
+          -1560640435
+        ],
+        "campaign_id": [
+          -517848665,
+          1188830745,
+          1409167750,
+          -1294016968
+        ],
+        "manual": false,
+        "locked": false,
+        "location": "L_GrayboxValidation",
+        "stage": "PROTOTYPE_ONLY / companion fixture"
+      }
+    ],
+    "generation_calls": 0,
+    "server_process_id": 0,
+    "wood": {
+      "player": 0,
+      "brother": 0,
+      "source": 80,
+      "camp": 20
+    },
+    "requested": 0,
+    "delivered": 0,
+    "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+    "layout_sequence": 230
+  },
+  "ended_unix": 1791141520.923622,
+  "root_finish_marker": {
+    "root_finished": true,
+    "route": "actual_os_dialogue_cancel_save_enter_safe_escape_cancel_mouse_confirm",
+    "acceptance": "ROOT_REVIEW_REQUIRED"
+  },
+  "final_public_state": {
+    "page": "hud",
+    "authority": {
+      "camp": {
+        "wood": 20,
+        "stone": 20,
+        "ore": 0,
+        "meat": 0,
+        "arrow": 0,
+        "axe": 0,
+        "bow": 0,
+        "hood": 0,
+        "armor": 0,
+        "gloves": 0,
+        "boots": 0,
+        "belt": 0,
+        "shield": 0,
+        "quiver": 0,
+        "amulet": 0,
+        "roast": 0,
+        "herb": 20,
+        "hide": 0,
+        "rope": 0,
+        "flower": 0,
+        "medicine": 0,
+        "firepot": 0,
+        "medicine_half": 0,
+        "wild_food": 0,
+        "cooked_food": 0,
+        "full_meal": 0,
+        "metal_ingot": 0,
+        "refined_ore": 0,
+        "steel_ingot": 0,
+        "shortblade": 0,
+        "longblade": 0,
+        "spear": 0,
+        "leggings": 0,
+        "pickaxe": 0,
+        "shortblade_2": 0,
+        "longblade_2": 0,
+        "spear_2": 0,
+        "blunt_2": 0,
+        "bow_2": 0,
+        "crossbow_2": 0,
+        "head_2": 0,
+        "chest_2": 0,
+        "legs_2": 0,
+        "feet_2": 0,
+        "shield_2": 0,
+        "pickaxe_2": 0,
+        "shortblade_3": 0,
+        "longblade_3": 0,
+        "spear_3": 0,
+        "blunt_3": 0,
+        "bow_3": 0,
+        "crossbow_3": 0,
+        "head_3": 0,
+        "chest_3": 0,
+        "legs_3": 0,
+        "feet_3": 0,
+        "shield_3": 0,
+        "pickaxe_3": 0,
+        "fishing_rod": 0,
+        "bow_rare": 0,
+        "blueprint_hunter_bow": 0,
+        "hearth_blade": 0,
+        "grain": 0,
+        "bait": 0,
+        "feed": 0,
+        "seed_greens": 0,
+        "seed_grain": 0,
+        "seed_herb": 0,
+        "fish_carp": 0,
+        "fish_crucian_carp": 0,
+        "fish_catfish": 0,
+        "fish_eel": 0,
+        "treasure_map_1": 0,
+        "treasure_map_2": 0,
+        "treasure_map_3": 0,
+        "egg": 0,
+        "milk": 0
+      },
+      "brother": {
+        "version": 1,
+        "backpackRank": 1,
+        "stacks": {},
+        "instances": [
+          {
+            "id": "328C40BE4FE7E96B441006869B13E67D",
+            "definition": "axe",
+            "durability": 80,
+            "uniqueClaim": "None"
+          }
+        ],
+        "equipped": {}
+      },
+      "player": {
+        "version": 1,
+        "backpackRank": 1,
+        "stacks": {},
+        "instances": [],
+        "equipped": {}
+      },
+      "source": {
+        "version": 1,
+        "backpackRank": 1,
+        "stacks": {
+          "wood": 80
+        },
+        "instances": [],
+        "equipped": {}
+      },
+      "requested": 0,
+      "delivered": 0,
+      "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+      "order": "wait",
+      "routine": false
+    },
+    "epoch": [
+      -363885754,
+      1227348193,
+      1117489030,
+      154284595
+    ],
+    "campaign_id": [
+      -517848665,
+      1188830745,
+      1409167750,
+      -1294016968
+    ],
+    "savepoints": [
+      {
+        "save_id": [
+          109853400,
+          1217138721,
+          -1354914893,
+          -2090961403
+        ],
+        "campaign_id": [
+          -517848665,
+          1188830745,
+          1409167750,
+          -1294016968
+        ],
+        "manual": false,
+        "locked": false,
+        "location": "L_GrayboxValidation",
+        "stage": "PROTOTYPE_ONLY / companion fixture"
+      },
+      {
+        "save_id": [
+          -1518529271,
+          1081819954,
+          -1307164225,
+          -1830303466
+        ],
+        "campaign_id": [
+          -517848665,
+          1188830745,
+          1409167750,
+          -1294016968
+        ],
+        "manual": true,
+        "locked": false,
+        "location": "L_GrayboxValidation",
+        "stage": "PROTOTYPE_ONLY / companion fixture"
+      },
+      {
+        "save_id": [
+          -1292579605,
+          1334066674,
+          -1000020301,
+          -1560640435
+        ],
+        "campaign_id": [
+          -517848665,
+          1188830745,
+          1409167750,
+          -1294016968
+        ],
+        "manual": false,
+        "locked": false,
+        "location": "L_GrayboxValidation",
+        "stage": "PROTOTYPE_ONLY / companion fixture"
+      }
+    ],
+    "save_status": "世界与知识已恢复；旧时间线请求已废止",
+    "generation_calls": 0,
+    "server_process_id": 0
+  },
+  "final_difference_from_baseline": {
+    "epoch": {
+      "before": [
+        -72613663,
+        1130406825,
+        -1963222622,
+        1663076391
+      ],
+      "after": [
+        -363885754,
+        1227348193,
+        1117489030,
+        154284595
+      ]
+    },
+    "save_status": {
+      "before": "快照已保存",
+      "after": "世界与知识已恢复；旧时间线请求已废止"
+    },
+    "savepoints": {
+      "before": [
+        {
+          "save_id": [
+            109853400,
+            1217138721,
+            -1354914893,
+            -2090961403
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": false,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        },
+        {
+          "save_id": [
+            -1518529271,
+            1081819954,
+            -1307164225,
+            -1830303466
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": true,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        }
+      ],
+      "after": [
+        {
+          "save_id": [
+            109853400,
+            1217138721,
+            -1354914893,
+            -2090961403
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": false,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        },
+        {
+          "save_id": [
+            -1518529271,
+            1081819954,
+            -1307164225,
+            -1830303466
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": true,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        },
+        {
+          "save_id": [
+            -1292579605,
+            1334066674,
+            -1000020301,
+            -1560640435
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": false,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        }
+      ]
+    }
+  },
+  "final_difference_from_future": {
+    "authority": {
+      "before": {
+        "camp": {
+          "wood": 20,
+          "stone": 20,
+          "ore": 0,
+          "meat": 0,
+          "arrow": 0,
+          "axe": 0,
+          "bow": 0,
+          "hood": 0,
+          "armor": 0,
+          "gloves": 0,
+          "boots": 0,
+          "belt": 0,
+          "shield": 0,
+          "quiver": 0,
+          "amulet": 0,
+          "roast": 0,
+          "herb": 20,
+          "hide": 0,
+          "rope": 0,
+          "flower": 0,
+          "medicine": 0,
+          "firepot": 0,
+          "medicine_half": 0,
+          "wild_food": 0,
+          "cooked_food": 0,
+          "full_meal": 0,
+          "metal_ingot": 0,
+          "refined_ore": 0,
+          "steel_ingot": 0,
+          "shortblade": 0,
+          "longblade": 0,
+          "spear": 0,
+          "leggings": 0,
+          "pickaxe": 0,
+          "shortblade_2": 0,
+          "longblade_2": 0,
+          "spear_2": 0,
+          "blunt_2": 0,
+          "bow_2": 0,
+          "crossbow_2": 0,
+          "head_2": 0,
+          "chest_2": 0,
+          "legs_2": 0,
+          "feet_2": 0,
+          "shield_2": 0,
+          "pickaxe_2": 0,
+          "shortblade_3": 0,
+          "longblade_3": 0,
+          "spear_3": 0,
+          "blunt_3": 0,
+          "bow_3": 0,
+          "crossbow_3": 0,
+          "head_3": 0,
+          "chest_3": 0,
+          "legs_3": 0,
+          "feet_3": 0,
+          "shield_3": 0,
+          "pickaxe_3": 0,
+          "fishing_rod": 0,
+          "bow_rare": 0,
+          "blueprint_hunter_bow": 0,
+          "hearth_blade": 0,
+          "grain": 0,
+          "bait": 0,
+          "feed": 0,
+          "seed_greens": 0,
+          "seed_grain": 0,
+          "seed_herb": 0,
+          "fish_carp": 0,
+          "fish_crucian_carp": 0,
+          "fish_catfish": 0,
+          "fish_eel": 0,
+          "treasure_map_1": 0,
+          "treasure_map_2": 0,
+          "treasure_map_3": 0,
+          "egg": 0,
+          "milk": 0
+        },
+        "brother": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [
+            {
+              "id": "328C40BE4FE7E96B441006869B13E67D",
+              "definition": "axe",
+              "durability": 80,
+              "uniqueClaim": "None"
+            }
+          ],
+          "equipped": {}
+        },
+        "player": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {
+            "wood": 1
+          },
+          "instances": [],
+          "equipped": {}
+        },
+        "source": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {
+            "wood": 80
+          },
+          "instances": [],
+          "equipped": {}
+        },
+        "requested": 0,
+        "delivered": 0,
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "order": "wait",
+        "routine": false
+      },
+      "after": {
+        "camp": {
+          "wood": 20,
+          "stone": 20,
+          "ore": 0,
+          "meat": 0,
+          "arrow": 0,
+          "axe": 0,
+          "bow": 0,
+          "hood": 0,
+          "armor": 0,
+          "gloves": 0,
+          "boots": 0,
+          "belt": 0,
+          "shield": 0,
+          "quiver": 0,
+          "amulet": 0,
+          "roast": 0,
+          "herb": 20,
+          "hide": 0,
+          "rope": 0,
+          "flower": 0,
+          "medicine": 0,
+          "firepot": 0,
+          "medicine_half": 0,
+          "wild_food": 0,
+          "cooked_food": 0,
+          "full_meal": 0,
+          "metal_ingot": 0,
+          "refined_ore": 0,
+          "steel_ingot": 0,
+          "shortblade": 0,
+          "longblade": 0,
+          "spear": 0,
+          "leggings": 0,
+          "pickaxe": 0,
+          "shortblade_2": 0,
+          "longblade_2": 0,
+          "spear_2": 0,
+          "blunt_2": 0,
+          "bow_2": 0,
+          "crossbow_2": 0,
+          "head_2": 0,
+          "chest_2": 0,
+          "legs_2": 0,
+          "feet_2": 0,
+          "shield_2": 0,
+          "pickaxe_2": 0,
+          "shortblade_3": 0,
+          "longblade_3": 0,
+          "spear_3": 0,
+          "blunt_3": 0,
+          "bow_3": 0,
+          "crossbow_3": 0,
+          "head_3": 0,
+          "chest_3": 0,
+          "legs_3": 0,
+          "feet_3": 0,
+          "shield_3": 0,
+          "pickaxe_3": 0,
+          "fishing_rod": 0,
+          "bow_rare": 0,
+          "blueprint_hunter_bow": 0,
+          "hearth_blade": 0,
+          "grain": 0,
+          "bait": 0,
+          "feed": 0,
+          "seed_greens": 0,
+          "seed_grain": 0,
+          "seed_herb": 0,
+          "fish_carp": 0,
+          "fish_crucian_carp": 0,
+          "fish_catfish": 0,
+          "fish_eel": 0,
+          "treasure_map_1": 0,
+          "treasure_map_2": 0,
+          "treasure_map_3": 0,
+          "egg": 0,
+          "milk": 0
+        },
+        "brother": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [
+            {
+              "id": "328C40BE4FE7E96B441006869B13E67D",
+              "definition": "axe",
+              "durability": 80,
+              "uniqueClaim": "None"
+            }
+          ],
+          "equipped": {}
+        },
+        "player": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {},
+          "instances": [],
+          "equipped": {}
+        },
+        "source": {
+          "version": 1,
+          "backpackRank": 1,
+          "stacks": {
+            "wood": 80
+          },
+          "instances": [],
+          "equipped": {}
+        },
+        "requested": 0,
+        "delivered": 0,
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "order": "wait",
+        "routine": false
+      }
+    },
+    "epoch": {
+      "before": [
+        -72613663,
+        1130406825,
+        -1963222622,
+        1663076391
+      ],
+      "after": [
+        -363885754,
+        1227348193,
+        1117489030,
+        154284595
+      ]
+    },
+    "save_status": {
+      "before": "快照已保存",
+      "after": "世界与知识已恢复；旧时间线请求已废止"
+    },
+    "savepoints": {
+      "before": [
+        {
+          "save_id": [
+            109853400,
+            1217138721,
+            -1354914893,
+            -2090961403
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": false,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        },
+        {
+          "save_id": [
+            -1518529271,
+            1081819954,
+            -1307164225,
+            -1830303466
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": true,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        }
+      ],
+      "after": [
+        {
+          "save_id": [
+            109853400,
+            1217138721,
+            -1354914893,
+            -2090961403
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": false,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        },
+        {
+          "save_id": [
+            -1518529271,
+            1081819954,
+            -1307164225,
+            -1830303466
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": true,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        },
+        {
+          "save_id": [
+            -1292579605,
+            1334066674,
+            -1000020301,
+            -1560640435
+          ],
+          "campaign_id": [
+            -517848665,
+            1188830745,
+            1409167750,
+            -1294016968
+          ],
+          "manual": false,
+          "locked": false,
+          "location": "L_GrayboxValidation",
+          "stage": "PROTOTYPE_ONLY / companion fixture"
+        }
+      ]
+    }
+  }
+}

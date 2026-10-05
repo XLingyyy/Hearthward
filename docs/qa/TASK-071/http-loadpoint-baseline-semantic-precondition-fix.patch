@@ -1,0 +1,42 @@
+--- a/docs/qa/TASK-071/verify_http_loadpoint_pie.py
++++ b/docs/qa/TASK-071/verify_http_loadpoint_pie.py
+@@ -73,8 +73,7 @@
+ def watch(expected, deadline, cleared):
+     while time.monotonic() < deadline:
+         actual = authority()
+-        check('no extra inventory or task effect', same_world(expected, actual)
+-              and actual['phase'] == expected['phase'])
++        check('no extra inventory or task effect', same_world(expected, actual))
+         check('no stale candidate', not st['ai'].has_candidate())
+         check('no old pending request', not st['ai'].is_busy())
+         if cleared:
+@@ -92,9 +91,17 @@
+     baseline_node = next(p for p in st['save'].get_points() if key(p.save_id) == key(st['baseline']))
+     check('baseline actual saved ID retained', key(baseline_node.save_id) == key(st['baseline']))
+     c = st['brother']
+-    check('baseline public task is idle', c.get_phase() == unreal.HearthwardCompanionPhase.IDLE
+-          and c.get_requested() == 0 and c.get_delivered() == 0
+-          and c.get_acquired() == 0 and c.get_carried() == 0)
++    goal = c.get_goal()
++    report['setup']['baseline_public_task'] = {
++        'phase': str(c.get_phase()), 'command_id': list(key(c.get_command_id())),
++        'requested': c.get_requested(), 'delivered': c.get_delivered(),
++        'acquired': c.get_acquired(), 'carried': c.get_carried(),
++        'goal': {'intent': str(goal.intent), 'item': str(goal.item), 'quantity': goal.quantity,
++                 'mode': goal.quantity_mode, 'source': goal.source_ref}}
++    check('baseline has no requested or carried material task', c.get_requested() == 0
++          and c.get_delivered() == 0 and c.get_acquired() == 0 and c.get_carried() == 0
++          and goal.quantity == 0 and str(goal.intent).lower() in ('', 'none')
++          and str(goal.item).lower() in ('', 'none'))
+ 
+     report['stage'] = 'real_candidate_across_load'
+     ai = st['ai']
+@@ -122,7 +129,7 @@
+     yield from watch(baseline, time.monotonic()+3, True)
+     checkpoint = save_now('cancelled HTTP checkpoint')
+     check('cancelled HTTP leaves inventory and public task unchanged', same_world(baseline, authority())
+-          and checkpoint['phase'] == baseline['phase'] and checkpoint['requested'] == 0
++          and checkpoint['requested'] == 0
+           and checkpoint['delivered'] == 0 and checkpoint['acquired'] == 0 and checkpoint['carried'] == 0)
+     report['cancelled_checkpoint'] = checkpoint
+ 

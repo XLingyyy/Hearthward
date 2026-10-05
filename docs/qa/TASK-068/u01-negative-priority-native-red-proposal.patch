@@ -1,0 +1,20 @@
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -236,6 +236,17 @@
+     TestFalse(TEXT("Collection describing acquired cargo cannot authorize another new harvest"),HearthwardAgent::Validate(G).IsEmpty());
+     G.Original=TEXT("新采二份木材，别往那里走");
+     TestFalse(TEXT("An omitted excluded direction cannot default to the current safe source"),HearthwardAgent::Validate(G).IsEmpty());
++    FHearthwardAgentGoal NegativeQuantity;
++    if(!TestTrue(TEXT("The unchanged CPU U01 model output parses"),HearthwardAgent::Parse(
++        TEXT(R"({"intent":"collect","item":"wood","quantity":3,"mode":"additional_acquired","source":"S1","limits":[],"unresolved":[],"npc_line":"哥，新采负三份木材带回仓库，数量逻辑异常，请确认具体需求或重新表述。"})"),NegativeQuantity)))return false;
++    NegativeQuantity.Original=TEXT("新采负三份木材带回仓库");
++    TestEqual(TEXT("An explicit negative quantity is refused before asking about collection source"),
++        HearthwardAgent::Validate(NegativeQuantity),FString(TEXT("UNRESOLVED_CONSTRAINT")));
++    NegativeQuantity.Original=TEXT("新采三份木材带回仓库");
++    TestTrue(TEXT("The same positive collection proposal remains valid"),HearthwardAgent::Validate(NegativeQuantity).IsEmpty());
++    NegativeQuantity.Original=TEXT("拿三份木材过来");
++    TestEqual(TEXT("A genuinely unspecified acquisition source retains clarification"),
++        HearthwardAgent::Validate(NegativeQuantity),FString(TEXT("UNRESOLVED_COLLECTION_SOURCE")));
+     return true;
+ }
+ 

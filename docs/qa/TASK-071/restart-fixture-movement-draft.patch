@@ -1,0 +1,18 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -144,8 +144,13 @@
+         World->InitializeActorsForPlay(FURL(),false);World->GetWorldSettings()->NotifyBeginPlay();
+         if(!TestTrue(TEXT("Mature fixture initializes actors and real building/timer lifecycle"),World->AreActorsInitialized()
+             && World->HasBegunPlay() && Building->HasBegunPlay() && Timer->HasBegunPlay()))return false;
+-        for(int32 I=0;I<80 && (!Hero->GetCharacterMovement()->IsMovingOnGround() || !Brother->GetCharacterMovement()->IsMovingOnGround());++I)
+-            World->Tick(LEVELTICK_All,.025f);
++        World->Tick(LEVELTICK_All,.025f);
++        // Synchronous World ticks share GFrameCounter; advance real movement after the first scheduled tick.
++        for(int32 I=1;I<80 && (!Hero->GetCharacterMovement()->IsMovingOnGround() || !Brother->GetCharacterMovement()->IsMovingOnGround());++I)
++        {
++            Hero->GetCharacterMovement()->TickComponent(.025f,LEVELTICK_All,nullptr);
++            Brother->GetCharacterMovement()->TickComponent(.025f,LEVELTICK_All,nullptr);
++        }
+         if(!TestTrue(FString::Printf(TEXT("Both actual capsules settle: Hero mode=%d z=%.3f active=%d tick=%d controller=%d; Brother mode=%d z=%.3f active=%d tick=%d controller=%d"),int32(Hero->GetCharacterMovement()->MovementMode),Hero->GetActorLocation().Z,Hero->GetCharacterMovement()->IsActive(),Hero->GetCharacterMovement()->IsComponentTickEnabled(),Hero->GetController()!=nullptr,int32(Brother->GetCharacterMovement()->MovementMode),Brother->GetActorLocation().Z,Brother->GetCharacterMovement()->IsActive(),Brother->GetCharacterMovement()->IsComponentTickEnabled(),Brother->GetController()!=nullptr),
+             Hero->GetCharacterMovement()->IsMovingOnGround() && Brother->GetCharacterMovement()->IsMovingOnGround()))return false;
+         Gameplay->EnableAdventure();Nature->EnsureWorld();FHitResult Ground;

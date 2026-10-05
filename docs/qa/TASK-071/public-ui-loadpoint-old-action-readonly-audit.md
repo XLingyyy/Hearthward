@@ -1,0 +1,31 @@
+# TASK071 公共UI旧动作跨Load只读调查
+
+状态：只读现Source及已有测试，只有自身QA写入。未执行UI/UE/build/model/HTTP/Git，未修改Source或脚本。第三HTTP实际已GREEN，具体信用见http-loadpoint-runtime-review.md；这里没有新增运行PASS。
+
+## 正常UI调用和保护
+
+当前默认UI为ScreenWidget自绘Elements，不是每个确认项都创建带闭包的UButton。ScreenContent528–534在当前候选上生成agentConfirm:<实际GUID>，MouseDown414–434按当前Elements命中后ExecuteAction；Enter493–507也读取当前焦点Elements的Action。ExecuteAction91复制Action，避免Refresh后原Element字符串失效。
+
+Save Restore425广播OnSnapshotRestored；HUDDialogue26注册，42–49回调Screen.OpenPage(hud)，并关闭旧Dialogue/Storage。OpenPage205清ConfirmAction/GiveUpEpoch和焦点，230隐藏Draft。进入HUD时没有清理全部旧Draft文本，但send/say在ScreenActions468–473明确要求Page=dialogue。因此一个在Load后HUD上迟到的DraftCommitted OnEnter（Widget562–563）进入send也会被页面守卫拒绝，不能仅凭保留文本断言旧请求会发送。
+
+旧agentConfirm:<GUID>在HUD上会由ScreenActions192页面守卫拒绝；重新打开dialogue后仍需AI.ConfirmCandidate的真实GUID/pending/记忆revision/restore/paused检查（AgentInteraction309–314）。旧generic confirm由ScreenActions286–297取当前ConfirmAction；Load后它已空，不能执行旧模态动作。Memory/Storage/Workshop/GiveUp另有epoch/页面绑定；此调查不修改这些边界或把所有UI动作泛化成必须携带新序号。
+
+未发现已经确认、需要新生产保护的缺陷。上面是静态调用事实，不能替代旧动作跨Load的实际运行。特别是重新打开dialogue以后的人为旧Draft回调重放，没有保存的实际Slate事件证据，不能先把它推断成正常发生的业务RED。
+
+## Root优先可执行的最窄路线
+
+建议一个独立PIE公共UI action replay测试，继续复用已成功TASK068准备，不发额外模型HTTP。正常菜单已提供agentCollectCard（ScreenActions217–234）：在dialogue页依当前注册能力生成quantity1的正常手动任务卡，并经SetStructuredGoal/StageCandidate。这是实际玩家可用UI功能，不是固定模型response；记录manual-card来源，模型理解与物理输入信用均0。
+
+1. 正常fixture实际baseline SavePoint；打开真实Screen dialogue页，ExecuteAction(agentCollectCard)必须成功，实际候选应为collect/wood/1/S1；数量/来源等以公开GetCandidate核对。没有setter调整菜单私有索引。
+2. 通过公开ActionAt取得实际绘制确认项的agentConfirm:<GUID>，保留为oldAction。当前Compose固定原始中心是(1118,737)，但须先assert实际ActionAt返回预期候选GUID；如全局布局有更改，使用公开DescribeLayout确定坐标或报告fixture失败，不直接写Elements/private layout。该normalUI候选确认前世界库存不变。
+3. 保持dialogue页面直接实际Save.LoadPoint(baseline)；不先打开save页。离开dialogue时OpenPage174–175本身CancelPending，所以先导航save再Load会把旧候选取消原因变为页面切换，不能据此证明Load边界。实际Load广播后应GetPage=hud、epoch改变、候选消失。
+4. 在HUD重放实际oldAction，应false且库存／公开任务量不变。重新打开dialogue再次重放oldAction，应false；这里能证明不是仅页面守卫造成的假通过，同时仍经过真实UI handler和AI候选保护。
+5. 正常agentCollectCard再建新卡，取得实际freshAction；oldAction在新卡旁仍false，freshAction经真实Screen.ExecuteAction可确认并实际完成，camp wood+1/source wood-1、Delivered1、玩家背包不变。随后短quiet观察无额外量。此为UI handler正控制，已有HTTP长期边界不必为这个非HTTP路径再等125秒。
+
+这一路线无需新增API、private World读取、Source testsetter或模型重跑，只调用现正常UI/存档/库存行为。Script可记“public UI action replay跨Load通过”及HUD实际snapshot reset；尚未驱动真实Slate pointer/IME排队事件，不把它命名为physical click或旧Slate callback已验证。若Root要求真实Slate链，应在登记Native测试窗口后调用现公开NativeOnMouseButtonDown/NativeOnKeyDown，并保持ActionAt真实前置；Python公开API无法直接构造完整FPointerEvent回调。Native注入事件同样没有真人物理输入信用。
+
+## 普通读档菜单的独立最窄正／负控制
+
+如果Root优先普通菜单确认，可以用同一个fixture两次正常SavePoint准备A/B（公开TryAdd1份wood产生未来B，记录两个实际SaveId），保持公共API：OpenPage(save)→ask:load:A进入真实确认；外部实际Load B触发HUD重置；重放confirm必须false，B的未来物品保持。随后重新走save→ask:load:A→confirm应true并恢复A原库存。此验证Generic Confirm和normal OpenSavePoint路径，没有模型/HTTP，不读取Point.World。
+
+它是第二个明确UI契约，与候选GUID动作不同，可在Root需要对应验收时单独选；不建议一次扩到兼容修复、Delete/Quit、所有页面或物理键鼠。现ExperienceTests的危险确认焦点／GiveUp以及Native ActualLoadPoint旧CommandTicket分别已有独立证据，未覆盖这里的真实HUD OnSnapshotRestored＋旧ScreenAction组合，不能重复计算。

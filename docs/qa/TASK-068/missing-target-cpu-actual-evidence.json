@@ -1,0 +1,34 @@
+{
+  "method": "Read-only actual CPU full60 records; no modified expectations or synthetic model response",
+  "source": "Saved/Task068/cpu/cases.jsonl",
+  "cases": [
+    {
+      "id": "A09",
+      "input": "帮忙照顾一下作物",
+      "raw": "{\"intent\":\"nature_care\",\"item\":\"harvest\",\"quantity\":1,\"mode\":\"action_count\",\"source\":\"known_target\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，照顾作物需先确认地块状态及作物成熟度，请明确具体地块位置或作物类型，以便执行浇水、施肥或收获操作。\"}",
+      "raw_pass": false,
+      "e2e_pass": false,
+      "reason": "TARGET_REQUIRED",
+      "status": "任务未就绪：TARGET_REQUIRED",
+      "line": "当前能力或工作台条件不满足，未改变正在执行的任务。",
+      "applied_intent": "refuse",
+      "candidate": false,
+      "no_unconfirmed_world_effect": true
+    },
+    {
+      "id": "A10",
+      "input": "带一个人回营地",
+      "raw": "{\"intent\":\"escort\",\"item\":\"rescued_01\",\"quantity\":1,\"mode\":\"one_person\",\"source\":\"known_person\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡护送族人01回营地报到，请确认后再执行。\"}",
+      "raw_pass": false,
+      "e2e_pass": false,
+      "reason": "PERSON_NOT_CONTACTED",
+      "status": "任务未就绪：PERSON_NOT_CONTACTED",
+      "line": "当前能力或工作台条件不满足，未改变正在执行的任务。",
+      "applied_intent": "refuse",
+      "candidate": false,
+      "no_unconfirmed_world_effect": true
+    }
+  ],
+  "native_proposal_status": "NOT_RUN",
+  "ui_production_proposal_status": "NOT_APPLIED"
+}

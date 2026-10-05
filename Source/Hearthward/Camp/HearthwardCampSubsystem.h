@@ -36,10 +36,12 @@ public:
     UFUNCTION(BlueprintCallable) bool ReclaimHometown(FName Victory,FVector Position);
     bool Restore(const FString& Json,int32 LegacyTier,FVector Camp,double Calendar);
     bool BrotherWorking() const;
+    bool BrotherWorkplace(FVector& Position,AActor*& Facility) const;
     void RefreshQuartermasters();
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type Type) const override;
 private:
     void SyncTier();
+    bool Workplace(const FHearthwardCampRegion& Region,FVector From,FVector& Position,AActor*& Facility) const;
     double Efficiency(AActor* Actor,const FHearthwardCampRegion& Region) const;
 };
