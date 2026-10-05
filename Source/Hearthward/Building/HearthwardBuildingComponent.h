@@ -43,6 +43,7 @@ public:
     bool MatchesFacility(FGuid Station,FName Kind,int32 Level) const;
 
     UPROPERTY(BlueprintReadOnly) FString Feedback;
+    uint32 GetFeedbackRevision() const { return FeedbackRevision; }
     UPROPERTY(BlueprintReadOnly) bool ValidPlacement = false;
     UPROPERTY(BlueprintReadOnly) FVector Placement = FVector::ZeroVector;
     UPROPERTY(BlueprintReadOnly) float Yaw = 0;
@@ -51,6 +52,9 @@ public:
     static bool Validate(const TArray<TSharedPtr<FJsonValue>>& Rows);
     void Restore(const TArray<TSharedPtr<FJsonValue>>& Rows);
 private:
+    uint32 FeedbackRevision=0;
+    void SetFeedback(FString Value,bool Repeat=true)
+    { if(Repeat || Feedback!=Value) ++FeedbackRevision; Feedback=MoveTemp(Value); }
     UFUNCTION() void Complete();
     UFUNCTION() void Interrupted();
     bool CheckPlacement(FString& Reason) const;

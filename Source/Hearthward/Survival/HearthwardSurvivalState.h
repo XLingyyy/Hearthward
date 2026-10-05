@@ -16,23 +16,26 @@ struct FHearthwardSurvivalState
     UPROPERTY() double DrowningRemaining = -1;
     UPROPERTY() double HotRemaining = 0;
     UPROPERTY() double HotRate = 0;
+    UPROPERTY() FName HotItem;
     UPROPERTY() double RecoveryDelay = 0;
     UPROPERTY() double SafeSeconds = 0;
     UPROPERTY(BlueprintReadOnly) FName Medicine;
     UPROPERTY(BlueprintReadOnly) double MedicineRemaining = 0;
     UPROPERTY() bool AutomaticMedicine = false;
+    UPROPERTY(BlueprintReadOnly) FName FoodItem;
+    UPROPERTY(BlueprintReadOnly) double FoodRemaining = 0;
     UPROPERTY() TSet<FName> AutoPermissions;
 
     bool Severe() const { return SevereDue >= 0; }
     void Food(float Hunger) { if (Hunger >= 10) SevereDue = -1; }
-    void Kill() { Life=EHearthwardLife::Dead; DownRemaining=0; HotRemaining=HotRate=0; }
+    void Kill() { Life=EHearthwardLife::Dead; DownRemaining=0; HotRemaining=HotRate=0; HotItem=NAME_None; }
     void Damage(float& Health, float Amount)
     {
         if (Amount<=0 || Life==EHearthwardLife::Dead) return;
         SafeSeconds=0;
         if (Life==EHearthwardLife::Downed) { Health=0; Kill(); return; }
         Health=FMath::Max(0.f,Health-Amount);
-        if (Health==0) { Life=EHearthwardLife::Downed; DownRemaining=120; HotRemaining=HotRate=0; }
+        if (Health==0) { Life=EHearthwardLife::Downed; DownRemaining=120; HotRemaining=HotRate=0; HotItem=NAME_None; }
     }
     // Returns the consumed fraction, so a calendar jump can stop at a fatal boundary.
     double Advance(float& Health,float& Hunger,float Maximum,double Active,double Calendar,double StartW,
@@ -63,6 +66,7 @@ struct FHearthwardSurvivalState
             Hunger=FMath::Max(0.f,float(Hunger-Calendar*Step*Rate));
             if (Hunger<1e-5) Hunger=0;
             HotRemaining=FMath::Max(0.,HotRemaining-Active*Step);
+            if(HotRemaining==0) HotItem=NAME_None;
             Used+=Step;
             if (Hunger==0 && Health<=Maximum*.1+1e-5 && !Severe())
             {

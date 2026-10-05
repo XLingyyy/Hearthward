@@ -14,6 +14,7 @@
 #include "HearthwardHUD.h"
 #include "HearthwardLoadingSubsystem.h"
 #include "Engine/GameInstance.h"
+#include "Engine/GameViewportClient.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -34,6 +35,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 #include "Serialization/JsonSerializer.h"
 #include "Rendering/DrawElements.h"
 #include "Styling/CoreStyle.h"
@@ -69,14 +72,19 @@ void UHearthwardScreenWidget::InitializeScreen(AHearthwardHUD* HUD)
     OpenPage(TEXT("title"));
     GetGameInstance()->GetSubsystem<UHearthwardUpdateSubsystem>()->Check();
     auto* Save=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>();
-    if(!Save->LoadPointIndex()) { ConfirmAction=TEXT("compat.resolve");CompatibilityScroll=0;Refresh();return; }
+    Save->OnSnapshotRestored.AddUniqueDynamic(this,&UHearthwardScreenWidget::ResetHUDQuestNotice);
+    if(!Save->LoadPointIndex())
+    {
+        GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->FinishSession(false);
+        ConfirmAction=TEXT("compat.resolve");CompatibilityScroll=0;Refresh();return;
+    }
     if(UGameplayStatics::GetCurrentLevelName(GetWorld(),true)!=TEXT("L_HearthwardWilds")) return;
     const FString LoadId=GetWorld()->URL.GetOption(TEXT("HearthwardLoad="),TEXT(""));
     auto* Loading=GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>();
     if(FCString::Strcmp(GetWorld()->URL.GetOption(TEXT("HearthwardNewGame="),TEXT("")),TEXT("1"))==0)
     {
         Loading->BeginLoading();
-        if(Save->EnableNaturalWorld() && Save->StartNewProgress()) { OpenPage(TEXT("hud"));Loading->FinishSession(true); return; }
+        if(Save->EnableNaturalWorld() && Save->StartNewProgress()) { HUDAnnounceInitialQuest=true; OpenPage(TEXT("hud"));Loading->FinishSession(true); return; }
     }
     else if(!LoadId.IsEmpty())
     {
@@ -95,6 +103,9 @@ void UHearthwardScreenWidget::InitializeScreen(AHearthwardHUD* HUD)
 }
 void UHearthwardScreenWidget::NativeDestruct()
 {
+    CancelInventoryDrag();
+    if(OwnPause && GetWorld()) UGameplayStatics::SetGamePaused(this,false);
+    OwnPause=false;
     if(SettingsSoundMix && GetWorld()) UGameplayStatics::PopSoundMixModifier(this,SettingsSoundMix);
     Super::NativeDestruct();
 }
@@ -112,6 +123,7 @@ void UHearthwardScreenWidget::LoadTheme()
     Typeface=MakeShared<FCompositeFont>(NAME_None,Root/Text(Typography,TEXT("body")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
     DisplayTypeface=MakeShared<FCompositeFont>(NAME_None,Root/Text(Typography,TEXT("display")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
     TMap<FString,UTexture2D*> Loaded;
+    FImage JournalGlyphs;
     for(const auto& Entry:Theme->GetObjectField(TEXT("assets"))->Values)
     {
         const auto R=Entry.Value->AsObject(); const FString File=Text(R,TEXT("file"));
@@ -138,7 +150,42 @@ void UHearthwardScreenWidget::LoadTheme()
             const FVector2D S((*UV)[2]->AsNumber()/Texture->GetSizeX(),(*UV)[3]->AsNumber()/Texture->GetSizeY());
             B.SetUVRegion(FBox2f(FVector2f(P),FVector2f(P+S)));
         }
-        Brushes.Add(FString(*Entry.Key),B);
+        const FString Glyph(*Entry.Key);Brushes.Add(Glyph,B);
+        if(Glyph.StartsWith(TEXT("journalCategory")) && Glyph!=TEXT("journalCategorymain"))
+        {
+            // The five legacy inactive glyphs are much darker than the main glyph.
+            // Cache a warm-white coverage mask for selection without changing the atlas.
+            if(JournalGlyphs.RawData.IsEmpty())
+            {
+                const bool GlyphsLoaded=FImageUtils::LoadImage(*(Root/File),JournalGlyphs);
+                if(!GlyphsLoaded || JournalGlyphs.Format!=ERawImageFormat::BGRA8)
+                    UE_LOG(LogTemp,Fatal,TEXT("Cannot read journal glyph atlas %s"),*File);
+            }
+            const auto& Crop=R->GetArrayField(TEXT("uv"));
+            const int32 Left=Crop[0]->AsNumber(),Top=Crop[1]->AsNumber(),Width=Crop[2]->AsNumber(),Height=Crop[3]->AsNumber();
+            const auto* Source=reinterpret_cast<const FColor*>(JournalGlyphs.RawData.GetData());
+            int32 Peak=21;
+            for(int32 Y=0;Y<Height;++Y) for(int32 X=0;X<Width;++X)
+            {
+                const auto& Pixel=Source[(Top+Y)*JournalGlyphs.SizeX+Left+X];
+                Peak=FMath::Max(Peak,FMath::Max3(int32(Pixel.R),int32(Pixel.G),int32(Pixel.B)));
+            }
+            TArray<FColor> Pixels;Pixels.SetNumUninitialized(Width*Height);
+            for(int32 Y=0;Y<Height;++Y) for(int32 X=0;X<Width;++X)
+            {
+                const auto& Pixel=Source[(Top+Y)*JournalGlyphs.SizeX+Left+X];
+                const float Luma=FMath::Max3(int32(Pixel.R),int32(Pixel.G),int32(Pixel.B));
+                const float Coverage=FMath::Pow(FMath::Clamp((Luma-20.f)/(Peak-20.f),0.f,1.f),.7f);
+                Pixels[Y*Width+X]=FColor(255,242,207,FMath::RoundToInt(Pixel.A*Coverage));
+            }
+            auto* Highlight=UTexture2D::CreateTransient(Width,Height,PF_B8G8R8A8,NAME_None,
+                TConstArrayView64<uint8>(reinterpret_cast<const uint8*>(Pixels.GetData()),Pixels.Num()*sizeof(FColor)));
+            check(Highlight);Highlight->SRGB=true;Highlight->Filter=TF_Bilinear;
+            Highlight->AddressX=TA_Clamp;Highlight->AddressY=TA_Clamp;Highlight->UpdateResource();Textures.Add(Highlight);
+            FSlateBrush Selected=B;Selected.SetResourceObject(Highlight);Selected.ImageSize=FVector2D(Width,Height);
+            Selected.SetUVRegion(FBox2f(FVector2f(0,0),FVector2f(1,1)));
+            Brushes.Add(Glyph+TEXT("Highlight"),Selected);
+        }
     }
     if(!ReloadLayout()) UE_LOG(LogTemp,Fatal,TEXT("Cannot load Hearthward UI layout"));
 }
@@ -167,6 +214,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if(Name==TEXT("equipment"))EquipmentEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     if(DisplayDeadline>0) {FinishDisplayChange(false);}
     if(Elements.IsValidIndex(KeyboardFocus)) PageFocus.Add(Page,Elements[KeyboardFocus].Action);
+    CancelInventoryDrag();
     BindingCapture=NAME_None;
     if(auto* C=Cast<AHearthwardCharacter>(GetOwningPlayerPawn())) C->ResetHeldInput();
     const FName PreviousPage=Page;
@@ -192,6 +240,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if(Name!=PreviousPage)
     {
         const bool Nested=Name==TEXT("settings") || Name==TEXT("save") ||
+            (Name==TEXT("equipment") && PreviousPage==TEXT("inventory")) ||
             (Name==TEXT("memory") && PreviousPage==TEXT("dialogue")) ||
             (Name==TEXT("map") && PreviousPage==TEXT("journal"));
         if(!ReturnPages.IsEmpty() && Name==ReturnPages.Last())
@@ -202,6 +251,14 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         else { ReturnPages.Reset(); ReturnCategories.Reset(); }
     }
     if(Page!=Name) Category=RestoringParent?RestoredCategory:FString();
+    if(Name==TEXT("map") && PreviousPage!=Name && !RestoringParent)
+    {
+        WorldMap=false;
+        const auto Map=Theme->GetObjectField(TEXT("localMap"));
+        MapZoom=FMath::Clamp(float(Number(Map,TEXT("initialZoom"),2)),1.f,2.f);
+        const auto& Pan=Map->GetArrayField(TEXT("initialPan"));
+        MapPan=FVector2D(FMath::Clamp(Pan[0]->AsNumber(),-450.,450.),FMath::Clamp(Pan[1]->AsNumber(),-300.,300.));
+    }
     Page=Name; TextScroll=0; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset();GiveUpEpoch.Invalidate(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
     GConfig->GetBool(TEXT("Hearthward.Survival"),TEXT("MenuPause"),MenuPause,GGameUserSettingsIni);
@@ -211,21 +268,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         SettingsSelection.Reset();
         LoadSettingsDraft();
     }
-    const bool Pause=LayoutEditing || Name==TEXT("title") || Name==TEXT("pause") || Name==TEXT("save")
-        || (MenuPause && Name!=TEXT("hud") && Name!=TEXT("dialogue"));
-    if (Pause && !GetWorld()->IsPaused()) OwnPause=UGameplayStatics::SetGamePaused(this,true);
-    else if (!Pause && OwnPause) { UGameplayStatics::SetGamePaused(this,false); OwnPause=false; }
-    auto* Player=GetOwningPlayer(); Player->FlushPressedKeys();
-    if (Name==TEXT("hud") && !LayoutEditing)
-    {
-        SetVisibility(ESlateVisibility::HitTestInvisible); Player->SetInputMode(FInputModeGameOnly()); Player->bShowMouseCursor=false;
-    }
-    else
-    {
-        SetVisibility(ESlateVisibility::Visible); FInputModeUIOnly Mode; Mode.SetWidgetToFocus(TakeWidget()); Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        Player->SetInputMode(Mode); Player->bShowMouseCursor=true; SetKeyboardFocus();
-    }
-    GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->InputModeChanged();
+    ApplyInputMode();
     if (Draft)
     {
         Draft->SetVisibility(Name==TEXT("dialogue") || Name==TEXT("memory")?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
@@ -245,6 +288,29 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
             if(GetOwningPlayerPawn()->FindComponentByClass<UHearthwardPresentationComponent>()->PlayFixedCue(Cue,FGuid::NewGuid(),true)) Campaign->Record(Fact);
     }
     Refresh();
+}
+void UHearthwardScreenWidget::ApplyInputMode()
+{
+    auto* Player=GetOwningPlayer();
+    if(!Player || !GetWorld())return;
+    const bool Pause=LayoutEditing || Page==TEXT("title") || Page==TEXT("pause") || Page==TEXT("save")
+        || (MenuPause && Page!=TEXT("hud") && Page!=TEXT("dialogue"));
+    if(Pause && !GetWorld()->IsPaused())OwnPause=UGameplayStatics::SetGamePaused(this,true);
+    else if(!Pause && OwnPause) {UGameplayStatics::SetGamePaused(this,false);OwnPause=false;}
+    Player->FlushPressedKeys();
+    if(Page==TEXT("hud") && !LayoutEditing)
+    {
+        SetVisibility(ESlateVisibility::HitTestInvisible);
+        Player->SetInputMode(FInputModeGameOnly());Player->bShowMouseCursor=false;
+    }
+    else
+    {
+        SetVisibility(ESlateVisibility::Visible);
+        FInputModeUIOnly Mode;Mode.SetWidgetToFocus(TakeWidget());Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        Player->SetInputMode(Mode);Player->bShowMouseCursor=true;SetKeyboardFocus();
+    }
+    // Preserve the latest page mode, then block input until loading has ended.
+    GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->InputModeChanged();
 }
 void UHearthwardScreenWidget::Element(FString Type,FString TextValue,FVector2D P,FVector2D Size,float Font,FString Action,FString Asset,bool Selected)
 {
@@ -298,30 +364,33 @@ void UHearthwardScreenWidget::LoadElements(const TArray<TSharedPtr<FJsonValue>>&
 void UHearthwardScreenWidget::Refresh()
 {
     if(!Theme || !LayoutConfig || !Gameplay()) return;
+    UpdateHUDQuestNotice();
     const FString FocusedAction=Elements.IsValidIndex(KeyboardFocus) && Elements[KeyboardFocus].Enabled &&
         !Elements[KeyboardFocus].Hidden ? Elements[KeyboardFocus].Action : FString();
-    Elements.Reset(); const auto P=Theme->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString());
+    const FString HoveredAction=Elements.IsValidIndex(Hover) && Elements[Hover].Enabled &&
+        !Elements[Hover].Hidden ? Elements[Hover].Action : FString();
+    Elements.Reset(); const auto P=Page==TEXT("map") && WorldMap?Theme->GetObjectField(TEXT("worldMapPage")):Theme->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString());
     const FString Background=Text(P,TEXT("background"));
     if(!Background.IsEmpty()) { Element(TEXT("image"),TEXT(""),FVector2D::ZeroVector,DesignSize,18,TEXT(""),Background); Elements.Last().LayoutId=TEXT("background"); }
     LoadComponents();
     if(P->GetBoolField(TEXT("header"))) LoadElements(Theme->GetArrayField(TEXT("header")));
     LoadElements(P->GetArrayField(TEXT("elements")));
     if(Page==TEXT("settings")) ComposeSettings();
-    if(Page==TEXT("pause") && GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled() && !Gameplay()->Enabled)
-    {
-        Element(TEXT("text"),TEXT("自然地图探索"),FVector2D(1096,220),FVector2D(280,36),22);
-        const FVector Camp(-98000,-75000,0),Here=GetOwningPlayerPawn()->GetActorLocation();
-        Element(TEXT("text"),FString::Printf(TEXT("距新营地 %.0f 米"),FVector::Dist2D(Camp,Here)/100),FVector2D(1152,510),FVector2D(245,40),19);
-    }
     if(Page==TEXT("pause"))
     {
-        Element(TEXT("button"),MenuPause?TEXT("普通菜单暂停：开"):TEXT("普通菜单暂停：关"),FVector2D(1100,765),FVector2D(280,48),18,TEXT("menuPause"));
+        // Preserve contextual survival actions inside the menu; ordinary menu pausing lives in Settings.
         auto* S=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
-        if(S && S->State.Life==EHearthwardLife::Downed)
-            Element(TEXT("button"),TEXT("放弃救援并回档"),FVector2D(1100,640),FVector2D(280,55),20,TEXT("giveUp"));
-        if(S && S->Busy()) Element(TEXT("button"),TEXT("取消当前动作"),FVector2D(1100,705),FVector2D(280,55),20,TEXT("cancelSurvival"));
+        int32 Row=0;
+        auto ContextAction=[&](const FString& Label,const FString& Action)
+        {
+            Element(TEXT("menuAction"),Label,{590.f,638.f+Row++*52.f},{492,48},20,Action);
+            auto& E=Elements.Last(); E.Font=20*GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f;
+            E.TextInset=22; E.Tracking=0; E.Component=TEXT("pause.menu");
+        };
+        if(S && S->State.Life==EHearthwardLife::Downed) ContextAction(TEXT("放弃救援并回档"),TEXT("giveUp"));
+        if(S && S->Busy()) ContextAction(TEXT("取消当前动作"),TEXT("cancelSurvival"));
     }
-    if(Page==TEXT("inventory")){ComposeInventory(false);Element(TEXT("button"),TEXT("逐件装备 · 行装管理"),FVector2D(260,810),FVector2D(280,45),18,TEXT("page:equipment"));}
+    if(Page==TEXT("inventory")) ComposeInventory(false);
     if(Page==TEXT("equipment"))ComposeEquipment();
     if(Page==TEXT("nature"))ComposeNature();
     if(Page==TEXT("storage")) ComposeInventory(true);
@@ -336,8 +405,9 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("crafting")) ComposeCrafting();
     if(Page==TEXT("repairing")) ComposeRepair();
     if(Page==TEXT("save")) ComposeSave();
-    if(Page==TEXT("title") && ConfirmAction!=TEXT("compat.resolve"))ComposeUpdateNotice();
-    if(!Message.IsEmpty()) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
+    if(Page==TEXT("title")) ComposeTitleControls();
+    if(!Message.TrimStartAndEnd().IsEmpty() && Page!=TEXT("settings") && Page!=TEXT("save") && Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("equipment") && Page!=TEXT("skills") && Page!=TEXT("journal") && Page!=TEXT("map")) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
+    if(Page==TEXT("map") && WorldMap && !Message.IsEmpty()) Element(TEXT("notice"),Message,{440,860},{1100,44},20);
     if(!ConfirmAction.IsEmpty())
     {
         if(ConfirmAction==TEXT("compat.resolve"))ComposeCompatibility();
@@ -365,7 +435,7 @@ void UHearthwardScreenWidget::Refresh()
     }
     ApplyLayout();
     ApplyReadableLayout();
-    ApplyReadableHUD();
+    ApplyTitleMenuWindow();
     if(Draft)
     {
         FEditableTextBoxStyle& Style=Draft->WidgetStyle;
@@ -376,10 +446,94 @@ void UHearthwardScreenWidget::Refresh()
     { return E.Action==FocusedAction && E.Enabled && !E.Hidden; });
     if(KeyboardFocus==INDEX_NONE && ConfirmAction.IsEmpty() && PageFocus.Contains(Page))
         KeyboardFocus=Elements.IndexOfByPredicate([&](const auto& E){return E.Action==PageFocus[Page] && E.Enabled && !E.Hidden;});
+    if(!ConfirmAction.IsEmpty() && (KeyboardFocus==INDEX_NONE ||
+        (Elements[KeyboardFocus].Action!=TEXT("confirm") && Elements[KeyboardFocus].Action!=TEXT("cancel") &&
+         Elements[KeyboardFocus].Action!=TEXT("resetPrev") && Elements[KeyboardFocus].Action!=TEXT("resetNext") &&
+         !(ConfirmAction==TEXT("compat.resolve") && (Elements[KeyboardFocus].Action.StartsWith(TEXT("compat.")) || Elements[KeyboardFocus].Action==TEXT("update.open"))))))
+        KeyboardFocus=ConfirmAction==TEXT("giveUp")?INDEX_NONE:
+            Elements.IndexOfByPredicate([](const auto& E){return E.Action==TEXT("cancel") && E.Enabled && !E.Hidden;});
+    Hover=HoveredAction.IsEmpty()?INDEX_NONE:Elements.IndexOfByPredicate([&](const auto& E)
+    { return E.Action==HoveredAction && E.Enabled && !E.Hidden && (ConfirmAction.IsEmpty() ||
+        E.Action==TEXT("confirm") || E.Action==TEXT("cancel") ||
+        (ConfirmAction==TEXT("compat.resolve") && (E.Action.StartsWith(TEXT("compat.")) || E.Action==TEXT("update.open")))); });
+    if(Page==TEXT("pause") && ConfirmAction.IsEmpty() && KeyboardFocus==INDEX_NONE)
+        KeyboardFocus=Elements.IndexOfByPredicate([](const auto& E){return E.Action==TEXT("page:hud") && E.Enabled && !E.Hidden;});
+    if(Page==TEXT("title") && ConfirmAction.IsEmpty())
+    {
+        if(!Elements.ContainsByPredicate([&](const auto& E){return E.Type==TEXT("titleOption") && E.Action==TitleSelection && E.Enabled && !E.Hidden;}))
+        {
+            const auto* First=Elements.FindByPredicate([](const auto& E){return E.Type==TEXT("titleOption") && E.Enabled && !E.Hidden;});
+            if(First) SelectTitleOption(First->Action);
+        }
+        if(KeyboardFocus==INDEX_NONE) SelectTitleOption(TitleSelection);
+    }
+}
+float UHearthwardScreenWidget::GetHUDQuestNoticeRemaining() const
+{
+    return HUDQuestNotice.IsNone()?0.f:FMath::Max(0.f,float(HUDQuestNoticeUntil-FPlatformTime::Seconds()));
+}
+double UHearthwardScreenWidget::HUDFeedbackDeadline(FName Id,const FString& Label,uint32 Revision,bool Eligible)
+{
+    auto& Notice=HUDFeedbackNotices.FindOrAdd(Id);
+    if(Notice.Text!=Label || Notice.Revision!=Revision)
+    { Notice.Text=Label;Notice.Revision=Revision;Notice.Until=0; }
+    if(Label.IsEmpty()) return 0;
+    // A render refresh never renews a notice. Only a new result, even with identical text, does.
+    if(Eligible && Notice.Until==0) Notice.Until=FPlatformTime::Seconds()+2;
+    return Eligible?Notice.Until:0;
+}
+void UHearthwardScreenWidget::ResetHUDQuestNotice()
+{
+    CancelInventoryDrag();
+    HUDFeedbackNotices.Reset();
+    HUDKnownQuests.Reset(); HUDQuestNotice=HUDPendingQuest=NAME_None; HUDQuestNoticeUntil=0;
+    HUDQuestsObserved=HUDAnnounceInitialQuest=false;
+}
+void UHearthwardScreenWidget::UpdateHUDQuestNotice()
+{
+    auto* G=Gameplay();
+    if(!G || !G->Enabled || GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring()
+        || GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->IsLoading()) return;
+    const bool Seed=!HUDQuestsObserved;
+    FName Received; bool ReceivedMain=false;
+    for(const auto& V:HearthwardData::Rows(TEXT("quests")))
+    {
+        const auto Q=V->AsObject(); const FName Id(*HearthwardData::Text(Q,TEXT("id")));
+        if(!G->QuestAvailable(Id)) continue;
+        if(!Seed && !HUDKnownQuests.Contains(Id) && !G->Claimed.Contains(Id))
+        {
+            const bool Main=HearthwardData::Text(Q,TEXT("category"))==TEXT("main");
+            if(Received.IsNone() || Id==G->TrackedQuest || (Received!=G->TrackedQuest && Main && !ReceivedMain))
+            {Received=Id;ReceivedMain=Main;}
+        }
+        HUDKnownQuests.Add(Id);
+    }
+    if(Seed && HUDAnnounceInitialQuest && !G->TrackedQuest.IsNone() && G->QuestAvailable(G->TrackedQuest) && !G->Claimed.Contains(G->TrackedQuest))
+        Received=G->TrackedQuest;
+    HUDQuestsObserved=true; HUDAnnounceInitialQuest=false;
+    // Coalesce a batch of newly unlocked quests into one five-second notice; the complete list stays in the journal.
+    if(!Received.IsNone()) HUDPendingQuest=Received;
+    const double Now=FPlatformTime::Seconds();
+    if(!HUDQuestNotice.IsNone() && (Now>=HUDQuestNoticeUntil || !G->QuestAvailable(HUDQuestNotice) || G->Claimed.Contains(HUDQuestNotice)))
+    { HUDQuestNotice=NAME_None; HUDQuestNoticeUntil=0; }
+    if(!HUDPendingQuest.IsNone() && (!G->QuestAvailable(HUDPendingQuest) || G->Claimed.Contains(HUDPendingQuest))) HUDPendingQuest=NAME_None;
+    if(Page==TEXT("hud") && !HUDPendingQuest.IsNone())
+    { HUDQuestNotice=HUDPendingQuest;HUDPendingQuest=NAME_None;HUDQuestNoticeUntil=Now+5; }
 }
 void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
 {
     Super::NativeTick(G,Delta);
+#if !UE_BUILD_SHIPPING
+    FString TestPool; FGuid PoolId;
+    if(Page==TEXT("title") && !HUDPreviewStarted && FParse::Param(FCommandLine::Get(),TEXT("HearthwardHUDPreview"))
+        && FParse::Value(FCommandLine::Get(),TEXT("HearthwardSaveTestPool="),TestPool) && FGuid::Parse(TestPool,PoolId) && PoolId.IsValid()
+        && !GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->IsLoading())
+    { HUDPreviewStarted=true; ExecuteAction(TEXT("new")); return; }
+    if(Page==TEXT("hud") && !MapPreviewOpened && FParse::Param(FCommandLine::Get(),TEXT("HearthwardMapPreview"))
+        && GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->State.Facts.Contains(TEXT("prologue_intro"))
+        && !GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->IsLoading())
+    { MapPreviewOpened=true;OpenPage(TEXT("map"));return; }
+#endif
     if(DisplayDeadline>0 && FPlatformTime::Seconds()>=DisplayDeadline) FinishDisplayChange(false);
     if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) && Page!=TEXT("save") && Page!=TEXT("title"))
     {
@@ -387,6 +541,12 @@ void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
         OpenPage(TEXT("save"));
     }
     if((RefreshDelay-=Delta)<=0) { RefreshDelay=.2f; Refresh(); }
+    if(Page==TEXT("map"))
+    {
+        UpdateMapMarkers();
+        // Real-time smoke continues to drift while the map pauses the world.
+        if(const auto Cached=GetCachedWidget())Cached->Invalidate(EInvalidateWidgetReason::Paint);
+    }
     if(!Message.IsEmpty() && FPlatformTime::Seconds()>MessageUntil) { Message.Reset(); }
 }
 FVector2D UHearthwardScreenWidget::CanvasPoint(const FGeometry& G,const FVector2D& Screen) const
@@ -398,7 +558,7 @@ int32 UHearthwardScreenWidget::Hit(const FVector2D& P) const
 {
     for(int32 I=Elements.Num()-1;I>=0;--I)
     {
-        const auto& E=Elements[I]; if(E.Action.IsEmpty() || !E.Enabled || E.Hidden) continue;
+        const auto& E=Elements[I]; if(E.Action.IsEmpty() || E.Hidden) continue;
         if(!ConfirmAction.IsEmpty() && E.Action!=TEXT("confirm") && E.Action!=TEXT("cancel")
             && !(ConfirmAction==TEXT("compat.resolve") && (E.Action.StartsWith(TEXT("compat.")) || E.Action==TEXT("update.open")))) continue;
         if(Page==TEXT("map") && ReadableLayout() && E.Component==TEXT("map.sidebar"))
@@ -408,17 +568,45 @@ int32 UHearthwardScreenWidget::Hit(const FVector2D& P) const
                 || P.Y<Sidebar.Position.Y+16 || P.Y>Sidebar.Position.Y+Sidebar.Size.Y-8)continue;
         }
         const auto MapPoint=ComponentPoint(TEXT("map.canvas"),P,true);
-        if(E.MapClipped && (MapPoint.X<407 || MapPoint.X>1517 || MapPoint.Y<95 || MapPoint.Y>855)) continue;
-        if(P.X>=E.Position.X && P.Y>=E.Position.Y && P.X<E.Position.X+E.Size.X && P.Y<E.Position.Y+E.Size.Y) return I;
+        if(E.MapClipped && (WorldMap?(MapPoint.X<407 || MapPoint.X>1517 || MapPoint.Y<95 || MapPoint.Y>855):(MapPoint.X<0 || MapPoint.X>DesignSize.X || MapPoint.Y<0 || MapPoint.Y>DesignSize.Y))) continue;
+        if(P.X>=E.Position.X && P.Y>=E.Position.Y && P.X<E.Position.X+E.Size.X && P.Y<E.Position.Y+E.Size.Y)
+        {
+            if(E.Enabled) return I;
+            if(E.Type==TEXT("menuAction")) return INDEX_NONE;
+        }
     }
     return INDEX_NONE;
 }
+bool UHearthwardScreenWidget::IsHighlighted(int32 Index) const
+{
+    if(!Elements.IsValidIndex(Index)) return false;
+    const auto& E=Elements[Index];
+    if(!E.Enabled || E.Hidden) return false;
+    if(Page==TEXT("pause") && ConfirmAction.IsEmpty() && E.Type==TEXT("menuAction"))
+        return Index==(Elements.IsValidIndex(Hover)?Hover:KeyboardFocus);
+    if(E.Type==TEXT("titleOption") || E.Type==TEXT("menuRow")) return E.Selected;
+    if(Page==TEXT("journal") && E.LayoutId.StartsWith(TEXT("journal.header.tab."))) return E.Selected;
+    // Refresh keeps a safe logical default for Enter. Only keyboard input makes it visible.
+    return E.Selected || Index==Hover || (KeyboardNavigationActive && Index==KeyboardFocus);
+}
+#if !UE_BUILD_SHIPPING
+bool UHearthwardScreenWidget::IsActionHighlighted(const FString& Action) const
+{ return IsHighlighted(Elements.IndexOfByPredicate([&](const auto& E){return E.Action==Action;})); }
+#endif
 FReply UHearthwardScreenWidget::NativeOnMouseButtonDown(const FGeometry& G,const FPointerEvent& E)
 {
+    KeyboardNavigationActive=false;
+    if(!ConfirmAction.IsEmpty()) KeyboardFocus=Elements.IndexOfByPredicate([](const auto& Item)
+    { return Item.Action==TEXT("cancel") && Item.Enabled && !Item.Hidden; });
     if(LayoutEditing) return LayoutMouseDown(G,E);
+    if(Page==TEXT("inventory") && ConfirmAction.IsEmpty() && E.GetEffectingButton()==EKeys::LeftMouseButton)
+    {
+        const FReply Reply=InventoryMouseDown(G,E);if(Reply.IsEventHandled())return Reply;
+    }
     if(CaptureBinding(E.GetEffectingButton(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown())) return FReply::Handled();
     if(Page==TEXT("map") && ConfirmAction.IsEmpty() && HearthwardInput::Matches(GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings,TEXT("map.marker"),E.GetEffectingButton(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown()))
     {
+        if(!WorldMap)return FReply::Handled();
         if(const auto* Bounds=LayoutBounds.Find(TEXT("map.canvas"));Bounds && Bounds->Hidden) return FReply::Handled();
         const FVector2D P=ComponentPoint(TEXT("map.canvas"),CanvasPoint(G,E.GetScreenSpacePosition()),true);
         if(P.X>=407 && P.X<=1517 && P.Y>=95 && P.Y<=855)
@@ -432,11 +620,17 @@ FReply UHearthwardScreenWidget::NativeOnMouseButtonDown(const FGeometry& G,const
         return FReply::Handled();
     }
     if(E.GetEffectingButton()==EKeys::LeftMouseButton)
-    { const int32 I=Hit(CanvasPoint(G,E.GetScreenSpacePosition())); if(Elements.IsValidIndex(I)) { ExecuteAction(Elements[I].Action); return FReply::Handled(); } }
+    { Hover=Hit(CanvasPoint(G,E.GetScreenSpacePosition())); if(Elements.IsValidIndex(Hover)) { ExecuteAction(Elements[Hover].Action); return FReply::Handled(); } }
     return Super::NativeOnMouseButtonDown(G,E);
 }
 FReply UHearthwardScreenWidget::NativeOnMouseMove(const FGeometry& G,const FPointerEvent& E)
 {
+    if(!InventoryDragItem.IsNone())
+    {
+        InventoryDragCursor=CanvasPoint(G,E.GetScreenSpacePosition());
+        InventoryDragging|=(InventoryDragCursor-InventoryDragStart).SizeSquared()>=25;
+        return FReply::Handled();
+    }
     if(LayoutEditing)
     {
         if(LayoutDragging)
@@ -447,14 +641,59 @@ FReply UHearthwardScreenWidget::NativeOnMouseMove(const FGeometry& G,const FPoin
         }
         return FReply::Handled();
     }
-    if(!E.GetCursorDelta().IsNearlyZero()) KeyboardFocus=INDEX_NONE;
-    Hover=Hit(CanvasPoint(G,E.GetScreenSpacePosition())); return FReply::Handled();
+    const bool Moved=!E.GetCursorDelta().IsNearlyZero();
+    if(Moved) KeyboardNavigationActive=false;
+    if(Page==TEXT("title") && ConfirmAction.IsEmpty())
+    {
+        const int32 Index=Hit(CanvasPoint(G,E.GetScreenSpacePosition()));
+        if(Moved)
+        {
+            Hover=Index;
+            if(Elements.IsValidIndex(Index))
+            {
+                if(Elements[Index].Type==TEXT("titleOption")) SelectTitleOption(Elements[Index].Action);
+                else KeyboardFocus=Index;
+            }
+        }
+        return FReply::Handled();
+    }
+    if(Moved) KeyboardFocus=ConfirmAction.IsEmpty()?INDEX_NONE:
+        Elements.IndexOfByPredicate([](const auto& Item){return Item.Action==TEXT("cancel") && Item.Enabled && !Item.Hidden;});
+    // Slate may send zero-delta moves after repainting; they must not steal keyboard selection.
+    if(Moved || !KeyboardNavigationActive) Hover=Hit(CanvasPoint(G,E.GetScreenSpacePosition()));
+    if(ConfirmAction.IsEmpty() && Moved && Elements.IsValidIndex(Hover))
+    {
+        const FString Id=Elements[Hover].Id;
+        if(Page==TEXT("settings") && !Id.IsEmpty() && Id!=SettingsSelection)
+        { SettingsSelection=Id; Refresh(); }
+        FGuid Point;
+        if(Page==TEXT("save") && FGuid::Parse(Id,Point) && Point!=SaveSelection)
+        { SaveSelection=Point; Refresh(); }
+    }
+    return FReply::Handled();
 }
 void UHearthwardScreenWidget::NativeOnMouseLeave(const FPointerEvent& E)
 { Hover=INDEX_NONE; Super::NativeOnMouseLeave(E); }
 FReply UHearthwardScreenWidget::NativeOnMouseWheel(const FGeometry& G,const FPointerEvent& E)
 {
+    if(!InventoryDragItem.IsNone())
+    {
+        if(Page==TEXT("inventory") && !FMath::IsNearlyZero(E.GetWheelDelta()))
+        {Scroll=FMath::Max(0,Scroll+(E.GetWheelDelta()>0?-1:1));Refresh();}
+        return FReply::Handled();
+    }
     if(LayoutEditing) return FReply::Handled();
+    if(!ConfirmAction.IsEmpty()) return FReply::Handled();
+    KeyboardNavigationActive=false;
+    if(Page==TEXT("title"))
+    {
+        if(!FMath::IsNearlyZero(E.GetWheelDelta())) NavigateTitle(E.GetWheelDelta()>0?-1:1);
+        return FReply::Handled();
+    }
+    if(Page==TEXT("hud"))
+    {
+        return FReply::Handled();
+    }
     if(ReadableLayout())
     {
         const FVector2D P=CanvasPoint(G,E.GetScreenSpacePosition());
@@ -468,13 +707,21 @@ FReply UHearthwardScreenWidget::NativeOnMouseWheel(const FGeometry& G,const FPoi
     Refresh(); return FReply::Handled();
 }
 bool UHearthwardScreenWidget::InputMatches(FName Id,const FKeyEvent& E) const
-{ return HearthwardInput::Matches(GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings,Id,E.GetKey(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown()); }
+{
+    const auto* Definition=HearthwardInput::Definitions().FindByPredicate([Id](const auto& D){return D.Id==Id;});
+    return Definition && Definition->Contexts.Contains(Page)
+        && HearthwardInput::Matches(GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings,Id,E.GetKey(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown());
+}
 FReply UHearthwardScreenWidget::NativeOnPreviewKeyDown(const FGeometry& G,const FKeyEvent& E)
 {
+    if(GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->IsLoading())return FReply::Handled();
     if(LayoutKey(E)) return FReply::Handled();
     if(CaptureBinding(E.GetKey(),E.IsShiftDown(),E.IsControlDown(),E.IsAltDown())) return FReply::Handled();
     if(E.GetKey()==EKeys::Escape)
-    { ExecuteAction(ConfirmAction.IsEmpty()?TEXT("back"):TEXT("cancel"));return FReply::Handled(); }
+    {
+        if(!InventoryDragItem.IsNone()){CancelInventoryDrag();return FReply::Handled();}
+        ExecuteAction(ConfirmAction.IsEmpty()?TEXT("back"):TEXT("cancel"));return FReply::Handled();
+    }
     if(!ConfirmAction.IsEmpty()) return NativeOnKeyDown(G,E);
     // Slate owns IME composition and emits OnTextCommitted after composition completes.
     if(Draft && Draft->HasKeyboardFocus()) return Super::NativeOnPreviewKeyDown(G,E);
@@ -493,11 +740,30 @@ FReply UHearthwardScreenWidget::NativeOnKeyUp(const FGeometry& G,const FKeyEvent
 }
 FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEvent& E)
 {
+    if(!InventoryDragItem.IsNone())
+    {
+        if(E.GetKey()==EKeys::Escape)CancelInventoryDrag();
+        return FReply::Handled();
+    }
+    if(GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>()->IsLoading())return FReply::Handled();
     const FKey Key=E.GetKey();
     if(ReadableLayout() && (Key==EKeys::PageUp || Key==EKeys::PageDown || Key==EKeys::Home || Key==EKeys::End))
     {TextScroll=Key==EKeys::Home?0:Key==EKeys::End?TextScrollMaximum:FMath::Clamp(TextScroll+(Key==EKeys::PageDown?600:-600),0.f,TextScrollMaximum);Refresh();return FReply::Handled();}
     if(E.IsRepeat()) return FReply::Handled();
+    KeyboardNavigationActive=true;Hover=INDEX_NONE;
     const bool Confirming=!ConfirmAction.IsEmpty();
+    if(Page==TEXT("title") && !Confirming && (Key==EKeys::Up || Key==EKeys::Down))
+    { NavigateTitle(Key==EKeys::Up?-1:1); return FReply::Handled(); }
+    if(Page==TEXT("journal") && !Confirming)
+    {
+        FString Action;
+        if(InputMatches(TEXT("journal.category.prev"),E)) Action=TEXT("journal.category.prev");
+        else if(InputMatches(TEXT("journal.category.next"),E)) Action=TEXT("journal.category.next");
+        else if(Key==EKeys::Up || Key==EKeys::Down) Action=Key==EKeys::Up?TEXT("journal.entry.prev"):TEXT("journal.entry.next");
+        else if(Key==EKeys::PageUp || Key==EKeys::PageDown) Action=Key==EKeys::PageUp?TEXT("journal.list.prev"):TEXT("journal.list.next");
+        else if(Key==EKeys::Home || Key==EKeys::End) Action=Key==EKeys::Home?TEXT("journal.list.first"):TEXT("journal.list.last");
+        if(!Action.IsEmpty()) { ExecuteAction(Action);return FReply::Handled(); }
+    }
     if(ConfirmAction==TEXT("compat.resolve") && (Key==EKeys::PageUp || Key==EKeys::PageDown))
     {ExecuteAction(Key==EKeys::PageDown?TEXT("compat.next"):TEXT("compat.prev"));return FReply::Handled();}
     if(Key==EKeys::Enter)
@@ -527,6 +793,10 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
             if(!Item.Action.IsEmpty() && !Item.Hidden && Item.Enabled && (!Confirming || Item.Action==TEXT("confirm") || Item.Action==TEXT("cancel") || Item.Action==TEXT("resetPrev") || Item.Action==TEXT("resetNext")))
             {
                 KeyboardFocus=Candidate;PageFocus.Add(Page,Item.Action);
+                if(Page==TEXT("title") && Item.Type==TEXT("titleOption")) SelectTitleOption(Item.Action);
+                if(Page==TEXT("settings") && !Item.Id.IsEmpty()) { SettingsSelection=Item.Id;Refresh(); }
+                if(Page==TEXT("save"))
+                { FGuid Point;if(FGuid::Parse(Item.Id,Point)) { SaveSelection=Point;Refresh(); } }
                 if(ReadableLayout() && (Page!=TEXT("map") || Item.Component==TEXT("map.sidebar")))
                 {
                     const auto* Sidebar=LayoutBounds.Find(TEXT("map.sidebar"));
@@ -547,7 +817,7 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     struct FPageAction {const TCHAR* Page;const TCHAR* Id;const TCHAR* Action;};
     const FPageAction Shortcuts[]={
         {TEXT("inventory"),TEXT("inventory.use"),TEXT("use")},{TEXT("inventory"),TEXT("inventory.drop"),TEXT("drop")},{TEXT("inventory"),TEXT("inventory.repair"),TEXT("repair")},
-        {TEXT("crafting"),TEXT("crafting.commit"),TEXT("craft")},{TEXT("repairing"),TEXT("repair.commit"),TEXT("repairEquipment")},{TEXT("skills"),TEXT("skills.learn"),TEXT("learn")},
+        {TEXT("crafting"),TEXT("crafting.commit"),TEXT("craft")},{TEXT("equipment"),TEXT("repair.commit"),TEXT("gear.repair:100")},{TEXT("skills"),TEXT("skills.learn"),TEXT("learn")},
         {TEXT("journal"),TEXT("journal.locate"),TEXT("questMap")},{TEXT("journal"),TEXT("journal.track"),TEXT("track")},{TEXT("storage"),TEXT("storage.transfer"),TEXT("transfer")}};
     for(const auto& S:Shortcuts) if(Page==S.Page && Is(S.Id))
     {ExecuteAction(S.Action);return FReply::Handled();}
@@ -556,16 +826,17 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     if(Is(TEXT("ui.inventory"))) {OpenPage(Page==TEXT("inventory")?TEXT("hud"):TEXT("inventory"));return FReply::Handled();}
     if(Is(TEXT("companion.dialogue"))) {ExecuteAction(Page==TEXT("dialogue")?TEXT("back"):TEXT("page:dialogue"));return FReply::Handled();}
     if(Is(TEXT("ui.pause"))) {ExecuteAction(Page==TEXT("pause")?TEXT("page:hud"):TEXT("page:pause"));return FReply::Handled();}
-    if(Is(TEXT("ui.map"))) {OpenPage(TEXT("map"));return FReply::Handled();}
-    if(Is(TEXT("ui.skills"))) {OpenPage(TEXT("skills"));return FReply::Handled();}
-    if(Is(TEXT("ui.journal"))) {OpenPage(TEXT("journal"));return FReply::Handled();}
+    if(Is(TEXT("ui.map"))) {ExecuteAction(Page==TEXT("map")?TEXT("back"):TEXT("page:map"));return FReply::Handled();}
+    if(Is(TEXT("ui.skills"))) {ExecuteAction(Page==TEXT("skills")?TEXT("back"):TEXT("page:skills"));return FReply::Handled();}
+    if(Is(TEXT("ui.journal"))) {ExecuteAction(Page==TEXT("journal")?TEXT("back"):TEXT("page:journal"));return FReply::Handled();}
+    if(Is(TEXT("building.catalogue"))) {ExecuteAction(Page==TEXT("building")?TEXT("back"):TEXT("page:building"));return FReply::Handled();}
     return FReply::Handled();
 }
 void UHearthwardScreenWidget::DraftCommitted(const FText& TextValue,ETextCommit::Type Method)
 { if(Method==ETextCommit::OnEnter) ExecuteAction(Page==TEXT("memory")?TEXT("memorySave"):TEXT("send")); }
 
 bool UHearthwardScreenWidget::ReadableLayout() const
-{ return Page!=TEXT("hud") && !LayoutEditing && ConfirmAction.IsEmpty() && GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale>100; }
+{ return Page!=TEXT("title") && Page!=TEXT("pause") && Page!=TEXT("settings") && Page!=TEXT("save") && Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("equipment") && Page!=TEXT("skills") && Page!=TEXT("journal") && (Page!=TEXT("map") || WorldMap) && Page!=TEXT("building") && !LayoutEditing && ConfirmAction.IsEmpty() && GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale>100; }
 void UHearthwardScreenWidget::ApplyReadableLayout()
 {
     if(!ReadableLayout()) return;
@@ -674,66 +945,4 @@ void UHearthwardScreenWidget::ApplyReadableLayout()
     for(auto& E:Rows) if(!(E.Type==TEXT("image") && E.Size.X>=1600))
     {E.Position.Y-=TextScroll;E.TextScrollClipped=E.Position.Y+E.Size.Y<60 || E.Position.Y>Bottom;}
     Elements=MoveTemp(Rows);
-}
-
-void UHearthwardScreenWidget::ApplyReadableHUD()
-{
-    if(Page!=TEXT("hud") || LayoutEditing || GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale<=100) return;
-    const auto Original=Elements;Elements.Reset();
-    auto* G=Gameplay();const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
-    auto Key=[&](const TCHAR* Id){return HearthwardInput::Label(Bindings,FName(Id));};
-    auto Label=[&](FString Text,FVector2D P,FVector2D Size)
-    {Element(TEXT("text"),Text,P,Size,24);Elements.Last().FontRole=TEXT("body");};
-    const auto Quest=Find(TEXT("quests"),G->TrackedQuest.ToString());
-    Label(Text(Quest,TEXT("name")),{48,42},{650,60});Elements.Last().Color=Color(TEXT("gold"));
-    Label(Text(Quest,TEXT("objective")),{48,108},{650,115});
-    Label(FString::Printf(TEXT("进度 %d / %.0f · %s 任务"),G->QuestProgress(G->TrackedQuest),Number(Quest,TEXT("required")),*Key(TEXT("ui.journal"))),{48,233},{650,55});
-    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
-    {
-        auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();
-        Label(FString::Printf(TEXT("弟弟 · 生命 %.0f · 饱食 %.0f"),S->Health(),S->Hunger()),{48,310},{650,55});
-        Label(S->Describe().IsEmpty()?GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetStatus():S->Describe(),{48,373},{650,110});
-        Label(Key(TEXT("companion.wait"))+TEXT(" 等待 · ")+Key(TEXT("companion.follow"))+TEXT(" 跟随 · ")+Key(TEXT("companion.attack"))+TEXT(" 进攻"),{48,495},{650,55});
-        break;
-    }
-    const float Values[]={G->Health,G->Hunger,G->Stamina},Maximum[]={G->MaxHealth(),100,G->MaxStamina()};
-    const TCHAR* Names[]={TEXT("生命"),TEXT("饱食"),TEXT("耐力")},*Colors[]={TEXT("health"),TEXT("hunger"),TEXT("stamina")};
-    for(int32 I=0;I<3;++I)
-    {
-        const float Y=610+I*56;Label(Names[I],{48,Y},{130,55});Elements.Last().Color=Color(Colors[I]);
-        Element(TEXT("bar"),TEXT(""),{190,Y+20},{175,12});Elements.Last().Value=Values[I]/Maximum[I];Elements.Last().Color=Color(Colors[I]);
-        Label(FString::Printf(TEXT("%.0f / %.0f"),Values[I],Maximum[I]),{388,Y},{265,55});
-    }
-    const auto& Slots=Theme->GetObjectField(TEXT("inventory"))->GetArrayField(TEXT("quickSlots"));
-    const TCHAR* Shortcuts[]={TEXT("survival.medicine"),TEXT("survival.food"),TEXT(""),TEXT("combat.throw")};
-    for(int32 I=0;I<Slots.Num();++I)
-    {
-        const FString Id=Slots[I]->AsString();const auto Item=Find(TEXT("items"),Id);const float X=48+I*155;
-        Element(TEXT("image"),TEXT(""),{X,797},{52,52},18,TEXT(""),Text(Item,TEXT("quickIcon")).IsEmpty()?Text(Item,TEXT("icon")):Text(Item,TEXT("quickIcon")));
-        FString Binding;if(I<UE_ARRAY_COUNT(Shortcuts) && Shortcuts[I][0])
-        {const auto& Keys=Bindings.FindChecked(FName(Shortcuts[I]));Binding=(Keys[0].Key.IsValid()?Keys[0]:Keys[1]).Label()+TEXT(" · ");}
-        Label(Binding+FString::FromInt(Inventory()->GetItemCount(FName(*Id))),{X,854},{150,55});
-    }
-    TSet<FString> Seen;float Y=110;
-    const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
-    for(const auto& Source:Original)
-    {
-        if(Source.Hidden || Source.Text.IsEmpty() || Seen.Contains(Source.Text)) continue;
-        const bool Notice=Source.Type==TEXT("notice");
-        const bool WorldText=Source.Type==TEXT("text") && Source.Position.X>=900 && Source.Component.IsEmpty();
-        if(!Notice && !WorldText) continue;
-        if(Source.Text.StartsWith(Key(TEXT("combat.dodge")))) continue;
-        Seen.Add(Source.Text);auto E=Source;E.Type=TEXT("text");E.FontRole=TEXT("body");E.Asset.Reset();E.TextInset=0;
-        E.Position={1000,Y};E.Size={620,0};FSlateFontInfo Font(Typeface,FMath::RoundToInt(E.Font*.75f));
-        TArray<FString> SourceLines;E.Text.ParseIntoArrayLines(SourceLines,false);int32 Count=0;
-        for(FString Line:SourceLines) do {const int32 N=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,600)+1,1,FMath::Max(1,Line.Len()));Line=Line.Mid(N);++Count;} while(!Line.IsEmpty());
-        E.Size.Y=FMath::Min(3,Count)*E.Font*1.6f;
-        if(Y+E.Size.Y>570) continue;Y+=E.Size.Y+18;Elements.Add(E);
-    }
-    for(const auto& Source:Original) if(Source.Type==TEXT("bar") && Source.Text==TEXT("发现程度"))
-    {auto E=Source;E.Text.Reset();E.Position={1000,588};E.Size={620,12};Elements.Add(E);}
-    const auto Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot();
-    const int32 Time=Clock.MinuteOfDay;
-    Label(Key(TEXT("ui.inventory"))+TEXT(" 背包 · ")+Key(TEXT("ui.map"))+TEXT(" 地图 · ")+Key(TEXT("ui.save"))+TEXT(" 存档"),{1000,886},{620,55});
-    Label(FString::Printf(TEXT("第%lld天 %02d:%02d"),Clock.DisplayDay,Time/60,Time%60),{1080,42},{540,55});
 }

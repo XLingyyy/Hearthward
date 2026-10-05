@@ -17,13 +17,15 @@ public:
     static bool HasFailed(UWorld* World);
     UPROPERTY(BlueprintReadOnly) FHearthwardSurvivalState State;
     UPROPERTY(BlueprintReadOnly) FString Status;
+    uint32 GetFeedbackRevision() const { return FeedbackRevision; }
     UPROPERTY(EditAnywhere) bool Resting=false;
     UPROPERTY(EditAnywhere) bool Treatment=false;
     float& Health(); float& Hunger(); float& Stamina();
     float MaxHealth() const; float MaxStamina() const;
     bool Enabled() const;
     bool Alive() const { return State.Life==EHearthwardLife::Alive; }
-    bool Busy() const { return !State.Medicine.IsNone() || Rescue.IsValid(); }
+    bool Busy() const { return !State.Medicine.IsNone() || !State.FoodItem.IsNone() || Rescue.IsValid(); }
+    FName ActiveConsumable() const;
     bool SafeToSave() const;
     UFUNCTION(BlueprintCallable) bool BeginMedicine(FName Item,bool Automatic=false);
     bool Eat(FName Item,bool Automatic=false);
@@ -48,6 +50,8 @@ public:
     UPROPERTY() float BrotherHunger=100;
     UPROPERTY() float BrotherStamina=100;
 private:
+    uint32 FeedbackRevision=0;
+    void SetStatus(FString Value) { Status=MoveTemp(Value); ++FeedbackRevision; }
     UFUNCTION() void NativeDamage(AActor* Actor,float Amount,const class UDamageType* Type,class AController* Instigator,AActor* Causer);
     class UHearthwardInventoryComponent* Bag() const;
     class UHearthwardGameplayComponent* Gameplay() const;

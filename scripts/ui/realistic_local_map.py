@@ -1,0 +1,135 @@
+"""Shade the observed terrain with photographic materials, without adding geography."""
+import hashlib
+import json
+from pathlib import Path
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter
+
+# Sampled from the open lake near its river junction. All connected water uses
+# this muted gray-blue palette; mesh heights determine coverage, never its tint.
+LAKE_WATER_RGB = np.array([53., 70., 75.])
+
+
+def render_realistic(scene, heights, levels, materials, origin, span, size):
+    atlas = Image.open(materials).convert('RGB')
+    tw, th = atlas.width // 3, atlas.height // 2
+    if atlas.size != (tw * 3, th * 2):
+        raise ValueError('Surface atlas must have six equal tiles')
+    yy, xx = np.mgrid[:size, :size]
+    rng = np.random.default_rng(5350920)
+    def variation(cells):
+        coarse = Image.fromarray(np.uint8(rng.random((cells, cells)) * 255))
+        return np.asarray(coarse.resize((size, size), Image.Resampling.BICUBIC), dtype=np.float32) / 255 - .5
+    # Material coordinates vary continuously so no repeated mirror motifs dominate the map.
+    warp_x, warp_y = variation(17) * 24, variation(19) * 24
+
+    def material(index, period):
+        x, y = index % 3, index // 3
+        tile = atlas.crop((x * tw + 8, y * th + 8, (x + 1) * tw - 8, (y + 1) * th - 8))
+        tile = np.asarray(tile.resize((period, period), Image.Resampling.LANCZOS), dtype=np.float32)
+        # Mirrored sampling avoids a visible grid without changing the generated asset.
+        px = np.floor(xx + yy * .17 + warp_x).astype(int) % (period * 2)
+        py = np.floor(yy - xx * .11 + warp_y).astype(int) % (period * 2)
+        px = np.where(px < period, px, period * 2 - 1 - px)
+        py = np.where(py < period, py, period * 2 - 1 - py)
+        return tile[py, px]
+
+    def texture(index, period, strength):
+        source = material(index, period)
+        luminance = source @ np.array([.2126, .7152, .0722], dtype=np.float32)
+        luminance -= np.mean(luminance)
+        return np.clip(luminance * strength, -22, 24)
+
+    from map_relief import relief_shading, relief_contours, EXAGGERATION
+    small = np.asarray(scene['heightsM'],dtype=np.float32).reshape(scene['samples'],scene['samples'])
+    shade, slope, ambient = relief_shading(heights, small, span / size)
+    elevation = np.clip((heights - 212) / 33, 0, 1)
+    grass = np.array([50., 60., 56.]) * (1 - elevation[..., None]) + np.array([126., 123., 109.]) * elevation[..., None]
+    rock_amount = np.clip((slope - .14) / .44, 0, .90)
+    land = grass * (1 - rock_amount[..., None]) + np.array([137., 136., 126.]) * rock_amount[..., None]
+    meadow_detail = texture(0, 67, .13) + texture(5, 43, .07)
+    stone_detail = texture(1, 80, .25)
+    detail = meadow_detail * (1 - rock_amount) + stone_detail * rock_amount
+    land = land * shade[..., None] + detail[..., None] + variation(31)[..., None] * 3
+    relief_image = Image.fromarray(np.uint8(np.clip(land,0,255))).convert('RGBA')
+    relief_image = Image.alpha_composite(relief_image,relief_contours(size,small))
+    land = np.asarray(relief_image)[...,:3].astype(float)
+    wet = np.isfinite(levels) & (heights < levels - .015)
+    water = LAKE_WATER_RGB + texture(2, 230, .14)[..., None]
+    water += (1.3 * np.sin(xx / 170 + yy / 420))[..., None]
+    expanded = np.asarray(Image.fromarray(np.uint8(wet * 255)).filter(ImageFilter.MaxFilter(15))) > 0
+    shore = expanded & ~wet
+    bank = np.array([94., 94., 85.]) + texture(5, 95, .20)[..., None]
+    land[shore] = land[shore] * .35 + bank[shore] * .65
+    pixels = np.uint8(np.clip(land, 0, 255))
+    pixels[wet] = np.uint8(np.clip(water, 0, 255))[wet]
+    image = Image.fromarray(pixels).convert('RGBA')
+    # A soft grounded edge replaces the old bright cartographic shore outline.
+    edge = np.asarray(Image.fromarray(np.uint8(wet * 255)).filter(ImageFilter.MinFilter(5))) == 0
+    shoreline = wet & edge
+    rgba = np.zeros((size, size, 4), dtype=np.uint8)
+    rgba[shoreline] = [107, 114, 112, 65]
+    image = Image.alpha_composite(image, Image.fromarray(rgba))
+    objects = Image.new('RGBA', (size, size))
+    draw = ImageDraw.Draw(objects)
+
+    def at(row):
+        return tuple((np.array([row['x'], row['y']]) - origin) / span * size)
+
+    def patch(index, width, height):
+        tx, ty = index % 3, index // 3
+        tile = atlas.crop((tx * tw + 8, ty * th + 8, (tx + 1) * tw - 8, (ty + 1) * th - 8))
+        return tile.resize((width, height), Image.Resampling.LANCZOS).convert('RGBA')
+
+    for row in scene['trees']:
+        x, y = at(row); r = 8; side = r * 2 + 1
+        draw.ellipse((x - r + 3, y - r + 4, x + r + 3, y + r + 4), fill=(10, 15, 13, 105))
+        crown = patch(4, side, side)
+        cy, cx = np.mgrid[:side, :side]; nx = (cx - r) / r; ny = (cy - r) / r
+        radius = np.hypot(nx, ny)
+        outline = .89 + .06 * np.sin(np.arctan2(ny, nx) * 9)
+        alpha = np.clip((outline - radius) * 8, 0, 1)
+        cp = np.asarray(crown).copy()
+        cp[..., :3] = np.uint8(np.clip(cp[..., :3] * (.58 + .20 * (1 - nx - ny))[..., None], 0, 255))
+        cp[..., 3] = np.uint8(alpha * 255)
+        objects.alpha_composite(Image.fromarray(cp), (round(x) - r, round(y) - r))
+    for row in scene['rocks']:
+        x, y = at(row)
+        draw.ellipse((x - 3, y, x + 6, y + 6), fill=(20, 21, 20, 90))
+        draw.polygon([(x - 4, y + 2), (x - 2, y - 4), (x + 3, y - 3), (x + 5, y + 1), (x + 2, y + 4)], fill=(101, 104, 101, 255))
+        draw.polygon([(x - 4, y + 2), (x - 2, y - 4), (x + 2, y - 1)], fill=(148, 149, 141, 245))
+        draw.line((x + 2, y - 1, x + 5, y + 1, x + 2, y + 4), fill=(68, 72, 69, 240), width=2)
+    for row in scene['houses']:
+        x, y = at(row)
+        rx, ry = row['halfX'] / span * size, row['halfY'] / span * size
+        left, top = round(x - rx), round(y - ry)
+        width, height = max(3, round(rx * 2)), max(3, round(ry * 2))
+        draw.rectangle((left + 3, top + 4, left + width + 3, top + height + 4), fill=(13, 15, 14, 145))
+        roof = patch(3, width, height)
+        rp = np.asarray(roof).copy(); rp[:, :width // 2, :3] = np.uint8(np.clip(rp[:, :width // 2, :3].astype(float) * 1.18, 0, 255))
+        rp[:, width // 2:, :3] = np.uint8(rp[:, width // 2:, :3].astype(float) * .79)
+        objects.alpha_composite(Image.fromarray(rp), (left, top))
+        draw.rectangle((left, top, left + width, top + height), outline=(40, 42, 38, 250), width=1)
+        draw.line((left + width // 2, top, left + width // 2, top + height), fill=(138, 135, 115, 255), width=1)
+    image = Image.alpha_composite(image, objects)
+    radius = np.hypot((xx + .5 - size / 2) / size * span, (yy + .5 - size / 2) / size * span)
+    # The opaque atmosphere is rendered by the UI. Transparent outside this exact
+    # reveal keeps its wisps visible instead of stamping a black square over them.
+    output = np.asarray(image).copy()
+    output[..., 3] = np.uint8(np.clip((250 - radius) / .65, 0, 1) * 255)
+    output[radius >= 250] = 0
+    visible = output[(radius < 235) & ~wet, :3].astype(float)
+    saturation = (visible.max(axis=1) - visible.min(axis=1)) / np.maximum(visible.max(axis=1), 1)
+    stats = dict(style='gray-dark relief with explicit valley walls, crests and airy atmospheric fog',
+        display_vertical_exaggeration=EXAGGERATION, ambient_occlusion_range=[float(ambient.min()),float(ambient.max())],
+        material_atlas=Path(materials).relative_to(Path(__file__).resolve().parents[2]).as_posix(),
+        material_sha256=hashlib.sha256(Path(materials).read_bytes()).hexdigest(),
+        wet_mask_sha256=hashlib.sha256(wet.astype(np.uint8).tobytes()).hexdigest(),
+        actor_footprints_sha256=hashlib.sha256(json.dumps({k:scene[k] for k in ('trees','rocks','houses')},sort_keys=True).encode()).hexdigest(),
+        height_samples_sha256=hashlib.sha256(np.asarray(scene['heightsM'],dtype=np.float32).tobytes()).hexdigest(),
+        water_base_rgb=LAKE_WATER_RGB.astype(int).tolist(),
+        water_colour='Shared lake gray-blue; continuous original ripples across lake and river, independent of mesh surface level and depth',
+        land_mean_luminance=float(np.mean(visible @ [.2126,.7152,.0722])), land_mean_saturation=float(np.mean(saturation)),
+        outside_circle_terrain_transparent=bool(np.all(output[radius >= 250,3] == 0)),
+        geography='Original observed height field, original water triangles and original actor positions; materials add surface detail only')
+    return Image.fromarray(output), stats

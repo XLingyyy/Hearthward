@@ -1576,6 +1576,96 @@
         47,
         810
       ]
+    },
+    "titleGlyphGui": {
+      "file": "Art/logo.png",
+      "uv": [
+        220,
+        100,
+        683,
+        635
+      ]
+    },
+    "titleGlyphGuiTail": {
+      "file": "Art/logo.png",
+      "uv": [
+        220,
+        735,
+        101,
+        45
+      ]
+    },
+    "titleGlyphHuo": {
+      "file": "Art/logo.png",
+      "uv": [
+        960,
+        100,
+        690,
+        635
+      ]
+    },
+    "titleGlyphHuoTail": {
+      "file": "Art/logo.png",
+      "uv": [
+        895,
+        667,
+        65,
+        68
+      ]
+    },
+    "titleGlyphFlame": {
+      "file": "Art/logo.png",
+      "uv": [
+        895,
+        335,
+        65,
+        332
+      ]
+    },
+    "titleWordmarkEnglish": {
+      "file": "Art/logo.png",
+      "uv": [
+        318,
+        742,
+        1180,
+        78
+      ]
+    },
+    "mapLocalTerrain": {
+      "file": "Art/map-local-terrain.png",
+      "uv": [
+        0,
+        0,
+        1800,
+        1800
+      ]
+    },
+    "mapFlameRed": {
+      "file": "Art/map-flames.png",
+      "uv": [
+        134.5,
+        0,
+        380.0,
+        1230.5555555555554
+      ]
+    },
+    "mapFlameBlue": {
+      "file": "Art/map-flames.png",
+      "uv": [
+        735.5,
+        0,
+        380.0,
+        1231.6666666666667
+      ]
+    },
+    "mapDarkFog": {
+      "file": "Art/map-dark-fog.png",
+      "uv": [
+        0,
+        0,
+        1536,
+        1024
+      ]
     }
   },
   "header": [
@@ -1690,1098 +1780,203 @@
   ],
   "pages": {
     "title": {
-      "background": "titleBackground",
+      "background": "",
       "header": false,
       "elements": [
         {
           "type": "image",
-          "layoutId": "title.trim",
-          "asset": "titleTrim",
+          "layoutId": "title.logo.gui",
+          "component": "title.logo",
+          "asset": "titleGlyphGui",
           "rect": [
-            0,
-            0,
-            57,
-            862
+            538.5,
+            152.21,
+            284.185,
+            264.213
           ]
         },
         {
           "type": "image",
-          "text": "",
+          "layoutId": "title.logo.gui.tail",
+          "component": "title.logo",
+          "asset": "titleGlyphGuiTail",
           "rect": [
-            80,
-            112,
-            366,
-            204
-          ],
-          "font": 18,
-          "asset": "logo",
-          "layoutId": "title.element.000",
-          "component": "title.menu"
+            538.5,
+            416.423,
+            42.024,
+            18.724
+          ]
         },
         {
           "type": "image",
-          "text": "",
+          "layoutId": "title.logo.huo",
+          "component": "title.logo",
+          "asset": "titleGlyphHuo",
           "rect": [
-            239,
-            310,
-            47,
-            41
-          ],
-          "font": 18,
-          "asset": "emblem",
-          "layoutId": "title.element.001",
-          "component": "title.menu"
+            846.402,
+            176.21,
+            287.098,
+            264.213
+          ]
         },
         {
-          "type": "text",
-          "text": "火 不 曾 熄 灭\n只 是 等 待 归 来 的 人",
+          "type": "image",
+          "layoutId": "title.logo.huo.tail",
+          "component": "title.logo",
+          "asset": "titleGlyphHuoTail",
           "rect": [
-            210,
-            45,
-            260,
-            60
-          ],
-          "font": 15,
-          "color": "muted",
-          "tracking": 200,
-          "layoutId": "title.element.002",
-          "component": "title.header",
-          "fontRole": "decorative"
+            819.357,
+            412.129,
+            27.045,
+            28.294
+          ]
         },
         {
-          "type": "button",
+          "type": "image",
+          "layoutId": "title.logo.flame",
+          "component": "title.logo",
+          "asset": "titleGlyphFlame",
+          "rect": [
+            819.357,
+            261.99,
+            27.045,
+            138.14
+          ]
+        },
+        {
+          "type": "image",
+          "layoutId": "title.logo.english",
+          "component": "title.logo",
+          "asset": "titleWordmarkEnglish",
+          "rect": [
+            590.51,
+            449.336,
+            490.979,
+            32.455
+          ]
+        },
+        {
+          "type": "titleOption",
           "text": "继续游戏",
           "rect": [
-            77,
-            383,
-            331,
-            62
+            596,
+            606,
+            480,
+            44
           ],
-          "font": 26,
+          "font": 24,
+          "fontRole": "display",
+          "align": "center",
+          "textInset": 0,
+          "tracking": 100,
           "action": "continuePrompt",
-          "textInset": 102,
-          "tracking": 80,
-          "layoutId": "title.element.003",
+          "layoutId": "title.option.0",
           "component": "title.menu"
         },
         {
-          "type": "image",
-          "text": "",
-          "rect": [
-            105,
-            394,
-            38,
-            38
-          ],
-          "font": 18,
-          "asset": "continueIcon",
-          "layoutId": "title.element.004",
-          "component": "title.menu"
-        },
-        {
-          "type": "button",
+          "type": "titleOption",
           "text": "新游戏",
           "rect": [
-            77,
-            449,
-            331,
-            62
+            596,
+            650,
+            480,
+            44
           ],
-          "font": 26,
+          "font": 24,
+          "fontRole": "display",
+          "align": "center",
+          "textInset": 0,
+          "tracking": 100,
           "action": "newPrompt",
-          "textInset": 102,
-          "tracking": 80,
-          "layoutId": "title.element.005",
+          "layoutId": "title.option.1",
           "component": "title.menu"
         },
         {
-          "type": "image",
-          "text": "",
-          "rect": [
-            105,
-            460,
-            38,
-            38
-          ],
-          "font": 18,
-          "asset": "newIcon",
-          "layoutId": "title.element.006",
-          "component": "title.menu"
-        },
-        {
-          "type": "button",
+          "type": "titleOption",
           "text": "载入存档",
           "rect": [
-            77,
-            515,
-            331,
-            62
+            596,
+            694,
+            480,
+            44
           ],
-          "font": 26,
+          "font": 24,
+          "fontRole": "display",
+          "align": "center",
+          "textInset": 0,
+          "tracking": 100,
           "action": "page:save",
-          "textInset": 102,
-          "tracking": 80,
-          "layoutId": "title.element.007",
+          "layoutId": "title.option.2",
           "component": "title.menu"
         },
         {
-          "type": "image",
-          "text": "",
-          "rect": [
-            105,
-            526,
-            38,
-            38
-          ],
-          "font": 18,
-          "asset": "loadIcon",
-          "layoutId": "title.element.008",
-          "component": "title.menu"
-        },
-        {
-          "type": "button",
+          "type": "titleOption",
           "text": "设置",
           "rect": [
-            77,
-            581,
-            331,
-            62
+            596,
+            738,
+            480,
+            44
           ],
-          "font": 26,
+          "font": 24,
+          "fontRole": "display",
+          "align": "center",
+          "textInset": 0,
+          "tracking": 100,
           "action": "page:settings",
-          "textInset": 102,
-          "tracking": 80,
-          "layoutId": "title.element.009",
+          "layoutId": "title.option.3",
           "component": "title.menu"
         },
         {
-          "type": "image",
-          "text": "",
-          "rect": [
-            105,
-            592,
-            38,
-            38
-          ],
-          "font": 18,
-          "asset": "settingsIcon",
-          "layoutId": "title.element.010",
-          "component": "title.menu"
-        },
-        {
-          "type": "button",
+          "type": "titleOption",
           "text": "退出游戏",
           "rect": [
-            77,
-            647,
-            331,
-            62
+            596,
+            782,
+            480,
+            44
           ],
-          "font": 26,
+          "font": 24,
+          "fontRole": "display",
+          "align": "center",
+          "textInset": 0,
+          "tracking": 100,
           "action": "ask:quit",
-          "textInset": 102,
-          "tracking": 80,
-          "layoutId": "title.element.011",
+          "layoutId": "title.option.4",
           "component": "title.menu"
         },
         {
-          "type": "image",
-          "text": "",
+          "type": "titleArrow",
           "rect": [
-            105,
-            658,
-            38,
-            38
-          ],
-          "font": 18,
-          "asset": "quitIcon",
-          "layoutId": "title.element.012",
-          "component": "title.menu"
-        },
-        {
-          "type": "text",
-          "text": "回 到 土 地 · 守 住 族 人 · 守 回 故 乡",
-          "rect": [
-            112,
-            844,
-            500,
-            30
-          ],
-          "font": 12,
-          "color": "muted",
-          "layoutId": "title.element.013",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "text",
-          "text": "S A M E   F I R E .   A   B R I G H T E R   T O M O R R O W",
-          "rect": [
-            112,
-            872,
+            827,
             580,
-            20
+            18,
+            9
           ],
-          "font": 9,
+          "action": "title.prev",
           "color": "muted",
-          "layoutId": "title.element.014",
-          "component": "title.footer",
-          "fontRole": "decorative"
+          "layoutId": "title.arrow.up",
+          "component": "title.menu"
         },
         {
-          "type": "text",
-          "text": "山\n河\n仍\n在",
+          "type": "titleArrow",
           "rect": [
-            1590,
-            150,
-            35,
-            130
+            827,
+            794,
+            18,
+            9
           ],
-          "font": 20,
+          "action": "title.next",
           "color": "muted",
-          "layoutId": "title.element.015",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "text",
-          "text": "终\n将\n归",
-          "rect": [
-            1558,
-            197,
-            35,
-            140
-          ],
-          "font": 18,
-          "tracking": 150,
-          "layoutId": "title.element.016",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "text",
-          "text": "野性的根，从未远去。",
-          "rect": [
-            1413,
-            844,
-            250,
-            35
-          ],
-          "font": 12,
-          "tracking": 120,
-          "layoutId": "title.element.017",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1480,
-            24,
-            38,
-            38
-          ],
-          "font": 18,
-          "asset": "accountIcon",
-          "action": "page:settings",
-          "layoutId": "title.element.018",
-          "component": "title.header"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1545,
-            24,
-            38,
-            38
-          ],
-          "font": 18,
-          "asset": "gearIcon",
-          "action": "page:settings",
-          "layoutId": "title.element.019",
-          "component": "title.header"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1610,
-            24,
-            38,
-            38
-          ],
-          "font": 18,
-          "asset": "powerIcon",
-          "action": "ask:quit",
-          "layoutId": "title.element.020",
-          "component": "title.header"
-        },
-        {
-          "type": "line",
-          "layoutId": "title.rule.left",
-          "component": "title.menu",
-          "rect": [
-            115,
-            329,
-            122,
-            1
-          ],
-          "color": "bronze"
-        },
-        {
-          "type": "line",
-          "layoutId": "title.rule.right",
-          "component": "title.menu",
-          "rect": [
-            287,
-            329,
-            124,
-            1
-          ],
-          "color": "bronze"
+          "layoutId": "title.arrow.down",
+          "component": "title.menu"
         }
       ]
     },
     "inventory": {
       "background": "",
       "header": false,
-      "elements": [
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            80,
-            18,
-            141,
-            78
-          ],
-          "font": 18,
-          "asset": "logo",
-          "layoutId": "inventory.element.000",
-          "component": "inventory.header"
-        },
-        {
-          "type": "text",
-          "text": "灰 烬 中 仍 有 人\n只 是 等 待 归 来 的 人",
-          "rect": [
-            248,
-            39,
-            215,
-            65
-          ],
-          "font": 15,
-          "color": "muted",
-          "layoutId": "inventory.element.001",
-          "component": "inventory.header",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "tab",
-          "text": "装备",
-          "rect": [
-            510,
-            35,
-            145,
-            62
-          ],
-          "font": 19,
-          "action": "filter:装备",
-          "tracking": 200,
-          "textInset": 57,
-          "layoutId": "inventory.element.002",
-          "component": "inventory.header"
-        },
-        {
-          "type": "tab",
-          "text": "材料",
-          "rect": [
-            667,
-            35,
-            145,
-            62
-          ],
-          "font": 19,
-          "action": "filter:材料",
-          "tracking": 200,
-          "textInset": 57,
-          "layoutId": "inventory.element.003",
-          "component": "inventory.header"
-        },
-        {
-          "type": "tab",
-          "text": "食物",
-          "rect": [
-            824,
-            35,
-            145,
-            62
-          ],
-          "font": 19,
-          "action": "filter:食物",
-          "tracking": 200,
-          "textInset": 57,
-          "layoutId": "inventory.element.004",
-          "component": "inventory.header"
-        },
-        {
-          "type": "tab",
-          "text": "工具",
-          "rect": [
-            981,
-            35,
-            145,
-            62
-          ],
-          "font": 19,
-          "action": "filter:工具",
-          "tracking": 200,
-          "textInset": 57,
-          "layoutId": "inventory.element.005",
-          "component": "inventory.header"
-        },
-        {
-          "type": "tab",
-          "text": "任务",
-          "rect": [
-            1138,
-            35,
-            145,
-            62
-          ],
-          "font": 19,
-          "action": "filter:任务",
-          "tracking": 200,
-          "textInset": 57,
-          "layoutId": "inventory.element.006",
-          "component": "inventory.header"
-        },
-        {
-          "type": "tab",
-          "text": "设置",
-          "rect": [
-            1564,
-            38,
-            85,
-            43
-          ],
-          "font": 16,
-          "action": "page:settings",
-          "tracking": 160,
-          "textInset": 10,
-          "layoutId": "inventory.element.007",
-          "component": "inventory.header"
-        },
-        {
-          "type": "text",
-          "text": "全部",
-          "rect": [
-            66,
-            208,
-            450,
-            35
-          ],
-          "font": 16,
-          "bind": "category",
-          "layoutId": "inventory.element.008",
-          "component": "inventory.bag"
-        },
-        {
-          "type": "text",
-          "text": "按物品类型",
-          "rect": [
-            296,
-            208,
-            170,
-            35
-          ],
-          "font": 16,
-          "color": "muted",
-          "layoutId": "inventory.element.009",
-          "component": "inventory.bag"
-        },
-        {
-          "type": "text",
-          "text": "荒 行 者",
-          "rect": [
-            1418,
-            151,
-            200,
-            50
-          ],
-          "font": 25,
-          "tracking": 180,
-          "layoutId": "inventory.element.010",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "text",
-          "text": "行过黑暗，守住火种。",
-          "rect": [
-            1418,
-            193,
-            220,
-            35
-          ],
-          "font": 15,
-          "color": "muted",
-          "layoutId": "inventory.element.011",
-          "component": "inventory.stats",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "text",
-          "text": "战斗属性",
-          "rect": [
-            1340,
-            490,
-            280,
-            30
-          ],
-          "font": 18,
-          "color": "gold",
-          "layoutId": "inventory.element.012",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "text",
-          "text": "其他属性",
-          "rect": [
-            1340,
-            670,
-            280,
-            30
-          ],
-          "font": 18,
-          "color": "gold",
-          "layoutId": "inventory.element.013",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            525,
-            54,
-            32,
-            32
-          ],
-          "text": "",
-          "asset": "nav_gear",
-          "layoutId": "inventory.element.014",
-          "component": "inventory.header"
-        },
-        {
-          "type": "image",
-          "rect": [
-            689,
-            54,
-            32,
-            32
-          ],
-          "text": "",
-          "asset": "nav_materials",
-          "layoutId": "inventory.element.015",
-          "component": "inventory.header"
-        },
-        {
-          "type": "image",
-          "rect": [
-            838,
-            54,
-            32,
-            32
-          ],
-          "text": "",
-          "asset": "nav_food",
-          "layoutId": "inventory.element.016",
-          "component": "inventory.header"
-        },
-        {
-          "type": "image",
-          "rect": [
-            995,
-            54,
-            32,
-            32
-          ],
-          "text": "",
-          "asset": "nav_tools",
-          "layoutId": "inventory.element.017",
-          "component": "inventory.header"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1157,
-            54,
-            32,
-            32
-          ],
-          "text": "",
-          "asset": "nav_quest",
-          "layoutId": "inventory.element.018",
-          "component": "inventory.header"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1339,
-            333,
-            26,
-            26
-          ],
-          "text": "",
-          "asset": "healthIcon",
-          "layoutId": "inventory.element.019",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1340,
-            379,
-            26,
-            27
-          ],
-          "text": "",
-          "asset": "hungerIcon",
-          "layoutId": "inventory.element.020",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1342,
-            425,
-            24,
-            31
-          ],
-          "text": "",
-          "asset": "staminaIcon",
-          "layoutId": "inventory.element.021",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1334,
-            142,
-            61,
-            88
-          ],
-          "text": "",
-          "asset": "heroEmblem",
-          "layoutId": "inventory.element.022",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            0,
-            0,
-            56,
-            862
-          ],
-          "asset": "invLeftTrim",
-          "layoutId": "inventory.element.023"
-        },
-        {
-          "type": "image",
-          "rect": [
-            57,
-            109,
-            1565,
-            7
-          ],
-          "asset": "invTopRule",
-          "layoutId": "inventory.element.024",
-          "component": "inventory.header"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1348,
-            529,
-            21,
-            20
-          ],
-          "asset": "invAttackIcon",
-          "layoutId": "inventory.element.025",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1348,
-            557,
-            21,
-            21
-          ],
-          "asset": "invDefenseIcon",
-          "layoutId": "inventory.element.026",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1348,
-            588,
-            21,
-            21
-          ],
-          "asset": "invExperienceIcon",
-          "layoutId": "inventory.element.027",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1348,
-            618,
-            21,
-            21
-          ],
-          "asset": "invCostIcon",
-          "layoutId": "inventory.element.028",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1348,
-            706,
-            21,
-            21
-          ],
-          "asset": "invWeightIcon",
-          "layoutId": "inventory.element.029",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1348,
-            746,
-            21,
-            20
-          ],
-          "asset": "invSpeedIcon",
-          "layoutId": "inventory.element.030",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            63,
-            769,
-            20,
-            20
-          ],
-          "asset": "invBagWeightIcon",
-          "layoutId": "inventory.element.031",
-          "component": "inventory.bag"
-        },
-        {
-          "type": "image",
-          "rect": [
-            443,
-            576,
-            27,
-            23
-          ],
-          "asset": "invDetailAttack",
-          "layoutId": "inventory.element.032",
-          "component": "inventory.detail"
-        },
-        {
-          "type": "image",
-          "rect": [
-            443,
-            609,
-            27,
-            25
-          ],
-          "asset": "invDetailDurability",
-          "layoutId": "inventory.element.033",
-          "component": "inventory.detail"
-        },
-        {
-          "type": "image",
-          "rect": [
-            443,
-            644,
-            27,
-            23
-          ],
-          "asset": "invDetailWeight",
-          "layoutId": "inventory.element.034",
-          "component": "inventory.detail"
-        },
-        {
-          "type": "image",
-          "rect": [
-            439,
-            464,
-            232,
-            5
-          ],
-          "asset": "invDetailRule0",
-          "layoutId": "inventory.element.035",
-          "component": "inventory.detail"
-        },
-        {
-          "type": "image",
-          "rect": [
-            439,
-            562,
-            232,
-            5
-          ],
-          "asset": "invDetailRule1",
-          "layoutId": "inventory.element.036",
-          "component": "inventory.detail"
-        },
-        {
-          "type": "image",
-          "rect": [
-            439,
-            598,
-            232,
-            5
-          ],
-          "asset": "invDetailRule2",
-          "layoutId": "inventory.element.037",
-          "component": "inventory.detail"
-        },
-        {
-          "type": "image",
-          "rect": [
-            439,
-            634,
-            232,
-            5
-          ],
-          "asset": "invDetailRule3",
-          "layoutId": "inventory.element.038",
-          "component": "inventory.detail"
-        },
-        {
-          "type": "image",
-          "rect": [
-            439,
-            672,
-            232,
-            5
-          ],
-          "asset": "invDetailRule4",
-          "layoutId": "inventory.element.039",
-          "component": "inventory.detail"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1339,
-            304,
-            281,
-            6
-          ],
-          "asset": "invStatsRule0",
-          "layoutId": "inventory.element.040",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1341,
-            512,
-            279,
-            5
-          ],
-          "asset": "invStatsRule1",
-          "layoutId": "inventory.element.041",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1341,
-            692,
-            279,
-            5
-          ],
-          "asset": "invStatsRule2",
-          "layoutId": "inventory.element.042",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1353,
-            798,
-            268,
-            59
-          ],
-          "asset": "invFlavor",
-          "layoutId": "inventory.element.043",
-          "component": "inventory.stats"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1340,
-            884,
-            289,
-            32
-          ],
-          "asset": "invFooterTag",
-          "layoutId": "inventory.element.044",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "image",
-          "rect": [
-            1539,
-            45,
-            27,
-            25
-          ],
-          "asset": "invSettingsIcon",
-          "layoutId": "inventory.element.045",
-          "component": "inventory.header"
-        },
-        {
-          "type": "keycap",
-          "text": "Esc",
-          "rect": [
-            45,
-            886,
-            55,
-            34
-          ],
-          "font": 15,
-          "tracking": 0,
-          "layoutId": "inventory.element.046",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "text",
-          "text": "返回",
-          "rect": [
-            112,
-            888,
-            90,
-            35
-          ],
-          "font": 16,
-          "layoutId": "inventory.element.047",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "keycap",
-          "text": "R",
-          "rect": [
-            225,
-            886,
-            32,
-            34
-          ],
-          "font": 15,
-          "tracking": 0,
-          "layoutId": "inventory.element.048",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "text",
-          "text": "丢弃",
-          "rect": [
-            269,
-            888,
-            90,
-            35
-          ],
-          "font": 16,
-          "layoutId": "inventory.element.049",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "keycap",
-          "text": "F",
-          "rect": [
-            381,
-            886,
-            32,
-            34
-          ],
-          "font": 15,
-          "tracking": 0,
-          "layoutId": "inventory.element.050",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "text",
-          "text": "装备 / 使用",
-          "rect": [
-            425,
-            888,
-            190,
-            35
-          ],
-          "font": 16,
-          "layoutId": "inventory.element.051",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "keycap",
-          "text": "H",
-          "rect": [
-            639,
-            886,
-            32,
-            34
-          ],
-          "font": 15,
-          "tracking": 0,
-          "layoutId": "inventory.element.052",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "text",
-          "text": "工作台维修",
-          "rect": [
-            683,
-            888,
-            190,
-            35
-          ],
-          "font": 16,
-          "layoutId": "inventory.element.053",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "keycap",
-          "text": "滚轮",
-          "rect": [
-            886,
-            886,
-            80,
-            34
-          ],
-          "font": 12,
-          "tracking": 0,
-          "layoutId": "inventory.element.054",
-          "component": "inventory.footer"
-        },
-        {
-          "type": "text",
-          "text": "翻页",
-          "rect": [
-            978,
-            888,
-            120,
-            35
-          ],
-          "font": 16,
-          "layoutId": "inventory.element.055",
-          "component": "inventory.footer"
-        }
-      ]
+      "elements": []
     },
     "storage": {
       "background": "storageBackground",
@@ -3194,1974 +2389,168 @@
       ]
     },
     "pause": {
-      "background": "pauseBackground",
+      "background": "",
       "header": false,
       "elements": [
         {
-          "type": "image",
+          "type": "menuSurface",
           "text": "",
           "rect": [
-            695,
-            105,
-            291,
-            145
+            546,
+            154,
+            580,
+            632
           ],
-          "asset": "logo",
-          "layoutId": "pause.element.000",
-          "component": "pause.menu"
+          "layoutId": "pause.sheet",
+          "component": "pause.menu",
+          "tracking": 0
         },
         {
           "type": "text",
           "text": "已 暂 停",
           "rect": [
-            782,
-            313,
-            180,
-            35
+            590,
+            194,
+            492,
+            52
           ],
-          "font": 23,
-          "tracking": 140,
-          "layoutId": "pause.element.001",
-          "component": "pause.menu"
+          "layoutId": "pause.heading",
+          "component": "pause.menu",
+          "tracking": 0,
+          "font": 32,
+          "color": "gold"
         },
         {
-          "type": "button",
+          "type": "line",
+          "text": "",
+          "rect": [
+            590,
+            260,
+            492,
+            1
+          ],
+          "layoutId": "pause.heading.rule",
+          "component": "pause.menu",
+          "tracking": 0,
+          "color": "bronze"
+        },
+        {
+          "type": "menuAction",
           "text": "继续",
           "rect": [
-            655,
-            369,
-            344,
-            62
+            590,
+            278,
+            492,
+            70
           ],
-          "font": 25,
-          "textInset": 102,
-          "tracking": 90,
+          "layoutId": "pause.option.0",
+          "component": "pause.menu",
+          "tracking": 0,
+          "font": 26,
+          "textInset": 22,
           "action": "page:hud",
-          "id": "active",
-          "layoutId": "pause.element.002",
-          "component": "pause.menu"
+          "fontRole": "body"
         },
         {
-          "type": "image",
-          "text": "",
-          "rect": [
-            685,
-            381,
-            36,
-            38
-          ],
-          "asset": "continueIcon",
-          "layoutId": "pause.element.003",
-          "component": "pause.menu"
-        },
-        {
-          "type": "button",
+          "type": "menuAction",
           "text": "读取最近存档",
           "rect": [
-            655,
-            434,
-            344,
-            62
+            590,
+            348,
+            492,
+            70
           ],
-          "font": 25,
-          "textInset": 102,
-          "tracking": 90,
+          "layoutId": "pause.option.1",
+          "component": "pause.menu",
+          "tracking": 0,
+          "font": 26,
+          "textInset": 22,
           "action": "continuePrompt",
-          "layoutId": "pause.element.004",
-          "component": "pause.menu"
+          "fontRole": "body"
         },
         {
-          "type": "image",
-          "text": "",
-          "rect": [
-            685,
-            446,
-            36,
-            38
-          ],
-          "asset": "pauseLoad",
-          "layoutId": "pause.element.005",
-          "component": "pause.menu"
-        },
-        {
-          "type": "button",
+          "type": "menuAction",
           "text": "存档",
           "rect": [
-            655,
-            499,
-            344,
-            62
+            590,
+            418,
+            492,
+            70
           ],
-          "font": 25,
-          "textInset": 102,
-          "tracking": 90,
+          "layoutId": "pause.option.2",
+          "component": "pause.menu",
+          "tracking": 0,
+          "font": 26,
+          "textInset": 22,
           "action": "save",
-          "layoutId": "pause.element.006",
-          "component": "pause.menu"
+          "fontRole": "body"
         },
         {
-          "type": "image",
-          "text": "",
-          "rect": [
-            685,
-            511,
-            36,
-            38
-          ],
-          "asset": "pauseSave",
-          "layoutId": "pause.element.007",
-          "component": "pause.menu"
-        },
-        {
-          "type": "button",
+          "type": "menuAction",
           "text": "设置",
           "rect": [
-            655,
-            564,
-            344,
-            62
+            590,
+            488,
+            492,
+            70
           ],
-          "font": 25,
-          "textInset": 102,
-          "tracking": 90,
+          "layoutId": "pause.option.3",
+          "component": "pause.menu",
+          "tracking": 0,
+          "font": 26,
+          "textInset": 22,
           "action": "page:settings",
-          "layoutId": "pause.element.008",
-          "component": "pause.menu"
+          "fontRole": "body"
         },
         {
-          "type": "image",
-          "text": "",
-          "rect": [
-            685,
-            576,
-            36,
-            38
-          ],
-          "asset": "settingsIcon",
-          "layoutId": "pause.element.009",
-          "component": "pause.menu"
-        },
-        {
-          "type": "button",
+          "type": "menuAction",
           "text": "返回主菜单",
           "rect": [
-            655,
-            629,
-            344,
-            62
+            590,
+            558,
+            492,
+            70
           ],
-          "font": 25,
-          "textInset": 102,
-          "tracking": 90,
-          "action": "ask:title",
-          "layoutId": "pause.element.010",
-          "component": "pause.menu"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            685,
-            641,
-            36,
-            38
-          ],
-          "asset": "quitIcon",
-          "layoutId": "pause.element.011",
-          "component": "pause.menu"
-        },
-        {
-          "type": "text",
-          "text": "当前任务",
-          "rect": [
-            1096,
-            220,
-            230,
-            32
-          ],
-          "font": 18,
-          "color": "muted",
-          "layoutId": "pause.element.012",
-          "component": "pause.info"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            1138,
-            272,
-            290,
-            40
-          ],
-          "font": 24,
-          "bind": "quest",
-          "layoutId": "pause.element.013",
-          "component": "pause.info"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            1096,
-            310,
-            332,
-            236
-          ],
-          "font": 24,
-          "bind": "objective",
-          "layoutId": "pause.element.014",
-          "component": "pause.info"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1092,
-            268,
-            34,
-            36
-          ],
-          "asset": "pauseQuest",
-          "layoutId": "pause.element.015",
-          "component": "pause.info"
-        },
-        {
-          "type": "text",
-          "text": "游戏时间",
-          "rect": [
-            1138,
-            552,
-            114,
-            32
-          ],
-          "font": 18,
-          "color": "muted",
-          "layoutId": "pause.element.016",
-          "component": "pause.info"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            1256,
-            552,
-            172,
-            37
-          ],
-          "font": 24,
-          "bind": "time",
-          "layoutId": "pause.element.017",
-          "component": "pause.info"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1092,
-            550,
-            34,
-            33
-          ],
-          "asset": "pauseClock",
-          "layoutId": "pause.element.018",
-          "component": "pause.info"
-        },
-        {
-          "type": "text",
-          "text": "当前位置",
-          "rect": [
-            1138,
-            598,
-            114,
-            32
-          ],
-          "font": 18,
-          "color": "muted",
-          "layoutId": "pause.element.019",
-          "component": "pause.info"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            1256,
-            598,
-            172,
-            40
-          ],
-          "font": 24,
-          "bind": "location",
-          "layoutId": "pause.element.020",
-          "component": "pause.info"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1092,
-            592,
-            34,
-            42
-          ],
-          "asset": "pauseLocation",
-          "layoutId": "pause.element.021",
-          "component": "pause.info"
-        },
-        {
-          "type": "text",
-          "text": "S A M E   F I R E\nA  B R I G H T E R  T O M O R R O W",
-          "rect": [
-            720,
-            772,
-            330,
-            40
-          ],
-          "font": 8,
-          "color": "muted",
-          "layoutId": "pause.element.022",
+          "layoutId": "pause.option.4",
           "component": "pause.menu",
-          "fontRole": "decorative"
+          "tracking": 0,
+          "font": 26,
+          "textInset": 22,
+          "action": "ask:title",
+          "fontRole": "body"
         },
         {
           "type": "text",
-          "text": "归别尘埃 · 守住烟火 · 今日更多",
+          "text": "Esc  返回游戏",
           "rect": [
-            55,
-            863,
-            550,
-            30
+            590,
+            734,
+            492,
+            34
           ],
-          "font": 12,
+          "layoutId": "pause.return",
+          "component": "pause.menu",
+          "tracking": 0,
+          "font": 20,
           "color": "muted",
-          "layoutId": "pause.element.023",
-          "component": "pause.footer",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "text",
-          "text": "S A M E  F I R E   A  B R I G H T E R  T O M O R R O W",
-          "rect": [
-            55,
-            891,
-            560,
-            20
-          ],
-          "font": 8,
-          "color": "muted",
-          "layoutId": "pause.element.024",
-          "component": "pause.footer",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "text",
-          "text": "野性的根，从未远去。",
-          "rect": [
-            1428,
-            869,
-            240,
-            32
-          ],
-          "font": 12,
-          "color": "muted",
-          "layoutId": "pause.element.025",
-          "component": "pause.footer",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "text",
-          "text": "—  H E A R T H W A R D  —",
-          "rect": [
-            1460,
-            898,
-            200,
-            20
-          ],
-          "font": 8,
-          "color": "muted",
-          "layoutId": "pause.element.026",
-          "component": "pause.footer",
-          "fontRole": "decorative"
-        },
-        {
-          "type": "image",
-          "layoutId": "pause.ornament.top",
-          "asset": "pauseTopOrnament",
-          "rect": [
-            700,
-            253,
-            262,
-            41
-          ],
-          "component": "pause.menu"
-        },
-        {
-          "type": "image",
-          "layoutId": "pause.ornament.bottom",
-          "asset": "pauseBottomOrnament",
-          "rect": [
-            700,
-            704,
-            262,
-            66
-          ],
-          "component": "pause.menu"
-        },
-        {
-          "type": "image",
-          "layoutId": "pause.mountains",
-          "asset": "pauseMountains",
-          "rect": [
-            1201,
-            638,
-            198,
-            113
-          ],
-          "component": "pause.info"
-        },
-        {
-          "type": "line",
-          "layoutId": "pause.divider.0",
-          "rect": [
-            1085,
-            253,
-            310,
-            1
-          ],
-          "color": "bronze",
-          "component": "pause.info"
-        },
-        {
-          "type": "line",
-          "layoutId": "pause.divider.1",
-          "rect": [
-            1085,
-            548,
-            343,
-            1
-          ],
-          "color": "bronze",
-          "component": "pause.info"
-        },
-        {
-          "type": "line",
-          "layoutId": "pause.divider.2",
-          "rect": [
-            1085,
-            592,
-            343,
-            1
-          ],
-          "color": "bronze",
-          "component": "pause.info"
+          "align": "center"
         }
       ]
     },
     "skills": {
-      "background": "darkTexture",
+      "background": "",
       "header": false,
-      "elements": [
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            0,
-            341,
-            264,
-            440
-          ],
-          "asset": "skillsOriginalArt0",
-          "layoutId": "skills.element.000"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1278,
-            130,
-            344,
-            162
-          ],
-          "asset": "skillsOriginalArt1",
-          "layoutId": "skills.element.001",
-          "component": "skills.detail"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            55,
-            14,
-            150,
-            83
-          ],
-          "font": 18,
-          "asset": "logo",
-          "layoutId": "skills.element.002",
-          "component": "skills.header"
-        },
-        {
-          "type": "tab",
-          "text": "地图",
-          "rect": [
-            510,
-            19,
-            91,
-            48
-          ],
-          "font": 18,
-          "action": "page:map",
-          "tracking": 120,
-          "layoutId": "skills.element.003",
-          "component": "skills.header"
-        },
-        {
-          "type": "tab",
-          "text": "装备",
-          "rect": [
-            613,
-            19,
-            91,
-            48
-          ],
-          "font": 18,
-          "action": "page:inventory",
-          "tracking": 120,
-          "layoutId": "skills.element.004",
-          "component": "skills.header"
-        },
-        {
-          "type": "tab",
-          "text": "技能",
-          "rect": [
-            716,
-            19,
-            91,
-            48
-          ],
-          "font": 18,
-          "action": "page:skills",
-          "tracking": 120,
-          "layoutId": "skills.element.005",
-          "component": "skills.header"
-        },
-        {
-          "type": "tab",
-          "text": "任务",
-          "rect": [
-            819,
-            19,
-            91,
-            48
-          ],
-          "font": 18,
-          "action": "page:journal",
-          "tracking": 120,
-          "layoutId": "skills.element.006",
-          "component": "skills.header"
-        },
-        {
-          "type": "tab",
-          "text": "图鉴",
-          "rect": [
-            922,
-            19,
-            91,
-            48
-          ],
-          "font": 18,
-          "action": "page:journal",
-          "tracking": 120,
-          "layoutId": "skills.element.007",
-          "component": "skills.header"
-        },
-        {
-          "type": "tab",
-          "text": "系统",
-          "rect": [
-            1025,
-            19,
-            91,
-            48
-          ],
-          "font": 18,
-          "action": "page:settings",
-          "tracking": 120,
-          "layoutId": "skills.element.008",
-          "component": "skills.header"
-        },
-        {
-          "type": "text",
-          "text": "可用技能点",
-          "rect": [
-            1358,
-            42,
-            150,
-            30
-          ],
-          "font": 17,
-          "layoutId": "skills.element.009",
-          "component": "skills.header"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            1288,
-            22,
-            62,
-            50
-          ],
-          "font": 38,
-          "bind": "points",
-          "color": "gold",
-          "layoutId": "skills.element.010",
-          "component": "skills.header"
-        },
-        {
-          "type": "button",
-          "text": "免费洗点",
-          "rect": [
-            60,
-            788,
-            175,
-            48
-          ],
-          "font": 18,
-          "action": "respec",
-          "layoutId": "skills.element.011"
-        },
-        {
-          "type": "text",
-          "text": "Esc 返回     单击节点查看     Enter 确认",
-          "rect": [
-            48,
-            894,
-            900,
-            30
-          ],
-          "font": 16,
-          "layoutId": "skills.element.012",
-          "component": "skills.footer"
-        },
-        {
-          "type": "text",
-          "text": "以血肉护所爱，\n以技艺铸新生。",
-          "rect": [
-            80,
-            195,
-            210,
-            65
-          ],
-          "font": 17,
-          "tracking": 150,
-          "layoutId": "skills.element.013"
-        },
-        {
-          "type": "text",
-          "text": "S A M E  F I R E\nA  B R I G H T E R\nT O M O R R O W",
-          "rect": [
-            80,
-            280,
-            230,
-            70
-          ],
-          "font": 10,
-          "color": "muted",
-          "layoutId": "skills.element.014"
-        },
-        {
-          "type": "image",
-          "asset": "continueIcon",
-          "rect": [
-            1232,
-            28,
-            40,
-            42
-          ],
-          "text": "",
-          "layoutId": "skills.element.015",
-          "component": "skills.header"
-        },
-        {
-          "type": "line",
-          "layoutId": "skills.topRule",
-          "rect": [
-            53,
-            85,
-            1570,
-            1
-          ],
-          "color": "bronze",
-          "component": "skills.header"
-        },
-        {
-          "type": "line",
-          "layoutId": "skills.detail.rule",
-          "rect": [
-            1290,
-            340,
-            321,
-            1
-          ],
-          "color": "bronze",
-          "component": "skills.detail"
-        }
-      ]
+      "elements": []
     },
     "map": {
-      "background": "darkTexture",
+      "background": "",
       "header": false,
-      "elements": [
-        {
-          "type": "image",
-          "layoutId": "map.trim",
-          "asset": "invLeftTrim",
-          "rect": [
-            0,
-            0,
-            56,
-            862
-          ]
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            83,
-            15,
-            153,
-            86
-          ],
-          "font": 18,
-          "asset": "logo",
-          "layoutId": "map.element.000",
-          "component": "map.header"
-        },
-        {
-          "type": "tab",
-          "text": "地图",
-          "rect": [
-            614,
-            12,
-            112,
-            54
-          ],
-          "font": 22,
-          "action": "page:map",
-          "tracking": 120,
-          "layoutId": "map.element.001",
-          "component": "map.header"
-        },
-        {
-          "type": "tab",
-          "text": "任务",
-          "rect": [
-            735,
-            12,
-            112,
-            54
-          ],
-          "font": 22,
-          "action": "page:journal",
-          "tracking": 120,
-          "layoutId": "map.element.002",
-          "component": "map.header"
-        },
-        {
-          "type": "tab",
-          "text": "标记",
-          "rect": [
-            856,
-            12,
-            112,
-            54
-          ],
-          "font": 22,
-          "action": "mapFilter",
-          "tracking": 120,
-          "layoutId": "map.element.003",
-          "component": "map.header"
-        },
-        {
-          "type": "tab",
-          "text": "图鉴",
-          "rect": [
-            977,
-            12,
-            112,
-            54
-          ],
-          "font": 22,
-          "action": "page:journal",
-          "tracking": 120,
-          "layoutId": "map.element.004",
-          "component": "map.header"
-        },
-        {
-          "type": "tab",
-          "text": "设置",
-          "rect": [
-            1500,
-            28,
-            122,
-            52
-          ],
-          "font": 18,
-          "action": "page:settings",
-          "layoutId": "map.element.005",
-          "component": "map.header"
-        },
-        {
-          "type": "text",
-          "text": "苍岚谷",
-          "rect": [
-            94,
-            144,
-            300,
-            50
-          ],
-          "font": 34,
-          "layoutId": "map.element.006",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            94,
-            194,
-            300,
-            30
-          ],
-          "font": 24,
-          "color": "muted",
-          "bind": "exploration",
-          "layoutId": "map.element.007",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "群山环抱的河谷，古老的部族在此生息。\n而火种，仍在风中传唱。",
-          "rect": [
-            94,
-            239,
-            290,
-            120
-          ],
-          "font": 15,
-          "color": "muted",
-          "layoutId": "map.element.008",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            93,
-            345,
-            320,
-            300
-          ],
-          "font": 19,
-          "layoutId": "map.element.009",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "滚轮 缩放　方向键 平移　右键 设置标记　Esc 返回",
-          "rect": [
-            53,
-            892,
-            1100,
-            35
-          ],
-          "font": 16,
-          "layoutId": "map.element.010",
-          "component": "map.footer"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            92,
-            375,
-            31,
-            35
-          ],
-          "asset": "legendMain",
-          "layoutId": "map.element.011",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "主线任务",
-          "rect": [
-            142,
-            383,
-            235,
-            30
-          ],
-          "font": 16,
-          "layoutId": "map.element.012",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            92,
-            417,
-            31,
-            35
-          ],
-          "asset": "legendSide",
-          "layoutId": "map.element.013",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "支线任务",
-          "rect": [
-            142,
-            425,
-            235,
-            30
-          ],
-          "font": 16,
-          "layoutId": "map.element.014",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            92,
-            459,
-            31,
-            35
-          ],
-          "asset": "legendCamp",
-          "layoutId": "map.element.015",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "营地",
-          "rect": [
-            142,
-            467,
-            235,
-            30
-          ],
-          "font": 16,
-          "layoutId": "map.element.016",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            92,
-            501,
-            31,
-            35
-          ],
-          "asset": "legendTravel",
-          "layoutId": "map.element.017",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "已激活传送",
-          "rect": [
-            142,
-            509,
-            235,
-            30
-          ],
-          "font": 16,
-          "layoutId": "map.element.018",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            92,
-            543,
-            31,
-            35
-          ],
-          "asset": "legendLandmark",
-          "layoutId": "map.element.019",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "已发现路标",
-          "rect": [
-            142,
-            551,
-            235,
-            30
-          ],
-          "font": 16,
-          "layoutId": "map.element.020",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            92,
-            585,
-            31,
-            35
-          ],
-          "asset": "legendUnknown",
-          "layoutId": "map.element.021",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "尚未发现",
-          "rect": [
-            142,
-            593,
-            235,
-            30
-          ],
-          "font": 16,
-          "layoutId": "map.element.022",
-          "component": "map.sidebar"
-        },
-        {
-          "type": "image",
-          "layoutId": "map.compass",
-          "asset": "mapCompass",
-          "rect": [
-            1514,
-            94,
-            105,
-            110
-          ]
-        },
-        {
-          "type": "image",
-          "layoutId": "map.campPreview",
-          "asset": "campPortrait",
-          "rect": [
-            74,
-            742,
-            305,
-            150
-          ],
-          "component": "map.sidebar"
-        },
-        {
-          "type": "line",
-          "layoutId": "map.rule.0",
-          "rect": [
-            65,
-            68,
-            1606,
-            1
-          ],
-          "color": "bronze",
-          "component": "map.header"
-        },
-        {
-          "type": "line",
-          "layoutId": "map.rule.1",
-          "rect": [
-            65,
-            864,
-            1606,
-            1
-          ],
-          "color": "bronze",
-          "component": "map.footer"
-        }
-      ]
+      "elements": []
     },
     "journal": {
-      "background": "darkTexture",
+      "background": "",
       "header": false,
-      "elements": [
-        {
-          "type": "image",
-          "layoutId": "journal.trim.right",
-          "asset": "journalRightTrim",
-          "rect": [
-            1625,
-            60,
-            47,
-            810
-          ]
-        },
-        {
-          "type": "image",
-          "layoutId": "journal.trim.left",
-          "asset": "journalLeftTrim",
-          "rect": [
-            0,
-            0,
-            55,
-            870
-          ]
-        },
-        {
-          "type": "image",
-          "rect": [
-            917,
-            3,
-            132,
-            104
-          ],
-          "asset": "journalNavGlow",
-          "layoutId": "journal.element.000",
-          "component": "journal.header"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            76,
-            16,
-            182,
-            97
-          ],
-          "font": 18,
-          "asset": "logo",
-          "layoutId": "journal.element.002",
-          "component": "journal.header"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            248,
-            39,
-            215,
-            65
-          ],
-          "font": 15,
-          "color": "muted",
-          "layoutId": "journal.element.003",
-          "component": "journal.header"
-        },
-        {
-          "type": "tab",
-          "text": "角色",
-          "rect": [
-            408,
-            60,
-            102,
-            50
-          ],
-          "font": 21,
-          "action": "page:inventory",
-          "tracking": 120,
-          "layoutId": "journal.element.004",
-          "component": "journal.header"
-        },
-        {
-          "type": "tab",
-          "text": "背包",
-          "rect": [
-            542,
-            60,
-            102,
-            50
-          ],
-          "font": 21,
-          "action": "page:inventory",
-          "tracking": 120,
-          "layoutId": "journal.element.005",
-          "component": "journal.header"
-        },
-        {
-          "type": "tab",
-          "text": "技能",
-          "rect": [
-            676,
-            60,
-            102,
-            50
-          ],
-          "font": 21,
-          "action": "page:skills",
-          "tracking": 120,
-          "layoutId": "journal.element.006",
-          "component": "journal.header"
-        },
-        {
-          "type": "tab",
-          "text": "地图",
-          "rect": [
-            810,
-            60,
-            102,
-            50
-          ],
-          "font": 21,
-          "action": "page:map",
-          "tracking": 120,
-          "layoutId": "journal.element.007",
-          "component": "journal.header"
-        },
-        {
-          "type": "tab",
-          "text": "日志",
-          "rect": [
-            944,
-            60,
-            102,
-            50
-          ],
-          "font": 21,
-          "action": "page:journal",
-          "tracking": 120,
-          "layoutId": "journal.element.008",
-          "component": "journal.header"
-        },
-        {
-          "type": "tab",
-          "text": "营地",
-          "rect": [
-            1078,
-            60,
-            102,
-            50
-          ],
-          "font": 21,
-          "action": "page:storage",
-          "tracking": 120,
-          "layoutId": "journal.element.009",
-          "component": "journal.header"
-        },
-        {
-          "type": "tab",
-          "text": "设置",
-          "rect": [
-            1500,
-            28,
-            122,
-            52
-          ],
-          "font": 21,
-          "action": "page:settings",
-          "layoutId": "journal.element.010",
-          "component": "journal.header"
-        },
-        {
-          "type": "text",
-          "text": "同行与营地",
-          "rect": [
-            1270,
-            435,
-            250,
-            35
-          ],
-          "font": 20,
-          "color": "gold",
-          "layoutId": "journal.element.011",
-          "component": "journal.summary"
-        },
-        {
-          "type": "text",
-          "text": "弟弟",
-          "rect": [
-            1368,
-            480,
-            225,
-            35
-          ],
-          "font": 22,
-          "layoutId": "journal.element.012",
-          "component": "journal.summary"
-        },
-        {
-          "type": "text",
-          "text": "可交谈并下达采集委托",
-          "rect": [
-            1368,
-            518,
-            225,
-            30
-          ],
-          "font": 16,
-          "color": "muted",
-          "layoutId": "journal.element.013",
-          "component": "journal.summary"
-        },
-        {
-          "type": "text",
-          "text": "营地",
-          "rect": [
-            1368,
-            588,
-            225,
-            35
-          ],
-          "font": 22,
-          "layoutId": "journal.element.014",
-          "component": "journal.summary"
-        },
-        {
-          "type": "text",
-          "text": "共享物资与归途起点",
-          "rect": [
-            1368,
-            626,
-            225,
-            30
-          ],
-          "font": 16,
-          "color": "muted",
-          "layoutId": "journal.element.015",
-          "component": "journal.summary"
-        },
-        {
-          "type": "text",
-          "text": "任务奖励 / 见闻",
-          "rect": [
-            1270,
-            690,
-            250,
-            35
-          ],
-          "font": 20,
-          "color": "gold",
-          "layoutId": "journal.element.016",
-          "component": "journal.summary"
-        },
-        {
-          "type": "text",
-          "text": "",
-          "rect": [
-            51,
-            899,
-            1000,
-            30
-          ],
-          "font": 16,
-          "layoutId": "journal.element.017",
-          "component": "journal.footer"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1258,
-            468,
-            87,
-            85
-          ],
-          "asset": "portrait",
-          "layoutId": "journal.element.018",
-          "component": "journal.summary"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1258,
-            571,
-            87,
-            85
-          ],
-          "asset": "campPortrait",
-          "layoutId": "journal.element.019",
-          "component": "journal.summary"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            437,
-            22,
-            34,
-            35
-          ],
-          "asset": "journalNavcharacter",
-          "layoutId": "journal.element.020",
-          "component": "journal.header"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            572,
-            23,
-            31,
-            35
-          ],
-          "asset": "journalNavbag",
-          "layoutId": "journal.element.021",
-          "component": "journal.header"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            702,
-            26,
-            31,
-            33
-          ],
-          "asset": "journalNavskills",
-          "layoutId": "journal.element.022",
-          "component": "journal.header"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            835,
-            22,
-            32,
-            36
-          ],
-          "asset": "journalNavmap",
-          "layoutId": "journal.element.023",
-          "component": "journal.header"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            969,
-            22,
-            31,
-            40
-          ],
-          "asset": "journalNavjournal",
-          "layoutId": "journal.element.024",
-          "component": "journal.header"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1099,
-            23,
-            47,
-            35
-          ],
-          "asset": "journalNavcamp",
-          "layoutId": "journal.element.025",
-          "component": "journal.header"
-        },
-        {
-          "type": "button",
-          "text": "主线任务",
-          "rect": [
-            61,
-            238,
-            291,
-            59
-          ],
-          "font": 21,
-          "action": "category:main",
-          "textInset": 75,
-          "layoutId": "journal.element.026",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            84,
-            248,
-            34,
-            36
-          ],
-          "asset": "journalCategorymain",
-          "layoutId": "journal.element.027",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "button",
-          "text": "支线任务",
-          "rect": [
-            61,
-            302,
-            291,
-            59
-          ],
-          "font": 21,
-          "action": "category:side",
-          "textInset": 75,
-          "layoutId": "journal.element.028",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            84,
-            312,
-            34,
-            36
-          ],
-          "asset": "journalCategoryside",
-          "layoutId": "journal.element.029",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "button",
-          "text": "世界见闻",
-          "rect": [
-            61,
-            366,
-            291,
-            59
-          ],
-          "font": 21,
-          "action": "category:world",
-          "textInset": 75,
-          "layoutId": "journal.element.030",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            84,
-            376,
-            34,
-            36
-          ],
-          "asset": "journalCategoryworld",
-          "layoutId": "journal.element.031",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "button",
-          "text": "人物档案",
-          "rect": [
-            61,
-            430,
-            291,
-            59
-          ],
-          "font": 21,
-          "action": "category:people",
-          "textInset": 75,
-          "layoutId": "journal.element.032",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            84,
-            440,
-            34,
-            36
-          ],
-          "asset": "journalCategorypeople",
-          "layoutId": "journal.element.033",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "button",
-          "text": "势力阵营",
-          "rect": [
-            61,
-            494,
-            291,
-            59
-          ],
-          "font": 21,
-          "action": "category:factions",
-          "textInset": 75,
-          "layoutId": "journal.element.034",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            84,
-            504,
-            34,
-            36
-          ],
-          "asset": "journalCategoryfactions",
-          "layoutId": "journal.element.035",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "button",
-          "text": "收集要素",
-          "rect": [
-            61,
-            558,
-            291,
-            59
-          ],
-          "font": 21,
-          "action": "category:collection",
-          "textInset": 75,
-          "layoutId": "journal.element.036",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            84,
-            568,
-            34,
-            36
-          ],
-          "asset": "journalCategorycollection",
-          "layoutId": "journal.element.037",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "余烬未熄\n只要还有归去的人",
-          "rect": [
-            84,
-            164,
-            235,
-            55
-          ],
-          "font": 14,
-          "tracking": 250,
-          "layoutId": "journal.element.038",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "text",
-          "text": "行过荒野\n穿过黑暗\n火光总会指引方向",
-          "rect": [
-            84,
-            724,
-            240,
-            90
-          ],
-          "font": 14,
-          "tracking": 160,
-          "layoutId": "journal.element.039",
-          "component": "journal.sidebar"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            396,
-            253,
-            219,
-            34
-          ],
-          "asset": "journalTitleRule",
-          "layoutId": "journal.element.040",
-          "component": "journal.story"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            963,
-            606,
-            247,
-            56
-          ],
-          "asset": "journalArtSignature",
-          "categories": [
-            "main",
-            "side"
-          ],
-          "layoutId": "journal.element.041",
-          "component": "journal.story"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1279,
-            719,
-            84,
-            76
-          ],
-          "asset": "journalRewardXP",
-          "categories": [
-            "main",
-            "side"
-          ],
-          "layoutId": "journal.element.042",
-          "component": "journal.summary"
-        },
-        {
-          "type": "image",
-          "text": "",
-          "rect": [
-            1448,
-            21,
-            175,
-            88
-          ],
-          "asset": "journalTopTag",
-          "layoutId": "journal.element.043",
-          "component": "journal.header"
-        },
-        {
-          "type": "image",
-          "rect": [
-            394,
-            570,
-            26,
-            35
-          ],
-          "asset": "journalObjectiveIcon",
-          "layoutId": "journal.element.044",
-          "component": "journal.story"
-        },
-        {
-          "type": "image",
-          "rect": [
-            394,
-            716,
-            26,
-            33
-          ],
-          "asset": "journalProgressIcon",
-          "layoutId": "journal.element.045",
-          "component": "journal.story"
-        },
-        {
-          "type": "keycap",
-          "text": "Esc",
-          "rect": [
-            45,
-            895,
-            27,
-            25
-          ],
-          "font": 15,
-          "tracking": 0,
-          "layoutId": "journal.element.046",
-          "component": "journal.footer"
-        },
-        {
-          "type": "text",
-          "text": "返回",
-          "rect": [
-            84,
-            897,
-            190,
-            30
-          ],
-          "font": 16,
-          "layoutId": "journal.element.047",
-          "component": "journal.footer"
-        },
-        {
-          "type": "keycap",
-          "text": "滚轮",
-          "rect": [
-            230,
-            895,
-            30,
-            25
-          ],
-          "font": 12,
-          "tracking": 0,
-          "layoutId": "journal.element.048",
-          "component": "journal.footer"
-        },
-        {
-          "type": "text",
-          "text": "切换条目",
-          "rect": [
-            269,
-            897,
-            190,
-            30
-          ],
-          "font": 16,
-          "layoutId": "journal.element.049",
-          "component": "journal.footer"
-        },
-        {
-          "type": "keycap",
-          "text": "F",
-          "rect": [
-            1063,
-            895,
-            21,
-            25
-          ],
-          "font": 15,
-          "tracking": 0,
-          "layoutId": "journal.element.050",
-          "component": "journal.footer"
-        },
-        {
-          "type": "text",
-          "text": "在地图上查看",
-          "rect": [
-            1096,
-            897,
-            190,
-            30
-          ],
-          "font": 16,
-          "layoutId": "journal.element.051",
-          "component": "journal.footer"
-        },
-        {
-          "type": "keycap",
-          "text": "V",
-          "rect": [
-            1233,
-            895,
-            21,
-            25
-          ],
-          "font": 15,
-          "tracking": 0,
-          "layoutId": "journal.element.052",
-          "component": "journal.footer"
-        },
-        {
-          "type": "text",
-          "text": "设为追踪",
-          "rect": [
-            1266,
-            897,
-            190,
-            30
-          ],
-          "font": 16,
-          "layoutId": "journal.element.053",
-          "component": "journal.footer"
-        },
-        {
-          "type": "image",
-          "layoutId": "journal.castle",
-          "asset": "journalCastle",
-          "rect": [
-            1258,
-            205,
-            346,
-            205
-          ],
-          "component": "journal.summary"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.summary.rule.0",
-          "rect": [
-            1258,
-            450,
-            346,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.summary"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.summary.rule.1",
-          "rect": [
-            1258,
-            558,
-            346,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.summary"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.summary.rule.2",
-          "rect": [
-            1258,
-            662,
-            346,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.summary"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.summary.rule.3",
-          "rect": [
-            1258,
-            694,
-            346,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.summary"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.story.rule.0",
-          "rect": [
-            397,
-            268,
-            828,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.story"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.story.rule.1",
-          "rect": [
-            397,
-            605,
-            828,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.story"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.story.rule.2",
-          "rect": [
-            397,
-            694,
-            828,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.story"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.story.rule.3",
-          "rect": [
-            397,
-            747,
-            828,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.story"
-        },
-        {
-          "type": "line",
-          "layoutId": "journal.topRule",
-          "rect": [
-            55,
-            118,
-            1586,
-            1
-          ],
-          "color": "bronze",
-          "component": "journal.header"
-        }
-      ]
+      "elements": []
     },
     "dialogue": {
       "background": "",
@@ -5292,174 +2681,22 @@
     "hud": {
       "background": "",
       "header": false,
-      "elements": [
-        {
-          "type": "portrait",
-          "text": "",
-          "rect": [
-            49,
-            210,
-            89,
-            87
-          ],
-          "font": 18,
-          "asset": "portrait",
-          "layoutId": "hud.element.000",
-          "component": "hud.companion"
-        },
-        {
-          "type": "text",
-          "text": "弟弟",
-          "rect": [
-            154,
-            219,
-            200,
-            40
-          ],
-          "font": 23,
-          "layoutId": "hud.element.001",
-          "component": "hud.companion"
-        },
-        {
-          "type": "text",
-          "text": "T 交谈 / 下达委托",
-          "rect": [
-            48,
-            414,
-            340,
-            30
-          ],
-          "font": 16,
-          "layoutId": "hud.element.002",
-          "component": "hud.companion"
-        },
-        {
-          "type": "text",
-          "text": "Tab 背包 · M 地图 · K 技能 · J 任务 · B 建造 · Esc 暂停",
-          "rect": [
-            755,
-            903,
-            885,
-            30
-          ],
-          "font": 15,
-          "color": "muted",
-          "layoutId": "hud.element.003",
-          "component": "hud.footer"
-        }
-      ]
+      "elements": []
     },
     "save": {
-      "background": "pauseBackground",
+      "background": "",
       "header": false,
-      "elements": [
-        {
-          "type": "text",
-          "text": "存档",
-          "rect": [
-            470,
-            90,
-            300,
-            55
-          ],
-          "font": 36,
-          "layoutId": "save.element.000",
-          "component": "save.sheet"
-        },
-        {
-          "type": "button",
-          "text": "保存当前进度",
-          "rect": [
-            470,
-            166,
-            270,
-            55
-          ],
-          "font": 21,
-          "action": "save",
-          "layoutId": "save.element.001",
-          "component": "save.sheet"
-        },
-        {
-          "type": "button",
-          "text": "返回",
-          "rect": [
-            765,
-            166,
-            170,
-            55
-          ],
-          "font": 21,
-          "action": "back",
-          "layoutId": "save.element.002",
-          "component": "save.sheet"
-        },
-        {
-          "type": "text",
-          "text": "所有进度共享50个存档位 · 仅轮换未锁定自动档",
-          "rect": [
-            470,
-            239,
-            690,
-            45
-          ],
-          "font": 17,
-          "color": "muted",
-          "layoutId": "save.element.003",
-          "component": "save.sheet"
-        }
-      ]
+      "elements": []
     },
     "settings": {
-      "background": "pauseBackground",
+      "background": "",
       "header": false,
       "elements": []
     },
     "building": {
-      "background": "pauseBackground",
+      "background": "",
       "header": false,
-      "elements": [
-        {
-          "type": "text",
-          "text": "营地建造",
-          "rect": [
-            530,
-            145,
-            650,
-            60
-          ],
-          "font": 36,
-          "action": "",
-          "component": "building.sheet",
-          "layoutId": "building.营地建造"
-        },
-        {
-          "type": "button",
-          "text": "返回",
-          "rect": [
-            530,
-            760,
-            610,
-            55
-          ],
-          "font": 23,
-          "action": "back",
-          "component": "building.sheet",
-          "layoutId": "building.back"
-        },
-        {
-          "type": "button",
-          "text": "营地管理",
-          "rect": [
-            180,
-            140,
-            240,
-            55
-          ],
-          "font": 23,
-          "action": "page:camp"
-        }
-      ]
+      "elements": []
     },
     "crafting": {
       "background": "pauseBackground",
@@ -5709,7 +2946,7 @@
       "elements": []
     },
     "equipment": {
-      "background": "pauseBackground",
+      "background": "",
       "header": false,
       "elements": []
     },
@@ -5965,5 +3202,522 @@
     "body": "Fonts/LXGWWenKai-Regular.ttf",
     "display": "Fonts/NotoSerifCJKsc-Regular.otf",
     "tracking": 120
+  },
+  "localMap": {
+    "centerCm": [
+      92000,
+      53500
+    ],
+    "radiusCm": 25000,
+    "diameterPixels": 850,
+    "orientation": "+X right, +Y down; overhead camera pitch=-90 yaw=-90",
+    "regions": [
+      {
+        "id": "river",
+        "name": "河谷",
+        "xyCm": [
+          81000,
+          67400
+        ],
+        "font": 22
+      },
+      {
+        "id": "lake",
+        "name": "湖岸",
+        "xyCm": [
+          77100,
+          39400
+        ],
+        "font": 22
+      },
+      {
+        "id": "homeland",
+        "name": "故乡",
+        "xyCm": [
+          100000,
+          55700
+        ],
+        "font": 30
+      },
+      {
+        "id": "meadow",
+        "name": "草原",
+        "xyCm": [
+          103500,
+          38200
+        ],
+        "font": 22
+      },
+      {
+        "id": "hills",
+        "name": "坡地",
+        "xyCm": [
+          102000,
+          70400
+        ],
+        "font": 22
+      }
+    ],
+    "visualStyle": "gray-dark relief, recessed valley and rolling hills",
+    "fogStyle": "airy charcoal wisps; unrevealed terrain concealed",
+    "outlineFractions": [
+      0.94,
+      0.9884375,
+      0.99,
+      0.9853125,
+      0.93,
+      0.9518750000000001,
+      0.935,
+      0.9484374999999999,
+      0.97,
+      0.9859374999999999,
+      0.995,
+      0.9915625,
+      0.975,
+      0.931875,
+      0.895,
+      0.9015625,
+      0.925,
+      0.95375,
+      0.98,
+      0.99,
+      0.99,
+      0.9809375,
+      0.915,
+      0.93875,
+      0.96,
+      0.9328125,
+      0.91,
+      0.9728125000000001,
+      0.985,
+      0.9890625,
+      0.9750000000000002,
+      0.9121875000000003,
+      0.86,
+      0.87,
+      0.935,
+      0.96125,
+      0.98,
+      0.9921875,
+      0.995,
+      0.945,
+      0.965,
+      0.9187500000000003,
+      0.945,
+      0.9131250000000001,
+      0.955,
+      0.925,
+      0.985,
+      0.9865624999999999
+    ],
+    "outlineStyle": "mixed angular cuts and smooth terrain edges; approximately 91 percent of original circle",
+    "initialZoom": 2,
+    "initialPan": [
+      0,
+      30
+    ],
+    "outlineAngularSegments": [
+      47,
+      0,
+      3,
+      4,
+      21,
+      22,
+      25,
+      26,
+      32,
+      33,
+      38,
+      39,
+      43,
+      44,
+      45
+    ],
+    "outlineFeatherFractions": [
+      0.28,
+      0.4,
+      1.0,
+      0.4,
+      0.28,
+      0.4,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.4,
+      0.28,
+      0.4,
+      1.0,
+      0.4,
+      0.28,
+      0.4,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.4,
+      0.28,
+      0.4,
+      1.0,
+      1.0,
+      1.0,
+      0.4,
+      0.28,
+      0.4,
+      1.0,
+      1.0,
+      0.4,
+      0.4,
+      0.28,
+      0.4,
+      0.4
+    ]
+  },
+  "worldMapPage": {
+    "background": "",
+    "header": false,
+    "elements": [
+      {
+        "type": "journalBackdrop",
+        "rect": [
+          0,
+          0,
+          1672,
+          941
+        ],
+        "layoutId": "background"
+      },
+      {
+        "type": "menuSurface",
+        "rect": [
+          65,
+          120,
+          330,
+          739
+        ],
+        "layoutId": "worldmap.surface"
+      },
+      {
+        "type": "text",
+        "text": "苍岚谷",
+        "rect": [
+          94,
+          144,
+          300,
+          50
+        ],
+        "font": 34,
+        "layoutId": "map.element.006",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "",
+        "rect": [
+          94,
+          194,
+          300,
+          30
+        ],
+        "font": 24,
+        "color": "muted",
+        "bind": "exploration",
+        "layoutId": "map.element.007",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "",
+        "rect": [
+          93,
+          345,
+          320,
+          300
+        ],
+        "font": 19,
+        "layoutId": "map.element.009",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "滚轮 缩放　方向键 平移　右键 设置标记　Esc 返回",
+        "rect": [
+          53,
+          892,
+          1100,
+          35
+        ],
+        "font": 16,
+        "layoutId": "map.element.010",
+        "component": "map.footer"
+      },
+      {
+        "type": "image",
+        "text": "",
+        "rect": [
+          92,
+          375,
+          31,
+          35
+        ],
+        "asset": "legendMain",
+        "layoutId": "map.element.011",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "主线任务",
+        "rect": [
+          142,
+          383,
+          235,
+          30
+        ],
+        "font": 16,
+        "layoutId": "map.element.012",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "image",
+        "text": "",
+        "rect": [
+          92,
+          417,
+          31,
+          35
+        ],
+        "asset": "legendSide",
+        "layoutId": "map.element.013",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "支线任务",
+        "rect": [
+          142,
+          425,
+          235,
+          30
+        ],
+        "font": 16,
+        "layoutId": "map.element.014",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "image",
+        "text": "",
+        "rect": [
+          92,
+          459,
+          31,
+          35
+        ],
+        "asset": "legendCamp",
+        "layoutId": "map.element.015",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "营地",
+        "rect": [
+          142,
+          467,
+          235,
+          30
+        ],
+        "font": 16,
+        "layoutId": "map.element.016",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "image",
+        "text": "",
+        "rect": [
+          92,
+          501,
+          31,
+          35
+        ],
+        "asset": "legendTravel",
+        "layoutId": "map.element.017",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "已激活传送",
+        "rect": [
+          142,
+          509,
+          235,
+          30
+        ],
+        "font": 16,
+        "layoutId": "map.element.018",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "image",
+        "text": "",
+        "rect": [
+          92,
+          543,
+          31,
+          35
+        ],
+        "asset": "legendLandmark",
+        "layoutId": "map.element.019",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "已发现路标",
+        "rect": [
+          142,
+          551,
+          235,
+          30
+        ],
+        "font": 16,
+        "layoutId": "map.element.020",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "image",
+        "text": "",
+        "rect": [
+          92,
+          585,
+          31,
+          35
+        ],
+        "asset": "legendUnknown",
+        "layoutId": "map.element.021",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "text",
+        "text": "尚未发现",
+        "rect": [
+          142,
+          593,
+          235,
+          30
+        ],
+        "font": 16,
+        "layoutId": "map.element.022",
+        "component": "map.sidebar"
+      },
+      {
+        "type": "image",
+        "layoutId": "map.compass",
+        "asset": "mapCompass",
+        "rect": [
+          1514,
+          94,
+          105,
+          110
+        ]
+      },
+      {
+        "type": "image",
+        "layoutId": "map.campPreview",
+        "asset": "campPortrait",
+        "rect": [
+          74,
+          742,
+          305,
+          150
+        ],
+        "component": "map.sidebar"
+      },
+      {
+        "type": "line",
+        "layoutId": "map.rule.1",
+        "rect": [
+          65,
+          864,
+          1606,
+          1
+        ],
+        "color": "bronze",
+        "component": "map.footer"
+      },
+      {
+        "type": "text",
+        "text": "世界地图",
+        "rect": [
+          65,
+          24,
+          500,
+          60
+        ],
+        "font": 32,
+        "component": "map.header"
+      },
+      {
+        "type": "menuAction",
+        "text": "局部地图 ›",
+        "rect": [
+          1270,
+          24,
+          340,
+          50
+        ],
+        "font": 22,
+        "action": "map.local",
+        "component": "map.header"
+      },
+      {
+        "type": "menuAction",
+        "text": "筛选传送点",
+        "rect": [
+          800,
+          24,
+          400,
+          50
+        ],
+        "font": 22,
+        "action": "mapFilter",
+        "component": "map.header"
+      },
+      {
+        "type": "menuAction",
+        "text": "Esc 返回",
+        "rect": [
+          1370,
+          882,
+          250,
+          44
+        ],
+        "font": 20,
+        "action": "back",
+        "component": "map.footer"
+      },
+      {
+        "type": "text",
+        "text": "群山环抱的河谷，古老的部族在此生息。\n而火种，仍在风中传唱。",
+        "rect": [
+          94,
+          239,
+          290,
+          120
+        ],
+        "font": 15,
+        "color": "muted",
+        "layoutId": "map.element.008",
+        "component": "map.sidebar"
+      }
+    ]
   }
 }

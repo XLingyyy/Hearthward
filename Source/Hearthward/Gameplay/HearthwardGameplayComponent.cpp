@@ -143,7 +143,7 @@ float UHearthwardGameplayComponent::MaxHealth() const
 float UHearthwardGameplayComponent::MaxStamina() const
 { return 100 + HearthwardProgression::Attribute(Level(),TEXT("stamina_bonus")) + Number(HearthwardCamp::Tier(CampTier),TEXT("cumulative_stamina_bonus")) + Effect(TEXT("stamina")); }
 bool UHearthwardGameplayComponent::Result(bool Success,const FString& Message)
-{ Feedback=Message; OnChanged.Broadcast(); return Success; }
+{ SetFeedback(Message); OnChanged.Broadcast(); return Success; }
 bool UHearthwardGameplayComponent::Learn(FName Id)
 {
     const auto R=Find(TEXT("skills"),Id.ToString());
@@ -177,8 +177,138 @@ bool UHearthwardGameplayComponent::CommitEquipmentInstance(FGuid Id)
     if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();C && (Slot==TEXT("weapon") || Slot==TEXT("ranged")))C->SelectRanged(Slot==TEXT("ranged") && Equipment.Contains(Slot));
     return Result(true,TEXT("装备已更新"));
 }
+FName UHearthwardGameplayComponent::QuickItem(int32 Slot) const
+{ return QuickItems.IsValidIndex(Slot)?QuickItems[Slot]:NAME_None; }
+FName UHearthwardGameplayComponent::InventoryTab(FName Item)
+{
+    const auto Row=Find(TEXT("items"),Item.ToString());if(!Row)return NAME_None;
+    const FString Kind=Text(Row,TEXT("category"));
+    if(Number(Row,TEXT("throwDamage"))>0 || Number(Row,TEXT("bait"))>0 || Kind==TEXT("投掷物"))return TEXT("tool");
+    if(Kind==TEXT("装备"))return TEXT("gear");
+    if(Kind==TEXT("材料"))return TEXT("material");
+    if(Kind==TEXT("食物") || Kind==TEXT("药品") || Kind==TEXT("消耗品"))return TEXT("consumable");
+    if(Kind==TEXT("工具") || Kind==TEXT("任务") || Kind==TEXT("图纸"))return TEXT("tool");
+    return NAME_None;
+}
+int32 UHearthwardGameplayComponent::BackpackItemCount(FName Item) const
+{
+    const auto* Bag=Inventory();if(!Bag)return 0;
+    int32 Count=Bag->GetItemCount(Item);
+    for(const auto& Equipped:Bag->Snapshot().Equipped)
+        if(const auto* Instance=Bag->FindInstance(Equipped.Value))
+            if(Instance->Definition==Item)--Count;
+    return FMath::Max(0,Count);
+}
+TArray<FName> UHearthwardGameplayComponent::InventorySlots(FName Tab,bool IncludeEquipped) const
+{
+    TArray<TSharedPtr<FJsonObject>> Owned;
+    if(!Inventory() || Tab.IsNone())return {};
+    for(const auto& V:Rows(TEXT("items")))
+    {
+        const auto Row=V->AsObject();const FName Item(*Text(Row,TEXT("id")));
+        if(InventoryTab(Item)==Tab && Inventory()->GetItemCount(Item)>0)Owned.Add(Row);
+    }
+    Owned.StableSort([](const auto& A,const auto& B){return Number(A,TEXT("displayOrder"))<Number(B,TEXT("displayOrder"));});
+    TArray<FName> Slots;
+    for(const auto& Row:Owned)
+    {
+        const FName Item(*Text(Row,TEXT("id")));const auto* Position=InventoryPositions.Find(Item);
+        if(!Position)continue;
+        if(Slots.Num()<=*Position)Slots.SetNum(*Position+1);
+        Slots[*Position]=Item;
+    }
+    for(const auto& Row:Owned)
+    {
+        const FName Item(*Text(Row,TEXT("id")));if(InventoryPositions.Contains(Item))continue;
+        int32 Position=Slots.IndexOfByKey(NAME_None);if(Position==INDEX_NONE)Position=Slots.Add(NAME_None);
+        Slots[Position]=Item;
+    }
+    // Keep the saved positions stable while wearing gear, but vacate its visible cell.
+    // Spare instances of the same definition retain their own unequipped quantity.
+    if(!IncludeEquipped)
+    {
+        for(auto& Item:Slots)if(!Item.IsNone() && BackpackItemCount(Item)==0)Item=NAME_None;
+        while(!Slots.IsEmpty() && Slots.Last().IsNone())Slots.RemoveAt(Slots.Num()-1);
+    }
+    return Slots;
+}
+bool UHearthwardGameplayComponent::SetBackpackEquipment(FGuid Instance,FName Slot,bool EquipItem,FGuid Epoch)
+{
+    const auto* I=Inventory()?Inventory()->FindInstance(Instance):nullptr;
+    if(!I || Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())return Result(false,TEXT("物品或存档状态已变化，请重新拖动"));
+    if(FName(*Text(Find(TEXT("items"),I->Definition.ToString()),TEXT("slot")))!=Slot || Slot.IsNone())return Result(false,TEXT("无法放置：装备与该槽位不匹配"));
+    if(!CanUseItem(I->Definition))return false;
+    if(!CanChangeSkills())return Result(false,TEXT("当前有动作或处于战斗中，无法更换装备"));
+    const FGuid Current=Inventory()->EquippedInstance(Slot);
+    if(!EquipItem && Current!=Instance)return Result(false,TEXT("当前装备已变化，请重新拖动"));
+    if(EquipItem && Current==Instance)return Result(true,TEXT("该装备已穿戴"));
+    return CommitEquipmentInstance(Instance);
+}
+bool UHearthwardGameplayComponent::MoveInventoryItem(FName Item,int32 Position,FGuid Epoch,FGuid Unequip)
+{
+    const FName Tab=InventoryTab(Item);
+    if(!Enabled || Tab.IsNone() || !Inventory() || Inventory()->GetItemCount(Item)<=0 || Position<0 || Position>=500
+        || Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())return Result(false,TEXT("无法移动：物品、格子或存档状态已变化"));
+    if(!Unequip.IsValid() && BackpackItemCount(Item)<=0)return Result(false,TEXT("请先将当前装备拖回背包"));
+    auto Slots=InventorySlots(Tab,true);const int32 Source=Slots.IndexOfByKey(Item);
+    if(Source==INDEX_NONE)return false;
+    if(Slots.Num()<=Position)Slots.SetNum(Position+1);
+    Slots.Swap(Source,Position);
+    if(Unequip.IsValid())
+    {
+        const auto* I=Inventory()->FindInstance(Unequip);
+        if(!I || I->Definition!=Item || !SetBackpackEquipment(Unequip,FName(*Text(Find(TEXT("items"),Item.ToString()),TEXT("slot"))),false,Epoch))return false;
+    }
+    // Keep absent definitions from claiming a cell when the item is collected again.
+    for(auto It=InventoryPositions.CreateIterator();It;++It)if(InventoryTab(It.Key())==Tab)It.RemoveCurrent();
+    for(int32 Index=0;Index<Slots.Num();++Index)if(!Slots[Index].IsNone())InventoryPositions.Add(Slots[Index],Index);
+    return Result(true,TEXT("物品位置已更新"));
+}
+bool UHearthwardGameplayComponent::FitsQuickSlot(int32 Slot,FName Item)
+{
+    const auto Row=Find(TEXT("items"),Item.ToString());
+    if(!Row) return false;
+    switch(Slot)
+    {
+    case 0:return Number(Row,TEXT("healing"))>0;
+    case 1:return Number(Row,TEXT("food"))>0;
+    case 2:return Item==TEXT("arrow");
+    case 3:return Number(Row,TEXT("throwDamage"))>0 || Number(Row,TEXT("bait"))>0;
+    default:return false;
+    }
+}
+bool UHearthwardGameplayComponent::AssignQuickItem(int32 Slot,FName Item)
+{
+    if(!QuickItems.IsValidIndex(Slot)) return false;
+    const TCHAR* Names[]={TEXT("药品栏"),TEXT("食物栏"),TEXT("弓箭栏"),TEXT("投掷栏")};
+    if(Item.IsNone()) {QuickItems[Slot]=NAME_None;return Result(true,FString::Printf(TEXT("已清空%s"),Names[Slot]));}
+    if(!FitsQuickSlot(Slot,Item)) return Result(false,FString::Printf(TEXT("无法放置到%s：物品作用不符"),Names[Slot]));
+    if(!Inventory() || Inventory()->GetItemCount(Item)<=0) return Result(false,TEXT("无法放置：背包中没有该物品"));
+    QuickItems[Slot]=Item;
+    return Result(true,FString::Printf(TEXT("已放入%s：%s"),Names[Slot],*Text(Find(TEXT("items"),Item.ToString()),TEXT("name"))));
+}
+bool UHearthwardGameplayComponent::CanUseItem(FName Item)
+{
+    const auto* Survival=GetOwner()?GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
+    const FName Active=Survival?Survival->ActiveConsumable():NAME_None;
+    if(Active.IsNone()) return true;
+    FString ActiveName=Text(Find(TEXT("items"),Active.ToString()),TEXT("name"));
+    FString ItemName=Text(Find(TEXT("items"),Item.ToString()),TEXT("name"));
+    if(ActiveName.IsEmpty()) ActiveName=TEXT("药品");
+    if(ItemName.IsEmpty()) ItemName=TEXT("选中道具");
+    return Result(false,FString::Printf(TEXT("当前正在使用%s，不能同时使用%s"),*ActiveName,*ItemName));
+}
+bool UHearthwardGameplayComponent::UseQuickItem(int32 Slot)
+{
+    const FName Item=QuickItem(Slot);
+    if(Item.IsNone()) return Result(false,TEXT("该道具栏未配置物品"));
+    if(!FitsQuickSlot(Slot,Item)) return Result(false,TEXT("该道具栏中的物品作用不符"));
+    return UseItem(Item);
+}
 bool UHearthwardGameplayComponent::UseItem(FName Id)
 {
+    if(!Enabled || !CanUseItem(Id)) return false;
+    if(Id==TEXT("arrow")) return Result(false,TEXT("箭矢需装备对应弓，选中弓箭栏后用左键射击"));
     if(Id.ToString().StartsWith(TEXT("treasure_map_")))return GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->ReadMap(Id);
     const auto R=Find(TEXT("items"),Id.ToString());
     const float Food=Number(R,TEXT("food"));
@@ -189,8 +319,7 @@ bool UHearthwardGameplayComponent::UseItem(FName Id)
     if(Number(R,TEXT("throwDamage"))>0) return ThrowItem(Id);
     if(Food<=0) return Equip(Id);
     const bool Ate=Survival && Survival->Eat(Id);
-    if(Ate) Record(TEXT("consume"),Id);
-    return Result(Ate,Ate?TEXT("已食用：")+Text(R,TEXT("name")):TEXT("当前无法食用"));
+    return Result(Ate,Ate?TEXT("正在进食：")+Text(R,TEXT("name")):TEXT("当前无法食用"));
 }
 bool UHearthwardGameplayComponent::Drop(FName Id,int32 Count)
 {
@@ -326,6 +455,12 @@ float UHearthwardGameplayComponent::AttackPower() const
     const FName Weapon=Equipment.FindRef(TEXT("weapon"));
     if(Weapon.IsNone() || EquippedDurability(TEXT("weapon"))<=0) return 0;
     return Number(Find(TEXT("items"),Weapon.ToString()),TEXT("attack"))*(1+Effect(TEXT("attack")))*(GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.Severe()?.75f:1.f);
+}
+float UHearthwardGameplayComponent::ArmorReduction(FName Slot) const
+{
+    const auto Item=Find(TEXT("items"),Equipment.FindRef(Slot).ToString());
+    const float Part=EquippedDurability(Slot)>0?Number(Item,TEXT("defense"))/100+Effect(TEXT("local_armor_bonus")):0;
+    return (1-HearthwardCombat::ArmorDamage(100,Part,Effect(TEXT("defense")))/100)*100;
 }
 bool UHearthwardGameplayComponent::Attack()
 { return GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()->Attack(false); }
@@ -553,7 +688,7 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
         if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp"))
         {const auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();if(!C->Active() || !C->HasLocation(Id))continue;}
         if (!Discovered.Contains(Id) && FVector::Dist2D(P,LocationPosition(Id))<=Tune(TEXT("discoverRadius"))*(1+Effect(TEXT("discover"))))
-        { Discovered.Add(Id); GrantExperience(TEXT("first_discovery"),EventKey(TEXT("discover"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()); Record(TEXT("discover"),Id); Feedback=TEXT("发现：")+Text(L->AsObject(),TEXT("name")); }
+        { Discovered.Add(Id); GrantExperience(TEXT("first_discovery"),EventKey(TEXT("discover"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()); Record(TEXT("discover"),Id); SetFeedback(TEXT("发现：")+Text(L->AsObject(),TEXT("name"))); }
     }
     OnChanged.Broadcast();
 }
@@ -565,6 +700,12 @@ FString UHearthwardGameplayComponent::SaveSnapshot() const
     if(const auto* B=GetOwner()?GetOwner()->FindComponentByClass<UHearthwardBuildingComponent>():nullptr) J->SetArrayField(TEXT("buildings"),B->Snapshot());
     J->SetNumberField(TEXT("health"),Health); J->SetNumberField(TEXT("hunger"),Hunger); J->SetNumberField(TEXT("stamina"),Stamina);
     J->SetNumberField(TEXT("experience"),Experience); J->SetNumberField(TEXT("campTier"),CampTier); J->SetBoolField(TEXT("enabled"),Enabled);
+    TArray<TSharedPtr<FJsonValue>> Quick;
+    for(FName Item:QuickItems) Quick.Add(MakeShared<FJsonValueString>(Item.ToString()));
+    J->SetArrayField(TEXT("quickItems"),Quick);
+    auto Positions=MakeShared<FJsonObject>();
+    for(const auto& Entry:InventoryPositions)Positions->SetNumberField(Entry.Key.ToString(),Entry.Value);
+    J->SetObjectField(TEXT("inventoryPositions"),Positions);
     J->SetStringField(TEXT("tracked"),TrackedQuest.ToString());
     J->SetStringField(TEXT("companionOrder"),CompanionOrder.ToString());
     J->SetBoolField(TEXT("companionRoutine"),CompanionRoutineEnabled);
@@ -586,6 +727,28 @@ bool UHearthwardGameplayComponent::ValidateSnapshot(const FString& Json)
     const auto J=Parse(Json); if (!J) return false;
     if(J->HasField(TEXT("combat")) && (!J->HasTypedField<EJson::String>(TEXT("combat")) || !UHearthwardCombatComponent::ValidateSnapshot(Text(J,TEXT("combat"))))) return false;
     if(Number(J,TEXT("version"))!=1) return false;
+    if(J->HasField(TEXT("quickItems")))
+    {
+        const TArray<TSharedPtr<FJsonValue>>* Quick;
+        if(!J->TryGetArrayField(TEXT("quickItems"),Quick) || Quick->Num()!=4) return false;
+        for(int32 Slot=0;Slot<4;++Slot)
+        { FString Item;if(!(*Quick)[Slot]->TryGetString(Item) || (!FName(*Item).IsNone() && !FitsQuickSlot(Slot,FName(*Item))))return false; }
+    }
+    if(J->HasField(TEXT("inventoryPositions")))
+    {
+        const TSharedPtr<FJsonObject>* Positions;
+        if(!J->TryGetObjectField(TEXT("inventoryPositions"),Positions))return false;
+        TSet<FString> Occupied;TSet<FName> Items;
+        for(const auto& Entry:(*Positions)->Values)
+        {
+            double Position;const FName Tab=InventoryTab(FName(*Entry.Key));
+            const FName Item(*Entry.Key);
+            if(Tab.IsNone() || Items.Contains(Item) || Entry.Value->Type!=EJson::Number || !Entry.Value->TryGetNumber(Position) || !FMath::IsFinite(Position) || Position<0 || Position>=500 || Position!=FMath::FloorToDouble(Position))return false;
+            Items.Add(Item);
+            const FString Key=Tab.ToString()+TEXT(":")+FString::FromInt(int32(Position));
+            if(Occupied.Contains(Key))return false;Occupied.Add(Key);
+        }
+    }
     if(J->HasField(TEXT("buildings")))
     {
         const TArray<TSharedPtr<FJsonValue>>* Buildings;
@@ -665,12 +828,18 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     for(auto& A:OpponentActors) if(A.Value.IsValid()) A.Value->Destroy();
     LandmarkActors.Reset(); OpponentActors.Reset(); Stunned.Reset();
     Skills.Reset(); RewardFacts.Reset(); KnownRecipes.Reset(); Equipment.Reset(); Discovered.Reset(); Activated.Reset(); Claimed.Reset(); Events.Reset(); Explored.Reset(); Opponents.Reset(); Durability.Reset();
-    Sprinting=false; RecoveryDelay=0; ExploreDelay=0; AttackDelay=EnemyAttackDelay=CombatRemaining=CompanionAttackDelay=0; Feedback.Reset();
+    QuickItems={TEXT("medicine"),TEXT("roast"),TEXT("arrow"),TEXT("firepot")};
+    InventoryPositions.Reset();
+    Sprinting=false; RecoveryDelay=0; ExploreDelay=0; AttackDelay=EnemyAttackDelay=CombatRemaining=CompanionAttackDelay=0; SetFeedback(FString());
     CompanionOrder=TEXT("wait"); CompanionRoutineEnabled=false; CompanionRoutineActivity=NAME_None;
     CompanionTacticalIntent=TEXT("hold"); CompanionCombatTarget=NAME_None; CompanionCombatReason=TEXT("EXPLICIT_HOLD");
     HasWaypoint=false; Waypoint=FVector::ZeroVector;
     if (Json.IsEmpty()) { if(GetOwner()) if(auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>()) C->Restore(TEXT("")); Health=Hunger=Stamina=100; Experience=0; CampTier=1; Enabled=false; TrackedQuest=TEXT("ember"); return; }
     const auto J=Parse(Json);
+    if(J->HasTypedField<EJson::Array>(TEXT("quickItems")))
+        for(int32 Slot=0;Slot<4;++Slot) QuickItems[Slot]=FName(*J->GetArrayField(TEXT("quickItems"))[Slot]->AsString());
+    if(J->HasTypedField<EJson::Object>(TEXT("inventoryPositions")))
+        for(const auto& Entry:J->GetObjectField(TEXT("inventoryPositions"))->Values)InventoryPositions.Add(FName(*Entry.Key),int32(Entry.Value->AsNumber()));
     if(J->HasField(TEXT("companionOrder"))) CompanionOrder=FName(*Text(J,TEXT("companionOrder")));
     if(J->HasField(TEXT("companionRoutine"))) CompanionRoutineEnabled=J->GetBoolField(TEXT("companionRoutine"));
     if(J->HasField(TEXT("hasWaypoint"))) { HasWaypoint=J->GetBoolField(TEXT("hasWaypoint")); Waypoint.InitFromString(Text(J,TEXT("waypoint"))); }

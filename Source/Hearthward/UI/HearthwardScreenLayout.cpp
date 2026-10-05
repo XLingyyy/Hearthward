@@ -26,7 +26,7 @@ bool Contains(FVector2D P,FVector2D A,FVector2D S)
 FString LayoutFile() { return FPaths::ProjectDir()/TEXT("Resources/UI/layout.json"); }
 }
 TSharedPtr<FJsonObject> UHearthwardScreenWidget::PageLayout() const
-{ return LayoutConfig->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString()); }
+{ return Page==TEXT("map") && WorldMap?LayoutConfig->GetObjectField(TEXT("worldMap")):LayoutConfig->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString()); }
 bool UHearthwardScreenWidget::ReloadLayout()
 {
     FString Json; TSharedPtr<FJsonObject> Parsed;
@@ -221,6 +221,7 @@ FReply UHearthwardScreenWidget::LayoutMouseDown(const FGeometry& G,const FPointe
 }
 FReply UHearthwardScreenWidget::NativeOnMouseButtonUp(const FGeometry& G,const FPointerEvent& E)
 {
+    if(!InventoryDragItem.IsNone() && E.GetEffectingButton()==EKeys::LeftMouseButton)return InventoryMouseUp(G,E);
     if(LayoutDragging) { LayoutDragging=false; return FReply::Handled().ReleaseMouseCapture(); }
     return Super::NativeOnMouseButtonUp(G,E);
 }

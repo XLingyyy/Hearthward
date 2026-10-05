@@ -9,7 +9,7 @@ def mean11(x):
     return (s[11:,11:]-s[:-11,11:]-s[11:,:-11]+s[:-11,:-11])/121
 out={}
 for name,ref in names.items():
-    a=np.asarray(Image.open(root/'ui pic'/f'{ref}.png').convert('RGB'),dtype=np.float64)/255
+    a=np.asarray(Image.open(root/'art_source/ui-reference/TASK-020'/f'{ref}.png').convert('RGB'),dtype=np.float64)/255
     b=np.asarray(Image.open(evidence/f'{name}.png').convert('RGB'),dtype=np.float64)/255
     mae=float(np.abs(a-b).mean())
     x=a.mean(2);y=b.mean(2);mx=mean11(x);my=mean11(y)

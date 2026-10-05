@@ -1,0 +1,32 @@
+[
+  {
+    "failure": "LoadingRestoresLatestPageInputMode",
+    "cause": "新UI输入应用漏接main的InputModeChanged，独立Widget无HUD回退路径会恢复旧快照",
+    "fix": "设置页面输入模式后记录最新状态，加载期继续阻断输入",
+    "verified_by": "ui-native-final"
+  },
+  {
+    "failure": "DangerousConfirmationNeedsExplicitFocus",
+    "cause": "放弃救援弹窗沿用了新UI默认取消焦点，Enter误关闭弹窗",
+    "fix": "放弃救援保留显式选择，其他新UI确认框保持安全取消默认值",
+    "verified_by": "ui-native-pass"
+  },
+  {
+    "failure": "PauseQuestStatesKeepReadableActions 150%",
+    "cause": "新暂停页仍进入旧列表重排，显示查询与实际命中错位",
+    "fix": "新暂停页按自身字号布局，覆盖34任务状态与生存/倒地、100%/150%",
+    "verified_by": "ui-native-pass"
+  },
+  {
+    "failure": "地图旧测试定位/解引用",
+    "cause": "旧测试仍读取pages.map，世界地图已分离为worldMapPage",
+    "fix": "保持探索与可读性断言，改用实际世界地图配置，并验证两种视图切换",
+    "verified_by": "map-render"
+  },
+  {
+    "failure": "提示测试2项文案断言",
+    "cause": "main满血用药返回具体拒绝原因，UI历史断言期望旧笼统文案",
+    "fix": "测试断言准确的满血拒绝原因，继续验证重复触发、淡出、暂停与活动进度",
+    "verified_by": "feedback-final"
+  }
+]

@@ -3,13 +3,15 @@
 ## Hearthward 本地启动约定
 
 - 游戏开发根目录为本仓库；上层 GameFactory 是独立工具仓库，禁止将游戏提交到上层仓库。
-- TASK-003、TASK-005至TASK-012已提交推送；TASK-004仅任务单，明确不执行。TASK-013本地模型和设计修订已提交推送。TASK-014独立灰盒已提交推送。TASK-015伙伴UI已提交推送。TASK-016世界知识快照已提交推送。TASK-017存档UI及交接已提交推送。TASK-018玩家采集/入库已提交推送。TASK-019已提交推送。TASK-020九页UI及配套玩法已于2026-09-19通过用户验收。TASK-021导航已提交推送；TASK-022建造已提交推送；TASK-023即时制作已提交推送；TASK-024已由用户PR #21合并到main；原025经PR #22合并main d02b5fe后用户未通过验收；当前TASK-025按用户增强版v2执行A+B，分支codex/TASK-025-agent-rev2，范围/验收见025任务单，延续任务分支提交推送授权，未授权Agent合并。仅显式非Shipping夹具，不把R22未定边界补成正式玩法。
+- 当前主干与未合并分支以 `docs/PROJECT_STATE.md`、`docs/planning/BRANCH_INTEGRATION.md` 和实际 Git 记录为准；旧任务授权与验收见各单交接。2026-10-05远端main基线为 `ac6a302b`；TASK-076在此基础上整合新版UI与玩法，来源与验证见本单交接。
 - 原始输入保留于 docs；WORKFLOW.md 是后续维护入口，docs/工作流_v1.0.md 作为原始快照保留。
 - 文本通过 Python 显式 UTF-8 读取；未知编码先检查 BOM。禁止用 LibreOffice 读取文档。
 - UE 目标为 5.8.2；首次生成新工程时 Game/Editor Target 使用 BuildSettingsVersion.V7，EngineAssociation 使用 5.8。
 - 本机绝对路径见被忽略的 .agent-local/environment.json。不要直接激活上层脚本：它默认指向 GameFactoryUE 准备工程。
 - 引擎操作使用 GameFactory 的 UEClient 公开 API，并显式指定本游戏工程；创建工程前按上层 setting_overview 路由读取所需引擎文档。
 - 当前提交／推送授权涵盖 TASK-003 成果、TASK-004 任务单及相应状态／交接文档；不包含合并、变更远端保护或执行 TASK-004。用户随后授权 TASK-005、TASK-006、TASK-007、TASK-008、TASK-009、TASK-010、TASK-011、TASK-012 实现、任务单与证据提交推送；合并权限仍未授予。
+
+- 用户2026-10-05明确授权TASK-075／076整理、UI与玩法整合的提交、推送及更新main；本轮无需再次询问。不得强推、修改远端保护或代填人工验收。
 
 ## 项目与权限
 
@@ -29,6 +31,12 @@
 4. 核对真实工作目录、分支、HEAD、未知改动、任务归属、可选Issue与资产锁；无远端能力明确说明。
 5. 返回简短接手回执：目标、来源、允许路径、当前证据、阻塞、下一步。
 6. 无任务、在main、未知改动或写权限未确认时，只读调查，不自动清理或扩权。
+
+## 文件存放与编号
+
+- 目录用途及迁移记录见 `docs/REPOSITORY_LAYOUT.md`；运行时资源放 `Resources/`，制作源放 `art_source/`，禁止重新创建根 `Resource/`、`ui pic/` 或日期目录。
+- 新QA临时输出先放 `.agent-local/qa/<任务>/<运行>/`，交付时只提升报告明确引用的必要证据至 `docs/qa/<任务>/`；原始失败证据如用于说明限制，应保留。不要把既有QA记录批量删除或改写。
+- 新任务编号先核对main、远端活跃分支和整合清单；已经出现的TASK-053双重用途必须附分支名，UI整合使用TASK-076，main TASK-053保持通行玩法含义。
 
 ## 写入纪律
 

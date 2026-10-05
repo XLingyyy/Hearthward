@@ -66,7 +66,7 @@ bool UHearthwardScreenWidget::ExecuteSettingsAction(const FString& Action)
 {
     if(Page!=TEXT("settings")) return false;
     if(Action==TEXT("settings.prev") || Action==TEXT("settings.next"))
-    { Scroll=FMath::Max(0,Scroll+(Action==TEXT("settings.next")?5:-5));Refresh();return true; }
+    { if(!ConfirmAction.IsEmpty()) return false;Scroll=FMath::Max(0,Scroll+(Action==TEXT("settings.next")?MenuPageSize():-MenuPageSize()));Refresh();return true; }
     if(Action.StartsWith(TEXT("settings.bind:")) || Action.StartsWith(TEXT("settings.clear:")))
     {
         TArray<FString> Parts;Action.ParseIntoArray(Parts,TEXT(":"));if(Parts.Num()!=3) return false;
@@ -129,6 +129,7 @@ bool UHearthwardScreenWidget::ExecuteSettingsAction(const FString& Action)
         PlayerSettings->Bindings=SettingsBindings;PlayerSettings->Comfort=SettingsComfort;PlayerSettings->Persist();
         if(auto* Character=Cast<AHearthwardCharacter>(GetOwningPlayerPawn()))
         {Character->SetLookSettings(SettingsSensitivity,SettingsInvertY);Character->RebuildInputBindings();PlayerSettings->ApplyTo(Character);}
+        ApplyInputMode();
         if(ChangedDisplay) {DisplayDeadline=FPlatformTime::Seconds()+15;ConfirmAction=TEXT("settings.display");ConfirmMessage=TEXT("保留新的显示模式与分辨率？15秒后自动恢复。");KeyboardFocus=INDEX_NONE;}
         SettingsDirty=false;
         Message=TEXT("设置已应用");
@@ -198,20 +199,11 @@ void UHearthwardScreenWidget::ComposeSettings()
 {
     const TCHAR* Tabs[]={TEXT("游戏"),TEXT("显示"),TEXT("图形"),TEXT("音频"),
         TEXT("控制"),TEXT("键位"),TEXT("辅助功能"),TEXT("教程")};
-    Element(TEXT("panel"),TEXT(""),FVector2D(417,180),FVector2D(227,587));
-    Element(TEXT("panel"),TEXT(""),FVector2D(668,180),FVector2D(692,462));
-    Element(TEXT("panel"),TEXT(""),FVector2D(668,651),FVector2D(692,116));
-    Element(TEXT("line"),TEXT(""),FVector2D(677,139),FVector2D(125,1)); Elements.Last().Color=Color(TEXT("bronze"));
-    Element(TEXT("line"),TEXT(""),FVector2D(987,139),FVector2D(125,1)); Elements.Last().Color=Color(TEXT("bronze"));
-    Element(TEXT("text"),TEXT("设置"),FVector2D(814,111),FVector2D(155,56),44); Elements.Last().Align=TEXT("center");
+    ComposeMenuChrome(TEXT("设置"),TEXT("系统与操作偏好"));
     for(int32 I=0;I<UE_ARRAY_COUNT(Tabs);++I)
     {
-        const int32 Y=188+I*57;
-        const bool Active=Category==Tabs[I];
-        Element(TEXT("settingsTab"),TEXT(""),FVector2D(423,Y),FVector2D(215,53),18,FString(TEXT("category:"))+Tabs[I],TEXT(""),Active);
-        Element(TEXT("text"),FString(Tabs[I]).Left(1),FVector2D(439,Y+12),FVector2D(32,32),24);
-        Elements.Last().Align=TEXT("center"); Elements.Last().Color=Color(TEXT("gold"));
-        Element(TEXT("text"),Tabs[I],FVector2D(493,Y+11),FVector2D(131,32),25);
+        auto& Tab=MenuElement(TEXT("menuTab"),Tabs[I],{88.+I*187,158},{179,44},22,FString(TEXT("category:"))+Tabs[I],Category==Tabs[I]);
+        Tab.Align=TEXT("center");
     }
 
     TArray<FSettingRow> Rows;
@@ -258,7 +250,7 @@ void UHearthwardScreenWidget::ComposeSettings()
     }
     else if(Category==TEXT("键位"))
     {
-        for(const auto& D:HearthwardInput::Definitions()) Add(*D.Id.ToString(),*D.Label,HearthwardInput::Label(SettingsBindings,D.Id),TEXT("点击主／副键后按新键；同时可用的冲突阻止应用。Esc和Enter为保留键。"));
+        for(const auto& D:HearthwardInput::Definitions()) Add(*D.Id.ToString(),*D.Label,HearthwardInput::Label(SettingsBindings,D.Id),TEXT("点击主／副键后按新键；同场景冲突阻止应用。Esc、Enter、方向及翻页键保留用于界面导航。"));
     }
     else if(Category==TEXT("辅助功能"))
     {
@@ -280,51 +272,66 @@ void UHearthwardScreenWidget::ComposeSettings()
         Add(TEXT("tutorial4"),TEXT("查看方向"),TEXT("M / J"),TEXT("地图和任务页可帮助确定下一步目标。"));
         Add(TEXT("tutorial5"),TEXT("保存进度"),TEXT("F6"),TEXT("在安全时打开存档页保存游戏。"));
     }
-    if(!Rows.ContainsByPredicate([&](const FSettingRow& Row){return SettingsSelection==Row.Key;})) SettingsSelection=Rows[0].Key;
-    const int32 PageSize=5;
-    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Rows.Num()-1));
+    const int32 PageSize=MenuPageSize();
+    const float Height=MenuRowHeight();
+    Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,Rows.Num()-PageSize));
+    const int32 SelectedIndex=Rows.IndexOfByPredicate([&](const FSettingRow& Row){return SettingsSelection==Row.Key;});
+    if(SelectedIndex<Scroll || SelectedIndex>=Scroll+PageSize) SettingsSelection=Rows[Scroll].Key;
+    MenuElement(TEXT("text"),TEXT("项目"),{132,235},{650,31},20).Color=Color(TEXT("muted"));
+    if(Category==TEXT("键位"))
+    {
+        MenuElement(TEXT("text"),TEXT("主键位"),{891,235},{285,31},20).Align=TEXT("center");
+        MenuElement(TEXT("text"),TEXT("副键位"),{1209,235},{285,31},20).Align=TEXT("center");
+    }
+    else MenuElement(TEXT("text"),TEXT("当前设置"),{948,235},{440,31},20).Align=TEXT("center");
+    MenuElement(TEXT("line"),TEXT(""),{112,274},{1448,1}).Color=Color(TEXT("bronze"));
     for(int32 I=Scroll;I<FMath::Min(Rows.Num(),Scroll+PageSize);++I)
     {
-        const FSettingRow& Row=Rows[I];
-        const int32 Y=190+(I-Scroll)*78;
-        Element(TEXT("settingsRow"),ReadableLayout()?Row.Label+TEXT(" · ")+Row.Value:FString(),FVector2D(677,Y),FVector2D(674,72),18,FString(TEXT("settings.select:"))+Row.Key,TEXT(""),SettingsSelection==Row.Key);
-        Element(TEXT("text"),Row.Label,FVector2D(702,Y+10),FVector2D(320,61),23);
+        const FSettingRow& Row=Rows[I]; const float Y=286+(I-Scroll)*Height;
+        const bool Selected=SettingsSelection==Row.Key;
+        auto& Background=MenuElement(TEXT("menuRow"),TEXT(""),{112,Y},{1448,Height-1},18,TEXT("settings.select:")+Row.Key,Selected);
+        Background.Id=Row.Key;
+        auto& Label=MenuElement(TEXT("text"),Row.Label,{132,Y+8},{690,Height-12},23);
+        Label.Id=Row.Key; Label.LayoutId=TEXT("settings.label.")+Row.Key;
+        if(Selected) Label.Color=Color(TEXT("gold"));
         if(Category==TEXT("键位"))
         {
             const auto& Slots=SettingsBindings.FindChecked(FName(*Row.Key));
             for(int32 BindingIndex=0;BindingIndex<2;++BindingIndex)
             {
-                const FString Suffix=FString(Row.Key)+TEXT(":")+FString::FromInt(BindingIndex);
-                Element(TEXT("button"),Slots[BindingIndex].Label(),FVector2D(1045+BindingIndex*151,Y+5),FVector2D(142,60),18,TEXT("settings.bind:")+Suffix);
+                const FString Suffix=Row.Key+TEXT(":")+FString::FromInt(BindingIndex);
+                auto& Binding=MenuElement(TEXT("menuAction"),Slots[BindingIndex].Label(),{891.+BindingIndex*318,Y},{285,Height-1},21,TEXT("settings.bind:")+Suffix);
+                Binding.Align=TEXT("center"); Binding.Id=Row.Key;
             }
         }
         else if(Row.Adjustable)
         {
-            Element(TEXT("button"),TEXT("‹"),FVector2D(1093,Y+6),FVector2D(37,38),25,FString(TEXT("settings.change:"))+Row.Key+TEXT(":-1"));
-            Element(TEXT("text"),Row.Value,FVector2D(1138,Y+10),FVector2D(145,34),23); Elements.Last().Align=TEXT("center");
-            Element(TEXT("button"),TEXT("›"),FVector2D(1291,Y+6),FVector2D(37,38),25,FString(TEXT("settings.change:"))+Row.Key+TEXT(":1"));
+            MenuElement(TEXT("menuAction"),TEXT("‹"),{878,Y},{55,Height-1},30,TEXT("settings.change:")+Row.Key+TEXT(":-1")).Id=Row.Key;
+            auto& Value=MenuElement(TEXT("menuAction"),Row.Value,{948,Y},{440,Height-1},24,TEXT("settings.select:")+Row.Key+TEXT(":value"));
+            Value.Action=TEXT("settings.select:")+Row.Key; Value.Align=TEXT("center"); Value.Id=Row.Key;
+            if(Selected) Value.Color=Color(TEXT("gold"));
+            MenuElement(TEXT("menuAction"),TEXT("›"),{1490,Y},{55,Height-1},30,TEXT("settings.change:")+Row.Key+TEXT(":1")).Id=Row.Key;
         }
         else
         {
-            Element(TEXT("text"),Row.Value,FVector2D(1094,Y+10),FVector2D(225,34),21); Elements.Last().Align=TEXT("right"); Elements.Last().Color=Color(TEXT("muted"));
+            auto& Value=MenuElement(TEXT("menuAction"),Row.Value,{948,Y},{440,Height-1},22);
+            Value.Align=TEXT("center"); Value.Id=Row.Key; Value.Color=Color(TEXT("muted"));
         }
     }
     if(Rows.Num()>PageSize)
     {
-        Element(TEXT("button"),TEXT("上一页"),FVector2D(697,595),FVector2D(160,38),18,TEXT("settings.prev"));Elements.Last().Enabled=Scroll>0;
-        Element(TEXT("button"),TEXT("下一页"),FVector2D(1150,595),FVector2D(160,38),18,TEXT("settings.next"));Elements.Last().Enabled=Scroll+PageSize<Rows.Num();
+        MenuElement(TEXT("menuAction"),TEXT("‹  上一页"),{112,690},{180,37},19,TEXT("settings.prev")).Enabled=Scroll>0;
+        auto& Range=MenuElement(TEXT("text"),FString::Printf(TEXT("%d — %d / %d"),Scroll+1,FMath::Min(Scroll+PageSize,Rows.Num()),Rows.Num()),{650,697},{372,30},18);
+        Range.Align=TEXT("center"); Range.Color=Color(TEXT("muted"));
+        MenuElement(TEXT("menuAction"),TEXT("下一页  ›"),{1380,690},{180,37},19,TEXT("settings.next")).Enabled=Scroll+PageSize<Rows.Num();
     }
+    MenuElement(TEXT("line"),TEXT(""),{112,734},{1448,1}).Color=Color(TEXT("bronze"));
     const FSettingRow* Selected=Rows.FindByPredicate([&](const FSettingRow& Row){return SettingsSelection==Row.Key;});
-    Element(TEXT("text"),Selected->Label,FVector2D(696,669),FVector2D(625,28),23); Elements.Last().Color=Color(TEXT("gold"));
-    Element(TEXT("text"),Selected->Description,FVector2D(696,702),FVector2D(635,55),19);
-    if(SettingsDirty)
-    {
-        Element(TEXT("text"),TEXT("更改待应用"),FVector2D(916,801),FVector2D(180,27),17);
-        Elements.Last().Color=Color(TEXT("gold"));
-    }
-    Element(TEXT("button"),TEXT("Esc  返回"),FVector2D(438,793),FVector2D(163,44),20,TEXT("back"));
-    Element(TEXT("button"),TEXT("R  恢复默认"),FVector2D(616,793),FVector2D(185,44),20,TEXT("settings.defaults"));
-    Element(TEXT("button"),TEXT("应用更改  ›"),FVector2D(1108,793),FVector2D(235,44),21,TEXT("settings.apply"));
+    MenuElement(TEXT("text"),Selected->Label,{132,748},{1408,32},20).Color=Color(TEXT("gold"));
+    MenuElement(TEXT("text"),Selected->Description,{132,788},{1408,48},18).Color=Color(TEXT("muted"));
+    MenuElement(TEXT("menuAction"),TEXT("恢复默认"),{365,872},{230,43},21,TEXT("settings.defaults"));
+    if(SettingsDirty) MenuElement(TEXT("text"),TEXT("更改待应用"),{900,880},{320,30},18).Color=Color(TEXT("gold"));
+    MenuElement(TEXT("menuAction"),TEXT("应用更改  ›"),{1310,872},{250,43},22,TEXT("settings.apply")).Align=TEXT("right");
 }
 
 bool UHearthwardScreenWidget::CaptureBinding(FKey Key,bool Shift,bool Control,bool Alt)

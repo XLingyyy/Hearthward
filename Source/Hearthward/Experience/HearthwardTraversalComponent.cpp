@@ -31,7 +31,7 @@ void UHearthwardTraversalComponent::BeginPlay()
 }
 void UHearthwardTraversalComponent::EndPlay(const EEndPlayReason::Type Reason)
 { GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.RemoveDynamic(this,&UHearthwardTraversalComponent::Restored);Super::EndPlay(Reason); }
-void UHearthwardTraversalComponent::Restored() { CancelVault();InWater=false;Status.Reset(); }
+void UHearthwardTraversalComponent::Restored() { CancelVault();InWater=false;SetStatus(FString()); }
 float UHearthwardTraversalComponent::FallDamage(float DownSpeed,float Gravity,float MaximumHealth)
 {
     const float Height=FMath::Square(FMath::Max(0.f,DownSpeed)*.01f)/(2*FMath::Abs(Gravity)*.01f);
@@ -92,22 +92,22 @@ bool UHearthwardTraversalComponent::BeginVault()
         || UHearthwardSurvivalComponent::HasFailed(GetWorld()) || (Combat && Combat->Busy()) || !FindVault(End)) return false;
     if(G)
     {
-        if(!G->SpendStamina(8)) {Status=TEXT("攀越需要8耐力");return false;}
+        if(!G->SpendStamina(8)) {SetStatus(TEXT("攀越需要8耐力"));return false;}
     }
     else
     {
         const float Cost=8*C->FindComponentByClass<UHearthwardInventoryComponent>()->GetStaminaCostMultiplier();
-        if(S->Stamina()<Cost) {Status=TEXT("攀越需要8耐力");return false;}
+        if(S->Stamina()<Cost) {SetStatus(TEXT("攀越需要8耐力"));return false;}
         S->Stamina()-=Cost;S->State.RecoveryDelay=.5;
     }
     Start=C->GetActorLocation();HighStart=FVector(Start.X,Start.Y,End.Z+4);HighEnd=FVector(End.X,End.Y,End.Z+4);
     StartingHealth=S->Health();VaultEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
-    Elapsed=0;Vaulting=true;Status=TEXT("攀越中");if(G)G->SetSprinting(false);C->GetCharacterMovement()->StopMovementImmediately();C->GetCharacterMovement()->SetMovementMode(MOVE_Flying);return true;
+    Elapsed=0;Vaulting=true;SetStatus(TEXT("攀越中"));if(G)G->SetSprinting(false);C->GetCharacterMovement()->StopMovementImmediately();C->GetCharacterMovement()->SetMovementMode(MOVE_Flying);return true;
 }
 void UHearthwardTraversalComponent::CancelVault()
 {
     if(!Vaulting) return;
-    Vaulting=false;Status=TEXT("攀越已中止");CastChecked<ACharacter>(GetOwner())->GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+    Vaulting=false;SetStatus(TEXT("攀越已中止"));CastChecked<ACharacter>(GetOwner())->GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 }
 void UHearthwardTraversalComponent::TickComponent(float Delta,ELevelTick Type,FActorComponentTickFunction* Tick)
 {
@@ -122,7 +122,7 @@ void UHearthwardTraversalComponent::TickComponent(float Delta,ELevelTick Type,FA
         const FVector Next=Elapsed<.3f?FMath::Lerp(Start,HighStart,Elapsed/.3f):Elapsed<.8f?FMath::Lerp(HighStart,HighEnd,(Elapsed-.3f)/.5f):FMath::Lerp(HighEnd,End,(Elapsed-.8f)/.2f);
         FHitResult Hit;M->SafeMoveUpdatedComponent(Next-C->GetActorLocation(),C->GetActorQuat(),true,Hit);
         if(Hit.IsValidBlockingHit()) {CancelVault();return;}
-        if(Elapsed>=1) {Vaulting=false;M->SetMovementMode(MOVE_Falling);Status.Reset();}
+        if(Elapsed>=1) {Vaulting=false;M->SetMovementMode(MOVE_Falling);SetStatus(FString());}
         return;
     }
     float Surface=0;const bool Area=WaterSurface(C->GetActorLocation(),Surface);

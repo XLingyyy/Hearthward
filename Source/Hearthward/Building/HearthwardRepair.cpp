@@ -28,7 +28,7 @@ FString UHearthwardBuildingComponent::RepairInstanceStatus(FGuid Station,FGuid I
 }
 bool UHearthwardBuildingComponent::RepairInstance(FGuid Station,FGuid Instance,double Fraction,FGuid Epoch)
 {
-    Feedback=RepairInstanceStatus(Station,Instance,Fraction,Epoch);if(!Feedback.IsEmpty())return false;
+    SetFeedback(RepairInstanceStatus(Station,Instance,Fraction,Epoch));if(!Feedback.IsEmpty())return false;
     auto* Bag=GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>();const FName Item=Bag->FindInstance(Instance)->Definition;
     TMap<FName,int32> Materials;double Restored;
     if(!HearthwardWorkshop::RepairQuote(Bag,Instance,Fraction,Materials,Restored))return false;
@@ -36,5 +36,5 @@ bool UHearthwardBuildingComponent::RepairInstance(FGuid Station,FGuid Instance,d
     const bool Camp=!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(GetOwner()->GetActorLocation()).IsNone();
     if(!GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->Workshop(Bag,Materials,{},Camp,Instance,Restored))return false;
     GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>()->Record(TEXT("repair"),Item);
-    Feedback=FString::Printf(TEXT("维修完成，恢复 %.2f 耐久"),Restored);return true;
+    SetFeedback(FString::Printf(TEXT("维修完成，恢复 %.2f 耐久"),Restored));return true;
 }

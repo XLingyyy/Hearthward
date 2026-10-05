@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "TASK-076",
+  "title": "新版UI与main玩法整合、冲突修复和运行验证",
+  "status": "Active",
+  "updated_at": "2026-10-05",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-076-ui-gameplay-integration",
+  "source_refs": [
+    "用户2026-10-05要求采用新版UI并保留已开发玩法，修复分支冲突",
+    "main@ac6a302ba24ea6531ccdaf880d83e9a03779c51e",
+    "codex/TASK-053-title-wheel@fa1828ed"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "AGENTS.md",
+    ".gitignore",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/REPOSITORY_LAYOUT.md",
+    "docs/qa/README.md",
+    "art_source/README.md",
+    "docs/planning/BRANCH_INTEGRATION.md",
+    "docs/tasks/TASK-075.json",
+    "docs/handoffs/TASK-075.md",
+    "Resource/",
+    "ui pic/",
+    "2026-09-22/",
+    "art_source/TASK-004/Tripo/主角/",
+    "art_source/TASK-004/Tripo/弟弟/",
+    "art_source/ui-reference/",
+    "docs/assets/requests/",
+    "docs/qa/evidence/TASK-020/compare_reference.py",
+    ".gitattributes",
+    "Resources/",
+    "Source/",
+    "scripts/ui/",
+    "scripts/release/demo.iss",
+    "TestClient/",
+    "docs/contracts/CT-004-presentation-gameplay.md",
+    "docs/tasks/TASK-076.json",
+    "docs/handoffs/TASK-076.md",
+    "docs/qa/TASK-076/",
+    "启动测试版游戏.cmd",
+    "地图测试版.cmd",
+    "地图测试版_预览.png",
+    "地图测试版_移动验证.png",
+    "scripts/animals/paths.py"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "新版UI正常呈现和操作，main玩法与存档规则保留",
+    "文本及语义冲突解决，无重复任务档案覆盖",
+    "Editor构建、相关原生测试及实际UI操作验证通过"
+  ],
+  "non_goals": [
+    "重新设计玩法、美术或全仓重构",
+    "修改原始存档或发布安装包",
+    "复制新版UI分支全部试跑材料"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "granted",
+    "push": "granted",
+    "merge": "owner_authorized_main"
+  },
+  "notes": [
+    "整合原UI TASK-053成果使用TASK-076记录，main TASK-053仍为通行玩法。",
+    "用户2026-10-05追加明确授权提交、推送并整理更新main。",
+    "本轮用户明确授权整理结果与整合代码提交推送并更新main；人工体验验收另行保留。"
+  ]
+}

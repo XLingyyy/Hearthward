@@ -81,6 +81,14 @@ void UHearthwardSurvivalComponent::SetAutoPermission(FName Item,bool Allowed)
     const FName Key=Base.IsEmpty()?Item:FName(*Base);
     if(Allowed) State.AutoPermissions.Add(Key); else State.AutoPermissions.Remove(Key);
 }
+FName UHearthwardSurvivalComponent::ActiveConsumable() const
+{
+    if(!State.Medicine.IsNone()) return State.Medicine;
+    if(!State.FoodItem.IsNone()) return State.FoodItem;
+    if(State.HotRemaining>0) return State.HotItem.IsNone()?FName(TEXT("medicine")):State.HotItem;
+    // Keep a same-frame cancelled dose reserved until damage or the next active tick settles it.
+    return CancelledMedicine;
+}
 bool UHearthwardSurvivalComponent::BeginMedicine(FName Item,bool Automatic)
 {
     auto Reject=[&](const TCHAR* Reason){Status=Reason;return false;};
@@ -91,6 +99,7 @@ bool UHearthwardSurvivalComponent::BeginMedicine(FName Item,bool Automatic)
     const double Fraction=Number(R,TEXT("healing"))/100.;
     const double Duration=Number(R,TEXT("medicineDuration"));
     if(Settling || Busy() || !CancelledMedicine.IsNone()) return Reject(TEXT("当前动作尚未结束"));
+    if(!Automatic && !ActiveConsumable().IsNone()) return Reject(TEXT("当前道具仍在使用中"));
     if(Health()>=MaxHealth()) return Reject(TEXT("生命已满，无需用药"));
     if(Fraction<=0) return Reject(TEXT("此物品不能作为药品使用"));
     if(Automatic && !Permitted(Item)) return Reject(TEXT("此药品尚未获准自动使用"));
@@ -101,13 +110,23 @@ bool UHearthwardSurvivalComponent::BeginMedicine(FName Item,bool Automatic)
     State.Medicine=Item; State.MedicineRemaining=3; State.AutomaticMedicine=Automatic;
     ActionOrigin=GetOwner()->GetActorLocation(); ActionEpoch=Epoch();
     if(auto* Timer=GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>()) Timer->InterruptAction();
-    Resting=false; Status=TEXT("正在用药，移动会取消"); return true;
+    Resting=false; SetStatus(TEXT("正在用药，移动会取消")); return true;
 }
 bool UHearthwardSurvivalComponent::Eat(FName Item,bool Automatic)
 {
     const auto R=Find(TEXT("items"),Item.ToString()); const double Food=Number(R,TEXT("food"));
-    if(!Enabled() || HasFailed(GetWorld())) {Status=TEXT("兄弟已无法继续，请载入保存节点");return false;}
-    if(!Alive() || Settling || Food<=0 || Hunger()>=100 || (Automatic && !Permitted(Item))) return false;
+    if(!Enabled() || HasFailed(GetWorld())) {SetStatus(TEXT("兄弟已无法继续，请载入保存节点"));return false;}
+    if(!Enabled() || !Alive() || Settling || Busy() || Food<=0 || Hunger()>=100 || (Automatic && !Permitted(Item))) return false;
+    if(!Automatic)
+    {
+        if(!ActiveConsumable().IsNone()) return false;
+        if(const auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();C && (C->Busy() || C->Guarding() || C->MovementMultiplier()<1)) return false;
+        if(!Bag() || !Bag()->Reserve(Item)) return false;
+        State.FoodItem=Item; State.FoodRemaining=3;
+        ActionEpoch=Epoch(); ActionOrigin=GetOwner()->GetActorLocation();
+        if(auto* Timer=GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>()) Timer->InterruptAction();
+        Resting=false; SetStatus(TEXT("正在进食")); return true;
+    }
     TGuardValue<bool> Guard(Settling,true);
     if(Bag()->TryRemove(Item,1,false)!=EHearthwardInventoryResult::Success) return false;
     Hunger()=FMath::Min(100.f,Hunger()+float(Food)*(1+(Gameplay()?Gameplay()->Effect(TEXT("food")):0)));
@@ -134,6 +153,11 @@ void UHearthwardSurvivalComponent::CancelAction(bool Damaged)
     if(Settling || (!Damaged && !Busy() && !Resting && !Treatment)) return;
     TGuardValue<bool> Guard(Settling,true);
     Rescue.Reset(); RescueRemaining=0; Resting=false; Treatment=false;RecoveryFacility.Reset();RecoveryEpoch.Invalidate();
+    if(!State.FoodItem.IsNone())
+    {
+        State.FoodItem=NAME_None; State.FoodRemaining=0;
+        if(Bag()) Bag()->ReleaseReservation();
+    }
     FName Item=State.Medicine;
     if(Item.IsNone() && Damaged && CancelFrame==GFrameCounter) Item=CancelledMedicine;
     State.Medicine=NAME_None; State.MedicineRemaining=0;
@@ -147,7 +171,7 @@ void UHearthwardSurvivalComponent::CancelAction(bool Damaged)
         }
         else { CancelFrame=GFrameCounter; CancelledMedicine=Item; }
     }
-    Status=Damaged?(Item.IsNone()?TEXT("受到伤害"):TEXT("受伤中断，损失半份药量")):TEXT("动作已取消");
+    SetStatus(Damaged?(Item.IsNone()?TEXT("受到伤害"):TEXT("受伤中断，损失半份药量")):TEXT("动作已取消"));
 }
 bool UHearthwardSurvivalComponent::ReceiveDamage(float Amount,FGuid Event,FGuid Timeline,bool Fatal)
 {
@@ -211,13 +235,13 @@ bool UHearthwardSurvivalComponent::BeginRescue(UHearthwardSurvivalComponent* Tar
     Rescue=Target; RescueRemaining=5; ActionEpoch=Epoch(); ActionOrigin=GetOwner()->GetActorLocation();
     if(Cast<AHearthwardCompanionFixture>(GetOwner()))
         if(auto* P=Target->GetOwner()->FindComponentByClass<UHearthwardPresentationComponent>()) P->PlayFixedCue(TEXT("fixed.rescue.started"),FGuid::NewGuid(),true);
-    Status=TEXT("正在扶起，需持续5秒"); return true;
+    SetStatus(TEXT("正在扶起，需持续5秒")); return true;
 }
 void UHearthwardSurvivalComponent::FinishActions(double Delta)
 {
     if(!Busy()) return;
     if(HasFailed(GetWorld())) {CancelAction();Status=TEXT("兄弟已无法继续，请载入保存节点");return;}
-    if(!Alive() || ActionEpoch!=Epoch() || FVector::Dist(ActionOrigin,GetOwner()->GetActorLocation())>5 || GetOwner()->GetVelocity().Size()>5)
+    if(!Alive() || ActionEpoch!=Epoch() || (State.FoodItem.IsNone() && (FVector::Dist(ActionOrigin,GetOwner()->GetActorLocation())>5 || GetOwner()->GetVelocity().Size()>5)))
     { CancelAction(); return; }
     if(auto* Target=Rescue.Get())
     {
@@ -227,8 +251,24 @@ void UHearthwardSurvivalComponent::FinishActions(double Delta)
         if(RescueRemaining==0)
         {
             Target->State.Life=EHearthwardLife::Alive; Target->State.DownRemaining=0; Target->Health()=Target->MaxHealth()*.1f;
-            Rescue.Reset(); Status=TEXT("已扶起");
+            Rescue.Reset(); SetStatus(TEXT("已扶起"));
         }
+    }
+    if(!State.FoodItem.IsNone())
+    {
+        State.FoodRemaining=FMath::Max(0.,State.FoodRemaining-Delta);
+        if(State.FoodRemaining>0) return;
+        if(Hunger()>=100) { CancelAction();return; }
+        const FName Used=State.FoodItem;
+        const float Food=Number(Find(TEXT("items"),Used.ToString()),TEXT("food"));
+        TGuardValue<bool> Guard(Settling,true);
+        const bool Committed=Bag()->CommitReservation(NAME_None,false);
+        State.FoodItem=NAME_None;State.FoodRemaining=0;
+        if(!Committed) {SetStatus(TEXT("进食已取消"));return;}
+        Hunger()=FMath::Min(100.f,Hunger()+Food*(1+(Gameplay()?Gameplay()->Effect(TEXT("food")):0)));
+        State.Food(Hunger());SetStatus(TEXT("进食完成"));
+        if(auto* G=Gameplay()) G->Record(TEXT("consume"),Used);
+        Bag()->OnInventoryChanged.Broadcast();return;
     }
     if(State.Medicine.IsNone()) return;
     State.MedicineRemaining=FMath::Max(0.,State.MedicineRemaining-Delta);
@@ -239,19 +279,20 @@ void UHearthwardSurvivalComponent::FinishActions(double Delta)
         || (Duration>0 && State.HotRemaining>0 && Heal/Duration<State.HotRate)) { CancelAction(); return; }
     TGuardValue<bool> Guard(Settling,true);
     if(!Bag()->CommitReservation(NAME_None,false)) { State.Medicine=NAME_None; State.MedicineRemaining=0; return; }
-    if(Duration>0) { State.HotRemaining=Duration; State.HotRate=Heal/Duration; }
+    if(Duration>0) { State.HotRemaining=Duration; State.HotRate=Heal/Duration; State.HotItem=State.Medicine; }
     else Health()=FMath::Min(MaxHealth(),Health()+float(Heal));
     const FName Used=State.Medicine;
-    State.Medicine=NAME_None; Status=TEXT("用药完成");
+    State.Medicine=NAME_None; SetStatus(TEXT("用药完成"));
     if(auto* G=Gameplay()) G->Record(TEXT("consume"),Used);
     Bag()->OnInventoryChanged.Broadcast();
 }
 void UHearthwardSurvivalComponent::ResetTransient()
 {
-    InventoryNotificationPending=false;
+    InventoryNotificationPending=false;SetStatus(FString());
     DamageEvents.Reset(); Rescue.Reset(); RescueRemaining=0; CancelledMedicine=NAME_None;
     Bag()->ReleaseReservation();
     if(!State.Medicine.IsNone()) Bag()->Reserve(State.Medicine);
+    else if(!State.FoodItem.IsNone()) Bag()->Reserve(State.FoodItem);
     ActionEpoch=Epoch(); ActionOrigin=GetOwner()->GetActorLocation(); Resting=Treatment=false;RecoveryFacility.Reset();RecoveryEpoch.Invalidate();Status.Reset();
 }
 FString UHearthwardSurvivalComponent::Describe() const
@@ -260,6 +301,7 @@ FString UHearthwardSurvivalComponent::Describe() const
     if(State.Life==EHearthwardLife::Downed) return FString::Printf(TEXT("倒地：剩余 %.0f 秒"),State.DownRemaining);
     if(Rescue.IsValid()) return FString::Printf(TEXT("扶起：剩余 %.1f 秒"),RescueRemaining);
     if(!State.Medicine.IsNone()) return FString::Printf(TEXT("用药：剩余 %.1f 秒"),State.MedicineRemaining);
+    if(!State.FoodItem.IsNone()) return FString::Printf(TEXT("进食：剩余 %.1f 秒"),State.FoodRemaining);
     if(State.DrowningRemaining>=0) return FString::Printf(TEXT("溺水：剩余 %.1f 秒"),State.DrowningRemaining);
     if(State.Severe()) return FString::Printf(TEXT("严重饥饿：距死亡 %.0f 游戏分钟"),FMath::Max(0.,State.SevereDue-GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes));
     return Status;
@@ -339,7 +381,7 @@ bool UHearthwardSurvivalComponent::AutomaticBehavior(float Delta)
             const auto* Path=UNavigationSystemV1::FindPathToActorSynchronously(GetWorld(),C->GetActorLocation(),Player,100,C);
             const double Speed=350*(State.Severe()?.8:1.);
             if(!Path || !Path->IsValid() || Path->IsPartial() || Path->GetPathLength()/Speed+5>=Target->State.DownRemaining)
-            { C->StopForSurvival(); C->BlockReason=TEXT("救援路径不可达或剩余时间不足"); Status=C->BlockReason; return true; }
+            { C->StopForSurvival(); C->BlockReason=TEXT("救援路径不可达或剩余时间不足"); SetStatus(C->BlockReason); return true; }
         }
         if(G && G->IncomingDamage(C,5)>=Health())
         {
@@ -352,7 +394,7 @@ bool UHearthwardSurvivalComponent::AutomaticBehavior(float Delta)
                     if(Number(R,TEXT("healing"))>0 && Number(R,TEXT("medicineDuration"))==0 && BeginMedicine(Id,true)) return true;
                 }
             if(C->Camp) C->NavigateTo(C->Camp,350,150);
-            C->BlockReason=TEXT("当前火力下无法完成扶起，正在撤向营地"); Status=C->BlockReason; return true;
+            C->BlockReason=TEXT("当前火力下无法完成扶起，正在撤向营地"); SetStatus(C->BlockReason); return true;
         }
         if(Busy()) return true;
         if(C->GetPhase()!=EHearthwardCompanionPhase::Cancelled) C->StopForSurvival();
@@ -360,7 +402,7 @@ bool UHearthwardSurvivalComponent::AutomaticBehavior(float Delta)
         else if(Target->State.DownRemaining<=5 || !C->NavigateTo(Player,350,150))
             C->BlockReason=TEXT("无法及时抵达或救援路径被阻挡");
         else C->BlockReason=TEXT("正在靠近倒地的哥哥");
-        Status=C->BlockReason;
+        SetStatus(C->BlockReason);
         return true;
     }
     if(Busy()) return true;

@@ -31,6 +31,8 @@ public:
     UPROPERTY(BlueprintReadOnly) TArray<FVector2D> Explored;
     UPROPERTY(BlueprintReadOnly) FName TrackedQuest = TEXT("ember");
     UPROPERTY(BlueprintReadOnly) FString Feedback;
+    uint32 GetFeedbackRevision() const { return FeedbackRevision; }
+    void SetFeedback(FString Value) { Feedback=MoveTemp(Value); ++FeedbackRevision; }
     UPROPERTY(BlueprintReadOnly) bool Enabled = false;
     UPROPERTY(BlueprintReadOnly) FName CompanionOrder = TEXT("wait");
     UPROPERTY(BlueprintReadOnly) bool CompanionRoutineEnabled = true;
@@ -48,6 +50,17 @@ public:
     UFUNCTION(BlueprintCallable) bool Learn(FName Id);
     UFUNCTION(BlueprintCallable) void ResetSkills();
     UFUNCTION(BlueprintCallable) bool UseItem(FName Id);
+    UFUNCTION(BlueprintPure) FName QuickItem(int32 Slot) const;
+    static bool FitsQuickSlot(int32 Slot,FName Item);
+    UFUNCTION(BlueprintCallable) bool AssignQuickItem(int32 Slot,FName Item);
+    UFUNCTION(BlueprintCallable) bool UseQuickItem(int32 Slot);
+    bool CanUseItem(FName Item);
+    // Backpack placement is independent of physical inventory quantities and reservations.
+    static FName InventoryTab(FName Item);
+    int32 BackpackItemCount(FName Item) const;
+    TArray<FName> InventorySlots(FName Tab,bool IncludeEquipped=false) const;
+    bool MoveInventoryItem(FName Item,int32 Position,FGuid Epoch,FGuid Unequip=FGuid());
+    bool SetBackpackEquipment(FGuid Instance,FName Slot,bool Equip,FGuid Epoch);
     UFUNCTION(BlueprintCallable) bool Equip(FName Id);
     UFUNCTION(BlueprintCallable) bool Drop(FName Id, int32 Count);
     UFUNCTION(BlueprintCallable) bool Claim(FName Id);
@@ -72,6 +85,7 @@ public:
     UFUNCTION(BlueprintPure) FName GetCompanionRoutineActivity() const { return CompanionRoutineActivity; }
     UFUNCTION(BlueprintCallable) void SetWaypoint(FVector Position);
     UFUNCTION(BlueprintPure) float AttackPower() const;
+    float ArmorReduction(FName Slot) const;
     UFUNCTION(BlueprintPure) bool InCombat() const { return CombatRemaining>0; }
     UFUNCTION(BlueprintCallable) void EnableAdventure();
     float IncomingDamage(const AActor* Target,float Seconds) const;
@@ -104,6 +118,9 @@ public:
     FVector LocationPosition(FName Id) const;
     UFUNCTION() void InventoryChanged();
 private:
+    UPROPERTY() TArray<FName> QuickItems={TEXT("medicine"),TEXT("roast"),TEXT("arrow"),TEXT("firepot")};
+    UPROPERTY() TMap<FName,int32> InventoryPositions;
+    uint32 FeedbackRevision=0;
     friend class AHearthwardCompanionFixture;
 
     void DamageOpponent(FName Target,float Damage,AActor* Source);

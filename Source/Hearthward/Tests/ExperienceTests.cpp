@@ -48,6 +48,14 @@ bool FExperienceBindingsTest::RunTest(const FString&)
     auto Conflict=HearthwardInput::Defaults();Conflict[TEXT("combat.throw")][0]={EKeys::W,EKeys::LeftControl};
     TestFalse(TEXT("Chord cannot also move through its bare key"),HearthwardInput::Validate(Conflict).IsEmpty());
     const auto Encoded=FHearthwardKeyBinding::Decode(TEXT("LeftControl+Y"));TestTrue(TEXT("Binding round trip retains chord"),Encoded==B[TEXT("combat.throw")][0]);
+    auto UIConflict=HearthwardInput::Defaults();UIConflict[TEXT("ui.map")][0]={EKeys::Q,FKey()};
+    TestFalse(TEXT("Journal category navigation cannot mask a global menu key"),HearthwardInput::Validate(UIConflict).IsEmpty());
+    UIConflict=HearthwardInput::Defaults();UIConflict[TEXT("ui.skills")][0]={EKeys::Down,FKey()};
+    TestFalse(TEXT("Fixed arrow navigation cannot mask a rebound menu key"),HearthwardInput::Validate(UIConflict).IsEmpty());
+    UIConflict=HearthwardInput::Defaults();UIConflict[TEXT("ui.save")][0]={EKeys::PageDown,FKey()};
+    TestFalse(TEXT("Page navigation cannot mask the save shortcut"),HearthwardInput::Validate(UIConflict).IsEmpty());
+    UIConflict=HearthwardInput::Defaults();UIConflict[TEXT("journal.category.next")][0]={EKeys::Y,FKey()};
+    TestTrue(TEXT("Journal category can be rebound without affecting world interaction"),HearthwardInput::Validate(UIConflict).IsEmpty());
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FExperienceFallTest,"Hearthward.Experience.FallHeightAndMaximumHealth",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
@@ -229,7 +237,7 @@ bool FModifierSides069Test::RunTest(const FString&)
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPauseObjectiveMetrics069Test,
-    "Hearthward.UI069.PauseAllObjectivesUseReadableNonOverlappingText",
+    "Hearthward.UI069.PauseQuestStatesKeepReadableActions",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FPauseObjectiveMetrics069Test::RunTest(const FString&)
 {
@@ -266,22 +274,10 @@ bool FPauseObjectiveMetrics069Test::RunTest(const FString&)
     if(!TestNotNull(TEXT("Actual Pause widget exists"),Screen)) {Cleanup();return false;}
     Screen->SetIsFocusable(true);Screen->TakeWidget();Screen->AddToViewport();
 
-    FString ThemeJson;TSharedPtr<FJsonObject> Theme;
-    const FString UIRoot=FPaths::ProjectDir()/TEXT("Resources/UI");
-    if(!TestTrue(TEXT("Actual theme typography loads"),FFileHelper::LoadFileToString(ThemeJson,*(UIRoot/TEXT("interface.json")))
-        && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(ThemeJson),Theme))) {Cleanup();return false;}
-    const auto Typography=Theme->GetObjectField(TEXT("typography"));
-    const auto BodyFont=MakeShared<FCompositeFont>(NAME_None,UIRoot/Typography->GetStringField(TEXT("body")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
-    const auto DisplayFont=MakeShared<FCompositeFont>(NAME_None,UIRoot/Typography->GetStringField(TEXT("display")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
-    const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
-    const auto ReadRect=[](const TSharedPtr<FJsonObject>& Row)
-    {
-        const auto& Values=Row->GetArrayField(TEXT("rect"));
-        return FVector4(Values[0]->AsNumber(),Values[1]->AsNumber(),Values[2]->AsNumber(),Values[3]->AsNumber());
-    };
     const auto& QuestRows=HearthwardData::Rows(TEXT("quests"));
     if(!TestTrue(TEXT("Actual quest catalog is nonempty"),!QuestRows.IsEmpty())) {Cleanup();return false;}
-    int32 MaximumLines=0;
+    // The new pause sheet keeps commands; quest details live in the journal and HUD.
+    // Retain the Alive/Downed catalog matrix and measure the actual replacement controls.
     for(int32 LifeCase=0;LifeCase<2;++LifeCase)
     {
         if(LifeCase==1)
@@ -291,74 +287,38 @@ bool FPauseObjectiveMetrics069Test::RunTest(const FString&)
                 Survival->ReceiveDamage(Survival->MaxHealth(),FGuid::NewGuid(),Epoch)
                 && Survival->State.Life==EHearthwardLife::Downed)) {Cleanup();return false;}
         }
-        for(const auto& QuestValue:QuestRows)
+        for(const int32 Scale:{100,150})
         {
-            const auto Quest=QuestValue->AsObject();
-            const FString QuestId=Quest->GetStringField(TEXT("id"));
-            const FString Case=FString(LifeCase?TEXT("Downed "):TEXT("Alive "))+QuestId;
-            Gameplay->TrackedQuest=FName(*QuestId);Screen->OpenPage(TEXT("pause"));
-            TSharedPtr<FJsonObject> Description;
-            if(!TestTrue(Case+TEXT(" actual layout parses"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),Description)))
-            {Cleanup();return false;}
-            const auto& Components=Description->GetArrayField(TEXT("components"));
-            TSharedPtr<FJsonObject> Objective;
-            for(const auto& Value:Components)
-                if(HearthwardData::Text(Value->AsObject(),TEXT("bind"))==TEXT("objective")) {Objective=Value->AsObject();break;}
-            if(!TestNotNull(Case+TEXT(" actual objective is present"),Objective.Get())) {Cleanup();return false;}
-            TestTrue(Case+TEXT(" objective remains visible"),Objective->GetBoolField(TEXT("visible")));
-            TestEqual(Case+TEXT(" objective retains the complete catalog text"),Objective->GetStringField(TEXT("text")),Quest->GetStringField(TEXT("objective")));
-            const float FontSize=float(Objective->GetNumberField(TEXT("font")));
-            TestTrue(Case+TEXT(" actual objective font meets 24px floor"),FontSize>=24.f);
-            const FVector4 Bounds=ReadRect(Objective);
-            const FString FontRole=Objective->GetStringField(TEXT("fontRole"));
-            const bool Display=FontRole==TEXT("display") || (FontRole.IsEmpty() && FontSize>=30);
-            FSlateFontInfo Font(Display?DisplayFont:BodyFont,FMath::RoundToInt(FontSize*.75f));
-            Font.LetterSpacing=int32(Objective->GetNumberField(TEXT("tracking")));
-            TArray<FString> SourceLines,Lines;Objective->GetStringField(TEXT("text")).ParseIntoArrayLines(SourceLines,false);
-            // Match NativePaint's final FontInfo, letter spacing, and whole-character wrapping.
-            for(FString Line:SourceLines)
+            Instance->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale=Scale;
+            for(const auto& QuestValue:QuestRows)
             {
-                while(Line.Len()>1 && Measure->Measure(Line,Font).X>Bounds.Z)
+                const auto Quest=QuestValue->AsObject();
+                const FString Case=FString::Printf(TEXT("%s %d%% %s"),LifeCase?TEXT("Downed"):TEXT("Alive"),Scale,*Quest->GetStringField(TEXT("id")));
+                Gameplay->TrackedQuest=FName(*Quest->GetStringField(TEXT("id")));Screen->OpenPage(TEXT("pause"));
+                TSharedPtr<FJsonObject> Layout;
+                if(!TestTrue(Case+TEXT(" actual layout parses"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),Layout)))
+                {Cleanup();return false;}
+                TSet<FString> Actions;TArray<FBox2D> Buttons;
+                for(const auto& Value:Layout->GetArrayField(TEXT("components")))
                 {
-                    const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,Bounds.Z)+1,1,Line.Len());
-                    Lines.Add(Line.Left(Count));Line=Line.Mid(Count);
+                    const auto Row=Value->AsObject();const FString Action=HearthwardData::Text(Row,TEXT("action"));
+                    if(Action.IsEmpty() || !Row->GetBoolField(TEXT("visible")))continue;
+                    const auto& R=Row->GetArrayField(TEXT("rect"));
+                    const FVector2D Position(R[0]->AsNumber(),R[1]->AsNumber()),Size(R[2]->AsNumber(),R[3]->AsNumber());
+                    TestTrue(Case+TEXT(" control fits the screen: ")+Action,Position.Y>=0 && Position.Y+Size.Y<=941);
+                    TestTrue(Case+TEXT(" action text keeps the new menu size: ")+Action,Row->GetNumberField(TEXT("font"))>=20);
+                    TestEqual(Case+TEXT(" real hit target: ")+Action,Screen->ActionAt(Position+Size*.5),Action);
+                    const FBox2D Bounds(Position+FVector2D(.1,.1),Position+Size-FVector2D(.1,.1));
+                    for(const auto& Previous:Buttons)TestFalse(Case+TEXT(" action rectangles do not overlap"),Bounds.Intersect(Previous));
+                    Buttons.Add(Bounds);Actions.Add(Action);
                 }
-                Lines.Add(Line);
+                for(const TCHAR* Action:{TEXT("page:hud"),TEXT("continuePrompt"),TEXT("save"),TEXT("page:settings"),TEXT("ask:title")})
+                    TestTrue(Case+TEXT(" original menu function is reachable: ")+Action,Actions.Contains(Action));
+                TestEqual(Case+TEXT(" abandonment is available exactly while downed"),Actions.Contains(TEXT("giveUp")),LifeCase==1);
             }
-            MaximumLines=FMath::Max(MaximumLines,Lines.Num());
-            float Width=0,Height=0;
-            for(int32 LineIndex=0;LineIndex<Lines.Num();++LineIndex)
-            {
-                const FVector2D Extent=Measure->Measure(Lines[LineIndex],Font);
-                Width=FMath::Max(Width,float(Extent.X));
-                Height=FMath::Max(Height,float(LineIndex*FontSize*1.6f+Extent.Y));
-            }
-            TestTrue(Case+TEXT(" declared objective height contains every rendered line"),Height<=Bounds.W);
-            const FBox2D TextBounds(FVector2D(Bounds.X,Bounds.Y),FVector2D(Bounds.X+Width,Bounds.Y+Height));
-            int32 InformationRows=0;bool FoundAbandon=false;
-            for(const auto& Value:Components)
-            {
-                const auto Other=Value->AsObject();
-                const FString ElementId=Other->GetStringField(TEXT("id"));
-                const FString Bind=HearthwardData::Text(Other,TEXT("bind"));
-                const FString Action=HearthwardData::Text(Other,TEXT("action"));
-                const bool Information=Bind==TEXT("time") || Bind==TEXT("location")
-                    || ElementId==TEXT("pause.element.016") || ElementId==TEXT("pause.element.019");
-                const bool SurvivalButton=Action==TEXT("giveUp") || Action==TEXT("cancelSurvival") || Action==TEXT("menuPause");
-                if(!Other->GetBoolField(TEXT("visible")) || (!Information && !SurvivalButton))continue;
-                if(Information)++InformationRows;
-                if(Action==TEXT("giveUp"))FoundAbandon=true;
-                const FVector4 OtherBounds=ReadRect(Other);
-                const FBox2D Occupied(FVector2D(OtherBounds.X,OtherBounds.Y),FVector2D(OtherBounds.X+OtherBounds.Z,OtherBounds.Y+OtherBounds.W));
-                TestFalse(Case+TEXT(" drawn objective avoids ")+ElementId,TextBounds.Intersect(Occupied));
-                if(Action==TEXT("giveUp"))TestEqual(Case+TEXT(" actual abandonment hit target remains available"),
-                    Screen->ActionAt(FVector2D(OtherBounds.X+OtherBounds.Z*.5,OtherBounds.Y+OtherBounds.W*.5)),Action);
-            }
-            TestEqual(Case+TEXT(" both titles and values are present"),InformationRows,4);
-            if(LifeCase==1)TestTrue(Case+TEXT(" actual Downed abandonment button is present"),FoundAbandon);
         }
     }
-    AddInfo(FString::Printf(TEXT("Measured %d real catalog objectives in Alive and Downed Pause; maximum wrapped lines=%d"),QuestRows.Num(),MaximumLines));
+    AddInfo(FString::Printf(TEXT("Checked %d tracked quest states, Alive/Downed, 100%%/150%% in the production pause widget"),QuestRows.Num()));
     Cleanup();return true;
 }
 

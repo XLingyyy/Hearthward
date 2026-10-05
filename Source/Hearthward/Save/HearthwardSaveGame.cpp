@@ -53,12 +53,15 @@ bool ValidTimer(const FHearthwardSavedTimer& Timer)
 bool ValidSurvival(const FHearthwardSurvivalState& State,const TMap<FName,int32>& Bag,double Calendar)
 {
     if(State.Life!=EHearthwardLife::Alive || State.DownRemaining!=0 || State.DrowningRemaining!=-1) return false;
-    for(double Value:{State.SevereDue,State.HotRemaining,State.HotRate,State.RecoveryDelay,State.SafeSeconds,State.MedicineRemaining})
+    for(double Value:{State.SevereDue,State.HotRemaining,State.HotRate,State.RecoveryDelay,State.SafeSeconds,State.MedicineRemaining,State.FoodRemaining})
         if(!FMath::IsFinite(Value)) return false;
     if((State.SevereDue!=-1 && State.SevereDue<=Calendar) || State.HotRemaining<0 || State.HotRemaining>15 || State.HotRate<0
-        || State.RecoveryDelay<0 || State.RecoveryDelay>.5 || State.SafeSeconds<0 || State.MedicineRemaining<0 || State.MedicineRemaining>3) return false;
+        || State.RecoveryDelay<0 || State.RecoveryDelay>.5 || State.SafeSeconds<0 || State.MedicineRemaining<0 || State.MedicineRemaining>3 || State.FoodRemaining<0 || State.FoodRemaining>3) return false;
     if(State.Medicine.IsNone()!= (State.MedicineRemaining==0)) return false;
     if(!State.Medicine.IsNone() && (Bag.FindRef(State.Medicine)<1 || HearthwardData::Number(HearthwardData::Find(TEXT("items"),State.Medicine.ToString()),TEXT("healing"))<=0)) return false;
+    if(State.FoodItem.IsNone()!=(State.FoodRemaining==0) || (!State.Medicine.IsNone() && !State.FoodItem.IsNone())) return false;
+    if(!State.FoodItem.IsNone() && (Bag.FindRef(State.FoodItem)<1 || HearthwardData::Number(HearthwardData::Find(TEXT("items"),State.FoodItem.ToString()),TEXT("food"))<=0)) return false;
+    if(!State.HotItem.IsNone() && (State.HotRemaining<=0 || HearthwardData::Number(HearthwardData::Find(TEXT("items"),State.HotItem.ToString()),TEXT("healing"))<=0)) return false;
     for(FName Id:State.AutoPermissions) if(!HearthwardData::Find(TEXT("items"),Id.ToString())) return false;
     return true;
 }

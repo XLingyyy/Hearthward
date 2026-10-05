@@ -156,7 +156,8 @@ void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);RebuildInputBindings();
     auto* Player=CastChecked<APlayerController>(GetController());
-    Player->SetInputMode(FInputModeGameOnly());Player->bShowMouseCursor=false;
+    if(auto* HUD=Cast<AHearthwardHUD>(Player->GetHUD());HUD && HUD->Screen)HUD->Screen->ApplyInputMode();
+    else {Player->SetInputMode(FInputModeGameOnly());Player->bShowMouseCursor=false;}
 }
 void AHearthwardCharacter::RebuildInputBindings()
 {
@@ -263,6 +264,10 @@ void AHearthwardCharacter::KeyPressed(FKey Key)
     if(Is(TEXT("jump"))) {StartJump();return;}
     if(Is(TEXT("interact"))) {Interact(Is(TEXT("traversal.vault")));return;}
     if(Is(TEXT("traversal.vault"))) {FindComponentByClass<UHearthwardTraversalComponent>()->BeginVault();return;}
+    if(Is(TEXT("combat.throw"))) {CombatThrow();return;}
+    if(Is(TEXT("survival.medicine"))) {Screen(TEXT("quick:0"));return;}
+    if(Is(TEXT("survival.food"))) {Screen(TEXT("quick:1"));return;}
+    if(Is(TEXT("combat.ammunition"))) {Screen(TEXT("quick:2"));return;}
     auto* C=FindComponentByClass<UHearthwardCombatComponent>();
     if(FindComponentByClass<UHearthwardTraversalComponent>()->IsInWater()) return;
     if(Is(TEXT("combat.execute"))) {Execution();return;}
@@ -274,9 +279,6 @@ void AHearthwardCharacter::KeyPressed(FKey Key)
     if(Is(TEXT("combat.dodge"))) {CombatDodge();return;}
     if(Is(TEXT("combat.lock"))) {CombatLock();return;}
     if(Is(TEXT("combat.sense"))) {CombatSense();return;}
-    if(Is(TEXT("combat.throw"))) {CombatThrow();return;}
-    if(Is(TEXT("survival.medicine"))) {Screen(TEXT("quick:0"));return;}
-    if(Is(TEXT("survival.food"))) {Screen(TEXT("quick:1"));return;}
     if(Is(TEXT("companion.wait"))) {Gameplay->OrderCompanion(TEXT("wait"));return;}
     if(Is(TEXT("companion.follow"))) {Gameplay->OrderCompanion(TEXT("follow"));return;}
     if(Is(TEXT("companion.attack"))) {Gameplay->OrderCompanion(TEXT("attack"));return;}
@@ -367,7 +369,15 @@ void AHearthwardCharacter::PreviewAttack()
     }
     auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
     if(Combat->Executing()) { Combat->Cancel(); return; }
-    if(Combat->Aiming) { Combat->Shoot(false); return; }
+    auto* PC=Cast<APlayerController>(GetController());
+    const auto* HUD=PC?Cast<AHearthwardHUD>(PC->GetHUD()):nullptr;
+    const int32 Slot=HUD && HUD->Screen?HUD->Screen->GetHUDQuickSelection():0;
+    if(Slot==3) { Gameplay->UseQuickItem(3); return; }
+    if(Slot==2 && Combat->SupportsAmmo(Gameplay->QuickItem(2)))
+    {
+        Combat->Aim(true); Combat->Shoot(false); return;
+    }
+    Combat->Aim(false);
     Combat->Attack(SemanticHeld(TEXT("combat.heavyModifier")));
 }
 
@@ -394,7 +404,7 @@ void AHearthwardCharacter::Interact(bool AllowVault)
     Arrows.Sort([&](const auto& A,const auto& B)
     {const double DA=FVector::DistSquared(A.GetActorLocation(),GetActorLocation()),DB=FVector::DistSquared(B.GetActorLocation(),GetActorLocation());return DA!=DB?DA<DB:A.GetPathName()<B.GetPathName();});
     if(!Arrows.IsEmpty())
-    {if(!Arrows[0]->Recover(this)) {Gameplay->Feedback=TEXT("背包容量不足，无法回收箭");Gameplay->OnChanged.Broadcast();}return;}
+    {if(!Arrows[0]->Recover(this)) {Gameplay->SetFeedback(TEXT("背包容量不足，无法回收箭"));Gameplay->OnChanged.Broadcast();}return;}
     Survival->CancelAction();
     if(FindComponentByClass<UHearthwardBuildingComponent>()->IsPlacing()) return;
     if(FindComponentByClass<UHearthwardBuildingComponent>()->NearbyWorkbench().IsValid())
@@ -441,14 +451,22 @@ void AHearthwardCharacter::GuardStart()
     if(auto* B=FindComponentByClass<UHearthwardBuildingComponent>();B && B->IsPlacing()) { B->CancelPlacement(); return; }
     auto* C=FindComponentByClass<UHearthwardCombatComponent>();
     const auto& Comfort=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort;
-    if(C->RangedSelected()) C->Aim(Comfort.AimToggle?!C->Aiming:true); else C->SetGuard(Comfort.GuardToggle?!C->Guarding():true);
+    const auto* PC=Cast<APlayerController>(GetController()); const auto* HUD=PC?Cast<AHearthwardHUD>(PC->GetHUD()):nullptr;
+    if(HUD && HUD->Screen && HUD->Screen->GetHUDQuickSelection()==2 && C->SupportsAmmo(Gameplay->QuickItem(2)))
+        C->Aim(Comfort.AimToggle?!C->Aiming:true);
+    else {C->Aim(false);C->SetGuard(Comfort.GuardToggle?!C->Guarding():true);}
 }
 void AHearthwardCharacter::GuardEnd() {
     auto* C=FindComponentByClass<UHearthwardCombatComponent>();
     const auto& Comfort=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort;
     if(!Comfort.AimToggle) C->Aim(false);if(!Comfort.GuardToggle) C->SetGuard(false);
 }
-void AHearthwardCharacter::ReleaseAttack() { auto* C=FindComponentByClass<UHearthwardCombatComponent>(); if(C->Aiming && !FindComponentByClass<UHearthwardTraversalComponent>()->IsInWater()) C->Shoot(true); }
+void AHearthwardCharacter::ReleaseAttack()
+{
+    auto* C=FindComponentByClass<UHearthwardCombatComponent>();
+    const auto* PC=Cast<APlayerController>(GetController()); const auto* HUD=PC?Cast<AHearthwardHUD>(PC->GetHUD()):nullptr;
+    if(HUD && HUD->Screen && HUD->Screen->GetHUDQuickSelection()==2 && C->Aiming && C->SupportsAmmo(Gameplay->QuickItem(2)) && !FindComponentByClass<UHearthwardTraversalComponent>()->IsInWater()) C->Shoot(true);
+}
 void AHearthwardCharacter::CombatDodge() { FindComponentByClass<UHearthwardCombatComponent>()->Dodge(GetLastMovementInputVector()); }
 void AHearthwardCharacter::CombatLock() { FindComponentByClass<UHearthwardCombatComponent>()->ToggleLock(); }
 void AHearthwardCharacter::CombatSense() { FindComponentByClass<UHearthwardCombatComponent>()->Sense(); }

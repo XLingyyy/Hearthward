@@ -102,6 +102,8 @@ bool FMapExplorationBoundaries064Test::RunTest(const FString&)
         FFileHelper::SaveStringToFile(Method,*(Directory/TEXT("method.json")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
     };
     Screen->OpenPage(TEXT("map"));
+    TestTrue(TEXT("New local map remains the default presentation"),Screen->DescribeLayout().Contains(TEXT("map.terrain")));
+    TestTrue(TEXT("World map gameplay is reachable through the new UI"),Screen->ExecuteAction(TEXT("map.world")));
     if(!TestEqual(TEXT("Normal map entry is available"),Screen->GetPage(),FName(TEXT("map"))))
     {
         Screen->RemoveFromParent();Cleanup();return false;
@@ -223,10 +225,10 @@ bool FMapExplorationBoundaries064Test::RunTest(const FString&)
         Screen->RemoveFromParent();Cleanup();return false;
     }
     FString ExpectedDescription;
-    for(const auto& Value:Theme->GetObjectField(TEXT("pages"))->GetObjectField(TEXT("map"))->GetArrayField(TEXT("elements")))
+    for(const auto& Value:Theme->GetObjectField(TEXT("worldMapPage"))->GetArrayField(TEXT("elements")))
     {
         const auto Row=Value->AsObject();
-        if(Row->GetStringField(TEXT("layoutId"))==TEXT("map.element.008"))ExpectedDescription=Row->GetStringField(TEXT("text"));
+        if(HearthwardData::Text(Row,TEXT("layoutId"))==TEXT("map.element.008"))ExpectedDescription=Row->GetStringField(TEXT("text"));
     }
     TestEqual(TEXT("The sidebar retains its complete authored description"),Description->GetStringField(TEXT("text")),ExpectedDescription);
     const auto Typeface=MakeShared<FCompositeFont>(NAME_None,FPaths::ProjectDir()/TEXT("Resources/UI")/
@@ -289,6 +291,8 @@ bool FMapExplorationBoundaries064Test::RunTest(const FString&)
     }
     Capture(TEXT("map-trace-explored-boundary"));
 
+    TestTrue(TEXT("Return to the new local map is available"),Screen->ExecuteAction(TEXT("map.local")));
+    TestTrue(TEXT("Returning preserves the new terrain presentation"),Screen->DescribeLayout().Contains(TEXT("map.terrain")));
     Screen->RemoveFromParent();Cleanup();return true;
 }
 
@@ -350,6 +354,8 @@ bool FMapScaledGuidance069Test::RunTest(const FString&)
     auto* Screen=CreateWidget<UHearthwardScreenWidget>(Controller);
     if(!TestNotNull(TEXT("Real scaled map widget is created"),Screen)) {Cleanup();return false;}
     Screen->SetIsFocusable(true);Screen->TakeWidget();Screen->AddToViewport();Screen->OpenPage(TEXT("map"));
+    TestTrue(TEXT("New local map remains the default presentation"),Screen->DescribeLayout().Contains(TEXT("map.terrain")));
+    TestTrue(TEXT("World map gameplay is reachable through the new UI"),Screen->ExecuteAction(TEXT("map.world")));
     FString ThemeText;TSharedPtr<FJsonObject> Theme;
     if(!TestEqual(TEXT("The scaled fixture uses the normal map entry"),Screen->GetPage(),FName(TEXT("map")))
         || !TestTrue(TEXT("The real map typography is readable"),
@@ -361,7 +367,7 @@ bool FMapScaledGuidance069Test::RunTest(const FString&)
         Typography->GetStringField(TEXT("body")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
     const auto DisplayTypeface=MakeShared<FCompositeFont>(NAME_None,FPaths::ProjectDir()/TEXT("Resources/UI")/
         Typography->GetStringField(TEXT("display")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
-    const auto& ThemeRows=Theme->GetObjectField(TEXT("pages"))->GetObjectField(TEXT("map"))->GetArrayField(TEXT("elements"));
+    const auto& ThemeRows=Theme->GetObjectField(TEXT("worldMapPage"))->GetArrayField(TEXT("elements"));
     const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
     const auto Rect=[](const TSharedPtr<FJsonObject>& Row)
     {
@@ -539,6 +545,8 @@ bool FMapScaledGuidance069Test::RunTest(const FString&)
                 TestEqual(TEXT("Home restores the top description position without changing the map page"),Rect(Value->AsObject()).Y,D.Y);
         TestEqual(TEXT("Reading the sidebar retains the actual map page"),Screen->GetPage(),FName(TEXT("map")));
     }
+    TestTrue(TEXT("Return to the new local map is available"),Screen->ExecuteAction(TEXT("map.local")));
+    TestTrue(TEXT("Returning preserves the new terrain presentation"),Screen->DescribeLayout().Contains(TEXT("map.terrain")));
     Screen->RemoveFromParent();Cleanup();return true;
 }
 #endif

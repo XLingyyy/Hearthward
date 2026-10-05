@@ -28,5 +28,5 @@ private:
     FTSTicker::FDelegateHandle TickHandle;
     FDelegateHandle BeforeHandle,AfterHandle;
     bool Loading=false,AwaitingSession=false;
-    double ReadySince=0,StartedAt=0;
+    double ReadySince=0,WorldReadySince=0,StartedAt=0;
 };

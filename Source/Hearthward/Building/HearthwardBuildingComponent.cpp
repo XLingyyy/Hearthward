@@ -97,7 +97,7 @@ bool UHearthwardBuildingComponent::SelectBuilding(FName Id)
     if(!G->Enabled || G->Health<=0 || !Find(TEXT("buildings"),Id.ToString()) || IsBuilding()
         || HearthwardCamp::RequiredTier(Id,1)>GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Tier) return false;
     ClearPreview(); Selected=Id; Yaw=Cast<APawn>(GetOwner())->GetControlRotation().Yaw;
-    Feedback=TEXT("移动和转动视角调整位置，Q旋转，左键建造，右键取消");
+    SetFeedback(TEXT("移动和转动视角调整位置，Q旋转，左键建造，右键取消"));
     return true;
 }
 void UHearthwardBuildingComponent::ClearPreview()
@@ -109,12 +109,12 @@ void UHearthwardBuildingComponent::ClearPreview()
 void UHearthwardBuildingComponent::CancelPlacement()
 {
     if(Pending) GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>()->InterruptAction();
-    Pending=false; ReleaseMaterials();ClearPreview(); Feedback=TEXT("已取消建造，材料未消耗");
+    Pending=false; ReleaseMaterials();ClearPreview(); SetFeedback(TEXT("已取消建造，材料未消耗"));
 }
 void UHearthwardBuildingComponent::Interrupted()
 {
     if(!Pending) return;
-    Pending=false; ReleaseMaterials();ClearPreview(); Feedback=TEXT("建造已中断，材料未消耗");
+    Pending=false; ReleaseMaterials();ClearPreview(); SetFeedback(TEXT("建造已中断，材料未消耗"));
 }
 void UHearthwardBuildingComponent::RotatePreview()
 { if(IsPlacing() && !Pending) Yaw=FMath::Fmod(Yaw+Tuning(TEXT("rotationStep")),360.0); }
@@ -170,8 +170,9 @@ void UHearthwardBuildingComponent::TickComponent(float Delta,ELevelTick Type,FAc
     FHitResult Hit; FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardBuildAim),false,GetOwner()); Query.AddIgnoredActor(Preview.Get());
     const bool Ground=GetWorld()->LineTraceSingleByChannel(Hit,Aim+FVector(0,0,150),Aim-FVector(0,0,400),ECC_Visibility,Query);
     Placement=Ground?Hit.ImpactPoint:Aim;
-    ValidPlacement=Ground && CheckPlacement(Feedback);
-    if(!Ground) Feedback=TEXT("没有可支撑建筑的地面");
+    FString PlacementFeedback;
+    ValidPlacement=Ground && CheckPlacement(PlacementFeedback);
+    SetFeedback(Ground?PlacementFeedback:FString(TEXT("没有可支撑建筑的地面")),false);
     const FVector Half=Extent(Find(TEXT("buildings"),Selected.ToString()));
     if(!Preview.IsValid()) Preview=SpawnBuilding(Selected,Placement,Yaw,true);
     if(Preview.IsValid()) { Preview->SetActorLocation(Placement+FVector(0,0,Half.Z)); Preview->SetActorRotation(FRotator(0,Yaw,0)); }
@@ -179,17 +180,20 @@ void UHearthwardBuildingComponent::TickComponent(float Delta,ELevelTick Type,FAc
 }
 bool UHearthwardBuildingComponent::ConfirmPlacement()
 {
-    if(!IsPlacing() || Pending || GetWorld()->IsPaused() || !CheckPlacement(Feedback)) return false;
+    if(!IsPlacing() || Pending || GetWorld()->IsPaused()) return false;
+    FString Reason;const bool PlacementOK=CheckPlacement(Reason);SetFeedback(Reason);
+    if(!PlacementOK) return false;
     auto* Timer=GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>();
-    if(!ReserveMaterials()) {Feedback=TEXT("材料预留失败");return false;}
-    if(!Timer->StartAction()) { ReleaseMaterials();Feedback=TEXT("请先完成当前动作"); return false; }
-    Pending=true; StartedAt=GetOwner()->GetActorLocation(); Feedback=TEXT("建造中，移动或受伤将中断"); return true;
+    if(!ReserveMaterials()) {SetFeedback(TEXT("材料预留失败"));return false;}
+    if(!Timer->StartAction()) { ReleaseMaterials();SetFeedback(TEXT("请先完成当前动作")); return false; }
+    Pending=true; StartedAt=GetOwner()->GetActorLocation(); SetFeedback(TEXT("建造中，移动或受伤将中断")); return true;
 }
 void UHearthwardBuildingComponent::Complete()
 {
     if(!Pending) return;
     Pending=false;
-    if(!CheckPlacement(Feedback)) { ReleaseMaterials();ClearPreview(); return; }
+    FString Reason;const bool PlacementOK=CheckPlacement(Reason);SetFeedback(Reason);
+    if(!PlacementOK) { ReleaseMaterials();ClearPreview(); return; }
     TGuardValue<bool> Guard(Settling,true);
     auto* Economy=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
     TGuardValue<bool> EconomyGuard(Economy->Settling,true);
@@ -198,7 +202,7 @@ void UHearthwardBuildingComponent::Complete()
         auto* Existing=Built.FindByPredicate([&](const auto& B){return B.Id==Editing;});
         if(!Existing || !Existing->Actor.IsValid()){ReleaseMaterials();ClearPreview();return;}
         const auto Paid=Materials();
-        if(!CommitMaterials()){Feedback=TEXT("材料结算失败");ReleaseMaterials();ClearPreview();return;}
+        if(!CommitMaterials()){SetFeedback(TEXT("材料结算失败"));ReleaseMaterials();ClearPreview();return;}
         if(Upgrading) Economy->CompleteFacilityUpgrade(Editing,Paid);
         else
         {
@@ -212,18 +216,18 @@ void UHearthwardBuildingComponent::Complete()
                 F->Camp=NewCamp;
             }
         }
-        GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>()->OnInventoryChanged.Broadcast();Feedback=Upgrading?TEXT("设施升级完成"):TEXT("设施移动完成");ClearPreview();return;
+        GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>()->OnInventoryChanged.Broadcast();SetFeedback(Upgrading?TEXT("设施升级完成"):TEXT("设施移动完成"));ClearPreview();return;
     }
     auto* Actor=SpawnBuilding(Selected,Placement,Yaw,false);
-    if(!Actor) { Feedback=TEXT("建造失败，材料未消耗"); ReleaseMaterials();ClearPreview(); return; }
+    if(!Actor) { SetFeedback(TEXT("建造失败，材料未消耗")); ReleaseMaterials();ClearPreview(); return; }
     const auto Paid=Materials();
-    if(!CommitMaterials()){Actor->Destroy();Feedback=TEXT("材料结算失败");ReleaseMaterials();ClearPreview();return;}
+    if(!CommitMaterials()){Actor->Destroy();SetFeedback(TEXT("材料结算失败"));ReleaseMaterials();ClearPreview();return;}
     // Publish both the constructed object and all material changes before inventory observers run.
     Built.Add({FGuid::NewGuid(),Selected,Placement,Yaw,Actor});
     Economy->RegisterFacility(Built.Last().Id,Selected,Placement,Paid);
     GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>()->OnInventoryChanged.Broadcast();
     GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>()->Record(TEXT("build"),Selected);
-    Feedback=TEXT("建造完成：")+Text(Find(TEXT("buildings"),Selected.ToString()),TEXT("name")); ClearPreview();
+    SetFeedback(TEXT("建造完成：")+Text(Find(TEXT("buildings"),Selected.ToString()),TEXT("name"))); ClearPreview();
 }
 TArray<AActor*> UHearthwardBuildingComponent::GetBuildings() const
 { TArray<AActor*> Out; for(const auto& B:Built) if(B.Actor.IsValid()) Out.Add(B.Actor.Get()); return Out; }
@@ -252,7 +256,7 @@ bool UHearthwardBuildingComponent::Validate(const TArray<TSharedPtr<FJsonValue>>
 }
 void UHearthwardBuildingComponent::Restore(const TArray<TSharedPtr<FJsonValue>>& Entries)
 {
-    Pending=false;ReleaseMaterials(); ClearPreview(); Feedback.Reset();
+    Pending=false;ReleaseMaterials(); ClearPreview(); SetFeedback(FString());
     for(auto& B:Built) if(B.Actor.IsValid()) B.Actor->Destroy();
     Built.Reset();
     for(const auto& V:Entries)

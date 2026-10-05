@@ -49,7 +49,7 @@ bool UHearthwardBuildingComponent::UpgradeFacility(FGuid Id,FGuid Epoch)
     auto* F=Economy->State.Facilities.FindByPredicate([&](const auto& Entry){return Entry.Id==Id;});
     const auto* B=Built.FindByPredicate([&](const auto& Entry){return Entry.Id==Id;});
     if(!Economy->CanManage(Epoch) || !F || !B || !CanUseFacility(Id) || HearthwardCamp::RequiredTier(F->Kind,F->Level+1)>Economy->State.Tier)
-    {Feedback=TEXT("等级尚未解锁或请先靠近设施");return false;}
+    {SetFeedback(TEXT("等级尚未解锁或请先靠近设施"));return false;}
     if(!SelectBuilding(F->Kind))return false;
     Editing=Id;Upgrading=true;Placement=B->Position;Yaw=B->Rotation;F->Paused=true;
     if(!ConfirmPlacement()){ClearPreview();return false;}return true;
@@ -59,16 +59,16 @@ bool UHearthwardBuildingComponent::MoveFacility(FGuid Id,FGuid Epoch)
     auto* Economy=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
     auto* F=Economy->State.Facilities.FindByPredicate([&](const auto& Entry){return Entry.Id==Id;});
     if(!Economy->CanManage(Epoch) || !F || !CanUseFacility(Id))return false;
-    if(!SelectBuilding(F->Kind))return false;Editing=Id;F->Paused=true;Feedback=TEXT("免费移动：选择合法新位置，原生产进度保留");return true;
+    if(!SelectBuilding(F->Kind))return false;Editing=Id;F->Paused=true;SetFeedback(TEXT("免费移动：选择合法新位置，原生产进度保留"));return true;
 }
 bool UHearthwardBuildingComponent::DemolishFacility(FGuid Id,bool ConfirmLoss,FGuid Epoch)
 {
     auto* Economy=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
     if(!Economy->CanManage(Epoch) || !CanUseFacility(Id))return false;
     TGuardValue<bool> Guard(Settling,true);TGuardValue<bool> EconomyGuard(Economy->Settling,true);
-    if(!Economy->RemoveFacility(Id,ConfirmLoss)){Feedback=TEXT("需要确认未完成批次投入损失，或仓储数量已满");return false;}
+    if(!Economy->RemoveFacility(Id,ConfirmLoss)){SetFeedback(TEXT("需要确认未完成批次投入损失，或仓储数量已满"));return false;}
     for(auto& B:Built)if(B.Id==Id && B.Actor.IsValid())B.Actor->Destroy();
-    Built.RemoveAll([&](const auto& B){return B.Id==Id;});Feedback=TEXT("已拆除，按累计实付材料向下返还80%至共享仓储");return true;
+    Built.RemoveAll([&](const auto& B){return B.Id==Id;});SetFeedback(TEXT("已拆除，按累计实付材料向下返还80%至共享仓储"));return true;
 }
 bool UHearthwardBuildingComponent::AddGift(FName Kind,FVector Position)
 {

@@ -8,12 +8,16 @@ import sys
 GAME = Path(__file__).resolve().parents[2]
 SOURCE = GAME / 'art_source/TASK-051/animal_motion'
 OUTPUT = GAME / '.agent-local/animal-factory-output'
+LOCAL_ENV = GAME / '.agent-local/environment.json'
+LOCAL_PATHS = json.loads(LOCAL_ENV.read_text(encoding='utf-8-sig')) if LOCAL_ENV.is_file() else {}
 
 
 def factory_root():
     configured = os.environ.get('HEARTHWARD_FACTORY_ROOT')
     candidates = [Path(configured)] if configured else []
-    candidates.append(GAME.parent / 'GameFactory-3A')
+    if LOCAL_PATHS.get('framework_root'):
+        candidates.append(Path(LOCAL_PATHS['framework_root']))
+    candidates.extend([GAME.parent, GAME.parent / 'GameFactory-3A'])
     common = subprocess.check_output(
         ['git', 'rev-parse', '--git-common-dir'], cwd=GAME, text=True).strip()
     common_path = Path(common)
@@ -30,6 +34,8 @@ def ue_root():
     configured = os.environ.get('HEARTHWARD_UE_ROOT')
     candidates = [Path(configured)] if configured else [
         Path(r'E:\UE_5.8'), Path(r'C:\Program Files\Epic Games\UE_5.8')]
+    if not configured and LOCAL_PATHS.get('ue_root'):
+        candidates.insert(0, Path(LOCAL_PATHS['ue_root']))
     for candidate in candidates:
         if (candidate / 'Engine/Binaries/Win64/UnrealEditor.exe').is_file():
             return candidate.resolve()

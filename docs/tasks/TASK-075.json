@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "TASK-075",
+  "title": "整理仓库目录、当前状态入口与开发材料存放规则",
+  "status": "Active",
+  "updated_at": "2026-10-05",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-075-repository-organization",
+  "source_refs": [
+    "用户2026-10-05要求整理Hearthward仓库文件",
+    "main@ac6a302ba24ea6531ccdaf880d83e9a03779c51e"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "AGENTS.md",
+    ".gitignore",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/REPOSITORY_LAYOUT.md",
+    "docs/qa/README.md",
+    "art_source/README.md",
+    "docs/planning/BRANCH_INTEGRATION.md",
+    "docs/tasks/TASK-075.json",
+    "docs/handoffs/TASK-075.md",
+    "Resource/",
+    "ui pic/",
+    "2026-09-22/",
+    "art_source/TASK-004/Tripo/主角/",
+    "art_source/TASK-004/Tripo/弟弟/",
+    "art_source/ui-reference/",
+    "docs/assets/requests/",
+    "docs/qa/evidence/TASK-020/compare_reference.py"
+  ],
+  "forbidden_paths": [
+    "Source/",
+    "Content/",
+    "Config/",
+    "Resources/",
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "散落素材归入制作源和参考目录，重复文件先逐字节比较后归并",
+    "当前入口准确区分main已集成玩法与尚未集成新版UI",
+    "移动后的链接、LFS属性与修改范围通过检查；游戏运行路径无改动"
+  ],
+  "non_goals": [
+    "合并新版UI或修改玩法",
+    "删除历史QA证据、缓存、存档或重写Git历史",
+    "提交推送、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "granted",
+    "push": "granted",
+    "merge": "owner_authorized_main"
+  },
+  "notes": [
+    "本次用户授权本地整理；main与远端保持原提交。",
+    "本轮用户明确授权整理结果与整合代码提交推送并更新main；人工体验验收另行保留。"
+  ]
+}

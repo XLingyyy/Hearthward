@@ -23,6 +23,7 @@ public:
     UFUNCTION(BlueprintPure) bool IsVaulting() const { return Vaulting; }
     UFUNCTION(BlueprintPure) bool IsInWater() const { return InWater; }
     UFUNCTION(BlueprintPure) FString GetStatus() const { return Status; }
+    uint32 GetFeedbackRevision() const { return FeedbackRevision; }
     UFUNCTION(BlueprintCallable) bool BeginVault();
     UFUNCTION(BlueprintCallable) void CancelVault();
     bool FindVault(FVector& Landing) const;
@@ -30,6 +31,8 @@ public:
     bool BreathingOnGround() const;
     static float FallDamage(float DownSpeed,float Gravity,float MaximumHealth);
 private:
+    uint32 FeedbackRevision=0;
+    void SetStatus(FString Value) { Status=MoveTemp(Value); ++FeedbackRevision; }
     UFUNCTION() void Restored();
     bool Vaulting=false,InWater=false;
     float Elapsed=0,StartingHealth=0;
