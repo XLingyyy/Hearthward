@@ -1,0 +1,811 @@
+{
+  "schema_version": 1,
+  "status": "Approved",
+  "baseline_sha": "67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+  "tasks": [
+    {
+      "id": "TASK-053",
+      "original_id": "TASK-055",
+      "title": "补齐正式基础通行与导航连接",
+      "phase": "B",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-044",
+        "TASK-049",
+        "TASK-051"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-051-input-traversal.md",
+        "docs/contracts/CT-TASK-049-campaign.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Experience/HearthwardTraversalComponent.h",
+        "Source/Hearthward/Experience/HearthwardTraversalComponent.cpp",
+        "Source/Hearthward/Companion/HearthwardCompanionNavigationComponent.h",
+        "Source/Hearthward/Companion/HearthwardCompanionNavigationComponent.cpp",
+        "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+        "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+        "Content/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.umap及对应World Partition外部Actor（施工登记实际包名）"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-024"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-054",
+      "original_id": "TASK-056",
+      "title": "实现正式生存、药品、倒地和救援闭环",
+      "phase": "B",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-044",
+        "TASK-050",
+        "TASK-052"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-044-survival-transitions.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Survival/",
+        "Source/Hearthward/Interaction/HearthwardFurnitureInteractionComponent.cpp",
+        "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+        "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+        "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+        "Source/Hearthward/UI/HearthwardHUD.cpp",
+        "Source/Hearthward/Save/（仅必要生存字段）",
+        "Source/Hearthward/Tests/SurvivalTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-013",
+        "T-018",
+        "T-011"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-055",
+      "original_id": "TASK-057",
+      "title": "接入正式装备语义和玩家战斗",
+      "phase": "B",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-045",
+        "TASK-047",
+        "TASK-051"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-045-combat-alert.md",
+        "docs/contracts/CT-TASK-047-progression-inventory.md",
+        "docs/contracts/CT-TASK-051-input-traversal.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Combat/",
+        "Source/Hearthward/Inventory/",
+        "Source/Hearthward/HearthwardCharacter.cpp及Source/Hearthward/Animation/",
+        "Source/Hearthward/Building/HearthwardRepair.cpp",
+        "Source/Hearthward/UI/HearthwardScreenEquipment.cpp",
+        "Source/Hearthward/UI/HearthwardScreenRepair.cpp",
+        "Resources/Data/gameplay.json（仅已批准装备／动作绑定）",
+        "Content/Characters/及武器／护甲动画资产（先登记实际包）",
+        "Source/Hearthward/Tests/CombatTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-004",
+        "T-011",
+        "T-024"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-056",
+      "original_id": "TASK-058",
+      "title": "实现敌人AI、潜入警戒和自然地图遭遇",
+      "phase": "B",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-043",
+        "TASK-045",
+        "TASK-049",
+        "TASK-052",
+        "TASK-053",
+        "TASK-055"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-045-combat-alert.md",
+        "docs/contracts/CT-TASK-049-campaign.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Campaign/HearthwardCampaignActor.h",
+        "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+        "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+        "Source/Hearthward/Combat/HearthwardCombatTargetComponent.h",
+        "Source/Hearthward/Combat/HearthwardCombatTargetComponent.cpp",
+        "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+        "Resources/Data/gameplay.json（遭遇和现有AI字段）",
+        "Source/Hearthward/Tests/CombatTests.cpp",
+        "Source/Hearthward/Tests/CampaignTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-014",
+        "T-011"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-057",
+      "original_id": "TASK-059",
+      "title": "接通正式采集、工具、蓝图与加工链",
+      "phase": "B",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-043",
+        "TASK-047",
+        "TASK-048",
+        "TASK-052"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-047-progression-inventory.md",
+        "docs/contracts/CT-TASK-048-nature.md",
+        "docs/contracts/CT-TASK-046-camp-economy.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Interaction/HearthwardHarvestSubsystem.cpp",
+        "Source/Hearthward/Nature/HearthwardNatureActions.cpp",
+        "Source/Hearthward/Nature/HearthwardNatureSubsystem.cpp",
+        "Source/Hearthward/Building/HearthwardCrafting.cpp",
+        "Source/Hearthward/Building/HearthwardWorkshopService.cpp",
+        "Source/Hearthward/UI/HearthwardScreenCrafting.cpp",
+        "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+        "Resources/Data/gameplay.json（点位／设施绑定）",
+        "Source/Hearthward/Tests/HarvestRefreshTests.cpp",
+        "Source/Hearthward/Tests/NatureTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-004",
+        "T-007",
+        "T-016"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-058",
+      "original_id": "TASK-060",
+      "title": "实现营地升阶、设施等级和建筑管理",
+      "phase": "B",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-046",
+        "TASK-047",
+        "TASK-052",
+        "TASK-057"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-046-camp-economy.md",
+        "docs/contracts/CT-TASK-047-progression-inventory.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Building/HearthwardBuildingComponent.cpp",
+        "Source/Hearthward/Building/HearthwardBuildingEconomy.cpp",
+        "Source/Hearthward/Camp/HearthwardCampSubsystem.cpp",
+        "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+        "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+        "Source/Hearthward/Save/（仅设施增量）",
+        "Resources/Data/gameplay.json（既有营地表接入）",
+        "Source/Hearthward/Tests/CampEconomyTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-006",
+        "T-005",
+        "T-016"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-059",
+      "original_id": "TASK-061",
+      "title": "实现族人分工、营地生产和公共口粮",
+      "phase": "B",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-043",
+        "TASK-046",
+        "TASK-052",
+        "TASK-058"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-046-camp-economy.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Camp/",
+        "Source/Hearthward/Building/HearthwardBuildingEconomy.cpp",
+        "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp（仅救回人口接入）",
+        "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+        "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+        "Source/Hearthward/Tests/CampEconomyTests.cpp",
+        "Source/Hearthward/Tests/WorldClockTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-005",
+        "T-016"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-060",
+      "original_id": "TASK-062",
+      "title": "导入动物行为并接通狩猎供给",
+      "phase": "C",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-048",
+        "TASK-053",
+        "TASK-055",
+        "TASK-057"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-048-nature.md",
+        "docs/contracts/CT-TASK-051-animal-motion.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Nature/HearthwardNatureActor.cpp",
+        "Source/Hearthward/Nature/HearthwardNatureSubsystem.cpp",
+        "Source/Hearthward/Nature/HearthwardNatureState.h",
+        "Source/Hearthward/Animals/HearthwardAnimalMotionComponent.h",
+        "Source/Hearthward/Animals/HearthwardAnimalMotionComponent.cpp",
+        "Source/Hearthward/Animals/HearthwardAnimalAnimInstance.cpp",
+        "Resources/Data/animal_motion.json",
+        "Resources/Data/gameplay.json（既有动物栖息地绑定）",
+        "Content/Hearthward/Nature/及动物动作资产（按实际包登记）",
+        "Source/Hearthward/Tests/NatureTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-004",
+        "T-016"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-061",
+      "original_id": "TASK-063",
+      "title": "实现钓鱼、稀有奖励与藏宝图闭环",
+      "phase": "C",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-048",
+        "TASK-052",
+        "TASK-057"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-048-nature.md",
+        "docs/contracts/CT-TASK-047-progression-inventory.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Nature/HearthwardNatureFishing.cpp",
+        "Source/Hearthward/Nature/HearthwardNatureActions.cpp",
+        "Source/Hearthward/UI/HearthwardScreenNature.cpp",
+        "Source/Hearthward/Input/（仅既有钓鱼语义接入）",
+        "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp（宝箱实际落点）",
+        "Content/Hearthward/Nature/及现有鱼竿资产（按实际包登记）",
+        "Source/Hearthward/Tests/NatureTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-019",
+        "T-004",
+        "T-011"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-062",
+      "original_id": "TASK-064",
+      "title": "实现种植、照料和个体养殖",
+      "phase": "C",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-048",
+        "TASK-052",
+        "TASK-058",
+        "TASK-059"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-048-nature.md",
+        "docs/contracts/CT-TASK-050-companion-activities.md",
+        "docs/contracts/CT-TASK-046-camp-economy.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Nature/",
+        "Source/Hearthward/UI/HearthwardScreenNature.cpp",
+        "Source/Hearthward/Building/HearthwardBuildingEconomy.cpp（栏舍接入）",
+        "Source/Hearthward/Camp/HearthwardCampSubsystem.cpp（真实饲料／产品）",
+        "Source/Hearthward/Save/（仅新增生态字段）",
+        "Resources/Data/gameplay.json（既有作物／栏舍绑定）",
+        "Content/Hearthward/Nature/作物与栏舍资产（按实际包登记）",
+        "Source/Hearthward/Tests/NatureTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-016",
+        "T-004"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-063",
+      "original_id": "TASK-065",
+      "title": "让伙伴接入正式关卡与新增生活能力",
+      "phase": "B",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-050",
+        "TASK-054",
+        "TASK-056",
+        "TASK-057",
+        "TASK-058",
+        "TASK-059"
+      ],
+      "contracts": [
+        "docs/contracts/CT-002-companion-command.md",
+        "docs/contracts/CT-TASK-050-companion-activities.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/AI/（限现有能力与执行器接入）",
+        "Source/Hearthward/Companion/",
+        "Source/Hearthward/Gameplay/HearthwardCompanionBehavior.cpp及Source/Hearthward/AI/HearthwardNPCContextProjection.cpp",
+        "Source/Hearthward/Nature/（能力消费接口）",
+        "Source/Hearthward/Building/HearthwardWorkshopService.cpp",
+        "Source/Hearthward/UI/HearthwardDialogueWidget.cpp",
+        "Source/Hearthward/Tests/（现有伙伴相关定向用例）"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-007",
+        "T-008",
+        "T-009",
+        "T-010",
+        "T-020"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-064",
+      "original_id": "TASK-066",
+      "title": "接入自然地图真实地点、任务与玩家引导",
+      "phase": "B",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-049",
+        "TASK-051",
+        "TASK-056",
+        "TASK-057",
+        "TASK-058",
+        "TASK-059"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-049-campaign.md",
+        "docs/contracts/CT-TASK-051-input-traversal.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+        "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+        "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+        "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+        "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+        "Resources/Data/gameplay.json（既有路线／标记绑定）",
+        "Content/Hearthward/World/Natural/Rebuild/及对应__ExternalActors__包（登记实际范围）",
+        "Source/Hearthward/Tests/CampaignTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-017",
+        "T-025"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-065",
+      "original_id": "TASK-067",
+      "title": "验收第一条完整可玩体验切片",
+      "phase": "B",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-042",
+        "TASK-052",
+        "TASK-053",
+        "TASK-054",
+        "TASK-055",
+        "TASK-056",
+        "TASK-057",
+        "TASK-058",
+        "TASK-059",
+        "TASK-063",
+        "TASK-064"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-049-campaign.md",
+        "docs/contracts/CT-TASK-050-companion-activities.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "docs/qa/TASK-065/",
+        "docs/handoffs/TASK-065.md",
+        "docs/PROJECT_STATE.md",
+        "README.md",
+        "发现的缺陷按所属实现任务登记精确路径，不能以验收单自动扩大源码写范围"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-021",
+        "T-022"
+      ],
+      "implementation_status": "Backlog",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-066",
+      "original_id": "TASK-068",
+      "title": "制作夜袭、故乡四区与八主线十五支线",
+      "phase": "C",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-049",
+        "TASK-056",
+        "TASK-059",
+        "TASK-064",
+        "TASK-065"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-049-campaign.md",
+        "docs/contracts/CT-TASK-045-combat-alert.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Campaign/",
+        "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+        "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+        "Resources/Data/gameplay.json（批准23任务与场景绑定）",
+        "Content/Hearthward/World/Natural/Rebuild/及对应外部Actor（先登记实际包）",
+        "Content/Hearthward/Campaign/及Content/Characters/Brother/（登记实际敌人／族人资产）",
+        "Source/Hearthward/Tests/CampaignTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-014",
+        "T-015",
+        "T-022"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-067",
+      "original_id": "TASK-069",
+      "title": "实现永久夺回、双营地和通关后世界",
+      "phase": "C",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-043",
+        "TASK-046",
+        "TASK-049",
+        "TASK-058",
+        "TASK-059",
+        "TASK-066"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-043-world-time-persistence.md",
+        "docs/contracts/CT-TASK-046-camp-economy.md",
+        "docs/contracts/CT-TASK-049-campaign.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Campaign/HearthwardCampaignState.cpp",
+        "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+        "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+        "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+        "Source/Hearthward/Camp/",
+        "Source/Hearthward/Building/HearthwardBuildingEconomy.cpp",
+        "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+        "Source/Hearthward/Tests/CampaignTests.cpp",
+        "Source/Hearthward/Tests/CampEconomyTests.cpp"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-005",
+        "T-015",
+        "T-017"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-068",
+      "original_id": "TASK-070",
+      "title": "验收伙伴角色表达和长程协作可靠性",
+      "phase": "C",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-050",
+        "TASK-060",
+        "TASK-061",
+        "TASK-062",
+        "TASK-063",
+        "TASK-065",
+        "TASK-066",
+        "TASK-067"
+      ],
+      "contracts": [
+        "docs/contracts/CT-002-companion-command.md",
+        "docs/contracts/CT-TASK-050-companion-activities.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "docs/qa/TASK-068/",
+        "docs/handoffs/TASK-068.md",
+        "Source/Hearthward/AI/（有真实缺陷才登记具体文件）",
+        "config/npc-agent.policy.json及Source/Hearthward/AI/HearthwardAgentContract.cpp（实际角色提示／能力）",
+        "config/local-ai.lock.json（仅明确批准的版本修复）",
+        "README.md"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-020",
+        "T-010",
+        "T-011"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-069",
+      "original_id": "TASK-071",
+      "title": "收尾全流程UI、设置和操作可访问性",
+      "phase": "D",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-051",
+        "TASK-054",
+        "TASK-064",
+        "TASK-067"
+      ],
+      "contracts": [
+        "docs/contracts/CT-004-presentation-gameplay.md",
+        "docs/contracts/CT-TASK-051-input-traversal.md",
+        "docs/contracts/CT-003-save-load.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/UI/",
+        "Source/Hearthward/Input/",
+        "Source/Hearthward/Experience/HearthwardPlayerSettings.cpp",
+        "Resources/UI/（仅实际布局／标签／状态）",
+        "Source/Hearthward/Tests/（现有设置／输入定向用例）",
+        "docs/qa/TASK-069/"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-025",
+        "T-012"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-070",
+      "original_id": "TASK-072",
+      "title": "收尾正式美术、动作、声音和氛围",
+      "phase": "D",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-042",
+        "TASK-049",
+        "TASK-051",
+        "TASK-065",
+        "TASK-066"
+      ],
+      "contracts": [
+        "docs/contracts/CT-004-presentation-gameplay.md",
+        "docs/contracts/CT-TASK-051-animal-motion.md",
+        "docs/contracts/CT-TASK-051-input-traversal.md",
+        "docs/contracts/CT-TASK-049-campaign.md"
+      ],
+      "proposed_implementation_paths": [
+        "art_source/TASK-070/",
+        "docs/assets/TASK-070/",
+        "Content/（按已确认逐件资产／地图包登记，禁止笼统写全目录）",
+        "Resources/UI/（批准图标／插画）",
+        "Resources/Data/animal_motion.json（缺失动作绑定）",
+        "Source/Hearthward/Animation/（仅正式动作时序）",
+        "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+        "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+        "docs/qa/TASK-070/"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-021"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-071",
+      "original_id": "TASK-073",
+      "title": "完成全系统存档迁移和时间线回归",
+      "phase": "D",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-052",
+        "TASK-054",
+        "TASK-055",
+        "TASK-057",
+        "TASK-058",
+        "TASK-059",
+        "TASK-060",
+        "TASK-061",
+        "TASK-062",
+        "TASK-063",
+        "TASK-066",
+        "TASK-067"
+      ],
+      "contracts": [
+        "docs/contracts/CT-003-save-load.md",
+        "docs/contracts/CT-TASK-043-world-time-persistence.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "Source/Hearthward/Save/",
+        "Source/Hearthward/Update/",
+        "Source/Hearthward/Tests/SaveTests.cpp",
+        "Source/Hearthward/Tests/WorldClockTests.cpp",
+        "领域快照消费者仅限复现缺陷所需精确文件",
+        "docs/qa/TASK-071/"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-011",
+        "T-012",
+        "T-016",
+        "T-017"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-072",
+      "original_id": "TASK-074",
+      "title": "验证游戏与模型联合性能及独立机器兼容",
+      "phase": "D",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-051",
+        "TASK-065",
+        "TASK-069",
+        "TASK-070",
+        "TASK-071"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-051-input-traversal.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md",
+        "docs/contracts/CT-002-companion-command.md"
+      ],
+      "proposed_implementation_paths": [
+        "docs/qa/TASK-072/",
+        "scripts/release/package_demo.py（仅可复现打包缺陷）",
+        "Source/Hearthward/AI/（仅实测瓶颈文件）",
+        "Source/Hearthward/（其余瓶颈须先精确登记）",
+        "Config/（实际批准性能参数）",
+        "docs/ENVIRONMENT.md",
+        "README.md"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-001",
+        "T-020",
+        "T-021"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-073",
+      "original_id": "TASK-075",
+      "title": "执行首版全流程试玩和最终平衡",
+      "phase": "D",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-060",
+        "TASK-061",
+        "TASK-062",
+        "TASK-066",
+        "TASK-067",
+        "TASK-068",
+        "TASK-069",
+        "TASK-070",
+        "TASK-071",
+        "TASK-072"
+      ],
+      "contracts": [
+        "docs/contracts/CT-TASK-049-campaign.md",
+        "docs/contracts/CT-TASK-046-camp-economy.md",
+        "docs/contracts/CT-TASK-050-companion-activities.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "docs/qa/TASK-073/",
+        "docs/handoffs/TASK-073.md",
+        "Resources/Data/gameplay.json（仅实测后Owner批准平衡项）",
+        "发现的功能缺陷按所属任务精确登记路径",
+        "README.md",
+        "docs/PROJECT_STATE.md"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-022",
+        "T-020"
+      ],
+      "implementation_status": "Backlog",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-074",
+      "original_id": "TASK-076",
+      "title": "准备首版发布候选和正式交付",
+      "phase": "D",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-073"
+      ],
+      "contracts": [
+        "docs/contracts/CT-003-save-load.md",
+        "docs/contracts/CT-002-companion-command.md",
+        "docs/contracts/CT-TASK-052-clock-refresh.md"
+      ],
+      "proposed_implementation_paths": [
+        "docs/releases/first-release/",
+        "scripts/release/（仅当前打包／安装器必要调整）",
+        "docs/releases/first-release/manifest.json（RC冻结后生成）",
+        "README.md",
+        "docs/PROJECT_STATE.md",
+        "发行manifest／许可证／版本说明按实际文件登记"
+      ],
+      "required_tests": [
+        "T-002",
+        "T-001",
+        "T-021",
+        "T-022"
+      ],
+      "implementation_status": "Active",
+      "status": "Active"
+    }
+  ],
+  "approval": "用户2026-10-03：审阅通过，现在直接开始施工"
+}

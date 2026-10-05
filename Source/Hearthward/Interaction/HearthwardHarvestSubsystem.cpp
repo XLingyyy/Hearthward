@@ -75,8 +75,24 @@ FString UHearthwardHarvestTargetComponent::GetInteractionPrompt(AActor* Interact
 {
     const int32 Count=GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Remaining(ResourceKey,Capacity);
     const FString Label=HearthwardData::Text(HearthwardData::Find(TEXT("items"),Item.ToString()),TEXT("name"));
-    return Count>0?FString::Printf(TEXT("E 采集%s ×%d · 5秒\n剩余 %d · 移动可中断"),*Label,FMath::Min([&](){FGuid Tool;const auto* Bag=Interactor?Interactor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;return Bag?HearthwardHarvestTools::Yield(Bag,Item,Tool):0;}(),Count),Count)
-        :Label+TEXT("已采尽 · 两个游戏日后恢复，建筑遮挡时延后");
+    if(Count<=0)return Label+TEXT("已采尽 · 两个游戏日后恢复，建筑遮挡时延后");
+    const auto* Bag=Interactor?Interactor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
+    FGuid Tool;const int32 ToolYield=Bag?HearthwardHarvestTools::Yield(Bag,Item,Tool):0;
+    if(ToolYield<=0)
+    {
+        const TCHAR* Required=Item==TEXT("wood")?TEXT("斧头")
+            :Item==TEXT("refined_ore")?TEXT("Ⅱ级或更高等级的镐")
+            :(Item==TEXT("stone") || Item==TEXT("ore"))?TEXT("镐")
+            :Item==TEXT("fish")?TEXT("钓竿"):TEXT("采集工具");
+        return FString::Printf(TEXT("采集%s不可用 · 剩余 %d\n需要耐久大于零的%s"),*Label,Count,Required);
+    }
+    FString ToolStatus=TEXT("徒手");
+    if(const auto* Instance=Bag->FindInstance(Tool))
+    {
+        const auto Definition=HearthwardData::Find(TEXT("items"),Instance->Definition.ToString());
+        ToolStatus=HearthwardData::Text(Definition,TEXT("name"))+FString::Printf(TEXT(" · 耐久 %.2f / %.0f"),Instance->Durability,HearthwardData::Number(Definition,TEXT("durability")));
+    }
+    return FString::Printf(TEXT("E 采集%s ×%d · 5秒 · 移动可中断\n剩余 %d · %s"),*Label,FMath::Min(ToolYield,Count),Count,*ToolStatus);
 }
 FString UHearthwardHarvestTargetComponent::CompleteInteraction(AActor* Player)
 { return GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Harvest(this,Player); }

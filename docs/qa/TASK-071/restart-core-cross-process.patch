@@ -1,0 +1,167 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -15,6 +15,7 @@
+ #include "Misc/Crc.h"
+ #include "Misc/Paths.h"
+ #include "HAL/FileManager.h"
++#include "HAL/PlatformProcess.h"
+ #include "Kismet/GameplayStatics.h"
+ #include "../Campaign/HearthwardCampaignState.h"
+ #include "../Save/HearthwardSaveCompatibility.h"
+@@ -81,8 +82,13 @@
+     FString PoolArgument;FGuid PoolId;
+     if(!TestTrue(TEXT("Actual LoadPoint uses the runner's isolated save pool"),
+         FParse::Value(FCommandLine::Get(),TEXT("HearthwardSaveTestPool="),PoolArgument) && FGuid::Parse(PoolArgument,PoolId)))return false;
++    FString RestartPhase;
++    if(FParse::Value(FCommandLine::Get(),TEXT("Hearthward071RestartPhase="),RestartPhase)
++        && !TestTrue(TEXT("Explicit restart phase is write or read"),RestartPhase==TEXT("write") || RestartPhase==TEXT("read")))return false;
++    const FString ManifestPath=FPaths::ProjectSavedDir()/TEXT("Task071")/PoolId.ToString(EGuidFormats::Digits)/TEXT("manifest.json");
+     UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+-    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
++    const FName WorldName=RestartPhase.IsEmpty()?FName():FName(TEXT("Task071RestartFixture"));
++    auto* World=UWorld::CreateWorld(EWorldType::Game,false,WorldName,nullptr,true,ERHIFeatureLevel::Num,&Values);
+     GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+     ON_SCOPE_EXIT { GEngine->DestroyWorldContext(World);World->DestroyWorld(false); };
+     FActorSpawnParameters Spawn;Spawn.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+@@ -101,9 +107,106 @@
+         && Stock->TryAdd(TEXT("wood"),8)==EHearthwardInventoryResult::Success))return false;
+     const bool Enabled=Save->EnablePrototype();
+     if(!TestTrue(FString(TEXT("Real prototype save participants initialize: "))+Save->GetStatus(),Enabled))return false;
++    if(RestartPhase==TEXT("read"))
++    {
++        FString ManifestText;TSharedPtr<FJsonObject> Manifest;
++        if(!TestTrue(TEXT("Read phase finds the write process's QA manifest"),FFileHelper::LoadFileToString(ManifestText,*ManifestPath)
++            && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(ManifestText),Manifest) && Manifest.IsValid()))return false;
++        FGuid SavedId,CampaignId,CommandId,AxeId,MemoryId;
++        if(!TestTrue(TEXT("Manifest identifies the same isolated pool and real saved GUIDs"),Manifest->GetStringField(TEXT("pool"))==PoolId.ToString(EGuidFormats::Digits)
++            && FGuid::Parse(Manifest->GetStringField(TEXT("save_id")),SavedId) && FGuid::Parse(Manifest->GetStringField(TEXT("campaign_id")),CampaignId)
++            && FGuid::Parse(Manifest->GetStringField(TEXT("command_id")),CommandId) && FGuid::Parse(Manifest->GetStringField(TEXT("axe_id")),AxeId)
++            && FGuid::Parse(Manifest->GetStringField(TEXT("memory_id")),MemoryId)))return false;
++        if(!TestTrue(TEXT("Read runs in a different process from write"),uint32(Manifest->GetNumberField(TEXT("writer_pid")))!=FPlatformProcess::GetCurrentProcessId()))return false;
++        const auto Points=Save->GetPoints();
++        TestEqual(TEXT("Fresh process sees the write process's exact pool node count"),Points.Num(),Manifest->GetIntegerField(TEXT("point_count")));
++        const auto* Found=Points.FindByPredicate([&](const auto& P){return P.SaveId==SavedId;});
++        if(!TestNotNull(TEXT("Manifest selects the actual manual node read from disk"),Found))return false;
++        const auto Point=*Found;const auto& Expected=Point.World;
++        TestTrue(TEXT("Persisted campaign and command match write-process GUIDs"),Point.CampaignId==CampaignId && Expected.CommandId==CommandId && Expected.CommandActive);
++        TestEqual(TEXT("Persisted A matches write-process boundary"),Expected.ActiveSeconds,Manifest->GetNumberField(TEXT("active_seconds")));
++        TestEqual(TEXT("Persisted W matches write-process boundary"),Expected.CalendarMinutes,Manifest->GetNumberField(TEXT("calendar_minutes")));
++        TestEqual(TEXT("Persisted origin day matches write process"),Expected.InitialDay,int64(Manifest->GetNumberField(TEXT("initial_day"))));
++        TestEqual(TEXT("Persisted origin minute matches write process"),Expected.InitialMinute,Manifest->GetNumberField(TEXT("initial_minute")));
++        TestEqual(TEXT("Persisted NPC revision matches write process"),Expected.NPCMemory.Revision,int64(Manifest->GetNumberField(TEXT("npc_revision"))));
++        TestEqual(TEXT("Persisted NPC events match write-process count"),Expected.NPCMemory.Events.Num(),Manifest->GetIntegerField(TEXT("npc_events")));
++        TestEqual(TEXT("Persisted NPC coverage matches write-process count"),Expected.NPCMemory.CommandCoverage.Num(),Manifest->GetIntegerField(TEXT("npc_coverage")));
++        const auto& EventIds=Manifest->GetArrayField(TEXT("event_ids"));
++        TestEqual(TEXT("Persisted event GUID count matches write process"),Expected.NPCMemory.Events.Num(),EventIds.Num());
++        for(int32 I=0;I<FMath::Min(Expected.NPCMemory.Events.Num(),EventIds.Num());++I)
++            TestEqual(TEXT("Persisted event retains write-process identity"),Expected.NPCMemory.Events[I].Id.ToString(),EventIds[I]->AsString());
++        TestTrue(TEXT("Persisted NPC conversation clock matches write process"),Expected.NPCMemory.ConversationClockStarted==Manifest->GetBoolField(TEXT("conversation_started"))
++            && Expected.NPCMemory.ConversationClockAwaitingFirstMeeting==Manifest->GetBoolField(TEXT("awaiting_meeting"))
++            && Expected.NPCMemory.LastConversationCalendar==Manifest->GetNumberField(TEXT("last_contact")));
++        TestEqual(TEXT("Persisted knowledge revision matches write process"),Expected.KnowledgeRevision,int64(Manifest->GetNumberField(TEXT("knowledge_revision"))));
++        TestEqual(TEXT("Persisted exact exchange matches write process"),FString::Join(Expected.Knowledge,TEXT("\n")),Manifest->GetStringField(TEXT("knowledge")));
++        if(!TestTrue(TEXT("Read fixture starts with different inventories"),PlayerBag->TryAdd(TEXT("wood"),2)==EHearthwardInventoryResult::Success
++            && Store->Adjust({},{{FName(TEXT("wood")),4}}) && Stock->TryRemove(TEXT("wood"),1)==EHearthwardInventoryResult::Success
++            && Brother->Bag->TryAdd(TEXT("wood"),1)==EHearthwardInventoryResult::Success && !PlayerBag->FirstInstance(TEXT("axe")).IsValid()))return false;
++        for(int32 Pass=0;Pass<2;++Pass)
++        {
++            const FGuid PreviousEpoch=Store->GetTimelineEpoch();
++            if(!TestTrue(FString::Printf(TEXT("Cross-process LoadPoint pass %d: "),Pass+1)+Save->GetStatus(),Save->LoadPoint(SavedId)))return false;
++            TestTrue(TEXT("Each actual load replaces the live timeline"),Store->GetTimelineEpoch()!=PreviousEpoch);
++            TestTrue(TEXT("Loaded real axe retains its exact write-process instance GUID"),PlayerBag->FirstInstance(TEXT("axe"))==AxeId);
++            TestEqual(TEXT("Repeated load preserves player wood without gain"),PlayerBag->GetItemCount(TEXT("wood")),Manifest->GetIntegerField(TEXT("player_wood")));
++            TestEqual(TEXT("Repeated load preserves shared wood without gain"),Store->GetItemCount(TEXT("wood")),Manifest->GetIntegerField(TEXT("shared_wood")));
++            TestEqual(TEXT("Repeated load preserves Brother wood without gain"),Brother->Bag->GetItemCount(TEXT("wood")),Manifest->GetIntegerField(TEXT("brother_wood")));
++            TestEqual(TEXT("Repeated load preserves source wood without gain"),Stock->GetItemCount(TEXT("wood")),Manifest->GetIntegerField(TEXT("source_wood")));
++            TestTrue(TEXT("Repeated load preserves saved campaign and command"),Save->GetCampaignId()==CampaignId && Brother->GetCommandId()==CommandId);
++            TestEqual(TEXT("Requested work is restored"),Brother->GetRequested(),Manifest->GetIntegerField(TEXT("requested")));
++            TestEqual(TEXT("Acquired cargo is restored without replay"),Brother->GetAcquired(),Manifest->GetIntegerField(TEXT("acquired")));
++            TestEqual(TEXT("Carried cargo is restored without replay"),Brother->GetCarried(),Manifest->GetIntegerField(TEXT("carried")));
++            TestEqual(TEXT("Delivered work is restored without replay"),Brother->GetDelivered(),Manifest->GetIntegerField(TEXT("delivered")));
++            const auto Time=Clock->GetSnapshot();
++            TestEqual(TEXT("Repeated load freezes A at saved boundary"),Time.ActivePlaySeconds,Expected.ActiveSeconds);
++            TestEqual(TEXT("Repeated load freezes W at saved boundary"),Time.ElapsedCalendarMinutes,Expected.CalendarMinutes);
++            TestEqual(TEXT("Restored clock derives display day from saved origin"),Time.DisplayDay,Expected.InitialDay+FMath::FloorToInt64((Expected.InitialMinute+Expected.CalendarMinutes)/1440.0));
++            TestEqual(TEXT("Restored clock derives minute from saved origin"),Time.MinuteOfDay,FMath::Fmod(Expected.InitialMinute+Expected.CalendarMinutes,1440.0));
++            const auto& Memory=AI->GetMemorySnapshot();
++            TestEqual(TEXT("Repeated load cannot append NPC records"),Memory.Records.Num(),1);
++            const auto* Record=Memory.Records.FindByPredicate([&](const auto& R){return R.Id==MemoryId;});
++            TestTrue(TEXT("Exact original agreement and campaign survive restart"),Record && Record->Kind==TEXT("agreement")
++                && Record->Text==TEXT("Task071 restart agreement") && Record->Campaign==CampaignId && !Record->Revoked && Record->RecordedAt==Expected.ActiveSeconds);
++            TestEqual(TEXT("Repeated load cannot change NPC revision"),Memory.Revision,Expected.NPCMemory.Revision);
++            TestEqual(TEXT("Repeated load cannot append NPC events"),Memory.Events.Num(),Expected.NPCMemory.Events.Num());
++            for(int32 I=0;I<FMath::Min(Memory.Events.Num(),Expected.NPCMemory.Events.Num());++I)
++            {
++                const auto& E=Memory.Events[I];const auto& S=Expected.NPCMemory.Events[I];
++                TestTrue(TEXT("NPC event identity and payload are restored without replay"),E.Id==S.Id && E.Command==S.Command && E.Campaign==S.Campaign
++                    && E.Kind==S.Kind && E.Item==S.Item && E.Count==S.Count && E.At==S.At && E.Reason==S.Reason);
++            }
++            TestEqual(TEXT("Repeated load preserves command coverage"),Memory.CommandCoverage.Num(),Expected.NPCMemory.CommandCoverage.Num());
++            for(int32 I=0;I<FMath::Min(Memory.CommandCoverage.Num(),Expected.NPCMemory.CommandCoverage.Num());++I)
++            {
++                const auto& C=Memory.CommandCoverage[I];const auto& S=Expected.NPCMemory.CommandCoverage[I];
++                TestTrue(TEXT("Coverage keeps the original command and completeness"),C.Command==S.Command && C.Coverage==S.Coverage && C.Active==S.Active);
++            }
++            TestTrue(TEXT("Conversation clock flags and last contact survive restart"),Memory.ConversationClockStarted==Expected.NPCMemory.ConversationClockStarted
++                && Memory.ConversationClockAwaitingFirstMeeting==Expected.NPCMemory.ConversationClockAwaitingFirstMeeting && Memory.LastConversationCalendar==Expected.NPCMemory.LastConversationCalendar);
++            TestEqual(TEXT("Repeated load restores exact exchanges"),Save->GetKnowledge(),FString::Join(Expected.Knowledge,TEXT("\n")));
++        }
++        if(!TestTrue(TEXT("Restored state still captures through public SavePoint"),Save->SavePoint(true)))return false;
++        const auto After=Save->GetPoints().Last().World;
++        TestTrue(TEXT("Repeated loads cannot create NPC effect operations"),After.NPCOperations==Expected.NPCOperations);
++        TestEqual(TEXT("Repeated loads cannot create NPC effect receipts"),After.NPCReceipts.Num(),Expected.NPCReceipts.Num());
++        TestTrue(TEXT("Resave retains exact clock origin and knowledge revision"),After.InitialDay==Expected.InitialDay && After.InitialMinute==Expected.InitialMinute && After.KnowledgeRevision==Expected.KnowledgeRevision);
++        AddInfo(FString::Printf(TEXT("TASK071 restart READ pid=%u writer=%u save=%s, two actual LoadPoint passes"),FPlatformProcess::GetCurrentProcessId(),uint32(Manifest->GetNumberField(TEXT("writer_pid"))),*SavedId.ToString()));
++        return true;
++    }
+     if(!TestTrue(TEXT("Runner pool is fresh before this actual-world test"),Save->GetPoints().IsEmpty()))return false;
+     const bool Started=Save->StartNewProgress();
+     if(!TestTrue(FString(TEXT("Normal new progress writes and restores the prepared world: "))+Save->GetStatus(),Started))return false;
++    if(RestartPhase==TEXT("write"))
++    {
++        Clock->Tick(7.0f);
++        if(!TestTrue(TEXT("Write phase creates real nonzero elapsed clock state"),Clock->GetSnapshot().ActivePlaySeconds==7 && Clock->GetSnapshot().ElapsedCalendarMinutes==7))return false;
++        if(!TestTrue(TEXT("Write phase uses public inventory operations and a real instance"),PlayerBag->TryAdd(TEXT("axe"),1)==EHearthwardInventoryResult::Success
++            && PlayerBag->FirstInstance(TEXT("axe")).IsValid() && Store->Adjust({},{{FName(TEXT("wood")),6}})
++            && Brother->Bag->TryAdd(TEXT("wood"),2)==EHearthwardInventoryResult::Success))return false;
++        if(!TestTrue(TEXT("Write phase records an actual player agreement"),AI->PutPlayerMemory(Hero,Brother,FGuid::NewGuid(),TEXT("agreement"),TEXT("Task071 restart agreement"))))return false;
++        Save->RememberExchange(TEXT("Player"),TEXT("Task071 restart exchange"));
++    }
+     FHearthwardAgentGoal Goal;Goal.Intent=TEXT("collect");Goal.Item=TEXT("wood");Goal.Quantity=1;
+     Goal.QuantityMode=TEXT("additional_acquired");Goal.SourceRef=TEXT("S1");
+     const auto FirstTicket=Brother->Request(Hero,TEXT("Collect one wood"));
+@@ -111,6 +214,34 @@
+     const bool Saved=Save->SavePoint(true);
+     if(!TestTrue(FString(TEXT("Actual stable command snapshot saves: "))+Save->GetStatus(),Saved))return false;
+     const auto Point=Save->GetPoints().Last();const auto OldEpoch=Store->GetTimelineEpoch();
++    if(RestartPhase==TEXT("write"))
++    {
++        const auto& S=Point.World;
++        if(!TestTrue(TEXT("Write snapshot has a real active command, record, and event coverage"),S.CommandActive && S.CommandId.IsValid()
++            && S.NPCMemory.Records.Num()==1 && !S.NPCMemory.Events.IsEmpty() && !S.NPCMemory.CommandCoverage.IsEmpty()))return false;
++        auto Manifest=MakeShared<FJsonObject>();
++        Manifest->SetStringField(TEXT("pool"),PoolId.ToString(EGuidFormats::Digits));Manifest->SetNumberField(TEXT("writer_pid"),FPlatformProcess::GetCurrentProcessId());
++        Manifest->SetStringField(TEXT("save_id"),Point.SaveId.ToString());Manifest->SetStringField(TEXT("campaign_id"),Point.CampaignId.ToString());
++        Manifest->SetStringField(TEXT("command_id"),S.CommandId.ToString());Manifest->SetStringField(TEXT("axe_id"),PlayerBag->FirstInstance(TEXT("axe")).ToString());
++        Manifest->SetStringField(TEXT("memory_id"),S.NPCMemory.Records[0].Id.ToString());Manifest->SetNumberField(TEXT("point_count"),Save->GetPoints().Num());
++        Manifest->SetNumberField(TEXT("player_wood"),S.PlayerItems.Stacks.FindRef(TEXT("wood")));Manifest->SetNumberField(TEXT("shared_wood"),S.StorageItems.Stacks.FindRef(TEXT("wood")));
++        Manifest->SetNumberField(TEXT("brother_wood"),S.BrotherItems.Stacks.FindRef(TEXT("wood")));Manifest->SetNumberField(TEXT("source_wood"),S.Resource.FindRef(TEXT("wood")));
++        Manifest->SetNumberField(TEXT("requested"),S.Requested);Manifest->SetNumberField(TEXT("acquired"),S.Acquired);
++        Manifest->SetNumberField(TEXT("carried"),S.Carried);Manifest->SetNumberField(TEXT("delivered"),S.Delivered);
++        Manifest->SetNumberField(TEXT("active_seconds"),S.ActiveSeconds);Manifest->SetNumberField(TEXT("calendar_minutes"),S.CalendarMinutes);
++        Manifest->SetNumberField(TEXT("initial_day"),S.InitialDay);Manifest->SetNumberField(TEXT("initial_minute"),S.InitialMinute);
++        Manifest->SetNumberField(TEXT("npc_revision"),S.NPCMemory.Revision);Manifest->SetNumberField(TEXT("npc_events"),S.NPCMemory.Events.Num());
++        Manifest->SetNumberField(TEXT("npc_coverage"),S.NPCMemory.CommandCoverage.Num());Manifest->SetNumberField(TEXT("knowledge_revision"),S.KnowledgeRevision);
++        TArray<TSharedPtr<FJsonValue>> EventIds;for(const auto& E:S.NPCMemory.Events) EventIds.Add(MakeShared<FJsonValueString>(E.Id.ToString()));
++        Manifest->SetArrayField(TEXT("event_ids"),EventIds);Manifest->SetBoolField(TEXT("conversation_started"),S.NPCMemory.ConversationClockStarted);
++        Manifest->SetBoolField(TEXT("awaiting_meeting"),S.NPCMemory.ConversationClockAwaitingFirstMeeting);Manifest->SetNumberField(TEXT("last_contact"),S.NPCMemory.LastConversationCalendar);
++        Manifest->SetStringField(TEXT("knowledge"),FString::Join(S.Knowledge,TEXT("\n")));
++        FString Json;FJsonSerializer::Serialize(Manifest,TJsonWriterFactory<>::Create(&Json));
++        if(!TestTrue(TEXT("Write process persists the isolated QA manifest"),IFileManager::Get().MakeDirectory(*FPaths::GetPath(ManifestPath),true)
++            && FFileHelper::SaveStringToFile(Json,*ManifestPath,FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM)))return false;
++        AddInfo(FString::Printf(TEXT("TASK071 restart WRITE pid=%u save=%s manifest=%s"),FPlatformProcess::GetCurrentProcessId(),*Point.SaveId.ToString(),*ManifestPath));
++        return true;
++    }
+     const auto OldTicket=Brother->Request(Hero,TEXT("Late result for another one wood"));
+     if(!TestTrue(TEXT("Old pending ticket is genuinely current before LoadPoint"),Brother->IsProposalCurrent(Hero,OldTicket)))return false;
+     if(!TestTrue(TEXT("Future inventories really differ before LoadPoint"),

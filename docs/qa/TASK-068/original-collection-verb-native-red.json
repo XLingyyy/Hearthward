@@ -1,0 +1,105 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "DADB6A00425A4B0C089D499B70AF0180",
+			"instanceName": "LAPTOP-R8NPOP05-47832",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.04-13.57.59",
+	"succeeded": 0,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.12578320503234863,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "OriginalCollectionVerbCompatibility",
+			"fullTestPath": "Hearthward.NPCAgent.OriginalCollectionVerbCompatibility",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"DADB6A00425A4B0C089D499B70AF0180"
+			],
+			"duration": 0.12578320503234863,
+			"dateTime": "2026.10.04-13.57.59",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'An explicit collection request using help remains valid' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Source\\Hearthward\\Tests\\NPCAgentTests.cpp",
+					"lineNumber": 229,
+					"timestamp": "2026.10.04-13.57.59"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'An explicit collection request for the speaker remains valid' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Source\\Hearthward\\Tests\\NPCAgentTests.cpp",
+					"lineNumber": 231,
+					"timestamp": "2026.10.04-13.57.59"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'A negative collection request cannot authorize fresh collection' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Source\\Hearthward\\Tests\\NPCAgentTests.cpp",
+					"lineNumber": 233,
+					"timestamp": "2026.10.04-13.57.59"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Collection describing acquired cargo cannot authorize another new harvest' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Source\\Hearthward\\Tests\\NPCAgentTests.cpp",
+					"lineNumber": 236,
+					"timestamp": "2026.10.04-13.57.59"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'An omitted excluded direction cannot default to the current safe source' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Source\\Hearthward\\Tests\\NPCAgentTests.cpp",
+					"lineNumber": 238,
+					"timestamp": "2026.10.04-13.57.59"
+				}
+			],
+			"warnings": 0,
+			"errors": 5,
+			"artifacts": []
+		}
+	]
+}

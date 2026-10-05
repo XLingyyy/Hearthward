@@ -1,0 +1,105 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -35,6 +35,54 @@
+     for(const auto& V:*A) { FString S; if(!V->TryGetString(S) || S.IsEmpty() || S.Len()>Length) return false; Out.Add(S); }
+     return true;
+ }
++bool OriginalMaterialBudgetsMatch(const FHearthwardAgentGoal& Goal)
++{
++    const FString Text=HearthwardAgent::Normalize(Goal.Original);
++    FRegexMatcher Budget(FRegexPattern(TEXT("(最多|至多|不超过)([^，,。；;\\n]*?)(?=最多|至多|不超过|[，,。；;\\n]|$)")),Text);
++    while(Budget.FindNext())
++    {
++        int32 Start=Budget.GetMatchBeginning();
++        while(Start>0 && !FString(TEXT("，,。；;\n")).Contains(Text.Mid(Start-1,1)))--Start;
++        FString Prefix=Text.Mid(Start,Budget.GetMatchBeginning()-Start).TrimEnd();
++        const FString Tail=Budget.GetCaptureGroup(2);
++        if(!Prefix.Contains(TEXT("耗")) && !Prefix.Contains(TEXT("用")) && !Tail.Contains(TEXT("耗")) && !Tail.Contains(TEXT("用")))continue;
++        Prefix.ReplaceInline(TEXT("消耗"),TEXT(""));Prefix.ReplaceInline(TEXT("使用"),TEXT(""));Prefix.ReplaceInline(TEXT("耗"),TEXT(""));Prefix.ReplaceInline(TEXT("用"),TEXT(""));Prefix.TrimEndInline();
++        bool TailHasItem=false;
++        for(const auto& Item:HearthwardBasicItems())
++            if(Tail.Contains(HearthwardAgent::Normalize(HearthwardAgent::ItemText(Item.Id))) || Tail.Contains(Item.Id.ToString())){TailHasItem=true;break;}
++        FRegexMatcher Number(FRegexPattern(TEXT("(?<![-−负.．点0-9零〇一二两三四五六七八九十百千万亿])([0-9]+|[零〇一二两三四五六七八九十百千万亿]+)(?![.．点0-9零〇一二两三四五六七八九十百千万亿])\\s*(份|个|根|单位|块|件)")),Tail);
++        bool Found=false;TSet<FName> BoundItems;
++        while(Number.FindNext())
++        {
++            FString Before=Tail.Left(Number.GetMatchBeginning()).TrimEnd();
++            Before.ReplaceInline(TEXT("消耗"),TEXT(""));Before.ReplaceInline(TEXT("使用"),TEXT(""));Before.ReplaceInline(TEXT("耗"),TEXT(""));Before.ReplaceInline(TEXT("用"),TEXT(""));Before.TrimEndInline();
++            const FString After=Tail.Mid(Number.GetMatchEnding()).TrimStart();
++            FName Material;int32 BestLength=0;bool Ambiguous=false;
++            for(const auto& Item:HearthwardBasicItems())
++            {
++                const FString Name=HearthwardAgent::Normalize(HearthwardAgent::ItemText(Item.Id)),Id=Item.Id.ToString();
++                const int32 Length=FMath::Max(After.StartsWith(Name) || Before.EndsWith(Name) || (!TailHasItem && Prefix.EndsWith(Name))?Name.Len():0,
++                    After.StartsWith(Id) || Before.EndsWith(Id) || (!TailHasItem && Prefix.EndsWith(Id))?Id.Len():0);
++                if(Length>BestLength){Material=Item.Id;BestLength=Length;Ambiguous=false;}
++                else if(Length>0 && Length==BestLength && Material!=Item.Id)Ambiguous=true;
++            }
++            if(Material.IsNone() || Ambiguous || BoundItems.Contains(Material))return false;
++            BoundItems.Add(Material);bool Matches=false;
++            for(const auto& Limit:Goal.Limits)
++            {
++                TArray<FString> Parts;Limit.ParseIntoArray(Parts,TEXT(":"));
++                if(Parts.Num()!=3 || Parts[0]!=TEXT("max") || Parts[1]!=Material.ToString())continue;
++                FHearthwardAgentGoal Amount;Amount.Intent=TEXT("collect");Amount.Item=Material;Amount.Quantity=FCString::Atoi(*Parts[2]);
++                Amount.Original=TEXT("数量：")+Number.GetCaptureGroup(1)+Number.GetCaptureGroup(2)+HearthwardAgent::ItemText(Material);
++                if(HearthwardAgent::OriginalQuantityMatches(Amount)){Matches=true;break;}
++            }
++            if(!Matches)return false;
++            Found=true;
++        }
++        if(!Found)return false;
++    }
++    return true;
++}
+ }
+ int32 HearthwardAgent::Policy(const TCHAR* Key) { return PolicyData()->GetIntegerField(Key); }
+ bool HearthwardAgent::Settle(TArray<FHearthwardAgentReceipt>& Receipts,FGuid Id,FGuid Command,
+@@ -56,12 +104,35 @@
+ {
+     const FString Text=Normalize(Goal.Original),Item=Normalize(ItemText(Goal.Item));
+     FString Chinese;
+-    if(Goal.Quantity>=0 && Goal.Quantity<=99)
++    if(Goal.Quantity>=0 && Goal.Quantity<=100000)
+     {
+         const FString Digits=TEXT("零一二三四五六七八九");
+-        if(Goal.Quantity<10)Chinese=Digits.Mid(Goal.Quantity,1);
+-        else Chinese=(Goal.Quantity>=20?Digits.Mid(Goal.Quantity/10,1):FString())+TEXT("十")
+-            +(Goal.Quantity%10?Digits.Mid(Goal.Quantity%10,1):FString());
++        const auto GroupText=[&](int32 Value,bool OmitLeadingOne)
++        {
++            FString Out;bool Zero=false;
++            const int32 Places[]={1000,100,10,1};
++            const TCHAR* Units[]={TEXT("千"),TEXT("百"),TEXT("十"),TEXT("")};
++            for(int32 Index=0;Index<4;++Index)
++            {
++                const int32 Digit=Value/Places[Index]%10;
++                if(Digit>0)
++                {
++                    if(Zero){Out+=TEXT("零");Zero=false;}
++                    if(Digit!=1 || Places[Index]!=10 || !Out.IsEmpty() || !OmitLeadingOne)Out+=Digits.Mid(Digit,1);
++                    Out+=Units[Index];
++                }
++                else if(!Out.IsEmpty() && Value%Places[Index]>0)Zero=true;
++            }
++            return Out;
++        };
++        if(Goal.Quantity==0)Chinese=TEXT("零");
++        else if(Goal.Quantity>=10000)
++        {
++            Chinese=GroupText(Goal.Quantity/10000,true)+TEXT("万");
++            const int32 Low=Goal.Quantity%10000;
++            if(Low>0)Chinese+=(Low<1000?TEXT("零"):TEXT(""))+GroupText(Low,false);
++        }
++        else Chinese=GroupText(Goal.Quantity,true);
+     }
+     FRegexMatcher Number(FRegexPattern(TEXT("(数量[为是： ]*)?(?<![-−负.．点0-9零〇一二两三四五六七八九十百千万亿])([0-9]+|[零〇一二两三四五六七八九十百千万亿]+)(?![.．点0-9零〇一二两三四五六七八九十百千万亿])\\s*(份|个|根|单位|块|件|批)?")),Text);
+     const int32 Supplement=Text.Find(TEXT("\n补充："),ESearchCase::CaseSensitive,ESearchDir::FromEnd);
+@@ -273,6 +344,7 @@
+         if(!ValidLimit(L) || !C->Constraints.Contains(Type)) return TEXT("UNRESOLVED_CONSTRAINT");
+         if(Type==TEXT("ban") && Rest==G.Item.ToString() && (G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect"))) return TEXT("POLICY_CONFLICT");
+     }
++    if((G.Intent==TEXT("craft") || G.Intent==TEXT("repair")) && !OriginalMaterialBudgetsMatch(G))return TEXT("UNRESOLVED_CONSTRAINT");
+     if(C->Writes && !G.Unresolved.IsEmpty()) return TEXT("UNRESOLVED_CONSTRAINT");
+     if(G.Intent==TEXT("rule_proposal") && (G.Limits.Num()!=1 || !G.Unresolved.IsEmpty())) return TEXT("UNRESOLVED_CONSTRAINT");
+     return {};

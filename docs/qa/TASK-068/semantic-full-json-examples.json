@@ -1,0 +1,31 @@
+{
+  "kind": "Final single QA candidate: two complete JSON examples; no production application or model run",
+  "examples": [
+    {
+      "input": "拿仓库材料冶炼七批金属锭",
+      "output": {
+        "intent": "craft",
+        "item": "metal_ingot",
+        "quantity": 7,
+        "mode": "batches",
+        "source": "camp",
+        "limits": [],
+        "unresolved": [],
+        "npc_line": "哥，这张卡用仓库材料炼七批金属锭，请确认；现场条件会在执行前复核。"
+      }
+    },
+    {
+      "input": "我包里的十一份矿石先给你，再存进营地仓库",
+      "output": {
+        "intent": "store",
+        "item": "ore",
+        "quantity": 11,
+        "mode": "held_to_camp",
+        "source": "player_bag",
+        "limits": [],
+        "unresolved": [],
+        "npc_line": "哥，这张卡从你包里接十一份矿石，最终送入仓库；请确认后再执行。"
+      }
+    }
+  ]
+}

@@ -178,7 +178,8 @@ FString UHearthwardScreenWidget::DescribeLayout() const
         const auto& B=LayoutBounds[Id]; auto R=MakeShared<FJsonObject>(); R->SetStringField(TEXT("id"),Id);
         R->SetStringField(TEXT("parent"),B.Parent); R->SetBoolField(TEXT("visible"),!B.Hidden); WriteRect(R,B.Position,B.Size);
         if(const auto* E=Elements.FindByPredicate([&](const auto& Row){return Row.LayoutId==Id;}))
-        { R->SetStringField(TEXT("action"),E->Action); R->SetStringField(TEXT("text"),E->Text); R->SetStringField(TEXT("asset"),E->Asset); }
+        { R->SetStringField(TEXT("action"),E->Action); R->SetStringField(TEXT("text"),E->Text); R->SetStringField(TEXT("asset"),E->Asset);
+          R->SetNumberField(TEXT("font"),E->Font); R->SetNumberField(TEXT("tracking"),E->Tracking); R->SetStringField(TEXT("fontRole"),E->FontRole); R->SetStringField(TEXT("bind"),E->Bind); }
         Rows.Add(MakeShared<FJsonValueObject>(R));
     }
     Result->SetArrayField(TEXT("components"),Rows);

@@ -1,0 +1,124 @@
+--- a/docs/qa/TASK-070/probe_imported_weapons.py
++++ b/docs/qa/TASK-070/probe_imported_weapons.py
+@@ -78,10 +78,51 @@
+ 
+ def material_info(material):
+     result = object_info(material)
++    lib = unreal.MaterialEditingLibrary
++    if isinstance(material, unreal.MaterialInstanceConstant):
++        parent = material.get_editor_property("parent")
++        result.update({
++            "graph_status": "MIC instance parameters; parent graph is read-only",
++            "parent": object_info(parent),
++            "explicit_texture_overrides": [],
++            "explicit_scalar_overrides": [],
++            "explicit_vector_overrides": [],
++            "effective_global_texture_parameters": {},
++            "effective_global_scalar_parameters": {},
++            "effective_global_vector_parameters": {},
++            "effective_global_static_switch_parameters": {},
++            "parameter_query_scope": "Public name-based getters use GlobalParameter. Explicit overrides retain association/index; layer-specific inherited effective values are not measured.",
++        })
++        for kind in ("texture", "scalar", "vector"):
++            for override in material.get_editor_property(kind + "_parameter_values"):
++                info = override.get_editor_property("parameter_info")
++                value = override.get_editor_property("parameter_value")
++                if kind == "texture":
++                    value = object_info(value)
++                elif kind == "vector":
++                    value = [float(value.r), float(value.g), float(value.b), float(value.a)]
++                else:
++                    value = float(value)
++                result["explicit_" + kind + "_overrides"].append({
++                    "name": str(info.get_editor_property("name")),
++                    "association": str(info.get_editor_property("association")),
++                    "index": int(info.get_editor_property("index")),
++                    "value": value,
++                })
++        for name in lib.get_texture_parameter_names(material):
++            result["effective_global_texture_parameters"][str(name)] = object_info(lib.get_material_instance_texture_parameter_value(material, name))
++        for name in lib.get_scalar_parameter_names(material):
++            result["effective_global_scalar_parameters"][str(name)] = float(lib.get_material_instance_scalar_parameter_value(material, name))
++        for name in lib.get_vector_parameter_names(material):
++            value = lib.get_material_instance_vector_parameter_value(material, name)
++            result["effective_global_vector_parameters"][str(name)] = [float(value.r), float(value.g), float(value.b), float(value.a)]
++        for name in lib.get_static_switch_parameter_names(material):
++            result["effective_global_static_switch_parameters"][str(name)] = bool(lib.get_material_instance_static_switch_parameter_value(material, name))
++        result["parent_details_read_only"] = material_info(parent) if parent else None
++        return result
+     if not isinstance(material, unreal.Material):
+         result["graph_status"] = "not_UMaterial; direct property graph not inspected or rewritten"
+         return result
+-    lib = unreal.MaterialEditingLibrary
+     expressions = list(lib.get_material_expressions(material))
+     result.update({
+         "blend_mode": str(material.get_editor_property("blend_mode")),
+@@ -103,6 +144,8 @@
+         if isinstance(expression, unreal.MaterialExpressionTextureBase):
+             node["texture"] = object_info(expression.get_editor_property("texture"))
+             node["sampler_type"] = str(expression.get_editor_property("sampler_type"))
++        if isinstance(expression, (unreal.MaterialExpressionParameter, unreal.MaterialExpressionTextureSampleParameter)):
++            node["parameter_name"] = str(expression.get_editor_property("parameter_name"))
+         if isinstance(expression, unreal.MaterialExpressionMaterialFunctionCall):
+             node["material_function"] = object_info(expression.get_editor_property("material_function"))
+             node["function_internals"] = "not expanded; external function reference retained"
+--- a/docs/qa/TASK-070/fix_confirmed_weapon_material.py
++++ b/docs/qa/TASK-070/fix_confirmed_weapon_material.py
+@@ -113,5 +113,56 @@
+     return report
+ 
+ 
++def apply_instance_texture_fix(piece, confirmed_bindings, manifest_path=DEFAULT_MANIFEST):
++    """Root-authorized exact MIC texture overrides using existing parent parameters.
++
++    confirmed_bindings maps actual global parent parameter names from the probe
++    to Color/Normal/Roughness/Metallic. No inferred parameter names or parent edits.
++    """
++    if not confirmed_bindings or any(name not in ("Color", "Normal", "Roughness", "Metallic") for name in confirmed_bindings.values()):
++        raise ValueError("Specify probe-confirmed existing parameter -> imported texture bindings.")
++    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8-sig"))
++    entry = next(item for item in manifest["imports"] if item["piece"] == piece)
++    instance = unreal.load_asset(entry["expected_material_package"])
++    if not isinstance(instance, unreal.MaterialInstanceConstant):
++        raise RuntimeError("Expected the actual imported MaterialInstanceConstant.")
++    parent = instance.get_editor_property("parent")
++    if parent is None:
++        raise RuntimeError("Missing parent; inspect the actual imported instance before fixing overrides.")
++    lib = unreal.MaterialEditingLibrary
++    existing_names = {str(name) for name in lib.get_texture_parameter_names(parent)}
++    if any(name not in existing_names for name in confirmed_bindings):
++        raise ValueError("Requested texture parameter is not declared by the existing parent.")
++    textures = {}
++    for parameter_name, texture_name in confirmed_bindings.items():
++        texture = unreal.load_asset(entry["destination"] + "/" + texture_name)
++        if not isinstance(texture, unreal.Texture2D):
++            raise RuntimeError("Missing/wrong texture " + texture_name + "; use public UEClient.assets.import_texture first.")
++        textures[parameter_name] = texture
++    report = {"piece": piece, "instance": instance.get_path_name(), "parent": parent.get_path_name(), "changes": []}
++    for parameter_name, texture in textures.items():
++        previous = lib.get_material_instance_texture_parameter_value(instance, parameter_name)
++        # UE5.8 implementation updates the instance but leaves its returned bool false.
++        # Record it; verify the actual override through the public getter instead.
++        returned = lib.set_material_instance_texture_parameter_value(instance, parameter_name, texture)
++        actual = lib.get_material_instance_texture_parameter_value(instance, parameter_name)
++        overridden = lib.is_material_instance_parameter_overridden(instance, parameter_name)
++        if actual != texture or not overridden:
++            raise RuntimeError("MIC override readback failed for " + parameter_name)
++        report["changes"].append({
++            "parameter_name": parameter_name,
++            "before": previous.get_path_name() if previous else None,
++            "after": actual.get_path_name(),
++            "setter_returned": bool(returned),
++            "instance_override_readback": bool(overridden),
++        })
++    report["parent_after"] = instance.get_editor_property("parent").get_path_name()
++    if not unreal.EditorAssetLibrary.save_loaded_asset(instance):
++        raise RuntimeError("Cannot save MIC " + instance.get_path_name())
++    report["saved_instance_only"] = True
++    unreal.log("TASK070 confirmed MIC texture fix: " + json.dumps(report, ensure_ascii=False))
++    return report
++
++
+ if __name__ == "__main__":
+-    unreal.log("TASK070 material-fix draft loaded. Root must explicitly call apply_material_fix(piece, confirmed_channels).")
++    unreal.log("TASK070 material-fix draft loaded. Root must explicitly call the function matching the actual asset class and confirmed defects.")

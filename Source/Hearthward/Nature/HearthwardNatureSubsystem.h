@@ -29,7 +29,7 @@ public:
     double NextBoundary() const;
     void RefreshDue();
     void Restore(const FString& Json,double Calendar);
-    bool DamageAnimal(FName Id,float Health);
+    bool DamageAnimal(FName Id,float Health,AActor* Source=nullptr);
     FVector Position(FGuid Id) const;
     class AHearthwardNatureActor* Actor(FGuid Id) const;
     void RebuildActors();

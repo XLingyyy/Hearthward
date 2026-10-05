@@ -1,0 +1,625 @@
+{
+  "captured_utc": "2026-10-03T23:51:31.974743+00:00",
+  "engine_version": "5.8.2-56702186+++UE5+Release-5.8",
+  "method": "Public material graph API, existing four textures, local sample materials only; slot0 and confirmed mesh collision removal; exact asset saves",
+  "ok": true,
+  "saved_assets": [
+    {
+      "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Roughness.Roughness",
+      "actual_asset_class": "Texture2D"
+    },
+    {
+      "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Metallic.Metallic",
+      "actual_asset_class": "Texture2D"
+    },
+    {
+      "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR",
+      "actual_asset_class": "Material"
+    },
+    {
+      "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/SM_Spear.SM_Spear",
+      "actual_asset_class": "StaticMesh"
+    },
+    {
+      "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Roughness.Roughness",
+      "actual_asset_class": "Texture2D"
+    },
+    {
+      "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Metallic.Metallic",
+      "actual_asset_class": "Texture2D"
+    },
+    {
+      "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR",
+      "actual_asset_class": "Material"
+    },
+    {
+      "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/SM_ShortBlade.SM_ShortBlade",
+      "actual_asset_class": "StaticMesh"
+    }
+  ],
+  "pieces": [
+    {
+      "piece": "spear",
+      "mesh": {
+        "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/SM_Spear.SM_Spear",
+        "actual_asset_class": "StaticMesh"
+      },
+      "old_slot0": {
+        "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/tripo_mat_29322e3e.tripo_mat_29322e3e",
+        "actual_asset_class": "MaterialInstanceConstant"
+      },
+      "collision_before": {
+        "simple": 0,
+        "convex": 1
+      },
+      "texture_changes": [
+        {
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Roughness.Roughness",
+            "actual_asset_class": "Texture2D"
+          },
+          "before": {
+            "srgb": true,
+            "compression_settings": "<TextureCompressionSettings.TC_DEFAULT: 0>"
+          },
+          "after": {
+            "srgb": false,
+            "compression_settings": "<TextureCompressionSettings.TC_MASKS: 2>"
+          }
+        },
+        {
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Metallic.Metallic",
+            "actual_asset_class": "Texture2D"
+          },
+          "before": {
+            "srgb": true,
+            "compression_settings": "<TextureCompressionSettings.TC_DEFAULT: 0>"
+          },
+          "after": {
+            "srgb": false,
+            "compression_settings": "<TextureCompressionSettings.TC_MASKS: 2>"
+          }
+        }
+      ],
+      "new_material": {
+        "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR",
+        "actual_asset_class": "Material"
+      },
+      "connections": [
+        {
+          "parameter": "BaseColor",
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Color.Color",
+            "actual_asset_class": "Texture2D"
+          },
+          "property": "<MaterialProperty.MP_BASE_COLOR: 5>",
+          "output": "RGB",
+          "sampler": "<MaterialSamplerType.SAMPLERTYPE_COLOR: 0>"
+        },
+        {
+          "parameter": "Normal",
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Normal.Normal",
+            "actual_asset_class": "Texture2D"
+          },
+          "property": "<MaterialProperty.MP_NORMAL: 10>",
+          "output": "RGB",
+          "sampler": "<MaterialSamplerType.SAMPLERTYPE_NORMAL: 3>"
+        },
+        {
+          "parameter": "Roughness",
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Roughness.Roughness",
+            "actual_asset_class": "Texture2D"
+          },
+          "property": "<MaterialProperty.MP_ROUGHNESS: 8>",
+          "output": "R",
+          "sampler": "<MaterialSamplerType.SAMPLERTYPE_MASKS: 4>"
+        },
+        {
+          "parameter": "Metallic",
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Metallic.Metallic",
+            "actual_asset_class": "Texture2D"
+          },
+          "property": "<MaterialProperty.MP_METALLIC: 6>",
+          "output": "R",
+          "sampler": "<MaterialSamplerType.SAMPLERTYPE_MASKS: 4>"
+        }
+      ],
+      "compile_errors": [],
+      "remove_collisions_result": true,
+      "collision_after": {
+        "simple": 0,
+        "convex": 0
+      },
+      "actual_material_graph": {
+        "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR",
+        "actual_asset_class": "Material",
+        "blend_mode": "<BlendMode.BLEND_OPAQUE: 0>",
+        "material_domain": "<MaterialDomain.MD_SURFACE: 0>",
+        "two_sided": false,
+        "use_material_attributes": false,
+        "expressions": [
+          {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR:MaterialExpressionTextureSampleParameter2D_0",
+            "actual_asset_class": "MaterialExpressionTextureSampleParameter2D",
+            "input_names": [
+              "UVs",
+              "Apply View MipBias"
+            ],
+            "input_nodes": [
+              null,
+              null
+            ],
+            "input_output_names": [
+              null,
+              null
+            ],
+            "texture": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Color.Color",
+              "actual_asset_class": "Texture2D"
+            },
+            "sampler_type": "<MaterialSamplerType.SAMPLERTYPE_COLOR: 0>",
+            "parameter_name": "BaseColor"
+          },
+          {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR:MaterialExpressionTextureSampleParameter2D_1",
+            "actual_asset_class": "MaterialExpressionTextureSampleParameter2D",
+            "input_names": [
+              "UVs",
+              "Apply View MipBias"
+            ],
+            "input_nodes": [
+              null,
+              null
+            ],
+            "input_output_names": [
+              null,
+              null
+            ],
+            "texture": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Normal.Normal",
+              "actual_asset_class": "Texture2D"
+            },
+            "sampler_type": "<MaterialSamplerType.SAMPLERTYPE_NORMAL: 3>",
+            "parameter_name": "Normal"
+          },
+          {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR:MaterialExpressionTextureSampleParameter2D_2",
+            "actual_asset_class": "MaterialExpressionTextureSampleParameter2D",
+            "input_names": [
+              "UVs",
+              "Apply View MipBias"
+            ],
+            "input_nodes": [
+              null,
+              null
+            ],
+            "input_output_names": [
+              null,
+              null
+            ],
+            "texture": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Roughness.Roughness",
+              "actual_asset_class": "Texture2D"
+            },
+            "sampler_type": "<MaterialSamplerType.SAMPLERTYPE_MASKS: 4>",
+            "parameter_name": "Roughness"
+          },
+          {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR:MaterialExpressionTextureSampleParameter2D_3",
+            "actual_asset_class": "MaterialExpressionTextureSampleParameter2D",
+            "input_names": [
+              "UVs",
+              "Apply View MipBias"
+            ],
+            "input_nodes": [
+              null,
+              null
+            ],
+            "input_output_names": [
+              null,
+              null
+            ],
+            "texture": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/Metallic.Metallic",
+              "actual_asset_class": "Texture2D"
+            },
+            "sampler_type": "<MaterialSamplerType.SAMPLERTYPE_MASKS: 4>",
+            "parameter_name": "Metallic"
+          }
+        ],
+        "property_inputs": {
+          "MP_BASE_COLOR": {
+            "node": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR:MaterialExpressionTextureSampleParameter2D_0",
+              "actual_asset_class": "MaterialExpressionTextureSampleParameter2D"
+            },
+            "output_name": "RGB",
+            "status": "connected"
+          },
+          "MP_NORMAL": {
+            "node": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR:MaterialExpressionTextureSampleParameter2D_1",
+              "actual_asset_class": "MaterialExpressionTextureSampleParameter2D"
+            },
+            "output_name": "RGB",
+            "status": "connected"
+          },
+          "MP_ROUGHNESS": {
+            "node": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR:MaterialExpressionTextureSampleParameter2D_2",
+              "actual_asset_class": "MaterialExpressionTextureSampleParameter2D"
+            },
+            "output_name": "R",
+            "status": "connected"
+          },
+          "MP_METALLIC": {
+            "node": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.M_Spear_PBR:MaterialExpressionTextureSampleParameter2D_3",
+              "actual_asset_class": "MaterialExpressionTextureSampleParameter2D"
+            },
+            "output_name": "R",
+            "status": "connected"
+          },
+          "MP_SPECULAR": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_EMISSIVE_COLOR": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_OPACITY": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_OPACITY_MASK": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_ANISOTROPY": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_TANGENT": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_WORLD_POSITION_OFFSET": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_SUBSURFACE_COLOR": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_AMBIENT_OCCLUSION": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_REFRACTION": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_FRONT_MATERIAL": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_MATERIAL_ATTRIBUTES": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          }
+        },
+        "hidden_input_coverage": "Hidden/customized-UV/custom-data/pixel-depth/shading-model inputs are not exposed by MaterialProperty; no numeric-enum workaround."
+      }
+    },
+    {
+      "piece": "shortblade",
+      "mesh": {
+        "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/SM_ShortBlade.SM_ShortBlade",
+        "actual_asset_class": "StaticMesh"
+      },
+      "old_slot0": {
+        "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/tripo_mat_8dd7cafa.tripo_mat_8dd7cafa",
+        "actual_asset_class": "MaterialInstanceConstant"
+      },
+      "collision_before": {
+        "simple": 0,
+        "convex": 1
+      },
+      "texture_changes": [
+        {
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Roughness.Roughness",
+            "actual_asset_class": "Texture2D"
+          },
+          "before": {
+            "srgb": true,
+            "compression_settings": "<TextureCompressionSettings.TC_DEFAULT: 0>"
+          },
+          "after": {
+            "srgb": false,
+            "compression_settings": "<TextureCompressionSettings.TC_MASKS: 2>"
+          }
+        },
+        {
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Metallic.Metallic",
+            "actual_asset_class": "Texture2D"
+          },
+          "before": {
+            "srgb": true,
+            "compression_settings": "<TextureCompressionSettings.TC_DEFAULT: 0>"
+          },
+          "after": {
+            "srgb": false,
+            "compression_settings": "<TextureCompressionSettings.TC_MASKS: 2>"
+          }
+        }
+      ],
+      "new_material": {
+        "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR",
+        "actual_asset_class": "Material"
+      },
+      "connections": [
+        {
+          "parameter": "BaseColor",
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Color.Color",
+            "actual_asset_class": "Texture2D"
+          },
+          "property": "<MaterialProperty.MP_BASE_COLOR: 5>",
+          "output": "RGB",
+          "sampler": "<MaterialSamplerType.SAMPLERTYPE_COLOR: 0>"
+        },
+        {
+          "parameter": "Normal",
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Normal.Normal",
+            "actual_asset_class": "Texture2D"
+          },
+          "property": "<MaterialProperty.MP_NORMAL: 10>",
+          "output": "RGB",
+          "sampler": "<MaterialSamplerType.SAMPLERTYPE_NORMAL: 3>"
+        },
+        {
+          "parameter": "Roughness",
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Roughness.Roughness",
+            "actual_asset_class": "Texture2D"
+          },
+          "property": "<MaterialProperty.MP_ROUGHNESS: 8>",
+          "output": "R",
+          "sampler": "<MaterialSamplerType.SAMPLERTYPE_MASKS: 4>"
+        },
+        {
+          "parameter": "Metallic",
+          "texture": {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Metallic.Metallic",
+            "actual_asset_class": "Texture2D"
+          },
+          "property": "<MaterialProperty.MP_METALLIC: 6>",
+          "output": "R",
+          "sampler": "<MaterialSamplerType.SAMPLERTYPE_MASKS: 4>"
+        }
+      ],
+      "compile_errors": [],
+      "remove_collisions_result": true,
+      "collision_after": {
+        "simple": 0,
+        "convex": 0
+      },
+      "actual_material_graph": {
+        "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR",
+        "actual_asset_class": "Material",
+        "blend_mode": "<BlendMode.BLEND_OPAQUE: 0>",
+        "material_domain": "<MaterialDomain.MD_SURFACE: 0>",
+        "two_sided": false,
+        "use_material_attributes": false,
+        "expressions": [
+          {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR:MaterialExpressionTextureSampleParameter2D_0",
+            "actual_asset_class": "MaterialExpressionTextureSampleParameter2D",
+            "input_names": [
+              "UVs",
+              "Apply View MipBias"
+            ],
+            "input_nodes": [
+              null,
+              null
+            ],
+            "input_output_names": [
+              null,
+              null
+            ],
+            "texture": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Color.Color",
+              "actual_asset_class": "Texture2D"
+            },
+            "sampler_type": "<MaterialSamplerType.SAMPLERTYPE_COLOR: 0>",
+            "parameter_name": "BaseColor"
+          },
+          {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR:MaterialExpressionTextureSampleParameter2D_1",
+            "actual_asset_class": "MaterialExpressionTextureSampleParameter2D",
+            "input_names": [
+              "UVs",
+              "Apply View MipBias"
+            ],
+            "input_nodes": [
+              null,
+              null
+            ],
+            "input_output_names": [
+              null,
+              null
+            ],
+            "texture": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Normal.Normal",
+              "actual_asset_class": "Texture2D"
+            },
+            "sampler_type": "<MaterialSamplerType.SAMPLERTYPE_NORMAL: 3>",
+            "parameter_name": "Normal"
+          },
+          {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR:MaterialExpressionTextureSampleParameter2D_2",
+            "actual_asset_class": "MaterialExpressionTextureSampleParameter2D",
+            "input_names": [
+              "UVs",
+              "Apply View MipBias"
+            ],
+            "input_nodes": [
+              null,
+              null
+            ],
+            "input_output_names": [
+              null,
+              null
+            ],
+            "texture": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Roughness.Roughness",
+              "actual_asset_class": "Texture2D"
+            },
+            "sampler_type": "<MaterialSamplerType.SAMPLERTYPE_MASKS: 4>",
+            "parameter_name": "Roughness"
+          },
+          {
+            "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR:MaterialExpressionTextureSampleParameter2D_3",
+            "actual_asset_class": "MaterialExpressionTextureSampleParameter2D",
+            "input_names": [
+              "UVs",
+              "Apply View MipBias"
+            ],
+            "input_nodes": [
+              null,
+              null
+            ],
+            "input_output_names": [
+              null,
+              null
+            ],
+            "texture": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/Metallic.Metallic",
+              "actual_asset_class": "Texture2D"
+            },
+            "sampler_type": "<MaterialSamplerType.SAMPLERTYPE_MASKS: 4>",
+            "parameter_name": "Metallic"
+          }
+        ],
+        "property_inputs": {
+          "MP_BASE_COLOR": {
+            "node": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR:MaterialExpressionTextureSampleParameter2D_0",
+              "actual_asset_class": "MaterialExpressionTextureSampleParameter2D"
+            },
+            "output_name": "RGB",
+            "status": "connected"
+          },
+          "MP_NORMAL": {
+            "node": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR:MaterialExpressionTextureSampleParameter2D_1",
+              "actual_asset_class": "MaterialExpressionTextureSampleParameter2D"
+            },
+            "output_name": "RGB",
+            "status": "connected"
+          },
+          "MP_ROUGHNESS": {
+            "node": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR:MaterialExpressionTextureSampleParameter2D_2",
+              "actual_asset_class": "MaterialExpressionTextureSampleParameter2D"
+            },
+            "output_name": "R",
+            "status": "connected"
+          },
+          "MP_METALLIC": {
+            "node": {
+              "path": "/Game/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.M_ShortBlade_PBR:MaterialExpressionTextureSampleParameter2D_3",
+              "actual_asset_class": "MaterialExpressionTextureSampleParameter2D"
+            },
+            "output_name": "R",
+            "status": "connected"
+          },
+          "MP_SPECULAR": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_EMISSIVE_COLOR": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_OPACITY": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_OPACITY_MASK": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_ANISOTROPY": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_TANGENT": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_WORLD_POSITION_OFFSET": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_SUBSURFACE_COLOR": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_AMBIENT_OCCLUSION": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_REFRACTION": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_FRONT_MATERIAL": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          },
+          "MP_MATERIAL_ATTRIBUTES": {
+            "node": null,
+            "output_name": null,
+            "status": "no expression connection; default value not measured"
+          }
+        },
+        "hidden_input_coverage": "Hidden/customized-UV/custom-data/pixel-depth/shading-model inputs are not exposed by MaterialProperty; no numeric-enum workaround."
+      }
+    }
+  ],
+  "old_mic_and_parent_edited": false,
+  "Owner_style": "pending",
+  "hand_grip": "not measured"
+}

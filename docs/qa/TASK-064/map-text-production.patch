@@ -1,0 +1,155 @@
+--- a/Source/Hearthward/UI/HearthwardScreenContent.cpp
++++ b/Source/Hearthward/UI/HearthwardScreenContent.cpp
+@@ -20,6 +20,9 @@
+ #include "../Interaction/HearthwardInteractionComponent.h"
+ #include "../Interaction/HearthwardInteractionTargetComponent.h"
+ #include "../Actions/HearthwardTimedActionComponent.h"
++#include "Framework/Application/SlateApplication.h"
++#include "Rendering/SlateRenderer.h"
++#include "Fonts/FontMeasure.h"
+ 
+ using namespace HearthwardData;
+ FString UHearthwardScreenWidget::Resolve(const FString& Bind) const
+@@ -325,6 +328,23 @@
+     {
+         const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
+         Element(TEXT("text"),TEXT("◎ ")+Text(Q,TEXT("objective")),FVector2D(535,816),FVector2D(910,42),19);
++        auto& Objective=Elements.Last();
++        const bool Display=Objective.FontRole==TEXT("display") || (Objective.FontRole.IsEmpty() && Objective.Font>=30);
++        FSlateFontInfo Font(Display?DisplayTypeface:Typeface,FMath::RoundToInt(Objective.Font*.75f));Font.LetterSpacing=Objective.Tracking;
++        const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
++        TArray<FString> SourceLines;Objective.Text.ParseIntoArrayLines(SourceLines,false);int32 Lines=0;
++        for(FString Line:SourceLines)
++        {
++            while(Line.Len()>1 && Measure->Measure(Line,Font).X>Objective.Size.X)
++            {
++                const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,Objective.Size.X)+1,1,Line.Len());
++                Line=Line.Mid(Count);++Lines;
++            }
++            ++Lines;
++        }
++        Objective.Size.Y=Lines*Objective.Font*1.6f;
++        Objective.Position.Y=Center.Y+MapSize.Y*.5f-8-Objective.Size.Y;
++        Objective.Component=TEXT("map.canvas");
+         const auto Target=Find(TEXT("locations"),Campaign?GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->QuestLocation(G->TrackedQuest).ToString():Text(Q,TEXT("location")));
+         if(Target)
+         {
+--- a/Resources/UI/interface.json
++++ b/Resources/UI/interface.json
+@@ -4033,7 +4033,7 @@
+             94,
+             239,
+             290,
+-            63
++            120
+           ],
+           "font": 15,
+           "color": "muted",
+@@ -4071,7 +4071,7 @@
+           "text": "",
+           "rect": [
+             92,
+-            311,
++            375,
+             31,
+             35
+           ],
+@@ -4084,7 +4084,7 @@
+           "text": "主线任务",
+           "rect": [
+             142,
+-            319,
++            383,
+             235,
+             30
+           ],
+@@ -4097,7 +4097,7 @@
+           "text": "",
+           "rect": [
+             92,
+-            353,
++            417,
+             31,
+             35
+           ],
+@@ -4110,7 +4110,7 @@
+           "text": "支线任务",
+           "rect": [
+             142,
+-            361,
++            425,
+             235,
+             30
+           ],
+@@ -4123,7 +4123,7 @@
+           "text": "",
+           "rect": [
+             92,
+-            395,
++            459,
+             31,
+             35
+           ],
+@@ -4136,7 +4136,7 @@
+           "text": "营地",
+           "rect": [
+             142,
+-            403,
++            467,
+             235,
+             30
+           ],
+@@ -4149,7 +4149,7 @@
+           "text": "",
+           "rect": [
+             92,
+-            437,
++            501,
+             31,
+             35
+           ],
+@@ -4162,7 +4162,7 @@
+           "text": "已激活传送",
+           "rect": [
+             142,
+-            445,
++            509,
+             235,
+             30
+           ],
+@@ -4175,7 +4175,7 @@
+           "text": "",
+           "rect": [
+             92,
+-            479,
++            543,
+             31,
+             35
+           ],
+@@ -4188,7 +4188,7 @@
+           "text": "已发现路标",
+           "rect": [
+             142,
+-            487,
++            551,
+             235,
+             30
+           ],
+@@ -4201,7 +4201,7 @@
+           "text": "",
+           "rect": [
+             92,
+-            521,
++            585,
+             31,
+             35
+           ],
+@@ -4214,7 +4214,7 @@
+           "text": "尚未发现",
+           "rect": [
+             142,
+-            529,
++            593,
+             235,
+             30
+           ],

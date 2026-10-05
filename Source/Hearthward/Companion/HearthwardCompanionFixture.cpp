@@ -1,6 +1,7 @@
 #include "HearthwardCompanionFixture.h"
 #include "../Inventory/HearthwardHarvestTools.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
+#include "../Experience/HearthwardTraversalComponent.h"
 #include "HearthwardCompanionNavigationComponent.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -71,9 +72,11 @@ int32 TransferableHandoff(const FHearthwardInventorySnapshot& SourceSnapshot,
 }
 }
 
-AHearthwardCompanionFixture::AHearthwardCompanionFixture()
+AHearthwardCompanionFixture::AHearthwardCompanionFixture(const FObjectInitializer& ObjectInitializer)
+    : Super(ObjectInitializer.SetDefaultSubobjectClass<UHearthwardMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
     CreateDefaultSubobject<UHearthwardSurvivalComponent>(TEXT("Survival"));
+    CreateDefaultSubobject<UHearthwardTraversalComponent>(TEXT("Traversal"));
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = false;
     auto* Capsule = GetCapsuleComponent();
@@ -87,6 +90,10 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture()
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0, 500, 0);
     GetCharacterMovement()->MaxWalkSpeed = 180;
+    GetCharacterMovement()->MaxStepHeight = 45;
+    GetCharacterMovement()->SetWalkableFloorAngle(45);
+    GetCharacterMovement()->MaxSwimSpeed = 300;
+    GetCharacterMovement()->GetNavAgentPropertiesRef().bCanSwim = true;
     bUseControllerRotationYaw = false;
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> BrotherMesh(TEXT("/Game/Characters/Brother/UE5/SK_Brother.SK_Brother"));
     GetMesh()->SetSkeletalMesh(BrotherMesh.Object);
@@ -94,7 +101,11 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture()
     GetMesh()->SetRelativeScale3D(FVector(160.f / 97.863766f));
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -80.f));
     GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
-    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    GetMesh()->SetCollisionResponseToAllChannels(ECR_Ignore);
+    GetMesh()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
+    GetMesh()->SetCanEverAffectNavigation(false);
+    GetMesh()->VisibilityBasedAnimTickOption=EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
     GetMesh()->SetCanEverAffectNavigation(false);
     GetMesh()->SetAnimInstanceClass(UHearthwardBrotherAnimInstance::StaticClass());
     Bag = CreateDefaultSubobject<UHearthwardInventoryComponent>(TEXT("FixtureBag"));
@@ -1371,9 +1382,9 @@ FString AHearthwardCompanionFixture::PreviewGoal(const FHearthwardAgentGoal& Goa
         if(!Point || Point->Remaining<=0 || !Nature->Actor(Goal.Station))return TEXT("FISH_POINT_UNAVAILABLE");
         if(!Player || FVector::Dist2D(Player->GetActorLocation(),Point->Position)>3000)return TEXT("TARGET_NOT_KNOWN");
         if(Bag->Available(TEXT("bait"))<1)return TEXT("BAIT_REQUIRED");
-        for(const auto& I:Bag->Snapshot().Instances)
-            if(I.Durability>0 && HearthwardData::Text(HearthwardData::Find(TEXT("items"),I.Definition.ToString()),TEXT("toolKind"))==TEXT("fishing_rod"))return {};
-        return TEXT("FISHING_ROD_REQUIRED");
+        const auto* Rod=Bag->FindInstance(Bag->EquippedInstance(TEXT("tool")));
+        return Rod && Rod->Durability>0 && HearthwardData::Text(HearthwardData::Find(TEXT("items"),Rod->Definition.ToString()),TEXT("toolKind"))==TEXT("fishing_rod")
+            ?FString():TEXT("FISHING_ROD_REQUIRED");
     }
     if(Goal.Intent==TEXT("capture"))
     {
@@ -1549,8 +1560,15 @@ void AHearthwardCompanionFixture::WorkshopTick()
         int64 AddedWeight=0;
         for(const auto& C:Cost)
         {
-            const int32 Missing=FMath::Max(0,C.Value-Bag->GetItemCount(C.Key));
-            if(Storage->GetItemCount(C.Key)<Missing){HandleExecutionFailure(TEXT("INSUFFICIENT_MATERIAL"));return;}
+            const int32 Missing=C.Value;
+            const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCA01^FCrc::StrCrc32(*C.Key.ToString()),Ticket.Id.D);
+            const FString Payload=FString::Printf(TEXT("take:%s:%d:r%lld"),*C.Key.ToString(),Missing,Ticket.Revision);
+            if(const auto* Receipt=Receipts.FindByPredicate([&](const auto& R){return R.Id==Op;}))
+            {
+                if(Receipt->Command!=Ticket.Id || Receipt->Payload!=Payload){HandleExecutionFailure(TEXT("SETTLEMENT_FAILED"));return;}
+                continue;
+            }
+            if(Storage->Available(C.Key)<Missing){HandleExecutionFailure(TEXT("INSUFFICIENT_MATERIAL"));return;}
             const auto* D=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==C.Key;});
             if(!D){HandleExecutionFailure(TEXT("ITEM_UNAVAILABLE"));return;}
             AddedWeight+=int64(Missing)*D->WeightHundredths;
@@ -1560,7 +1578,7 @@ void AHearthwardCompanionFixture::WorkshopTick()
         TGuardValue<bool> Guard(bSettling,true);
         for(const auto& C:Cost)
         {
-            const int32 Missing=FMath::Max(0,C.Value-Bag->GetItemCount(C.Key));if(!Missing)continue;
+            const int32 Missing=C.Value;if(!Missing)continue;
             const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCA01^FCrc::StrCrc32(*C.Key.ToString()),Ticket.Id.D);
             if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
                 FString::Printf(TEXT("take:%s:%d:r%lld"),*C.Key.ToString(),Missing,Ticket.Revision),[&]

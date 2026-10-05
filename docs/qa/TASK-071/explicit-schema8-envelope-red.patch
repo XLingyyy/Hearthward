@@ -1,0 +1,11 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -502,6 +502,8 @@
+         TestTrue(TEXT("Repeat legacy load is stable"),HearthwardSave::Read(Path,Loaded,Error));
+         TestTrue(TEXT("Upgrade write preserves schema8 original backup"),HearthwardSave::Write(Path,Loaded,Error) && IFileManager::Get().FileExists(*(Path+TEXT(".pre-schema9"))));
+     }
++    WriteEnvelope(0x48575337);
++    TestFalse(TEXT("Explicit schema8 payload cannot migrate under a schema7 envelope"),HearthwardSave::Read(Path,Loaded,Error));
+     E->RefreshDue=4000;S.Campaign=Campaign.Snapshot();WriteEnvelope(0x48575338);
+     TestFalse(TEXT("Indeterminate legacy death time cannot be guessed"),HearthwardSave::Read(Path,Loaded,Error));
+     TestTrue(TEXT("Migration gives a specific conflict"),Error.Contains(TEXT("死亡时间")));

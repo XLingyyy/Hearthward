@@ -1,0 +1,85 @@
+--- a/Source/Hearthward/Tests/CraftingPresentationTests.cpp
++++ b/Source/Hearthward/Tests/CraftingPresentationTests.cpp
+@@ -6,9 +6,13 @@
+ #include "../Survival/HearthwardSurvivalComponent.h"
+ #include "../Actions/HearthwardTimedActionComponent.h"
+ #include "../Building/HearthwardBuildingComponent.h"
++#include "../Building/HearthwardWorkshopService.h"
++#include "../Companion/HearthwardCompanionFixture.h"
++#include "../AI/HearthwardLocalAISubsystem.h"
+ #include "../Camp/HearthwardCampSubsystem.h"
+ #include "../Interaction/HearthwardHarvestSubsystem.h"
+ #include "Components/BoxComponent.h"
++#include "Components/SceneComponent.h"
+ #include "Engine/Engine.h"
+ #include "Engine/GameInstance.h"
+ #include "Engine/GameViewportClient.h"
+@@ -158,6 +162,68 @@
+     TestEqual(TEXT("Rejected crafting retains the warehouse reservation stock"),Storage->GetItemCount(TEXT("wood")),2);
+ 
+     Bag->ReleaseMaterials();Storage->Release(Reservation);
++
++    // Start inside both production acceptance radii; every material transfer and craft is still executed by Tick.
++    const auto& Facilities=World->GetSubsystem<UHearthwardCampSubsystem>()->State.Facilities;
++    const auto* Workbench=Facilities.FindByPredicate([](const auto& F){return F.Kind==TEXT("workbench");});
++    auto* Station=Workbench?Building->ResolveFacility(Workbench->Id):nullptr;
++    if(!TestNotNull(TEXT("Source regression has its real registered workbench"),Station))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    const FVector BrotherPosition(Station->GetActorLocation().X,Station->GetActorLocation().Y-100,80);
++    auto* CampActor=World->SpawnActor<AActor>();
++    auto* CampRoot=NewObject<USceneComponent>(CampActor);
++    CampActor->AddInstanceComponent(CampRoot);CampActor->SetRootComponent(CampRoot);CampRoot->RegisterComponent();
++    CampActor->SetActorLocation(BrotherPosition);
++    auto* CampStock=NewObject<UHearthwardInventoryComponent>(CampActor);
++    CampActor->AddInstanceComponent(CampStock);CampStock->RegisterComponent();
++    auto* Brother=World->SpawnActor<AHearthwardCompanionFixture>();
++    Brother->SetActorLocation(BrotherPosition);Brother->InitializeCompanion(CampStock,CampActor);
++    auto* AI=World->GetSubsystem<UHearthwardLocalAISubsystem>();
++    if(!TestTrue(TEXT("Source regression starts at camp without a navigation request"),Brother->IsAtCamp())
++        || !TestTrue(TEXT("Source regression has a communicable living brother"),Brother->CanCommunicate(Player)))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++
++    for(const FString& SourceRef:{FString(TEXT("camp")),FString(TEXT("bag"))})
++    {
++        const bool CampSource=SourceRef==TEXT("camp");
++        const FString Label=CampSource?TEXT("Camp source"):TEXT("Bag source");
++        TMap<FName,int32> OldCampStock;
++        for(const FName Item:{FName(TEXT("wood")),FName(TEXT("rope"))})
++            if(Storage->GetItemCount(Item)>0)OldCampStock.Add(Item,Storage->GetItemCount(Item));
++        if(!TestTrue(*(Label+TEXT(" fixture prepares exactly twenty camp wood")),Storage->Adjust(OldCampStock,{{TEXT("wood"),20}})))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        const int32 OldWood=Brother->Bag->GetItemCount(TEXT("wood"));
++        if(OldWood>0 && !TestEqual(*(Label+TEXT(" fixture resets brother wood through inventory API")),
++            Brother->Bag->TryRemove(TEXT("wood"),OldWood),EHearthwardInventoryResult::Success))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        if(!TestEqual(*(Label+TEXT(" fixture prepares exactly twelve brother wood")),
++            Brother->Bag->TryAdd(TEXT("wood"),12),EHearthwardInventoryResult::Success))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        TestEqual(*(Label+TEXT(" starts with camp wood twenty")),Storage->GetItemCount(TEXT("wood")),20);
++        TestEqual(*(Label+TEXT(" starts with brother wood twelve")),Brother->Bag->GetItemCount(TEXT("wood")),12);
++        TestEqual(*(Label+TEXT(" starts with no camp rope")),Storage->GetItemCount(TEXT("rope")),0);
++        if(!TestTrue(*(Label+TEXT(" fixture satisfies the real Workshop check")),
++            HearthwardWorkshop::Check(Brother,Station,Brother->Bag,TEXT("craft"),TEXT("rope"),1).IsEmpty()))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++
++        FHearthwardAgentGoal Goal;Goal.Intent=TEXT("craft");Goal.Item=TEXT("rope");Goal.Quantity=1;
++        Goal.QuantityMode=TEXT("batches");Goal.SourceRef=SourceRef;Goal.Station=Workbench->Id;
++        if(!TestTrue(*(Label+TEXT(" stages its actual structured goal")),AI->SetStructuredGoal(Player,Brother,Goal)))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        TestEqual(*(Label+TEXT(" is retained in the actual candidate")),AI->GetCandidate().SourceRef,SourceRef);
++        TestEqual(*(Label+TEXT(" staging does not spend camp materials")),Storage->GetItemCount(TEXT("wood")),20);
++        TestEqual(*(Label+TEXT(" staging does not spend brother materials")),Brother->Bag->GetItemCount(TEXT("wood")),12);
++        if(!TestTrue(*(Label+TEXT(" confirms the actual candidate")),AI->ConfirmCandidate(AI->GetCandidateId())))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++        TestEqual(*(Label+TEXT(" is retained in the accepted execution goal")),Brother->GetGoal().SourceRef,SourceRef);
++        for(int32 Step=0;Step<16 && Brother->GetPhase()!=EHearthwardCompanionPhase::Completed;++Step)Brother->Tick(.01f);
++        TestTrue(*(Label+TEXT(" completes through the production executor")),Brother->GetPhase()==EHearthwardCompanionPhase::Completed);
++        TestEqual(*(Label+TEXT(" delivers one real rope")),Brother->GetDelivered(),1);
++        TestEqual(*(Label+TEXT(" pays from the authorized camp stock")),Storage->GetItemCount(TEXT("wood")),CampSource?18:20);
++        TestEqual(*(Label+TEXT(" retains the correct brother stock")),Brother->Bag->GetItemCount(TEXT("wood")),CampSource?12:10);
++        TestEqual(*(Label+TEXT(" deposits one real product into camp")),Storage->GetItemCount(TEXT("rope")),1);
++        TestEqual(*(Label+TEXT(" leaves no crafted product in the brother bag")),Brother->Bag->GetItemCount(TEXT("rope")),0);
++    }
+     Screen->RemoveFromParent();Cleanup();return true;
+ }
+ 

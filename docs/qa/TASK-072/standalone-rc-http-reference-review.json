@@ -1,0 +1,27 @@
+{
+  "stage": "READ_ONLY_SOURCE_REVIEW",
+  "script_lines": 224,
+  "code_correction_required": false,
+  "hud_screen_property_response": {
+    "field": "Screen",
+    "value": "UObject GetPathName string; null empty string",
+    "extra_wrappers": [],
+    "current_parser": "CORRECT"
+  },
+  "call_response": {
+    "return_field": "ReturnValue",
+    "actor_array_field": "OutActors"
+  },
+  "seed": {
+    "location": "parameters.Object / parameters.WorldContextObject",
+    "is_valid_proves": "object valid only, may load asset World",
+    "live_world_proof": "actual Pawn/GetLevel/World/current map HTTP return required",
+    "actual_result": "NOT_RUN",
+    "fallback": "NONE"
+  },
+  "local_ai_lookup": "public GetWorldSubsystem actual Pawn context; not GI.LocalAI property",
+  "root_or_engine_mutations": false,
+  "ue_http_model_build_git": "NOT_RUN",
+  "independent_review": "COMPLETE",
+  "next_step": "Root serial real smoke; preserve first actual HTTP failure"
+}

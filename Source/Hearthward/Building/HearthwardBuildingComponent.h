@@ -4,6 +4,8 @@
 #include "Dom/JsonObject.h"
 #include "HearthwardBuildingComponent.generated.h"
 
+struct FCollisionQueryParams;
+
 UCLASS(ClassGroup=(Hearthward), meta=(BlueprintSpawnableComponent))
 class HEARTHWARD_API UHearthwardBuildingComponent : public UActorComponent
 {
@@ -52,6 +54,7 @@ private:
     UFUNCTION() void Complete();
     UFUNCTION() void Interrupted();
     bool CheckPlacement(FString& Reason) const;
+    bool CheckGeometry(const TSharedPtr<FJsonObject>& Recipe,FVector Position,float RotationDegrees,const FCollisionQueryParams& Query,FString& Reason) const;
     bool HasMaterials() const;
     bool ReserveMaterials();
     void ReleaseMaterials();

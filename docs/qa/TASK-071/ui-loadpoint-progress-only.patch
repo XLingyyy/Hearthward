@@ -1,0 +1,190 @@
+--- a/docs/qa/TASK-071/verify_ui_loadpoint_pie.py
++++ b/docs/qa/TASK-071/verify_ui_loadpoint_pie.py
+@@ -16,9 +16,34 @@
+ out.mkdir(parents=True, exist_ok=True)
+ report = {'ok': False, 'method': 'Public UI ActionAt / ExecuteAction with real SavePoint and LoadPoint',
+           'pool': pool, 'checks': [], 'stage': 'fixture', 'setup': {}, 'actions': [],
++          'script_revision': 'ui-progress-only-v2',
+           'slate_event_replay': 'NOTRUN', 'physical_input': 'NOTRUN',
+           'model_http': 'NOTRUN: normal manual card only',
+           'npc_receipt_operation_checks': 'NOTRUN: no public Python API'}
++def progress():
++    (out/'progress.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
++
++
++def set_stage(name):
++    report['stage'] = name
++    progress()
++
++
++def operation(name, invoke):
++    report['operation'] = {'name': name, 'state': 'before', 'monotonic': time.monotonic()}
++    progress()
++    value = invoke()
++    report['operation'] = {'name': name, 'state': 'returned', 'monotonic': time.monotonic()}
++    progress()
++    return value
++
++
++def ui_action(name, action):
++    return operation(name, lambda: st['ui'].execute_action(action))
++
++
++progress()
++
+ # Redirect before advancing the dormant fixture flow or allowing a Slate tick.
+ base = runpy.run_path(str(root/'docs/qa/TASK-068/verify_model_matrix_pie.py'))
+ g = base['run'].__globals__
+@@ -33,8 +58,13 @@
+ 
+ def check(name, value):
+     report['checks'].append({'name': name, 'pass': bool(value)})
++    progress()
+     if not value:
+         raise AssertionError(name)
++
++
++# Preserve fixture behavior, adding the same immediate check journal before UI routes start.
++g['require'] = lambda name, value: check('fixture: '+name, value)
+ 
+ 
+ def guid_digits(value):
+@@ -56,14 +86,14 @@
+ 
+ def action_at(name, predicate):
+     """Use the actual public element rectangle and verify its hit action."""
+-    layout = json.loads(st['ui'].describe_layout())
++    layout = json.loads(operation(name+' DescribeLayout', lambda: st['ui'].describe_layout()))
+     rows = [row for row in layout['components'] if row.get('visible')
+             and predicate(row.get('action', ''))]
+     check(name+' has one visible actual element', len(rows) == 1)
+     row = rows[0]
+     x, y, width, height = row['rect']
+     point = unreal.Vector2D(x+width/2, y+height/2)
+-    action = st['ui'].action_at(point)
++    action = operation(name+' ActionAt', lambda: st['ui'].action_at(point))
+     check(name+' actual ActionAt matches rendered element', action == row['action'])
+     report['actions'].append({'name': name, 'page': str(st['ui'].get_page()),
+                               'action': action, 'layout_id': row['id'], 'rect': row['rect']})
+@@ -71,13 +101,13 @@
+ 
+ 
+ def open_page(name):
+-    check('normal UI page '+name, st['ui'].execute_action('page:'+name)
++    check('normal UI page '+name, ui_action('OpenPage '+name, 'page:'+name)
+           and str(st['ui'].get_page()) == name)
+ 
+ 
+ def check_collect_card(name):
+     ai = st['ai']
+-    check(name+' normal manual card', st['ui'].execute_action('agentCollectCard') and ai.has_candidate())
++    check(name+' normal manual card', ui_action(name+' agentCollectCard', 'agentCollectCard') and ai.has_candidate())
+     candidate = ai.get_candidate()
+     check(name+' actual collect wood one S1', str(candidate.intent) == 'collect'
+           and str(candidate.item) == 'wood' and candidate.quantity == 1
+@@ -90,7 +120,7 @@
+ 
+ def direct_load(save_id, name):
+     before = key(st['store'].get_timeline_epoch())
+-    check(name+' real LoadPoint', st['save'].load_point(save_id))
++    check(name+' real LoadPoint', operation(name+' LoadPoint', lambda: st['save'].load_point(save_id)))
+     refresh()
+     check(name+' actual epoch changes', key(st['store'].get_timeline_epoch()) != before)
+     check(name+' actual HUD restore event', str(st['ui'].get_page()) == 'hud')
+@@ -120,7 +150,7 @@
+     check('no model generation or server before public card', st['ai'].get_generation_calls() == 0
+           and st['ai'].get_server_process_id() == 0)
+ 
+-    report['stage'] = 'old_manual_card_action_across_load'
++    set_stage('old_manual_card_action_across_load')
+     open_page('dialogue')
+     old_action, old_id = check_collect_card('old card')
+     report['old_candidate_id'] = list(old_id)
+@@ -129,20 +159,20 @@
+           and st['ai'].has_candidate())
+     direct_load(baseline_id, 'dialogue old card')  # Do not navigate away and cancel it before Load.
+     unchanged('actual baseline restored', baseline, baseline_task)
+-    check('old actual action rejected on HUD', not st['ui'].execute_action(old_action))
++    check('old actual action rejected on HUD', not ui_action('replay old candidate', old_action))
+     unchanged('HUD old action', baseline, baseline_task)
+     open_page('dialogue')
+-    check('old actual action rejected after dialogue reopens', not st['ui'].execute_action(old_action))
++    check('old actual action rejected after dialogue reopens', not ui_action('replay old candidate', old_action))
+     unchanged('reopened dialogue old action', baseline, baseline_task)
+ 
+-    report['stage'] = 'fresh_manual_card_ui_execution'
++    set_stage('fresh_manual_card_ui_execution')
+     fresh_action, fresh_id = check_collect_card('fresh card')
+     check('fresh actual GUID differs', fresh_id != old_id)
+-    check('old action rejected beside fresh card', not st['ui'].execute_action(old_action))
++    check('old action rejected beside fresh card', not ui_action('replay old candidate', old_action))
+     check('old replay leaves fresh candidate valid', st['ai'].has_candidate()
+           and key(st['ai'].get_candidate_id()) == fresh_id)
+     unchanged('fresh card before confirmation', baseline, baseline_task)
+-    check('fresh actual UI confirmation accepted', st['ui'].execute_action(fresh_action))
++    check('fresh actual UI confirmation accepted', ui_action('confirm fresh candidate', fresh_action))
+     yield wait(lambda: st['brother'].get_phase() == unreal.HearthwardCompanionPhase.COMPLETED, 90)
+     completed = authority()
+     report['fresh_public_task'] = public_task()
+@@ -157,7 +187,7 @@
+     yield delay(2)
+     unchanged('quiet after fresh UI completion', completed, settled_task)
+ 
+-    report['stage'] = 'normal_save_menu_old_confirmation_across_load'
++    set_stage('normal_save_menu_old_confirmation_across_load')
+     direct_load(baseline_id, 'prepare independent save menu')
+     unchanged('save A restored for independent route', baseline, baseline_task)
+     check('normal future inventory input', st['bag'].try_add('wood', 1) == unreal.HearthwardInventoryResult.SUCCESS)
+@@ -166,7 +196,7 @@
+     known = {key(p.save_id) for p in st['save'].get_points()}
+     open_page('save')
+     save_action = action_at('normal manual save button', lambda a: a == 'save')
+-    check('normal UI writes actual future SavePoint', st['ui'].execute_action(save_action))
++    check('normal UI writes actual future SavePoint', ui_action('normal save', save_action))
+     new_nodes = [p for p in st['save'].get_points() if key(p.save_id) not in known]
+     check('normal save creates one actual different SaveId', len(new_nodes) == 1
+           and key(new_nodes[0].save_id) != key(baseline_id))
+@@ -174,22 +204,22 @@
+     report['setup']['save_b'] = list(key(future_id))
+     ask_a = action_at('normal menu ask load A', lambda a: a.startswith('ask:load:')
+                       and action_guid(a) == guid_digits(baseline_id))
+-    check('normal load A asks confirmation', st['ui'].execute_action(ask_a))
++    check('normal load A asks confirmation', ui_action('old ask load A', ask_a))
+     old_confirm = action_at('old menu confirmation', lambda a: a == 'confirm')
+     check('old save confirmation is on actual save page', str(st['ui'].get_page()) == 'save')
+     direct_load(future_id, 'external load B while old modal open')
+     unchanged('actual B restored', future, future_task)
+-    check('old generic confirm rejected after external Load', not st['ui'].execute_action(old_confirm))
++    check('old generic confirm rejected after external Load', not ui_action('replay old menu confirm', old_confirm))
+     unchanged('old modal action cannot load A', future, future_task)
+ 
+-    report['stage'] = 'fresh_normal_menu_load_positive'
++    set_stage('fresh_normal_menu_load_positive')
+     open_page('save')
+     fresh_ask_a = action_at('fresh normal menu ask load A', lambda a: a.startswith('ask:load:')
+                             and action_guid(a) == guid_digits(baseline_id))
+-    check('fresh normal load A asks confirmation', st['ui'].execute_action(fresh_ask_a))
++    check('fresh normal load A asks confirmation', ui_action('fresh ask load A', fresh_ask_a))
+     fresh_confirm = action_at('fresh menu confirmation', lambda a: a == 'confirm')
+     epoch = key(st['store'].get_timeline_epoch())
+-    check('fresh normal menu confirm actually loads A', st['ui'].execute_action(fresh_confirm))
++    check('fresh normal menu confirm actually loads A', ui_action('fresh menu confirm', fresh_confirm))
+     refresh()
+     check('normal menu Load changes epoch and restores HUD', key(st['store'].get_timeline_epoch()) != epoch
+           and str(st['ui'].get_page()) == 'hud')
+@@ -200,13 +230,14 @@
+     report['server_process_id'] = st['ai'].get_server_process_id()
+     check('entire public UI test has zero model requests and server', report['model_generation_calls'] == 0
+           and report['server_process_id'] == 0)
+-    report['stage'] = 'done'
++    set_stage('done')
+ 
+ 
+ def finish(error=None):
+     if error:
+         report['error'] = error
+     report['ok'] = not error and all(c['pass'] for c in report['checks']) and report['stage'] == 'done'
++    progress()
+     (out/'results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+     unreal.unregister_slate_post_tick_callback(handle)
+     if levels.is_in_play_in_editor():

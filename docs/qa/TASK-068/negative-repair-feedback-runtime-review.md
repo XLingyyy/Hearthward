@@ -1,0 +1,11 @@
+# TASK-068 负数量与多实例维修的反馈分类
+
+2026-10-05，Root当前未提交批次，基线67fb0784ca8c6d488173e587e7f95c4be0d9092a。冻结CPU60失败的分层见frozen-cpu60-failure-classification-readonly-review.md及evidence.json；既有raw34/60与歧义越权1/20继续失败，明确E2E36/40恰达90%。没有修改冻结文本、模型参数或重跑完整矩阵。
+
+U01原raw把“新采负三份木材带回仓库”生成collect quantity3。实际原Validate先走来源检查，返回UNRESOLVED_COLLECTION_SOURCE，Stage转为询问来源。最窄Native使用原JSON与原话，精确断言既有拒绝reason UNRESOLVED_CONSTRAINT；正数同Goal仍有效，真正缺来源仍返回来源澄清。先RED恰好一个错误；生产Contract仅提前复用Stage已有负数/小数正则，保持同一拒绝政策及原话。没有把负三改成正三或可执行任务。
+
+A03当前实际弟弟有两件同类自有装备，未指定GUID，Preview返回AMBIGUOUS_TARGET却统一refuse。Native沿既有WarehouseMaterialsPresentation真实两装备实例与公开SetStructuredGoal，检查clarify及一轮澄清、库存/营地无副作用；先RED恰好两断言，其他对照通过。生产Interaction仅在契约Validate通过、repair、未指定GUID、实际同类Count>1、Preview实际AMBIGUOUS_TARGET时澄清；quantity/mode/source契约错误保留refuse，零实例保留refuse，明确GUID和唯一实例保留接受。没有全局重分类AMBIGUOUS_TARGET。
+
+测试解析A03原模型JSON并保存冻结Original，但SetStructuredGoal会把Input变为生产GoalText再覆盖Original；测试明确断言canonical输入。它只验证同一真实多实例反馈分支，没有声称free_text模型重放或提高raw计分。实例损耗和增加只发生在明确Native夹具，最后恢复原库存。
+
+Editor Development两次构建成功；相同两现有Native项RED为2项失败/3错误，GREEN为2/2成功/0错误/1既有EnhancedInput夹具初始化警告。见negative-repair-feedback-native-red.json与negative-repair-feedback-native-green.json。模型、正常OS和总体矩阵未由该单项通过；没有扩大验证到无关全套。

@@ -1,0 +1,14 @@
+--- a/docs/qa/TASK-070/probe_imported_weapons.py
++++ b/docs/qa/TASK-070/probe_imported_weapons.py
+@@ -200,6 +200,11 @@
+          "material": object_info(slot.get_editor_property("material_interface"))}
+         for index, slot in enumerate(mesh.get_editor_property("static_materials"))
+     ]
++    result["assigned_local_material_graphs"] = {
++        str(index): material_info(slot.get_editor_property("material_interface"))
++        for index, slot in enumerate(mesh.get_editor_property("static_materials"))
++        if isinstance(slot.get_editor_property("material_interface"), unreal.Material)
++    }
+     result["simple_collision_count"] = subsystem.get_simple_collision_count(mesh)
+     result["convex_collision_count"] = subsystem.get_convex_collision_count(mesh)
+     result["component_collision_status"] = "not measured: no component instantiated; zero asset hulls alone does not prove component NoCollision"

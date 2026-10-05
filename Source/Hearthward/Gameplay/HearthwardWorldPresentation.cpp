@@ -97,11 +97,11 @@ void UHearthwardWorldPresentation::ApplyTime(double Minute)
     {
         auto* Fill=GetWorld()->SpawnActor<ADirectionalLight>(FVector::ZeroVector,FRotator(-32,30,0));
         Fill->Tags.Add(TEXT("HearthwardNightFill"));NightFill=Fill;
-        auto* Light=Fill->GetComponent();Light->SetMobility(EComponentMobility::Movable);
+        auto* Light=Cast<UDirectionalLightComponent>(Fill->GetLightComponent());Light->SetMobility(EComponentMobility::Movable);
         Light->SetAtmosphereSunLight(false);Light->SetCastShadows(false);
         Light->SetLightColor(FLinearColor(.56f,.70f,1.f));
     }
-    NightFill->GetComponent()->SetIntensity(1.5f*(1-Day));
+    NightFill->GetLightComponent()->SetIntensity(1.5f*(1-Day));
     for(TActorIterator<AActor> It(GetWorld());It;++It)
     {
         if(auto* Sun=It->FindComponentByClass<UDirectionalLightComponent>();Sun && !It->ActorHasTag(TEXT("HearthwardNightFill")))

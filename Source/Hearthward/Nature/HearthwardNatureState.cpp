@@ -149,6 +149,7 @@ bool FHearthwardNatureState::Valid() const
     {
         const auto D=HearthwardNature::Definition(A.Domestic?TEXT("domestic"):TEXT("wildlife"),A.Definition);
         if(!Id(A.Id,A.Position) || !D || A.Destination.ContainsNaN() || !FMath::IsFinite(A.Health) || A.Health<0 || A.Health>Number(D,TEXT("health")) || !FMath::IsFinite(A.Growth) || A.Growth<0 || A.Growth>2880 || !FMath::IsFinite(A.FedRemaining) || A.FedRemaining<0 || A.FedRemaining>1440 || !FMath::IsFinite(A.ProductMinutes) || A.ProductMinutes<0 || A.ProductMinutes>=1440 || !FMath::IsFinite(A.AlertRemaining) || A.AlertRemaining<0)return false;
+        if(!A.Threat.IsNone() && A.Threat!=TEXT("player") && A.Threat!=TEXT("brother"))return false;
         for(FGuid Home:{A.Pen,A.ReservedPen})if(Home.IsValid() && !Pens.ContainsByPredicate([&](const auto& P){return P.Id==Home && P.Definition==A.Definition;}))return false;
         if(A.Pen.IsValid() && A.ReservedPen.IsValid())return false;
         if(A.FollowingBrother && (!A.Domestic || !A.Captured || !A.Following || !A.ReservedPen.IsValid()))return false;

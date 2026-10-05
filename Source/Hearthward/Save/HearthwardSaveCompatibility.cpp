@@ -68,6 +68,7 @@ FString HearthwardSave::Diagnose(const UHearthwardSaveGame& Pool)
         if(!FHearthwardInventoryState::Validate(S.BrotherItems,false))Areas.Add(TEXT("弟弟背包与装备"));
         if(!FHearthwardInventoryState::Validate(S.StorageItems,true))Areas.Add(TEXT("共享仓储"));
         if(!S.NPCMemory.IsValid(S.ActiveSeconds))Areas.Add(TEXT("弟弟记忆与任务时间线"));
+        int64 Revision;if(!ResolveCommandRevision(S,Revision))Areas.Add(TEXT("弟弟命令与结算回执版本"));
         if(!Areas.IsEmpty())return Label(P)+TEXT("：")+FString::Join(Areas,TEXT("、"))+TEXT("校验未通过。请查看兼容详情；原档保留。");
     }
     return TEXT("存档身份、任务状态或跨系统关联校验未通过。原档保留；无法安全推断应删除的内容，请更新或恢复备份。");

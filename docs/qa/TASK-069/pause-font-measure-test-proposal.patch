@@ -1,0 +1,155 @@
+--- a/Source/Hearthward/Tests/ExperienceTests.cpp
++++ b/Source/Hearthward/Tests/ExperienceTests.cpp
+@@ -21,6 +21,13 @@
+ #include "GameFramework/PlayerController.h"
+ #include "Misc/AutomationTest.h"
+ #include "Widgets/SViewport.h"
++#include "../Gameplay/HearthwardGameData.h"
++#include "Framework/Application/SlateApplication.h"
++#include "Rendering/SlateRenderer.h"
++#include "Fonts/FontMeasure.h"
++#include "Misc/FileHelper.h"
++#include "Misc/Paths.h"
++#include "Serialization/JsonSerializer.h"
+ #if WITH_DEV_AUTOMATION_TESTS
+ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FExperienceBindingsTest,"Hearthward.Experience.BindingConflictsAndContexts",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+ bool FExperienceBindingsTest::RunTest(const FString&)
+@@ -219,4 +226,138 @@
+     }
+     Cleanup();return true;
+ }
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPauseObjectiveMetrics069Test,
++    "Hearthward.UI069.PauseAllObjectivesUseReadableNonOverlappingText",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++bool FPauseObjectiveMetrics069Test::RunTest(const FString&)
++{
++    auto* Instance=NewObject<UGameInstance>(GEngine);Instance->InitializeStandalone();
++    auto* World=Instance->GetWorld();
++    auto* Viewport=NewObject<UGameViewportClient>(GEngine);
++    Instance->GetWorldContext()->GameViewport=Viewport;
++    Viewport->Init(*Instance->GetWorldContext(),Instance,false);
++    const TSharedRef<SViewport> SlateViewport=SNew(SViewport);
++    TSharedPtr<FSceneViewport> SceneViewport=Viewport->CreateViewport(SlateViewport);
++    auto* LocalPlayer=NewObject<ULocalPlayer>(GEngine);
++    Instance->AddLocalPlayer(LocalPlayer,FPlatformUserId::CreateFromInternalId(0));
++    auto* Controller=World->SpawnActor<APlayerController>();Controller->SetPlayer(LocalPlayer);
++    World->AddController(Controller);
++    auto* Player=World->SpawnActor<ACharacter>();Controller->Possess(Player);
++    auto* Bag=NewObject<UHearthwardInventoryComponent>(Player);
++    Player->AddInstanceComponent(Bag);Bag->RegisterComponent();
++    auto* Gameplay=NewObject<UHearthwardGameplayComponent>(Player);
++    Player->AddInstanceComponent(Gameplay);Gameplay->RegisterComponent();Gameplay->Enabled=true;
++    auto* Survival=NewObject<UHearthwardSurvivalComponent>(Player);
++    Player->AddInstanceComponent(Survival);Survival->RegisterComponent();
++    auto* Combat=NewObject<UHearthwardCombatComponent>(Player);
++    Player->AddInstanceComponent(Combat);Combat->RegisterComponent();
++    auto* Building=NewObject<UHearthwardBuildingComponent>(Player);
++    Player->AddInstanceComponent(Building);Building->RegisterComponent();
++    Instance->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale=100;
++    auto* Screen=CreateWidget<UHearthwardScreenWidget>(Controller);
++    const auto Cleanup=[&]()
++    {
++        if(Screen)Screen->RemoveFromParent();
++        SceneViewport->SetViewportClient(nullptr);SceneViewport.Reset();
++        Instance->Shutdown();GEngine->DestroyWorldContext(World);World->DestroyWorld(false);
++    };
++    if(!TestNotNull(TEXT("Actual Pause widget exists"),Screen)) {Cleanup();return false;}
++    Screen->SetIsFocusable(true);Screen->TakeWidget();Screen->AddToViewport();
++
++    FString ThemeJson;TSharedPtr<FJsonObject> Theme;
++    const FString UIRoot=FPaths::ProjectDir()/TEXT("Resources/UI");
++    if(!TestTrue(TEXT("Actual theme typography loads"),FFileHelper::LoadFileToString(ThemeJson,*(UIRoot/TEXT("interface.json")))
++        && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(ThemeJson),Theme))) {Cleanup();return false;}
++    const auto Typography=Theme->GetObjectField(TEXT("typography"));
++    const auto BodyFont=MakeShared<FCompositeFont>(NAME_None,UIRoot/Typography->GetStringField(TEXT("body")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
++    const auto DisplayFont=MakeShared<FCompositeFont>(NAME_None,UIRoot/Typography->GetStringField(TEXT("display")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
++    const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
++    const auto ReadRect=[](const TSharedPtr<FJsonObject>& Row)
++    {
++        const auto& Values=Row->GetArrayField(TEXT("rect"));
++        return FVector4(Values[0]->AsNumber(),Values[1]->AsNumber(),Values[2]->AsNumber(),Values[3]->AsNumber());
++    };
++    const auto& QuestRows=HearthwardData::Rows(TEXT("quests"));
++    if(!TestTrue(TEXT("Actual quest catalog is nonempty"),!QuestRows.IsEmpty())) {Cleanup();return false;}
++    int32 MaximumLines=0;
++    for(int32 LifeCase=0;LifeCase<2;++LifeCase)
++    {
++        if(LifeCase==1)
++        {
++            const FGuid Epoch=World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
++            if(!TestTrue(TEXT("Actual lethal damage supplies the Downed Pause button"),
++                Survival->ReceiveDamage(Survival->MaxHealth(),FGuid::NewGuid(),Epoch)
++                && Survival->State.Life==EHearthwardLife::Downed)) {Cleanup();return false;}
++        }
++        for(const auto& QuestValue:QuestRows)
++        {
++            const auto Quest=QuestValue->AsObject();
++            const FString QuestId=Quest->GetStringField(TEXT("id"));
++            const FString Case=FString(LifeCase?TEXT("Downed "):TEXT("Alive "))+QuestId;
++            Gameplay->TrackedQuest=FName(*QuestId);Screen->OpenPage(TEXT("pause"));
++            TSharedPtr<FJsonObject> Description;
++            if(!TestTrue(Case+TEXT(" actual layout parses"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),Description)))
++            {Cleanup();return false;}
++            const auto& Components=Description->GetArrayField(TEXT("components"));
++            TSharedPtr<FJsonObject> Objective;
++            for(const auto& Value:Components)
++                if(HearthwardData::Text(Value->AsObject(),TEXT("bind"))==TEXT("objective")) {Objective=Value->AsObject();break;}
++            if(!TestNotNull(Case+TEXT(" actual objective is present"),Objective.Get())) {Cleanup();return false;}
++            TestTrue(Case+TEXT(" objective remains visible"),Objective->GetBoolField(TEXT("visible")));
++            TestEqual(Case+TEXT(" objective retains the complete catalog text"),Objective->GetStringField(TEXT("text")),Quest->GetStringField(TEXT("objective")));
++            const float FontSize=float(Objective->GetNumberField(TEXT("font")));
++            TestTrue(Case+TEXT(" actual objective font meets 24px floor"),FontSize>=24.f);
++            const FVector4 Bounds=ReadRect(Objective);
++            const FString FontRole=Objective->GetStringField(TEXT("fontRole"));
++            const bool Display=FontRole==TEXT("display") || (FontRole.IsEmpty() && FontSize>=30);
++            FSlateFontInfo Font(Display?DisplayFont:BodyFont,FMath::RoundToInt(FontSize*.75f));
++            Font.LetterSpacing=int32(Objective->GetNumberField(TEXT("tracking")));
++            TArray<FString> SourceLines,Lines;Objective->GetStringField(TEXT("text")).ParseIntoArrayLines(SourceLines,false);
++            // Match NativePaint's final FontInfo, letter spacing, and whole-character wrapping.
++            for(FString Line:SourceLines)
++            {
++                while(Line.Len()>1 && Measure->Measure(Line,Font).X>Bounds.Z)
++                {
++                    const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,Bounds.Z)+1,1,Line.Len());
++                    Lines.Add(Line.Left(Count));Line=Line.Mid(Count);
++                }
++                Lines.Add(Line);
++            }
++            MaximumLines=FMath::Max(MaximumLines,Lines.Num());
++            float Width=0,Height=0;
++            for(int32 LineIndex=0;LineIndex<Lines.Num();++LineIndex)
++            {
++                const FVector2D Extent=Measure->Measure(Lines[LineIndex],Font);
++                Width=FMath::Max(Width,float(Extent.X));
++                Height=FMath::Max(Height,float(LineIndex*FontSize*1.6f+Extent.Y));
++            }
++            TestTrue(Case+TEXT(" declared objective height contains every rendered line"),Height<=Bounds.W);
++            const FBox2D TextBounds(FVector2D(Bounds.X,Bounds.Y),FVector2D(Bounds.X+Width,Bounds.Y+Height));
++            int32 InformationRows=0;bool FoundAbandon=false;
++            for(const auto& Value:Components)
++            {
++                const auto Other=Value->AsObject();
++                const FString ElementId=Other->GetStringField(TEXT("id"));
++                const FString Bind=HearthwardData::Text(Other,TEXT("bind"));
++                const FString Action=HearthwardData::Text(Other,TEXT("action"));
++                const bool Information=Bind==TEXT("time") || Bind==TEXT("location")
++                    || ElementId==TEXT("pause.element.016") || ElementId==TEXT("pause.element.019");
++                const bool SurvivalButton=Action==TEXT("giveUp") || Action==TEXT("cancelSurvival") || Action==TEXT("menuPause");
++                if(!Other->GetBoolField(TEXT("visible")) || (!Information && !SurvivalButton))continue;
++                if(Information)++InformationRows;
++                if(Action==TEXT("giveUp"))FoundAbandon=true;
++                const FVector4 OtherBounds=ReadRect(Other);
++                const FBox2D Occupied(FVector2D(OtherBounds.X,OtherBounds.Y),FVector2D(OtherBounds.X+OtherBounds.Z,OtherBounds.Y+OtherBounds.W));
++                TestFalse(Case+TEXT(" drawn objective avoids ")+ElementId,TextBounds.Intersect(Occupied));
++                if(Action==TEXT("giveUp"))TestEqual(Case+TEXT(" actual abandonment hit target remains available"),
++                    Screen->ActionAt(FVector2D(OtherBounds.X+OtherBounds.Z*.5,OtherBounds.Y+OtherBounds.W*.5)),Action);
++            }
++            TestEqual(Case+TEXT(" both titles and values are present"),InformationRows,4);
++            if(LifeCase==1)TestTrue(Case+TEXT(" actual Downed abandonment button is present"),FoundAbandon);
++        }
++    }
++    AddInfo(FString::Printf(TEXT("Measured %d real catalog objectives in Alive and Downed Pause; maximum wrapped lines=%d"),QuestRows.Num(),MaximumLines));
++    Cleanup();return true;
++}
+ #endif

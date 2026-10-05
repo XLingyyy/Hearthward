@@ -113,11 +113,236 @@ bool FNPCAgentContractTest::RunTest(const FString&)
     TestTrue(TEXT("Inventory query is distinct read-only contract"),HearthwardAgent::Validate(Query).IsEmpty() && !Query.WritesWorld()
         && Query.QuantityMode!=Report.QuantityMode && Query.SourceRef!=Report.SourceRef);
     const FString Description=HearthwardAgent::Describe();
-    TestTrue(TEXT("Capability description keeps localized recipe identity"),Description.Contains(TEXT("arrows=箭矢")));
+    TestTrue(TEXT("Capability description keeps localized recipe identity"),Description.Contains(TEXT("箭矢[arrows]")));
     TestFalse(TEXT("Generic capability description does not inject recipe quantities"),Description.Contains(TEXT("每批消耗")) || Description.Contains(TEXT("每批产出")));
     TestFalse(TEXT("Real crafting materials"),HearthwardWorkshop::Materials(TEXT("craft"),TEXT("arrows"),1).IsEmpty());
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalQuantityTest,"Hearthward.NPCAgent.OriginalQuantityBoundary",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentOriginalQuantityTest::RunTest(const FString&)
+{
+    FHearthwardAgentGoal G;G.Intent=TEXT("collect");G.Item=TEXT("wood");G.Quantity=32;
+    G.QuantityMode=TEXT("additional_acquired");G.SourceRef=TEXT("S1");
+    G.Original=TEXT("新采三十三份木材带回仓库");
+    TestFalse(TEXT("Explicit Chinese 33 cannot become a legal 32-unit proposal"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("新采33份木材带回仓库");TestFalse(TEXT("ASCII 33 cannot become 32"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("新采132份木材带回仓库");TestFalse(TEXT("32 is not a substring quantity of 132"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("新采一百三十二份木材");TestFalse(TEXT("A large Chinese token is not reduced to its suffix"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("新采三十二份木材带回仓库");TestTrue(TEXT("The exact supported Chinese target remains valid"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("新采32份木材带回仓库");TestTrue(TEXT("The exact ASCII target remains valid"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Quantity=2;G.Original=TEXT("新采十二份木材");TestFalse(TEXT("Two is not the suffix of twelve"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("新采两份木头");TestTrue(TEXT("Existing item alias and Chinese two remain supported"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=HearthwardAgent::GoalText(G);TestTrue(TEXT("Structured GoalText item-times-quantity remains supported"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Quantity=3;G.Original=TEXT("采些木材，最多消耗三份木材");TestFalse(TEXT("Consumption quantity cannot fill a missing target"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("采些木材\n补充：三份");TestTrue(TEXT("Explicit quantity clarification fills the known item"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Quantity=4;G.Original=TEXT("采些木材\n补充：4");TestTrue(TEXT("Existing bare ASCII quantity clarification remains supported"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("采些木材\n补充：四份。");TestTrue(TEXT("A declarative period does not reject explicit quantity clarification"),HearthwardAgent::OriginalQuantityMatches(G));G.Quantity=3;
+    G.Original=TEXT("请采木材，数量为三");TestTrue(TEXT("Existing explicit quantity statement remains supported"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("新采二份木材\n补充：三份");TestFalse(TEXT("Conflicting original and clarification quantities need review"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("新采二份木材，再采三份木材");TestFalse(TEXT("Multiple target quantities cannot be silently selected"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Intent=TEXT("craft");G.Item=TEXT("arrows");G.QuantityMode=TEXT("batches");G.SourceRef=TEXT("bag");
+    G.Original=TEXT("制作三批箭矢，最多消耗三份木材");
+    TestTrue(TEXT("Craft batches and a same-valued material limit are distinct slots"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("制作三批箭矢，最多消耗五份木材");TestTrue(TEXT("A different material limit does not replace the target batches"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Quantity=5;TestFalse(TEXT("The material budget cannot become five craft batches"),HearthwardAgent::OriginalQuantityMatches(G));G.Quantity=3;
+    G.Original=TEXT("制作些箭矢，最多消耗三份木材");TestFalse(TEXT("Only a consumption number supplies no craft batches"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=TEXT("制作三支箭矢");TestFalse(TEXT("Product pieces cannot be relabeled as batches"),HearthwardAgent::OriginalQuantityMatches(G));
+    G.Original=HearthwardAgent::GoalText(G);TestTrue(TEXT("Structured craft GoalText preserves exact batches"),HearthwardAgent::OriginalQuantityMatches(G));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalBudgetTest,"Hearthward.NPCAgent.OriginalMaterialBudget",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentOriginalBudgetTest::RunTest(const FString&)
+{
+    FHearthwardAgentGoal G;G.Intent=TEXT("craft");G.Item=TEXT("arrows");G.Quantity=3;
+    G.QuantityMode=TEXT("batches");G.SourceRef=TEXT("bag");
+    G.Original=TEXT("制作三批箭矢，最多消耗三份木材");
+    TestTrue(TEXT("Target batches are independently valid before checking its material budget"),HearthwardAgent::OriginalQuantityMatches(G));
+    TestFalse(TEXT("An explicit original material budget cannot disappear from a valid proposal"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("max:wood:4")};
+    TestFalse(TEXT("An explicit original material budget cannot be enlarged by the proposal"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("max:wood:3")};
+    TestTrue(TEXT("The exact explicit material budget remains a valid proposal"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=HearthwardAgent::GoalText(G);
+    TestTrue(TEXT("The public structured GoalText retains a material budget"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("制作三批箭矢");
+    TestTrue(TEXT("An applicable confirmed rule can still supply an unspoken material limit"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("制作三批箭矢，消耗最多三份木材");
+    TestTrue(TEXT("Consumption before the ceiling word retains its explicit budget"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("制作三批箭矢，木材最多消耗三份");
+    TestTrue(TEXT("Material before the ceiling word retains its explicit budget"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("用你背包的材料制作三批箭矢最多消耗三份木材");
+    TestTrue(TEXT("A target before a ceiling without punctuation is not a second budget material"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("max:wood:3"),TEXT("max:stone:2")};G.Original=TEXT("制作三批箭矢，最多消耗三份木材和二份石材");
+    TestTrue(TEXT("Two different materials bind their own complete quantities in one budget clause"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("max:wood:3")};
+    TestFalse(TEXT("A second explicit material budget cannot disappear"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("max:wood:100")};G.Original=TEXT("制作三批箭矢，最多消耗一百份木材");
+    TestTrue(TEXT("A valid hundred-unit Chinese material budget is not narrowed to ninety-nine"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("max:wood:100000")};G.Original=TEXT("制作三批箭矢，最多消耗十万份木材");
+    TestTrue(TEXT("The existing maximum material budget remains valid in Chinese"),HearthwardAgent::Validate(G).IsEmpty());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalCollectionMeaningTest,"Hearthward.NPCAgent.OriginalCollectionMeaning",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentOriginalCollectionMeaningTest::RunTest(const FString&)
+{
+    FHearthwardAgentGoal G;
+    if(!TestTrue(TEXT("The actual model-shaped collection result parses before the original is bound"),HearthwardAgent::Parse(
+        TEXT("{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":2,\"mode\":\"additional_acquired\",\"source\":\"S1\",")
+        TEXT("\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡去已知安全点采集两份木材，请确认后再执行。\"}"),G)))return false;
+    G.Original=TEXT("拿二份木材过来");
+    if(!TestTrue(TEXT("The actual original has a valid exact quantity before collection meaning is checked"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
+    TestFalse(TEXT("An unspecified transfer source cannot become new collection from default S1"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("请新采两份木头并带回营地仓库");
+    TestTrue(TEXT("Explicit new collection with the existing material alias remains valid"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("请采二份木材送进仓库");
+    TestTrue(TEXT("A normal explicit collection verb does not require a new wording prefix"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=HearthwardAgent::GoalText(G);
+    TestTrue(TEXT("Structured collection GoalText remains a valid confirmed contract"),HearthwardAgent::Validate(G).IsEmpty());
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalLocationRestrictionTest,"Hearthward.NPCAgent.OriginalCollectionLocationRestriction",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentOriginalLocationRestrictionTest::RunTest(const FString&)
+{
+    FHearthwardAgentGoal G;
+    if(!TestTrue(TEXT("The actual model-shaped location omission parses before original binding"),HearthwardAgent::Parse(
+        TEXT("{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":4,\"mode\":\"additional_acquired\",\"source\":\"S1\",")
+        TEXT("\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，新采四份木材但避开原采集点，请确认路线与目标；若遇阻碍或危险将安全返营等待。\"}"),G)))return false;
+    G.Original=TEXT("新采四份木材，但别去那里");
+    if(!TestTrue(TEXT("The excluded-place clause preserves a legitimate exact target quantity"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
+    TestFalse(TEXT("An unrepresented excluded location cannot silently fall back to S1"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("去已知安全点新采四份木材，带回营地入库");G.Limits={TEXT("source:S1")};
+    TestTrue(TEXT("The existing positive known-source restriction stays valid"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=HearthwardAgent::GoalText(G);
+    TestTrue(TEXT("Canonical positive source GoalText is unaffected"),HearthwardAgent::Validate(G).IsEmpty());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalCollectionVerbTest,"Hearthward.NPCAgent.OriginalCollectionVerbCompatibility",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentOriginalCollectionVerbTest::RunTest(const FString&)
+{
+    FHearthwardAgentGoal G;
+    if(!TestTrue(TEXT("The model-shaped collection contract parses before checking the original wording"),HearthwardAgent::Parse(
+        TEXT("{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":2,\"mode\":\"additional_acquired\",\"source\":\"S1\",")
+        TEXT("\"limits\":[],\"unresolved\":[],\"npc_line\":\"请核对任务卡。\"}"),G)))return false;
+    G.Original=TEXT("帮忙采两份木材并送入仓库");
+    TestTrue(TEXT("An explicit collection request using help remains valid"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("给我采两份木材送入仓库");
+    TestTrue(TEXT("An explicit collection request for the speaker remains valid"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("请勿采两份木材");
+    TestFalse(TEXT("A negative collection request cannot authorize fresh collection"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("请把你采集好的二份木材送入仓库");
+    if(!TestTrue(TEXT("The existing acquired cargo has an exact target quantity"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
+    TestFalse(TEXT("Collection describing acquired cargo cannot authorize another new harvest"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("新采二份木材，别往那里走");
+    TestFalse(TEXT("An omitted excluded direction cannot default to the current safe source"),HearthwardAgent::Validate(G).IsEmpty());
+    FHearthwardAgentGoal NegativeQuantity;
+    if(!TestTrue(TEXT("The unchanged CPU U01 model output parses"),HearthwardAgent::Parse(
+        TEXT(R"({"intent":"collect","item":"wood","quantity":3,"mode":"additional_acquired","source":"S1","limits":[],"unresolved":[],"npc_line":"哥，新采负三份木材带回仓库，数量逻辑异常，请确认具体需求或重新表述。"})"),NegativeQuantity)))return false;
+    NegativeQuantity.Original=TEXT("新采负三份木材带回仓库");
+    TestEqual(TEXT("An explicit negative quantity is refused before asking about collection source"),
+        HearthwardAgent::Validate(NegativeQuantity),FString(TEXT("UNRESOLVED_CONSTRAINT")));
+    NegativeQuantity.Original=TEXT("新采三份木材带回仓库");
+    TestTrue(TEXT("The same positive collection proposal remains valid"),HearthwardAgent::Validate(NegativeQuantity).IsEmpty());
+    NegativeQuantity.Original=TEXT("拿三份木材过来");
+    TestEqual(TEXT("A genuinely unspecified acquisition source retains clarification"),
+        HearthwardAgent::Validate(NegativeQuantity),FString(TEXT("UNRESOLVED_COLLECTION_SOURCE")));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalNoLimitTest,"Hearthward.NPCAgent.OriginalMaterialProhibition",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentOriginalNoLimitTest::RunTest(const FString&)
+{
+    FHearthwardAgentGoal G;
+    if(!TestTrue(TEXT("The model-shaped proposal parses with all eight fields"),HearthwardAgent::Parse(
+        TEXT("{\"intent\":\"craft\",\"item\":\"rope\",\"quantity\":1,\"mode\":\"batches\",\"source\":\"bag\",")
+        TEXT("\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡用我背包的材料制作一批绳索，请确认；现场条件会在执行前复核。\"}"),G)))return false;
+    G.Original=TEXT("请用你背包的材料制作一批绳索，但不要消耗木材");
+    if(!TestTrue(TEXT("The prohibition clause does not alter the actual target batches"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
+    const auto Cost=HearthwardWorkshop::Materials(G.Intent,G.Item,G.Quantity);
+    if(!TestTrue(TEXT("The actual recipe has positive wood cost before testing the missing prohibition"),Cost.FindRef(TEXT("wood"))>0))return false;
+    TestFalse(TEXT("An explicit original prohibition cannot disappear from a parsed model proposal"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("no:wood")};
+    TestTrue(TEXT("An accurately preserved prohibition remains a valid constrained contract"),HearthwardAgent::Validate(G).IsEmpty());
+    TestFalse(TEXT("The preserved prohibition blocks the actual recipe cost"),HearthwardAgent::AllowsCost(G.Limits,Cost,{}));
+    G.Original=HearthwardAgent::GoalText(G);
+    TestTrue(TEXT("Structured GoalText keeps its explicit material prohibition"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("制作一批绳索，不要消耗药草");G.Limits={TEXT("no:herb")};
+    TestTrue(TEXT("An original prohibition of another material retains its existing alias"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("no:wood")};
+    TestFalse(TEXT("A prohibition cannot bind a different material"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("制作一批绳索，不允许使用精矿");G.Limits={TEXT("no:refined_ore")};
+    TestTrue(TEXT("The registered refined material name binds its exact item"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("制作一批绳索，不要使用refined_ore");G.Limits={TEXT("no:ore")};
+    TestFalse(TEXT("The longer refined item id cannot be reduced to ore"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("no:refined_ore")};
+    TestTrue(TEXT("The complete refined item id remains supported"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("制作一批绳索，不要消耗精炼矿石");G.Limits={TEXT("no:ore")};
+    TestFalse(TEXT("An unregistered compound cannot authorize a suffix material match"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("no:herb"),TEXT("no:wood")};G.Original=HearthwardAgent::GoalText(G);
+    TestTrue(TEXT("Canonical material prohibitions remain valid when joined as constraint labels"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("no:herb")};
+    TestFalse(TEXT("A later canonical prohibition cannot disappear after a constraint-label separator"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={};G.Original=TEXT("这次授权使用营地仓库材料制作一批绳索");G.SourceRef=TEXT("camp");
+    TestTrue(TEXT("A normal warehouse-source authorization adds no one-time material exception"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Intent=TEXT("repair");G.Item=TEXT("axe");G.QuantityMode=TEXT("one_owned");G.SourceRef=TEXT("bag");G.Original=TEXT("维修自己的石斧一件，不要用木头");
+    TestFalse(TEXT("A repair proposal also preserves an explicit original material prohibition"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("no:wood")};
+    TestTrue(TEXT("Repair accepts the existing wood alias when its prohibition is preserved"),HearthwardAgent::Validate(G).IsEmpty());
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalRuleMaterialTest,"Hearthward.NPCAgent.OriginalRuleMaterialConstraint",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentOriginalRuleMaterialTest::RunTest(const FString&)
+{
+    FHearthwardAgentGoal G;G.Intent=TEXT("rule_proposal");G.Item=TEXT("none");G.Quantity=0;
+    G.QuantityMode=TEXT("none");G.SourceRef=TEXT("none");G.Limits={TEXT("ban:stone")};
+    G.Original=TEXT("以后不要消耗石材");
+    TestFalse(TEXT("An original material-consumption prohibition cannot become a collection ban rule"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("no:stone")};
+    TestTrue(TEXT("The exact material-consumption rule remains valid"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=HearthwardAgent::GoalText(G);
+    TestTrue(TEXT("Canonical explicit material rules keep existing manual-card compatibility"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("ban:stone")};G.Original=TEXT("以后不要采集石材");
+    TestTrue(TEXT("An explicit collection ban retains its distinct registered rule"),HearthwardAgent::Validate(G).IsEmpty());
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalOnceTest,"Hearthward.NPCAgent.OriginalOnceAuthorization",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FNPCAgentOriginalOnceTest::RunTest(const FString&)
+{
+    FHearthwardNPCMemory Rules;
+    if(!TestTrue(TEXT("A lasting material prohibition is recorded through the existing public memory operation"),
+        Rules.PutRule(TEXT("no:wood"),TEXT("以后制作和维修都不要消耗木材"),1)))return false;
+    if(!TestTrue(TEXT("The lasting prohibition is applicable to this capability"),Rules.ApplicableRules(TEXT("craft")).Contains(TEXT("no:wood"))))return false;
+    FHearthwardAgentGoal G;
+    if(!TestTrue(TEXT("A model-proposed one-time exception has the normal eight-field shape"),HearthwardAgent::Parse(
+        TEXT("{\"intent\":\"craft\",\"item\":\"rope\",\"quantity\":1,\"mode\":\"batches\",\"source\":\"bag\",")
+        TEXT("\"limits\":[\"once:wood\"],\"unresolved\":[],\"npc_line\":\"哥，这次用我背包的材料制作一批绳索；请确认后执行，其他约定保持有效。\"}"),G)))return false;
+    G.Original=TEXT("这次请用你背包的材料制作一批绳索");
+    if(!TestTrue(TEXT("A current-only task still has an exact legitimate target"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
+    TestFalse(TEXT("Saying this time cannot authorize an unspoken material-specific exception"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("这次允许消耗木材，请用你背包的材料制作一批绳索");
+    TestTrue(TEXT("An explicit original one-time wood allowance remains supported"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=HearthwardAgent::GoalText(G);
+    TestTrue(TEXT("Structured GoalText retains its explicit one-time material allowance"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("这次允许使用木材粉，制作一批绳索");
+    TestFalse(TEXT("A complete unknown material suffix cannot grant a one-time wood exception"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("这次允许使用木材的替代物，制作一批绳索");
+    TestFalse(TEXT("Permission to use a wood substitute cannot grant a one-time wood exception"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("这次允许用石头，制作一批绳索");
+    TestFalse(TEXT("A one-time stone allowance cannot lift the wood prohibition"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("once:stone")};
+    TestTrue(TEXT("The explicit one-time allowance binds the actual aliased material"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("本次可以用木头，制作一批绳索");G.Limits={TEXT("once:wood")};
+    TestTrue(TEXT("An explicit current-only wood allowance supports existing wording and alias"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("不允许本次消耗木材，制作一批绳索");G.Limits={TEXT("once:wood"),TEXT("no:wood")};
+    TestFalse(TEXT("Consent cannot start inside a negated authorization even when no is retained"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Limits={TEXT("no:wood")};
+    TestTrue(TEXT("A negated current-only consumption clause retains its actual prohibition"),HearthwardAgent::Validate(G).IsEmpty());
+    TestTrue(TEXT("A one-time task never revokes the lasting rule record"),Rules.ApplicableRules(TEXT("craft")).Contains(TEXT("no:wood")));
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentReceiptTest,"Hearthward.NPCAgent.EffectReceiptsAndProgress",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FNPCAgentReceiptTest::RunTest(const FString&)
 {

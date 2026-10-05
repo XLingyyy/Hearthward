@@ -5,6 +5,7 @@
 #include "../Inventory/HearthwardInventoryState.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "Dom/JsonObject.h"
+#include "Internationalization/Regex.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Serialization/JsonReader.h"
@@ -34,6 +35,100 @@ bool StringArray(const TSharedPtr<FJsonObject>& O,const TCHAR* Key,TArray<FStrin
     for(const auto& V:*A) { FString S; if(!V->TryGetString(S) || S.IsEmpty() || S.Len()>Length) return false; Out.Add(S); }
     return true;
 }
+bool OriginalMaterialBudgetsMatch(const FHearthwardAgentGoal& Goal)
+{
+    const FString Text=HearthwardAgent::Normalize(Goal.Original);
+    FRegexMatcher Budget(FRegexPattern(TEXT("(最多|至多|不超过)([^，,。；;\\n]*?)(?=最多|至多|不超过|[，,。；;\\n]|$)")),Text);
+    while(Budget.FindNext())
+    {
+        int32 Start=Budget.GetMatchBeginning();
+        while(Start>0 && !FString(TEXT("，,。；;\n")).Contains(Text.Mid(Start-1,1)))--Start;
+        FString Prefix=Text.Mid(Start,Budget.GetMatchBeginning()-Start).TrimEnd();
+        const FString Tail=Budget.GetCaptureGroup(2);
+        if(!Prefix.Contains(TEXT("耗")) && !Prefix.Contains(TEXT("用")) && !Tail.Contains(TEXT("耗")) && !Tail.Contains(TEXT("用")))continue;
+        Prefix.ReplaceInline(TEXT("消耗"),TEXT(""));Prefix.ReplaceInline(TEXT("使用"),TEXT(""));Prefix.ReplaceInline(TEXT("耗"),TEXT(""));Prefix.ReplaceInline(TEXT("用"),TEXT(""));Prefix.TrimEndInline();
+        bool TailHasItem=false;
+        for(const auto& Item:HearthwardBasicItems())
+            if(Tail.Contains(HearthwardAgent::Normalize(HearthwardAgent::ItemText(Item.Id))) || Tail.Contains(Item.Id.ToString())){TailHasItem=true;break;}
+        FRegexMatcher Number(FRegexPattern(TEXT("(?<![-−负.．点0-9零〇一二两三四五六七八九十百千万亿])([0-9]+|[零〇一二两三四五六七八九十百千万亿]+)(?![.．点0-9零〇一二两三四五六七八九十百千万亿])\\s*(份|个|根|单位|块|件)")),Tail);
+        bool Found=false;TSet<FName> BoundItems;
+        while(Number.FindNext())
+        {
+            FString Before=Tail.Left(Number.GetMatchBeginning()).TrimEnd();
+            Before.ReplaceInline(TEXT("消耗"),TEXT(""));Before.ReplaceInline(TEXT("使用"),TEXT(""));Before.ReplaceInline(TEXT("耗"),TEXT(""));Before.ReplaceInline(TEXT("用"),TEXT(""));Before.TrimEndInline();
+            const FString After=Tail.Mid(Number.GetMatchEnding()).TrimStart();
+            FName Material;int32 BestLength=0;bool Ambiguous=false;
+            for(const auto& Item:HearthwardBasicItems())
+            {
+                const FString Name=HearthwardAgent::Normalize(HearthwardAgent::ItemText(Item.Id)),Id=Item.Id.ToString();
+                const int32 Length=FMath::Max(After.StartsWith(Name) || Before.EndsWith(Name) || (!TailHasItem && Prefix.EndsWith(Name))?Name.Len():0,
+                    After.StartsWith(Id) || Before.EndsWith(Id) || (!TailHasItem && Prefix.EndsWith(Id))?Id.Len():0);
+                if(Length>BestLength){Material=Item.Id;BestLength=Length;Ambiguous=false;}
+                else if(Length>0 && Length==BestLength && Material!=Item.Id)Ambiguous=true;
+            }
+            if(Material.IsNone() || Ambiguous || BoundItems.Contains(Material))return false;
+            BoundItems.Add(Material);bool Matches=false;
+            for(const auto& Limit:Goal.Limits)
+            {
+                TArray<FString> Parts;Limit.ParseIntoArray(Parts,TEXT(":"));
+                if(Parts.Num()!=3 || Parts[0]!=TEXT("max") || Parts[1]!=Material.ToString())continue;
+                FHearthwardAgentGoal Amount;Amount.Intent=TEXT("collect");Amount.Item=Material;Amount.Quantity=FCString::Atoi(*Parts[2]);
+                Amount.Original=TEXT("数量：")+Number.GetCaptureGroup(1)+Number.GetCaptureGroup(2)+HearthwardAgent::ItemText(Material);
+                if(HearthwardAgent::OriginalQuantityMatches(Amount)){Matches=true;break;}
+            }
+            if(!Matches)return false;
+            Found=true;
+        }
+        if(!Found)return false;
+    }
+    return true;
+}
+bool OriginalMaterialPermissionsMatch(const FHearthwardAgentGoal& Goal)
+{
+    const FString Text=HearthwardAgent::Normalize(Goal.Original);
+    const auto BindMaterials=[](FString Tail,TSet<FName>& Items)
+    {
+        for(;;)
+        {
+            Tail.TrimStartInline();FName Material;int32 BestLength=0;bool Ambiguous=false;
+            for(const auto& Item:HearthwardBasicItems())
+            {
+                const FString Name=HearthwardAgent::Normalize(HearthwardAgent::ItemText(Item.Id)),Id=Item.Id.ToString();int32 Length=0;
+                for(const auto& Word:{Name,Id})
+                {
+                    if(Word.IsEmpty() || !Tail.StartsWith(Word))continue;
+                    if(Word==Id && Tail.Len()>Word.Len() && Tail[Word.Len()]<128
+                        && (FChar::IsAlnum(Tail[Word.Len()]) || Tail[Word.Len()]==TEXT('_')))continue;
+                    Length=FMath::Max(Length,Word.Len());
+                }
+                if(Length>BestLength){Material=Item.Id;BestLength=Length;Ambiguous=false;}
+                else if(Length>0 && Length==BestLength && Material!=Item.Id)Ambiguous=true;
+            }
+            if(Material.IsNone() || Ambiguous)return false;
+            Items.Add(Material);Tail=Tail.Mid(BestLength).TrimStart();bool Joined=false;
+            for(const auto* Join:{TEXT("和"),TEXT("与"),TEXT("及"),TEXT("、")})
+                if(Tail.StartsWith(Join)){Tail=Tail.Mid(FCString::Strlen(Join));Joined=true;break;}
+            if(!Joined)return Tail.IsEmpty();
+        }
+    };
+    TSet<FName> Prohibited;
+    FRegexMatcher No(FRegexPattern(TEXT("(?:(?:不允许|不得|禁止|不能|不要|不许|不准|别|不)\\s*(?:(?:仅)?(?:这次|本次)\\s*)?(?:消耗|使用|耗费|耗|用)|禁耗)\\s*([^，,。；;\\n]*?)(?=、(?:不得消耗|仅本次允许消耗|累计最多消耗)|[，,。；;\\n]|$)")),Text);
+    while(No.FindNext())if(!BindMaterials(No.GetCaptureGroup(1),Prohibited))return false;
+    for(FName Item:Prohibited)if(!Goal.Limits.Contains(TEXT("no:")+Item.ToString()))return false;
+    if(Goal.Limits.ContainsByPredicate([](const auto& L){return L.StartsWith(TEXT("once:"));}))
+    {
+        TSet<FName> Authorized;
+        FRegexMatcher Once(FRegexPattern(TEXT("(?:^|[，,。；;：:、\\n])\\s*(?:(?:仅)?(?:这次|本次)\\s*(?:允许|可以|可|准许|同意|授权)|(?:允许|准许|同意|授权)\\s*(?:仅)?(?:这次|本次))\\s*(?:消耗|使用|耗费|耗|用)\\s*([^，,。；;\\n]*?)(?=、(?:不得消耗|仅本次允许消耗|累计最多消耗)|[，,。；;\\n]|$)")),Text);
+        while(Once.FindNext())
+        {
+            TSet<FName> Materials;
+            if(BindMaterials(Once.GetCaptureGroup(1),Materials))for(FName Item:Materials)Authorized.Add(Item);
+        }
+        for(const auto& L:Goal.Limits)
+            if(L.StartsWith(TEXT("once:")) && !Authorized.Contains(FName(*L.RightChop(5))))return false;
+    }
+    return true;
+}
 }
 int32 HearthwardAgent::Policy(const TCHAR* Key) { return PolicyData()->GetIntegerField(Key); }
 bool HearthwardAgent::Settle(TArray<FHearthwardAgentReceipt>& Receipts,FGuid Id,FGuid Command,
@@ -50,6 +145,71 @@ FString HearthwardAgent::Normalize(const FString& Text)
     FString Out=Text.ToLower();
     for(const auto& A:PolicyData()->GetObjectField(TEXT("aliases"))->Values) Out.ReplaceInline(*A.Key,*A.Value->AsString());
     return Out;
+}
+bool HearthwardAgent::OriginalQuantityMatches(const FHearthwardAgentGoal& Goal)
+{
+    const FString Text=Normalize(Goal.Original),Item=Normalize(ItemText(Goal.Item));
+    FString Chinese;
+    if(Goal.Quantity>=0 && Goal.Quantity<=100000)
+    {
+        const FString Digits=TEXT("零一二三四五六七八九");
+        const auto GroupText=[&](int32 Value,bool OmitLeadingOne)
+        {
+            FString Out;bool Zero=false;
+            const int32 Places[]={1000,100,10,1};
+            const TCHAR* Units[]={TEXT("千"),TEXT("百"),TEXT("十"),TEXT("")};
+            for(int32 Index=0;Index<4;++Index)
+            {
+                const int32 Digit=Value/Places[Index]%10;
+                if(Digit>0)
+                {
+                    if(Zero){Out+=TEXT("零");Zero=false;}
+                    if(Digit!=1 || Places[Index]!=10 || !Out.IsEmpty() || !OmitLeadingOne)Out+=Digits.Mid(Digit,1);
+                    Out+=Units[Index];
+                }
+                else if(!Out.IsEmpty() && Value%Places[Index]>0)Zero=true;
+            }
+            return Out;
+        };
+        if(Goal.Quantity==0)Chinese=TEXT("零");
+        else if(Goal.Quantity>=10000)
+        {
+            Chinese=GroupText(Goal.Quantity/10000,true)+TEXT("万");
+            const int32 Low=Goal.Quantity%10000;
+            if(Low>0)Chinese+=(Low<1000?TEXT("零"):TEXT(""))+GroupText(Low,false);
+        }
+        else Chinese=GroupText(Goal.Quantity,true);
+    }
+    FRegexMatcher Number(FRegexPattern(TEXT("(数量[为是： ]*)?(?<![-−负.．点0-9零〇一二两三四五六七八九十百千万亿])([0-9]+|[零〇一二两三四五六七八九十百千万亿]+)(?![.．点0-9零〇一二两三四五六七八九十百千万亿])\\s*(份|个|根|单位|块|件|批)?")),Text);
+    const int32 Supplement=Text.Find(TEXT("\n补充："),ESearchCase::CaseSensitive,ESearchDir::FromEnd);
+    bool Found=false;
+    while(Number.FindNext())
+    {
+        const FString Unit=Number.GetCaptureGroup(3);
+        if(Goal.Intent==TEXT("craft")?Unit!=TEXT("批"):Unit==TEXT("批"))continue;
+        const int32 Begin=Number.GetMatchBeginning(),End=Number.GetMatchEnding();
+        int32 ClauseStart=Begin;
+        while(ClauseStart>0 && !FString(TEXT("，,。；;\n")).Contains(Text.Mid(ClauseStart-1,1)))--ClauseStart;
+        const FString Prefix=Text.Mid(ClauseStart,Begin-ClauseStart);
+        if(Prefix.Contains(TEXT("耗")) || Prefix.Contains(TEXT("最多")) || Prefix.Contains(TEXT("至多")) || Prefix.Contains(TEXT("不超过")))continue;
+        FString Before=Text.Left(Begin).TrimEnd();
+        if(Before.EndsWith(TEXT("×")))Before=Before.LeftChop(1).TrimEnd();
+        const FString After=Text.Mid(End).TrimStart();
+        const bool Clarification=Supplement!=INDEX_NONE && Begin>=Supplement+4
+            && Text.Mid(Supplement+4,Begin-Supplement-4).TrimStartAndEnd().IsEmpty()
+            && (After.IsEmpty() || After==TEXT("。") || After==TEXT(".")) && Text.Left(Supplement).Contains(Item);
+        if(Unit.IsEmpty() && Number.GetCaptureGroup(1).IsEmpty()
+            && !(Clarification && Number.GetCaptureGroup(2).IsNumeric()))continue;
+        if(Goal.Intent!=TEXT("craft") && !After.StartsWith(Item) && !After.StartsWith(Goal.Item.ToString())
+            && !Before.EndsWith(Item) && !Before.EndsWith(Goal.Item.ToString())
+            && !(Number.GetCaptureGroup(1).Len()>0 && Text.Contains(Item)) && !Clarification)continue;
+        FString Token=Number.GetCaptureGroup(2);Token.ReplaceInline(TEXT("两"),TEXT("二"));Token.ReplaceInline(TEXT("〇"),TEXT("零"));
+        while(Token.Len()>1 && Token[0]==TEXT('0'))Token.RightChopInline(1);
+        const bool Matches=Token.IsNumeric()?Token==FString::FromInt(Goal.Quantity):!Chinese.IsEmpty() && Token==Chinese;
+        if(!Matches || Found)return false;
+        Found=true;
+    }
+    return Found;
 }
 const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
 {
@@ -83,26 +243,26 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
         for(const auto& R:HearthwardCamp::Table()->GetArrayField(TEXT("recipes")))
             CampRecipes.Add(FName(*HearthwardData::Text(R->AsObject(),TEXT("id"))));
         TArray<FHearthwardAgentCapability> Result={
-            {TEXT("collect"),TEXT("采集木材→返营→入库；数量是新采集份数；S1为当前已知安全点"),{TEXT("wood")},Policy(TEXT("max_collect")),TEXT("additional_acquired"),{TEXT("S1")},{TEXT("ban"),TEXT("source")},true},
-            {TEXT("nature_collect"),TEXT("从已选定的同营地安全资源点采集或收取栏舍普通产物→返营→入库；数量是新取得份数；必须指定真实目标"),Resources,Policy(TEXT("max_collect")),TEXT("additional_acquired"),{TEXT("known_target")},{TEXT("ban")},true},
-            {TEXT("store"),TEXT("将弟弟背包已有物品或玩家在同一营地3米内明确交付的普通物品送入营地仓库；不能从仓库取出，不计作新采集"),Stored,Policy(TEXT("max_collect")),TEXT("held_to_camp"),{TEXT("bag"),TEXT("player_bag")},{},true},
-            {TEXT("retrieve"),TEXT("从当前营地仓库取出明确数量的普通物品，交到同营地玩家背包；仅实际交给玩家计入完成，返仓不计交付"),Stored,Policy(TEXT("max_collect")),TEXT("camp_to_player"),{TEXT("camp")},{},true},
-            {TEXT("give"),TEXT("将弟弟背包已有的明确数量普通物品，交入同营地玩家背包；仅实际交给玩家计入完成；中断时物品留在弟弟背包"),Stored,Policy(TEXT("max_collect")),TEXT("bag_to_player"),{TEXT("bag")},{},true},
-            {TEXT("fetch"),TEXT("从当前营地仓库取出明确数量的普通物品，留在弟弟背包；仅实际取入弟弟背包计入完成"),Stored,Policy(TEXT("max_collect")),TEXT("camp_to_bag"),{TEXT("camp")},{},true},
-            {TEXT("receive"),TEXT("从同营地玩家背包接收明确数量的普通物品，留在弟弟背包；仅实际接收计入完成"),Stored,Policy(TEXT("max_collect")),TEXT("player_to_bag"),{TEXT("player_bag")},{},true},
-            {TEXT("nature_care"),TEXT("照料已知的当前地块或栏舍；必须指定唯一目标，浇水/施肥/收获各1次，喂饲料可指定份数"),{TEXT("water"),TEXT("fertilize"),TEXT("harvest"),TEXT("deposit_feed")},32,TEXT("action_count"),{TEXT("known_target")},{},true},
-            {TEXT("hunt"),TEXT("仅在玩家同行时狩猎玩家已指认的单只野生动物；必须指定现场目标，弟弟真实命中并击杀后才完成；战利品留在尸体"),Wildlife,1,TEXT("one_animal"),{TEXT("known_target")},{},true},
-            {TEXT("fish"),TEXT("仅在玩家同行时于已指认鱼点钓获一条；弟弟使用自己的鱼竿、鱼饵和背包，按Nature鱼群库存与稀有奖励结算"),{TEXT("fish")},1,TEXT("one_catch"),{TEXT("known_target")},{},true},
-            {TEXT("capture"),TEXT("仅在玩家同行时捕获已指认的单只家畜并实际牵引入当前营地同种栏舍；新捕获消耗弟弟的饲料和绳索，继续牵引不重复消耗"),Domestic,1,TEXT("one_animal"),{TEXT("known_target")},{},true},
-            {TEXT("camp_batch"),TEXT("在当前营地已配置、只由弟弟工作的设施生产区执行指定配方的有限批次；材料和产物由营地共享仓储真实结算，到批数上限自动停产"),CampRecipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("assigned_region")},{},true},
-            {TEXT("craft"),TEXT("取得授权材料→到工作台制作→产物入库；quantity是批数；默认弟弟背包bag，明确授权才用camp仓库；once:物品仅用于玩家明确说这次可用的单次例外"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
-            {TEXT("repair"),TEXT("到工作台修理弟弟背包中明确的装备实例；同类多件必须由玩家选择实例；quantity=1；once:物品仅用于玩家明确说这次可用的单次例外"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
-            {TEXT("escort"),TEXT("仅在玩家同行时护送已接触的指定族人回当前营地；玩家负责交谈，族人实际入营报到才完成；不能搜寻未知族人"),People,1,TEXT("one_person"),{TEXT("known_person")},{},true},
-            {TEXT("companion_order"),TEXT("高层伙伴指令；hold原地等待，follow跟随玩家，assist在玩家附近协助有效威胁，routine恢复营地低权限自由活动；UE决定目标、导航、攻击时机和伤害"),{TEXT("hold"),TEXT("follow"),TEXT("assist"),TEXT("routine")},1,TEXT("directive"),{TEXT("player")},{},true},
-            {TEXT("inventory"),TEXT("只读询问营地当前或已有belief库存；‘多少/几份/是不是有/吗/？’这类疑问句属于inventory；回复必须说明来源与是否亲自确认"),All,0,TEXT("none"),{TEXT("none")},{},false},
-            {TEXT("inventory_report"),TEXT("仅限玩家用陈述句明确报告营地某物品的精确当前数量；疑问句不是report；只更新弟弟的belief，不修改实际仓库"),All,100000,TEXT("reported_exact"),{TEXT("player")},{},false},
-            {TEXT("recall"),TEXT("只读有效原话和本人实际事件"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{},false},
-            {TEXT("rule_proposal"),TEXT("提出长期规则卡，确认后生效；limits一条ban:wood或source:S1或no:物品或max:物品:整数；allow:物品仅撤销对应不得消耗规则，不授权仓库取用"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{TEXT("ban"),TEXT("source"),TEXT("no"),TEXT("max"),TEXT("allow")},false}
+            {TEXT("collect"),TEXT("已知安全S1新采木材→返营入库；量是新增。"),{TEXT("wood")},Policy(TEXT("max_collect")),TEXT("additional_acquired"),{TEXT("S1")},{TEXT("ban"),TEXT("source")},true},
+            {TEXT("nature_collect"),TEXT("唯一已知同营地安全资源/栏舍普通产物→返营入库；量是新增。"),Resources,Policy(TEXT("max_collect")),TEXT("additional_acquired"),{TEXT("known_target")},{TEXT("ban")},true},
+            {TEXT("store"),TEXT("弟弟已有普通货物→仓库；玩家3米同营地明确交付时可收货再入库。"),Stored,Policy(TEXT("max_collect")),TEXT("held_to_camp"),{TEXT("bag"),TEXT("player_bag")},{},true},
+            {TEXT("retrieve"),TEXT("同营地仓库→玩家背包；实际交给玩家才完成。"),Stored,Policy(TEXT("max_collect")),TEXT("camp_to_player"),{TEXT("camp")},{},true},
+            {TEXT("give"),TEXT("同营地弟弟背包→玩家；中断时货物留弟弟。"),Stored,Policy(TEXT("max_collect")),TEXT("bag_to_player"),{TEXT("bag")},{},true},
+            {TEXT("fetch"),TEXT("同营地仓库→弟弟背包；实际取入才完成。"),Stored,Policy(TEXT("max_collect")),TEXT("camp_to_bag"),{TEXT("camp")},{},true},
+            {TEXT("receive"),TEXT("同营地玩家背包→弟弟背包；需明确交付。"),Stored,Policy(TEXT("max_collect")),TEXT("player_to_bag"),{TEXT("player_bag")},{},true},
+            {TEXT("nature_care"),TEXT("唯一已知地块/栏舍；water/fertilize/harvest各1次，deposit_feed按份数。"),{TEXT("water"),TEXT("fertilize"),TEXT("harvest"),TEXT("deposit_feed")},32,TEXT("action_count"),{TEXT("known_target")},{},true},
+            {TEXT("hunt"),TEXT("玩家同行指认单只野生猎物；弟弟真实击杀才完成；战利品留尸体。"),Wildlife,1,TEXT("one_animal"),{TEXT("known_target")},{},true},
+            {TEXT("fish"),TEXT("玩家同行已指认鱼点钓1条；自有竿/饵/包；按实际鱼群和稀有奖励结算。"),{TEXT("fish")},1,TEXT("one_catch"),{TEXT("known_target")},{},true},
+            {TEXT("capture"),TEXT("玩家同行指认单只家畜→当前同种栏舍；首次捕获消耗自有绳索/饲料，继续牵引不重复消耗。"),Domestic,1,TEXT("one_animal"),{TEXT("known_target")},{},true},
+            {TEXT("camp_batch"),TEXT("已配置且只分配弟弟的设施岗位；仓库结算有限批次，到数停产。"),CampRecipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("assigned_region")},{},true},
+            {TEXT("craft"),TEXT("授权制作配方批数→产物入库。"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
+            {TEXT("repair"),TEXT("工作台维修自有装备；量1。"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
+            {TEXT("escort"),TEXT("同行护送已接触指定族人→当前营地报到；玩家负责交谈，不能寻找未知人。"),People,1,TEXT("one_person"),{TEXT("known_person")},{},true},
+            {TEXT("companion_order"),TEXT("伙伴高层指令，UE决定战术细节。"),{TEXT("hold"),TEXT("follow"),TEXT("assist"),TEXT("routine")},1,TEXT("directive"),{TEXT("player")},{},true},
+            {TEXT("inventory"),TEXT("只读库存认知。"),All,0,TEXT("none"),{TEXT("none")},{},false},
+            {TEXT("inventory_report"),TEXT("陈述库存报告。"),All,100000,TEXT("reported_exact"),{TEXT("player")},{},false},
+            {TEXT("recall"),TEXT("仅有效原话和本人事件。"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{},false},
+            {TEXT("rule_proposal"),TEXT("长期1条规则卡，确认生效：ban/source/no/max/allow。"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{TEXT("ban"),TEXT("source"),TEXT("no"),TEXT("max"),TEXT("allow")},false}
         };
         for(FName Id:{FName(TEXT("cancel")),FName(TEXT("clarify")),FName(TEXT("dialogue")),FName(TEXT("refuse"))})
             Result.Add({Id,TEXT("取消/澄清/闲聊/拒绝；无物品参数"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{},false});
@@ -132,23 +292,47 @@ FString HearthwardAgent::CompanionOrderPrompt()
 
 FString HearthwardAgent::Describe()
 {
-    FString Out=TEXT("目录v2；只有这些已注册能力。站点或物资不足可暂时不可用；战斗仅允许companion_order高层指令，不能生成逐帧战术、建造或未知物品能力。\n");
-    for(const auto& C:Capabilities())
+    const auto& Catalog=Capabilities();TArray<FName> Items;
+    for(const auto& C:Catalog)for(FName Id:C.Items)Items.AddUnique(Id);
+    TArray<TArray<FName>> GroupIntents,GroupItems;
+    for(FName Id:Items)
     {
-        TArray<FString> I;
-        for(FName Id:C.Items)
+        TArray<FName> Intents;
+        for(const auto& C:Catalog)if(C.Items.Contains(Id))Intents.Add(C.Id);
+        int32 Group=GroupIntents.IndexOfByPredicate([&](const auto& Existing){return Existing==Intents;});
+        if(Group==INDEX_NONE){Group=GroupIntents.Add(Intents);GroupItems.Add(TArray<FName>());}
+        GroupItems[Group].Add(Id);
+    }
+    FString Out=TEXT("能力|语义|quantity上限|mode|source（斜线分隔可选值）\n");
+    for(const auto& C:Catalog)
+        Out+=C.Id.ToString()+TEXT("|")+C.Description+FString::Printf(TEXT("|%d|"),C.MaxQuantity)
+            +C.QuantityMode+TEXT("|")+FString::Join(C.Sources,TEXT("/"))+TEXT("\n");
+    Out+=TEXT("item允许关系（左侧意图允许右侧全部物品；中文/别名[id]，同名仅id）：\n");
+    const auto Aliases=PolicyData()->GetObjectField(TEXT("aliases"));
+    for(int32 Group=0;Group<GroupIntents.Num();++Group)
+    {
+        TArray<FString> Intents,Labels;
+        for(FName Intent:GroupIntents[Group])Intents.Add(Intent.ToString());
+        for(FName Id:GroupItems[Group])
         {
             const FString Label=ItemText(Id);
-            I.Add(Label.IsEmpty() || Label==Id.ToString()?Id.ToString():Id.ToString()+TEXT("=")+Label);
+            if(Label.IsEmpty() || Label==Id.ToString()) Labels.Add(Id.ToString());
+            else
+            {
+                TArray<FString> Names={Label};
+                for(const auto& Alias:Aliases->Values)if(Alias.Value->AsString()==Label) Names.AddUnique(FString(Alias.Key));
+                Labels.Add(FString::Join(Names,TEXT("/"))+TEXT("[")+Id.ToString()+TEXT("]"));
+            }
         }
-        Out+=C.Id.ToString()+TEXT(": ")+C.Description+TEXT("；item=")+FString::Join(I,TEXT(","))+FString::Printf(TEXT("；quantity上限%d；mode="),C.MaxQuantity)+C.QuantityMode+TEXT("\n");
+        Out+=FString::Join(Intents,TEXT("/"))+TEXT(":")+FString::Join(Labels,TEXT(","))+TEXT("\n");
     }
-    Out+=TEXT("制作请求已明确批数和配方即可提卡。背包材料默认有使用权，无须额外确认；实际库存、配方成本/产量、到站距离由UE再校验，模型不需要推算材料或产量，不能把这些自动检查列成玩家未解决问题。\n");
     return Out;
 }
 FString HearthwardAgent::Schema()
 {
     auto Root=MakeShared<FJsonObject>(); TArray<TSharedPtr<FJsonValue>> Branches;
+    TArray<FString> RegisteredItems;for(const auto& I:HearthwardBasicItems()) RegisteredItems.Add(I.Id.ToString());
+    const FString LimitItems=TEXT("(")+FString::Join(RegisteredItems,TEXT("|"))+TEXT(")");
     for(const auto& C:Capabilities())
     {
         auto B=MakeShared<FJsonObject>(),P=MakeShared<FJsonObject>();B->SetStringField(TEXT("type"),TEXT("object"));B->SetBoolField(TEXT("additionalProperties"),false);
@@ -158,7 +342,26 @@ FString HearthwardAgent::Schema()
         P->SetObjectField(TEXT("mode"),Enum({C.QuantityMode}));P->SetObjectField(TEXT("source"),Enum(C.Sources));
         for(const auto& Key:{TEXT("limits"),TEXT("unresolved")})
         {
-            auto A=MakeShared<FJsonObject>(),S=MakeShared<FJsonObject>();A->SetStringField(TEXT("type"),TEXT("array"));A->SetNumberField(TEXT("maxItems"),4);S->SetStringField(TEXT("type"),TEXT("string"));S->SetNumberField(TEXT("maxLength"),120);A->SetObjectField(TEXT("items"),S);P->SetObjectField(Key,A);
+            auto A=MakeShared<FJsonObject>(),S=MakeShared<FJsonObject>();A->SetStringField(TEXT("type"),TEXT("array"));A->SetNumberField(TEXT("maxItems"),4);S->SetStringField(TEXT("type"),TEXT("string"));S->SetNumberField(TEXT("maxLength"),120);
+            if(FCString::Strcmp(Key,TEXT("unresolved"))==0 && (C.Writes || C.Id==TEXT("rule_proposal"))) A->SetNumberField(TEXT("maxItems"),0);
+            if(FCString::Strcmp(Key,TEXT("limits"))==0)
+            {
+                A->SetNumberField(TEXT("maxItems"),C.Constraints.IsEmpty()?0:4);
+                if(C.Id==TEXT("rule_proposal")){A->SetNumberField(TEXT("minItems"),1);A->SetNumberField(TEXT("maxItems"),1);}
+                if(!C.Constraints.IsEmpty())
+                {
+                    TArray<FString> Patterns,ItemTypes;
+                    for(const auto& Type:C.Constraints)
+                    {
+                        if(Type==TEXT("source")) Patterns.Add(TEXT("source:S1"));
+                        else if(Type==TEXT("max")) Patterns.Add(TEXT("max:")+LimitItems+TEXT(":(0|[1-9][0-9]{0,4}|100000)"));
+                        else ItemTypes.Add(Type);
+                    }
+                    if(!ItemTypes.IsEmpty()) Patterns.Add(TEXT("(")+FString::Join(ItemTypes,TEXT("|"))+TEXT("):")+LimitItems);
+                    S->SetStringField(TEXT("pattern"),TEXT("^(")+FString::Join(Patterns,TEXT("|"))+TEXT(")$"));
+                }
+            }
+            A->SetObjectField(TEXT("items"),S);P->SetObjectField(Key,A);
         }
         auto Line=MakeShared<FJsonObject>();Line->SetStringField(TEXT("type"),TEXT("string"));Line->SetNumberField(TEXT("maxLength"),150);P->SetObjectField(TEXT("npc_line"),Line);
         B->SetObjectField(TEXT("properties"),P);B->SetArrayField(TEXT("required"),Strings({TEXT("intent"),TEXT("item"),TEXT("quantity"),TEXT("mode"),TEXT("source"),TEXT("limits"),TEXT("unresolved"),TEXT("npc_line")}));Branches.Add(MakeShared<FJsonValueObject>(B));
@@ -180,6 +383,11 @@ FString HearthwardAgent::Validate(const FHearthwardAgentGoal& G)
     if(!C || G.CapabilityVersion!=2 || !C->Items.Contains(G.Item)) return TEXT("UNSUPPORTED_CAPABILITY");
     if(G.Quantity<(C->Writes?1:0) || G.Quantity>C->MaxQuantity || G.QuantityMode!=C->QuantityMode || !C->Sources.Contains(G.SourceRef)) return TEXT("AMBIGUOUS_TARGET");
     if(G.Limits.Num()>4 || G.Unresolved.Num()>4) return TEXT("UNRESOLVED_CONSTRAINT");
+    if(C->Writes && !G.Original.IsEmpty())
+    {
+        FRegexMatcher InvalidQuantity(FRegexPattern(TEXT("[-−负]\\s*[0-9一二两三四五六七八九十]|[0-9]+[.．][0-9]+|[零一二两三四五六七八九十]+点[零一二两三四五六七八九十]+")),G.Original);
+        if(InvalidQuantity.FindNext())return TEXT("UNRESOLVED_CONSTRAINT");
+    }
     if(G.Intent==TEXT("nature_care") && G.Item!=TEXT("deposit_feed") && G.Quantity!=1)return TEXT("AMBIGUOUS_TARGET");
     for(const auto& L:G.Limits)
     {
@@ -187,6 +395,19 @@ FString HearthwardAgent::Validate(const FHearthwardAgentGoal& G)
         if(!ValidLimit(L) || !C->Constraints.Contains(Type)) return TEXT("UNRESOLVED_CONSTRAINT");
         if(Type==TEXT("ban") && Rest==G.Item.ToString() && (G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect"))) return TEXT("POLICY_CONFLICT");
     }
+    if((G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect")) && !G.Original.IsEmpty())
+    {
+        const FString Text=Normalize(G.Original);
+        FRegexMatcher Excluded(FRegexPattern(TEXT("(?:别|不要|不许|不准|禁止|不得|不能|勿|不)\\s*(?:去|到|往|前往|进入|靠近)|(?:避开|绕开)\\s*[^，,。；;\\n]+")),Text);
+        if(Excluded.FindNext())return TEXT("UNRESOLVED_COLLECTION_LOCATION");
+        if(G.Intent==TEXT("collect"))
+        {
+            FRegexMatcher Acquisition(FRegexPattern(TEXT("(?:^|[，,。；;：:\\n])\\s*(?:(?:请|帮我|帮忙|给我|去|从|到|麻烦)(?:(?!不|别|勿|禁止|无需|(?:之前|已经|曾经|已)\\s*(?:新采(?:集)?|采集|收集|采))[^，,。；;\\n])*?)?(?:新采(?:集)?|采集|收集|采)(?=\\s*(?:[0-9零一二两三四五六七八九十百千万些点]|")+ItemText(G.Item)+TEXT("|")+G.Item.ToString()+TEXT("))")),Text);
+            if(!Acquisition.FindNext())return TEXT("UNRESOLVED_COLLECTION_SOURCE");
+        }
+    }
+    if((G.Intent==TEXT("craft") || G.Intent==TEXT("repair") || G.Intent==TEXT("rule_proposal"))
+        && (!OriginalMaterialBudgetsMatch(G) || !OriginalMaterialPermissionsMatch(G)))return TEXT("UNRESOLVED_CONSTRAINT");
     if(C->Writes && !G.Unresolved.IsEmpty()) return TEXT("UNRESOLVED_CONSTRAINT");
     if(G.Intent==TEXT("rule_proposal") && (G.Limits.Num()!=1 || !G.Unresolved.IsEmpty())) return TEXT("UNRESOLVED_CONSTRAINT");
     return {};

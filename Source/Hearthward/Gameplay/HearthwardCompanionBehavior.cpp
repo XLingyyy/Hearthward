@@ -5,6 +5,7 @@
 #include "../AI/HearthwardNPCRoutine.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Companion/HearthwardCompanionNavigationComponent.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -34,6 +35,24 @@ FHearthwardCompanionBehaviorResult HearthwardCompanionBehavior::Tick(const FHear
         Out.EffectiveOrder=TEXT("wait");
         Out.Reason=TEXT("TASK_OWNS_COMPANION");
         return Out;
+    }
+
+    if(Context.RequestedOrder==TEXT("wait") && !Context.bPlayerInCombat && !Context.bPlayerDown)
+    {
+        auto* Camps=Companion->GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+        FVector Workplace;AActor* Facility=nullptr;
+        if(Camps->BrotherWorkplace(Workplace,Facility))
+        {
+            Out.RoutineActivity=TEXT("camp_production");Out.TacticalIntent=TEXT("routine");Out.Reason=TEXT("CAMP_WORK_AUTHORIZED");
+            if(Camps->BrotherWorking()) {Companion->Navigation->Stop();Companion->BlockReason.Reset();}
+            else
+            {
+                const float Speed=BehaviorTune(TEXT("companionMoveSpeed"));
+                const bool Moving=Facility?Companion->Navigation->MoveToActor(Facility,Speed,200):Companion->Navigation->MoveToLocation(Workplace,Speed,200);
+                Companion->BlockReason=Moving?TEXT("正在前往营地岗位"):TEXT("营地工作路线暂时不可达");
+            }
+            return Out;
+        }
     }
 
     if(Context.bRoutineEnabled && Context.RequestedOrder==TEXT("wait") && IsValid(Companion->Camp))
@@ -119,10 +138,9 @@ FHearthwardCompanionBehaviorResult HearthwardCompanionBehavior::Tick(const FHear
     const bool bRegroup=Decision.Intent==EHearthwardCompanionTacticalIntent::Regroup;
     const float StopDistance=bTargeting?BehaviorTune(TEXT("attackRange"))*.8f
         :bRegroup?BehaviorTune(TEXT("companionRegroupDistance")):BehaviorTune(TEXT("companionFollowDistance"));
-    FVector Direction=Destination->GetActorLocation()-Companion->GetActorLocation();
-    Direction.Z=0;
+    const bool AtDestination=Companion->Navigation->IsAt(Destination,StopDistance);
 
-    if(bTargeting && Direction.Size()<=StopDistance)
+    if(bTargeting && AtDestination)
     {
         FHitResult Hit;
         FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardCompanionAttack),false,Companion);
@@ -145,7 +163,7 @@ FHearthwardCompanionBehaviorResult HearthwardCompanionBehavior::Tick(const FHear
         return Out;
     }
 
-    if(Direction.Size()>StopDistance)
+    if(!AtDestination)
     {
         const float Acceptance=FMath::Max(20.f,StopDistance-10.f);
         float MoveSpeed=BehaviorTune(TEXT("companionMoveSpeed"));
@@ -157,6 +175,7 @@ FHearthwardCompanionBehaviorResult HearthwardCompanionBehavior::Tick(const FHear
                 :bTargeting?TEXT("正在接近威胁")
                 :bRegroup?TEXT("压力过大，正在回撤会合"):TEXT(""))
             :TEXT("目标不可达，请调整位置");
+        if(!Companion->Navigation->GetStatus().IsEmpty())Companion->BlockReason=Companion->Navigation->GetStatus();
     }
     else
     {

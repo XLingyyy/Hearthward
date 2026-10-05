@@ -7,6 +7,7 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Animation/AnimSequence.h"
@@ -60,6 +61,8 @@ bool UHearthwardAnimalMotionComponent::Configure(FName InSpecies,float Scale)
     Stop=FName(*Profile->GetStringField(TEXT("stop")));Alert=FName(*Profile->GetStringField(TEXT("alert")));
     Hit=FName(*Profile->GetStringField(TEXT("hit")));Collapse=FName(*Profile->GetStringField(TEXT("collapse")));
     Corpse=FName(*Profile->GetStringField(TEXT("corpse")));
+    Attack=Species==TEXT("wolf")?FName(TEXT("BiteShort")):Species==TEXT("pig")?FName(TEXT("SnoutStrikeShort")):
+        Species==TEXT("black_bear")?FName(TEXT("SwipeShort_L")):Species==TEXT("ram")?FName(TEXT("RamShort")):NAME_None;
     DetectRadius=Profile->GetNumberField(TEXT("detect_radius_cm"));WalkSpeed=Profile->GetNumberField(TEXT("walk_speed_cm_s"));RunSpeed=Profile->GetNumberField(TEXT("run_speed_cm_s"));
     // Fish exports carry zero reference speed. Keep an explicit presentation
     // reference separate from the newly balanced actor movement speed.
@@ -125,11 +128,7 @@ void UHearthwardAnimalMotionComponent::SetHabitat(const FBox& InRegion,bool IsDe
 }
 bool UHearthwardAnimalMotionComponent::ControlsNatureMovement() const
 {
-    if(!Ready())return false;
-    const auto* Nature=Cast<AHearthwardNatureActor>(GetOwner());if(!Nature)return true;
-    const auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
-    const auto* A=N->State.Animals.FindByPredicate([&](const auto& X){return X.Id==Nature->Id;});
-    return A && !A->Captured && !N->WorkingOn(Nature->Id);
+    return Ready() && !Cast<AHearthwardNatureActor>(GetOwner());
 }
 void UHearthwardAnimalMotionComponent::SetClip(FName Clip,float Seconds)
 {
@@ -140,7 +139,7 @@ void UHearthwardAnimalMotionComponent::SetClip(FName Clip,float Seconds)
 void UHearthwardAnimalMotionComponent::Enter(EPhase Next,FName Clip,float Seconds)
 {
     Phase=Next;SetClip(Clip,Seconds);
-    const TCHAR* Names[]={TEXT("静候"),TEXT("缓游 / 缓步"),TEXT("自然行为"),TEXT("察觉靠近"),TEXT("起步逃离"),TEXT("快速逃离"),TEXT("减速收步"),TEXT("受击"),TEXT("倒地 / 沉降"),TEXT("死亡保持")};
+    const TCHAR* Names[]={TEXT("静候"),TEXT("缓游 / 缓步"),TEXT("自然行为"),TEXT("察觉靠近"),TEXT("起步逃离"),TEXT("快速逃离"),TEXT("减速收步"),TEXT("受击"),TEXT("倒地 / 沉降"),TEXT("死亡保持"),TEXT("攻击")};
     Behavior=Names[int32(Next)];
 }
 void UHearthwardAnimalMotionComponent::BeginWalk()
@@ -252,7 +251,7 @@ void UHearthwardAnimalMotionComponent::OnFatalDamage()
 {
     if(!Ready() || Dead)return;
     Dead=true;Queue.Reset();GroundSpeed=0;CalmTime=0;
-    GetOwner()->SetActorRotation(FRotator(0,GetOwner()->GetActorRotation().Yaw,0));
+    if(!Cast<AHearthwardNatureActor>(GetOwner()))GetOwner()->SetActorRotation(FRotator(0,GetOwner()->GetActorRotation().Yaw,0));
     Enter(EPhase::Falling,Collapse);
 }
 void UHearthwardAnimalMotionComponent::ResetAnimal()
@@ -263,19 +262,78 @@ void UHearthwardAnimalMotionComponent::ResetAnimal()
     {C->Health=C->MaximumHealth;C->DamageIds.Reset();C->Memory.HitRemaining=0;PreviousHealth=C->Health;}
     Enter(EPhase::Idle,Idle,Random.FRandRange(1.5f,4));AlignMesh();
 }
+void UHearthwardAnimalMotionComponent::ObserveNature(const AHearthwardNatureActor* Nature,float Delta)
+{
+    LastThreat=Nature->MotionThreat;
+    GroundSpeed=Dead?0:FVector::Dist2D(Previous,GetOwner()->GetActorLocation())/Delta;
+    Remaining-=Delta;
+    if(Dead)
+    {
+        if(Remaining<=0 && Phase!=EPhase::Dead)AdvancePhase();
+        return;
+    }
+    if(NatureAttackSequence!=Nature->AttackSequence)
+    {
+        NatureAttackSequence=Nature->AttackSequence;
+        if(!(Phase==EPhase::Hit && Remaining>0) && Clips.Contains(Attack))Enter(EPhase::Attacking,Attack);
+    }
+    if((Phase==EPhase::Hit || Phase==EPhase::Attacking) && Remaining>0)return;
+    if(Nature->MotionIntent==TEXT("flee") && GroundSpeed>3)
+    {
+        if(Phase!=EPhase::Fleeing && Phase!=EPhase::Starting)
+        {
+            Queue.Reset();
+            if(Clips.Contains(Start))Enter(EPhase::Starting,Start);else Enter(EPhase::Fleeing,Run,3600);
+        }
+        else if(Phase==EPhase::Starting && Remaining<=0)Enter(EPhase::Fleeing,Run,3600);
+        return;
+    }
+    if((Phase==EPhase::Fleeing || Phase==EPhase::Starting) && Clips.Contains(Stop))Enter(EPhase::Stopping,Stop);
+    if(Phase==EPhase::Stopping && Remaining>0)return;
+    if(GroundSpeed>3)
+    {
+        const FName Wanted=GroundSpeed>WalkSpeed*1.8?Run:Walk;
+        Queue.Reset();if(Phase!=EPhase::Walking || ActiveClip!=Wanted)Enter(EPhase::Walking,Wanted,3600);
+        Behavior=Nature->MotionIntent==TEXT("lead")?TEXT("牵引跟随"):Nature->MotionIntent==TEXT("chase")?TEXT("追击"):TEXT("缓游 / 缓步");
+    }
+    else if(Nature->MotionIntent==TEXT("captured") || Nature->MotionIntent==TEXT("working") || Nature->MotionIntent==TEXT("lead"))
+    {
+        const FName Wanted=Clips.Contains(TEXT("CapturedIdle"))?FName(TEXT("CapturedIdle")):Idle;
+        Queue.Reset();if(Phase!=EPhase::Idle || ActiveClip!=Wanted)Enter(EPhase::Idle,Wanted,3600);
+        Behavior=TEXT("照料 / 等待");
+    }
+    else if(Nature->MotionIntent==TEXT("alert") || Nature->MotionIntent==TEXT("chase") || Nature->MotionIntent==TEXT("flee"))
+    {
+        Queue.Reset();if(Phase!=EPhase::Alert)Enter(EPhase::Alert,Alert,3600);
+    }
+    else
+    {
+        if(Phase!=EPhase::Idle && Phase!=EPhase::Natural){Queue.Reset();Enter(EPhase::Idle,Idle,Random.FRandRange(1.5f,4.f));}
+        if(Remaining<=0)
+        {
+            if(Phase==EPhase::Idle)BeginCycle();
+            else if(!Queue.IsEmpty())
+            {const auto Step=Queue[0];Queue.RemoveAt(0);Enter(EPhase::Natural,Step.Clip,Step.MaxSeconds>0?Random.FRandRange(Step.MinSeconds,Step.MaxSeconds):0);}
+            else Enter(EPhase::Idle,Idle,Random.FRandRange(1.5f,4.f));
+        }
+    }
+}
 void UHearthwardAnimalMotionComponent::TickComponent(float Delta,ELevelTick Type,FActorComponentTickFunction* Tick)
 {
     Super::TickComponent(Delta,Type,Tick);if(!Ready() || GetWorld()->IsPaused() || Delta<=0)return;
+    const auto* Nature=Cast<AHearthwardNatureActor>(GetOwner());
+    if(Nature && GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return;
     auto* Combat=GetOwner()->FindComponentByClass<UHearthwardCombatTargetComponent>();
     if(Combat && Combat->Health<=0)OnFatalDamage();
     if(Combat && Combat->Health<PreviousHealth && Combat->Health>0)
     {
-        ThreatPosition=UGameplayStatics::GetPlayerPawn(this,0)?UGameplayStatics::GetPlayerPawn(this,0)->GetActorLocation():Home;
-        Queue.Reset();CalmTime=0;Enter(EPhase::Hit,Hit);
+        if(!Nature)ThreatPosition=UGameplayStatics::GetPlayerPawn(this,0)?UGameplayStatics::GetPlayerPawn(this,0)->GetActorLocation():Home;
+        Queue.Reset();CalmTime=0;Enter(EPhase::Hit,Hit,Nature?FMath::Max(.01f,float(Combat->Memory.HitRemaining)):0);
     }
     if(Combat)PreviousHealth=Combat->Health;
     const bool External=!ControlsNatureMovement();
-    if(!Dead && External)
+    if(Nature)ObserveNature(Nature,Delta);
+    else if(!Dead && External)
     {
         GroundSpeed=FVector::Dist2D(Previous,GetOwner()->GetActorLocation())/Delta;
         FName Wanted=GroundSpeed>WalkSpeed*1.8?Run:GroundSpeed>3?Walk:Clips.Contains(TEXT("CapturedIdle"))?FName(TEXT("CapturedIdle")):Idle;
@@ -326,7 +384,7 @@ void UHearthwardAnimalMotionComponent::TickComponent(float Delta,ELevelTick Type
                 if(ActiveClip!=Wanted)SetClip(Wanted,Remaining);
                 if(Phase==EPhase::Walking && FVector::Dist2D(GetOwner()->GetActorLocation(),Goal)<20)Remaining=0;
             }
-            if(auto* Nature=Cast<AHearthwardNatureActor>(GetOwner()))
+            if(Nature)
                 if(auto* A=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->State.Animals.FindByPredicate([&](const auto& X){return X.Id==Nature->Id;}))A->Position=GetOwner()->GetActorLocation();
         }
     }
@@ -335,7 +393,8 @@ void UHearthwardAnimalMotionComponent::TickComponent(float Delta,ELevelTick Type
         const float Reference=FMath::Max(1.f,GaitReferenceSpeed()>0?GaitReferenceSpeed():ActiveClip==Walk?WalkSpeed:RunSpeed);
         // Some paired gaits need more than 1.8x at the balanced escape speed.
         // Bound playback by the configured movement speed, preserving stride length.
-        PlayRate=FMath::Clamp(GroundSpeed/Reference,.2f,FMath::Max(1.8f,EscapeSpeed()/Reference));
+        const float Maximum=Nature?FMath::Max(EscapeSpeed(),GroundSpeed):EscapeSpeed();
+        PlayRate=FMath::Clamp(GroundSpeed/Reference,.2f,FMath::Max(1.8f,Maximum/Reference));
     }
     else PlayRate=1;
     AlignMesh();Previous=GetOwner()->GetActorLocation();

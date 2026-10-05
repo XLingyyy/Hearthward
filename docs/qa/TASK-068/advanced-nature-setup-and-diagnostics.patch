@@ -1,0 +1,89 @@
+--- a/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py
++++ b/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py
+@@ -11,6 +11,12 @@
+ root = Path(unreal.Paths.project_dir())
+ qa = root/'docs/qa/TASK-068'
+ data = json.loads((qa/'advanced-cases-proposal.json').read_text(encoding='utf-8-sig'))
++case_match = re.search(r'Task068AdvancedCases=([A-Z0-9,-]+)', unreal.SystemLibrary.get_command_line())
++if case_match:
++    selected_ids = case_match.group(1).split(',')
++    if len(selected_ids) != len(set(selected_ids)) or not set(selected_ids) <= {row['id'] for row in data['cases']}:
++        raise ValueError('invalid supplemental case selection')
++    data['cases'] = [row for row in data['cases'] if row['id'] in selected_ids]
+ catalog = json.loads((root/'Resources/Data/gameplay.json').read_text(encoding='utf-8-sig'))
+ items = [row['id'] for row in catalog['items']]
+ fish_items = [row['item'] for row in catalog['nature']['fish']]
+@@ -98,6 +104,22 @@
+ def target(case):
+     collection = 'crops' if case['setup'] == 'plant_greens' else 'points'
+     return next(row for row in nature()[collection] if key(guid(row['id'])) == key(st['target']))
++
++
++def actual_diagnostics(target_position=None):
++    def xyz(value):
++        return {'x': value.x, 'y': value.y, 'z': value.z}
++    p = st['player']; c = st['brother']; position = p.get_actor_location()
++    return {'player_position': xyz(position), 'brother_position': xyz(c.get_actor_location()),
++            'camp_position': xyz(c.camp.get_actor_location()), 'target_position': target_position,
++            'player_movement': str(p.get_component_by_class(unreal.CharacterMovementComponent).get_editor_property('movement_mode')),
++            'brother_movement': str(c.get_component_by_class(unreal.CharacterMovementComponent).get_editor_property('movement_mode')),
++            'phase': str(c.get_phase()), 'execution_action': c.get_execution_action(),
++            'block_reason': str(c.get_editor_property('block_reason')), 'navigation_status': c.navigation.get_status(),
++            'nature_feedback': str(st['nature'].get_editor_property('feedback')), 'nature_busy': st['nature'].busy(),
++            'plant_ground_expected': {'front_query': xyz(position+p.get_actor_forward_vector()*250),
++                                      'flat_normal_minimum': .966, 'requires_camp_and_clear_plot': True,
++                                      'temporary_cube_top_z': -50}}
+ 
+ 
+ def observed(case):
+@@ -117,7 +139,7 @@
+             'camp': {item: st['store'].get_item_count(item) for item in items},
+             'target': facts, 'requested': c.get_requested(), 'delivered': c.get_delivered(),
+             'acquired': c.get_acquired(), 'carried': c.get_carried(),
+-            'phase': str(c.get_phase())}
++            'phase': str(c.get_phase()), 'diagnostics': actual_diagnostics(t['position'])}
+ 
+ 
+ def count(state, where, item):
+@@ -188,6 +210,7 @@
+         st['player'].set_actor_location(vector(st['center'], -800, -800, 100), False, True)
+         st['player'].set_actor_rotation(unreal.Rotator(), False)
+         st['pc'].set_control_rotation(unreal.Rotator())
++        yield wait(lambda: st['player'].get_component_by_class(unreal.CharacterMovementComponent).get_editor_property('movement_mode') == unreal.MovementMode.MOVE_WALKING, 10)
+         old = {row['id'] for row in nature()['crops']}
+         require('normal public plant starts', st['nature'].act('plant', unreal.Guid(), 'greens', st['store'].get_timeline_epoch(), 1))
+         yield wait(lambda: not st['nature'].busy(), 15)
+@@ -293,6 +316,7 @@
+             row['e2e_pass'] = bool(row['raw_pass'] and row['pipeline_pass'] and row['no_unconfirmed_effect'] and row['execution_pass'])
+         except Exception:
+             row['error'] = traceback.format_exc()
++            row['failure_diagnostics'] = actual_diagnostics()
+             if row['fixture_pass']:
+                 row['after_error'] = observed(case)
+         finally:
+--- a/docs/qa/TASK-068/run_advanced_pie_proposal.py
++++ b/docs/qa/TASK-068/run_advanced_pie_proposal.py
+@@ -13,7 +13,13 @@
+ parser.add_argument('--backend', choices=('cpu', 'vulkan'), required=True)
+ parser.add_argument('--bundle', type=Path, default=Path('G:/GameFactory/Hearthward/Runtime/LocalAI'))
+ parser.add_argument('--timeout', type=int, default=1200)
++parser.add_argument('--case-ids', default='', help='Comma-separated supplemental IDs, e.g. ADV-N01,ADV-N02')
+ args = parser.parse_args()
++if args.case_ids:
++    known_ids = {row['id'] for row in json.loads((Path(__file__).resolve().parent/'advanced-cases-proposal.json').read_text(encoding='utf-8-sig'))['cases']}
++    selected_ids = args.case_ids.split(',')
++    if len(selected_ids) != len(set(selected_ids)) or not set(selected_ids) <= known_ids:
++        parser.error('--case-ids must contain unique known supplemental IDs')
+ root = Path(__file__).resolve().parents[3]
+ qa = root/'docs/qa/TASK-068'
+ pool = str(uuid.uuid4())
+@@ -23,7 +29,8 @@
+ launch = ue.runtime.launch_editor(map_path='/Game/Hearthward/Tests/Graybox/L_GrayboxValidation', extra_args=[
+     '-ExecutePythonScript='+str(qa/'verify_advanced_model_pie_proposal.py'), '-HearthwardSaveTestPool='+pool,
+     '-HearthwardAIBundlePath='+str(args.bundle.resolve()), '-HearthwardAIBackend='+args.backend,
+-    '-HearthwardAIGpuLayers=16', '-Task068AdvancedRun='+pool, '-NoSound', '-NoSplash', '-culture=en'])
++    '-HearthwardAIGpuLayers=16', '-Task068AdvancedRun='+pool, '-NoSound', '-NoSplash', '-culture=en']
++    + (['-Task068AdvancedCases='+args.case_ids] if args.case_ids else []))
+ (qa/(label+'-launch.json')).write_text(json.dumps(launch, ensure_ascii=False, indent=2), encoding='utf-8')
+ print(json.dumps({'backend': args.backend, 'pool': pool, 'output': label, 'launch_ok': launch['ok']}), flush=True)
+ if not launch['ok']:

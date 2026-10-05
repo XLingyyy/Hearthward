@@ -1,0 +1,31 @@
+{
+  "base_head": "67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+  "working_tree": "uncommitted batch source + test-only proposals before fixes",
+  "method": "real UE5.8 render Native",
+  "tests": [
+    {
+      "path": "Hearthward.Crafting057.WarehouseMaterialsPresentation",
+      "state": "Fail",
+      "errors": 1,
+      "warnings": 1,
+      "failures": [
+        "Expected 'A unique nearby unwatered crop stages through the public entry without a supplied station' to be true."
+      ]
+    },
+    {
+      "path": "Hearthward.Equipment055.StoneAxeHeavyUsesCurrentMoveAndPhysicalBlade",
+      "state": "Fail",
+      "errors": 7,
+      "warnings": 0,
+      "failures": [
+        "Expected 'Heavy native graph reaches source .6L at its own windup boundary: elapsed=0.650000000 locationError=18.429017 rotationError=0.494468' to be true.",
+        "Expected 'The early heavy active pose still has no physical blade contact' to be 100.000000, but it was 45.400005 and outside tolerance 0.000100.",
+        "Expected 'No early heavy physical contact means no current GUID wear' to be 80.000000, but it was 78.000000 and outside tolerance 0.000100.",
+        "Expected 'Heavy physical blade at 30fps case2: health=48.000 expected=100.000 power=30.000 skill=0.000' to be true.",
+        "Expected 'A physical heavy hit wears only its current axe GUID by two durability units once' to be 80.000000, but it was 78.000000 and outside tolerance 0.000100.",
+        "Expected 'Heavy recovery never repeats body damage' to be true.",
+        "Expected 'Heavy recovery never repeats current GUID wear' to be 80.000000, but it was 78.000000 and outside tolerance 0.000100."
+      ]
+    }
+  ]
+}

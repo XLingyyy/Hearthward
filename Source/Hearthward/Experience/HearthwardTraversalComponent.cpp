@@ -3,6 +3,7 @@
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
+#include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Save/HearthwardSaveSubsystem.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
@@ -86,11 +87,22 @@ bool UHearthwardTraversalComponent::FindVault(FVector& Landing) const
 bool UHearthwardTraversalComponent::BeginVault()
 {
     auto* C=CastChecked<ACharacter>(GetOwner());auto* G=C->FindComponentByClass<UHearthwardGameplayComponent>();auto* S=C->FindComponentByClass<UHearthwardSurvivalComponent>();
-    if(!G->Enabled || !S->Alive() || S->Busy() || C->FindComponentByClass<UHearthwardCombatComponent>()->Busy() || !FindVault(End)) return false;
-    if(!G->SpendStamina(8)) {Status=TEXT("攀越需要8耐力");return false;}
+    const auto* Combat=C->FindComponentByClass<UHearthwardCombatComponent>();
+    if(!S->Enabled() || !S->Alive() || S->Busy() || GetWorld()->IsPaused()
+        || UHearthwardSurvivalComponent::HasFailed(GetWorld()) || (Combat && Combat->Busy()) || !FindVault(End)) return false;
+    if(G)
+    {
+        if(!G->SpendStamina(8)) {Status=TEXT("攀越需要8耐力");return false;}
+    }
+    else
+    {
+        const float Cost=8*C->FindComponentByClass<UHearthwardInventoryComponent>()->GetStaminaCostMultiplier();
+        if(S->Stamina()<Cost) {Status=TEXT("攀越需要8耐力");return false;}
+        S->Stamina()-=Cost;S->State.RecoveryDelay=.5;
+    }
     Start=C->GetActorLocation();HighStart=FVector(Start.X,Start.Y,End.Z+4);HighEnd=FVector(End.X,End.Y,End.Z+4);
-    StartingHealth=G->Health;VaultEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
-    Elapsed=0;Vaulting=true;Status=TEXT("攀越中");G->SetSprinting(false);C->GetCharacterMovement()->StopMovementImmediately();C->GetCharacterMovement()->SetMovementMode(MOVE_Flying);return true;
+    StartingHealth=S->Health();VaultEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    Elapsed=0;Vaulting=true;Status=TEXT("攀越中");if(G)G->SetSprinting(false);C->GetCharacterMovement()->StopMovementImmediately();C->GetCharacterMovement()->SetMovementMode(MOVE_Flying);return true;
 }
 void UHearthwardTraversalComponent::CancelVault()
 {
@@ -101,9 +113,11 @@ void UHearthwardTraversalComponent::TickComponent(float Delta,ELevelTick Type,FA
 {
     Super::TickComponent(Delta,Type,Tick);if(GetWorld()->IsPaused()) return;
     auto* C=CastChecked<ACharacter>(GetOwner());auto* M=C->GetCharacterMovement();auto* G=C->FindComponentByClass<UHearthwardGameplayComponent>();
+    auto* S=C->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(Vaulting)
     {
-        if(VaultEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch() || G->Health<StartingHealth || G->Health<=0) {CancelVault();return;}
+        if(VaultEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()
+            || !S->Enabled() || !S->Alive() || S->Health()<StartingHealth || S->Health()<=0) {CancelVault();return;}
         Elapsed=FMath::Min(1.f,Elapsed+Delta);
         const FVector Next=Elapsed<.3f?FMath::Lerp(Start,HighStart,Elapsed/.3f):Elapsed<.8f?FMath::Lerp(HighStart,HighEnd,(Elapsed-.3f)/.5f):FMath::Lerp(HighEnd,End,(Elapsed-.8f)/.2f);
         FHitResult Hit;M->SafeMoveUpdatedComponent(Next-C->GetActorLocation(),C->GetActorQuat(),true,Hit);
@@ -113,10 +127,10 @@ void UHearthwardTraversalComponent::TickComponent(float Delta,ELevelTick Type,FA
     }
     float Surface=0;const bool Area=WaterSurface(C->GetActorLocation(),Surface);
     InWater=Area && C->GetActorLocation().Z-C->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()<Surface-5;
-    if(!G->Enabled || G->Health<=0) return;
+    if(!S->Enabled() || !S->Alive() || S->Health()<=0) return;
     FFindFloorResult Floor;M->FindFloor(C->GetActorLocation(),Floor,false);
     const bool Standing=Floor.IsWalkableFloor() && Floor.FloorDist<=2.5f;
-    if(InWater && !Standing) {G->SetSprinting(false);M->MaxSwimSpeed=300;M->SetMovementMode(MOVE_Swimming);}
+    if(InWater && !Standing) {if(G)G->SetSprinting(false);M->MaxSwimSpeed=300;M->SetMovementMode(MOVE_Swimming);}
     else if(M->IsSwimming()) M->SetMovementMode(Standing?MOVE_Walking:MOVE_Falling);
 }
 void UHearthwardMovementComponent::PhysicsVolumeChanged(APhysicsVolume* NewVolume)

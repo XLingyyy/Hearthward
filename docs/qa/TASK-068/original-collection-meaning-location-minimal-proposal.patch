@@ -1,0 +1,35 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -390,6 +390,17 @@
+         if(!ValidLimit(L) || !C->Constraints.Contains(Type)) return TEXT("UNRESOLVED_CONSTRAINT");
+         if(Type==TEXT("ban") && Rest==G.Item.ToString() && (G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect"))) return TEXT("POLICY_CONFLICT");
+     }
++    if((G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect")) && !G.Original.IsEmpty())
++    {
++        const FString Text=Normalize(G.Original);
++        FRegexMatcher Excluded(FRegexPattern(TEXT("(?:别|不要|不许|不准|禁止|不得|不能|不)\\s*(?:去|到|前往|进入|靠近)|(?:避开|绕开)\\s*[^，,。；;\\n]+")),Text);
++        if(Excluded.FindNext())return TEXT("UNRESOLVED_COLLECTION_LOCATION");
++        if(G.Intent==TEXT("collect"))
++        {
++            FRegexMatcher Acquisition(FRegexPattern(TEXT("(?:^|[，,。；;：:\\n])\\s*(?:(?:请|帮我|去|从|到|麻烦)(?:(?!不|别|禁止|无需)[^，,。；;\\n])*?)?(?:新采(?:集)?|采集|收集|采(?=\\s*(?:[0-9零一二两三四五六七八九十百千万些点]|")+ItemText(G.Item)+TEXT("|")+G.Item.ToString()+TEXT(")))")),Text);
++            if(!Acquisition.FindNext())return TEXT("UNRESOLVED_COLLECTION_SOURCE");
++        }
++    }
+     if((G.Intent==TEXT("craft") || G.Intent==TEXT("repair"))
+         && (!OriginalMaterialBudgetsMatch(G) || !OriginalMaterialPermissionsMatch(G)))return TEXT("UNRESOLVED_CONSTRAINT");
+     if(C->Writes && !G.Unresolved.IsEmpty()) return TEXT("UNRESOLVED_CONSTRAINT");
+--- a/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
+@@ -297,6 +297,12 @@
+     Memory.WorkingGoal=Goal;
+     if(!ReasonCode.IsEmpty())
+     {
++        if(ReasonCode==TEXT("UNRESOLVED_COLLECTION_SOURCE") || ReasonCode==TEXT("UNRESOLVED_COLLECTION_LOCATION"))
++        {
++            NPCLine=ReasonCode==TEXT("UNRESOLVED_COLLECTION_SOURCE")?TEXT("要从哪里取得，再交到哪里？请明确是新采集还是搬运已有物品。"):
++                TEXT("需要避开哪个地点？当前任务卡无法保留这个地点限制，请明确后再安排。");
++            Status=TEXT("等待补充信息");LastAppliedIntent=TEXT("clarify");Memory.AddClarification(Input,NPCLine);return;
++        }
+         NPCLine=ReasonCode==TEXT("POLICY_CONFLICT")?TEXT("这项任务与已确认的规则冲突，请先修改规则或任务。"):
+             ReasonCode==TEXT("UNRESOLVED_CONSTRAINT")?TEXT("还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。"):
+             ReasonCode==TEXT("AMBIGUOUS_TARGET")?TEXT("没有找到我自己持有的唯一目标，不能代用你的装备。"):

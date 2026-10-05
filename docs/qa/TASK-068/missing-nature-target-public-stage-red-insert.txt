@@ -1,0 +1,16 @@
+    FHearthwardAgentGoal MissingTarget;MissingTarget.Intent=TEXT("nature_care");MissingTarget.Item=TEXT("harvest");
+    MissingTarget.Quantity=1;MissingTarget.QuantityMode=TEXT("action_count");MissingTarget.SourceRef=TEXT("known_target");
+    if(!TestTrue(TEXT("A missing-target care draft has its valid typed contract"),HearthwardAgent::Validate(MissingTarget).IsEmpty())
+        || !TestFalse(TEXT("The public staging fixture is unpaused"),World->IsPaused())
+        || !TestEqual(TEXT("The actual companion preview identifies the missing target"),Brother->PreviewGoal(MissingTarget),FString(TEXT("TARGET_REQUIRED"))))
+    {Screen->RemoveFromParent();Cleanup();return false;}
+    const FString MissingTargetBag=Brother->Bag->DescribeInventory();
+    TestFalse(TEXT("A care draft without a bound target cannot form an executable card"),AI->SetStructuredGoal(Player,Brother,MissingTarget));
+    if(!TestEqual(TEXT("Public staging reached the actual missing-target branch"),AI->GetReasonCode(),FString(TEXT("TARGET_REQUIRED"))))
+    {Screen->RemoveFromParent();Cleanup();return false;}
+    TestFalse(TEXT("Missing-target staging retains no candidate"),AI->HasCandidate());
+    TestEqual(TEXT("Missing target asks for information rather than reporting unavailable facilities"),AI->GetLastAppliedIntent(),FString(TEXT("clarify")));
+    TestEqual(TEXT("Missing-target clarification records exactly one public conversation turn"),AI->GetClarificationTurns(),1);
+    TestEqual(TEXT("The manual draft retains its canonical original in working memory"),AI->GetMemorySnapshot().WorkingGoal.Original,HearthwardAgent::GoalText(MissingTarget));
+    TestEqual(TEXT("Missing-target clarification does not change the brother inventory"),Brother->Bag->DescribeInventory(),MissingTargetBag);
+

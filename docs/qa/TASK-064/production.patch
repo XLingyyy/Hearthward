@@ -1,0 +1,82 @@
+diff --git a/Source/Hearthward/UI/HearthwardScreenContent.cpp b/Source/Hearthward/UI/HearthwardScreenContent.cpp
+index f607fa5..e250c0c 100644
+--- a/Source/Hearthward/UI/HearthwardScreenContent.cpp
++++ b/Source/Hearthward/UI/HearthwardScreenContent.cpp
+@@ -239,21 +239,48 @@ void UHearthwardScreenWidget::ComposeMap()
+     Element(TEXT("image"),TEXT(""),Center-MapSize*.5*MapZoom+MapPan,MapSize*MapZoom,18,TEXT(""),TEXT("mapTerrain"));
+     const float FogRadius=Number(Catalog()->GetObjectField(TEXT("tuning")),TEXT("fogRadius"));
+     const FVector Origin=Campaign?FVector::ZeroVector:G->LocationPosition(TEXT("camp"));
++    const double RadiusSquared=FMath::Square(double(FogRadius));
++    const auto ExploredAt=[&](FVector World)
++    {
++        return G->Explored.ContainsByPredicate([&](FVector2D Seen)
++        { return FVector2D::DistSquared(FVector2D(World.X,World.Y),Seen)<=RadiusSquared; });
++    };
++    const double PixelWorldSize=Extent/(MapSize.X*MapZoom);
++    const auto FogCell=[&](FVector2D Local,double Side,const auto& Subdivide)->void
++    {
++        const FVector2D Min=Local+FVector2D(Origin.X,Origin.Y),Max=Min+FVector2D(Side,Side);
++        bool Intersects=false;
++        for(const FVector2D Seen:G->Explored)
++        {
++            const double FarX=FMath::Max(FMath::Abs(Min.X-Seen.X),FMath::Abs(Max.X-Seen.X));
++            const double FarY=FMath::Max(FMath::Abs(Min.Y-Seen.Y),FMath::Abs(Max.Y-Seen.Y));
++            if(FMath::Square(FarX)+FMath::Square(FarY)<=RadiusSquared)return;
++            const FVector2D Nearest(FMath::Clamp(Seen.X,Min.X,Max.X),FMath::Clamp(Seen.Y,Min.Y,Max.Y));
++            Intersects|=FVector2D::DistSquared(Nearest,Seen)<=RadiusSquared;
++        }
++        // Keep distant fog coarse; refine only the explored boundary to a design pixel.
++        if(Intersects && Side>PixelWorldSize)
++        {
++            const double Half=Side*.5;
++            Subdivide(Local,Half,Subdivide);Subdivide(Local+FVector2D(Half,0),Half,Subdivide);
++            Subdivide(Local+FVector2D(0,Half),Half,Subdivide);Subdivide(Local+FVector2D(Half,Half),Half,Subdivide);
++            return;
++        }
++        Element(TEXT("fog"),TEXT(""),MapPoint(FVector(Local.X,Local.Y+Side,0)),MapSize*(Side/Extent*MapZoom)+FVector2D(1,1));
++    };
+     const int32 Cell=Extent/20;
+     for(int32 X=-Extent/2;X<Extent/2;X+=Cell)
+         for(int32 Y=-Extent/2;Y<Extent/2;Y+=Cell)
+-        {
+-            const FVector2D World(Origin.X+X+Cell/2,Origin.Y+Y+Cell/2);
+-            if(G->Explored.ContainsByPredicate([&](FVector2D Seen){ return FVector2D::Distance(World,Seen)<=FMath::Max(double(FogRadius),Cell*.72); })) continue;
+-            Element(TEXT("fog"),TEXT(""),MapPoint(FVector(X,Y+Cell,0)),FVector2D(55.5,38)*MapZoom+FVector2D(1,1));
+-        }
++            FogCell(FVector2D(X,Y),Cell,FogCell);
+     if(Campaign && G->QuestAvailable(TEXT("main_05")))
+     {
+         const auto& Route=Catalog()->GetObjectField(TEXT("campaign"))->GetArrayField(TEXT("route_trace"));
+         for(int32 I=0;I<Route.Num();I+=3)
+         {
+             const auto& P=Route[I]->AsArray();
+-            Element(TEXT("text"),TEXT("·"),MapPoint(FVector(P[0]->AsNumber()*100,P[1]->AsNumber()*100,0))-FVector2D(4,10),FVector2D(12,20),18);
++            const FVector World(P[0]->AsNumber()*100,P[1]->AsNumber()*100,0);
++            if(!ExploredAt(World))continue;
++            Element(TEXT("text"),TEXT("·"),MapPoint(World)-FVector2D(4,10),FVector2D(12,20),18);
+             Elements.Last().Color=Color(TEXT("gold"));
+         }
+     }
+@@ -262,7 +289,8 @@ void UHearthwardScreenWidget::ComposeMap()
+         const auto R=V->AsObject(); const FName Id(*Text(R,TEXT("id"))); if(!G->Discovered.Contains(Id)) continue;
+         if(Category==TEXT("travel") && Text(R,TEXT("kind"))==TEXT("landmark")) continue;
+         if(Campaign && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->HasLocation(Id))continue;
+-        const FVector P=Campaign?G->LocationPosition(Id):Position(R); const FVector2D UI=MapPoint(P)-FVector2D(27,27);
++        const FVector World=G->LocationPosition(Id);if(!ExploredAt(World))continue;
++        const FVector2D UI=MapPoint(World-Origin)-FVector2D(27,27);
+         Element(TEXT("image"),TEXT(""),UI+FVector2D(10,9),FVector2D(34,36),18,TEXT(""),G->Activated.Contains(Id)?TEXT("mapTravelIcon"):Text(R,TEXT("kind"))==TEXT("landmark")?TEXT("mapLandmarkIcon"):TEXT("mapCampIcon"));
+         Element(TEXT("tab"),TEXT(""),UI,FVector2D(54,54),32,TEXT("location:")+Id.ToString(),TEXT(""),SelectedLocation==Id);
+         Element(TEXT("text"),Text(R,TEXT("name")),UI+FVector2D(-27,58),FVector2D(200,35),19);
+@@ -300,7 +328,11 @@ void UHearthwardScreenWidget::ComposeMap()
+         const auto Target=Find(TEXT("locations"),Campaign?GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->QuestLocation(G->TrackedQuest).ToString():Text(Q,TEXT("location")));
+         if(Target)
+         {
+-            Element(TEXT("image"),TEXT(""),MapPoint(Campaign?G->LocationPosition(FName(*Text(Target,TEXT("id")))):Position(Target))+FVector2D(25,-40),FVector2D(33,40),18,TEXT(""),TEXT("mapQuestIcon")); Elements.Last().MapClipped=true;
++            const FVector World=G->LocationPosition(FName(*Text(Target,TEXT("id"))));
++            if(ExploredAt(World))
++            {
++                Element(TEXT("image"),TEXT(""),MapPoint(World-Origin)+FVector2D(25,-40),FVector2D(33,40),18,TEXT(""),TEXT("mapQuestIcon")); Elements.Last().MapClipped=true;
++            }
+         }
+     }
+ }

@@ -85,6 +85,8 @@ struct FHearthwardWorldSave
     UPROPERTY() int32 Carried = 0;
     UPROPERTY() int32 CampBatchBaseline = -1;
     UPROPERTY() FGuid CommandId;
+    // Zero is absent historical revision metadata; recover it from an exact versioned receipt when available.
+    UPROPERTY() int64 CommandRevision=0;
     UPROPERTY() TMap<FName,float> NPCDurability;
     UPROPERTY() TMap<FName,int32> NPCSpent;
     UPROPERTY() TArray<FGuid> NPCOperations;
@@ -135,6 +137,7 @@ namespace HearthwardSave
     // INDEX_NONE means no capacity. An index equal to Num means append.
     int32 SelectSlot(const TArray<FHearthwardSavePoint>& Points);
     bool Validate(const UHearthwardSaveGame& Pool);
+    bool ResolveCommandRevision(const FHearthwardWorldSave& Snapshot,int64& Revision);
     bool MigrateInventory(UHearthwardSaveGame& Pool,FString& Error);
     bool Read(const FString& Path, UHearthwardSaveGame*& Out, FString& Error);
     bool Write(const FString& Path, UHearthwardSaveGame* Pool, FString& Error);

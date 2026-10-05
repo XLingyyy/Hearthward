@@ -22,6 +22,8 @@ namespace
 APawn* CampPlayer(UWorld* W) {return UGameplayStatics::GetPlayerPawn(W,0);}
 AHearthwardCompanionFixture* CampBrother(UWorld* W)
 {for(TActorIterator<AHearthwardCompanionFixture> It(W);It;++It)return *It;return nullptr;}
+bool AtWorkplace(FVector Position,FVector Workplace)
+{return FVector::DistSquared2D(Position,Workplace)<=FMath::Square(240.) && FMath::Abs(Position.Z-Workplace.Z)<=240;}
 }
 bool UHearthwardCampSubsystem::DoesSupportWorldType(EWorldType::Type Type) const {return Type==EWorldType::Game || Type==EWorldType::PIE;}
 void UHearthwardCampSubsystem::EnsureCamp(FVector Position)
@@ -130,9 +132,47 @@ bool UHearthwardCampSubsystem::WaitAtCampfire(FGuid Id,int32 Minutes,FGuid Epoch
     R.Epoch=Epoch;R.OperationId=FGuid::NewGuid();R.Campaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId();R.StartW=Clock->GetSnapshot().ElapsedCalendarMinutes;
     const auto Result=Clock->RequestTimeAdvance(R);Feedback=Result.Reason;return Result.Accepted;
 }
+bool UHearthwardCampSubsystem::Workplace(const FHearthwardCampRegion& Region,FVector From,FVector& Position,AActor*& Facility) const
+{
+    Facility=nullptr;
+    if(Region.Facility.IsValid())
+    {
+        const auto* Record=State.Facilities.FindByPredicate([&](const auto& B){return B.Id==Region.Facility;});
+        if(!Record || Record->Paused || Record->Camp!=Region.Camp)return false;
+        if(auto* Player=CampPlayer(GetWorld()))if(auto* Builder=Player->FindComponentByClass<UHearthwardBuildingComponent>())
+            if(auto* Actor=Builder->ResolveFacility(Region.Facility)) {Facility=Actor;Position=Actor->GetActorLocation();return true;}
+        return false;
+    }
+    if(!Region.Batch.Active)
+    {
+        const int32 Selected=State.SourceIndex(Region);
+        if(Selected==INDEX_NONE)return false;
+        Position=State.Sources[Selected].Position;return true;
+    }
+    const FName Item=Region.Job==TEXT("forage")?FName(TEXT("wild_food")):Region.Job;
+    const FHearthwardCampSource* Closest=nullptr;double Distance=DBL_MAX;
+    for(const auto& Source:State.Sources)if(Source.Camp==Region.Camp && Source.Item==Item && !Source.Blocked)
+    {
+        if(AtWorkplace(From,Source.Position)) {Position=Source.Position;return true;}
+        const double Candidate=FVector::DistSquared(From,Source.Position);
+        if(Candidate<Distance) {Closest=&Source;Distance=Candidate;}
+    }
+    if(!Closest)return false;
+    Position=Closest->Position;return true;
+}
+bool UHearthwardCampSubsystem::BrotherWorkplace(FVector& Position,AActor*& Facility) const
+{
+    auto* Brother=CampBrother(GetWorld());if(!Brother)return false;
+    const auto* Survival=Brother->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(!Survival || !Survival->Alive() || Survival->Busy() || Survival->Resting
+        || Brother->Action->GetStatus()==EHearthwardTimedActionStatus::Running)return false;
+    for(const auto& Region:State.Regions)if(Region.Enabled && Region.Safe && Region.Brother && Region.BatchStopAt==0)
+        return Workplace(Region,Brother->GetActorLocation(),Position,Facility);
+    return false;
+}
 double UHearthwardCampSubsystem::Efficiency(AActor* Actor,const FHearthwardCampRegion& Region) const
 {
-    if(!Actor || Actor->GetVelocity().SizeSquared2D()>25)return 0;
+    if(!Actor || Actor->GetVelocity().SizeSquared()>25)return 0;
     const auto* S=Actor->FindComponentByClass<UHearthwardSurvivalComponent>();
     const auto* Timer=Actor->FindComponentByClass<UHearthwardTimedActionComponent>();
     if(!S || !S->Alive() || S->Busy() || S->Resting || (Timer && Timer->GetStatus()==EHearthwardTimedActionStatus::Running))return 0;
@@ -144,19 +184,8 @@ double UHearthwardCampSubsystem::Efficiency(AActor* Actor,const FHearthwardCampR
         if(!C->PerformingCampBatch(Region.Id) && ((Phase!=EHearthwardCompanionPhase::Idle && Phase!=EHearthwardCompanionPhase::Completed
             && Phase!=EHearthwardCompanionPhase::Cancelled) || G->CompanionOrder!=TEXT("wait")))return 0;
     }
-    FVector Workplace=FVector::ZeroVector;bool Found=false;
-    if(Region.Facility.IsValid())
-    {
-        if(auto* B=CampPlayer(GetWorld())->FindComponentByClass<UHearthwardBuildingComponent>())
-            if(auto* A=B->ResolveFacility(Region.Facility)) {Workplace=A->GetActorLocation();Found=true;}
-    }
-    else
-    {
-        const FName Item=Region.Job==TEXT("forage")?FName(TEXT("wild_food")):Region.Job;
-        for(const auto& Source:State.Sources)if(Source.Camp==Region.Camp && Source.Item==Item && !Source.Blocked
-            && FVector::Dist2D(Actor->GetActorLocation(),Source.Position)<=240) {Found=true;Workplace=Source.Position;break;}
-    }
-    return Found && FVector::Dist2D(Actor->GetActorLocation(),Workplace)<=240?(S->State.Severe()?2.1:3):0;
+    FVector Position;AActor* Facility=nullptr;
+    return Workplace(Region,Actor->GetActorLocation(),Position,Facility) && AtWorkplace(Actor->GetActorLocation(),Position)?(S->State.Severe()?2.1:3):0;
 }
 bool UHearthwardCampSubsystem::BrotherWorking() const
 {

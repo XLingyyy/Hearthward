@@ -1,0 +1,21 @@
+{
+  "normal_settings_apply_then_continue": "RED",
+  "actual_os_keys": [
+    "Escape",
+    "Tab"
+  ],
+  "observed": "HUD remains with clock ticking after both keys, no Pause or Inventory",
+  "loading_logs": [
+    "[2026.10.04-20.53.58:400][  0]LogTemp: Hearthward loading begin (restoreIgnoreInput=0)",
+    "[2026.10.04-20.54.00:455][154]LogTemp: Hearthward loading input restore (before=1, saved=0)",
+    "[2026.10.04-20.54.00:456][155]LogTemp: Hearthward loading end (2.09 s)",
+    "[2026.10.04-20.54.48:347][963]LogTemp: Hearthward loading begin (restoreIgnoreInput=1)",
+    "[2026.10.04-20.54.48:354][963]LogTemp: Hearthward loading begin (restoreIgnoreInput=1)",
+    "[2026.10.04-20.54.50:385][963]LogTemp: Hearthward loading begin (restoreIgnoreInput=1)",
+    "[2026.10.04-20.54.54:534][981]LogTemp: Hearthward loading input restore (before=0, saved=1)",
+    "[2026.10.04-20.54.54:537][982]LogTemp: Hearthward loading end (4.15 s)"
+  ],
+  "root_cause": "Loading Hide restores saved IgnoreInput=true after actual HUD GameOnly set false; cold bootstrap path saved false",
+  "shipping_credit": false,
+  "normal_quit": "NOT_RUN"
+}

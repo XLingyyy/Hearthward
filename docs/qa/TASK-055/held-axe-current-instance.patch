@@ -1,0 +1,16 @@
+--- a/Source/Hearthward/HearthwardCharacter.cpp
++++ b/Source/Hearthward/HearthwardCharacter.cpp
+@@ -145,9 +145,10 @@
+ 
+ void AHearthwardCharacter::RefreshHeldTool()
+ {
+-    // The existing equipment and inventory state remain the sole source of truth.
+-    const bool HoldingAxe=Gameplay->Equipment.FindRef(TEXT("weapon"))==TEXT("axe")
+-        && Inventory->GetItemCount(TEXT("axe"))>0;
++    const auto* Equipped=Inventory->FindInstance(Inventory->EquippedInstance(TEXT("weapon")));
++    const auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
++    const bool HoldingAxe=Equipped && Equipped->Definition==TEXT("axe") && Equipped->Durability>0
++        && !Combat->RangedSelected();
+     HeldAxe->SetVisibility(HoldingAxe);
+ }
+ 

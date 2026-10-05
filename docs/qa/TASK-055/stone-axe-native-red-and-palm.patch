@@ -1,0 +1,260 @@
+--- a/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
++++ b/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
+@@ -1,4 +1,24 @@
+ #include "../HearthwardCharacter.h"
++#include "../Combat/HearthwardCombatTargetComponent.h"
++#include "Animation/AnimationPoseData.h"
++#include "Animation/AttributesRuntime.h"
++#include "Animation/AnimCurveTypes.h"
++#include "BoneContainer.h"
++#include "BonePose.h"
++#include "Misc/MemStack.h"
++#include "Engine/StaticMeshSocket.h"
++#include "../Animation/HearthwardHeroAnimInstance.h"
++#include "Animation/AnimSequence.h"
++#include "Engine/SkeletalMesh.h"
++#include "Misc/CommandLine.h"
++#include "Misc/FileHelper.h"
++#include "Misc/Parse.h"
++#include "Misc/Paths.h"
++#include "HAL/FileManager.h"
++#include "Rendering/SkeletalMeshRenderData.h"
++#include "Rendering/SkinWeightVertexBuffer.h"
++#include "SkeletalRenderPublic.h"
++#include "Serialization/JsonSerializer.h"
+ #include "../UI/HearthwardScreenWidget.h"
+ #include "../Inventory/HearthwardInventoryComponent.h"
+ #include "../Inventory/HearthwardStorageSubsystem.h"
+@@ -212,6 +232,112 @@
+     const auto* Collection=Hero->GetLevel()->GetCachedLevelCollection();
+     AddInfo(FString::Printf(TEXT("HeldAxe055 component configuration only: flag=%d contextualVisible=%d hiddenInGame=%d collectionVisible=%d"),
+         Held->GetVisibleFlag(),Held->IsVisible(),Held->bHiddenInGame,Collection?int32(Collection->IsVisible()):-1));
++    if(FParse::Param(FCommandLine::Get(),TEXT("Task055PalmSkinCapture")))
++    {
++        auto* Mesh=Hero->GetMesh();
++        auto* Anim=Cast<UHearthwardHeroAnimInstance>(Mesh->GetAnimInstance());
++        auto* Clip=Anim && Anim->Clips.IsValidIndex(6)?Anim->Clips[6].Get():nullptr;
++        const auto PreviousMode=Mesh->GetAnimationMode();
++        if(!TestNotNull(TEXT("Palm capture uses the actual native attack clip"),Clip)) {Cleanup();return false;}
++        Mesh->PlayAnimation(Clip,false);Mesh->SetPlayRate(0);Mesh->SetPosition(.55f,false);
++        Mesh->TickAnimation(0,false);Mesh->RefreshBoneTransforms();
++        const auto RestoreAnimation=[&]() {Mesh->SetAnimationMode(PreviousMode);};
++        const auto* Data=Mesh->GetSkeletalMeshAsset()->GetResourceForRendering();
++        const auto* Skin=Mesh->GetSkinWeightBuffer(0);
++        if(!TestFalse(TEXT("Actual palm skin capture requires a real RHI"),FParse::Param(FCommandLine::Get(),TEXT("nullrhi")))
++            || !TestTrue(TEXT("Palm capture has actual CPU-readable LOD0 weights"),
++            Data && Data->LODRenderData.IsValidIndex(0) && Skin
++            && Skin->GetNeedsCPUAccess())) {RestoreAnimation();Cleanup();return false;}
++        const auto& LOD=Data->LODRenderData[0];
++        TArray<FFinalSkinVertex> Positions;Mesh->GetCPUSkinnedVertices(Positions,0);
++        TArray<FSkinWeightInfo> Weights;Skin->GetSkinWeights(Weights);
++        if(!TestEqual(TEXT("Actual LOD0 skin positions retain every original weight vertex ID"),Positions.Num(),Weights.Num()))
++        {RestoreAnimation();Cleanup();return false;}
++        const auto VectorJson=[](FVector V)
++        {
++            TArray<TSharedPtr<FJsonValue>> Result;
++            for(double N:{V.X,V.Y,V.Z})Result.Add(MakeShared<FJsonValueNumber>(N));
++            return Result;
++        };
++        const auto TransformJson=[&](const FTransform& T)
++        {
++            auto Result=MakeShared<FJsonObject>();Result->SetArrayField(TEXT("translation_cm"),VectorJson(T.GetLocation()));
++            Result->SetArrayField(TEXT("scale_xyz"),VectorJson(T.GetScale3D()));
++            TArray<TSharedPtr<FJsonValue>> Rotation;const FQuat Q=T.GetRotation();
++            for(double N:{Q.X,Q.Y,Q.Z,Q.W})Rotation.Add(MakeShared<FJsonValueNumber>(N));
++            Result->SetArrayField(TEXT("rotation_quat_xyzw"),Rotation);return Result;
++        };
++        const FTransform MeshWorld=Mesh->GetComponentTransform(),HandWorld=Mesh->GetSocketTransform(TEXT("hand_r"));
++        TSet<int32> HandBones;TArray<TSharedPtr<FJsonValue>> Bones;
++        for(int32 Bone=0;Bone<Mesh->GetNumBones();++Bone)
++        {
++            const FString Name=Mesh->GetBoneName(Bone).ToString();
++            if(Name!=TEXT("hand_r") && !(Name.EndsWith(TEXT("_r")) &&
++                (Name.Contains(TEXT("thumb")) || Name.Contains(TEXT("index")) || Name.Contains(TEXT("middle"))
++                || Name.Contains(TEXT("ring")) || Name.Contains(TEXT("pinky")))))continue;
++            HandBones.Add(Bone);auto Entry=MakeShared<FJsonObject>();Entry->SetNumberField(TEXT("mesh_bone_index"),Bone);
++            Entry->SetStringField(TEXT("name"),Name);Entry->SetObjectField(TEXT("actual_world"),TransformJson(Mesh->GetSocketTransform(*Name)));
++            Bones.Add(MakeShared<FJsonValueObject>(Entry));
++        }
++        TArray<TSharedPtr<FJsonValue>> Vertices;TSet<uint32> Selected;
++        for(int32 SectionIndex=0;SectionIndex<LOD.RenderSections.Num();++SectionIndex)
++        {
++            const auto& Section=LOD.RenderSections[SectionIndex];
++            for(uint32 Vertex=Section.BaseVertexIndex;Vertex<Section.BaseVertexIndex+Section.NumVertices;++Vertex)
++            {
++                const auto& W=Weights[Vertex];int32 Dominant=INDEX_NONE;uint16 Maximum=0;uint32 Total=0;
++                for(int32 Influence=0;Influence<MAX_TOTAL_INFLUENCES;++Influence)
++                {
++                    Total+=W.InfluenceWeights[Influence];
++                    if(W.InfluenceWeights[Influence]>Maximum) {Maximum=W.InfluenceWeights[Influence];Dominant=W.InfluenceBones[Influence];}
++                }
++                const int32 Global=Section.BoneMap.IsValidIndex(Dominant)?Section.BoneMap[Dominant]:INDEX_NONE;
++                if(!HandBones.Contains(Global))continue;
++                auto Entry=MakeShared<FJsonObject>();Entry->SetNumberField(TEXT("lod0_vertex_id"),Vertex);
++                Entry->SetNumberField(TEXT("section_index"),SectionIndex);Entry->SetStringField(TEXT("dominant_bone"),Mesh->GetBoneName(Global).ToString());
++                Entry->SetNumberField(TEXT("raw_weight_sum"),Total);
++                const FVector Component(Positions[Vertex].Position),WorldPosition=MeshWorld.TransformPosition(Component);
++                Entry->SetArrayField(TEXT("skinned_component_cm"),VectorJson(Component));
++                Entry->SetArrayField(TEXT("skinned_world_cm"),VectorJson(WorldPosition));
++                Entry->SetArrayField(TEXT("actual_hand_r_local"),VectorJson(HandWorld.InverseTransformPosition(WorldPosition)));
++                TArray<TSharedPtr<FJsonValue>> Influences;
++                for(int32 Influence=0;Influence<MAX_TOTAL_INFLUENCES;++Influence)
++                {
++                    const uint16 Raw=W.InfluenceWeights[Influence];if(!Raw)continue;
++                    const int32 Local=W.InfluenceBones[Influence];
++                    if(!Section.BoneMap.IsValidIndex(Local)) {RestoreAnimation();Cleanup();AddError(TEXT("Actual skin influence is outside its section BoneMap"));return false;}
++                    const int32 Bone=Section.BoneMap[Local];auto Weight=MakeShared<FJsonObject>();
++                    Weight->SetNumberField(TEXT("section_bone_index"),Local);Weight->SetNumberField(TEXT("mesh_bone_index"),Bone);
++                    Weight->SetStringField(TEXT("bone_name"),Mesh->GetBoneName(Bone).ToString());Weight->SetNumberField(TEXT("raw_uint16_weight"),Raw);
++                    Influences.Add(MakeShared<FJsonValueObject>(Weight));
++                }
++                Entry->SetArrayField(TEXT("actual_influences"),Influences);Vertices.Add(MakeShared<FJsonValueObject>(Entry));Selected.Add(Vertex);
++            }
++        }
++        TArray<uint32> Indices;LOD.MultiSizeIndexContainer.GetIndexBuffer(Indices);TArray<TSharedPtr<FJsonValue>> Triangles;
++        for(int32 I=0;I+2<Indices.Num();I+=3)
++        {
++            if(!Selected.Contains(Indices[I]) || !Selected.Contains(Indices[I+1]) || !Selected.Contains(Indices[I+2]))continue;
++            TArray<TSharedPtr<FJsonValue>> Triangle;for(int32 Corner=0;Corner<3;++Corner)Triangle.Add(MakeShared<FJsonValueNumber>(Indices[I+Corner]));
++            Triangles.Add(MakeShared<FJsonValueArray>(Triangle));
++        }
++        auto Report=MakeShared<FJsonObject>();Report->SetStringField(TEXT("method"),TEXT("Normal GUID Equip; actual attack SingleNode .55; public GetCPUSkinnedVertices LOD0 with actual component SkinWeightBuffer"));
++        Report->SetStringField(TEXT("meaning"),TEXT("Measured dominant hand/finger skin surface; no palm-centre or grip-fit acceptance"));
++        Report->SetStringField(TEXT("hero_mesh"),Mesh->GetSkeletalMeshAsset()->GetPathName());Report->SetStringField(TEXT("attack_clip"),Clip->GetPathName());
++        Report->SetNumberField(TEXT("actual_asset_morph_target_count"),Mesh->GetSkeletalMeshAsset()->GetMorphTargets().Num());
++        Report->SetNumberField(TEXT("actual_single_node_time_seconds"),Mesh->GetPosition());
++        Report->SetObjectField(TEXT("mesh_world"),TransformJson(MeshWorld));Report->SetObjectField(TEXT("actual_hand_r_world"),TransformJson(HandWorld));
++        Report->SetObjectField(TEXT("actual_axe_world"),TransformJson(Held->GetComponentTransform()));Report->SetObjectField(TEXT("actual_axe_relative"),TransformJson(Held->GetRelativeTransform()));
++        Report->SetStringField(TEXT("equipped_guid"),Equipped.ToString());Report->SetArrayField(TEXT("actual_right_hand_bones"),Bones);
++        Report->SetArrayField(TEXT("lod0_skin_vertices"),Vertices);Report->SetArrayField(TEXT("triangles_fully_inside_selected_vertices"),Triangles);
++        const FString Directory=FPaths::ProjectSavedDir()/TEXT("Task055/stone-axe-palm-skin");IFileManager::Get().MakeDirectory(*Directory,true);
++        FString Json;FJsonSerializer::Serialize(Report,TJsonWriterFactory<>::Create(&Json));
++        TestTrue(TEXT("Palm capture saves measured QA JSON only"),FFileHelper::SaveStringToFile(Json,*(Directory/TEXT("actual-hand-skin.json")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM));
++        TestTrue(TEXT("Actual right-hand surface has measured vertices"),!Vertices.IsEmpty());
++        AddInfo(FString::Printf(TEXT("PalmSkin055 originalLOD0=%d selected=%d actualHandBones=%d triangles=%d output=%s"),Positions.Num(),Vertices.Num(),Bones.Num(),Triangles.Num(),*Directory));
++        RestoreAnimation();
++    }
++
+     TestTrue(TEXT("Wear targets a specific spare instance"),Bag->WearInstance(Spare,1));
+     TestEqual(TEXT("Spare wear leaves the currently equipped axe intact"),Bag->FindInstance(Equipped)->Durability,80.);
+     TestTrue(TEXT("Wear on a non-current GUID keeps the full current axe visible"),Held->GetVisibleFlag());
+@@ -249,4 +375,119 @@
+     Cleanup();
+     return true;
+ }
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStoneAxePhaseAndBlade055Test,
++    "Hearthward.Equipment055.StoneAxeLightUsesClipPhaseAndPhysicalBlade",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++
++bool FStoneAxePhaseAndBlade055Test::RunTest(const FString&)
++{
++    for(const int32 Case:{0,1,2,3})
++    {
++        const int32 FPS=Case==0?30:1;
++        const bool Moving=Case==2,StationaryNegative=Case==3;
++        UWorld::InitializationValues Values;
++        Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
++        auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
++        GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
++        const auto Cleanup=[&]()
++        {
++            World->EndPlay(EEndPlayReason::Quit);GEngine->DestroyWorldContext(World);World->DestroyWorld(false);
++        };
++        World->InitializeActorsForPlay(FURL());
++        FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
++        auto* Hero=World->SpawnActor<AHearthwardCharacter>(FVector(0,0,90),FRotator(0,Moving?-45:0,0),Params);
++        auto* Controller=World->SpawnActor<APlayerController>();World->AddController(Controller);Controller->Possess(Hero);
++        Hero->Gameplay->Enabled=true;World->GetWorldSettings()->NotifyBeginPlay();
++        Hero->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
++        auto* Bag=Hero->FindComponentByClass<UHearthwardInventoryComponent>();
++        auto* Combat=Hero->FindComponentByClass<UHearthwardCombatComponent>();
++        auto* Clock=World->GetSubsystem<UHearthwardWorldClockSubsystem>();
++        auto* Mesh=Hero->GetMesh();auto* Anim=Cast<UHearthwardHeroAnimInstance>(Mesh->GetAnimInstance());
++        UStaticMeshComponent* Held=nullptr;TArray<UStaticMeshComponent*> Components;Hero->GetComponents(Components);
++        for(auto* Component:Components)if(Component->GetFName()==TEXT("HeldAxe"))Held=Component;
++        if(!TestTrue(TEXT("Real Hero owns the normal production inventory/combat/animation fixture"),
++            Bag && Combat && Clock && Anim && Held && Held->GetStaticMesh() && Anim->Clips.IsValidIndex(6) && Anim->Clips[6]))
++        {Cleanup();return false;}
++        for(const FName Socket:{FName(TEXT("Grip")),FName(TEXT("BladeBase")),FName(TEXT("BladeTip"))})
++            if(!TestNotNull(TEXT("Physical stone axe uses its actually authored socket"),Held->GetStaticMesh()->FindSocket(Socket)))
++            {Cleanup();return false;}
++        if(!TestTrue(TEXT("Two normal stone axe GUIDs fit in the Hero inventory"),Bag->TryAdd(TEXT("axe"),2)==EHearthwardInventoryResult::Success))
++        {Cleanup();return false;}
++        TArray<FGuid> Axes;for(const auto& Item:Bag->Snapshot().Instances)if(Item.Definition==TEXT("axe"))Axes.Add(Item.Id);
++        if(!TestEqual(TEXT("The normal inventory creates a current axe and a spare GUID"),Axes.Num(),2)
++            || !TestTrue(TEXT("Normal gameplay starts the current axe equipment switch"),Hero->Gameplay->EquipInstance(Axes[0])))
++        {Cleanup();return false;}
++        Clock->Tick(.5f);Combat->TickComponent(.5f,LEVELTICK_All,nullptr);
++        if(!TestEqual(TEXT("The timed normal switch equips the chosen GUID"),Bag->EquippedInstance(TEXT("weapon")),Axes[0])
++            || !TestTrue(TEXT("Normal current axe equipment displays the actual mesh"),Held->GetVisibleFlag()))
++        {Cleanup();return false;}
++        Mesh->TickAnimation(.2f,false);Mesh->RefreshBoneTransforms();
++        auto* Enemy=World->SpawnActor<AActor>();auto* Body=NewObject<UBoxComponent>(Enemy);
++        Enemy->AddInstanceComponent(Body);Enemy->SetRootComponent(Body);
++        Body->SetBoxExtent(Case>=2?FVector(3,3,3):FVector(30,25,45));Body->ComponentTags.Add(TEXT("body"));
++        Body->SetCollisionEnabled(ECollisionEnabled::QueryOnly);Body->SetCollisionResponseToAllChannels(ECR_Ignore);
++        Body->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);Body->RegisterComponent();
++        Enemy->SetActorLocation(Case>=2?FVector(72,30,150):FVector(110,-35,125));
++        auto* Target=NewObject<UHearthwardCombatTargetComponent>(Enemy);Enemy->AddInstanceComponent(Target);
++        Target->Id=TEXT("stone_axe_physical_test");Target->Health=Target->MaximumHealth=100;Target->RegisterComponent();
++        Hero->Gameplay->Opponents.Add(Target->Id,Target->Health);
++        const float InitialHealth=Target->Health,Power=Hero->Gameplay->AttackPower();
++        const double CurrentWear=Bag->FindInstance(Axes[0])->Durability,SpareWear=Bag->FindInstance(Axes[1])->Durability;
++        if(!TestTrue(TEXT("Actual normal stone axe light attack is accepted"),Combat->Attack(false))) {Cleanup();return false;}
++        if(Moving)
++        {
++            const FTransform Before=Mesh->GetComponentTransform();
++            Hero->SetActorLocationAndRotation(FVector(0,120,90),FRotator(0,45,0),false,nullptr,ETeleportType::TeleportPhysics);
++            AddInfo(FString::Printf(TEXT("StoneAxe055 actual one-frame movement: previousMesh=%s currentMesh=%s fixedTarget=%s"),
++                *Before.ToString(),*Mesh->GetComponentTransform().ToString(),*Enemy->GetActorLocation().ToString()));
++        }
++        double Advanced=0;
++        const auto AdvanceTo=[&](double End)
++        {
++            while(Advanced<End-1.e-7)
++            {
++                const float Delta=FMath::Min(1.f/FPS,float(End-Advanced));
++                Clock->Tick(Delta);Combat->TickComponent(Delta,LEVELTICK_All,nullptr);
++                Mesh->TickAnimation(Delta,false);Mesh->RefreshBoneTransforms();Advanced+=Delta;
++            }
++        };
++        if(FPS==30)
++        {
++            AdvanceTo(.35);
++            FTransform Expected;
++            {
++                FMemMark Mark(FMemStack::Get());const auto& Bones=Anim->GetRequiredBones();
++                FCompactPose Pose;Pose.SetBoneContainer(&Bones);Pose.ResetToRefPose();FBlendedCurve Curve;Curve.InitFrom(Bones);
++                UE::Anim::FStackAttributeContainer Attributes;FAnimationPoseData Data(Pose,Curve,Attributes);
++                Anim->Clips[6]->GetAnimationPose(Data,FAnimExtractContext(Anim->Clips[6]->GetPlayLength()*.6,false));
++                FCSPose<FCompactPose> ComponentPose;ComponentPose.InitPose(MoveTemp(Pose));
++                const auto Hand=Bones.MakeCompactPoseIndex(FMeshPoseBoneIndex(Mesh->GetBoneIndex(TEXT("hand_r"))));
++                Expected=ComponentPose.GetComponentSpaceTransform(Hand)*Mesh->GetComponentTransform();
++            }
++            const FTransform Actual=Mesh->GetSocketTransform(TEXT("hand_r"));
++            const double LocationError=FVector::Distance(Actual.GetLocation(),Expected.GetLocation());
++            const double RotationError=Actual.GetRotation().AngularDistance(Expected.GetRotation());
++            TestTrue(FString::Printf(TEXT("At logical .35 the real native graph has reached source .6L (.55), after its .12 blend: elapsed=%.9f locationError=%.6f rotationError=%.6f"),
++                Combat->Elapsed,LocationError,RotationError),LocationError<=.05 && RotationError<=.002);
++            AdvanceTo(.40);
++            TestEqual(TEXT("At .40 the measured physical blade has not reached the fixed body box"),Target->Health,InitialHealth);
++            TestEqual(TEXT("No pre-contact physical strike wears the current axe GUID"),Bag->FindInstance(Axes[0])->Durability,CurrentWear);
++            AdvanceTo(.55);
++        }
++        else AdvanceTo(1.);
++        const float ExpectedHealth=InitialHealth-(StationaryNegative?0:Power);
++        const double ExpectedWear=CurrentWear-(StationaryNegative?0:1.);
++        TestTrue(FString::Printf(TEXT("Physical blade uses real pose and previous/current world movement at %dfps case%d: health=%.3f expected=%.3f actualPower=%.3f"),FPS,Case,Target->Health,ExpectedHealth,Power),
++            FMath::IsNearlyEqual(Target->Health,ExpectedHealth,.001f));
++        TestEqual(TEXT("Current weapon wear follows an actual physical contact"),Bag->FindInstance(Axes[0])->Durability,ExpectedWear);
++        TestEqual(TEXT("The same-type spare GUID is unaffected by the real blade strike"),Bag->FindInstance(Axes[1])->Durability,SpareWear);
++        AdvanceTo(1.1);
++        TestTrue(TEXT("The entire recovery cannot repeat physical damage"),FMath::IsNearlyEqual(Target->Health,ExpectedHealth,.001f));
++        TestEqual(TEXT("Recovery does not charge the current GUID again"),Bag->FindInstance(Axes[0])->Durability,ExpectedWear);
++        TestFalse(TEXT("Actual production time completes the light attack"),Combat->Busy());
++        Cleanup();
++    }
++    return true;
++}
+ #endif

@@ -14,6 +14,17 @@
 #include "GameFramework/PlayerController.h"
 #include "AIController.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "../HearthwardCharacter.h"
+#include "Animation/AnimSequence.h"
+#include "Animation/AnimationPoseData.h"
+#include "Animation/AnimCurveTypes.h"
+#include "Animation/AttributesRuntime.h"
+#include "BoneContainer.h"
+#include "BonePose.h"
+#include "Misc/MemStack.h"
+#include "Engine/StaticMesh.h"
+#include "Engine/StaticMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
@@ -28,6 +39,11 @@ UHearthwardCombatComponent::UHearthwardCombatComponent() { PrimaryComponentTick.
 void UHearthwardCombatComponent::BeginPlay()
 {
     Super::BeginPlay(); if(G()) AddTickPrerequisiteComponent(G());
+    if(auto* C=Cast<AHearthwardCharacter>(GetOwner()))
+    {
+        AddTickPrerequisiteComponent(C->GetCharacterMovement());
+        C->GetMesh()->AddTickPrerequisiteComponent(this);
+    }
 }
 UHearthwardGameplayComponent* UHearthwardCombatComponent::G() const { return GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>(); }
 UHearthwardInventoryComponent* UHearthwardCombatComponent::Bag() const { return GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>(); }
@@ -65,7 +81,7 @@ bool UHearthwardCombatComponent::Start(FName Name,double Seconds)
     Action=Name; Duration=Seconds; Elapsed=0; StartedAt=Now(); ActionEpoch=Epoch(); ActionId=FGuid::NewGuid();
     StartPosition=GetOwner()->GetActorLocation(); ActionWeapon=G()->Equipment.FindRef(TEXT("weapon"));
     ActionInstance=Bag()->EquippedInstance(Name==TEXT("draw") || Name==TEXT("crossbow") || Name==TEXT("reload")?FName(TEXT("ranged")):FName(TEXT("weapon"))); ActionPower=G()->AttackPower(); ChargedWear=false;
-    HitIds.Reset(); Guard.Release(); G()->SetSprinting(false); return true;
+    HitIds.Reset(); StoneAxeBlocked=false; Guard.Release(); G()->SetSprinting(false); return true;
 }
 bool UHearthwardCombatComponent::Attack(bool Heavy)
 {
@@ -79,7 +95,8 @@ bool UHearthwardCombatComponent::Attack(bool Heavy)
     if(!Available() || G()->Stamina<Move.Cost*Bag()->GetStaminaCostMultiplier()*FMath::Max(.1f,1-G()->Effect(TEXT("cost")))) return false;
     if(!Start(TEXT("attack"),Move.Duration())) return false;
     G()->SpendStamina(Move.Cost); HeavyAttack=Heavy;
-    if(auto* C=Cast<ACharacter>(GetOwner())) if(auto* A=Cast<UHearthwardHeroAnimInstance>(C->GetMesh()->GetAnimInstance())) A->PlayCombat(float(Duration),false);
+    if(auto* C=Cast<AHearthwardCharacter>(GetOwner())) PreviousAttackMeshWorld=C->GetMesh()->GetComponentTransform();
+    if(auto* C=Cast<ACharacter>(GetOwner())) if(auto* A=Cast<UHearthwardHeroAnimInstance>(C->GetMesh()->GetAnimInstance())) A->PlayCombat(float(Duration),false,ActionWeapon==TEXT("axe") && Cast<AHearthwardCharacter>(GetOwner())?&Move:nullptr);
     return true;
 }
 bool UHearthwardCombatComponent::Eligible(UHearthwardCombatTargetComponent* T) const
@@ -174,12 +191,31 @@ bool UHearthwardCombatComponent::Damage(float Raw,FName Part,FVector Source,bool
     const FName Slot=Part==TEXT("body")?FName(TEXT("chest")):Part;
     const float Armor=G()->EquippedDurability(Slot)>0?Number(R,TEXT("defense"))/100+G()->Effect(TEXT("local_armor_bonus")):0;
     const float Actual=HearthwardCombat::ArmorDamage(Raw*(Projectile && Part==TEXT("head")?3:1),Armor,G()->Effect(TEXT("defense")));
+    auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(!S->ReceiveDamage(Actual,Event,Epoch()))return false;
     Cancel(); DropBody(); Guard.Release();
     if(Armor>0) G()->WearEquipment(Slot,1,true);
-    auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
-    S->ReceiveDamage(Actual,Event,Epoch());
     if(S->Alive()) { Action=TEXT("hit"); Duration=.25; StartedAt=Now(); Elapsed=0; ActionEpoch=Epoch(); }
     G()->OnChanged.Broadcast(); return true;
+}
+bool UHearthwardCombatComponent::DamageActor(AActor* Target,float Raw,FName Part,FVector Source,bool Heavy,bool Projectile,FGuid Event)
+{
+    if(!Target || Part.IsNone())return false;
+    if(auto* Combat=Target->FindComponentByClass<UHearthwardCombatComponent>())
+        return Combat->Damage(Raw,Part,Source,Heavy,Projectile,Event);
+    auto* Survival=Target->FindComponentByClass<UHearthwardSurvivalComponent>();
+    auto* Inventory=Target->FindComponentByClass<UHearthwardInventoryComponent>();
+    if(!Survival || !Inventory || Raw<=0 || !FMath::IsFinite(Raw))return false;
+    const FName Slot=Part==TEXT("body")?FName(TEXT("chest")):Part;
+    const FGuid ArmorId=Inventory->EquippedInstance(Slot);
+    const auto* Item=Inventory->FindInstance(ArmorId);
+    const float Armor=Item && Item->Durability>0?Number(Find(TEXT("items"),Item->Definition.ToString()),TEXT("defense"))/100:0;
+    const float Actual=HearthwardCombat::ArmorDamage(Raw*(Projectile && Part==TEXT("head")?3:1),Armor);
+    if(!Event.IsValid())Event=FGuid::NewGuid();
+    const FGuid Timeline=Target->GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    if(!Survival->ReceiveDamage(Actual,Event,Timeline))return false;
+    if(Armor>0)Inventory->WearInstance(ArmorId,1);
+    return true;
 }
 void UHearthwardCombatComponent::ObserveDamage(UHearthwardCombatTargetComponent* T,AActor* Source)
 {
@@ -197,27 +233,104 @@ void UHearthwardCombatComponent::HitTarget(UHearthwardCombatTargetComponent* T,f
     if(Armor>0) T->ArmorDurability[Part]=FMath::Max(0.f,T->ArmorDurability[Part]-1);
     const float PreviousHealth=T->Health;
     T->Health=FMath::Max(0.f,T->Health-Actual); T->Memory.HitRemaining=.25;
-    G()->CommitOpponentHealth(T->Id,T->Health,PreviousHealth);
+    G()->CommitOpponentHealth(T->Id,T->Health,PreviousHealth,Source?Source:GetOwner());
     if(T->Health<=0) T->SetCorpse();
 }
 void UHearthwardCombatComponent::Sweep(double From,double To)
 {
     const double A=FMath::Max(From,Move.Windup),B=FMath::Min(To,Move.Windup+Move.Active);
     if(B<=A) return;
+    auto* Character=Cast<AHearthwardCharacter>(GetOwner());
+    const bool StoneAxe=Character && ActionWeapon==TEXT("axe");
+    if(StoneAxe && StoneAxeBlocked) return;
+    UStaticMeshComponent* Axe=nullptr;
+    UHearthwardHeroAnimInstance* Animation=nullptr;
+    UStaticMeshSocket* BladeBase=nullptr;
+    UStaticMeshSocket* BladeTip=nullptr;
+    const FBoneContainer* Bones=nullptr;
+    FCompactPoseBoneIndex Hand(INDEX_NONE);
+    if(StoneAxe)
+    {
+        TArray<UStaticMeshComponent*> Components; Character->GetComponents(Components);
+        for(auto* Component:Components)
+            if(Component->GetFName()==TEXT("HeldAxe")) Axe=Component;
+        auto* Mesh=Character->GetMesh();
+        Animation=Cast<UHearthwardHeroAnimInstance>(Mesh->GetAnimInstance());
+        if(Axe && Axe->GetStaticMesh())
+        {
+            BladeBase=Axe->GetStaticMesh()->FindSocket(TEXT("BladeBase"));
+            BladeTip=Axe->GetStaticMesh()->FindSocket(TEXT("BladeTip"));
+        }
+        if(Animation) Bones=&Animation->GetRequiredBones();
+        if(Bones && Bones->IsValid()) Hand=Bones->MakeCompactPoseIndex(FMeshPoseBoneIndex(Mesh->GetBoneIndex(TEXT("hand_r"))));
+        if(!Axe || Axe->GetAttachParent()!=Mesh || Axe->GetAttachSocketName()!=TEXT("hand_r")
+            || !Axe->IsUsingAbsoluteScale() || Axe->IsUsingAbsoluteLocation() || Axe->IsUsingAbsoluteRotation()
+            || !Animation || !Animation->Clips.IsValidIndex(6) || !Animation->Clips[6] || Hand.GetInt()==INDEX_NONE || !BladeBase || !BladeTip)
+        {
+            UE_LOG(LogTemp,Error,TEXT("Stone axe strike requires the real held mesh, BladeBase/BladeTip sockets, attack clip and hand_r compact pose"));
+            Cancel(); return;
+        }
+    }
+    FMemMark Mark(FMemStack::Get());
+    const FTransform CurrentMeshWorld=StoneAxe ? Character->GetMesh()->GetComponentTransform() : FTransform::Identity;
+    auto SampleEdge=[&](double Time)
+    {
+        FCompactPose Pose; Pose.SetBoneContainer(Bones); Pose.ResetToRefPose();
+        FBlendedCurve Curve; Curve.InitFrom(*Bones);
+        UE::Anim::FStackAttributeContainer Attributes;
+        FAnimationPoseData Data(Pose,Curve,Attributes);
+        Animation->Clips[6]->GetAnimationPose(Data,FAnimExtractContext(HearthwardCombat::StoneAxeClipTime(Time,Animation->Clips[6]->GetPlayLength(),Move),false));
+        FCSPose<FCompactPose> ComponentPose; ComponentPose.InitPose(MoveTemp(Pose));
+        FTransform MeshWorld;
+        MeshWorld.Blend(PreviousAttackMeshWorld,CurrentMeshWorld,float((Time-From)/(To-From)));
+        const FTransform HandWorld=ComponentPose.GetComponentSpaceTransform(Hand)*MeshWorld;
+        FTransform AxeWorld=Axe->GetRelativeTransform()*HandWorld;
+        // Match SceneComponent's absolute-scale attachment rule, including hand bone scale.
+        AxeWorld.SetScale3D(Axe->GetRelativeScale3D());
+        const FVector Base=AxeWorld.TransformPosition(BladeBase->RelativeLocation);
+        const FVector Tip=AxeWorld.TransformPosition(BladeTip->RelativeLocation);
+        return TPair<FVector,FVector>(Base,Tip);
+    };
+    TPair<FVector,FVector> PreviousEdge;
+    if(StoneAxe) PreviousEdge=SampleEdge(A);
     // Subdivide the crossed window, including low-frame-rate steps; each target is charged once.
     const int32 Steps=FMath::Max(1,FMath::CeilToInt((B-A)/.015));
     for(int32 I=0;I<=Steps;++I)
     {
-        const double P=(FMath::Lerp(A,B,double(I)/Steps)-Move.Windup)/Move.Active;
-        const float Angle=WeaponKind()==TEXT("spear")?0:FMath::Lerp(-55.,55.,P);
-        const FVector FromPoint=GetOwner()->GetActorLocation()+FVector(0,0,10);
-        const FVector ToPoint=FromPoint+GetOwner()->GetActorForwardVector().RotateAngleAxis(Angle,FVector::UpVector)*Move.Reach;
+        const double Time=FMath::Lerp(A,B,double(I)/Steps);
         FCollisionQueryParams Q(SCENE_QUERY_STAT(CombatWeapon),false,GetOwner());
         for(auto* T:Targets()) if(HitIds.Contains(T->Id)) Q.AddIgnoredActor(T->GetOwner());
         FHitResult Hit;
-        if(GetWorld()->SweepSingleByChannel(Hit,FromPoint,ToPoint,FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(5),Q))
+        bool Contact=false;
+        if(StoneAxe)
+        {
+            const auto Edge=I==0?PreviousEdge:SampleEdge(Time);
+            if(I==0) Contact=GetWorld()->SweepSingleByChannel(Hit,Edge.Key,Edge.Value,FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(5),Q);
+            else
+            {
+                const int32 Segments=FMath::Max(1,FMath::CeilToInt(FVector::Dist(Edge.Key,Edge.Value)/5));
+                for(int32 Point=0;Point<=Segments;++Point)
+                {
+                    const double Fraction=double(Point)/Segments;
+                    FHitResult Candidate;
+                    if(GetWorld()->SweepSingleByChannel(Candidate,FMath::Lerp(PreviousEdge.Key,PreviousEdge.Value,Fraction),FMath::Lerp(Edge.Key,Edge.Value,Fraction),FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(5),Q)
+                        && (!Contact || Candidate.Time<Hit.Time)) { Hit=Candidate; Contact=true; }
+                }
+            }
+            PreviousEdge=Edge;
+        }
+        else
+        {
+            const double P=(Time-Move.Windup)/Move.Active;
+            const float Angle=WeaponKind()==TEXT("spear")?0:FMath::Lerp(-55.,55.,P);
+            const FVector FromPoint=GetOwner()->GetActorLocation()+FVector(0,0,10);
+            const FVector ToPoint=FromPoint+GetOwner()->GetActorForwardVector().RotateAngleAxis(Angle,FVector::UpVector)*Move.Reach;
+            Contact=GetWorld()->SweepSingleByChannel(Hit,FromPoint,ToPoint,FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(5),Q);
+        }
+        if(Contact)
         {
             auto* T=Hit.GetActor()?Hit.GetActor()->FindComponentByClass<UHearthwardCombatTargetComponent>():nullptr;
+            if(StoneAxe && !T) { StoneAxeBlocked=true; return; }
             if(T && !HitIds.Contains(T->Id))
             {
                 HitIds.Add(T->Id); const FName Part=T->HitPart(Hit);
@@ -300,6 +413,7 @@ void UHearthwardCombatComponent::TickComponent(float Delta,ELevelTick Tick,FActo
     {
         if(Bag()->EquippedInstance(TEXT("weapon"))!=ActionInstance) { Cancel(); return; }
         if(WeaponKind()==TEXT("longblade") || HitIds.IsEmpty()) Sweep(Previous,Elapsed);
+        if(auto* C=Cast<AHearthwardCharacter>(GetOwner())) PreviousAttackMeshWorld=C->GetMesh()->GetComponentTransform();
     }
     if(Action==TEXT("dodge"))
     {
@@ -384,7 +498,7 @@ void UHearthwardCombatComponent::Perception(double Delta)
         if(Engaged) { Observer->Memory.ReportingBody=NAME_None; Observer->Memory.ReportRemaining=0; continue; }
         UHearthwardCombatTargetComponent* Corpse=nullptr;
         for(auto* BodyTarget:All)
-            if(BodyTarget->Health<=0 && !BodyTarget->Memory.BroadcastRegions.Contains(Observer->Region)
+            if(!BodyTarget->Protected && BodyTarget->Health<=0 && !BodyTarget->Memory.BroadcastRegions.Contains(Observer->Region)
                 && FVector::Dist(Observer->GetOwner()->GetActorLocation(),BodyTarget->GetOwner()->GetActorLocation())<=2500
                 && HearthwardCombat::InFront(Observer->GetOwner()->GetActorForwardVector(),BodyTarget->GetOwner()->GetActorLocation()-Observer->GetOwner()->GetActorLocation())
                 && Visible(Observer->GetOwner(),BodyTarget->GetOwner())) { Corpse=BodyTarget; break; }
@@ -416,7 +530,7 @@ bool UHearthwardCombatComponent::Carry(bool Back)
     if(Body.IsValid()) { DropBody(); return true; }
     if(!Available() || Busy()) return false;
     double Best=FMath::Square(150.); UHearthwardCombatTargetComponent* Found=nullptr;
-    for(auto* T:Targets()) if(T->Health<=0 && !T->Carrier.IsValid() && Visible(GetOwner(),T->GetOwner()))
+    for(auto* T:Targets()) if(!T->Protected && T->Health<=0 && !T->Carrier.IsValid() && Visible(GetOwner(),T->GetOwner()))
     { const double D=FVector::DistSquared(GetOwner()->GetActorLocation(),T->GetOwner()->GetActorLocation()); if(D<Best) { Found=T; Best=D; } }
     if(!Found || !Start(TEXT("pickup"),.5)) return false;
     Body=Found; Found->Carrier=GetOwner(); CarryingOnBack=Back; return true;

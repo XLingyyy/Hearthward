@@ -1,0 +1,139 @@
+--- a/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
++++ b/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
+@@ -1,3 +1,4 @@
++#include "../HearthwardCharacter.h"
+ #include "../UI/HearthwardScreenWidget.h"
+ #include "../Inventory/HearthwardInventoryComponent.h"
+ #include "../Inventory/HearthwardStorageSubsystem.h"
+@@ -6,13 +7,19 @@
+ #include "../Survival/HearthwardSurvivalComponent.h"
+ #include "../Building/HearthwardBuildingComponent.h"
+ #include "../Camp/HearthwardCampSubsystem.h"
++#include "../Time/HearthwardWorldClockSubsystem.h"
+ #include "Components/BoxComponent.h"
++#include "Components/SkeletalMeshComponent.h"
++#include "Components/StaticMeshComponent.h"
+ #include "Engine/Engine.h"
+ #include "Engine/GameInstance.h"
+ #include "Engine/GameViewportClient.h"
+ #include "Engine/LocalPlayer.h"
+ #include "Engine/World.h"
++#include "Engine/StaticMesh.h"
+ #include "GameFramework/Character.h"
++#include "GameFramework/CharacterMovementComponent.h"
++#include "GameFramework/WorldSettings.h"
+ #include "GameFramework/PlayerController.h"
+ #include "Misc/AutomationTest.h"
+ #include "Widgets/SViewport.h"
+@@ -127,4 +134,111 @@
+     Cleanup();
+     return true;
+ }
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHeldAxeInstance055Test,
++    "Hearthward.Equipment055.HeldAxeFollowsCurrentInstanceAndMode",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++
++bool FHeldAxeInstance055Test::RunTest(const FString&)
++{
++    UWorld::InitializationValues Values;
++    Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
++    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
++    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
++    const auto Cleanup=[&]() { GEngine->DestroyWorldContext(World);World->DestroyWorld(false); };
++    FActorSpawnParameters Params;
++    Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
++    auto* Hero=World->SpawnActor<AHearthwardCharacter>(FVector(0,0,200),FRotator::ZeroRotator,Params);
++    auto* Controller=World->SpawnActor<APlayerController>();
++    World->AddController(Controller);Controller->Possess(Hero);
++    Hero->Gameplay->Enabled=true;
++    World->GetWorldSettings()->NotifyBeginPlay();
++    Hero->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
++    auto* Bag=Hero->FindComponentByClass<UHearthwardInventoryComponent>();
++    auto* Combat=Hero->FindComponentByClass<UHearthwardCombatComponent>();
++    auto* Clock=World->GetSubsystem<UHearthwardWorldClockSubsystem>();
++    if(!TestTrue(TEXT("Real Hero and production inventory completed normal BeginPlay"),Hero->HasActorBegunPlay() && Bag && Bag->HasBegunPlay())
++        || !TestNotNull(TEXT("Real Hero owns the production combat component"),Combat)
++        || !TestNotNull(TEXT("Timed equipment changes use the production clock"),Clock))
++    {Cleanup();return false;}
++
++    TArray<UStaticMeshComponent*> Meshes;
++    Hero->GetComponents<UStaticMeshComponent>(Meshes);
++    UStaticMeshComponent* Held=nullptr;
++    int32 HeldCount=0;
++    for(auto* Mesh:Meshes)if(Mesh->GetFName()==TEXT("HeldAxe")) {Held=Mesh;++HeldCount;}
++    if(!TestEqual(TEXT("Hero has exactly one existing HeldAxe component"),HeldCount,1)
++        || !TestNotNull(TEXT("HeldAxe uses the actual imported stone axe"),Held->GetStaticMesh()))
++    {Cleanup();return false;}
++    TestEqual(TEXT("HeldAxe retains the formal existing asset"),Held->GetStaticMesh()->GetPathName(),
++        FString(TEXT("/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe.SM_stone_bone_axe")));
++    TestEqual(TEXT("HeldAxe is attached to the real Hero mesh"),Held->GetAttachParent(),static_cast<USceneComponent*>(Hero->GetMesh()));
++    TestEqual(TEXT("HeldAxe uses the existing actual hand bone"),Held->GetAttachSocketName(),FName(TEXT("hand_r")));
++    TestTrue(TEXT("The attachment bone exists on the formal Hero"),Hero->GetMesh()->GetBoneIndex(TEXT("hand_r"))!=INDEX_NONE);
++    TestFalse(TEXT("An empty equipment slot initially hides the axe"),Held->IsVisible());
++    if(!TestTrue(TEXT("Two axe GUIDs fit in the real inventory"),Bag->TryAdd(TEXT("axe"),2)==EHearthwardInventoryResult::Success)
++        || !TestTrue(TEXT("A real bow fits in the inventory"),Bag->TryAdd(TEXT("bow"),1)==EHearthwardInventoryResult::Success)
++        || !TestTrue(TEXT("A different melee weapon fits in the inventory"),Bag->TryAdd(TEXT("shortblade"),1)==EHearthwardInventoryResult::Success))
++    {Cleanup();return false;}
++    TArray<FGuid> Axes;
++    FGuid Bow,Blade;
++    for(const auto& Item:Bag->Snapshot().Instances)
++    {
++        if(Item.Definition==TEXT("axe"))Axes.Add(Item.Id);
++        else if(Item.Definition==TEXT("bow"))Bow=Item.Id;
++        else if(Item.Definition==TEXT("shortblade"))Blade=Item.Id;
++    }
++    if(!TestEqual(TEXT("The axe definition has two distinct actual GUIDs"),Axes.Num(),2)
++        || !TestTrue(TEXT("The bow and shortblade have real instance GUIDs"),Bow.IsValid() && Blade.IsValid()))
++    {Cleanup();return false;}
++    const FGuid Equipped=Axes[0],Spare=Axes[1];
++    const auto Switch=[&](FGuid Id)
++    {
++        if(!TestTrue(TEXT("Normal gameplay starts a timed equipment instance switch"),Hero->Gameplay->EquipInstance(Id)))return false;
++        Clock->Tick(.5f);Combat->TickComponent(.5f,LEVELTICK_All,nullptr);
++        return TestFalse(TEXT("Normal production clock completes the equipment switch"),Combat->Busy());
++    };
++    if(!Switch(Equipped)) {Cleanup();return false;}
++    TestEqual(TEXT("A full axe equips its selected GUID"),Bag->EquippedInstance(TEXT("weapon")),Equipped);
++    TestEqual(TEXT("The gameplay mirror follows the actual equipped axe"),Hero->Gameplay->Equipment.FindRef(TEXT("weapon")),FName(TEXT("axe")));
++    TestEqual(TEXT("The positive control axe has full durability"),Hero->Gameplay->EquippedDurability(TEXT("weapon")),80.f);
++    TestFalse(TEXT("Equipping melee selects the actual melee mode"),Combat->RangedSelected());
++    TestTrue(TEXT("The full currently equipped axe is displayed"),Held->IsVisible());
++    TestTrue(TEXT("Wear targets a specific spare instance"),Bag->WearInstance(Spare,1));
++    TestEqual(TEXT("Spare wear leaves the currently equipped axe intact"),Bag->FindInstance(Equipped)->Durability,80.);
++    TestTrue(TEXT("Wear on a non-current GUID keeps the full current axe visible"),Held->IsVisible());
++
++    if(!Switch(Equipped)) {Cleanup();return false;}
++    TestFalse(TEXT("Selecting the equipped GUID normally unequips the weapon slot"),Bag->EquippedInstance(TEXT("weapon")).IsValid());
++    TestEqual(TEXT("Unequipping clears the normal gameplay equipment mirror"),Hero->Gameplay->Equipment.FindRef(TEXT("weapon")),FName());
++    TestTrue(TEXT("A usable spare remains owned after normal unequip"),Bag->FindInstance(Spare)->Durability>0);
++    TestFalse(TEXT("Owned non-equipped axe GUIDs do not display a held axe"),Held->IsVisible());
++    if(!Switch(Blade)) {Cleanup();return false;}
++    TestEqual(TEXT("The normal weapon slot now points to the different weapon GUID"),Bag->EquippedInstance(TEXT("weapon")),Blade);
++    TestFalse(TEXT("A different current weapon does not display the owned spare axes"),Held->IsVisible());
++
++    if(!Switch(Equipped)) {Cleanup();return false;}
++    TestTrue(TEXT("Selecting the full axe again restores its visible positive control"),Held->IsVisible());
++    Hero->Gameplay->WearEquipment(TEXT("weapon"),80);
++    TestEqual(TEXT("Production wear leaves the broken current axe GUID equipped"),Bag->EquippedInstance(TEXT("weapon")),Equipped);
++    TestEqual(TEXT("The equipped GUID has genuinely reached zero durability"),Bag->FindInstance(Equipped)->Durability,0.);
++    TestEqual(TEXT("The gameplay mirror remains correctly synchronized to the broken axe"),Hero->Gameplay->Equipment.FindRef(TEXT("weapon")),FName(TEXT("axe")));
++    TestEqual(TEXT("The equipped durability query follows the broken GUID"),Hero->Gameplay->EquippedDurability(TEXT("weapon")),0.f);
++    TestTrue(TEXT("The different spare GUID remains usable"),Bag->FindInstance(Spare)->Durability>0);
++    TestEqual(TEXT("Type inventory still owns both distinct axe instances"),Bag->GetItemCount(TEXT("axe")),2);
++    TestFalse(TEXT("A broken current axe stays hidden despite a usable same-type spare"),Held->IsVisible());
++
++    if(!Switch(Spare)) {Cleanup();return false;}
++    TestEqual(TEXT("Normal switch equips the usable spare GUID explicitly"),Bag->EquippedInstance(TEXT("weapon")),Spare);
++    TestTrue(TEXT("The usable explicitly equipped spare restores axe visibility"),Held->IsVisible());
++    if(!Switch(Bow)) {Cleanup();return false;}
++    TestEqual(TEXT("Normal ranged switch equips the actual bow GUID"),Bag->EquippedInstance(TEXT("ranged")),Bow);
++    TestTrue(TEXT("The selected ranged GUID is a usable owned bow"),Bag->FindInstance(Bow)->Durability>0);
++    TestTrue(TEXT("Normal ranged equipment switch selects combat ranged mode"),Combat->RangedSelected());
++    TestEqual(TEXT("The melee slot legitimately retains its usable axe GUID"),Bag->EquippedInstance(TEXT("weapon")),Spare);
++    TestEqual(TEXT("The legacy melee mirror remains correctly synchronized while ranged is selected"),Hero->Gameplay->Equipment.FindRef(TEXT("weapon")),FName(TEXT("axe")));
++    TestFalse(TEXT("Ranged bow selection hides the separately equipped melee axe"),Held->IsVisible());
++    Cleanup();
++    return true;
++}
+ #endif

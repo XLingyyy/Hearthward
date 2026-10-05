@@ -62,6 +62,20 @@ FName FHearthwardCampState::CampAt(FVector Position) const
     for(const auto& C:Camps) if(FVector::Dist2D(Position,C.Position)<=Radius()) return C.Id;
     return NAME_None;
 }
+int32 FHearthwardCampState::SourceIndex(const FHearthwardCampRegion& Region) const
+{
+    const FName Item=Region.Job==TEXT("forage")?FName(TEXT("wild_food")):Region.Job;
+    const int32 Yield=Region.Job==TEXT("forage")?1:2;
+    int32 Result=INDEX_NONE;
+    // Finish a partially harvested patch before switching to a newly refreshed full patch.
+    for(int32 Index=0;Index<Sources.Num();++Index)
+    {
+        const auto& Source=Sources[Index];
+        if(Source.Camp==Region.Camp && Source.Item==Item && !Source.Blocked && Source.Remaining>=Yield
+            && (Result==INDEX_NONE || Source.Remaining<Sources[Result].Remaining))Result=Index;
+    }
+    return Result;
+}
 void FHearthwardCampState::AddCamp(FName Id,FVector Position)
 {
     if(Id.IsNone() || Camps.ContainsByPredicate([&](const auto& C){return C.Id==Id;})) return;
@@ -169,10 +183,8 @@ void FHearthwardCampState::Advance(double Minutes,bool Sleeping,const FExchange&
             {
                 const FName Item=R.Job==TEXT("forage")?FName(TEXT("wild_food")):R.Job;
                 const int32 Yield=R.Job==TEXT("forage")?1:2;
-                // Finish a partially harvested patch before switching to a newly refreshed full patch.
-                FHearthwardCampSource* Source=nullptr;
-                for(auto& S:Sources) if(S.Camp==R.Camp && S.Item==Item && !S.Blocked && S.Remaining>=Yield
-                    && (!Source || S.Remaining<Source->Remaining)) Source=&S;
+                const int32 Selected=SourceIndex(R);
+                FHearthwardCampSource* Source=Selected==INDEX_NONE?nullptr:&Sources[Selected];
                 if(!Source) {R.Status=TEXT("等待可采集来源／刷新");continue;}
                 Source->Remaining-=Yield;
                 if(Source->Remaining==0 && Source->RefreshMinutes>0) Source->Due=Calendar+Source->RefreshMinutes;

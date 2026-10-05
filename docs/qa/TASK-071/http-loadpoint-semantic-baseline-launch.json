@@ -1,0 +1,42 @@
+{
+  "ok": true,
+  "operation": "runtime.launch_editor",
+  "artifacts": [
+    {
+      "type": "unreal_editor_process",
+      "path": "G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "state": "running",
+      "process_id": 45752
+    }
+  ],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [],
+  "payload": {
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+      "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Hearthward.uproject",
+      "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation",
+      "-ExecCmds=WebControl.StartServer 30010",
+      "-NoSplash",
+      "-Log",
+      "-A3GameRuntimeInputPort=30020",
+      "-ExecutePythonScript=G:\\GameFactory\\Hearthward\\.agent-local\\task051\\docs\\qa\\TASK-071\\verify_http_loadpoint_pie.py",
+      "-HearthwardSaveTestPool=3a5bc510-3123-4200-9c7e-5c98c1997a69",
+      "-Task071HTTPLabel=actual-http-loadpoint-semantic-baseline",
+      "-HearthwardAIBundlePath=G:\\GameFactory\\Hearthward\\Runtime\\LocalAI",
+      "-HearthwardAIBackend=vulkan",
+      "-HearthwardAIGpuLayers=16",
+      "-NoSound",
+      "-NoSplash",
+      "-culture=en"
+    ],
+    "cwd": "G:\\GameFactory\\Hearthward\\.agent-local\\task051",
+    "map_path": "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation",
+    "remote_control_url": "http://127.0.0.1:30010",
+    "runtime_input_host": "127.0.0.1",
+    "runtime_input_port": 30020,
+    "dry_run": false,
+    "process_id": 45752
+  }
+}

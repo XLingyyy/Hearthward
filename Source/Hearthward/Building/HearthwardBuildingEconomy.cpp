@@ -1,5 +1,6 @@
 #include "HearthwardBuildingComponent.h"
 #include "../Camp/HearthwardCampSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
@@ -71,11 +72,33 @@ bool UHearthwardBuildingComponent::DemolishFacility(FGuid Id,bool ConfirmLoss,FG
 }
 bool UHearthwardBuildingComponent::AddGift(FName Kind,FVector Position)
 {
-    if(!HearthwardData::Find(TEXT("buildings"),Kind.ToString()))return false;
-    FHitResult Ground;FCollisionQueryParams Query(SCENE_QUERY_STAT(CampGift),false,GetOwner());
-    if(!GetWorld()->LineTraceSingleByChannel(Ground,Position+FVector(0,0,1000),Position-FVector(0,0,3000),ECC_Visibility,Query))return false;
-    Position=Ground.ImpactPoint;
-    auto* Actor=SpawnBuilding(Kind,Position,0,false);if(!Actor)return false;
-    const FGuid Id=FGuid::NewGuid();Built.Add({Id,Kind,Position,0,Actor});
-    GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->RegisterFacility(Id,Kind,Position,{});return true;
+    const auto Recipe=HearthwardData::Find(TEXT("buildings"),Kind.ToString());if(!Recipe)return false;
+    auto* Economy=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+    const bool Hometown=Economy->State.CampAt(Position)==TEXT("hometown");
+    FCollisionQueryParams Query(SCENE_QUERY_STAT(CampGift),false);
+    // Try the preferred spot first, then a bounded layout within the same hometown camp.
+    const FVector Offsets[]={FVector::ZeroVector,FVector(200,0,0),FVector(-200,0,0),FVector(0,200,0),FVector(0,-200,0),
+        FVector(200,200,0),FVector(-200,200,0),FVector(200,-200,0),FVector(-200,-200,0),
+        FVector(400,0,0),FVector(-400,0,0),FVector(0,400,0),FVector(0,-400,0)};
+    for(const FVector Offset:Offsets)
+    {
+        if(!Hometown && !Offset.IsZero())break;
+        FVector Candidate=Position+Offset;
+        if(Hometown)
+        {
+            if(Economy->State.CampAt(Candidate)!=TEXT("hometown")
+                || !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Ground(Candidate,Candidate))continue;
+        }
+        else
+        {
+            FHitResult Ground;
+            if(!GetWorld()->LineTraceSingleByChannel(Ground,Candidate+FVector(0,0,1000),Candidate-FVector(0,0,3000),ECC_Visibility,Query))continue;
+            Candidate=Ground.ImpactPoint;
+        }
+        FString Reason;if(!CheckGeometry(Recipe,Candidate,0,Query,Reason))continue;
+        auto* Actor=SpawnBuilding(Kind,Candidate,0,false);if(!Actor)return false;
+        const FGuid Id=FGuid::NewGuid();Built.Add({Id,Kind,Candidate,0,Actor});
+        Economy->RegisterFacility(Id,Kind,Candidate,{});return true;
+    }
+    return false;
 }

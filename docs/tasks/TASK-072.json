@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "id": "TASK-072",
+  "title": "验证游戏与模型联合性能及独立机器兼容",
+  "status": "Active",
+  "updated_at": "2026-10-05",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-053-074-design",
+  "source_refs": [
+    "用户2026-10-03：053及之后全部已有规划先整理设计，过目后再决定施工",
+    "docs/planning/TASK-053-074/sources/Hearthward_TASK-043-076.md：原稿TASK-074，canonical减2",
+    "docs/planning/TASK-053-074/sources/Hearthward_Audit_2026-09-24.md：历史审计，仅作缺口追溯",
+    "origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+    "docs/planning/TASK-053-074/TASK-072.md：本轮完整设计草案",
+    "用户2026-10-03：审阅通过，现在直接开始施工；批准整批D01—D08及逐单设计"
+  ],
+  "dependencies": [
+    "TASK-051",
+    "TASK-065",
+    "TASK-069",
+    "TASK-070",
+    "TASK-071"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-051-input-traversal.md",
+    "docs/contracts/CT-TASK-052-clock-refresh.md",
+    "docs/contracts/CT-002-companion-command.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/TASK-053-074/",
+    "docs/tasks/TASK-072.json",
+    "docs/tasks/TASK-072.md",
+    "docs/qa/TASK-072/",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "docs/qa/TASK-068/verify_model_matrix_pie.py",
+    "Source/Hearthward/AI/HearthwardLocalAIRuntime.cpp",
+    "docs/qa/fix2/run_performance.py",
+    "Runtime/LocalAI/models/",
+    "Runtime/LocalAI/bin/",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Intermediate/Build/Win64/x64/Hearthward/Shipping/",
+    "Intermediate/Build/Win64/x64/UnrealGame/Shipping/",
+    "Plugins/A3GamePlayable/Intermediate/Build/Win64/x64/UnrealGame/Shipping/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "config/",
+    "Resources/",
+    "art_source/",
+    "scripts/",
+    "docs/design/",
+    "docs/contracts/"
+  ],
+  "acceptance": [
+    "设计审阅：完成TASK-072现状、正式操作、失败和保存、建议施工范围、最小验证与出口的完整方案",
+    "施工验收：严格按docs/planning/TASK-053-074/TASK-072.md及ACCEPTANCE执行，仅在Owner下令施工后启动",
+    "不把设计检查或旧SHA的PASS登记为本单实现、真人体验或发行通过"
+  ],
+  "non_goals": [
+    "不超出逐单批准设计，不进行暂缓真人录音，不改未登记的共享资产或存档格式",
+    "不创建Issue，不自动提交推送、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-001",
+    "T-020",
+    "T-021"
+  ],
+  "permissions": {
+    "network": "granted: official engineering research, origin inspection and authorized task-branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: Owner explicitly authorized current TASK-053-074 batch commit to codex/TASK-053-traversal",
+    "push": "granted: Owner explicitly authorized current TASK-053-074 batch push to origin/codex/TASK-053-traversal",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "设计与施工已获Owner确认，按DEPENDENCIES推进；提交推送、合并、发布权限保持原登记。",
+    "Owner和Reviewer均为XLingyyy，无Issue；不登记虚构独立审查。",
+    "完整批次施工获批；激活具体任务时登记准确写路径、专用目录和共享接口窗口。",
+    "2026-10-04：仅CPU真实C01延迟116.009s的启动/计时/线程/日志只读调查，单例不作为暖p95/联合性能；Source/Config/Runtime不改，双后端及第二机器门槛均未完成。",
+    "2026-10-04：精准共享窗口仅成功HTTP现有timings UE_LOG与QA monotonic提交至真实proposal/status复核；无新公共字段、请求参数、模型或线程改动，不把HTTP getter当UI绘制/p95。",
+    "精确施工路径已按整批批准设计登记；移除与allowed_paths自身冲突的宽泛禁止前缀，未列出的路径继续不在允许范围：Source/",
+    "2026-10-04：实际Vulkan暖请求约15秒，timings显示每次cache_n=0且预填充约5.4—6秒；关闭缓存来自013旧默认，当前批准设计无必须禁用条款。登记Runtime与既有Subsystem两缓存开关候选，仅复用完整当前消息的公共token前缀计算；不改上下文过滤、NPC记忆、epoch/serial/确认、模型、预算、16层、4线程、单并发。最终保留须实测缓存/业务/延迟，hybrid checkpoint可能不命中。",
+    "2026-10-05：旧性能入口--help在隔离树固定parents[4]导入失败真实RED。按已批准072复用既有采样入口登记准确docs/qa/fix2/run_performance.py，仅复用074现有HEARTHWARD_FACTORY_ROOT/祖先marker发现与parse_args先行；不改原采样/阈值、不创建新框架。真实联合性能接入/场景尚未执行，Cook NOT_RUN。",
+    "2026-10-05：正常Standalone公共引用smoke实际通过(host0/stop_ok/PID37560退出)，Bootstrap new经Loading false正常换正式图，动态重取Pawn/World/PC/HUD/Screen/伙伴/Save/AI，natural enabled且AI false/false/0/0。临时Saved RemoteControl.ini只21精确函数childfalse，列入HTTP200/同类未列入只读函数明确400；无Config或模型参数改动。先前startup超时/默认函数拒绝/早于Loading new/禁Settings CDO/错误+Saved数组键分别留原失败。QA072/standalone-reference-runtime-review.md；模型、CSV/五场景/Shipping/双机仍未由smoke通过。",
+    "2026-10-05：正常初始自然图Dialogue固定视角真实CPU/Vulkan各一请求+完整CSV；CPU11727帧131.247s p9915.955/1%Low53.244，ready11.013后completion120s超时MODEL_UNAVAILABLE；Vulkan5890帧61.601s p9916.502/1%Low52.302，ready13.685/完整UE40.905，正确collect wood1 S1候选、3173/69tokens。无Confirm且Source16不变，两个帧target皆false；内存余量<1GB区间已由MemoryFreeMB读证，原因不武断归因。QA072/normal-new-cpu-vulkan-runtime-review.md。host1/0分别真实保留，正常quit/stop_ok及各UE/模型自有PID退出已核。固定单场景不覆盖五场景/暖p95/首次Paint/Shipping/第二机器；下一步仅CPU局部completion日志诊断，既有模型参数不改。",
+    "2026-10-05：正常CPU单请求日志诊断1356...真实FAIL，ready9.985s/完整UE130.082s，120s completion超时；原生prompt至少102.85s至2657tokens/progress0.84，无最终decode/timings，不断言末17s。11697帧/130.125s p9915.857ms/1%Low55.829仍FAIL；MemoryFreeMB最低6.973MiB但不归因换页。Source16不变无Confirm，公共quit/stop_ok且自有UE30100/model46992已退出。见QA072/normal-new-cpu-log-diagnosis-runtime-review.md。",
+    "2026-10-05：已批准072正常打包与实测诊断内登记精准Runtime/models与bin生成窗口：只硬链接既有同G卷bundle供原Build.cs依赖，不改模型/runtime/Build.cs，未列Runtime路径仍不授权。公共UEClient build.package Development/Hearthward及独立F:/uagent-task-temp/task072-game-development-20261005 Cooked/Staged/Archive/Shader/Temp准备局部对照Editor内存开销；本项不冻结074RC、不发布、不冒称Shipping/独立机器。通常ignored Binaries/Intermediate生成保持原构建约定，无删除旧产物。",
+    "2026-10-05：公共Game Development首编译真实RED Exit6/C2039两处NightFill GetComponent；本机UE DirectionalLight.h该方法受WITH_EDITORONLY_DATA保护，ALight::GetLightComponent为运行时接口。依批准072实测打包缺陷精确登记仅Gameplay/HearthwardWorldPresentation.cpp两调用替换，不改补光光色/强度/时序。原始UTF8 UBT diagnostics单独保留compile-red.txt（UAT转发日志含存储replacement，未重复乱码读取）；尚未进入Cook/Stage。",
+    "2026-10-05：Game真实编译两处editor-only GetComponent RED后最小runtime accessor修复，构建48.83s/Cook97.52s/Stage/Pak/Archive皆Exit0，内置GGUF/CPU+Vulkan/Resources实际进入成品。FName显示Title造成QA RED，仅大小写不敏感类型casefold修复。正常成品CPU/Vulkan各gen1/3177tokens，CPU120s HTTP超时/1%Low58.170 FAIL，Vulkan正确候选/完整64.069s/1%Low61.437/p9914.051/>50ms0，本场帧PASS。未Confirm Source16不变，实际四个自有PID皆退出；完整五场景/暖p95/Shipping/双机仍待验，QA072/game-development-runtime-review.md。",
+    "2026-10-05：按已批准072 Win64 Shipping独立工程诊断登记F:/uagent-task-temp/task072-shipping-diagnostic-20261005，仅新建原先不存在的Intermediate/Build/Win64/x64/{Hearthward,UnrealGame}/Shipping junction至该F根，覆盖新SharedPCH与项目obj，不迁移删除现有Development。G余1.326GiB，新Dev PCH实测2.153GB故精确外置。Shipping SaveTestPool编译关闭，复用公开GetProjectSavedDirectory在new之前核对唯一空UserDir/Saved；不符即停，无Owner真实档写入。Shipping CSV默认0，不开Profiler、不运行model-csv、不把引用smoke当性能/双机/正式RC。",
+    "Shipping外置窗口补齐真实独立plugin路径Plugins/A3GamePlayable/Intermediate/Build/Win64/x64/UnrealGame/Shipping；新建空叶目录，不碰Development。Shipping ExecCmds编译关闭，临时session显式bAutoStartWebServer=True并RCWebControlEnable，纯引用不使用console/CSV。UBA_ROOT仅本次host指F，系统环境不改；Binaries/PDB/UHT仍在G，容量是风险，不虚构完全外置或磁盘失败。",
+    "2026-10-05：本机Shipping工程Build/Cook/Stage/Archive全部Exit0/6m12，Cook0err0warn；三个仅新建Shipping叶目录准确junction外置F，旧Development不动。内层Shipping169228800B actualPID43772 Bootstrap title→new→Natural引用smoke PASS，new前GetProjectSavedDirectory准确匹配唯一ownUserDir，Shipping TestPool/ExecCmds无信用，22exact/childfalse/AllowAnyfalse。AIgen0，无Model/CSV；stop_ok/PID退出，未normalQuit。真实本池pool.hws存在但尚未手动保存/独立继续复核。见QA072/shipping-diagnostic-runtime-review.md；未冻RC/发布/双机/全性能。",
+    "2026-10-05：同本次实际Shipping inner exe，在新建own UserDir正常new后SavePoint(true)/GetPoints1→2，独立新进程正常continue前LoadPointIndex/GetPoints核对同一唯一最新Manual节点/Created/Campaign，恢复后同Campaign及精确Restore成功状态；writer45404/read46432各host0/publicquittrue/stop_ok/Root exactPID退出。无物品marker/定位/fixture，AIgen0；完整库存及自然退出归因未验，不给性能/双机/正式RC信用。QA072/shipping-diagnostic-runtime-review.md及shipping-save-write/read-green-*。",
+    "Owner随后明确授权当前053—074施工成果提交并推送到codex/TASK-053-traversal；不代填待验结果，任务原状态保留。合并与发布权限未授予。"
+  ],
+  "design_status": "Approved",
+  "design_plan": "docs/planning/TASK-053-074/TASK-072.md",
+  "original_task_id": "TASK-074",
+  "proposed_implementation_paths": [
+    "docs/qa/TASK-072/",
+    "scripts/release/package_demo.py（仅可复现打包缺陷）",
+    "Source/Hearthward/AI/（仅实测瓶颈文件）",
+    "Source/Hearthward/（其余瓶颈须先精确登记）",
+    "Config/（实际批准性能参数）",
+    "docs/ENVIRONMENT.md",
+    "README.md"
+  ],
+  "implementation_authorization": "granted: user2026-10-03 TASK-053—074 approved design and construction",
+  "integration_worktree": "G:\\GameFactory\\Hearthward\\.agent-local\\task051",
+  "implementation_writer": "/root",
+  "generated_artifact_windows": [
+    {
+      "path": "F:/uagent-task-temp/task072-game-development-20261005/",
+      "purpose": "local Game Development engineering diagnostic: Cooked/Staged/Archive/Shader/Temp and logs, no RC freeze/publication"
+    },
+    {
+      "path": "Runtime/LocalAI/models/ and bin/",
+      "purpose": "ignored read-only hard links of prepared existing same-volume bundle, no model/runtime updates"
+    },
+    {
+      "path": "F:/uagent-task-temp/task072-shipping-diagnostic-20261005/",
+      "purpose": "approved072 local Shipping engineering build/smoke, two previously absent Intermediate Shipping junctions to F, own UserDir verified via public getter BEFORE normal new; no RC freeze/publication"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "id": "TASK-070",
+  "title": "收尾正式美术、动作、声音和氛围",
+  "status": "Active",
+  "updated_at": "2026-10-05",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-053-074-design",
+  "source_refs": [
+    "用户2026-10-03：053及之后全部已有规划先整理设计，过目后再决定施工",
+    "docs/planning/TASK-053-074/sources/Hearthward_TASK-043-076.md：原稿TASK-072，canonical减2",
+    "docs/planning/TASK-053-074/sources/Hearthward_Audit_2026-09-24.md：历史审计，仅作缺口追溯",
+    "origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+    "docs/planning/TASK-053-074/TASK-070.md：本轮完整设计草案",
+    "用户2026-10-03：审阅通过，现在直接开始施工；批准整批D01—D08及逐单设计"
+  ],
+  "dependencies": [
+    "TASK-042",
+    "TASK-049",
+    "TASK-051",
+    "TASK-065",
+    "TASK-066"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-004-presentation-gameplay.md",
+    "docs/contracts/CT-TASK-051-animal-motion.md",
+    "docs/contracts/CT-TASK-051-input-traversal.md",
+    "docs/contracts/CT-TASK-049-campaign.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/TASK-053-074/",
+    "docs/tasks/TASK-070.json",
+    "docs/tasks/TASK-070.md",
+    "docs/qa/TASK-070/",
+    "docs/assets/TASK-070/",
+    "Content/Hearthward/Assets/TASK-070/Equipment/spear/SM_Spear.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/spear/tripo_mat_29322e3e.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/spear/Color.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/spear/Normal.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/spear/Roughness.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/spear/Metallic.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/shortblade/SM_ShortBlade.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/shortblade/tripo_mat_8dd7cafa.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/shortblade/Color.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/shortblade/Normal.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/shortblade/Roughness.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/shortblade/Metallic.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/spear/M_Spear_PBR.uasset",
+    "Content/Hearthward/Assets/TASK-070/Equipment/shortblade/M_ShortBlade_PBR.uasset"
+  ],
+  "forbidden_paths": [
+    "Source/",
+    "Config/",
+    "config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "scripts/",
+    "docs/design/",
+    "docs/contracts/"
+  ],
+  "acceptance": [
+    "设计审阅：完成TASK-070现状、正式操作、失败和保存、建议施工范围、最小验证与出口的完整方案",
+    "施工验收：严格按docs/planning/TASK-053-074/TASK-070.md及ACCEPTANCE执行，仅在Owner下令施工后启动",
+    "不把设计检查或旧SHA的PASS登记为本单实现、真人体验或发行通过"
+  ],
+  "non_goals": [
+    "不超出逐单批准设计，不进行暂缓真人录音，不改未登记的共享资产或存档格式",
+    "不创建Issue，不自动提交推送、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-021"
+  ],
+  "permissions": {
+    "network": "granted: official engineering research, origin inspection and authorized task-branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: Owner explicitly authorized current TASK-053-074 batch commit to codex/TASK-053-traversal",
+    "push": "granted: Owner explicitly authorized current TASK-053-074 batch push to origin/codex/TASK-053-traversal",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "设计与施工已获Owner确认，按DEPENDENCIES推进；提交推送、合并、发布权限保持原登记。",
+    "Owner和Reviewer均为XLingyyy，无Issue；不登记虚构独立审查。",
+    "完整批次施工获批；激活具体任务时登记准确写路径、专用目录和共享接口窗口。",
+    "2026-10-04：仅实际资产/动作/制作源/许可与TEMP缺口审计，暂不写Source/Content；070方向沿批准D04，录音继续暂缓，视觉与连续动作验收独立。",
+    "2026-10-04：按批准D04与055装备设计，仅登记既有真实源长矛/短刀两件首批样板的12个准确包（mesh/material/各4贴图），根持锁并公开UEClient导入。来源ID、原meta和制作源只读；未知许可保留未核实，不调付费API、不作批量TEMP替换、不改正式绑定或主地图，Owner三组样板视觉门仍未完成。未列出的Content继续不在allowed_paths。",
+    "2026-10-04：真实只读probe确认两件FBX被导入为Phong MIC，Metallic未接入且Roughness/Metallic为sRGB；仅追加两个专用本地M_Spear_PBR/M_ShortBlade_PBR准确包，按真实四贴图修复原样板，保留旧MIC，不修改共享/Engine parent。两件已锁mesh允许移除实际自动生成凸包；持握组件NoCollision和Owner风格仍独立未验。",
+    "2026-10-05：按已批准D04补人物、建筑/营地、地表/故乡三组概念样图，准确窗口仅QA070/style-review；使用平台内置imagegen，无外部收费API或新依赖，不修改正式骨架/布局/Content。记录提示、来源与样图局限，Owner视觉验收及可用资产许可保持独立。",
+    "Owner随后明确授权当前053—074施工成果提交并推送到codex/TASK-053-traversal；不代填待验结果，任务原状态保留。合并与发布权限未授予。"
+  ],
+  "design_status": "Approved",
+  "design_plan": "docs/planning/TASK-053-074/TASK-070.md",
+  "original_task_id": "TASK-072",
+  "proposed_implementation_paths": [
+    "art_source/TASK-070/",
+    "docs/assets/TASK-070/",
+    "Content/（按已确认逐件资产／地图包登记，禁止笼统写全目录）",
+    "Resources/UI/（批准图标／插画）",
+    "Resources/Data/animal_motion.json（缺失动作绑定）",
+    "Source/Hearthward/Animation/（仅正式动作时序）",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "docs/qa/TASK-070/"
+  ],
+  "implementation_authorization": "granted: user2026-10-03 TASK-053—074 approved design and construction",
+  "integration_worktree": "G:\\GameFactory\\Hearthward\\.agent-local\\task051",
+  "implementation_writer": "/root/farm062_resume"
+}

@@ -1,0 +1,151 @@
+--- a/Source/Hearthward/Tests/CampLaborPresentationTests.cpp
++++ b/Source/Hearthward/Tests/CampLaborPresentationTests.cpp
+@@ -10,6 +10,7 @@
+ #include "../Survival/HearthwardSurvivalComponent.h"
+ #include "../Actions/HearthwardTimedActionComponent.h"
+ #include "../Building/HearthwardBuildingComponent.h"
++#include "../Experience/HearthwardPresentationComponent.h"
+ #include "Components/BoxComponent.h"
+ #include "Engine/Engine.h"
+ #include "Engine/GameInstance.h"
+@@ -19,6 +20,14 @@
+ #include "GameFramework/Character.h"
+ #include "GameFramework/PlayerController.h"
+ #include "Misc/AutomationTest.h"
++#include "Misc/App.h"
++#include "Misc/CommandLine.h"
++#include "Misc/FileHelper.h"
++#include "Misc/Paths.h"
++#include "Misc/Parse.h"
++#include "HAL/FileManager.h"
++#include "Kismet/KismetRenderingLibrary.h"
++#include "Slate/WidgetRenderer.h"
+ #include "Widgets/SViewport.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -59,6 +68,8 @@
+     Player->AddInstanceComponent(Timer);Timer->RegisterComponent();
+     auto* Building=NewObject<UHearthwardBuildingComponent>(Player);
+     Player->AddInstanceComponent(Building);Building->RegisterComponent();
++    auto* Presentation=NewObject<UHearthwardPresentationComponent>(Player);
++    Player->AddInstanceComponent(Presentation);Presentation->RegisterComponent();
+ 
+     auto* Floor=World->SpawnActor<AActor>();Floor->Tags.Add(TEXT("Hearthward.NatureGround"));
+     auto* FloorBox=NewObject<UBoxComponent>(Floor);
+@@ -123,19 +134,40 @@
+         Cleanup();return false;
+     }
+     Screen->SetIsFocusable(true);Screen->TakeWidget();Screen->AddToViewport();
++    const auto Capture=[&](const TCHAR* Label)
++    {
++        if(!FParse::Param(FCommandLine::Get(),TEXT("Camp059Render"))
++            || FParse::Param(FCommandLine::Get(),TEXT("NullRHI")) || !FApp::CanEverRender())return;
++        const FString Directory=FPaths::ProjectSavedDir()/TEXT("Task059/native-widget-offscreen");
++        IFileManager::Get().MakeDirectory(*Directory,true);
++        const FString Name=FString(Label)+TEXT(".png");
++        FWidgetRenderer Renderer(true);
++        auto* Target=UKismetRenderingLibrary::CreateRenderTarget2D(World,1696,954,RTF_RGBA8,FLinearColor::Black);
++        if(!Target){AddError(TEXT("Native camp widget offscreen render target unavailable"));return;}
++        Renderer.DrawWidget(Target,Screen->TakeWidget(),FVector2D(1696,954),0,false);
++        UKismetRenderingLibrary::ExportRenderTarget(World,Target,Directory,Name);
++        UKismetRenderingLibrary::ReleaseRenderTarget2D(Target);
++        if(IFileManager::Get().FileSize(*(Directory/Name))<=0)AddError(TEXT("Native camp widget offscreen PNG export failed: ")+Name);
++        FFileHelper::SaveStringToFile(Screen->DescribeLayout(),*(Directory/(FString(Label)+TEXT("-layout.json"))),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
++        const FString Method=TEXT("{\"method\":\"native widget offscreen FWidgetRenderer DrawWidget to RGBA8 render target; explicit C++ fixture; no PIE or input acceptance\",\"width\":1696,\"height\":954}");
++        FFileHelper::SaveStringToFile(Method,*(Directory/TEXT("method.json")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
++    };
+     Screen->OpenPage(TEXT("camp"));
+     TestEqual(TEXT("The normal safe camp entry opens the management screen"),Screen->GetPage(),FName(TEXT("camp")));
+     TestTrue(TEXT("Open the real labor tab"),Screen->ExecuteAction(TEXT("camp.tab:workers")));
+     TestTrue(TEXT("Select the actual wood region"),Screen->ExecuteAction(TEXT("camp.regionNext")));
+     TestTrue(TEXT("The UI separates five occupied bodies from seven effective workers"),Screen->DescribeLayout().Contains(TEXT("身体岗位 5 / 5 · 有效工效 7.0")));
++    Capture(TEXT("workers-normal-7-0"));
+     Survival->State.SevereDue=1000;Camp->Advance(0,false);
+     TestTrue(TEXT("Refresh the labor view after actual severe-hunger state changes"),Screen->ExecuteAction(TEXT("camp.tab:workers")));
+     TestEqual(TEXT("The real severe-hunger efficiency is reduced"),Camp->State.Regions[1].PlayerEfficiency,2.1);
+     TestTrue(TEXT("The UI displays reduced efficiency without releasing a body slot"),Screen->DescribeLayout().Contains(TEXT("身体岗位 5 / 5 · 有效工效 6.1")));
++    Capture(TEXT("workers-severe-hunger-6-1"));
+     Survival->State.SevereDue=-1;Player->SetActorLocation(WoodSource+FVector(500,0,90));Camp->Advance(0,false);
+     TestTrue(TEXT("Refresh the labor view after the player leaves its workplace"),Screen->ExecuteAction(TEXT("camp.tab:workers")));
+     TestEqual(TEXT("The real off-site player provides no labor"),Camp->State.Regions[1].PlayerEfficiency,0.);
+     TestTrue(TEXT("The UI keeps the assigned body slot while showing its absent contribution"),Screen->DescribeLayout().Contains(TEXT("身体岗位 5 / 5 · 有效工效 4.0")));
++    Capture(TEXT("workers-offsite-4-0"));
+ 
+     auto* Threat=World->SpawnActor<AActor>();
+     auto* ThreatTarget=NewObject<UHearthwardCombatTargetComponent>(Threat);
+--- a/Source/Hearthward/Tests/MapGuidanceTests.cpp
++++ b/Source/Hearthward/Tests/MapGuidanceTests.cpp
+@@ -7,6 +7,7 @@
+ #include "../Survival/HearthwardSurvivalComponent.h"
+ #include "../Actions/HearthwardTimedActionComponent.h"
+ #include "../Building/HearthwardBuildingComponent.h"
++#include "../Experience/HearthwardPresentationComponent.h"
+ #include "Engine/Engine.h"
+ #include "Engine/GameInstance.h"
+ #include "Engine/GameViewportClient.h"
+@@ -15,7 +16,15 @@
+ #include "GameFramework/Character.h"
+ #include "GameFramework/PlayerController.h"
+ #include "Misc/AutomationTest.h"
++#include "Misc/App.h"
++#include "Misc/CommandLine.h"
++#include "Misc/FileHelper.h"
++#include "Misc/Paths.h"
++#include "Misc/Parse.h"
++#include "HAL/FileManager.h"
++#include "Kismet/KismetRenderingLibrary.h"
+ #include "Serialization/JsonSerializer.h"
++#include "Slate/WidgetRenderer.h"
+ #include "Widgets/SViewport.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -56,6 +65,8 @@
+     Player->AddInstanceComponent(Timer);Timer->RegisterComponent();
+     auto* Building=NewObject<UHearthwardBuildingComponent>(Player);
+     Player->AddInstanceComponent(Building);Building->RegisterComponent();
++    auto* Presentation=NewObject<UHearthwardPresentationComponent>(Player);
++    Player->AddInstanceComponent(Presentation);Presentation->RegisterComponent();
+     auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Phase=TEXT("occupied");
+     Gameplay->TickComponent(.3f,LEVELTICK_All,nullptr);
+     TestEqual(TEXT("Exploration samples come from the real gameplay tick"),Gameplay->Explored.Num(),1);
+@@ -67,6 +78,24 @@
+         Cleanup();return false;
+     }
+     Screen->SetIsFocusable(true);Screen->TakeWidget();Screen->AddToViewport();
++    const auto Capture=[&](const TCHAR* Label)
++    {
++        if(!FParse::Param(FCommandLine::Get(),TEXT("Map064Render"))
++            || FParse::Param(FCommandLine::Get(),TEXT("NullRHI")) || !FApp::CanEverRender())return;
++        const FString Directory=FPaths::ProjectSavedDir()/TEXT("Task064/native-widget-offscreen");
++        IFileManager::Get().MakeDirectory(*Directory,true);
++        const FString Name=FString(Label)+TEXT(".png");
++        FWidgetRenderer Renderer(true);
++        auto* Target=UKismetRenderingLibrary::CreateRenderTarget2D(World,1696,954,RTF_RGBA8,FLinearColor::Black);
++        if(!Target){AddError(TEXT("Native map widget offscreen render target unavailable"));return;}
++        Renderer.DrawWidget(Target,Screen->TakeWidget(),FVector2D(1696,954),0,false);
++        UKismetRenderingLibrary::ExportRenderTarget(World,Target,Directory,Name);
++        UKismetRenderingLibrary::ReleaseRenderTarget2D(Target);
++        if(IFileManager::Get().FileSize(*(Directory/Name))<=0)AddError(TEXT("Native map widget offscreen PNG export failed: ")+Name);
++        FFileHelper::SaveStringToFile(Screen->DescribeLayout(),*(Directory/(FString(Label)+TEXT("-layout.json"))),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
++        const FString Method=TEXT("{\"method\":\"native widget offscreen FWidgetRenderer DrawWidget to RGBA8 render target; explicit C++ fixture; no PIE or input acceptance\",\"width\":1696,\"height\":954}");
++        FFileHelper::SaveStringToFile(Method,*(Directory/TEXT("method.json")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
++    };
+     Screen->OpenPage(TEXT("map"));
+     if(!TestEqual(TEXT("Normal map entry is available"),Screen->GetPage(),FName(TEXT("map"))))
+     {
+@@ -118,6 +147,7 @@
+     const FVector2D Outside=Gameplay->Explored[0]+FVector2D(15000,5000);
+     TestTrue(TEXT("The boundary probe is outside the approved radius"),FVector2D::Distance(Outside,Gameplay->Explored[0])>Radius);
+     TestTrue(TEXT("A point beyond one hundred meters remains behind real map fog"),FogAt(Outside));
++    Capture(TEXT("map-initial-exploration"));
+ 
+     Gameplay->Claimed.Add(TEXT("main_04"));
+     TestTrue(TEXT("The existing fifth-main-quest entry is genuinely available"),Gameplay->QuestAvailable(TEXT("main_05")));
+@@ -161,6 +191,7 @@
+     TestFalse(TEXT("The unvisited ford does not expose a location marker"),HasAction(TEXT("location:route_ford")));
+     TestFalse(TEXT("Tracking the quest does not expose its unvisited exact objective position"),Components.ContainsByPredicate([](const auto& Value)
+     { FString Asset;return Value->AsObject()->TryGetStringField(TEXT("asset"),Asset) && Asset==TEXT("mapQuestIcon"); }));
++    Capture(TEXT("map-trace-explored-boundary"));
+ 
+     Screen->RemoveFromParent();Cleanup();return true;
+ }

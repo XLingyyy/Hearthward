@@ -282,8 +282,20 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action==TEXT("back"))
     { return ExecuteAction(TEXT("page:")+(ReturnPages.IsEmpty()?(Page==TEXT("title")?FString(TEXT("title")):FString(TEXT("hud"))):ReturnPages.Last().ToString())); }
     if(Action.StartsWith(TEXT("ask:"))) { ConfirmAction=Action.Mid(4); Refresh(); return true; }
-    if(Action==TEXT("cancel")) { ConfirmAction.Reset(); Refresh(); return true; }
-    if(Action==TEXT("confirm")) { const FString Confirmed=ConfirmAction; ConfirmAction.Reset(); return ExecuteAction(Confirmed); }
+    if(Action==TEXT("cancel")) { ConfirmAction.Reset();GiveUpEpoch.Invalidate();Refresh();return true; }
+    if(Action==TEXT("confirm"))
+    {
+        const FString Confirmed=ConfirmAction;ConfirmAction.Reset();
+        if(Confirmed==TEXT("giveUp"))
+        {
+            auto* S=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
+            const bool Valid=Page==TEXT("pause") && GiveUpEpoch==Store->GetTimelineEpoch() && S->State.Life==EHearthwardLife::Downed;
+            GiveUpEpoch.Invalidate();
+            if(!Valid){Message=TEXT("倒地状态已改变，放弃确认已失效");Refresh();return false;}
+            S->GiveUp();OpenPage(TEXT("save"));return true;
+        }
+        return ExecuteAction(Confirmed);
+    }
     if(Action==TEXT("resetAgreements"))
     {
         if(Page!=TEXT("memory"))return false;
@@ -370,7 +382,13 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         GConfig->SetBool(TEXT("Hearthward.Survival"),TEXT("MenuPause"),MenuPause,GGameUserSettingsIni);
         GConfig->Flush(false,GGameUserSettingsIni);
     }
-    else if(Action==TEXT("giveUp")) { GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>()->GiveUp(); OpenPage(TEXT("save")); }
+    else if(Action==TEXT("giveUp"))
+    {
+        const auto* S=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
+        if(Page!=TEXT("pause") || S->State.Life!=EHearthwardLife::Downed)return false;
+        GiveUpEpoch=Store->GetTimelineEpoch();ConfirmAction=TEXT("giveUp");
+        ConfirmMessage=TEXT("放弃后本次进度结束，需要载入保存节点才能继续。确认放弃救援？");Refresh();return true;
+    }
     else if(Action==TEXT("cancelSurvival")) { GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction(); }
     else if(Action==TEXT("autoPermission"))
     {
@@ -390,6 +408,16 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action==TEXT("repair"))
     {
         SelectedRepair=SelectedItem;
+        const auto* Bag=Inventory();
+        const auto* Selected=EquipmentOwner==TEXT("player")?Bag->FindInstance(EquipmentSelection):nullptr;
+        if(!Selected || Selected->Definition!=SelectedItem)
+        {
+            EquipmentSelection=Bag->FirstInstance(SelectedItem);
+            for(const auto& E:Bag->Snapshot().Equipped)
+                if(const auto* I=Bag->FindInstance(E.Value);I && I->Definition==SelectedItem)
+                {EquipmentSelection=I->Id;break;}
+        }
+        EquipmentOwner=TEXT("player");EquipmentStack=NAME_None;
         OpenPage(TEXT("repairing")); Success=Page==TEXT("equipment");
     }
     else if(Action.StartsWith(TEXT("quick:")))

@@ -22,6 +22,8 @@ public:
     FString InteractionText;
     UPROPERTY() TObjectPtr<class UHearthwardCombatTargetComponent> Combat;
     UPROPERTY() TObjectPtr<class UHearthwardAnimalMotionComponent> AnimalMotion;
+    FName MotionIntent=TEXT("idle"),MotionThreat;
+    int32 AttackSequence=0;
     void Configure(FGuid Entity,FName Type,FName Def);
     void Refresh();
     virtual void Tick(float Delta) override;

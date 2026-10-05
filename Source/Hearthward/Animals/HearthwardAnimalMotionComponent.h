@@ -56,13 +56,14 @@ private:
     TSet<FName> Looping;
     TMap<FName,float> ReferenceSpeeds;
     FRandomStream Random;
-    FName Idle,Walk,Run,Start,Stop,Alert,Hit,Collapse,Corpse;
-    enum class EPhase : uint8 {Idle,Walking,Natural,Alert,Starting,Fleeing,Stopping,Hit,Falling,Dead};
+    FName Idle,Walk,Run,Start,Stop,Alert,Hit,Collapse,Corpse,Attack;
+    enum class EPhase : uint8 {Idle,Walking,Natural,Alert,Starting,Fleeing,Stopping,Hit,Falling,Dead,Attacking};
     EPhase Phase=EPhase::Idle;
     FVector Home=FVector::ZeroVector,Goal=FVector::ZeroVector,Previous=FVector::ZeroVector,ThreatPosition=FVector::ZeroVector;
     FBox Region=FBox(EForceInit::ForceInit),SafeBounds=FBox(EForceInit::ForceInit);
     float Remaining=0,PhaseDuration=0,CalmTime=0,DetectRadius=800,WalkSpeed=90,RunSpeed=450,RootHeight=0,PreviousHealth=0,ReplanTime=0,BodyRadius=0;
     int32 CycleIndex=0;
+    int32 NatureAttackSequence=0;
     bool Demo=false,WasExternal=false;
     void SetClip(FName Clip,float Seconds=0);
     void Enter(EPhase Next,FName Clip,float Seconds=0);
@@ -73,5 +74,6 @@ private:
     void Move(float Delta,float Speed);
     bool Ground(FVector P,FVector& Result) const;
     AActor* NearestThreat(float& Distance) const;
+    void ObserveNature(const class AHearthwardNatureActor* Nature,float Delta);
     void AlignMesh();
 };

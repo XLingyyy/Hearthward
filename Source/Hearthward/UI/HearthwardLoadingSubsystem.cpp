@@ -92,7 +92,7 @@ void UHearthwardLoadingSubsystem::BeginLoading()
         PreviousIgnoreInput=V->IgnoreInput();V->SetIgnoreInput(true);
         V->AddViewportWidgetContent(Screen.ToSharedRef(),10000);Viewport=V;
     }
-    UE_LOG(LogTemp,Log,TEXT("Hearthward loading begin"));
+    UE_LOG(LogTemp,Log,TEXT("Hearthward loading begin (restoreIgnoreInput=%d)"),PreviousIgnoreInput);
 }
 void UHearthwardLoadingSubsystem::BeforeMap(const FString& Map)
 {
@@ -117,6 +117,15 @@ void UHearthwardLoadingSubsystem::FinishSession(bool Success)
 {
     AwaitingSession=false;
     if(!Success)Hide();
+}
+void UHearthwardLoadingSubsystem::InputModeChanged()
+{
+    if(Viewport.IsValid())
+    {
+        // Keep the page's latest mode for Hide while blocking gameplay during loading.
+        PreviousIgnoreInput=Viewport->IgnoreInput();
+        Viewport->SetIgnoreInput(true);
+    }
 }
 bool UHearthwardLoadingSubsystem::Tick(float Delta)
 {
@@ -152,7 +161,8 @@ void UHearthwardLoadingSubsystem::Hide()
         HeldMovement->SetMovementMode(EMovementMode(PreviousMovementMode),PreviousCustomMode);
     HeldMovement.Reset();
     if(Viewport.IsValid())
-    {if(Screen)Viewport->RemoveViewportWidgetContent(Screen.ToSharedRef());Viewport->SetIgnoreInput(PreviousIgnoreInput);}
+    {UE_LOG(LogTemp,Log,TEXT("Hearthward loading input restore (before=%d, saved=%d)"),Viewport->IgnoreInput(),PreviousIgnoreInput);
+     if(Screen)Viewport->RemoveViewportWidgetContent(Screen.ToSharedRef());Viewport->SetIgnoreInput(PreviousIgnoreInput);}
     Viewport.Reset();Screen.Reset();
     if(Loading)UE_LOG(LogTemp,Log,TEXT("Hearthward loading end (%.2f s)"),FPlatformTime::Seconds()-StartedAt);
     Loading=false;AwaitingSession=false;

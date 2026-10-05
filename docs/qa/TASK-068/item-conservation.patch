@@ -1,0 +1,47 @@
+--- a/docs/qa/TASK-068/verify_model_matrix_pie.py
++++ b/docs/qa/TASK-068/verify_model_matrix_pie.py
+@@ -94,6 +94,17 @@
+ def conserved(before, after):
+     return all(sum(count(before, c, item) for c in ('camp', 'brother', 'player', 'source')) ==
+                sum(count(after, c, item) for c in ('camp', 'brother', 'player', 'source')) for item in items)
++
++
++def unearned_items(case, before, after):
++    allowed = {}
++    if case.get('intent') == 'craft':
++        allowed['arrow' if case['item'] == 'arrows' else 'rope'] = case['quantity']*(4 if case['item'] == 'arrows' else 1)
++    extra = {}
++    for item in items:
++        delta = sum(count(after, c, item)-count(before, c, item) for c in ('camp', 'brother', 'player', 'source'))
++        if delta > allowed.get(item, 0): extra[item] = delta-allowed.get(item, 0)
++    return extra
+ 
+ 
+ def same_world(before, after):
+@@ -361,8 +372,12 @@
+                     row['belief'] = {'known': belief.known, 'value': belief.value, 'source': str(belief.source)}
+                     row['e2e_pass'] = row['e2e_pass'] and belief.known and belief.value == case['quantity'] and 'player_report' in str(belief.source).lower()
+             row['e2e_pass'] = bool(row['e2e_pass'] and row['pipeline_pass'])
++            row['unearned_items'] = unearned_items(case, before, authority())
+         except Exception:
+             row['error'] = traceback.format_exc(); row['e2e_pass'] = False
++            if 'before' in row and 'brother' in st:
++                row['after_error'] = authority()
++                row['unearned_items'] = unearned_items(case, row['before'], row['after_error'])
+             if 'ai' in st: st['ai'].cancel_pending()
+         append('cases', row)
+     if case_limit == 60:
+@@ -384,11 +399,13 @@
+                'guarded_count': len(guarded), 'guarded_raw_correct': sum(x['raw_pass'] for x in guarded),
+                'clear_count': len(clear_cases), 'clear_e2e_correct': sum(x['e2e_pass'] for x in clear_cases),
+                'execution_count': len(executable), 'execution_correct': sum(x['execution_pass'] for x in executable),
++               'unearned_item_cases': sum(bool(x.get('unearned_items')) for x in cases),
+                'boundary_count': len(report['boundaries']), 'boundary_correct': sum(x['passed'] for x in report['boundaries'])}
+     report['summary'] = summary
+     report['ok'] = bool(not error and summary['case_count'] == 60 and summary['raw_correct'] >= 54
+                         and summary['guarded_raw_correct'] >= 18 and summary['clear_e2e_correct'] >= 36
+                         and summary['execution_count'] == 30 and summary['execution_correct'] >= 29
++                        and summary['unearned_item_cases'] == 0
+                         and summary['boundary_count'] == 20 and summary['boundary_correct'] == 20)
+     (out/'results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+     unreal.unregister_slate_post_tick_callback(handle)

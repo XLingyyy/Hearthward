@@ -7,6 +7,7 @@
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "EngineUtils.h"
 using namespace HearthwardData;
 FName UHearthwardCampaignSubsystem::Nearest() const
@@ -39,6 +40,11 @@ FString UHearthwardCampaignSubsystem::Prompt() const
     if(Id.ToString().StartsWith(TEXT("rescued_")))return TEXT("E 与族人交谈：跟随 / 原地等待");
     const auto R=HearthwardCampaign::Find(TEXT("locations"),Id);
     FString Status=State.Phase==TEXT("prologue")?TEXT("夜袭 · 带弟弟撤离") : State.Victory?TEXT("故乡已夺回") : FString::Printf(TEXT("故乡控制 %d/4"),State.Flags.Num());
+    if(State.Phase!=TEXT("prologue") && !State.Victory && State.Total()>0)
+    {
+        const double Progress=70.0*State.Cleared()/State.Total()+30.0*State.Flags.Num()/4;
+        Status+=FString::Printf(TEXT(" · 总进度 %.1f%%"),Progress);
+    }
     if(State.ShowRemaining())Status+=FString::Printf(TEXT(" · 剩余驻军 %d"),State.Total()-State.Cleared());
     return Status+TEXT("\nE ")+Text(R,TEXT("name"));
 }
@@ -84,7 +90,8 @@ bool UHearthwardCampaignSubsystem::Use(FName Id)
         const FName Zone(*Id.ToString().RightChop(4));
         if(State.Flags.Contains(Zone)){Feedback=TEXT("此区已控制");return true;}
         if(!State.ZoneClear(Zone) || ZoneOccupied(Zone)){Feedback=TEXT("此区仍有敌军，暂时不能占旗");return false;}
-        PendingFlag=Zone;ActionPosition=Player()->GetActorLocation();ActionHealth=G->Health;FlagRemaining=5;ActionEpoch=Epoch;return true;
+        PendingFlag=Zone;ActionPosition=Player()->GetActorLocation();ActionHealth=G->Health;FlagRemaining=5;ActionEpoch=Epoch;
+        FlagCompleteAt=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds+5;return true;
     }
     if(Id==TEXT("route_ford") || Id==TEXT("camp") || Id==TEXT("hometown"))
     {G->Activated.Add(Id);G->Discovered.Add(Id);Feedback=TEXT("路标已激活，可从地图选择传送");return true;}

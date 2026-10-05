@@ -1,0 +1,58 @@
+--- a/Source/Hearthward/Tests/CraftingPresentationTests.cpp
++++ b/Source/Hearthward/Tests/CraftingPresentationTests.cpp
+@@ -224,6 +224,55 @@
+         TestEqual(*(Label+TEXT(" deposits one real product into camp")),Storage->GetItemCount(TEXT("rope")),1);
+         TestEqual(*(Label+TEXT(" leaves no crafted product in the brother bag")),Brother->Bag->GetItemCount(TEXT("rope")),0);
+     }
++
++    const auto Cost=HearthwardWorkshop::Materials(TEXT("craft"),TEXT("firepot"),1);
++    TArray<FName> CostItems;Cost.GetKeys(CostItems);
++    if(!TestTrue(TEXT("Recovery fixture uses a real known multi-material workbench recipe"),
++        CostItems.Num()>1 && Gameplay->KnowsRecipe(TEXT("firepot"))))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    TMap<FName,int32> PreviousStock;
++    for(const FName Item:CostItems)
++    {
++        if(Storage->GetItemCount(Item)>0)PreviousStock.Add(Item,Storage->GetItemCount(Item));
++        const int32 Count=Brother->Bag->GetItemCount(Item);
++        if(Count>0 && !TestEqual(TEXT("Recovery fixture clears held inputs through inventory API"),
++            Brother->Bag->TryRemove(Item,Count),EHearthwardInventoryResult::Success))
++        {Screen->RemoveFromParent();Cleanup();return false;}
++    }
++    if(Storage->GetItemCount(TEXT("firepot"))>0)PreviousStock.Add(TEXT("firepot"),Storage->GetItemCount(TEXT("firepot")));
++    if(!TestTrue(TEXT("Recovery fixture gives camp exactly one real recipe"),Storage->Adjust(PreviousStock,Cost)))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    // Iterate the actual material order: the first is free; another operation reserves all later inputs.
++    TMap<FName,int32> ReservedInputs;
++    for(int32 Index=1;Index<CostItems.Num();++Index)ReservedInputs.Add(CostItems[Index],Cost.FindChecked(CostItems[Index]));
++    const FGuid OtherOperation=FGuid::NewGuid();
++    if(!TestTrue(TEXT("Another real operation reserves later recipe inputs"),Storage->Reserve(OtherOperation,ReservedInputs)))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    FHearthwardAgentGoal RecoveryGoal;RecoveryGoal.Intent=TEXT("craft");RecoveryGoal.Item=TEXT("firepot");RecoveryGoal.Quantity=1;
++    RecoveryGoal.QuantityMode=TEXT("batches");RecoveryGoal.SourceRef=TEXT("camp");RecoveryGoal.Station=Workbench->Id;
++    if(!TestTrue(TEXT("Real camp recovery candidate stages"),AI->SetStructuredGoal(Player,Brother,RecoveryGoal))
++        || !TestTrue(TEXT("Real camp recovery candidate confirms"),AI->ConfirmCandidate(AI->GetCandidateId())))
++    {Storage->Release(OtherOperation);Screen->RemoveFromParent();Cleanup();return false;}
++    for(int32 Step=0;Step<16;++Step)Brother->Tick(.01f);
++    TestTrue(TEXT("Reserved inputs block normal execution safely"),Brother->GetPhase()==EHearthwardCompanionPhase::WaitingAtCamp
++        || Brother->GetPhase()==EHearthwardCompanionPhase::HoldingSafely);
++    TestEqual(TEXT("Blocked production has not created its product"),Storage->GetItemCount(TEXT("firepot")),0);
++    for(const auto& Reserved:ReservedInputs)
++        TestEqual(TEXT("Another operation's input remains in camp"),Storage->GetItemCount(Reserved.Key),Reserved.Value);
++    AddInfo(FString::Printf(TEXT("Material recovery before release: first=%s camp=%d held=%d phase=%s"),
++        *CostItems[0].ToString(),Storage->GetItemCount(CostItems[0]),Brother->Bag->GetItemCount(CostItems[0]),
++        *UEnum::GetValueAsString(Brother->GetPhase())));
++    Storage->Release(OtherOperation);
++    if(!TestTrue(TEXT("Public resume accepts the same command after reservation release"),Brother->ResumeBlocked(Player)))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    for(int32 Step=0;Step<16 && Brother->GetPhase()!=EHearthwardCompanionPhase::Completed;++Step)Brother->Tick(.01f);
++    TestTrue(TEXT("Released recipe resumes to actual completion"),Brother->GetPhase()==EHearthwardCompanionPhase::Completed);
++    TestEqual(TEXT("Recovered production delivers exactly one product"),Storage->GetItemCount(TEXT("firepot")),1);
++    for(const auto& Input:Cost)
++    {
++        TestEqual(TEXT("Recovered production consumes exactly the authorized camp input"),Storage->GetItemCount(Input.Key),0);
++        TestEqual(TEXT("Recovered production leaves no duplicate held recipe input"),Brother->Bag->GetItemCount(Input.Key),0);
++    }
+     Screen->RemoveFromParent();Cleanup();return true;
+ }
+ 

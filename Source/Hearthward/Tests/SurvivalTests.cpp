@@ -4,6 +4,7 @@
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
+#include "../Interaction/HearthwardFurnitureInteractionComponent.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
 #include "Engine/World.h"
 #include "Engine/Engine.h"
@@ -118,6 +119,78 @@ bool FSurvivalMedicineTest::RunTest(const FString&)
     TestTrue(TEXT("Downed medicine rejected"),!S->BeginMedicine(TEXT("medicine")));
     S->ReceiveDamage(1,FGuid::NewGuid(),Storage->GetTimelineEpoch());
     TestTrue(TEXT("Independent residual hit kills"),S->State.Life==EHearthwardLife::Dead);
+    GEngine->DestroyWorldContext(World); World->DestroyWorld(false);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSurvivalFailureTransactionsTest,"Hearthward.Survival.FailureRejectsTransactions",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSurvivalFailureTransactionsTest::RunTest(const FString&)
+{
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    auto* Actor=World->SpawnActor<AActor>();
+    auto* Bag=NewObject<UHearthwardInventoryComponent>(Actor); Actor->AddInstanceComponent(Bag); Bag->RegisterComponent();
+    auto* G=NewObject<UHearthwardGameplayComponent>(Actor); Actor->AddInstanceComponent(G); G->RegisterComponent(); G->Enabled=true; G->Health=20; G->Hunger=10;
+    auto* S=NewObject<UHearthwardSurvivalComponent>(Actor); Actor->AddInstanceComponent(S); S->RegisterComponent();
+    auto* Dead=World->SpawnActor<AActor>();
+    auto* DeadG=NewObject<UHearthwardGameplayComponent>(Dead); Dead->AddInstanceComponent(DeadG); DeadG->RegisterComponent(); DeadG->Enabled=true; DeadG->Health=0;
+    auto* DeadS=NewObject<UHearthwardSurvivalComponent>(Dead); Dead->AddInstanceComponent(DeadS); DeadS->RegisterComponent(); DeadS->State.Kill();
+    Bag->TryAdd(TEXT("roast"),1); Bag->TryAdd(TEXT("medicine"),1);
+    TestTrue(TEXT("One dead brother makes the world fail"),UHearthwardSurvivalComponent::HasFailed(World));
+    TestFalse(TEXT("The surviving brother cannot eat after failure"),S->Eat(TEXT("roast")));
+    TestEqual(TEXT("Failure preserves food inventory"),Bag->GetItemCount(TEXT("roast")),1);
+    TestEqual(TEXT("Failure preserves hunger"),G->Hunger,10.f);
+    TestFalse(TEXT("The surviving brother cannot start medicine after failure"),S->BeginMedicine(TEXT("medicine")));
+    S->CompleteBoundary(3);
+    TestEqual(TEXT("Failure cannot commit a medicine debit"),Bag->GetItemCount(TEXT("medicine")),1);
+    TestEqual(TEXT("Failure cannot commit medicine healing"),G->Health,20.f);
+    DeadS->State={};DeadG->Health=100;
+    TestTrue(TEXT("Medicine may start again in a live world"),S->BeginMedicine(TEXT("medicine")));
+    DeadS->State.Kill();DeadG->Health=0;S->CompleteBoundary(3);
+    TestTrue(TEXT("Failure cancels a medicine action that began beforehand"),S->State.Medicine.IsNone());
+    TestEqual(TEXT("A pending medicine is not spent by failure"),Bag->GetItemCount(TEXT("medicine")),1);
+    TestEqual(TEXT("A pending medicine supplies no healing after failure"),G->Health,20.f);
+    auto* Target=World->SpawnActor<AActor>();
+    auto* TargetG=NewObject<UHearthwardGameplayComponent>(Target); Target->AddInstanceComponent(TargetG); TargetG->RegisterComponent(); TargetG->Enabled=true; TargetG->Health=0;
+    auto* TargetS=NewObject<UHearthwardSurvivalComponent>(Target); Target->AddInstanceComponent(TargetS); TargetS->RegisterComponent(); TargetS->State.Life=EHearthwardLife::Downed; TargetS->State.DownRemaining=30;
+    TestFalse(TEXT("An otherwise reachable rescue cannot begin in a failed world"),S->BeginRescue(TargetS));
+    GEngine->DestroyWorldContext(World); World->DestroyWorld(false);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSurvivalFacilityRecoveryTest,"Hearthward.Survival.FacilityRecoveryBinding",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSurvivalFacilityRecoveryTest::RunTest(const FString&)
+{
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    auto* Actor=World->SpawnActor<AActor>();
+    auto* Root=NewObject<USceneComponent>(Actor); Actor->AddInstanceComponent(Root); Actor->SetRootComponent(Root); Root->RegisterComponent();
+    auto* Bag=NewObject<UHearthwardInventoryComponent>(Actor); Actor->AddInstanceComponent(Bag); Bag->RegisterComponent();
+    auto* G=NewObject<UHearthwardGameplayComponent>(Actor); Actor->AddInstanceComponent(G); G->RegisterComponent(); G->Enabled=true; G->Health=20;
+    auto* S=NewObject<UHearthwardSurvivalComponent>(Actor); Actor->AddInstanceComponent(S); S->RegisterComponent();
+    auto Facility=[&](FName Kind)
+    {
+        auto* Owner=World->SpawnActor<AActor>();
+        auto* Interaction=NewObject<UHearthwardFurnitureInteractionComponent>(Owner); Owner->AddInstanceComponent(Interaction); Owner->SetRootComponent(Interaction); Interaction->Kind=Kind; Interaction->MaxDistance=220; Interaction->RegisterComponent();
+        return Interaction;
+    };
+    auto* Medical=Facility(TEXT("medical_area"));
+    Medical->CompleteInteraction(Actor); S->AdvanceContinuous(1,1,0);
+    TestTrue(TEXT("The real treatment interaction supplies three percent recovery"),FMath::IsNearlyEqual(G->Health,23.f));
+    Medical->GetOwner()->Destroy(); S->AdvanceContinuous(1,1,1);
+    TestFalse(TEXT("Demolishing the treatment facility ends its recovery"),S->Treatment || S->Resting);
+    TestTrue(TEXT("A demolished facility leaves only ordinary recovery"),FMath::IsNearlyEqual(G->Health,23.5f));
+    auto* Bed=Facility(TEXT("bed")); G->Health=20; Bed->CompleteInteraction(Actor);
+    Bed->GetOwner()->SetActorLocation(FVector(500,0,0)); S->AdvanceContinuous(1,1,2);
+    TestFalse(TEXT("Moving the bed beyond reach ends resting"),S->Resting);
+    TestTrue(TEXT("A moved bed cannot heal the stationary former user"),FMath::IsNearlyEqual(G->Health,20.5f));
+    auto* CombatMedical=Facility(TEXT("medical_area")); G->Health=20; CombatMedical->CompleteInteraction(Actor);
+    G->NotifyCombat(); S->AdvanceContinuous(1,1,3);
+    TestFalse(TEXT("Entering combat ends treatment even without a damage event"),S->Treatment || S->Resting);
+    G->TickComponent(3,LEVELTICK_All,nullptr);
+    TestFalse(TEXT("The fixture has left combat"),G->InCombat());
+    G->Health=20; S->AdvanceContinuous(1,1,4);
+    TestTrue(TEXT("Leaving combat does not reactivate the old treatment"),FMath::IsNearlyEqual(G->Health,20.5f));
     GEngine->DestroyWorldContext(World); World->DestroyWorld(false);
     return true;
 }

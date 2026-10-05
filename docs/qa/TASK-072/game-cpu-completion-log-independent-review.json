@@ -1,0 +1,242 @@
+{
+  "scope": "QA-only independent read of completed packaged Game Development CPU probe; no UE/model/HTTP/build execution",
+  "pool": "99246739-0d4c-46d7-b4aa-8004fa5253bc",
+  "label": "packaged-game-development-normal-new-cpu-fname-green-attempt",
+  "source_results": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-99246739-0d4c-46d7-b4aa-8004fa5253bc\\results.json",
+  "source_engine_log": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-99246739-0d4c-46d7-b4aa-8004fa5253bc\\engine.log",
+  "source_server_log": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-99246739-0d4c-46d7-b4aa-8004fa5253bc\\local-ai.log",
+  "source_csv": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-99246739-0d4c-46d7-b4aa-8004fa5253bc\\User\\Saved\\Profiling\\CSV\\Task072-99246739-0d4c-46d7-b4aa-8004fa5253bc.csv",
+  "status": "FAILED",
+  "stage": "model_csv_terminal_results",
+  "lifecycle": {
+    "ue_pid": 32572,
+    "model_pid_from_engine": 20820,
+    "normal_quit_return": {
+      "ReturnValue": true
+    },
+    "stop_request_ok": true,
+    "host_process_exit_verified": "NOT_VERIFIED_BY_UECLIENT",
+    "parent_independent_exit_confirmation": "Root reported UE32572/model20820 both absent; this review performs no process query"
+  },
+  "request": {
+    "original": "采集1份木材送入营地仓库",
+    "public_submit_calls": 1,
+    "generation": 1,
+    "input_tokens": 3177,
+    "output_tokens": 0,
+    "raw": "",
+    "reason": "MODEL_UNAVAILABLE",
+    "cold_ready_observed_seconds": 8.888887000008253,
+    "full_ue_terminal_observed_seconds": 129.53891509999812,
+    "source_wood_before": 16,
+    "source_wood_after": 16,
+    "bundle": "F:\\uagent-task-temp\\task072-game-development-20261005\\Archive\\Windows\\Hearthward\\Runtime\\LocalAI",
+    "backend": "cpu",
+    "gpu_layers_option": 16,
+    "gpu_layers_actual_cpu_semantics": "CPU backend uses ngl0; option16 applies only Vulkan"
+  },
+  "stage_evidence": {
+    "engine_runtime_started": {
+      "line": 1105,
+      "raw_timestamp": "2026.10.04-22.34.06:480"
+    },
+    "engine_ready": {
+      "line": 1106,
+      "raw_timestamp": "2026.10.04-22.34.15:084",
+      "elapsed_seconds": 8.604
+    },
+    "generation_sent": {
+      "line": 1108,
+      "raw_timestamp": "2026.10.04-22.34.15:157"
+    },
+    "first_request_error": {
+      "line": 1111,
+      "raw_timestamp": "2026.10.04-22.36.15:158",
+      "message": "HTTP request timed out after 120.00 seconds",
+      "generation_to_timeout_seconds": 120.001
+    },
+    "server_prompt_progress": [
+      {
+        "line": 11,
+        "uptime_s": 88.1839,
+        "tokens": 2048,
+        "progress": 0.64,
+        "cumulative_prefill_seconds": 79.91,
+        "tokens_per_second": 25.63
+      },
+      {
+        "line": 12,
+        "uptime_s": 112.842396,
+        "tokens": 2620,
+        "progress": 0.82,
+        "cumulative_prefill_seconds": 104.57,
+        "tokens_per_second": 25.05
+      },
+      {
+        "line": 13,
+        "uptime_s": 114.971389,
+        "tokens": 2661,
+        "progress": 0.84,
+        "cumulative_prefill_seconds": 106.7,
+        "tokens_per_second": 24.94
+      }
+    ],
+    "complete_prompt_or_decode_timing": "NOT_RECORDED; tail after the last prompt-progress record cannot be uniquely assigned to prompt or decode"
+  },
+  "frames": {
+    "total_frames": 13553,
+    "dropped_frames": 0,
+    "measured_seconds": 129.6783524,
+    "p99_frame_ms": 14.3746,
+    "one_percent_low_fps": 58.16995260829327,
+    "frames_over_50ms": 1,
+    "fraction_over_50ms": 7.378440197742197e-05,
+    "max_frame_ms": 66.7757,
+    "average_fps": 104.51243209965396,
+    "distribution": "raw ordered engine CSV FrameTime preserved; all captured numeric rows included without numeric frame exclusions",
+    "diagnostic_frame_target_pass": false
+  },
+  "csv_numeric_rows": 13553,
+  "csv_measured_seconds": 129.67835239999994,
+  "csv_metric_units": "Memory fields and GPUMem are MiB; time fields are ms; durations sum actual FrameTime without frame exclusions",
+  "csv_resource_metrics": {
+    "MemoryFreeMB": {
+      "min": 612.9492,
+      "min_time_s": 17.119675899999994,
+      "max": 5137.6797,
+      "max_time_s": 129.5178132,
+      "numeric_rows": 13553
+    },
+    "PhysicalUsedMB": {
+      "min": 2482.3281,
+      "min_time_s": 102.72300539999985,
+      "max": 2748.293,
+      "max_time_s": 4.0473985999999975,
+      "numeric_rows": 13553
+    },
+    "VirtualUsedMB": {
+      "min": 4236.9609,
+      "min_time_s": 102.72300539999985,
+      "max": 4475.1562,
+      "max_time_s": 4.0473985999999975,
+      "numeric_rows": 13553
+    },
+    "GPUMem/LocalBudgetMB": {
+      "min": 7189.0,
+      "min_time_s": 0.0349473,
+      "max": 7189.0,
+      "max_time_s": 0.0349473,
+      "numeric_rows": 13551,
+      "nonpositive_uninitialized_rows": 2
+    },
+    "GPUMem/LocalUsedMB": {
+      "min": 2343.2031,
+      "min_time_s": 0.0349473,
+      "max": 2343.4531,
+      "max_time_s": 2.3392979999999985,
+      "numeric_rows": 13551,
+      "nonpositive_uninitialized_rows": 2
+    },
+    "GPUTime": {
+      "min": 6.3079,
+      "min_time_s": 10.97641469999999,
+      "max": 9.5627,
+      "max_time_s": 112.76696439999988,
+      "numeric_rows": 13553
+    },
+    "GameThreadTime": {
+      "min": 6.491,
+      "min_time_s": 65.99189990000008,
+      "max": 68.2386,
+      "max_time_s": 0.11116849999999999,
+      "numeric_rows": 13553
+    },
+    "RenderThreadTime": {
+      "min": 3.1796,
+      "min_time_s": 20.00896109999999,
+      "max": 18.9005,
+      "max_time_s": 0.0462529,
+      "numeric_rows": 13553
+    }
+  },
+  "available_ram_under_1024_mib": {
+    "frames": 12808,
+    "duration_seconds": 121.01126219999998,
+    "intervals": [
+      {
+        "start_s": 7.917711299999999,
+        "end_s": 128.92897349999993,
+        "duration_s": 121.01126219999998,
+        "frames": 12808,
+        "min_available_mib": 612.9492
+      }
+    ]
+  },
+  "hitches_over_50_ms": [
+    {
+      "frame_index_zero_based": 8,
+      "start_s": 0.11116849999999999,
+      "duration_ms": 66.7757,
+      "event": "",
+      "available_mib": 4809.9258,
+      "ue_physical_mib": 2701.2422,
+      "game_thread_ms": 68.2386,
+      "gpu_ms": 7.1611
+    }
+  ],
+  "csv_events": [
+    {
+      "frame_index_zero_based": 1,
+      "start_s": 0.023594999999999998,
+      "event": "PSO/Encountered new graphics PSO##0.024949;PSO/Encountered new graphics PSO##0.025142"
+    },
+    {
+      "frame_index_zero_based": 4244,
+      "start_s": 41.55878079999998,
+      "event": "GC##41.564061"
+    },
+    {
+      "frame_index_zero_based": 10734,
+      "start_s": 102.65983719999986,
+      "event": "GC##102.666600"
+    },
+    {
+      "frame_index_zero_based": 13552,
+      "start_s": 129.67040419999995,
+      "event": "Cmd: CsvProfile STOP##129.672419"
+    }
+  ],
+  "comparison": {
+    "editor_cpu_log_diagnosis_pool": "1356d3d4-f148-41f6-b343-150ee67de779",
+    "editor_cpu_input_tokens": 3173,
+    "editor_cpu_last_recorded_prefill": {
+      "tokens": 2657,
+      "seconds": 102.85,
+      "tokens_per_second": 25.83
+    },
+    "editor_cpu_ue_physical_range_mib": [
+      4419.7227,
+      4859.1758
+    ],
+    "editor_cpu_available_min_mib": 6.9727,
+    "editor_cpu_available_under_1024_mib_seconds": 85.5576794,
+    "same_original_text": true,
+    "byte_identical_prompt": false,
+    "prompt_difference": "Game input3177 vs Editor3173; FName display casing Arrow/Armor/Medicine differs in own_bag",
+    "observed_result": "Both CPU runs timed out after120s; packaged Game UE physical memory is lower but CPU last-recorded prefill rate did not improve",
+    "causal_attribution": "NOT_ESTABLISHED; no hard-fault/model-RSS trajectory/CPU frequency evidence"
+  },
+  "resource_snapshot": "Excluded: Root confirmed the system snapshot was taken after terminal cleanup; it is not a live peak",
+  "parent_live_sample": {
+    "ue_working_set_bytes": 2612088832,
+    "model_working_set_bytes": 4474679296,
+    "source": "Root message; single sample during run, not independently queried and not peak"
+  },
+  "acceptance_limits": [
+    "Single cold normal_new fixed-view probe only; five-scene CPU/Vulkan matrix and warm p95 not completed",
+    "1%Low58.16995 FPS below60; diagnostic frame target false despite p99 and >50ms fraction passing",
+    "No actual response/candidate; no model semantic credit",
+    "No Shipping/formalRC/second-machine/runtime-all-actions credit",
+    "No conclusion that memory caused CPU prefill slowness"
+  ]
+}

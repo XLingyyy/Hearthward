@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "id": "TASK-071",
+  "title": "完成全系统存档迁移和时间线回归",
+  "status": "Active",
+  "updated_at": "2026-10-05",
+  "owner": "XLingyyy",
+  "reviewer": "XLingyyy",
+  "issue_url": null,
+  "branch": "codex/TASK-053-074-design",
+  "source_refs": [
+    "用户2026-10-03：053及之后全部已有规划先整理设计，过目后再决定施工",
+    "docs/planning/TASK-053-074/sources/Hearthward_TASK-043-076.md：原稿TASK-073，canonical减2",
+    "docs/planning/TASK-053-074/sources/Hearthward_Audit_2026-09-24.md：历史审计，仅作缺口追溯",
+    "origin/main@67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+    "docs/planning/TASK-053-074/TASK-071.md：本轮完整设计草案",
+    "用户2026-10-03：审阅通过，现在直接开始施工；批准整批D01—D08及逐单设计"
+  ],
+  "dependencies": [
+    "TASK-052",
+    "TASK-054",
+    "TASK-055",
+    "TASK-057",
+    "TASK-058",
+    "TASK-059",
+    "TASK-060",
+    "TASK-061",
+    "TASK-062",
+    "TASK-063",
+    "TASK-066",
+    "TASK-067"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-003-save-load.md",
+    "docs/contracts/CT-TASK-043-world-time-persistence.md",
+    "docs/contracts/CT-TASK-052-clock-refresh.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/PROJECT_STATE.md",
+    "docs/planning/TASK-053-074/",
+    "docs/tasks/TASK-071.json",
+    "docs/tasks/TASK-071.md",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "docs/qa/TASK-071/",
+    "Source/Hearthward/Save/HearthwardSaveGame.cpp",
+    "Source/Hearthward/Tests/SavePartialSettlementFixture.h",
+    "Source/Hearthward/Tests/SavePartialSettlementTests.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Save/HearthwardSaveGame.h",
+    "Source/Hearthward/Save/HearthwardSaveCompatibility.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Config/",
+    "config/",
+    "Resources/",
+    "Runtime/",
+    "art_source/",
+    "scripts/",
+    "docs/design/",
+    "docs/contracts/"
+  ],
+  "acceptance": [
+    "设计审阅：完成TASK-071现状、正式操作、失败和保存、建议施工范围、最小验证与出口的完整方案",
+    "施工验收：严格按docs/planning/TASK-053-074/TASK-071.md及ACCEPTANCE执行，仅在Owner下令施工后启动",
+    "不把设计检查或旧SHA的PASS登记为本单实现、真人体验或发行通过"
+  ],
+  "non_goals": [
+    "不超出逐单批准设计，不进行暂缓真人录音，不改未登记的共享资产或存档格式",
+    "不创建Issue，不自动提交推送、合并main或发布"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-011",
+    "T-012",
+    "T-016",
+    "T-017"
+  ],
+  "permissions": {
+    "network": "granted: official engineering research, origin inspection and authorized task-branch push",
+    "install_dependencies": "not_granted",
+    "commit": "granted: Owner explicitly authorized current TASK-053-074 batch commit to codex/TASK-053-traversal",
+    "push": "granted: Owner explicitly authorized current TASK-053-074 batch push to origin/codex/TASK-053-traversal",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "设计与施工已获Owner确认，按DEPENDENCIES推进；提交推送、合并、发布权限保持原登记。",
+    "Owner和Reviewer均为XLingyyy，无Issue；不登记虚构独立审查。",
+    "完整批次施工获批；激活具体任务时登记准确写路径、专用目录和共享接口窗口。",
+    "2026-10-04：现有真实HWS2个人pool只读，仅独立QA副本执行既有LegacyCampMigration；生产Save不写，先通过现有Clock9OriginAndLegacyBoundary夹具验证显式schema9套HWS7不一致头的拒绝。",
+    "2026-10-04：integrated069-baseline071的Clock9真RED确认HWS7将schema9 Origin4/1200重置1/0；准确生产窗口SaveGame.cpp仅推广已有HWS8 Clock元数据保护至所有旧封装，保留缺省老归档迁移。真实HWS2旧池仍校验失败，原档保留，未定位前不改迁移。",
+    "2026-10-04：真实HWS2旧池4点缺省Schema读取成9、NPCVersion2/Survival0；PreviousMagic fallback直接3跳过既有2→3认知迁移。授权只按全点NPC2回到Schema2及同一Legacy测试的CDO默认Schema省略回归，不改validator或旧原池。",
+    "2026-10-04：完整Save相关12测11PASS，Clock新增explicit8套HWS7真实RED；准确SaveGame.cpp窗口按已知正式Header格式校验显式旧schema，保留缺省Schema=当前CDO的已有历史fallback，HWS2合法2/3同封装。",
+    "精确施工路径已按整批批准设计登记；移除与allowed_paths自身冲突的宽泛禁止前缀，未列出的路径继续不在允许范围：Source/",
+    "2026-10-04：保存当前命令Revision源码不对称；登记精确test-only公开OnTransferred预留监听器及独立真实partial/r>1 SavePoint/LoadPoint回归，先验证live正控制和实际Load RED，生产Save格式暂未修改。",
+    "2026-10-04：partial-command-revision071-red实际live r2正常完成、真实Load后同r2回执SETTLEMENT_FAILED共8错误；据整批批准的全系统保存设计登记SaveSubsystem.cpp/SaveGame.h精确窗口，新增tagged可选CommandRevision缺省兼容并保留真实Active revision，旧档依同Command合法一致版本回执推导，非法冲突拒档；不改Schema9、旧epoch或结算payload约束。",
+    "2026-10-04：实际Revision及历史缺tag回归GREEN；公开Decode→Diagnose尚只显示通用校验失败，登记Compatibility.cpp既有Areas中精确一行命令版本原因，与现负夹具一个断言。",
+    "2026-10-04重启续作：public Diagnose命令版本原因实际Native PASS；真实Qwen候选／在途HTTP跨LoadPoint与新请求确认执行实际PASS，独立pool3a5bc510-3123-4200-9c7e-5c98c1997a69，旧请求发出后125.438秒无额外效果。两次fixture前置失败各0模型请求保留；普通菜单／旧Slate回调／强制成功迟到回调／Python receipt检查未执行。",
+    "2026-10-04：普通公共菜单/旧卡 ActionAt→ExecuteAction 分帧实际 route 原先首次 dialogue 即 Slate 原生崩溃；069样式持久引用单行修复后96/96 PASS，真实新卡执行和正常 OpenSavePoint 恢复正确；物理输入、直接 Slate 事件、正常退出继续与强制成功迟到 HTTP 仍未验收。",
+    "2026-10-05：登记QA071独立hold-open公API监视/host，隔离UUID档池，零模型请求；使用已授权prototype基础夹具，baselineA后公开player wood+1，hold不执行UI/Load/Stage，Root通过computer-use sky真正OS键鼠操作并记录公共状态。此窗口仅QA，不构成人类Owner或正常新游戏通过。",
+    "2026-10-05：独立pool8618582c实际OS键鼠T/鼠标Draft/type_text未发送/Esc/F6/鼠标LoadAsk/Return安全保持/Esc取消/鼠标Confirm；1451 samples与epoch唯一更替、wood1→0、公APIauthority保留共同支持局部PASS，21fixture通过，零模型，PID48088已关闭。非IME/正常新游戏/九页/右mods/Owner；见QA071/physical-os-load-route-runtime-review.md。",
+    "Owner随后明确授权当前053—074施工成果提交并推送到codex/TASK-053-traversal；不代填待验结果，任务原状态保留。合并与发布权限未授予。"
+  ],
+  "design_status": "Approved",
+  "design_plan": "docs/planning/TASK-053-074/TASK-071.md",
+  "original_task_id": "TASK-073",
+  "proposed_implementation_paths": [
+    "Source/Hearthward/Save/",
+    "Source/Hearthward/Update/",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "Source/Hearthward/Tests/WorldClockTests.cpp",
+    "领域快照消费者仅限复现缺陷所需精确文件",
+    "docs/qa/TASK-071/"
+  ],
+  "implementation_authorization": "granted: user2026-10-03 TASK-053—074 approved design and construction",
+  "integration_worktree": "G:\\GameFactory\\Hearthward\\.agent-local\\task051",
+  "implementation_writer": "/root"
+}

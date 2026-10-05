@@ -5,13 +5,12 @@ an isolated QA save; omit them for a fresh prologue. No fixed timestep or frame 
 import argparse
 import csv
 import json
+import os
 import sys
 import time
 import uuid
 from pathlib import Path
 csv.field_size_limit(16*1024*1024)
-sys.path.insert(0,str(Path(__file__).resolve().parents[4]))
-from engine_adapters.ue5 import UEClient
 
 parser=argparse.ArgumentParser()
 parser.add_argument('--pool')
@@ -21,6 +20,14 @@ parser.add_argument('--frames',type=int,default=9000)
 parser.add_argument('--gpu-stats',action='store_true')
 args=parser.parse_args()
 root=Path(__file__).resolve().parents[3]
+configured=os.environ.get("HEARTHWARD_FACTORY_ROOT")
+candidates=[Path(configured)] if configured else []
+candidates.extend(root.parents)
+factory=next((candidate for candidate in candidates if (candidate/"engine_adapters/ue5/__init__.py").is_file()),None)
+if factory is None:
+    parser.error("Set HEARTHWARD_FACTORY_ROOT to the prepared GameFactory checkout.")
+sys.path.insert(0,str(factory.resolve()))
+from engine_adapters.ue5 import UEClient
 out=root/'Saved/Fix2Performance'/args.label
 out.mkdir(parents=True,exist_ok=True)
 existing=set((root/'Saved/Profiling/CSV').glob('*.csv'))

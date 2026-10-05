@@ -1,0 +1,16 @@
+diff --git a/Source/Hearthward/Tests/SaveTests.cpp b/Source/Hearthward/Tests/SaveTests.cpp
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -489,6 +489,12 @@
+     TestFalse(TEXT("Future schema cannot migrate as legacy"),HearthwardSave::Read(Path,Loaded,Error));
+     Pool->Schema=9;S.ClockVersion=1;S.InitialDay=1;S.InitialMinute=1200;WriteEnvelope(0x48575338);
+     TestFalse(TEXT("Schema9 clock metadata cannot be silently downgraded by a schema8 envelope"),HearthwardSave::Read(Path,Loaded,Error));
++    Pool->Schema=9;S.ClockVersion=1;S.InitialDay=4;S.InitialMinute=1200;WriteEnvelope(0x48575337);
++    const bool AcceptedSchema7=HearthwardSave::Read(Path,Loaded,Error);
++    TestFalse(TEXT("Explicit schema9 clock and origin cannot migrate under a schema7 envelope"),AcceptedSchema7);
++    if(AcceptedSchema7 && Loaded)
++        AddInfo(FString::Printf(TEXT("TASK071 mismatched envelope accepted: original origin=4/1200, loaded origin=%lld/%.0f"),
++            Loaded->Points[0].World.InitialDay,Loaded->Points[0].World.InitialMinute));
+     IFileManager::Get().Delete(*Path);IFileManager::Get().Delete(*(Path+TEXT(".pre-schema9")));
+     return true;
+ }

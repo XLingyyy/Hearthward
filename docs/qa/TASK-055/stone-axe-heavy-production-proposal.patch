@@ -1,0 +1,135 @@
+--- a/Source/Hearthward/Combat/HearthwardCombatRules.h
++++ b/Source/Hearthward/Combat/HearthwardCombatRules.h
+@@ -16,9 +16,8 @@
+     if(Kind==TEXT("blunt")) return Heavy?FMove{.65,.20,.65,30,2.6f,200}:FMove{.35,.18,.47,14,1.5f,200};
+     return Heavy?FMove{.40,.16,.44,20,1.8f,180}:FMove{};
+ }
+-inline double StoneAxeLightClipTime(double Elapsed,double ClipLength)
++inline double StoneAxeClipTime(double Elapsed,double ClipLength,const FMove& M)
+ {
+-    const FMove M=Move(TEXT("blunt"),false);
+     const double T=FMath::Clamp(Elapsed,0.,M.Duration());
+     if(T<=M.Windup) return ClipLength*.6*T/M.Windup;
+     if(T<=M.Windup+M.Active) return ClipLength*(.6+.2*(T-M.Windup)/M.Active);
+--- a/Source/Hearthward/Combat/HearthwardCombatComponent.cpp
++++ b/Source/Hearthward/Combat/HearthwardCombatComponent.cpp
+@@ -96,7 +96,7 @@
+     if(!Start(TEXT("attack"),Move.Duration())) return false;
+     G()->SpendStamina(Move.Cost); HeavyAttack=Heavy;
+     if(auto* C=Cast<AHearthwardCharacter>(GetOwner())) PreviousAttackMeshWorld=C->GetMesh()->GetComponentTransform();
+-    if(auto* C=Cast<ACharacter>(GetOwner())) if(auto* A=Cast<UHearthwardHeroAnimInstance>(C->GetMesh()->GetAnimInstance())) A->PlayCombat(float(Duration),false,!Heavy && ActionWeapon==TEXT("axe") && Cast<AHearthwardCharacter>(GetOwner()));
++    if(auto* C=Cast<ACharacter>(GetOwner())) if(auto* A=Cast<UHearthwardHeroAnimInstance>(C->GetMesh()->GetAnimInstance())) A->PlayCombat(float(Duration),false,ActionWeapon==TEXT("axe") && Cast<AHearthwardCharacter>(GetOwner())?&Move:nullptr);
+     return true;
+ }
+ bool UHearthwardCombatComponent::Eligible(UHearthwardCombatTargetComponent* T) const
+@@ -241,7 +241,7 @@
+     const double A=FMath::Max(From,Move.Windup),B=FMath::Min(To,Move.Windup+Move.Active);
+     if(B<=A) return;
+     auto* Character=Cast<AHearthwardCharacter>(GetOwner());
+-    const bool StoneAxe=Character && !HeavyAttack && ActionWeapon==TEXT("axe");
++    const bool StoneAxe=Character && ActionWeapon==TEXT("axe");
+     if(StoneAxe && StoneAxeBlocked) return;
+     UStaticMeshComponent* Axe=nullptr;
+     UHearthwardHeroAnimInstance* Animation=nullptr;
+@@ -279,7 +279,7 @@
+         FBlendedCurve Curve; Curve.InitFrom(*Bones);
+         UE::Anim::FStackAttributeContainer Attributes;
+         FAnimationPoseData Data(Pose,Curve,Attributes);
+-        Animation->Clips[6]->GetAnimationPose(Data,FAnimExtractContext(HearthwardCombat::StoneAxeLightClipTime(Time,Animation->Clips[6]->GetPlayLength()),false));
++        Animation->Clips[6]->GetAnimationPose(Data,FAnimExtractContext(HearthwardCombat::StoneAxeClipTime(Time,Animation->Clips[6]->GetPlayLength(),Move),false));
+         FCSPose<FCompactPose> ComponentPose; ComponentPose.InitPose(MoveTemp(Pose));
+         FTransform MeshWorld;
+         MeshWorld.Blend(PreviousAttackMeshWorld,CurrentMeshWorld,float((Time-From)/(To-From)));
+--- a/Source/Hearthward/Animation/HearthwardHeroAnimInstance.h
++++ b/Source/Hearthward/Animation/HearthwardHeroAnimInstance.h
+@@ -2,6 +2,7 @@
+ 
+ #include "CoreMinimal.h"
+ #include "Animation/AnimInstance.h"
++#include "../Combat/HearthwardCombatRules.h"
+ #include "HearthwardHeroAnimInstance.generated.h"
+ 
+ UCLASS()
+@@ -14,11 +15,12 @@
+     virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override;
+     virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* Proxy) override;
+     void PlayAttack();
+-    void PlayCombat(float Duration,bool Execution,bool StoneAxeLight=false);
++    void PlayCombat(float Duration,bool Execution,const HearthwardCombat::FMove* InStoneAxeMove=nullptr);
+     void StopCombat();
+     float CombatRate=1;
+     bool IsExecution=false;
+-    bool IsStoneAxeLight=false;
++    bool IsStoneAxe=false;
++    HearthwardCombat::FMove StoneAxeMove;
+ 
+     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") float GroundSpeed = 0;
+     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") FName MotionState = TEXT("Idle");
+--- a/Source/Hearthward/Animation/HearthwardHeroAnimInstance.cpp
++++ b/Source/Hearthward/Animation/HearthwardHeroAnimInstance.cpp
+@@ -72,11 +72,11 @@
+         Players[2].SetPlayRate(FMath::Clamp(Hero->GroundSpeed / 600.f, 0.4f, 1.8f));
+         for (int32 Index = 0; Index < 5; ++Index)
+             Layers[Index].bAlphaBoolEnabled = Hero->ActionState == Index + 1;
+-        Players[6].SetPlayRate(Hero->IsStoneAxeLight ? 0.f : Hero->CombatRate);
+-        if (Hero->IsStoneAxeLight)
++        Players[6].SetPlayRate(Hero->IsStoneAxe ? 0.f : Hero->CombatRate);
++        if (Hero->IsStoneAxe)
+         {
+             const auto* Combat=Hero->GetOwningActor()->FindComponentByClass<UHearthwardCombatComponent>();
+-            const float Position=float(HearthwardCombat::StoneAxeLightClipTime(Combat->Elapsed,Hero->Clips[6]->GetPlayLength()));
++            const float Position=float(HearthwardCombat::StoneAxeClipTime(Combat->Elapsed,Hero->Clips[6]->GetPlayLength(),Hero->StoneAxeMove));
+             // Child activation initializes from StartPosition after this PreUpdate.
+             Players[6].SetStartPosition(Position);
+             Players[6].SetAccumulatedTime(Position);
+@@ -107,7 +107,7 @@
+ {
+     if (Clips.IsValidIndex(6) && Clips[6])
+     {
+-        IsStoneAxeLight=false;
++        IsStoneAxe=false;
+         AttackRemaining = Clips[6]->GetPlayLength();
+         ++AttackRevision;
+     }
+@@ -124,7 +124,7 @@
+     const bool Falling = Character->GetCharacterMovement()->IsFalling();
+     if (bWasFalling && !Falling) LandRemaining = 0.2f;
+     bWasFalling = Falling;
+-    if(IsStoneAxeLight)
++    if(IsStoneAxe)
+     {
+         const auto* Combat=Character->FindComponentByClass<UHearthwardCombatComponent>();
+         AttackRemaining=float(FMath::Max(0.,Combat->Duration-Combat->Elapsed));
+@@ -137,7 +137,7 @@
+     {
+         AttackRemaining = LandRemaining = 0.f;
+         MotionState = TEXT("Idle");
+-        if(IsStoneAxeLight) for(auto& Layer:GetProxyOnGameThread<FHeroAnimProxy>().Layers) Layer.bAlphaBoolEnabled=false;
++        if(IsStoneAxe) for(auto& Layer:GetProxyOnGameThread<FHeroAnimProxy>().Layers) Layer.bAlphaBoolEnabled=false;
+         return;
+     }
+     const auto* Interaction = Character->FindComponentByClass<UHearthwardInteractionComponent>();
+@@ -156,7 +156,7 @@
+         ActionState = Character->GetVelocity().Z > 0.f ? 1 : 2;
+         MotionState = ActionState == 1 ? TEXT("JumpStart") : TEXT("Fall");
+     }
+-    if(IsStoneAxeLight)
++    if(IsStoneAxe)
+     {
+         auto& Proxy=GetProxyOnGameThread<FHeroAnimProxy>();
+         for(int32 Index=0;Index<5;++Index) Proxy.Layers[Index].bAlphaBoolEnabled=ActionState==Index+1;
+@@ -166,9 +166,11 @@
+ FAnimInstanceProxy* UHearthwardHeroAnimInstance::CreateAnimInstanceProxy() { return new FHeroAnimProxy(this); }
+ void UHearthwardHeroAnimInstance::DestroyAnimInstanceProxy(FAnimInstanceProxy* Proxy) { delete Proxy; }
+ 
+-void UHearthwardHeroAnimInstance::PlayCombat(float Duration,bool Execution,bool StoneAxeLight)
++void UHearthwardHeroAnimInstance::PlayCombat(float Duration,bool Execution,const HearthwardCombat::FMove* InStoneAxeMove)
+ {
+     if(Duration<=0 || !Clips.IsValidIndex(6) || !Clips[6]) return;
+-    AttackRemaining=Duration; CombatRate=Clips[6]->GetPlayLength()/Duration; IsExecution=Execution; IsStoneAxeLight=StoneAxeLight; ++AttackRevision;
++    AttackRemaining=Duration; CombatRate=Clips[6]->GetPlayLength()/Duration; IsExecution=Execution; IsStoneAxe=InStoneAxeMove!=nullptr;
++    if(InStoneAxeMove)StoneAxeMove=*InStoneAxeMove;
++    ++AttackRevision;
+ }
+-void UHearthwardHeroAnimInstance::StopCombat() { AttackRemaining=0; CombatRate=1; IsExecution=false; IsStoneAxeLight=false; }
++void UHearthwardHeroAnimInstance::StopCombat() { AttackRemaining=0; CombatRate=1; IsExecution=false; IsStoneAxe=false; }

@@ -1,0 +1,11 @@
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -135,6 +135,8 @@
+     G.Original=HearthwardAgent::GoalText(G);TestTrue(TEXT("Structured GoalText item-times-quantity remains supported"),HearthwardAgent::OriginalQuantityMatches(G));
+     G.Quantity=3;G.Original=TEXT("采些木材，最多消耗三份木材");TestFalse(TEXT("Consumption quantity cannot fill a missing target"),HearthwardAgent::OriginalQuantityMatches(G));
+     G.Original=TEXT("采些木材\n补充：三份");TestTrue(TEXT("Explicit quantity clarification fills the known item"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Quantity=4;G.Original=TEXT("采些木材\n补充：4");TestTrue(TEXT("Existing bare ASCII quantity clarification remains supported"),HearthwardAgent::OriginalQuantityMatches(G));
++    G.Original=TEXT("采些木材\n补充：四份。");TestTrue(TEXT("A declarative period does not reject explicit quantity clarification"),HearthwardAgent::OriginalQuantityMatches(G));G.Quantity=3;
+     G.Original=TEXT("请采木材，数量为三");TestTrue(TEXT("Existing explicit quantity statement remains supported"),HearthwardAgent::OriginalQuantityMatches(G));
+     G.Original=TEXT("新采二份木材\n补充：三份");TestFalse(TEXT("Conflicting original and clarification quantities need review"),HearthwardAgent::OriginalQuantityMatches(G));
+     G.Original=TEXT("新采二份木材，再采三份木材");TestFalse(TEXT("Multiple target quantities cannot be silently selected"),HearthwardAgent::OriginalQuantityMatches(G));

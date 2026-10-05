@@ -1,0 +1,50 @@
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -183,6 +183,47 @@
+     return true;
+ }
+ 
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalNoLimitTest,"Hearthward.NPCAgent.OriginalMaterialProhibition",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
++bool FNPCAgentOriginalNoLimitTest::RunTest(const FString&)
++{
++    FHearthwardAgentGoal G;
++    if(!TestTrue(TEXT("The model-shaped proposal parses with all eight fields"),HearthwardAgent::Parse(
++        TEXT("{\"intent\":\"craft\",\"item\":\"rope\",\"quantity\":1,\"mode\":\"batches\",\"source\":\"bag\",")
++        TEXT("\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡用我背包的材料制作一批绳索，请确认；现场条件会在执行前复核。\"}"),G)))return false;
++    G.Original=TEXT("请用你背包的材料制作一批绳索，但不要消耗木材");
++    if(!TestTrue(TEXT("The prohibition clause does not alter the actual target batches"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
++    const auto Cost=HearthwardWorkshop::Materials(G.Intent,G.Item,G.Quantity);
++    if(!TestTrue(TEXT("The actual recipe has positive wood cost before testing the missing prohibition"),Cost.FindRef(TEXT("wood"))>0))return false;
++    TestFalse(TEXT("An explicit original prohibition cannot disappear from a parsed model proposal"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("no:wood")};
++    TestTrue(TEXT("An accurately preserved prohibition remains a valid constrained contract"),HearthwardAgent::Validate(G).IsEmpty());
++    TestFalse(TEXT("The preserved prohibition blocks the actual recipe cost"),HearthwardAgent::AllowsCost(G.Limits,Cost,{}));
++    G.Original=HearthwardAgent::GoalText(G);
++    TestTrue(TEXT("Structured GoalText keeps its explicit material prohibition"),HearthwardAgent::Validate(G).IsEmpty());
++    return true;
++}
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalOnceTest,"Hearthward.NPCAgent.OriginalOnceAuthorization",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
++bool FNPCAgentOriginalOnceTest::RunTest(const FString&)
++{
++    FHearthwardNPCMemory Rules;
++    if(!TestTrue(TEXT("A lasting material prohibition is recorded through the existing public memory operation"),
++        Rules.PutRule(TEXT("no:wood"),TEXT("以后制作和维修都不要消耗木材"),1)))return false;
++    if(!TestTrue(TEXT("The lasting prohibition is applicable to this capability"),Rules.ApplicableRules(TEXT("craft")).Contains(TEXT("no:wood"))))return false;
++    FHearthwardAgentGoal G;
++    if(!TestTrue(TEXT("A model-proposed one-time exception has the normal eight-field shape"),HearthwardAgent::Parse(
++        TEXT("{\"intent\":\"craft\",\"item\":\"rope\",\"quantity\":1,\"mode\":\"batches\",\"source\":\"bag\",")
++        TEXT("\"limits\":[\"once:wood\"],\"unresolved\":[],\"npc_line\":\"哥，这次用我背包的材料制作一批绳索；请确认后执行，其他约定保持有效。\"}"),G)))return false;
++    G.Original=TEXT("这次请用你背包的材料制作一批绳索");
++    if(!TestTrue(TEXT("A current-only task still has an exact legitimate target"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
++    TestFalse(TEXT("Saying this time cannot authorize an unspoken material-specific exception"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("这次允许消耗木材，请用你背包的材料制作一批绳索");
++    TestTrue(TEXT("An explicit original one-time wood allowance remains supported"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=HearthwardAgent::GoalText(G);
++    TestTrue(TEXT("Structured GoalText retains its explicit one-time material allowance"),HearthwardAgent::Validate(G).IsEmpty());
++    TestTrue(TEXT("A one-time task never revokes the lasting rule record"),Rules.ApplicableRules(TEXT("craft")).Contains(TEXT("no:wood")));
++    return true;
++}
++
+ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentReceiptTest,"Hearthward.NPCAgent.EffectReceiptsAndProgress",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+ bool FNPCAgentReceiptTest::RunTest(const FString&)
+ {

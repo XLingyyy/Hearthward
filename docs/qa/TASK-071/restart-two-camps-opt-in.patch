@@ -1,0 +1,378 @@
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -31,6 +31,11 @@
+ #include "HAL/FileManager.h"
+ #include "HAL/PlatformProcess.h"
+ #include "Kismet/GameplayStatics.h"
++#include "../Campaign/HearthwardCampaignSubsystem.h"
++#include "../Campaign/HearthwardCampaignActor.h"
++#include "../UI/HearthwardLoadingSubsystem.h"
++#include "Containers/Ticker.h"
++#include "HAL/PlatformTime.h"
+ #include "../Campaign/HearthwardCampaignState.h"
+ #include "../Save/HearthwardSaveCompatibility.h"
+ #include "../Update/HearthwardUpdateSubsystem.h"
+@@ -101,6 +106,9 @@
+         && !TestTrue(TEXT("Explicit restart phase is write or read"),RestartPhase==TEXT("write") || RestartPhase==TEXT("read")))return false;
+     const bool RestartEcology=FParse::Param(FCommandLine::Get(),TEXT("Hearthward071RestartEcology"));
+     if(RestartEcology && !TestFalse(TEXT("Ecology requires an explicit restart phase"),RestartPhase.IsEmpty()))return false;
++    const bool RestartTwoCamps=FParse::Param(FCommandLine::Get(),TEXT("Hearthward071RestartTwoCamps"));
++    if(RestartTwoCamps && !TestFalse(TEXT("Two camps require an explicit restart phase"),RestartPhase.IsEmpty()))return false;
++    const FVector TwoCampAnchor=RestartTwoCamps?HearthwardCampaign::XY(HearthwardCampaign::Find(TEXT("locations"),TEXT("camp")),TEXT("xy")):FVector::ZeroVector;
+     const FString ManifestPath=FPaths::ProjectSavedDir()/TEXT("Task071")/PoolId.ToString(EGuidFormats::Digits)/TEXT("manifest.json");
+     UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+     const FName WorldName=RestartPhase.IsEmpty()?FName():FName(TEXT("Task071RestartFixture"));
+@@ -119,6 +127,7 @@
+     ON_SCOPE_EXIT { if(World->HasBegunPlay())World->EndPlay(EEndPlayReason::Quit);if(Instance)Instance->Shutdown();GEngine->DestroyWorldContext(World);World->DestroyWorld(false); };
+     FActorSpawnParameters Spawn;Spawn.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+     auto* Hero=World->SpawnActor<AHearthwardCharacter>(FVector(0,0,100),FRotator::ZeroRotator,Spawn);
++    if(RestartTwoCamps)Hero->SetActorLocation(TwoCampAnchor+FVector(0,0,100));
+     auto* Controller=World->SpawnActor<APlayerController>();World->AddController(Controller);Controller->Possess(Hero);
+     if(Instance)
+     {
+@@ -126,8 +135,10 @@
+     }
+     auto* Camp=World->SpawnActor<AActor>();auto* CampRoot=NewObject<USceneComponent>(Camp);
+     Camp->AddInstanceComponent(CampRoot);Camp->SetRootComponent(CampRoot);CampRoot->RegisterComponent();
++    if(RestartTwoCamps)Camp->SetActorLocation(TwoCampAnchor+FVector(0,0,100));
+     auto* Stock=NewObject<UHearthwardInventoryComponent>(Camp);Camp->AddInstanceComponent(Stock);Stock->RegisterComponent();
+     auto* Brother=World->SpawnActor<AHearthwardCompanionFixture>(FVector(0,200,100),FRotator::ZeroRotator,Spawn);
++    if(RestartTwoCamps)Brother->SetActorLocation(TwoCampAnchor+FVector(0,200,100));
+     Brother->InitializeFixture(Stock,Camp);
+     auto* PlayerBag=Hero->FindComponentByClass<UHearthwardInventoryComponent>();
+     auto* Store=World->GetSubsystem<UHearthwardStorageSubsystem>();auto* Save=World->GetSubsystem<UHearthwardSaveSubsystem>();
+@@ -144,6 +155,7 @@
+         auto* Floor=World->SpawnActor<AActor>();Floor->Tags.Add(TEXT("Hearthward.NatureGround"));
+         auto* Box=NewObject<UBoxComponent>(Floor);Floor->AddInstanceComponent(Box);Floor->SetRootComponent(Box);
+         Box->SetBoxExtent(FVector(80000,80000,10));Box->SetCollisionObjectType(ECC_WorldStatic);
++        if(RestartTwoCamps)Box->SetBoxExtent(FVector(200000,160000,10));
+         Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);Box->SetCollisionResponseToAllChannels(ECR_Block);
+         Box->RegisterComponent();Floor->SetActorLocation(FVector(0,0,-10));
+         World->InitializeActorsForPlay(FURL(),false);World->GetWorldSettings()->NotifyBeginPlay();
+@@ -185,6 +197,13 @@
+         Economy->Advance(0,false);
+         if(!TestTrue(TEXT("Actual camp safety accepts the prepared world without changing enemy health"),
+             !Economy->State.Regions.ContainsByPredicate([](const auto& R){return !R.Safe;})))return false;
++        if(RestartTwoCamps)
++        {
++            FVector Support;
++            if(!TestTrue(TEXT("Formal first-camp anchor is created by normal adventure initialization on real ground"),
++                World->GetSubsystem<UHearthwardCampaignSubsystem>()->Ground(TwoCampAnchor,Support) && Support.Equals(TwoCampAnchor,.01)
++                && Economy->State.Camps[0].Id==TEXT("camp") && Economy->State.Camps[0].Position.Equals(TwoCampAnchor+FVector(0,0,100),.01)))return false;
++        }
+     }
+     const bool Enabled=Save->EnablePrototype();
+     if(!TestTrue(FString(TEXT("Real prototype save participants initialize: "))+Save->GetStatus(),Enabled))return false;
+@@ -217,6 +236,90 @@
+         TestEqual(TEXT("Campfire waiting adds no active seconds"),Clock->GetSnapshot().ActivePlaySeconds,Before.ActivePlaySeconds);
+         TestEqual(TEXT("Campfire waiting commits exactly the requested calendar minutes"),Clock->GetSnapshot().ElapsedCalendarMinutes,Before.ElapsedCalendarMinutes+Minutes);
+         Nature->Tick(.5f);
++        return true;
++    };
++    const auto CheckTwoCamps=[&](const FHearthwardWorldSave& Expected)
++    {
++        auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();FHearthwardCampaignState SavedCampaign;
++        FHearthwardCampState SavedCamp;FHearthwardNatureState SavedNature;TSharedPtr<FJsonObject> SavedGameplay;
++        if(!TestTrue(TEXT("Actual saved two-camp domains and gameplay parse through their normal contracts"),
++            FHearthwardCampaignState::Parse(Expected.Campaign,SavedCampaign) && FHearthwardCampState::Parse(Expected.CampEconomy,SavedCamp)
++            && FHearthwardNatureState::Parse(Expected.Nature,SavedNature)
++            && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Expected.Gameplay),SavedGameplay)))return false;
++        TestTrue(TEXT("Repeated load preserves all registered campaign identities, combat generations, flags and terminal reinforcements"),
++            Campaign->State.Snapshot()==Expected.Campaign);
++        TestTrue(TEXT("Repeated load preserves every camp, source, facility, unique assignment and invested batch"),Economy->State.Snapshot()==Expected.CampEconomy);
++        TestTrue(TEXT("Repeated load preserves every ecological identity and both camp markers"),Nature->Describe()==Expected.Nature);
++        if(!TestTrue(TEXT("Restored permanent victory remains a legitimate continuous two-camp state"),Campaign->State.Victory
++            && Campaign->State.Phase==TEXT("reclaimed") && !Campaign->State.Legacy && !Campaign->State.LegacyHometown
++            && Campaign->State.ReadyForVictory() && Campaign->State.Validate() && Economy->State.Hometown && Economy->State.Camps.Num()==2
++            && Nature->State.Camps.Contains(TEXT("camp")) && Nature->State.Camps.Contains(TEXT("hometown"))
++            && Campaign->State.Facts.Contains(TEXT("prologue_complete")) && Campaign->State.Facts.Contains(TEXT("home_saved"))
++            && !Campaign->State.Facts.Contains(TEXT("home_continued")) && Gameplay->Activated.Contains(TEXT("hometown"))))return false;
++        int32 Gifts=0,Beds=0,Access=0,Fires=0;
++        for(const auto& Saved:SavedCamp.Facilities)
++        {
++            auto* Actor=Building->ResolveFacility(Saved.Id);
++            if(!TestTrue(FString::Printf(TEXT("Actual load reconstructs facility %s"),*Saved.Id.ToString()),Actor!=nullptr))return false;
++            if(Saved.Camp==TEXT("hometown"))
++            {
++                ++Gifts;Beds+=int32(Saved.Kind==TEXT("bed"));Access+=int32(Saved.Kind==TEXT("warehouse_access"));Fires+=int32(Saved.Kind==TEXT("campfire"));
++                TestTrue(TEXT("All four hometown facilities retain original unpaid gift accounting"),Saved.Level==1 && Saved.Paid.IsEmpty() && !Saved.Paused);
++            }
++        }
++        TestTrue(TEXT("Both different bed identities, warehouse and campfire survive actual reconstruction"),Gifts==4 && Beds==2 && Access==1 && Fires==1);
++        const auto ActualBuildings=Building->Snapshot();const auto& SavedBuildings=SavedGameplay->GetArrayField(TEXT("buildings"));
++        TestEqual(TEXT("Repeated load cannot duplicate any paid or gifted building"),ActualBuildings.Num(),SavedBuildings.Num());
++        for(const auto& V:SavedBuildings)
++        {
++            const auto R=V->AsObject();FGuid Id;FVector Position;
++            if(!TestTrue(TEXT("Actual saved building identity and position are readable"),FGuid::Parse(R->GetStringField(TEXT("id")),Id)
++                && Position.InitFromString(R->GetStringField(TEXT("position")))))return false;
++            const auto* Row=ActualBuildings.FindByPredicate([&](const auto& B){return B->AsObject()->GetStringField(TEXT("id"))==R->GetStringField(TEXT("id"));});
++            auto* Actor=Building->ResolveFacility(Id);auto* Box=Actor?Cast<UBoxComponent>(Actor->GetRootComponent()):nullptr;
++            TestTrue(TEXT("Every actual reconstructed building retains its saved recipe, position, yaw and root geometry"),Row && Box
++                && (*Row)->AsObject()->GetStringField(TEXT("recipe"))==R->GetStringField(TEXT("recipe"))
++                && (*Row)->AsObject()->GetStringField(TEXT("position"))==R->GetStringField(TEXT("position"))
++                && (*Row)->AsObject()->GetNumberField(TEXT("yaw"))==R->GetNumberField(TEXT("yaw"))
++                && Actor->GetActorLocation().Equals(Position+FVector(0,0,Box->GetScaledBoxExtent().Z),.01)
++                && Actor->GetActorRotation().Equals(FRotator(0,R->GetNumberField(TEXT("yaw")),0),.01));
++        }
++        int32 Person1=0,Person2=0;
++        for(const auto& R:Economy->State.Regions)
++        {
++            if(R.Workers.Contains(1)){++Person1;TestTrue(TEXT("Ordinary person one remains only in first-camp forage"),R.Id==TEXT("camp_forage") && R.Camp==TEXT("camp"));}
++            if(R.Workers.Contains(2)){++Person2;TestTrue(TEXT("Migrated ordinary person two remains only in hometown forage"),R.Id==TEXT("hometown_forage") && R.Camp==TEXT("hometown"));}
++        }
++        TestTrue(TEXT("Actual restore does not duplicate ordinary workers across camps"),Person1==1 && Person2==1);
++        for(const auto& Site:SavedCamp.Camps)
++            TestTrue(TEXT("Each saved camp retains real identified sources"),Economy->State.Sources.ContainsByPredicate([&](const auto& S){return S.Camp==Site.Id;}));
++        const auto* Reward=Expected.StorageItems.Instances.FindByPredicate([](const auto& I){return I.Definition==TEXT("hearth_blade");});
++        const auto Shared=Store->InventorySnapshot();
++        TestTrue(TEXT("Unique hometown reward survives without second grant"),Reward && Reward->UniqueClaim==TEXT("hometown_hearth_blade")
++            && Shared.Instances.ContainsByPredicate([&](const auto& I){return I.Id==Reward->Id && I.Definition==Reward->Definition && I.UniqueClaim==Reward->UniqueClaim;})
++            && Store->GetItemCount(TEXT("hearth_blade"))==1 && PlayerBag->GetItemCount(TEXT("hearth_blade"))==0 && Brother->Bag->GetItemCount(TEXT("hearth_blade"))==0);
++        TestEqual(TEXT("Repeated victory restore cannot grant experience again"),double(Gameplay->Experience),SavedGameplay->GetNumberField(TEXT("experience")));
++        const auto& RewardFacts=SavedGameplay->GetArrayField(TEXT("rewardFacts"));
++        TestEqual(TEXT("Victory and every actual defeat fact are not replayed"),Gameplay->RewardFacts.Num(),RewardFacts.Num());
++        for(const auto& Fact:RewardFacts)TestTrue(TEXT("Original reward fact retains its identity"),Gameplay->RewardFacts.Contains(FName(*Fact->AsString())));
++        TestTrue(TEXT("All participants and camp/source transforms restore the actual saved boundary"),Hero->GetActorTransform().Equals(Expected.Player,.001)
++            && Brother->GetActorTransform().Equals(Expected.Companion,.001) && Camp->GetActorTransform().Equals(Expected.Camp,.001)
++            && Stock->GetOwner()->GetActorTransform().Equals(Expected.Source,.001) && Controller->GetControlRotation().Equals(Expected.View,.001));
++        const auto CheckSurvival=[&](const FHearthwardSurvivalState& A,const FHearthwardSurvivalState& B)
++        {
++            TestTrue(TEXT("Saved life, calendar Due and active treatment timers restore without advancement"),A.Life==B.Life && A.SevereDue==B.SevereDue
++                && A.DownRemaining==B.DownRemaining && A.DrowningRemaining==B.DrowningRemaining && A.HotRemaining==B.HotRemaining && A.HotRate==B.HotRate
++                && A.RecoveryDelay==B.RecoveryDelay && A.SafeSeconds==B.SafeSeconds && A.Medicine==B.Medicine && A.MedicineRemaining==B.MedicineRemaining
++                && A.AutomaticMedicine==B.AutomaticMedicine && A.AutoPermissions.Num()==B.AutoPermissions.Num());
++            for(FName Permission:B.AutoPermissions)TestTrue(TEXT("Saved treatment permission retains its identity"),A.AutoPermissions.Contains(Permission));
++        };
++        CheckSurvival(Hero->FindComponentByClass<UHearthwardSurvivalComponent>()->State,Expected.PlayerSurvival);
++        CheckSurvival(Brother->FindComponentByClass<UHearthwardSurvivalComponent>()->State,Expected.BrotherSurvival);
++        TestTrue(TEXT("Actual health, hunger and stamina have no victory-load gain"),double(Gameplay->Health)==SavedGameplay->GetNumberField(TEXT("health"))
++            && double(Gameplay->Hunger)==SavedGameplay->GetNumberField(TEXT("hunger")) && double(Gameplay->Stamina)==SavedGameplay->GetNumberField(TEXT("stamina"))
++            && Brother->FindComponentByClass<UHearthwardSurvivalComponent>()->Health()==Expected.BrotherHealth
++            && Brother->FindComponentByClass<UHearthwardSurvivalComponent>()->Hunger()==Expected.BrotherHunger
++            && Brother->FindComponentByClass<UHearthwardSurvivalComponent>()->Stamina()==Expected.BrotherStamina);
+         return true;
+     };
+     if(RestartPhase==TEXT("read"))
+@@ -235,6 +338,27 @@
+         const auto* Found=Points.FindByPredicate([&](const auto& P){return P.SaveId==SavedId;});
+         if(!TestNotNull(TEXT("Manifest selects the actual manual node read from disk"),Found))return false;
+         const auto Point=*Found;const auto& Expected=Point.World;
++        if(RestartTwoCamps)
++        {
++            FHearthwardCampaignState SavedCampaign;FHearthwardCampState SavedCamp;FGuid RewardId;TSharedPtr<FJsonObject> SavedGameplay;
++            if(!TestTrue(TEXT("Two-camp read uses the write process's actual continuous campaign and unique reward identities"),
++                Manifest->GetBoolField(TEXT("two_camps")) && Expected.Campaign==Manifest->GetStringField(TEXT("campaign_state"))
++                && FHearthwardCampaignState::Parse(Expected.Campaign,SavedCampaign) && SavedCampaign.Victory && SavedCampaign.ReadyForVictory()
++                && FHearthwardCampState::Parse(Expected.CampEconomy,SavedCamp) && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Expected.Gameplay),SavedGameplay)
++                && SavedGameplay->GetNumberField(TEXT("experience"))==Manifest->GetNumberField(TEXT("campaign_experience"))
++                && FGuid::Parse(Manifest->GetStringField(TEXT("hometown_reward_id")),RewardId)
++                && Expected.StorageItems.Instances.ContainsByPredicate([&](const auto& I){return I.Id==RewardId && I.Definition==TEXT("hearth_blade")
++                    && I.UniqueClaim==TEXT("hometown_hearth_blade");})))return false;
++            const auto& GiftIds=Manifest->GetArrayField(TEXT("hometown_gift_ids"));TSet<FGuid> Distinct;
++            for(const auto& Value:GiftIds)
++            {
++                FGuid Id;
++                if(!TestTrue(TEXT("Manifest gift identity refers to an actual saved unpaid hometown facility"),FGuid::Parse(Value->AsString(),Id)
++                    && SavedCamp.Facilities.ContainsByPredicate([&](const auto& F){return F.Id==Id && F.Camp==TEXT("hometown") && F.Level==1 && F.Paid.IsEmpty();})))return false;
++                Distinct.Add(Id);
++            }
++            if(!TestTrue(TEXT("Read manifest preserves all four different original gift GUIDs"),GiftIds.Num()==4 && Distinct.Num()==4))return false;
++        }
+         TestTrue(TEXT("Persisted campaign and command match write-process GUIDs"),Point.CampaignId==CampaignId && Expected.CommandId==CommandId && Expected.CommandActive);
+         TestEqual(TEXT("Persisted A matches write-process boundary"),Expected.ActiveSeconds,Manifest->GetNumberField(TEXT("active_seconds")));
+         TestEqual(TEXT("Persisted W matches write-process boundary"),Expected.CalendarMinutes,Manifest->GetNumberField(TEXT("calendar_minutes")));
+@@ -306,6 +430,7 @@
+         {
+             const FGuid PreviousEpoch=Store->GetTimelineEpoch();
+             if(!TestTrue(FString::Printf(TEXT("Cross-process LoadPoint pass %d: "),Pass+1)+Save->GetStatus(),Save->LoadPoint(SavedId)))return false;
++            if(RestartTwoCamps && !CheckTwoCamps(Expected))return false;
+             TestTrue(TEXT("Each actual load replaces the live timeline"),Store->GetTimelineEpoch()!=PreviousEpoch);
+             int32 RestoredOpponents=0;const auto* Combat=Hero->FindComponentByClass<UHearthwardCombatComponent>();
+             for(TActorIterator<AActor> It(World);It;++It)
+@@ -403,6 +528,11 @@
+         TestTrue(TEXT("Resave retains exact clock origin and knowledge revision"),After.InitialDay==Expected.InitialDay && After.InitialMinute==Expected.InitialMinute && After.KnowledgeRevision==Expected.KnowledgeRevision);
+         TestEqual(TEXT("Resave preserves invested camp state without batch settlement"),After.CampEconomy,Expected.CampEconomy);
+         TestEqual(TEXT("Resave preserves pending nature claims without reward settlement"),After.Nature,Expected.Nature);
++        if(RestartTwoCamps)
++        {
++            TestEqual(TEXT("Resave preserves exact continuous campaign without replaying flags or victory gifts"),After.Campaign,Expected.Campaign);
++            if(!CheckTwoCamps(Expected))return false;
++        }
+         if(RestartEcology)
+         {
+             if(!TestTrue(TEXT("Only after noGain checks does public cancellation release the active command for paid waiting"),Brother->Cancel(Hero)
+@@ -463,6 +593,134 @@
+             && Building->BuildingCount()==1 && Economy->State.Facilities.Num()==1 && Economy->State.Facilities[0].Kind==TEXT("workbench")
+             && Economy->State.Facilities[0].Paid.FindRef(TEXT("wood"))==72 && PlayerBag->GetItemCount(TEXT("wood"))==0 && Store->GetItemCount(TEXT("wood"))==2
+             && FMath::IsNearlyEqual(Clock->GetSnapshot().ActivePlaySeconds,BeforeBuild.ActivePlaySeconds+5,1.e-6)))return false;
++        if(RestartTwoCamps)
++        {
++            auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();auto* Combat=Hero->FindComponentByClass<UHearthwardCombatComponent>();
++            auto* Loading=Instance->GetSubsystem<UHearthwardLoadingSubsystem>();
++            const auto PlaceParticipant=[&](ACharacter* Character,FVector At)
++            {
++                FVector Ground;
++                if(!TestTrue(TEXT("Explicit campaign scene placement has actual tagged terrain"),Campaign->Ground(At,Ground)))return false;
++                if(!TestTrue(TEXT("Public participant placement accepts the actual capsule"),Character->SetActorLocation(
++                    Ground+FVector(0,0,Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()+3),false,nullptr,ETeleportType::TeleportPhysics)))return false;
++                Character->GetCharacterMovement()->TickComponent(.025f,LEVELTICK_All,nullptr);
++                return TestTrue(TEXT("Campaign participant stands naturally on real queried support"),Character->GetCharacterMovement()->IsMovingOnGround());
++            };
++            const auto CompleteScriptedTravel=[&]()
++            {
++                // Native worker RunTest executes before core ticker; dispatch the real loading delegate and its wall-clock fade.
++                const double Deadline=FPlatformTime::Seconds()+8;
++                while((Campaign->Busy() || Loading->IsLoading()) && FPlatformTime::Seconds()<Deadline)
++                {
++                    Campaign->Tick(.025f);FTSTicker::GetCoreTicker().Tick(.025f);Clock->Tick(.025f);
++                    Hero->GetCharacterMovement()->TickComponent(.025f,LEVELTICK_All,nullptr);
++                    Brother->GetCharacterMovement()->TickComponent(.025f,LEVELTICK_All,nullptr);
++                    FPlatformProcess::Sleep(.005f);
++                }
++                if(!TestTrue(FString(TEXT("Real scripted travel, intro and loading finish: "))+Campaign->Feedback,
++                    !Campaign->Busy() && !Loading->IsLoading() && !Clock->Suspended()))return false;
++                for(int32 I=0;I<80 && (!Hero->GetCharacterMovement()->IsMovingOnGround() || !Brother->GetCharacterMovement()->IsMovingOnGround());++I)
++                {
++                    Hero->GetCharacterMovement()->TickComponent(.025f,LEVELTICK_All,nullptr);
++                    Brother->GetCharacterMovement()->TickComponent(.025f,LEVELTICK_All,nullptr);
++                }
++                return TestTrue(TEXT("Normal campaign lifecycle ends with both participants safely grounded"),
++                    Hero->FindComponentByClass<UHearthwardSurvivalComponent>()->SafeToSave() && Brother->FindComponentByClass<UHearthwardSurvivalComponent>()->SafeToSave());
++            };
++            if(!TestTrue(TEXT("Normal campaign setup uses the actual owned axe switch"),Gameplay->EquipInstance(PlayerBag->FirstInstance(TEXT("axe")))))return false;
++            Clock->Tick(.4f);Combat->TickComponent(.4f,LEVELTICK_All,nullptr);
++            if(!TestTrue(TEXT("Real completed switch exposes the registered axe's attack power"),!Combat->Busy() && Gameplay->AttackPower()>0
++                && PlayerBag->EquippedInstance(TEXT("weapon"))==PlayerBag->FirstInstance(TEXT("axe"))))return false;
++            Campaign->Start();
++            if(!TestTrue(TEXT("Public Start creates the normal prologue registry and pending reinforcements"),Campaign->State.Phase==TEXT("prologue")
++                && !Campaign->State.Legacy && !Campaign->State.Victory && Campaign->State.Total()==80 && Campaign->State.Flags.IsEmpty()
++                && Campaign->State.Reinforcements.FindRef(TEXT("workshops"))==TEXT("pending") && Campaign->State.Reinforcements.FindRef(TEXT("assembly"))==TEXT("pending")))return false;
++            if(!CompleteScriptedTravel())return false;
++            if(!TestTrue(TEXT("Public relic interaction grants the actual amulet once"),Campaign->Interact() && Campaign->State.Facts.Contains(TEXT("relic"))
++                && PlayerBag->GetItemCount(TEXT("amulet"))==1 && Gameplay->RewardFacts.Contains(TEXT("campaign_start_amulet"))))return false;
++            if(!TestTrue(TEXT("Normal public companion directive produces the prologue order"),Gameplay->ApplyCompanionDirective(Hero,TEXT("hold"))
++                && Campaign->State.Facts.Contains(TEXT("prologue_order"))))return false;
++            const FVector Exit=Campaign->Position(TEXT("prologue_exit"));
++            if(!PlaceParticipant(Hero,Exit) || !PlaceParticipant(Brother,Exit+FVector(0,180,0)))return false;
++            Campaign->Tick(.5f);
++            if(!TestTrue(TEXT("Actual back-alley interaction starts the real escape travel"),Campaign->Interact() && Campaign->IsTraveling()))return false;
++            if(!CompleteScriptedTravel())return false;
++            if(!TestTrue(TEXT("Actual continuous prologue ends at the previously established first camp"),Campaign->State.Phase==TEXT("occupied")
++                && Campaign->State.Facts.Contains(TEXT("prologue_placed")) && Campaign->State.Facts.Contains(TEXT("prologue_intro"))
++                && Campaign->State.Facts.Contains(TEXT("prologue_complete")) && Economy->State.CampAt(Hero->GetActorLocation())==TEXT("camp")
++                && Economy->State.CampAt(Brother->GetActorLocation())==TEXT("camp")))return false;
++            if(!PlaceParticipant(Hero,Campaign->Position(TEXT("home_entry"))))return false;
++            Campaign->Tick(.5f);TArray<FName> Registered;
++            for(const auto& E:Campaign->State.Enemies)if(E.Group==TEXT("base"))Registered.Add(E.Id);
++            if(!TestEqual(TEXT("Actual occupied registry supplies eighty different base identities"),Registered.Num(),80))return false;
++            int32 Hits=0;
++            for(FName Id:Registered)
++            {
++                auto* Actor=Campaign->Actor(Id);auto* Target=Actor?Actor->Target.Get():nullptr;FVector Support;
++                if(!TestTrue(FString::Printf(TEXT("Actual registered target %s is alive on real support"),*Id.ToString()),Target && Target->Id==Id
++                    && Target->CampaignTarget && !Target->Protected && Target->Alive() && Target->Memory.Generation==1
++                    && Campaign->Ground(Actor->GetActorLocation(),Support)))return false;
++                for(int32 Hit=0;Hit<32 && Target->Alive();++Hit)
++                {
++                    const float Before=Target->Health;Combat->HitTarget(Target,Gameplay->AttackPower(),TEXT("body"),false,FGuid::NewGuid(),Hero);++Hits;
++                    if(!TestTrue(TEXT("Each real attack transaction lowers the registered target's actual health"),Target->Health<Before))return false;
++                }
++                const auto* Enemy=Campaign->Enemy(Id);
++                if(!TestTrue(FString::Printf(TEXT("Actual death and stable defeat reward settle for %s"),*Id.ToString()),Enemy && !Target->Alive() && Enemy->Combat.Health==0
++                    && Gameplay->RewardFacts.Contains(FName(*FString::Printf(TEXT("defeat:%s:1"),*Id.ToString())))))return false;
++            }
++            Campaign->Tick(.5f);
++            if(!TestTrue(TEXT("Normal Tick cancels untriggered reinforcements and kills alone leave flags and victory unset"),Campaign->State.Cleared()==80
++                && Campaign->State.Total()==80 && Campaign->State.Flags.IsEmpty() && !Campaign->State.Victory
++                && Campaign->State.Reinforcements.FindRef(TEXT("workshops"))==TEXT("cancelled") && Campaign->State.Reinforcements.FindRef(TEXT("assembly"))==TEXT("cancelled")))return false;
++            for(FName Zone:{FName(TEXT("river_gate")),FName(TEXT("workshops")),FName(TEXT("dwellings")),FName(TEXT("assembly"))})
++            {
++                const FName Location(*(TEXT("loc_")+Zone.ToString()));
++                if(!PlaceParticipant(Hero,Campaign->Position(Location)+FVector(180,0,0)))return false;
++                Campaign->Tick(.5f);const int32 BeforeFlags=Campaign->State.Flags.Num();const auto Before=Clock->GetSnapshot();
++                if(!TestTrue(FString(TEXT("Public interaction starts genuine five-active-second flag capture: "))+Campaign->Feedback,
++                    Campaign->Interact() && Campaign->Busy() && Campaign->State.Flags.Num()==BeforeFlags))return false;
++                Clock->Tick(5.f);Campaign->Tick(5.f);
++                if(!TestTrue(TEXT("Production active deadline captures exactly the actual control zone"),!Campaign->Busy()
++                    && Campaign->State.Flags.Contains(Zone) && Campaign->State.Flags.Num()==BeforeFlags+1
++                    && Clock->GetSnapshot().ActivePlaySeconds==Before.ActivePlaySeconds+5))return false;
++            }
++            if(!TestTrue(FString(TEXT("Normal Tick commits the genuine second camp: "))+Economy->Feedback,Campaign->State.Victory
++                && Campaign->State.Phase==TEXT("reclaimed") && Campaign->State.ReadyForVictory() && Campaign->State.Validate()
++                && Economy->State.Hometown && Economy->State.Camps.Num()==2 && Gameplay->Activated.Contains(TEXT("hometown"))))return false;
++            int32 Gifts=0,Beds=0,Access=0,Fires=0;TSet<FGuid> GiftIds;
++            for(const auto& F:Economy->State.Facilities)if(F.Camp==TEXT("hometown"))
++            {
++                ++Gifts;Beds+=int32(F.Kind==TEXT("bed"));Access+=int32(F.Kind==TEXT("warehouse_access"));Fires+=int32(F.Kind==TEXT("campfire"));GiftIds.Add(F.Id);
++                if(!TestTrue(TEXT("Victory creates actual distinct gift actors with no fabricated paid materials"),F.Id.IsValid() && F.Level==1 && F.Paid.IsEmpty()
++                    && !F.Paused && Building->ResolveFacility(F.Id)))return false;
++            }
++            if(!TestTrue(TEXT("Victory grants two different beds, storage access, fire and exactly one unique blade"),Gifts==4 && GiftIds.Num()==4 && Beds==2 && Access==1 && Fires==1
++                && Store->GetItemCount(TEXT("hearth_blade"))==1 && Gameplay->RewardFacts.Contains(TEXT("reward:hometown"))))return false;
++            Nature->EnsureWorld();
++            if(!TestTrue(TEXT("Normal ecology initialization records both real camp markers"),Nature->State.Camps.Contains(TEXT("camp")) && Nature->State.Camps.Contains(TEXT("hometown"))))return false;
++            for(const auto& Source:Economy->State.Sources)
++            {
++                FVector Ground;
++                if(!TestTrue(TEXT("Every actual two-camp source keeps its stable camp identity on real terrain"),(Source.Camp==TEXT("camp") || Source.Camp==TEXT("hometown"))
++                    && Campaign->Ground(Source.Position,Ground) && Ground.Equals(Source.Position,.01)))return false;
++            }
++            if(!PlaceParticipant(Hero,Campaign->Position(TEXT("hometown"))))return false;
++            Economy->Advance(0,false);const FGuid Epoch=Store->GetTimelineEpoch();
++            if(!TestTrue(TEXT("Public management genuinely migrates ordinary person two and keeps person one at the old camp"),
++                Economy->AssignWorker(TEXT("camp_forage"),2,Epoch) && Economy->AssignWorker(TEXT("hometown_forage"),2,Epoch)
++                && Economy->AssignWorker(TEXT("camp_forage"),1,Epoch) && Campaign->State.Facts.Contains(TEXT("home_work"))))return false;
++            const auto* OldForage=Economy->State.Regions.FindByPredicate([](const auto& R){return R.Id==TEXT("camp_forage");});
++            const auto* HomeForage=Economy->State.Regions.FindByPredicate([](const auto& R){return R.Id==TEXT("hometown_forage");});
++            if(!TestTrue(TEXT("Real assignment removes the migrant from the first camp without enabling free production"),OldForage && HomeForage
++                && OldForage->Workers==TArray<int32>{1} && HomeForage->Workers==TArray<int32>{2} && !OldForage->Enabled && !HomeForage->Enabled))return false;
++            if(!PlaceParticipant(Hero,Economy->State.Camps[0].Position) || !PlaceParticipant(Brother,Economy->State.Camps[0].Position+FVector(0,200,0)))return false;
++            Controller->SetControlRotation(FRotator::ZeroRotator);Economy->Advance(0,false);
++            if(!TestTrue(TEXT("Continuous campaign returns alive to the real first camp before unchanged mature save preparation"),
++                Hero->FindComponentByClass<UHearthwardSurvivalComponent>()->SafeToSave() && Brother->FindComponentByClass<UHearthwardSurvivalComponent>()->SafeToSave()
++                && Brother->CanCommunicate(Hero) && !Gameplay->InCombat()))return false;
++            AddInfo(FString::Printf(TEXT("TASK071 two-camp progression actual registered=80 hits=%d flags=%d gifts=%d"),Hits,Campaign->State.Flags.Num(),Gifts));
++        }
+         if(RestartEcology)
+         {
+             if(!TestTrue(TEXT("Ecology fixture supplies actual campfire cost and food for both participants"),PlayerBag->TryAdd(TEXT("wood"),4)==EHearthwardInventoryResult::Success
+@@ -474,6 +732,8 @@
+             if(!TestTrue(FString(TEXT("Real campfire support and occupancy accept placement: "))+Building->Feedback,Building->ValidPlacement && Building->ConfirmPlacement()))return false;
+             Clock->Tick(5.f);Timer->TickComponent(5.f,LEVELTICK_All,nullptr);
+             const auto* Fire=Economy->State.Facilities.FindByPredicate([](const auto& F){return F.Kind==TEXT("campfire");});
++            if(RestartTwoCamps)Fire=Economy->State.Facilities.FindByPredicate([](const auto& F){return F.Kind==TEXT("campfire") && F.Camp==TEXT("camp")
++                && F.Paid.FindRef(TEXT("wood"))==4 && F.Paid.FindRef(TEXT("stone"))==4;});
+             if(!TestTrue(TEXT("Real five-second construction publishes one fully paid usable campfire"),Fire && !Building->IsBuilding() && !Building->IsPlacing()
+                 && Fire->Paid.FindRef(TEXT("wood"))==4 && Fire->Paid.FindRef(TEXT("stone"))==4 && Building->CanUseFacility(Fire->Id)
+                 && PlayerBag->GetItemCount(TEXT("wood"))==0 && PlayerBag->GetItemCount(TEXT("stone"))==0 && Store->GetItemCount(TEXT("wood"))==2))return false;
+@@ -605,6 +865,29 @@
+             Manifest->SetStringField(TEXT("ecology_slot"),EcologySlot.ToString());Manifest->SetStringField(TEXT("ecology_animal"),EcologyAnimal.ToString());
+             Manifest->SetStringField(TEXT("ecology_first_corpse"),EcologyFirstCorpse.ToString());Manifest->SetStringField(TEXT("ecology_source"),EcologySource);
+             Manifest->SetNumberField(TEXT("ecology_experience"),WrittenGameplay->GetNumberField(TEXT("experience")));
++        }
++        if(RestartTwoCamps)
++        {
++            FHearthwardCampaignState WrittenCampaign;TSharedPtr<FJsonObject> WrittenGameplay;
++            const auto* Reward=S.StorageItems.Instances.FindByPredicate([](const auto& I){return I.Definition==TEXT("hearth_blade");});
++            if(!TestTrue(TEXT("Manifest derives continuous permanent victory and original unique reward from the actual saved point"),
++                FHearthwardCampaignState::Parse(S.Campaign,WrittenCampaign) && WrittenCampaign.Victory && WrittenCampaign.ReadyForVictory()
++                && !WrittenCampaign.Legacy && !WrittenCampaign.LegacyHometown && WrittenCampaign.Facts.Contains(TEXT("prologue_complete"))
++                && WrittenCampaign.Facts.Contains(TEXT("home_saved")) && WrittenCamp.Hometown && WrittenCamp.Camps.Num()==2
++                && WrittenNature.Camps.Contains(TEXT("camp")) && WrittenNature.Camps.Contains(TEXT("hometown"))
++                && Reward && Reward->Id.IsValid() && Reward->UniqueClaim==TEXT("hometown_hearth_blade")
++                && FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(S.Gameplay),WrittenGameplay)))return false;
++            int32 Gifts=0,Beds=0,Access=0,Fires=0;TSet<FGuid> GiftIds;TArray<TSharedPtr<FJsonValue>> ManifestGifts;
++            for(const auto& F:WrittenCamp.Facilities)if(F.Camp==TEXT("hometown"))
++            {
++                ++Gifts;Beds+=int32(F.Kind==TEXT("bed"));Access+=int32(F.Kind==TEXT("warehouse_access"));Fires+=int32(F.Kind==TEXT("campfire"));GiftIds.Add(F.Id);
++                TestTrue(TEXT("Manifest publishes actual unpaid hometown gift accounting"),F.Paid.IsEmpty() && F.Level==1 && !F.Paused);
++                ManifestGifts.Add(MakeShared<FJsonValueString>(F.Id.ToString()));
++            }
++            if(!TestTrue(TEXT("Actual disk snapshot contains all four distinct victory gift identities"),Gifts==4 && GiftIds.Num()==4 && Beds==2 && Access==1 && Fires==1))return false;
++            Manifest->SetBoolField(TEXT("two_camps"),true);Manifest->SetStringField(TEXT("campaign_state"),S.Campaign);
++            Manifest->SetArrayField(TEXT("hometown_gift_ids"),ManifestGifts);
++            Manifest->SetStringField(TEXT("hometown_reward_id"),Reward->Id.ToString());Manifest->SetNumberField(TEXT("campaign_experience"),WrittenGameplay->GetNumberField(TEXT("experience")));
+         }
+         FString Json;FJsonSerializer::Serialize(Manifest,TJsonWriterFactory<>::Create(&Json));
+         if(!TestTrue(TEXT("Write process persists the isolated QA manifest"),IFileManager::Get().MakeDirectory(*FPaths::GetPath(ManifestPath),true)

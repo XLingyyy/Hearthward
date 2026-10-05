@@ -1,0 +1,44 @@
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -183,6 +183,41 @@
+     return true;
+ }
+ 
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalCollectionMeaningTest,"Hearthward.NPCAgent.OriginalCollectionMeaning",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
++bool FNPCAgentOriginalCollectionMeaningTest::RunTest(const FString&)
++{
++    FHearthwardAgentGoal G;
++    if(!TestTrue(TEXT("The actual model-shaped collection result parses before the original is bound"),HearthwardAgent::Parse(
++        TEXT("{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":2,\"mode\":\"additional_acquired\",\"source\":\"S1\",")
++        TEXT("\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡去已知安全点采集两份木材，请确认后再执行。\"}"),G)))return false;
++    G.Original=TEXT("拿二份木材过来");
++    if(!TestTrue(TEXT("The actual original has a valid exact quantity before collection meaning is checked"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
++    TestFalse(TEXT("An unspecified transfer source cannot become new collection from default S1"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("请新采两份木头并带回营地仓库");
++    TestTrue(TEXT("Explicit new collection with the existing material alias remains valid"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("请采二份木材送进仓库");
++    TestTrue(TEXT("A normal explicit collection verb does not require a new wording prefix"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=HearthwardAgent::GoalText(G);
++    TestTrue(TEXT("Structured collection GoalText remains a valid confirmed contract"),HearthwardAgent::Validate(G).IsEmpty());
++    return true;
++}
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalLocationRestrictionTest,"Hearthward.NPCAgent.OriginalCollectionLocationRestriction",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
++bool FNPCAgentOriginalLocationRestrictionTest::RunTest(const FString&)
++{
++    FHearthwardAgentGoal G;
++    if(!TestTrue(TEXT("The actual model-shaped location omission parses before original binding"),HearthwardAgent::Parse(
++        TEXT("{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":4,\"mode\":\"additional_acquired\",\"source\":\"S1\",")
++        TEXT("\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，新采四份木材但避开原采集点，请确认路线与目标；若遇阻碍或危险将安全返营等待。\"}"),G)))return false;
++    G.Original=TEXT("新采四份木材，但别去那里");
++    if(!TestTrue(TEXT("The excluded-place clause preserves a legitimate exact target quantity"),HearthwardAgent::OriginalQuantityMatches(G)))return false;
++    TestFalse(TEXT("An unrepresented excluded location cannot silently fall back to S1"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("去已知安全点新采四份木材，带回营地入库");G.Limits={TEXT("source:S1")};
++    TestTrue(TEXT("The existing positive known-source restriction stays valid"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=HearthwardAgent::GoalText(G);
++    TestTrue(TEXT("Canonical positive source GoalText is unaffected"),HearthwardAgent::Validate(G).IsEmpty());
++    return true;
++}
++
+ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalNoLimitTest,"Hearthward.NPCAgent.OriginalMaterialProhibition",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+ bool FNPCAgentOriginalNoLimitTest::RunTest(const FString&)
+ {

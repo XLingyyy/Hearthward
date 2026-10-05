@@ -12,10 +12,11 @@ class HEARTHWARD_API UHearthwardCompanionNavigationComponent : public UActorComp
 public:
     UHearthwardCompanionNavigationComponent();
 
-    bool IsAt(const AActor* Target,float AcceptanceRadius=50.0f) const;
-    bool MoveToActor(AActor* Target,float Speed,float AcceptanceRadius);
-    bool MoveToLocation(const FVector& Location,float Speed,float AcceptanceRadius);
-    void Stop();
+    UFUNCTION(BlueprintPure) bool IsAt(const AActor* Target,float AcceptanceRadius=50.0f) const;
+    UFUNCTION(BlueprintCallable) bool MoveToActor(AActor* Target,float Speed,float AcceptanceRadius);
+    UFUNCTION(BlueprintCallable) bool MoveToLocation(const FVector& Location,float Speed,float AcceptanceRadius);
+    UFUNCTION(BlueprintCallable) void Stop();
+    UFUNCTION(BlueprintPure) FString GetStatus() const { return Status; }
     bool IsRetryReady() const;
 
 private:
@@ -26,4 +27,5 @@ private:
     FVector Location=FVector::ZeroVector;
     float Acceptance=0;
     double RetryAt=0;
+    FString Status;
 };

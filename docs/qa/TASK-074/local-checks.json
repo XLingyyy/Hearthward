@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-04",
+  "scope": "TASK-074 limited source/import/config validation; no RC acceptance",
+  "source_tree_read": "G:/GameFactory/Hearthward/.agent-local/task051",
+  "patch_tree": "G:/GameFactory/Hearthward/.agent-local/task062",
+  "release_state": "not_frozen; TASK-073 acceptance pending; no unique RC_SHA",
+  "baseline_actual_help": {
+    "command": "G:/GameFactory/.venv/Scripts/python.exe -X utf8 G:/GameFactory/Hearthward/.agent-local/task051/scripts/release/package_demo.py --help",
+    "exit_code": 1,
+    "failure": "line 6: ModuleNotFoundError: No module named 'engine_adapters'",
+    "reached_output_mkdir": false,
+    "reached_UEClient_construction": false
+  },
+  "patched_actual_help": {
+    "command": "G:/GameFactory/.venv/Scripts/python.exe -X utf8 G:/GameFactory/Hearthward/.agent-local/task062/scripts/release/package_demo.py --help",
+    "exit_code": 0,
+    "usage": "package_demo.py [-h] [output]",
+    "reached_output_mkdir": false,
+    "reached_UEClient_construction": false
+  },
+  "ast": "PASS",
+  "bounded_import_probe": {
+    "method": "Execute only actual parsed statements before output.mkdir; no UEClient construction or build/package call",
+    "own_worktree": {
+      "factory": "G:/GameFactory",
+      "project": "G:/GameFactory/Hearthward/.agent-local/task062",
+      "output": "F:/HearthwardDemo/20260924",
+      "UEClient_module": "engine_adapters.ue5.ue_client"
+    },
+    "original_root_file_location_scenario": {
+      "method": "Same bounded parsed statements, __file__ set to original-root script location; not a full original-root packaging execution",
+      "factory": "G:/GameFactory",
+      "project": "G:/GameFactory/Hearthward",
+      "output": "F:/HearthwardDemo/20260924",
+      "UEClient_module": "engine_adapters.ue5.ue_client"
+    }
+  },
+  "cook_static": {
+    "actual_JSON_package_paths": 331,
+    "meshes": 14,
+    "skeletons": 14,
+    "clips": 303,
+    "physical_missing": 0,
+    "previous_explicit_directory_coverage": 0,
+    "patched_explicit_directory_coverage": 331,
+    "MotionR3_directory_packages": 471,
+    "MotionR3_directory_maps": 0,
+    "maps_unchanged": true,
+    "old_directories_retained": true,
+    "TASK055_candidate_directory_added": false,
+    "actual_cook": "NOT_RUN",
+    "Shipping_runtime_load": "NOT_RUN"
+  },
+  "UE_build_package_installer_runtime_copy_git_write": "NOT_RUN",
+  "checksum": "not computed",
+  "model_weights": "existence/stat only; content not read"
+}

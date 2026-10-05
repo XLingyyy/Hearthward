@@ -1,0 +1,54 @@
+--- a/Source/Hearthward/Save/HearthwardSaveGame.cpp
++++ b/Source/Hearthward/Save/HearthwardSaveGame.cpp
+@@ -94,7 +94,8 @@
+         Out->Schema=1;
+ 
+     if(Out && Header[0]==PreviousMagic && Out->Schema==HearthwardSave::CurrentSchema
+-        && !Out->Points.ContainsByPredicate([](const auto& P){return P.World.SurvivalVersion!=0;})) Out->Schema=3;
++        && !Out->Points.ContainsByPredicate([](const auto& P){return P.World.SurvivalVersion!=0;}))
++        Out->Schema=!Out->Points.IsEmpty() && !Out->Points.ContainsByPredicate([](const auto& P){return P.World.NPCStateVersion!=2;})?2:3;
+ 
+     // Before schema 6, the camp was stored as gameplay origin/tier and building
+     // actors. Preserve that restore path; absence is not a damaged economy blob.
+--- a/Source/Hearthward/Tests/SaveTests.cpp
++++ b/Source/Hearthward/Tests/SaveTests.cpp
+@@ -300,6 +300,39 @@
+         TestTrue(TEXT("Migrated file can be saved"),HearthwardSave::Write(Path+TEXT(".roundtrip"),Loaded,Error));
+         TestTrue(TEXT("Migrated file can be continued"),HearthwardSave::Read(Path+TEXT(".roundtrip"),Loaded,Error));
+     }
++    {
++        TGuardValue<int32> LegacySchema(Pool->Schema,2),LegacyNPC(S.NPCStateVersion,2),LegacySurvival(S.SurvivalVersion,0),LegacyClock(S.ClockVersion,0);
++        TGuardValue<int64> LegacyDay(S.InitialDay,0);TGuardValue<double> LegacyMinute(S.InitialMinute,-1.);
++        bool Written=false;
++        {
++            TGuardValue<int32> OldClassDefault(GetMutableDefault<UHearthwardSaveGame>()->Schema,2);
++            Written=WriteLegacy(0x48575332);
++        }
++        TestTrue(TEXT("Schema2 fixture serializes against its real historical class default"),Written);
++        TestEqual(TEXT("Historical serialization restores today's class default"),GetDefault<UHearthwardSaveGame>()->Schema,HearthwardSave::CurrentSchema);
++        TArray<uint8> Bytes,Payload;FFileHelper::LoadFileToArray(Bytes,*Path);
++        if(Bytes.Num()>12)
++        {
++            Payload.Append(Bytes.GetData()+12,Bytes.Num()-12);
++            const auto* Raw=Cast<UHearthwardSaveGame>(UGameplayStatics::LoadGameFromMemory(Payload));
++            if(TestNotNull(TEXT("Historical default-omitting payload uses standard GVAS deserialization"),Raw))
++            {
++                TestEqual(TEXT("Omitted schema really loads today's class default before migration"),Raw->Schema,HearthwardSave::CurrentSchema);
++                TestEqual(TEXT("Old NPC version remains explicit before migration"),Raw->Points[0].World.NPCStateVersion,2);
++                TestEqual(TEXT("Old fixture has no survival version"),Raw->Points[0].World.SurvivalVersion,0);
++            }
++        }
++        const bool Migrated=HearthwardSave::Read(Path,Loaded,Error);
++        TestTrue(FString(TEXT("Historical omitted schema2 migrates: "))+Error,Migrated);
++        if(Loaded)
++        {
++            TestEqual(TEXT("Existing cognition migration promotes omitted schema2 NPC state"),Loaded->Points[0].World.NPCStateVersion,HearthwardSave::NPCStateVersion);
++            TestEqual(TEXT("Omitted schema migration preserves player wood without rewards"),Loaded->Points[0].World.PlayerItems.Stacks.FindRef(TEXT("wood")),3);
++            TestEqual(TEXT("Omitted schema migration preserves shared wood without rewards"),Loaded->Points[0].World.StorageItems.Stacks.FindRef(TEXT("wood")),5);
++            TestTrue(TEXT("Omitted schema migration writes current-format snapshot"),HearthwardSave::Write(Path+TEXT(".default-schema.roundtrip"),Loaded,Error));
++            TestTrue(TEXT("Omitted schema migration reloads current-format snapshot"),HearthwardSave::Read(Path+TEXT(".default-schema.roundtrip"),Loaded,Error));
++        }
++    }
+     S.CampEconomy=TEXT("{broken");
+     TestTrue(TEXT("Write damaged legacy economy"),WriteLegacy(0x48575332));
+     TestFalse(TEXT("Present but malformed economy remains rejected"),HearthwardSave::Read(Path,Loaded,Error));

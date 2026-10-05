@@ -77,7 +77,7 @@ public:
     float IncomingDamage(const AActor* Target,float Seconds) const;
     bool IsRunning() const { return Sprinting && Stamina>0 && GetOwner()->GetVelocity().Size2D()>5; }
     void Record(FName Kind, FName Target, int32 Count = 1);
-    void CommitOpponentHealth(FName Target,float Health,float PreviousHealth=-1);
+    void CommitOpponentHealth(FName Target,float Health,float PreviousHealth=-1,AActor* Source=nullptr);
     bool CommitEquipment(FName Id);
     bool CommitEquipmentInstance(FGuid Id);
     UFUNCTION(BlueprintCallable) bool EquipInstance(FGuid Id);

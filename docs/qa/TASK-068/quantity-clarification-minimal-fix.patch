@@ -1,0 +1,21 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -70,7 +70,6 @@
+     {
+         const FString Unit=Number.GetCaptureGroup(3);
+         if(Goal.Intent==TEXT("craft")?Unit!=TEXT("批"):Unit==TEXT("批"))continue;
+-        if(Unit.IsEmpty() && Number.GetCaptureGroup(1).IsEmpty())continue;
+         const int32 Begin=Number.GetMatchBeginning(),End=Number.GetMatchEnding();
+         int32 ClauseStart=Begin;
+         while(ClauseStart>0 && !FString(TEXT("，,。；;\n")).Contains(Text.Mid(ClauseStart-1,1)))--ClauseStart;
+@@ -81,7 +80,9 @@
+         const FString After=Text.Mid(End).TrimStart();
+         const bool Clarification=Supplement!=INDEX_NONE && Begin>=Supplement+4
+             && Text.Mid(Supplement+4,Begin-Supplement-4).TrimStartAndEnd().IsEmpty()
+-            && After.TrimStartAndEnd().IsEmpty() && Text.Left(Supplement).Contains(Item);
++            && (After.IsEmpty() || After==TEXT("。") || After==TEXT(".")) && Text.Left(Supplement).Contains(Item);
++        if(Unit.IsEmpty() && Number.GetCaptureGroup(1).IsEmpty()
++            && !(Clarification && Number.GetCaptureGroup(2).IsNumeric()))continue;
+         if(Goal.Intent!=TEXT("craft") && !After.StartsWith(Item) && !After.StartsWith(Goal.Item.ToString())
+             && !Before.EndsWith(Item) && !Before.EndsWith(Goal.Item.ToString())
+             && !(Number.GetCaptureGroup(1).Len()>0 && Text.Contains(Item)) && !Clarification)continue;

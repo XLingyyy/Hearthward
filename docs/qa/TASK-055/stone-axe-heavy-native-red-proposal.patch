@@ -1,0 +1,136 @@
+--- a/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
++++ b/Source/Hearthward/Tests/EquipmentPresentationTests.cpp
+@@ -538,4 +538,133 @@
+     }
+     return true;
+ }
++
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStoneAxeHeavyPhaseAndBlade055Test,
++    "Hearthward.Equipment055.StoneAxeHeavyUsesCurrentMoveAndPhysicalBlade",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++
++bool FStoneAxeHeavyPhaseAndBlade055Test::RunTest(const FString&)
++{
++    for(const int32 Case:{0,1,2})
++    {
++        const int32 FPS=Case==1?1:30;
++        const bool OutsideBlade=Case==2;
++        UWorld::InitializationValues Values;
++        Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
++        auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
++        GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
++        const auto Cleanup=[&]()
++        {
++            World->EndPlay(EEndPlayReason::Quit);GEngine->DestroyWorldContext(World);World->DestroyWorld(false);
++        };
++        World->InitializeActorsForPlay(FURL());
++        FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
++        auto* Hero=World->SpawnActor<AHearthwardCharacter>(FVector(0,0,90),FRotator::ZeroRotator,Params);
++        auto* Controller=World->SpawnActor<APlayerController>();World->AddController(Controller);Controller->Possess(Hero);
++        Hero->Gameplay->Enabled=true;World->GetWorldSettings()->NotifyBeginPlay();
++        Hero->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
++        auto* Bag=Hero->FindComponentByClass<UHearthwardInventoryComponent>();
++        auto* Combat=Hero->FindComponentByClass<UHearthwardCombatComponent>();
++        auto* Clock=World->GetSubsystem<UHearthwardWorldClockSubsystem>();
++        auto* Mesh=Hero->GetMesh();auto* Anim=Cast<UHearthwardHeroAnimInstance>(Mesh->GetAnimInstance());
++        UStaticMeshComponent* Held=nullptr;TArray<UStaticMeshComponent*> Components;Hero->GetComponents(Components);
++        for(auto* Component:Components)if(Component->GetFName()==TEXT("HeldAxe"))Held=Component;
++        if(!TestTrue(TEXT("Heavy fixture uses the actual Hero animation and held axe"),
++            Bag && Combat && Clock && Anim && Held && Held->GetStaticMesh() && Anim->Clips.IsValidIndex(6) && Anim->Clips[6]))
++        {Cleanup();return false;}
++        for(const FName Socket:{FName(TEXT("Grip")),FName(TEXT("BladeBase")),FName(TEXT("BladeTip"))})
++            if(!TestNotNull(TEXT("Heavy strike requires its actual mesh socket"),Held->GetStaticMesh()->FindSocket(Socket)))
++            {Cleanup();return false;}
++        if(!TestTrue(TEXT("Normal inventory creates two stone axes"),Bag->TryAdd(TEXT("axe"),2)==EHearthwardInventoryResult::Success))
++        {Cleanup();return false;}
++        TArray<FGuid> Axes;for(const auto& Item:Bag->Snapshot().Instances)if(Item.Definition==TEXT("axe"))Axes.Add(Item.Id);
++        if(!TestEqual(TEXT("Heavy fixture has current and spare instance GUIDs"),Axes.Num(),2)
++            || !TestTrue(TEXT("Normal gameplay requests the actual instance switch"),Hero->Gameplay->EquipInstance(Axes[0])))
++        {Cleanup();return false;}
++        Clock->Tick(.5f);Combat->TickComponent(.5f,LEVELTICK_All,nullptr);
++        if(!TestEqual(TEXT("The real timed switch equipped the chosen axe GUID"),Bag->EquippedInstance(TEXT("weapon")),Axes[0])
++            || !TestTrue(TEXT("The actually equipped axe is visible"),Held->GetVisibleFlag()))
++        {Cleanup();return false;}
++        if(Case==0 && !TestTrue(TEXT("Production Learn spends the existing budget on the approved strong skill"),Hero->Gameplay->Learn(TEXT("strong"))))
++        {Cleanup();return false;}
++        const float Skill=Hero->Gameplay->Effect(TEXT("heavy_damage"));
++        if(Case==0)TestTrue(TEXT("The normally learned strong rank has a real nonzero heavy damage effect"),Skill>0);
++        Mesh->TickAnimation(.2f,false);Mesh->RefreshBoneTransforms();
++        auto* Enemy=World->SpawnActor<AActor>();auto* Body=NewObject<UBoxComponent>(Enemy);
++        Enemy->AddInstanceComponent(Body);Enemy->SetRootComponent(Body);
++        Body->SetBoxExtent(OutsideBlade?FVector(3):FVector(30,25,45));Body->ComponentTags.Add(TEXT("body"));
++        Body->SetCollisionEnabled(ECollisionEnabled::QueryOnly);Body->SetCollisionResponseToAllChannels(ECR_Ignore);
++        Body->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);Body->RegisterComponent();
++        Enemy->SetActorLocation(OutsideBlade?FVector(150,0,100):FVector(110,-35,125));
++        if(OutsideBlade)
++        {
++            FHitResult ReachHit;FCollisionQueryParams Query(SCENE_QUERY_STAT(StoneAxe055HeavyReachNegative),false,Hero);
++            TestTrue(TEXT("The distant negative body actually blocks the legacy reach through its centre"),
++                World->LineTraceSingleByChannel(ReachHit,FVector(0,0,100),FVector(200,0,100),ECC_Visibility,Query)
++                && ReachHit.GetActor()==Enemy);
++        }
++        auto* Target=NewObject<UHearthwardCombatTargetComponent>(Enemy);Enemy->AddInstanceComponent(Target);
++        Target->Id=TEXT("stone_axe_heavy_physical_test");Target->Health=Target->MaximumHealth=100;Target->RegisterComponent();
++        Hero->Gameplay->Opponents.Add(Target->Id,Target->Health);
++        const auto Move=HearthwardCombat::Move(TEXT("blunt"),true);
++        const float Power=Hero->Gameplay->AttackPower();
++        const float ExpectedDamage=Power*Move.Multiplier/HearthwardCombat::Move(TEXT("blunt"),false).Multiplier*(1+Skill);
++        const float InitialHealth=Target->Health,InitialStamina=Hero->Gameplay->Stamina;
++        const float StaminaCost=Move.Cost*Bag->GetStaminaCostMultiplier()*FMath::Max(.1f,1-Hero->Gameplay->Effect(TEXT("cost")));
++        const double CurrentWear=Bag->FindInstance(Axes[0])->Durability,SpareWear=Bag->FindInstance(Axes[1])->Durability;
++        if(!TestTrue(TEXT("The production heavy input starts the normal action"),Hero->Gameplay->HeavyAttack()))
++        {Cleanup();return false;}
++        TestEqual(TEXT("Heavy action retains the actual rules duration"),Combat->Duration,Move.Duration());
++        TestTrue(TEXT("Heavy action pays its own stamina cost once"),FMath::IsNearlyEqual(Hero->Gameplay->Stamina,InitialStamina-StaminaCost,.001f));
++        double Advanced=0;
++        const auto AdvanceTo=[&](double End)
++        {
++            while(Advanced<End-1.e-7)
++            {
++                const float Delta=FMath::Min(1.f/FPS,float(End-Advanced));
++                Clock->Tick(Delta);Combat->TickComponent(Delta,LEVELTICK_All,nullptr);
++                Mesh->TickAnimation(Delta,false);Mesh->RefreshBoneTransforms();Advanced+=Delta;
++            }
++        };
++        if(Case==0)
++        {
++            AdvanceTo(Move.Windup);
++            FTransform Expected;
++            {
++                FMemMark Mark(FMemStack::Get());const auto& Bones=Anim->GetRequiredBones();
++                FCompactPose Pose;Pose.SetBoneContainer(&Bones);Pose.ResetToRefPose();FBlendedCurve Curve;Curve.InitFrom(Bones);
++                UE::Anim::FStackAttributeContainer Attributes;FAnimationPoseData Data(Pose,Curve,Attributes);
++                Anim->Clips[6]->GetAnimationPose(Data,FAnimExtractContext(Anim->Clips[6]->GetPlayLength()*.6,false));
++                FCSPose<FCompactPose> ComponentPose;ComponentPose.InitPose(MoveTemp(Pose));
++                const auto Hand=Bones.MakeCompactPoseIndex(FMeshPoseBoneIndex(Mesh->GetBoneIndex(TEXT("hand_r"))));
++                Expected=ComponentPose.GetComponentSpaceTransform(Hand)*Mesh->GetComponentTransform();
++            }
++            const FTransform Actual=Mesh->GetSocketTransform(TEXT("hand_r"));
++            const double LocationError=FVector::Distance(Actual.GetLocation(),Expected.GetLocation());
++            const double RotationError=Actual.GetRotation().AngularDistance(Expected.GetRotation());
++            TestTrue(FString::Printf(TEXT("Heavy native graph reaches source .6L at its own windup boundary: elapsed=%.9f locationError=%.6f rotationError=%.6f"),
++                Combat->Elapsed,LocationError,RotationError),LocationError<=.05 && RotationError<=.002);
++            TestEqual(TEXT("Heavy preparation has not hit the fixed physical body"),Target->Health,InitialHealth);
++            AdvanceTo(Move.Windup+Move.Active*.25);
++            TestEqual(TEXT("The early heavy active pose still has no physical blade contact"),Target->Health,InitialHealth);
++            TestEqual(TEXT("No early heavy physical contact means no current GUID wear"),Bag->FindInstance(Axes[0])->Durability,CurrentWear);
++            AdvanceTo(Move.Windup+Move.Active+.02);
++        }
++        else AdvanceTo(Move.Duration()+.02);
++        const float ExpectedHealth=InitialHealth-(OutsideBlade?0:ExpectedDamage);
++        const double ExpectedWear=CurrentWear-(OutsideBlade?0:2.);
++        TestTrue(FString::Printf(TEXT("Heavy physical blade at %dfps case%d: health=%.3f expected=%.3f power=%.3f skill=%.3f"),
++            FPS,Case,Target->Health,ExpectedHealth,Power,Skill),FMath::IsNearlyEqual(Target->Health,ExpectedHealth,.001f));
++        TestEqual(TEXT("A physical heavy hit wears only its current axe GUID by two durability units once"),Bag->FindInstance(Axes[0])->Durability,ExpectedWear);
++        TestEqual(TEXT("The same-definition spare never pays the heavy wear"),Bag->FindInstance(Axes[1])->Durability,SpareWear);
++        AdvanceTo(Move.Duration()+.05);
++        TestTrue(TEXT("Heavy recovery never repeats body damage"),FMath::IsNearlyEqual(Target->Health,ExpectedHealth,.001f));
++        TestEqual(TEXT("Heavy recovery never repeats current GUID wear"),Bag->FindInstance(Axes[0])->Durability,ExpectedWear);
++        TestTrue(TEXT("Heavy recovery never repeats the initial stamina payment"),FMath::IsNearlyEqual(Hero->Gameplay->Stamina,InitialStamina-StaminaCost,.001f));
++        TestFalse(TEXT("Normal heavy time completes the actual action"),Combat->Busy());
++        Cleanup();
++    }
++    return true;
++}
++
+ #endif

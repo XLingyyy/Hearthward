@@ -1,0 +1,20 @@
+--- a/Source/Hearthward/Companion/HearthwardCompanionFixture.cpp
++++ b/Source/Hearthward/Companion/HearthwardCompanionFixture.cpp
+@@ -1560,7 +1560,7 @@
+         int64 AddedWeight=0;
+         for(const auto& C:Cost)
+         {
+-            const int32 Missing=FMath::Max(0,C.Value-Bag->GetItemCount(C.Key));
++            const int32 Missing=C.Value;
+             if(Storage->GetItemCount(C.Key)<Missing){HandleExecutionFailure(TEXT("INSUFFICIENT_MATERIAL"));return;}
+             const auto* D=HearthwardBasicItems().FindByPredicate([&](const auto& I){return I.Id==C.Key;});
+             if(!D){HandleExecutionFailure(TEXT("ITEM_UNAVAILABLE"));return;}
+@@ -1571,7 +1571,7 @@
+         TGuardValue<bool> Guard(bSettling,true);
+         for(const auto& C:Cost)
+         {
+-            const int32 Missing=FMath::Max(0,C.Value-Bag->GetItemCount(C.Key));if(!Missing)continue;
++            const int32 Missing=C.Value;if(!Missing)continue;
+             const auto Ticket=Command.GetActive();const FGuid Op(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCA01^FCrc::StrCrc32(*C.Key.ToString()),Ticket.Id.D);
+             if(!HearthwardAgent::Settle(Receipts,Op,Ticket.Id,Ticket.Epoch,Storage->GetTimelineEpoch(),
+                 FString::Printf(TEXT("take:%s:%d:r%lld"),*C.Key.ToString(),Missing,Ticket.Revision),[&]

@@ -97,6 +97,7 @@ struct FHearthwardCampState
     double Radius() const;
     float Bonus(const TCHAR* Field) const;
     FName CampAt(FVector Position) const;
+    int32 SourceIndex(const FHearthwardCampRegion& Region) const;
     void AddCamp(FName Id,FVector Position);
     bool Assign(FName Region,int32 Person); // 0..29 ordinary; 30 player; 31 brother.
     FString UpgradeReason() const;

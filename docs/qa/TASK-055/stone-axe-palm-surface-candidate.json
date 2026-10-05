@@ -1,0 +1,235 @@
+{
+  "status": "Measured-surface-derived candidate only; requires actual root close-up, no palm/fit PASS",
+  "source": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task055\\stone-axe-palm-skin\\actual-hand-skin.json",
+  "source_time_seconds": 0.550000011920929,
+  "actual_hand_world": {
+    "translation_cm": [
+      54.38819736929017,
+      -5.369391021360528,
+      275.39834110934055
+    ],
+    "scale_xyz": [
+      183.9175905117455,
+      183.917606590456,
+      183.91765859404612
+    ],
+    "rotation_quat_xyzw": [
+      0.2554541662153179,
+      0.718979417301816,
+      -0.6383029016111506,
+      -0.10188803783743944
+    ]
+  },
+  "palm_face": {
+    "original_lod0_ids": [
+      4265,
+      4268,
+      4258
+    ],
+    "dominant_bones": [
+      "hand_r",
+      "hand_r",
+      "hand_r"
+    ],
+    "centroid_in_hand_r_rigid_axes_cm": [
+      -1.9288319809484953,
+      -4.1329100004466675,
+      2.3515625042230552
+    ],
+    "selection": "Positive hand-Z side toward the measured curled finger skin; all three vertices dominant hand_r. This is one actual surface face, not an average of the whole hand."
+  },
+  "nearest_middle_ring_distal_surface": {
+    "original_lod0_triangle_ids": [
+      7564,
+      7566,
+      7563
+    ],
+    "closest_point_in_hand_r_rigid_axes_cm": [
+      -3.4638407209760675,
+      -5.466230097333501,
+      3.5679303095894968
+    ],
+    "gap_cm": 2.3692920779539453
+  },
+  "grip_target": {
+    "method": "Midpoint of chosen actual palm-face centroid and closest point on actual middle/ring distal skin triangle",
+    "hand_r_local": [
+      -0.014660568048220956,
+      -0.02609630550259209,
+      0.016092779940392793
+    ],
+    "hand_r_rigid_axes_cm": [
+      -2.6963363509622815,
+      -4.799570048890084,
+      2.9597464069062758
+    ],
+    "world_cm": [
+      54.139038136622695,
+      -9.535277289941462,
+      280.0512447660847
+    ],
+    "distance_from_wrist_cm": 6.250296086180075
+  },
+  "shaft_axis_candidate": {
+    "selection": "PCA through four measured distal skin group centres, oriented pinky toward index; requires image review, not an observed grasp axis",
+    "hand_r_rigid_axes_unit": [
+      0.7945087674905795,
+      -0.5176322019971562,
+      0.3175101917044162
+    ],
+    "four_distal_skin_centres_cm": {
+      "pinky_03_r": [
+        -7.15365890465175,
+        -5.506424407443603,
+        3.1018890253910185
+      ],
+      "ring_03_r": [
+        -4.897986703147387,
+        -5.0931977189903685,
+        3.5252235652572756
+      ],
+      "middle_03_r": [
+        -3.7614820695496363,
+        -6.160463163744106,
+        4.603838592167724
+      ],
+      "index_03_r": [
+        -1.564328010666544,
+        -8.719605294213862,
+        5.152501587699958
+      ]
+    },
+    "axe_source_slab_centres": [
+      {
+        "z_cm": -32.5,
+        "actual_vertex_count": 354,
+        "q05_xyz": [
+          19.915510272979738,
+          -24.53768253326416,
+          -32.95537490844727
+        ],
+        "q95_xyz": [
+          32.14191951751709,
+          -14.48775486946106,
+          -32.04902744293213
+        ],
+        "centre": [
+          26.028714895248413,
+          -19.51271870136261,
+          -32.5
+        ]
+      },
+      {
+        "z_cm": -22.5,
+        "actual_vertex_count": 511,
+        "q05_xyz": [
+          13.791449546813965,
+          -20.470023155212402,
+          -22.95095157623291
+        ],
+        "q95_xyz": [
+          24.29832363128662,
+          -11.954308032989502,
+          -22.05976676940918
+        ],
+        "centre": [
+          19.044886589050293,
+          -16.212165594100952,
+          -22.5
+        ]
+      }
+    ],
+    "measured_axe_local_tangent_unit": [
+      -0.5526946739461,
+      0.2612031744596011,
+      0.7913921272314006
+    ],
+    "current_tangent_in_hand_r_axes": [
+      -0.5526946739461,
+      -0.7913921272314005,
+      0.2612031744596013
+    ],
+    "minimum_rotation_degrees": 86.93527979326608
+  },
+  "temporary_attachment_candidate": {
+    "relative_rotation_quat_xyzw": [
+      0.4566498186196446,
+      0.6322560793415638,
+      0.25908733040905085,
+      0.5697341033427711
+    ],
+    "relative_translation_for_actual_source_pose_and_absolute_axe_scale_0_7": [
+      0.09912769305402128,
+      -0.09076282496607219,
+      0.09320168108961646
+    ],
+    "correct_public_application": "Set relative rotation from candidate quaternion, then read actual held world Grip and actual hand socket TransformLocation(hand-local target); one SetWorldLocation of their difference. Keep hand_r attachment and absolute scale .7. Read back relative TF; this numeric relative-translation estimate is offline, not an actual readback."
+  },
+  "dimension_warning_measured": {
+    "actual_grip_slab_q05_to_q95_width_xy_raw_cm": [
+      12.19013261795044,
+      8.99107551574707
+    ],
+    "same_width_at_actual_scale_0_7_cm": [
+      8.533092832565307,
+      6.2937528610229485
+    ],
+    "interpretation": "These exterior widths exceed the selected local palm-to-distal-skin gap; translation/rotation may still penetrate the closed fingers. This one surface gap is not a complete maximal-inscribed grasp diameter. Do not change production scale from this probe alone."
+  },
+  "excluded_from_axis_centre": {
+    "vertex": {
+      "lod0_vertex_id": 2184,
+      "section_index": 0,
+      "dominant_bone": "pinky_03_r",
+      "raw_weight_sum": 65535,
+      "skinned_component_cm": [
+        0.5264196991920471,
+        14.715944290161133,
+        63.801353454589844
+      ],
+      "skinned_world_cm": [
+        27.06521768347784,
+        -0.9681786958808623,
+        227.34194460789695
+      ],
+      "actual_hand_r_local": [
+        0.18491946249348326,
+        0.21948980193012815,
+        0.09244520603210957
+      ],
+      "actual_influences": [
+        {
+          "section_bone_index": 16,
+          "mesh_bone_index": 38,
+          "bone_name": "pinky_03_r",
+          "raw_uint16_weight": 26728
+        },
+        {
+          "section_bone_index": 23,
+          "mesh_bone_index": 55,
+          "bone_name": "thigh_r",
+          "raw_uint16_weight": 26728
+        },
+        {
+          "section_bone_index": 24,
+          "mesh_bone_index": 60,
+          "bone_name": "thigh_twist_01_r",
+          "raw_uint16_weight": 9509
+        },
+        {
+          "section_bone_index": 22,
+          "mesh_bone_index": 41,
+          "bone_name": "ring_03_r",
+          "raw_uint16_weight": 2570
+        }
+      ]
+    },
+    "world_distance_to_wrist_cm": 55.45568621475374,
+    "reason": "Actual mixed pinky/thigh weighted vertex is remote from the hand and not part of a meaningful distal hand-surface group centroid; no claim about import corruption."
+  },
+  "limitations": [
+    "Source .55 single node only; normal native blend and all poses remain untested for this grip",
+    "Face centroid and skin PCA are geometric proposals; palm contact/roll/shaft clearance need true rendered inspection",
+    "No held component, socket, Content or Source mutation executed by this script"
+  ]
+}

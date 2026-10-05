@@ -1,0 +1,239 @@
+{
+  "pool": "be88f3b0-7b14-42da-84f8-c8eea5cd64df",
+  "label": "packaged-game-development-normal-new-vulkan",
+  "output": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-be88f3b0-7b14-42da-84f8-c8eea5cd64df",
+  "port": 52924,
+  "status": "MODEL_CSV_CAPTURE_COMPLETE",
+  "stage": "complete",
+  "timeout_seconds": 300,
+  "method": "UEClient-owned packaged Game Development / normal Bootstrap ExecuteAction new / public RC UFUNCTIONs and HUD.Screen READ_ACCESS",
+  "acceptance": "NOT_EVALUATED",
+  "performance": "ONE_SCENE_DIAGNOSTIC_ONLY",
+  "model_request_count": 1,
+  "model_parameter_changes": false,
+  "actor_position_changes": false,
+  "bootstrap_seed_attempt": {
+    "path": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap",
+    "source": "requested map asset object path; unverified until actual pawn/world returned",
+    "validated": true,
+    "engine_path_attempt": null
+  },
+  "references": {
+    "bootstrap": {
+      "pawn": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.HearthwardCharacter_2147482356",
+      "level": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel",
+      "world": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap",
+      "current_level": "L_Bootstrap",
+      "controller": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.PlayerController_2147482368",
+      "hud": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.HearthwardHUD_2147482357",
+      "screen": "/Engine/Transient.GameEngine_2147482592:GameInstance_2147482536.HearthwardScreenWidget_2147482313"
+    },
+    "game_instance": "/Engine/Transient.GameEngine_2147482592:GameInstance_2147482536",
+    "natural": {
+      "pawn": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCharacter_2147482187",
+      "level": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel",
+      "world": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds",
+      "current_level": "L_HearthwardWilds",
+      "controller": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.PlayerController_2147482196",
+      "hud": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardHUD_2147482188",
+      "screen": "/Engine/Transient.GameEngine_2147482592:GameInstance_2147482536.HearthwardScreenWidget_2147482086"
+    },
+    "loading": "/Engine/Transient.GameEngine_2147482592:GameInstance_2147482536.HearthwardLoadingSubsystem_2147482464",
+    "players": [
+      "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCharacter_2147482187"
+    ],
+    "companions": [
+      "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCompanionFixture_2147482039"
+    ],
+    "local_ai": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:HearthwardLocalAISubsystem_2147482243",
+    "save": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:HearthwardSaveSubsystem_2147482241"
+  },
+  "observations": {
+    "campaign_id": {
+      "A": 2145660985,
+      "B": 1181762582,
+      "C": 1553334449,
+      "D": -113416628
+    },
+    "busy": false,
+    "ready": false,
+    "generation_calls": 0,
+    "server_process_id": 0
+  },
+  "packaged_executable": "F:\\uagent-task-temp\\task072-game-development-20261005\\Archive\\Windows\\Hearthward\\Binaries\\Win64\\Hearthward.exe",
+  "remote_function_policy": {
+    "allow_any": false,
+    "exact_rules": {
+      "/Script/Engine.KismetSystemLibrary": [
+        "IsValid",
+        "GetOuterObject",
+        "GetPathName",
+        "ExecuteConsoleCommand",
+        "GetProjectSavedDirectory",
+        "GetConsoleVariableStringValue"
+      ],
+      "/Script/Engine.GameplayStatics": [
+        "GetPlayerPawn",
+        "GetCurrentLevelName",
+        "GetPlayerController",
+        "GetGameInstance",
+        "GetAllActorsOfClass",
+        "IsGamePaused"
+      ],
+      "/Script/Hearthward.HearthwardCharacter": [
+        "GetLevel"
+      ],
+      "/Script/Engine.PlayerController": [
+        "GetHUD"
+      ],
+      "/Script/Engine.SubsystemBlueprintLibrary": [
+        "GetGameInstanceSubsystem",
+        "GetWorldSubsystem"
+      ],
+      "/Script/Hearthward.HearthwardScreenWidget": [
+        "GetPage",
+        "ExecuteAction"
+      ],
+      "/Script/Hearthward.HearthwardLoadingSubsystem": [
+        "IsLoading"
+      ],
+      "/Script/Hearthward.HearthwardSaveSubsystem": [
+        "IsNaturalWorldEnabled",
+        "GetCampaignId"
+      ],
+      "/Script/Hearthward.HearthwardLocalAISubsystem": [
+        "IsBusy",
+        "IsModelReady",
+        "GetGenerationCalls",
+        "GetServerProcessId",
+        "SubmitPlayerText",
+        "GetStatus",
+        "GetLastInput",
+        "GetLastStructuredResult",
+        "GetLastLatencySeconds",
+        "GetInputTokens",
+        "GetOutputTokens",
+        "GetReasonCode",
+        "GetLastAppliedIntent",
+        "HasCandidate",
+        "GetCandidate",
+        "GetLastFilteredContext"
+      ],
+      "/Script/Hearthward.HearthwardCompanionFixture": [
+        "CanCommunicate"
+      ],
+      "/Script/Hearthward.HearthwardInventoryComponent": [
+        "GetItemCount"
+      ]
+    },
+    "child_classes": false,
+    "scope": "owned Saved session ini only",
+    "file": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-be88f3b0-7b14-42da-84f8-c8eea5cd64df\\RemoteControl.ini",
+    "unlisted_readonly_control": "EXPECTED_400_FUNCTION_NOT_ALLOWED"
+  },
+  "model_server_log_file": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-be88f3b0-7b14-42da-84f8-c8eea5cd64df\\local-ai.log",
+  "process_id": 42856,
+  "model_csv": {
+    "scene": "normal_new_initial_scene_dialogue_fixed_view",
+    "backend_requested": "vulkan",
+    "bundle": "F:\\uagent-task-temp\\task072-game-development-20261005\\Archive\\Windows\\Hearthward\\Runtime\\LocalAI",
+    "gpu_layers_requested": 16,
+    "public_submit_calls": 1,
+    "text": "采集1份木材送入营地仓库",
+    "csv_minimum_seconds": 60,
+    "warm_p95": "NOT_RUN",
+    "ttft": "NOT_RUN",
+    "ui_first_paint_latency": "NOT_RUN",
+    "process_memory_vram_available_ram": "NOT_RUN",
+    "task072_acceptance": "NOT_EVALUATED",
+    "source": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.Actor_2147482044.HearthwardInventoryComponent_2147482042",
+    "camp": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.Actor_2147482051",
+    "source_wood_before": 16,
+    "render_cvars": {
+      "sg.ViewDistanceQuality": "3",
+      "sg.AntiAliasingQuality": "3",
+      "sg.ShadowQuality": "3",
+      "sg.GlobalIlluminationQuality": "3",
+      "sg.ReflectionQuality": "3",
+      "sg.PostProcessQuality": "3",
+      "sg.TextureQuality": "3",
+      "sg.EffectsQuality": "3",
+      "sg.FoliageQuality": "3",
+      "sg.ShadingQuality": "3",
+      "sg.LandscapeQuality": "3",
+      "r.ScreenPercentage": "100",
+      "r.DynamicRes.OperationMode": "0",
+      "t.MaxFPS": "0",
+      "r.VSync": "0",
+      "r.AntiAliasingMethod": "2",
+      "r.Shadow.Virtual.Enable": "1",
+      "r.Nanite": "1"
+    },
+    "excluded_before_capture_seconds": 10,
+    "csv": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task072\\standalone-rc-smoke-be88f3b0-7b14-42da-84f8-c8eea5cd64df\\User\\Saved\\Profiling\\CSV\\Task072-be88f3b0-7b14-42da-84f8-c8eea5cd64df.csv",
+    "submit_returned_after_seconds": 0.04326629999559373,
+    "busy_observed": true,
+    "cold_ready_observed_seconds": 7.659146799996961,
+    "full_ue_terminal_observed_seconds": 64.06948019999254,
+    "poll_interval_seconds": 1,
+    "model_request_count": 1,
+    "terminal": {
+      "last_input": "采集1份木材送入营地仓库",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡去已知安全点采集1份木材并送入营地仓库，请确认；若途中缺料或遇阻将安全返营等待。\"}",
+      "submission_to_response_seconds": 63.643056001514196,
+      "input_tokens": 3177,
+      "output_tokens": 69,
+      "reason": "",
+      "applied_intent": "proposal",
+      "has_candidate": true,
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡去已知安全点采集1份木材并送入营地仓库，请确认；若途中缺料或遇阻将安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 1,
+        "CapabilityVersion": 2
+      },
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":false,\"camp_distance_cm\":229532.328125,\"collection_source_distance_cm\":226261.640625,\"execution_phase\":\"EHearthwardCompanionPhase::Idle\",\"execution_action\":\"None\"},\"own_bag\":{\"Arrow\":24,\"axe\":1,\"bow\":1,\"hood\":1,\"Armor\":1,\"boots\":1,\"shield\":1,\"roast\":4,\"Medicine\":3,\"leggings\":1},\"companion_state\":{\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":0,\"preferred_directive\":\"None\",\"confidence\":0,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；bag=弟弟背包；camp=仅限玩家明确授权共享仓库材料；未知地点不可绑定S1\",\"capabilities_version\":\"npc-v2\"}",
+      "server_process_id": 49892
+    },
+    "expected_collect_candidate": true,
+    "source_wood_after": 16,
+    "unconfirmed_source_unchanged": true,
+    "frame_report": {
+      "total_frames": 7012,
+      "dropped_frames": 0,
+      "measured_seconds": 64.1052673,
+      "p99_frame_ms": 14.0511,
+      "one_percent_low_fps": 61.436884089751565,
+      "frames_over_50ms": 0,
+      "fraction_over_50ms": 0.0,
+      "max_frame_ms": 37.0199,
+      "average_fps": 109.38258734941739,
+      "distribution": "raw ordered engine CSV FrameTime preserved; all captured numeric rows included without numeric frame exclusions",
+      "diagnostic_frame_target_pass": true
+    }
+  },
+  "normal_quit_return": {
+    "ReturnValue": true
+  },
+  "stop_request_ok": true,
+  "process_exit_verified": "NOT_VERIFIED_BY_UECLIENT"
+}

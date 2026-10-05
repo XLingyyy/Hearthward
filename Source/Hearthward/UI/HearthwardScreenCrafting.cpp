@@ -1,7 +1,10 @@
 #include "HearthwardScreenWidget.h"
 #include "../Building/HearthwardBuildingComponent.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
+#include "../Inventory/HearthwardStorageSubsystem.h"
+#include "Engine/World.h"
 #include "GameFramework/Pawn.h"
 
 using namespace HearthwardData;
@@ -20,13 +23,19 @@ void UHearthwardScreenWidget::ComposeCrafting()
     Element(TEXT("text"),Text(R,TEXT("name")),FVector2D(905,210),FVector2D(450,55),32); Identify(TEXT("crafting.name"));
     Element(TEXT("image"),TEXT(""),FVector2D(792,200),FVector2D(95,95),18,TEXT(""),Text(R,TEXT("icon"))); Identify(TEXT("crafting.icon"));
     Element(TEXT("text"),Text(R,TEXT("description")),FVector2D(792,315),FVector2D(580,60),19); Identify(TEXT("crafting.description"));
-    FString Ingredients=TEXT("所需材料   持有 / 消耗\n");
+    const auto* Bag=Inventory();
+    const auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    const bool UseStorage=!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(GetOwningPlayerPawn()->GetActorLocation()).IsNone();
+    FString Ingredients=TEXT("所需材料   可用 / 本次消耗\n");
     FString Products=TEXT("本次获得\n"); double Delta=0;
     for(const auto& M:R->GetObjectField(TEXT("materials"))->Values)
     {
         const auto Item=Find(TEXT("items"),FString(*M.Key)); const int32 Needed=int32(M.Value->AsNumber())*CraftingBatches;
-        Ingredients+=Text(Item,TEXT("name"))+FString::Printf(TEXT("   %d / %d\n"),Inventory()->GetItemCount(FName(*M.Key)),Needed);
-        Delta-=Number(Item,TEXT("weight"))*Needed;
+        const int32 Personal=Bag->Available(FName(*M.Key));
+        Ingredients+=Text(Item,TEXT("name"))+(UseStorage
+            ?FString::Printf(TEXT("   背包可用 %d + 仓储可用 %d / 消耗 %d\n"),Personal,Storage->Available(FName(*M.Key)),Needed)
+            :FString::Printf(TEXT("   背包可用 %d / 消耗 %d\n"),Personal,Needed));
+        Delta-=Number(Item,TEXT("weight"))*FMath::Min(Personal,Needed);
     }
     for(const auto& O:R->GetObjectField(TEXT("outputs"))->Values)
     {
@@ -45,5 +54,6 @@ void UHearthwardScreenWidget::ComposeCrafting()
     Element(TEXT("text"),FString::Printf(TEXT("%d 批"),CraftingBatches),FVector2D(895,685),FVector2D(140,35),22); Identify(TEXT("crafting.quantity"),TEXT("crafting.actions"));
     Element(TEXT("button"),TEXT("+"),FVector2D(1040,675),FVector2D(65,50),26,TEXT("craftMore")); Identify(TEXT("crafting.more"),TEXT("crafting.actions"));
     Element(TEXT("button"),TEXT("F 制作"),FVector2D(1140,675),FVector2D(210,50),24,TEXT("craft")); Identify(TEXT("crafting.submit"),TEXT("crafting.actions")); Elements.Last().Enabled=Reason.IsEmpty();
-    Element(TEXT("text"),Reason.IsEmpty()?TEXT("即时完成 · 仅使用背包中的材料"):Reason,FVector2D(800,748),FVector2D(570,48),18); Identify(TEXT("crafting.status"),TEXT("crafting.actions"));
+    const FString Ready=UseStorage?TEXT("即时完成 · 背包优先，缺额使用营地仓储"):TEXT("即时完成 · 使用背包可用材料");
+    Element(TEXT("text"),Reason.IsEmpty()?Ready:Reason,FVector2D(800,748),FVector2D(570,48),18); Identify(TEXT("crafting.status"),TEXT("crafting.actions"));
 }

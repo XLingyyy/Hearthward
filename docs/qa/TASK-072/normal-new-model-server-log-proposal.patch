@@ -1,0 +1,12 @@
+--- a/docs/qa/TASK-072/run_standalone_rc_smoke_proposal.py
++++ b/docs/qa/TASK-072/run_standalone_rc_smoke_proposal.py
+@@ -157,6 +157,9 @@
+ report['remote_function_policy'] = {'allow_any': False, 'exact_rules': allowed_calls, 'child_classes': False,
+                                     'scope': 'owned Saved session ini only', 'file': str(policy_ini)}
+ try:
++    if args.model_csv:
++        os.environ['LLAMA_ARG_LOG_FILE'] = str(out/'local-ai.log')
++        report['model_server_log_file'] = str(out/'local-ai.log')
+     launch = ue.runtime.launch_editor(map_path='/Game/Hearthward/Bootstrap/L_Bootstrap', extra_args=[
+         '-game', '-RCWebControlEnable', '-HearthwardSaveTestPool='+pool,
+         '-ini:RemoteControl:[/Script/RemoteControlCommon.RemoteControlSettings]:RemoteControlHttpServerPort='+str(port),

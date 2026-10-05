@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-03",
+  "status": "PASS",
+  "baseline_sha": "67fb0784ca8c6d488173e587e7f95c4be0d9092a",
+  "branch": "codex/TASK-053-074-design",
+  "scope_authority": "User instruction for design-only batch; current draft JSON records docs scope. Not baseline-snapshot T-002 approval.",
+  "checks": {
+    "canonical_22_tasks": true,
+    "source_mapping_offset_minus_2": true,
+    "task_packets": true,
+    "packets_consistent_and_design_only": true,
+    "authored_relative_links": true,
+    "utf8_authored_text": true,
+    "design_only_changed_paths": true,
+    "new_readme_and_project_state_links": true
+  },
+  "task_count": 22,
+  "task_packet_files": 44,
+  "authored_local_links_checked": 334,
+  "changed_file_count": 81,
+  "out_of_scope": [],
+  "errors": [],
+  "repo_validation": {
+    "command": "G:/GameFactory/.venv/Scripts/python.exe -X utf8 scripts/validate_repo.py",
+    "exit_code": 0,
+    "tasks_inspected": 75,
+    "errors": 0,
+    "run_before_final_document_only_corrections": true
+  },
+  "not_run": [
+    "UE build",
+    "native / PIE / standalone game tests",
+    "real model accuracy / performance",
+    "human playtests",
+    "second machine",
+    "voice production",
+    "RC / publication",
+    "formal baseline-snapshot T-002: new draft task absent at base; no registration commit authorized"
+  ],
+  "commit": "NOT_PERFORMED",
+  "push": "NOT_PERFORMED",
+  "initial_document_check": {
+    "status": "FAIL",
+    "cause": "Keyword check accepted 验证 but omitted equivalent 验收 used by TASK-070",
+    "resolution": "Rechecked TASK-070 length and actual 保存、性能与验收 section, including scene, action, sound and Owner visual acceptance; no design content missing."
+  }
+}

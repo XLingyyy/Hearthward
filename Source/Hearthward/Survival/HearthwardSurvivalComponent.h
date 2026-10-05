@@ -27,8 +27,10 @@ public:
     bool SafeToSave() const;
     UFUNCTION(BlueprintCallable) bool BeginMedicine(FName Item,bool Automatic=false);
     bool Eat(FName Item,bool Automatic=false);
+    bool BeginRest(class UHearthwardFurnitureInteractionComponent* Facility);
     UFUNCTION(BlueprintCallable) bool BeginRescue(UHearthwardSurvivalComponent* Target);
     bool CanRescue(const UHearthwardSurvivalComponent* Target) const;
+    FString RescueBlockReason(const UHearthwardSurvivalComponent* Target) const;
     void CancelAction(bool Damaged=false);
     UFUNCTION(BlueprintCallable) void CancelCurrentAction() { CancelAction(); }
     bool ReceiveDamage(float Amount,FGuid Event,FGuid Epoch,bool Fatal=false);
@@ -53,8 +55,11 @@ private:
     bool InCombat() const;
     double HungerMultiplier(double Active) const;
     double RecoveryFraction() const;
+    bool RestValid() const;
     void FinishActions(double Delta);
     TWeakObjectPtr<UHearthwardSurvivalComponent> Rescue;
+    TWeakObjectPtr<class UHearthwardFurnitureInteractionComponent> RecoveryFacility;
+    FGuid RecoveryEpoch;
     FVector ActionOrigin=FVector::ZeroVector;
     FGuid ActionEpoch;
     TSet<FGuid> DamageEvents;

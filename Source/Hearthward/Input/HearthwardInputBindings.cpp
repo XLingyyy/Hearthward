@@ -26,7 +26,13 @@ FHearthwardKeyBinding FHearthwardKeyBinding::Decode(const FString& Text)
 bool FHearthwardKeyBinding::Matches(FKey Pressed,bool Shift,bool Control,bool Alt) const
 { return Key==Pressed && (!Modifier.IsValid() || (Modifier==EKeys::LeftShift && Shift) || (Modifier==EKeys::LeftControl && Control) || (Modifier==EKeys::LeftAlt && Alt)); }
 bool FHearthwardKeyBinding::Held(const APlayerController* Player) const
-{ return Player && Key.IsValid() && Player->IsInputKeyDown(Key) && (!Modifier.IsValid() || Player->IsInputKeyDown(Modifier)); }
+{
+    return Player && Key.IsValid() && Player->IsInputKeyDown(Key)
+        && (!Modifier.IsValid() || Player->IsInputKeyDown(Modifier)
+            || (Modifier==EKeys::LeftShift && Player->IsInputKeyDown(EKeys::RightShift))
+            || (Modifier==EKeys::LeftControl && Player->IsInputKeyDown(EKeys::RightControl))
+            || (Modifier==EKeys::LeftAlt && Player->IsInputKeyDown(EKeys::RightAlt)));
+}
 const TArray<FHearthwardInputDefinition>& HearthwardInput::Definitions()
 {
     static const TArray<FHearthwardInputDefinition> Result=[]

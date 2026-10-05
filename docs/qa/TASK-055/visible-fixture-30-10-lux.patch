@@ -1,0 +1,11 @@
+--- a/docs/qa/TASK-055/sample_stone_axe_hero_pose.py
++++ b/docs/qa/TASK-055/sample_stone_axe_hero_pose.py
+@@ -85,7 +85,7 @@
+     actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+     REPORT["world"] = info(world)
+     REPORT["lights"] = []
+-    for label, rot, intensity in (("key", unreal.Rotator(pitch=-35, yaw=-45, roll=0), 10000.0), ("fill", unreal.Rotator(pitch=-20, yaw=135, roll=0), 2000.0)):
++    for label, rot, intensity in (("key", unreal.Rotator(pitch=-35, yaw=-45, roll=0), 30.0), ("fill", unreal.Rotator(pitch=-20, yaw=135, roll=0), 10.0)):
+         light = spawn(actors, unreal.DirectionalLight, label, rot=rot)
+         light_component = light.get_component_by_class(unreal.DirectionalLightComponent)
+         light_component.set_intensity(intensity)

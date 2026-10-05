@@ -1,0 +1,88 @@
+--- a/Source/Hearthward/Tests/FarmingPresentationTests.cpp
++++ b/Source/Hearthward/Tests/FarmingPresentationTests.cpp
+@@ -16,7 +16,15 @@
+ #include "GameFramework/Character.h"
+ #include "GameFramework/PlayerController.h"
+ #include "Misc/AutomationTest.h"
++#include "Misc/App.h"
++#include "Misc/CommandLine.h"
++#include "Misc/FileHelper.h"
++#include "Misc/Paths.h"
++#include "Misc/Parse.h"
++#include "HAL/FileManager.h"
++#include "Kismet/KismetRenderingLibrary.h"
+ #include "Serialization/JsonSerializer.h"
++#include "Slate/WidgetRenderer.h"
+ #include "Widgets/SViewport.h"
+ 
+ #if WITH_DEV_AUTOMATION_TESTS
+@@ -74,6 +82,24 @@
+         }
+         return Result;
+     }
++    void Capture(FAutomationTestBase& Test,const TCHAR* Label) const
++    {
++        if(!FParse::Param(FCommandLine::Get(),TEXT("Farming062Render"))
++            || FParse::Param(FCommandLine::Get(),TEXT("NullRHI")) || !FApp::CanEverRender())return;
++        const FString Directory=FPaths::ProjectSavedDir()/TEXT("Task062/native-widget-offscreen");
++        IFileManager::Get().MakeDirectory(*Directory,true);
++        const FString Name=FString(Label)+TEXT(".png");
++        FWidgetRenderer Renderer(true);
++        auto* Target=UKismetRenderingLibrary::CreateRenderTarget2D(World,1696,954,RTF_RGBA8,FLinearColor::Black);
++        if(!Target){Test.AddError(TEXT("Native widget offscreen render target unavailable"));return;}
++        Renderer.DrawWidget(Target,Screen->TakeWidget(),FVector2D(1696,954),0,false);
++        UKismetRenderingLibrary::ExportRenderTarget(World,Target,Directory,Name);
++        UKismetRenderingLibrary::ReleaseRenderTarget2D(Target);
++        if(IFileManager::Get().FileSize(*(Directory/Name))<=0)Test.AddError(TEXT("Native widget offscreen PNG export failed: ")+Name);
++        FFileHelper::SaveStringToFile(Screen->DescribeLayout(),*(Directory/(FString(Label)+TEXT("-layout.json"))),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
++        const FString Method=TEXT("{\"method\":\"native widget offscreen FWidgetRenderer DrawWidget to RGBA8 render target; explicit C++ fixture; no PIE or input acceptance\",\"width\":1696,\"height\":954}");
++        FFileHelper::SaveStringToFile(Method,*(Directory/TEXT("method.json")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
++    }
+ };
+ }
+ 
+@@ -94,11 +120,13 @@
+     TestTrue(TEXT("Crop remaining time is expressed in calendar minutes"),Text.Contains(TEXT("1440 W分钟")));
+     TestTrue(TEXT("The real once-cared yield is retained"),Text.Contains(TEXT("预计产量 6")));
+     TestTrue(TEXT("Existing care completion remains visible"),Text.Contains(TEXT("浇水 完成")) && Text.Contains(TEXT("施肥 完成")));
++    F.Capture(*this,TEXT("crop-half"));
+     TestEqual(TEXT("Real bag can be filled to capacity"),F.Bag->TryAdd(TEXT("wood"),100),EHearthwardInventoryResult::Success);
+     F.Nature->Advance(1440);F.Screen->Refresh();Text=F.Text();
+     TestTrue(TEXT("Mature crop shows complete progress"),Text.Contains(TEXT("100%")));
+     TestTrue(TEXT("Mature crop exposes its actual capacity failure before spending five seconds"),Text.Contains(TEXT("容量不足")));
+     TestTrue(TEXT("Returned seed is included in the displayed harvest"),Text.Contains(TEXT("一粒种子")));
++    F.Capture(*this,TEXT("crop-mature-full-bag"));
+     F.Bag->TryRemove(TEXT("wood"),10);F.Screen->Refresh();Text=F.Text();
+     TestFalse(TEXT("Making actual bag space clears the capacity failure"),Text.Contains(TEXT("容量不足")));
+     TestTrue(TEXT("Mature output remains available rather than disappearing at capacity"),F.Nature->State.Crops.ContainsByPredicate([&](const auto& C){return C.Id==Crop.Id;}));
+@@ -119,6 +147,7 @@
+     TestTrue(TEXT("Selected juvenile is presented as a juvenile"),Text.Contains(TEXT("幼年")));
+     TestTrue(TEXT("Individual juvenile growth is shown from its paid growth"),Text.Contains(TEXT("25%")));
+     TestTrue(TEXT("Individual juvenile shows the remaining approved two-day calendar growth"),Text.Contains(TEXT("2160 W分钟")));
++    F.Capture(*this,TEXT("juvenile-quarter"));
+     F.Nature->State.Animals[0].Juvenile=false;F.Nature->State.Animals[0].Growth=2880;F.Nature->State.Animals[0].ProductMinutes=360;
+     F.Screen->Refresh();Text=F.Text();
+     TestTrue(TEXT("Adult product progress uses that animal's own authority"),Text.Contains(TEXT("25%")) && Text.Contains(TEXT("1080 W分钟")));
+@@ -135,12 +164,13 @@
+ {
+     FFarmingWidgetFixture F;
+     if(!TestNotNull(TEXT("Real pen widget is available"),F.Screen))return false;
+-    FHearthwardPen Pen;Pen.Id=FGuid::NewGuid();Pen.Definition=TEXT("goat");Pen.Position=FVector(200,0,0);F.Nature->State.Pens.Add(Pen);
++    FHearthwardPen Pen;Pen.Id=FGuid::NewGuid();Pen.Definition=TEXT("goat");Pen.Position=FVector(200,0,0);Pen.Products=6;F.Nature->State.Pens.Add(Pen);
+     FHearthwardAnimal Unfed;Unfed.Id=FGuid::NewGuid();Unfed.Definition=TEXT("goat");Unfed.Pen=Pen.Id;Unfed.Position=Pen.Position;Unfed.Health=60;Unfed.Domestic=Unfed.Captured=true;Unfed.ProductMinutes=1200;
+     FHearthwardAnimal Fed=Unfed;Fed.Id=FGuid::NewGuid();Fed.ProductMinutes=240;Fed.FedRemaining=1440;
+     F.Nature->State.Animals={Unfed,Fed};F.Screen->OpenNature(Pen.Id);
+     FString Text=F.Text();
+     TestTrue(TEXT("Pen forecast follows a fed productive adult, rather than an unfed animal with more progress"),Text.Contains(TEXT("1200 W分钟")));
++    F.Capture(*this,TEXT("goat-fed-pen"));
+     F.Nature->State.Animals[1].FedRemaining=0;F.Screen->Refresh();Text=F.Text();
+     TestTrue(TEXT("Pen with no paid feeding explains its paused production"),Text.Contains(TEXT("缺料")) && Text.Contains(TEXT("暂停")));
+     F.Nature->State.Animals[1].FedRemaining=1440;F.Nature->State.Pens[0].Products=HearthwardNature::ProductCapacity;
+@@ -150,6 +180,7 @@
+     F.Nature->State.Pens[0].Definition=TEXT("pig");F.Nature->State.Pens[0].Products=0;F.Nature->State.Animals.Reset();
+     F.Screen->Refresh();Text=F.Text();
+     TestFalse(TEXT("A pig pen does not invent a generic product storage"),Text.Contains(TEXT("普通产物")));
++    F.Capture(*this,TEXT("pig-pen"));
+     return true;
+ }
+ 

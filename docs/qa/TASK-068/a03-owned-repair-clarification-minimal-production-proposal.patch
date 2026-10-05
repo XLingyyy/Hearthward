@@ -1,0 +1,23 @@
+--- a/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
+@@ -279,6 +279,7 @@
+     if(Goal.Original.Len()>1000 || Goal.Unresolved.Num()>4 || Goal.Limits.Num()>4)
+     {ReasonCode=TEXT("CONTEXT_OVERFLOW");NPCLine=TEXT("本次条件超出任务卡容量，请保留全部要求重新整理。草稿仍保留。");Status=NPCLine;LastAppliedIntent=TEXT("refuse");return;}
+     ReasonCode=HearthwardAgent::Validate(Goal);
++    const bool ContractValid=ReasonCode.IsEmpty();
+     if(Goal.WritesWorld())
+     {
+         if(Goal.Intent==TEXT("craft") || Goal.Intent==TEXT("repair"))
+@@ -301,6 +302,12 @@
+     Memory.WorkingGoal=Goal;
+     if(!ReasonCode.IsEmpty())
+     {
++        if(ContractValid && ReasonCode==TEXT("AMBIGUOUS_TARGET") && Goal.Intent==TEXT("repair")
++            && !Goal.EquipmentId.IsValid() && PendingCompanion->Bag->GetItemCount(Goal.Item)>1)
++        {
++            NPCLine=TEXT("我有多件同类装备，请明确要维修哪一件；不能替你选定实例。");
++            Status=TEXT("等待补充信息");LastAppliedIntent=TEXT("clarify");Memory.AddClarification(Input,NPCLine);return;
++        }
+         if(ReasonCode==TEXT("TARGET_REQUIRED") && (Goal.Intent==TEXT("nature_care") || Goal.Intent==TEXT("nature_collect")))
+         {
+             NPCLine=Goal.Intent==TEXT("nature_care")?TEXT("请指认要照顾的地块或栏舍，并明确要做的动作。"):

@@ -1,0 +1,1344 @@
+Running AutomationTool...
+Using bundled DotNet SDK version: 10.0 win-x64
+Starting AutomationTool...
+Parsing command line: BuildCookRun -project=G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject -noP4 -platform=Win64 -clientconfig=Development -build -cook -stage -pak -iostore -archive -archivedirectory=F:\uagent-task-temp\task072-game-development-20261005\Archive -prereqs -utf8output -unattended -NoLiveCoding -map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds -target=Hearthward -CookOutputDir=F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows -stagingdirectory=F:\uagent-task-temp\task072-game-development-20261005\Staged -AdditionalCookerOptions=-ShaderWorkingDir=F:\uagent-task-temp\task072-game-development-20261005\Shaders -nodebuginfo
+Initializing script modules...
+Total script module initialization time: 0.41 s.
+Using E:\VSC++\MSBuild\Current\Bin\MSBuild.exe
+Executing commands...
+Setting up ProjectParams for G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject
+********** BUILD COMMAND STARTED **********
+Running: G:\UnrealEngine\UE_5.8\Engine\Binaries\ThirdParty\DotNet\10.0\win-x64\dotnet.exe "G:\UnrealEngine\UE_5.8\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="HearthwardEditor Win64 Development -Project=G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject" -Target="Hearthward Win64 Development -Project=G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject  -remoteini=\"G:\GameFactory\Hearthward\.agent-local\task051\"  " -log="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\UBA-HearthwardEditor-Win64-Development.txt"
+Log file: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\UBA-HearthwardEditor-Win64-Development.txt
+Determining max actions to execute in parallel (14 physical cores, 20 logical cores)
+  Executing up to 14 processes, one per physical core
+  Requested 1.5 GB memory per action, 15.63 GB available: limiting max parallel actions to 10
+Using 'git status' to determine working set for adaptive non-unity build (G:\GameFactory\Hearthward\.agent-local\task051).
+UbaServer - Listening on 0.0.0.0:1345
+Invalidating makefile for HearthwardEditor (working set of source files changed)
+Invalidating makefile for Hearthward (working set of source files changed)
+Building Hearthward and HearthwardEditor...
+===== Toolchain Information =====
+Hearthward Win64 Development:
+  Using ISPC compiler (G:\UnrealEngine\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (E:\VSC++\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardAgentContract.cpp, HearthwardAgentInteraction.cpp, HearthwardLocalAIRuntime.cpp, HearthwardLocalAISubsystem.cpp, HearthwardAnimalMotionComponent.cpp, HearthwardHeroAnimInstance.cpp, HearthwardBuildingComponent.cpp, HearthwardBuildingEconomy.cpp, HearthwardBuildingTests.cpp, HearthwardCrafting.cpp, HearthwardRepair.cpp, HearthwardCampState.cpp, HearthwardCampSubsystem.cpp, HearthwardQuartermaster.cpp, HearthwardCampaignActor.cpp, HearthwardCampaignInteraction.cpp, HearthwardCampaignQuests.cpp, HearthwardCampaignWorld.cpp, HearthwardCombatComponent.cpp, HearthwardProjectile.cpp, HearthwardCompanionDebug.cpp, HearthwardCompanionFixture.cpp, HearthwardCompanionNavigationComponent.cpp, HearthwardTraversalComponent.cpp, HearthwardCompanionBehavior.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, HearthwardWorldPresentation.cpp, HearthwardInputBindings.cpp, HearthwardFurnitureInteractionComponent.cpp, HearthwardHarvestSubsystem.cpp, HearthwardNatureActions.cpp, HearthwardNatureActor.cpp, HearthwardNatureFishing.cpp, HearthwardNatureState.cpp, HearthwardNatureSubsystem.cpp, HearthwardInventoryMigration.cpp, HearthwardSaveCompatibility.cpp, HearthwardSaveGame.cpp, HearthwardSaveSubsystem.cpp, HearthwardSurvivalComponent.cpp, CampaignAIBehaviorTests.cpp, CampaignEndStateTests.cpp, CampEconomyTests.cpp, CampLaborPresentationTests.cpp, CombatTests.cpp, CompanionWorkNavigationTests.cpp, CraftingPresentationTests.cpp, EquipmentPresentationTests.cpp, ExperienceTests.cpp, FarmingPresentationTests.cpp, FishingEntryTests.cpp, GameplayTests.cpp, HarvestRefreshTests.cpp, MapGuidanceTests.cpp, NatureBehaviorTests.cpp, NPCAgentTests.cpp, ProjectileBodyProtectionTests.cpp, SavePartialSettlementTests.cpp, SaveTests.cpp, SurvivalTests.cpp, TraversalTests.cpp, HearthwardHUDDialogue.cpp, HearthwardLoadingSubsystem.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenWidget.cpp
+HearthwardEditor Win64 Development:
+  Using ISPC compiler (G:\UnrealEngine\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+    Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+  Using Visual Studio 14.44.35228 toolchain (E:\VSC++\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardAgentContract.cpp, HearthwardAgentInteraction.cpp, HearthwardLocalAIRuntime.cpp, HearthwardLocalAISubsystem.cpp, HearthwardAnimalMotionComponent.cpp, HearthwardHeroAnimInstance.cpp, HearthwardBuildingComponent.cpp, HearthwardBuildingEconomy.cpp, HearthwardBuildingTests.cpp, HearthwardCrafting.cpp, HearthwardRepair.cpp, HearthwardCampState.cpp, HearthwardCampSubsystem.cpp, HearthwardQuartermaster.cpp, HearthwardCampaignActor.cpp, HearthwardCampaignInteraction.cpp, HearthwardCampaignQuests.cpp, HearthwardCampaignWorld.cpp, HearthwardCombatComponent.cpp, HearthwardProjectile.cpp, HearthwardCompanionDebug.cpp, HearthwardCompanionFixture.cpp, HearthwardCompanionNavigationComponent.cpp, HearthwardTraversalComponent.cpp, HearthwardCompanionBehavior.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, HearthwardWorldPresentation.cpp, HearthwardInputBindings.cpp, HearthwardFurnitureInteractionComponent.cpp, HearthwardHarvestSubsystem.cpp, HearthwardNatureActions.cpp, HearthwardNatureActor.cpp, HearthwardNatureFishing.cpp, HearthwardNatureState.cpp, HearthwardNatureSubsystem.cpp, HearthwardInventoryMigration.cpp, HearthwardSaveCompatibility.cpp, HearthwardSaveGame.cpp, HearthwardSaveSubsystem.cpp, HearthwardSurvivalComponent.cpp, CampaignAIBehaviorTests.cpp, CampaignEndStateTests.cpp, CampEconomyTests.cpp, CampLaborPresentationTests.cpp, CombatTests.cpp, CompanionWorkNavigationTests.cpp, CraftingPresentationTests.cpp, EquipmentPresentationTests.cpp, ExperienceTests.cpp, FarmingPresentationTests.cpp, FishingEntryTests.cpp, GameplayTests.cpp, HarvestRefreshTests.cpp, MapGuidanceTests.cpp, NatureBehaviorTests.cpp, NPCAgentTests.cpp, ProjectileBodyProtectionTests.cpp, SavePartialSettlementTests.cpp, SaveTests.cpp, SurvivalTests.cpp, TraversalTests.cpp, HearthwardHUDDialogue.cpp, HearthwardLoadingSubsystem.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenContent.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenLayout.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenWidget.cpp
+=================================
+Using Unreal Build Accelerator local executor to run 9 action(s)
+  CPU 14 physical cores, 20 logical cores
+  Memory 15.63 GB physical, 19.91 GB/31.26 GB committed
+  UBA Storage capacity 40 GB
+** For HearthwardEditor-Win64-Development **
+[1/9] Compile [x64] HearthwardWorldPresentation.cpp
+[2/9] Compile [x64] Module.Hearthward.3.cpp
+[3/9] Link [x64] UnrealEditor-Hearthward.lib
+  ���ڴ����� G:/GameFactory/Hearthward/.agent-local/task051/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.lib �Ͷ��� G:/GameFactory/Hearthward/.agent-local/task051/Intermediate/Build/Win64/x64/UnrealEditor/Development/Hearthward/UnrealEditor-Hearthward.exp
+** For Hearthward-Win64-Development **
+[4/9] Compile [x64] HearthwardWorldPresentation.cpp
+** For HearthwardEditor-Win64-Development **
+[5/9] Link [x64] UnrealEditor-Hearthward.dll
+[6/9] WriteMetadata HearthwardEditor.target [NoUba]
+** For Hearthward-Win64-Development **
+[7/9] Compile [x64] Module.Hearthward.3.cpp
+[8/9] Link [x64] Hearthward.exe
+  ���ڴ����� G:\GameFactory\Hearthward\.agent-local\task051\Binaries\Win64\Hearthward.lib �Ͷ��� G:\GameFactory\Hearthward\.agent-local\task051\Binaries\Win64\Hearthward.exp
+[9/9] WriteMetadata Hearthward.target [NoUba]
+
+Total time in Unreal Build Accelerator local executor: 44.06 seconds
+Output binary: G:\GameFactory\Hearthward\.agent-local\task051\Binaries\Win64\Hearthward.exe
+Output binary: G:\UnrealEngine\UE_5.8\Engine\Binaries\Win64\UnrealEditor.exe
+
+Result: Succeeded
+Total execution time: 48.39 seconds
+Trace written to file C:\Users\admin\AppData\Local\UnrealBuildTool\Trace.uba with size 11.9kb
+Took 48.83s to run dotnet.exe, ExitCode=0
+No build products were made
+Build command time: 48.85 s
+********** BUILD COMMAND COMPLETED **********
+********** COOK COMMAND STARTED **********
+HasMapsToCook /Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds
+Params.HasMapsToCook /Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds
+Running UnrealEditor Cook for project G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject
+Commandlet log file is G:\UnrealEngine\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.10.05-06.25.40.txt
+Running: G:\UnrealEngine\UE_5.8\Engine\Binaries\Win64\UnrealEditor-Cmd.exe "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject" -run=Cook -Map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds -TargetPlatform=Windows  -unversioned -outputdir="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows" -ShaderWorkingDir=F:\uagent-task-temp\task072-game-development-20261005\Shaders -fileopenlog -abslog="G:\UnrealEngine\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.10.05-06.25.40.txt" -stdout -CrashForUAT -unattended -NoLogTimes
+LogInit: Display: Running engine for game: Hearthward
+LogCore: Display: Requested channels: 'cpu,gpu,frame,log,bookmark,screenshot,region'
+LogTrace: Display: Control listening on port 1985
+LogCsvProfiler: Display: Metadata set : platform="Windows"
+LogCsvProfiler: Display: Metadata set : config="Development"
+LogCsvProfiler: Display: Metadata set : buildversion="++UE5+Release-5.8-CL-56702186"
+LogCsvProfiler: Display: Metadata set : engineversion="5.8.2-56702186+++UE5+Release-5.8"
+LogCsvProfiler: Display: Metadata set : enginereleaseversion="5.8.2"
+LogCsvProfiler: Display: Metadata set : os="Windows 11 (24H2) [10.0.26100.4351] "
+LogCsvProfiler: Display: Metadata set : cpu="GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX"
+LogCsvProfiler: Display: Metadata set : pgoenabled="0"
+LogCsvProfiler: Display: Metadata set : pgoprofilingenabled="0"
+LogCsvProfiler: Display: Metadata set : ltoenabled="0"
+LogCsvProfiler: Display: Metadata set : asan="0"
+LogCsvProfiler: Display: Metadata set : mergedmodules="0"
+LogCsvProfiler: Display: Metadata set : compacttset="0"
+LogCsvProfiler: Display: Metadata set : commandline="" G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject -run=Cook -Map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds -TargetPlatform=Windows -unversioned -outputdir=F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows -ShaderWorkingDir=F:\uagent-task-temp\task072-game-development-20261005\Shaders -fileopenlog -abslog=G:\UnrealEngine\UE_5.8\Engine\Programs\AutomationTool\Saved\Cook-2026.10.05-06.25.40.txt -stdout -CrashForUAT -unattended -NoLogTimes""
+LogCsvProfiler: Display: Metadata set : loginid="a82aa7934b238d42e0d65a84d8c108c4"
+LogCsvProfiler: Display: Metadata set : llm="0"
+LogCsvProfiler: Display: Metadata set : zenstreaming="0"
+LogCsvProfiler: Display: Metadata set : systemresolution.resx="1280"
+LogCsvProfiler: Display: Metadata set : systemresolution.resy="720"
+LogConfig: Display: Loading VulkanPC ini files took 0.08 seconds
+LogConfig: Display: Loading Mac ini files took 0.10 seconds
+LogConfig: Display: Loading IOS ini files took 0.10 seconds
+LogConfig: Display: Loading TVOS ini files took 0.11 seconds
+LogConfig: Display: Loading Android ini files took 0.11 seconds
+LogConfig: Display: Loading VisionOS ini files took 0.11 seconds
+LogConfig: Display: Loading Unix ini files took 0.11 seconds
+LogAudio: Display: Audio Device Manager not initializing due to all audio being disabled. If this is not intentional, please check command line arguments for "-nosound".
+LogConfig: Display: Loading Windows ini files took 0.12 seconds
+LogConfig: Display: Loading Linux ini files took 0.12 seconds
+LogAssetRegistry: Display: FindShardedCacheFiles: 1 via .ref, 0 via migration fallback, 1 total
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PreLoad): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogAssetRegistry: Display: LoadCacheFiles: loading 1 cache files, memory-mapping=enabled
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Mode=ValidatePlatforms -OutputSDKs  -AllPlatforms  -project="G:/GameFactory/Hearthward/.agent-local/task051/Hearthward.uproject" -log="G:/GameFactory/Hearthward/.agent-local/task051/Saved/Logs/AutoSDKInfo.txt" -verbose -timestamps
+LogAssetRegistry: Display: Asset registry cache read as 121.6 MiB from ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/CachedAssetRegistry/CachedAssetRegistry_0_AC716F454FBEC63D35F0DD8B0238F56B.bin (memory-mapped=yes)
+Log file: G:\GameFactory\Hearthward\.agent-local\task051\Saved\Logs\AutoSDKInfo.txt
+##PlatformValidate: Win64 VALID 10.0.22621.0
+##PlatformValidate: Mac INVALID 26.1.1
+##PlatformValidate: IOS INVALID 26.1.1
+##PlatformValidate: Android INVALID r27c
+##PlatformValidate: Linux INVALID v26_clang-20.1.8-rockylinux8
+##PlatformValidate: LinuxArm64 INVALID <UNKNOWN>
+##PlatformValidate: TVOS INVALID 26.1.1
+##PlatformValidate: VisionOS INVALID <UNKNOWN>
+Unable to find required SDK version 'MainVersion' for platform LinuxArm64. Check your SDK.json files
+Unable to find required SDK version 'MainVersion' for platform VisionOS. Check your SDK.json files
+Trace written to file C:\Users\admin\AppData\Local\UnrealBuildTool\Trace.uba with size 321b
+LogAsyncCompilation: Display: MemorySharingInfo: UsedMemory=337MiB, MaxMemoryAvailable=32006MiB
+RenderDocPlugin: Display: RenderDoc plugin will not be loaded. Use '-AttachRenderDoc' on the cmd line or enable 'renderdoc.AutoAttach' in the plugin settings.
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Log is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.CSV is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Horde is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Log is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.CSV is disabled for this application
+LogAnalytics: Display: Provider StudioTelemetry.Provider.Horde is disabled for this application
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogHAL: Display: Platform has ~ 16 GB [16780480512 / 17179869184 / 16], which maps to Larger [LargestMinGB=32, LargerMinGB=12, DefaultMinGB=8, SmallerMinGB=6, SmallestMinGB=0)
+LogCsvProfiler: Display: Metadata set : extradevelopmentmemorymb="0"
+LogObj: Display: Attempting to load config data for Default__DownlinkBandwidthManagerConfig before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+LogTextureFormatASTC: Display: ASTCEnc version 5.0.1 library loaded
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatASTC
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatDXT
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatETC2
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatIntelISPCTexComp
+LogTextureFormatOodle: Display: Oodle Texture TFO init; latest sdk version = 2.9.16
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.16.dll
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatOodle
+LogTextureFormatManager: Display: Loaded Base TextureFormat: TextureFormatUncompressed
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Android'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'IOS'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Linux'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'Mac'
+LogTargetPlatformManager: Display: Failed to SetupSDK for platform 'TVOS'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'Windows'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsEditor'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsServer'
+LogTargetPlatformManager: Display: Loaded TargetPlatform 'WindowsClient'
+LogTargetPlatformManager: Display: Building Assets For Windows
+LogAudioDebug: Display: Lib vorbis DLL was dynamically loaded.
+LogObj: Display: Attempting to load config data for Default__SlateThemeManager before the Class has been constructed/registered/linked (likely during module loading or early startup). This will result in the load silently failing and should be fixed.
+LogCsvProfiler: Display: Metadata set : verbatimrhiname="Null"
+LogCsvProfiler: Display: Metadata set : rhiname="Null"
+LogCsvProfiler: Display: Metadata set : rhifeaturelevel="SM6"
+LogCsvProfiler: Display: Metadata set : shaderplatform="PCD3D_SM6"
+LogCsvProfiler: Display: Metadata set : gpu=""
+LogCsvProfiler: Display: Metadata set : gpudriver=""
+LogDerivedDataCache: Display: ../../../Engine/DerivedDataCache/Compressed.ddp: Opened pak cache for reading. (1679 MiB)
+LogZenServiceInstance: Display: Launching zen utility 'G:/UnrealEngine/UE_5.8/Engine/Binaries/Win64/zen.exe service status'.
+LogZenServiceInstance: Display: Writing plugin version info to 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugin_versions.json'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/admin/AppData/Local/UnrealEngine/5.8/Saved/Zen/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Read zen version cache file from 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zen.version', version: '5.8.13-202605190912-windows-x64-release-094f62c2'
+LogZenServiceInstance: Display: Installed service at 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe' is up to date
+LogZenServiceInstance: Display: Launching executable 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zenserver.exe', working dir 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install', data dir 'C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Data', args '--port 8558 --data-dir C:\Users\admin\AppData\Local\UnrealEngine\Common\Zen\Data --http asio --gc-cache-duration-seconds 1209600 --gc-interval-seconds 21600 --gc-low-diskspace-threshold 2147483648 --cache-bucket-limit-overwrites --quiet --restrict-content-types --allow-external-oidctoken-exe=false --plugins-config "C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/zen_plugins_v1.json" --security-config-path "C:/Users/admin/AppData/Local/UnrealEngine/Common/Zen/Install/security-config.json" --owner-pid 42364  --child-id Zen_42364_Startup'
+LogZenServiceInstance: Display: Unreal Zen Storage Server HTTP service at http://[::1]:8558 status: OK!.
+LogDerivedDataCache: Display: ZenLocal: Using ZenServer HTTP service at [::1] with namespace ue.ddc. Status: OK!.
+LogDerivedDataCache: Display: C:/Users/admin/AppData/Local/UnrealEngine/Common/DerivedDataCache: Performance: Latency=0.11ms. RandomReadSpeed=159.88MBs, RandomWriteSpeed=86.93MBs. Assigned SpeedClass 'Local'
+LogUbaHorde: Display: UBA/Horde Configuration [Uba.Provider.Horde]: Not Enabled
+LogShaderCompilers: Display: No distributed shader compiler controller found
+LogShaderCompilers: Display: Using 17 local workers for shader compilation
+LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/ShaderAutogen/PCD3D_SM6/AutogenShaderHeaders.ush
+LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+LogEditorDomain: Display: EditorDomain is Disabled
+LogAssetRegistry: Display: AssetDataGatherer spent 0.000s loading caches from ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/CachedAssetRegistry.
+LogDeviceProfileManager: Display: Deviceprofile LinuxArm64Editor not found.
+LogDeviceProfileManager: Display: Deviceprofile LinuxArm64 not found.
+LogCsvProfiler: Display: Metadata set : deviceprofile="WindowsEditor"
+LogStreaming: Display: FlushAsyncLoading(1): 1 QueuedPackages, 0 AsyncPackages
+LogTextureEncodingSettings: Display: Texture Encode Speed: Final (cook).
+LogTextureEncodingSettings: Display: Oodle Texture Encode Speed settings: Fast: RDO Off Lambda=0, Effort=Normal Final: RDO Off Lambda=0, Effort=Normal
+LogTextureEncodingSettings: Display: Shared linear texture encoding: Disabled
+LogMeshReduction: Display: Using QuadricMeshReduction for automatic static mesh reduction
+LogMeshReduction: Display: Using SkeletalMeshReduction for automatic skeletal mesh reduction
+LogMeshReduction: Display: Using ProxyLODMeshReduction for automatic mesh merging
+LogMeshReduction: Display: No distributed automatic mesh merging module available
+LogShaderCompilers: Display: Compiling shader autogen file: ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/ShaderAutogen/PCD3D_SM5/AutogenShaderHeaders.ush
+LogShaderCompilers: Display: Autogen file is unchanged, skipping write.
+LogVirtualization: Display: VirtualizationSystem name found in ini file: None
+LogVirtualization: Display: FNullVirtualizationSystem mounted, virtualization will be disabled
+LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize started...
+LogWorldPartition: Display: FWorldPartitionClassDescRegistry::Initialize took 8.411 ms
+LogMetaSound: Display: MetaSound Page Target Initialized to 'Default'
+LogAudio: Display: Registering Engine Module Parameter Interfaces...
+LogSkinnedAsset: Display: 正在等待蒙皮资产就绪0/1（SK_Hero）……
+LogSkinnedAsset: Display: 正在等待蒙皮资产就绪0/1（SK_Brother）……
+LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+LogAudioCaptureCore: Display: No Audio Capture implementations found. Audio input will be silent.
+LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+LogCsvProfiler: Display: Metadata set : raytracing="0"
+LogCook: Display: CookProcessCount=1. CookMultiprocess is disabled and the cooker is running as a single process.
+LogCook: Display: CookSettings for Memory:
+	MemoryMaxUsedVirtual 0MiB
+	MemoryMaxUsedPhysical 0MiB
+	MemoryMinFreeVirtual 2048MiB
+	MemoryMinFreePhysical 2048MiB
+	MemoryTriggerGCAtPressureLevel None
+	SoftGCMemoryUseTrigger disabled
+	SoftGCTimeBudgetTrigger enabled (0.05 budget, 30s min period)
+LogCook: Display: SkipOnlyEditorOnly is enabled, unsolicited packages will not be cooked unless they are referenced from the cooked version of the instigator package.
+LogCook: Display: ---- Pre Content Initialisation: End ----
+LogCook: Display: ---- Post Content Initialisation: Start ----
+LogEditorDomain: Display: Cycle detected in parents of class /Script/RigVMDeveloper.RigVMUnitNode. Allow flags for editordomain and incremental cooking will be invalid.
+LogZenStore: Display: Establishing oplog 'Hearthward.1843b38d/EditorDomain'
+LogZenStore: Display: Zen project 'Hearthward.1843b38d' created
+LogZenStore: Display: Zen oplog 'Hearthward.1843b38d/EditorDomain' created
+LogCook: Display: Waiting for Asset Registry
+LogAssetRegistry: Display: Starting OnFilesLoaded.Broadcast
+LogAssetRegistry: Display: Completed OnFilesLoaded.Broadcast: 0.023s
+LogAssetRegistry: Display: Asset registry cache written as 121.6 MiB to ../../../../../GameFactory/Hearthward/.agent-local/task051/Intermediate/CachedAssetRegistry/CachedAssetRegistry_*.ref
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display:   CachedAssetRegistry_0_AC716F454FBEC63D35F0DD8B0238F56B.bin: deleted (orphaned, unreferenced by any .ref)
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 2 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 1 orphans deleted, 0 orphans locked (kept)
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogCook: Display: INCREMENTAL COOK DEPENDENCIES: Disabled. Incremental Cook Dependencies are disabled because the cooker is not using ZenStore, and we do not yet support storage of Incremental Cook dependency data with loose cooked packages. Falling back to legacy iterative cook mode.
+LogCook: Display: CalculateGlobalDependenciesHash(Windows):
+LogCook: Display: 	FGuid CookIncrementalVersion = ffa12fdc-c822-1fe2-7757-627a12f1d3a7
+LogCook: Display: 	[Editor]:CookSettings.ProjectCookIncrementalVersion = 00000000-0000-0000-0000-000000000000
+LogCook: Display: 	[Engine]:Core.System.CanStripEditorOnlyExportsAndImports = True
+LogCook: Display: 	[Engine]:Core.System.CanSkipEditorReferencedPackagesWhenCooking = False
+LogCook: Display: 	CanUseUnversionedPropertySerialization = True
+LogCook: Display: 	[Editor]:CookSettings.AutomaticOptionalInclusionAssetType = /Script/Niagara.NiagaraScript, /Script/Niagara.NiagaraEmitter, /Script/Niagara.NiagaraSystem, /Script/NiagaraEditor.NiagaraParameterDefinitions, /Script/Niagara.NiagaraEffectType, /Script/Niagara.NiagaraValidationRuleSet, /Script/OptimusCore.OptimusDeformer
+LogCook: Display: 	IsCookFlagSet(ECookInitializationFlags::Unversioned) = True
+LogCook: Display: 	FCoreRedirects::AppendHashOfGlobalRedirects = 585cca26a3cdc75e6429aaebf6e44e83b7ba1a57df64d1368584d8f9a0f23d24
+LogCook: Display: 	GlobalDependenciesHash(Windows) = 347b3354c8d2b1518815ea05de341f094084f0edd0baa356ea216265c3627def
+LogCook: Display: FULL COOK: Incremental Cook Dependencies are disabled, and -legacyiterative was not specified. Deleting previously cooked packages for platform Windows and recooking all packages discovered in the current cook.
+LogCook: Display: Sandbox cleanup took 0.070 seconds for platforms Windows
+LogCook: Display: Compiling global changed shaders for platform 'Windows'
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Global' (PCD3D_SM6-PCD3D_SM6) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 1, Unique Shadermaps: 461 (46100.00%)
+LogShaderLibrary: Display: Total Shaders: 8097, Unique Shaders: 8095 (99.98%)
+LogShaderLibrary: Display: Total Shader Size: 97.01mb, Unique Shaders Size: 97.01mb (100.00%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 3
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 530
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     2, 2, 1, 1, 1, 1, 1, 1, 1, 1
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Compute: 5931 shaders (73.27%), compressed size: 74.44 MB (12.85 KB avg per shader), uncompressed size: 98.46 MB (17.00 KB avg per shader)
+LogShaderLibrary: Display: SF_Pixel: 2025 shaders (25.02%), compressed size: 22.21 MB (11.23 KB avg per shader), uncompressed size: 29.19 MB (14.76 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 135 shaders (1.67%), compressed size: 0.35 MB (2.69 KB avg per shader), uncompressed size: 0.44 MB (3.35 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 3 shaders (0.04%), compressed size: 0.01 MB (2.15 KB avg per shader), uncompressed size: 0.01 MB (3.31 KB avg per shader)
+LogShaderLibrary: Display: SF_WorkGraphComputeNode: 1 shaders (0.01%), compressed size: 0.00 MB (2.75 KB avg per shader), uncompressed size: 0.00 MB (3.35 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../GameFactory/Hearthward/.agent-local/task051/Saved/Shaders/PCD3D_SM6-PCD3D_SM6/ShaderDebug-Global-PCD3D_SM6-PCD3D_SM6/Dump.txt'
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Global' (PCD3D_SM5-PCD3D_SM5) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 1, Unique Shadermaps: 345 (34500.00%)
+LogShaderLibrary: Display: Total Shaders: 3940, Unique Shaders: 3926 (99.64%)
+LogShaderLibrary: Display: Total Shader Size: 11.61mb, Unique Shaders Size: 11.61mb (99.96%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 3
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 309
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     3, 3, 3, 2, 2, 2, 2, 2, 2, 2
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Pixel: 1751 shaders (44.60%), compressed size: 6.68 MB (3.91 KB avg per shader), uncompressed size: 31.68 MB (18.53 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 2058 shaders (52.42%), compressed size: 4.85 MB (2.41 KB avg per shader), uncompressed size: 19.56 MB (9.73 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 115 shaders (2.93%), compressed size: 0.07 MB (0.61 KB avg per shader), uncompressed size: 0.15 MB (1.31 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.05%), compressed size: 0.00 MB (0.49 KB avg per shader), uncompressed size: 0.00 MB (1.55 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../GameFactory/Hearthward/.agent-local/task051/Saved/Shaders/PCD3D_SM5-PCD3D_SM5/ShaderDebug-Global-PCD3D_SM5-PCD3D_SM5/Dump.txt'
+LogShaderLibrary: Display: =================
+LogCook: Display: Discovering localized assets for cultures: en
+LogCook: Display: Found 0 localized assets
+LogCook: Display: ---- Post Content Initialisation: End ----
+LogCook: Display: Cooked packages 0 Packages Remain 1178 Total 1178
+LogCook: Display: Cook Diagnostics: OpenFileHandles=317, VirtualMemory=1704MiB, VirtualMemoryAvailable=11540MiB
+LogMaterial: Display: Missing cached shadermap for /Landmass/Landscape/BlueprintBrushes/Materials/Internal/BrushBounds.BrushBounds in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5c40a15b285ce61bb4c6915b86c5ef302b3cb97a), compiling.
+LogMaterial: Display: Missing cached shadermap for /SpeedTreeImporter/SpeedTree9/SpeedTreeMaster.SpeedTreeMaster in PCD3D_SM6, Default, SM6, Game (DDC key hash: cf0aaa7396df3036f6f088ae633a5992057fd009), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/Dataflow/DataflowSelection.DataflowSelection in PCD3D_SM6, Default, SM6, Game (DDC key hash: 665e3f46fc8cb2b595505e069d5825834fa40a93), compiling.
+LogCook: Display: Garbage collection triggered (Soft). Triggered by conditions:
+  CookSettings.SoftGCTimeTrigger: Periodic triggering of SoftGC: No duration data.
+LogCookCommandlet: Display: GarbageCollection... (Periodic GC)
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/Widget3DPassThrough_Opaque_OneSided.Widget3DPassThrough_Opaque_OneSided in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3a908c9a10f643d7f08f67ab42fbe0a5a3dde33a), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/Widget3DPassThrough_Masked_OneSided.Widget3DPassThrough_Masked_OneSided in PCD3D_SM6, Default, SM6, Game (DDC key hash: 671f292b3e7ca9a5f7e91ecc373f8c672a9b3d10), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorLandscapeResources/LandscapeLayerUsageMaterial.LandscapeLayerUsageMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 1bb01783093e8ed7a783d5e56dd560e2b84df643), compiling.
+LogMaterial: Display: Missing cached shadermap for /SpeedTreeImporter/SpeedTree9/SpeedTreeBillboardMaster.SpeedTreeBillboardMaster in PCD3D_SM6, Default, SM6, Game (DDC key hash: f02cf70544cf63e324a5d3a98712a95c4f416fcb), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/Widget3DPassThrough_Translucent_OneSided.Widget3DPassThrough_Translucent_OneSided in PCD3D_SM6, Default, SM6, Game (DDC key hash: e106b36b85b7df87e9811206f16314d846b5d303), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/M_Default.M_Default in PCD3D_SM6, Default, SM6, Game (DDC key hash: e64ab6fc0da420c377b696b904aae4a99e361091), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/GrassCards/Materials/GrassCards_material_0.GrassCards_material_0 in PCD3D_SM6, Default, SM6, Game (DDC key hash: cfe80c9d0fcd628c5c285fb901b14441cb5b62d5), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Transmission_DS.MI_Transmission_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: fc81a5ad8eab6f56bb8b45cec675131911700eda), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Sheen_Blend.MI_Sheen_Blend in PCD3D_SM6, Default, SM6, Game (DDC key hash: e60b2308a201e7c89d6023da8d5859fdef10a8e0), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Default_Opaque_DS.MI_Default_Opaque_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: ca76f58742e717bd51d9d17256bf23983374f585), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Sheen_Opaque_DS.MI_Sheen_Opaque_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 24fd2ad76227760706455a553f274345ff936954), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Sheen_Mask.MI_Sheen_Mask in PCD3D_SM6, Default, SM6, Game (DDC key hash: 0664339e48c0911e7a0fccd12c832fcddda2e83a), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/M_Sheen.M_Sheen in PCD3D_SM6, Default, SM6, Game (DDC key hash: 363fc8652c284f31627c941de19c6ed640d0d3bd), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Default_Mask_DS.MI_Default_Mask_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: d86b60a705261690c9caaaca09f1b04de6e4397d), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/M_Transmission.M_Transmission in PCD3D_SM6, Default, SM6, Game (DDC key hash: 35c14b985469493a405e3a372daff458000d9e68), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Sheen_Blend_DS.MI_Sheen_Blend_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: bc52c3effad9f5a46f8b4c4e702b286d1315e5eb), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Sheen_Mask_DS.MI_Sheen_Mask_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 0642a19a021f9c0c0c6dacbdb092f8cb6ff51d07), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Default_Mask.MI_Default_Mask in PCD3D_SM6, Default, SM6, Game (DDC key hash: 24180652de42ed7bac78ed0dcad8a35b7cb272f7), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_ClearCoat_Blend_DS.MI_ClearCoat_Blend_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 81b28c56cac1712de8e1db403471caddb9c1de08), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_ClearCoat_Mask_DS.MI_ClearCoat_Mask_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3f74096e20d103d01152d41321dd6050534500aa), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_ClearCoat_Opaque_DS.MI_ClearCoat_Opaque_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: ed69a182c3dddf4e1a0932177338d5df1e8d200c), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_ClearCoat_Blend.MI_ClearCoat_Blend in PCD3D_SM6, Default, SM6, Game (DDC key hash: a4a01365fe8fcec38a04f90318ec5265f2882038), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_ClearCoat_Mask.MI_ClearCoat_Mask in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5c9fe2bbc7713ae662f0fc5a7dab3e78de935265), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/M_ClearCoat.M_ClearCoat in PCD3D_SM6, Default, SM6, Game (DDC key hash: a4801aab4e247e56ab22e82dd1b4e452e2d29259), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Default_Blend_DS.MI_Default_Blend_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 05f8d3045f8ca61adf0935045c4bd80b5128031e), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Default_Blend.MI_Default_Blend in PCD3D_SM6, Default, SM6, Game (DDC key hash: e2098a6d81188d84855b5bedca58482016d4bc8b), compiling.
+LogCook: Display: Cooked packages 100 Packages Remain 1210 Total 1310
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/M_Unlit.M_Unlit in PCD3D_SM6, Default, SM6, Game (DDC key hash: 1c51d0c239711a480a872fee4f4c5c9f0ffeaa48), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/Widget3DPassThrough_Masked.Widget3DPassThrough_Masked in PCD3D_SM6, Default, SM6, Game (DDC key hash: 16e77fcd2c4f3bf4050aaa0a2ec70ff2ea064666), compiling.
+LogMaterial: Display: Missing cached shadermap for /Landmass/Landscape/BlueprintBrushes/Materials/Sprite/M_BrushSprite_01.M_BrushSprite_01 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 1f9b5f26d64003902652e16c54253c5be5141f96), compiling.
+LogMaterial: Display: Missing cached shadermap for /MeshModelingToolsetExp/Materials/PointSetOverlaidComponentMaterial.PointSetOverlaidComponentMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 1793e6aa8f82b173379daa13b00741bdf5755e13), compiling.
+LogMaterial: Display: Missing cached shadermap for /MeshModelingToolsetExp/Materials/LineSetOverlaidComponentMaterial.LineSetOverlaidComponentMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 79ccded03c74de2a7f4b8be07b4f03efa146b724), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorLandscapeResources/MaskBrushMaterial_MaskedRegion.MaskBrushMaterial_MaskedRegion in PCD3D_SM6, Default, SM6, Game (DDC key hash: df4a5e97c7bfca0c927fcb513c04da03ccd3800f), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/VREditor/SnapGrid/SnapGridMaterial.SnapGridMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3b27e9b7d57f1f1ed7c295248f4c8025d83014af), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorLandscapeResources/SelectBrushMaterial_SelectedRegion.SelectBrushMaterial_SelectedRegion in PCD3D_SM6, Default, SM6, Game (DDC key hash: f6a8a1ee9f845faec71b727a3fa402fd73a036b3), compiling.
+LogMaterial: Display: Missing cached shadermap for /Paper2D/OpaqueUnlitSpriteMaterial.OpaqueUnlitSpriteMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 85ab759b38645134032e305adc31bc4873845bbe), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Unlit_Mask_DS.MI_Unlit_Mask_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 6ee0b77893432a2b6e44a589739cf9c25338b119), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_SpecularGlossiness_Blend_DS.MI_SpecularGlossiness_Blend_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 4157ceabc508d8e0de2fd9e8b012be33e48d9bf6), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_SpecularGlossiness_Mask_DS.MI_SpecularGlossiness_Mask_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3501f921b1a57c5a8d7302e9c88a6fd974ae8f7b), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_SpecularGlossiness_Opaque_DS.MI_SpecularGlossiness_Opaque_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 1b347089ef2134c9957be965d0d30e4d5d7b64d3), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_SpecularGlossiness_Blend.MI_SpecularGlossiness_Blend in PCD3D_SM6, Default, SM6, Game (DDC key hash: bd33f142e4d3a89b5377135da9a9a4283605452d), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_SpecularGlossiness_Mask.MI_SpecularGlossiness_Mask in PCD3D_SM6, Default, SM6, Game (DDC key hash: c371a26136ef0c68725e4ab74b4d5c0f2c08408a), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/Substrate/M_GLTF.M_GLTF in PCD3D_SM6, Default, SM6, Game (DDC key hash: 6520e0bfb154c837b8011fc5d964fb97748cba9c), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Unlit_Blend_DS.MI_Unlit_Blend_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3252a04f81b77f6abff2be2a92a8c7f2ef7c20dc), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/M_SpecularGlossiness.M_SpecularGlossiness in PCD3D_SM6, Default, SM6, Game (DDC key hash: 9f2a4d0f87c019e2f0e53bbcbae6e5877dbf778d), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Unlit_Mask.MI_Unlit_Mask in PCD3D_SM6, Default, SM6, Game (DDC key hash: 72207bbed09e4f5961cf6c2c4fdd5499145565e4), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/Widget3DPassThrough_Translucent.Widget3DPassThrough_Translucent in PCD3D_SM6, Default, SM6, Game (DDC key hash: 87de170313924695e2acd40573e83094a2c78ecb), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/Widget3DPassThrough_Opaque.Widget3DPassThrough_Opaque in PCD3D_SM6, Default, SM6, Game (DDC key hash: 8dca788dfb1dc86709f707b42d231e10136c1e9b), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/DefaultTextMaterialOpaque.DefaultTextMaterialOpaque in PCD3D_SM6, Default, SM6, Game (DDC key hash: ddce582f5fb4706b7b106f26b7d01c088b967dfd), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/DefaultMaterial.DefaultMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 69d96c153b5bcf3ec61284dd567601d529eec574), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/DefaultDeferredDecalMaterial.DefaultDeferredDecalMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 37bb8625a83836619bed74d3d68b8b91b4a8482c), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/DefaultPostProcessMaterial.DefaultPostProcessMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3b471b745835323563d91f67c8283135680d998d), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/Materials/FBXLegacyPhongSurfaceMaterial.FBXLegacyPhongSurfaceMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: a919df2dbc005f54686f4a4cdbde65df72983248), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/WorldGridMaterial.WorldGridMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: de620071a01cc5581b9f5eff70fd4ec6c07aab5f), compiling. Is special engine material.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Unlit_Opaque_DS.MI_Unlit_Opaque_DS in PCD3D_SM6, Default, SM6, Game (DDC key hash: bf22fbcab0b6baab7a42d968a851333a48d7fe14), compiling.
+LogMaterial: Display: Missing cached shadermap for /InterchangeAssets/gltf/MaterialInstances/MI_Unlit_Blend.MI_Unlit_Blend in PCD3D_SM6, Default, SM6, Game (DDC key hash: e34bab96200912645780173e4c039930df2fcf4b), compiling.
+LogCook: Display: Cooked packages 178 Packages Remain 1132 Total 1310
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.11.dll
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.12.dll
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.15.dll
+LogCook: Display: Cooked packages 276 Packages Remain 1034 Total 1310
+LogWorldPartition: Display: [Cook] Gathering packages to cook from generators for owner object World /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds.
+LogWorldPartition: Display: WorldPartition initialize started...
+LogWorldPartition: Display: WorldPartition initialize took 51.233 ms
+LogWorldPartition: Display: GenerateStreaming for 'L_HearthwardWilds' started...
+LogWorldPartition: Display: GenerateStreaming for 'L_HearthwardWilds' took 82.345 ms
+LogWorldPartition: Display: [Cook] Gathered 294 packages to generate from 1 Generators.
+LogWorldPartition: Display: [Cook] Sending 294 packages to be generated.
+LogWorldPartition: Display: [Cook] Debug(GetGenerateList) : OwnerWorld=World /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds
+LogCook: Display: Splitting Package /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds with splitter FWorldCookPackageSplitter acting on object World /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/WidgetVertexColorMaterial.WidgetVertexColorMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 81ddf880a45bf39af5692da3e3df18c479f3df4f), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/Camera/CineMat.CineMat in PCD3D_SM6, Default, SM6, Game (DDC key hash: 91ce2038e4556da3a738d5e2c406ea5fe2222f49), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorLandscapeResources/SplineEditorMeshMat.SplineEditorMeshMat in PCD3D_SM6, Default, SM6, Game (DDC key hash: f5eb8df166907026170768e000c3e35d5b9e55a7), compiling.
+LogMaterial: Display: Missing cached shadermap for /HairStrands/Materials/HairDefaultMaterial.HairDefaultMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5cb8b6c6c8a9235868912d3db509fc57fad12f39), compiling.
+LogMaterial: Display: Missing cached shadermap for /HairStrands/Materials/HairCardsDefaultMaterial.HairCardsDefaultMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: c6334853f35e4fdd9cb13208055625cf1f798d01), compiling.
+LogMaterial: Display: Missing cached shadermap for /HairStrands/Materials/HairMeshesDefaultMaterial.HairMeshesDefaultMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: df387d77b220b2fabb33f35a94ef35325e440a9c), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/VREditor/TransformGizmo/TranslucentTransformGizmoMaterial.TranslucentTransformGizmoMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 7f2a0227f694a8b56fdbc6e4632f4707b860f688), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineDebugMaterials/M_SimpleUnlitTranslucent.M_SimpleUnlitTranslucent in PCD3D_SM6, Default, SM6, Game (DDC key hash: e938638ec274f1decd23ce3c48d200ba70a5fd94), compiling.
+LogMaterial: Display: Missing cached shadermap for /ControlRig/Controls/ControlRigXRayMaterial.ControlRigXRayMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: c3118e979769186760126dcd72b23638d1a3e694), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/facilities/campfire/tripo_mat_578cc516.tripo_mat_578cc516 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 55c71c5d7ed70222d7dddc743522636ca447b57d), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/catfish/tripo_mat_d8fb01be.tripo_mat_d8fb01be in PCD3D_SM6, Default, SM6, Game (DDC key hash: 86a010a7421fce4984ab7932633b25d26675083f), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/wood_wall_window/tripo_mat_17b709d0.tripo_mat_17b709d0 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 535d3e92f89908660fe644197eb5c9a36c5f1985), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/hen/tripo_mat_bcc1c840.tripo_mat_bcc1c840 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 22dba76afbb25cda501e30c53703ba6e056a1b24), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/pig/tripo_mat_0059d8b0.tripo_mat_0059d8b0 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 125afa145dc1521bfd1a0239cb4553e834961ce2), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/VREditor/TransformGizmo/Main.Main in PCD3D_SM6, Default, SM6, Game (DDC key hash: 81f170bd75775e97dfa1381ae27a9da05a0570c1), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/VREditor/TransformGizmo/Xray.Xray in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3ab2a9241bcd5a4e414663148ea9d5abf0447e0b), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 846f3e6e429e1293959828a13b4314a8a0d3f85e), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/Dataflow/DataflowVertexMaterial.DataflowVertexMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: ff64bf11b5dcd9c5318557fb811ae638b5e2cf93), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/Dataflow/DataflowTwoSidedVertexMaterial.DataflowTwoSidedVertexMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: f14b81d0807a24053f5c3218b3a036260c229744), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/Dataflow/DataflowTwoSidedVertexMaterial.SculptMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: cd0c60d3449d07b31992a0c3305bec111497a3c1), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/NaniteHiddenSectionMaterial.NaniteHiddenSectionMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: c1a7523f330af15859db48b59437d039f951c1ec), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/carp/tripo_mat_b2ce3e41.tripo_mat_b2ce3e41 in PCD3D_SM6, Default, SM6, Game (DDC key hash: dcf10f45d06778eef0320baea9f8714ea0934a73), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/stag_a/tripo_mat_6cda5dcd.tripo_mat_6cda5dcd in PCD3D_SM6, Default, SM6, Game (DDC key hash: 4ba7c40534bc5e7faf981e5f67da21f7baf08d99), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/red_fox/tripo_mat_e976d24b.tripo_mat_e976d24b in PCD3D_SM6, Default, SM6, Game (DDC key hash: 552ff587e2e1325c716d29bc3257fcee384a1205), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/RemoveSurfaceMaterial.RemoveSurfaceMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 4f4e31d442300793968eec7ba0289fb618401722), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineDebugMaterials/DebugMeshMaterial.DebugMeshMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 2c16791dc2a61809f0134fa8bad3efcd4dcb3544), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/GizmoMaterial.GizmoMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: b807a2b1cda551d29ea3ccd11ee1953cfce0a297), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/crucian_carp/tripo_mat_e193cb21.tripo_mat_e193cb21 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 749750ccce2c7b5ca8acb7b0ced7c618731e09e7), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/black_bear/tripo_mat_7f5206d7.tripo_mat_7f5206d7 in PCD3D_SM6, Default, SM6, Game (DDC key hash: f8fa7f0f172f40e65b08bdfa1418aebf942a4841), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/hare/tripo_mat_588471a5.tripo_mat_588471a5 in PCD3D_SM6, Default, SM6, Game (DDC key hash: c5646260763c1ed6509a5f346aeb184b92c97ab6), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/eel/tripo_mat_e473cc70.tripo_mat_e473cc70 in PCD3D_SM6, Default, SM6, Game (DDC key hash: e00b32b3fce4b267fc61d4c1fc42b3d45e1fe0e9), compiling.
+LogWorldPartition: Display: [Cook][PopulateGeneratorPackage] Processing 294 packages
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4036.734375 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 4036.835938 MiB
+LogWorldPartition: Display: [Cook][PopulateGeneratorPackage] Gathered 73 modified packages
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/PhAT_UnselectedMaterial.PhAT_UnselectedMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: b9f3a602256cbd0af3949d3943e57c52461b5be3), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/PhAT_NoCollisionMaterial.PhAT_NoCollisionMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 50967b9bddc26534805151a5526f62fcac1299f1), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampPine_Bark.M_CampPine_Bark in PCD3D_SM6, Default, SM6, Game (DDC key hash: aa90c0c289be0a1f0ef717fbaff6bf1c1b9b188a), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampPine_TrunkA.M_CampPine_TrunkA in PCD3D_SM6, Default, SM6, Game (DDC key hash: d18dfb42e0e2c04fb73f3593ccf6b1c5dddc7a6c), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/ram/tripo_mat_8334bd78.tripo_mat_8334bd78 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 93b579350d1da03c672979afdf5cedbafdbe1698), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/pheasant/tripo_mat_59a5036b.tripo_mat_59a5036b in PCD3D_SM6, Default, SM6, Game (DDC key hash: 91203a5d04ce9eaf76723ee4f6eb34a321e55f53), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/goat/tripo_mat_d005ba13.tripo_mat_d005ba13 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3ae93911910f5654a53a700560e5261cbfab16db), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_RockScan.M_RockScan in PCD3D_SM6, Default, SM6, Game (DDC key hash: bb43827105b075c74abc4b4e861f4e69de591fca), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_S1_Island_branches.M_S1_Island_branches in PCD3D_SM6, Default, SM6, Game (DDC key hash: 4a8424393164e740859c1b62131d591c657a8f1e), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_S1_Island_leaves.M_S1_Island_leaves in PCD3D_SM6, Default, SM6, Game (DDC key hash: f78f0ff583949be578309d090599810d7350173c), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_S1_Island_trunk.M_S1_Island_trunk in PCD3D_SM6, Default, SM6, Game (DDC key hash: 1269fedd2e8a6661bddcac1fbb0ac44956ce902d), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_S1_GrassCards.M_S1_GrassCards in PCD3D_SM6, Default, SM6, Game (DDC key hash: fa8bbc9bdd8e0261940fd4f45d6d6f40a9012906), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/wolf/tripo_mat_4ca01192.tripo_mat_4ca01192 in PCD3D_SM6, Default, SM6, Game (DDC key hash: e0bf690ed399768cfbc2dbb6991990f0ffefec76), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_Tree_branches.M_Tree_branches in PCD3D_SM6, Default, SM6, Game (DDC key hash: 82aec88b0ac2e3562f9d54d501f1d8ef7f42651d), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_Tree_trunk.M_Tree_trunk in PCD3D_SM6, Default, SM6, Game (DDC key hash: c513f9715ed8ca757651eefb485ef07a5abdaab6), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_Tree_leaves.M_Tree_leaves in PCD3D_SM6, Default, SM6, Game (DDC key hash: 070797ad10bddcdeaa85492763d46ce26a378148), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampPine_TrunkC.M_CampPine_TrunkC in PCD3D_SM6, Default, SM6, Game (DDC key hash: c019567959ecb289ef7a222d4cfc4526662fcf85), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_Stump.M_Stump in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5e792031d07219f2e82b3108289051571cdc8c47), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_Shrub.M_Shrub in PCD3D_SM6, Default, SM6, Game (DDC key hash: 8586fd9aec206208f35ee474b4f9e56a6d0b8993), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_RiverWater.M_RiverWater in PCD3D_SM6, Default, SM6, Game (DDC key hash: e7ece3a128ff239f42c9516560910dc90837ab75), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_RiverFoam.M_RiverFoam in PCD3D_SM6, Default, SM6, Game (DDC key hash: b58c6c1fa7f973b57e778f9488693d50b11d362e), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_GrassCards.M_GrassCards in PCD3D_SM6, Default, SM6, Game (DDC key hash: c930e2d8fd4b74f1a3b46c8c3c72980e6294c662), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/furniture/metal_lantern/tripo_mat_45e9542a.tripo_mat_45e9542a in PCD3D_SM6, Default, SM6, Game (DDC key hash: 7b5b10945ffeae23004fe4b6dc823f33dfac7da0), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/furniture/wood_chest/tripo_mat_911b746d.tripo_mat_911b746d in PCD3D_SM6, Default, SM6, Game (DDC key hash: e2c6d14e7dc0d5889991782aa44f18df48cdb202), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/furniture/wood_chair/tripo_mat_45dc3a60.tripo_mat_45dc3a60 in PCD3D_SM6, Default, SM6, Game (DDC key hash: ff05b5a3cfd075c19375c8c30e6bf23788337bd6), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/tripo_mat_91c736a2.tripo_mat_91c736a2 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 7336f60a4f64e82727391bb11eaa49dc9d35da21), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/thatched_roof_ridge/tripo_mat_adc6123b.tripo_mat_adc6123b in PCD3D_SM6, Default, SM6, Game (DDC key hash: 4577779f0e05fb1b203eabde1fcc20dfffe2a484), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/wood_door/tripo_mat_9a0e2767.tripo_mat_9a0e2767 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 295fb4354e0382361df36ff96a4bcc7ae03ea240), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/wood_wall_doorway/tripo_mat_6dc110ab.tripo_mat_6dc110ab in PCD3D_SM6, Default, SM6, Game (DDC key hash: bea0ba9047fff0bdf9fe446c310875bbbab1896f), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/furniture/wood_table/tripo_mat_a463c066.tripo_mat_a463c066 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 9485e2083b857f5670efaf47c1efd812d8f02f1d), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/thatched_roof_slope/tripo_mat_204bb2c0.tripo_mat_204bb2c0 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5091a372df56e74833dda277bcfb53e2f9b4f25c), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/tripo_mat_4f3ec881.tripo_mat_4f3ec881 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 9a92b8611a4b0417ec1d2fc08f4963f6f78de0a4), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/tripo_mat_5ab09d9b.tripo_mat_5ab09d9b in PCD3D_SM6, Default, SM6, Game (DDC key hash: 61f079762289a40e763ce040c4bc12db63eed2bb), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/wood_stairs/tripo_mat_77f7c347.tripo_mat_77f7c347 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3d16bb1bda2364c576b8319da0fb771a753b996b), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineDebugMaterials/M_VolumeRenderSphereTracePP.M_VolumeRenderSphereTracePP in PCD3D_SM6, Default, SM6, Game (DDC key hash: 8a5213897cb137933e7e4e76bbeae9d74b2e031c), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.LandscapeStreamingProxy_D7T4VF4LBP34PHV9XOEVM5TIG_1_2_3_0.LandscapeMaterialInstanceConstant_24 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 049aeb098109d455a242fbb6fdcac94b6010ab6a), compiling.
+LogMaterial: Display: Missing cached shadermap for /HairStrands/Materials/HairDebugMaterial.HairDebugMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: f454d8550ef061da3f26150c00e1ecd97443ea96), compiling.
+LogCook: Display: Cooked packages 298 Packages Remain 1306 Total 1604
+LogMaterial: Display: Missing cached shadermap for /Engine/VREditor/TransformGizmo/TransformGizmoMaterial.TransformGizmoMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: c6d598e297967216e50c582f0a10777a8714db25), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampPine_Twig.M_CampPine_Twig in PCD3D_SM6, Default, SM6, Game (DDC key hash: 451fb06446341aa99196ba7c742c68419771e0f7), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampFir_TrunkC.M_CampFir_TrunkC in PCD3D_SM6, Default, SM6, Game (DDC key hash: 8f25cd02b6825392239a66f6c5e9ff5596bb54dc), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampFir_Bark.M_CampFir_Bark in PCD3D_SM6, Default, SM6, Game (DDC key hash: 6477712d2525cb6081bae5536c0ab7a2040fdf84), compiling.
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3261.132812 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3261.132812 MiB
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampFir_TrunkA.M_CampFir_TrunkA in PCD3D_SM6, Default, SM6, Game (DDC key hash: caaa3a21df514f24378d8fbaaa04404dce457c8f), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampFir_Twig.M_CampFir_Twig in PCD3D_SM6, Default, SM6, Game (DDC key hash: 4236d9222c94d03ba2f4a241aa4213bc8d39c54f), compiling.
+LogMaterial: Display: Missing cached shadermap for /ControlRig/M_Manip.M_Manip in PCD3D_SM6, Default, SM6, Game (DDC key hash: 74e7584517b7c265b051010698c9654c6fd4c1ea), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/PhAT_JointLimitMaterial.PhAT_JointLimitMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 54e4f08feeb6f34d6777a10e8b77d8951146ad3f), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/Dataflow/M_Dataflow_CheckerBoard.M_Dataflow_CheckerBoard in PCD3D_SM6, Default, SM6, Game (DDC key hash: 7339c354bf66707d5bb9561be59235ddca136ee4), compiling.
+LogMaterial: Display: Missing cached shadermap for /Paper2D/DefaultSpriteMaterial.DefaultSpriteMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: a5ee94a76182f3ea304da7d5d716f66775f59cdf), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/FlattenMaterial.FlattenMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 0b0e304ab9149b45c6be9efd3152c8a9c804d685), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Characters/Hero/UE5/M_Hero.M_Hero in PCD3D_SM6, Default, SM6, Game (DDC key hash: c41b6429874eb800a972bd538faef0c2f8dc074e), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/tripo_mat_5ce74ca3.tripo_mat_5ce74ca3 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 01edc4ec5f0e0fe4ea68ba03d99ed89742cd5da6), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Characters/Brother/UE5/M_Brother.M_Brother in PCD3D_SM6, Default, SM6, Game (DDC key hash: e7a721661ccb36872d1e1209ba56509c6e5ad3d7), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorLandscapeResources/LayerVisMaterial.LayerVisMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5cbc5db9b2eeba11031e6c32ae71b8e65d19d804), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorLandscapeResources/SelectBrushMaterial.SelectBrushMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5fa6a09b7b006397a8d0482d3140da4fb62231e5), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorLandscapeResources/ColorMaskBrushMaterial.ColorMaskBrushMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: e83e61d947a9140f7db1a95cb6de1053cee4f1d6), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorLandscapeResources/LandscapeDirtyMaterial.LandscapeDirtyMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 80bf98627e781c1b9b456cfa5f34bcf462df2a8a), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/EmissiveMeshMaterial.EmissiveMeshMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 66b5387f12740f2d0e99b80810a8644fba244381), compiling.
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3237.507812 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3237.507812 MiB
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/M_InvalidLightmapSettings.M_InvalidLightmapSettings in PCD3D_SM6, Default, SM6, Game (DDC key hash: 9c83dfb649483b6c9918fb9b92b164688360c9bb), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/FlattenMaterial_VT.FlattenMaterial_VT in PCD3D_SM6, Default, SM6, Game (DDC key hash: 42a0e837b20acd13f132ee267e01179b9dc9b904), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/FlattenMaterial_WS_Normal_VT.FlattenMaterial_WS_Normal_VT in PCD3D_SM6, Default, SM6, Game (DDC key hash: 224727e694e6d40a0041318872eae1b9a42fce39), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Bootstrap/M_Wall.M_Wall in PCD3D_SM6, Default, SM6, Game (DDC key hash: cec3da054293aa92911e95f5a70bfc131aad2528), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Bootstrap/M_Marker.M_Marker in PCD3D_SM6, Default, SM6, Game (DDC key hash: 9f035c4bb242f118902c93bf27ba49187ab22a5f), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Bootstrap/M_Floor.M_Floor in PCD3D_SM6, Default, SM6, Game (DDC key hash: de882d3f7efbf7b6bc2847cd53c70293b5dea3b3), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/DefaultLightFunctionMaterial.DefaultLightFunctionMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3ff0aefe0ff1bface56bb49cb381afe095fcd8a3), compiling.
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3219.621094 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3219.621094 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3209.398438 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3209.398438 MiB
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampPine_Bark.M_CampPine_Bark in PCD3D_SM5, Default, SM5, Game (DDC key hash: 550669bb942dce0aab1e47b0e9df28d6a88caad9), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampPine_TrunkA.M_CampPine_TrunkA in PCD3D_SM5, Default, SM5, Game (DDC key hash: ebca60d81ee92b84863288a72de58f2320e72ecf), compiling.
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3168.550781 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3168.550781 MiB
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampPine_TrunkC.M_CampPine_TrunkC in PCD3D_SM5, Default, SM5, Game (DDC key hash: bb443933525033584f2ce72ee365ceb60cfd035d), compiling.
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3138.242188 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3138.296875 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3121.296875 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3121.296875 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3102.750 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3102.750 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3050.589844 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[SkinnedAsset]！所需内存 = 0.000 MiB + 4608.000 MiB，内存限制 = 3050.589844 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[StaticMesh]！所需内存 = 0.000 MiB + 6119.359863 MiB，内存限制 = 3026.457031 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[StaticMesh]！所需内存 = 0.000 MiB + 6119.359863 MiB，内存限制 = 3026.457031 MiB
+LogCook: Display: Cooked packages 349 Packages Remain 1283 Total 1632
+LogStaticMesh: Display: 正在等待静态网格体就绪12/78（/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/SM_CampFirA_CampUV）……
+LogStaticMesh: Display: 正在等待静态网格体就绪28/78（/Game/Hearthward/Assets/Demo/table/wood_table_model）……
+LogStaticMesh: Display: 正在等待静态网格体就绪34/78（/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/SM_wood_chest）……
+LogStaticMesh: Display: 正在等待静态网格体就绪44/78（/Game/Hearthward/Assets/TASK-028/house/wood_wall_solid/SM_wood_wall_solid）……
+LogStaticMesh: Display: 正在等待静态网格体就绪49/78（/Game/Hearthward/Assets/TASK-028/house/wood_stairs/SM_wood_stairs）……
+LogStaticMesh: Display: 正在等待静态网格体就绪50/78（/Game/Hearthward/Assets/TASK-028/facilities/campfire/SM_campfire）……
+LogStaticMesh: Display: 正在等待静态网格体就绪53/78（/Game/Hearthward/Nature/SM_carp）……
+LogStaticMesh: Display: 正在等待静态网格体就绪56/78（/Game/Hearthward/Nature/SM_stag_a）……
+LogStaticMesh: Display: 正在等待静态网格体就绪57/78（/Game/Hearthward/Nature/SM_red_fox）……
+LogStaticMesh: Display: 正在等待静态网格体就绪69/78（/Game/Hearthward/Nature/SM_hen）……
+LogStaticMesh: Display: 正在等待静态网格体就绪74/78（/Game/Hearthward/Nature/SM_goat）……
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampPine_Twig.M_CampPine_Twig in PCD3D_SM5, Default, SM5, Game (DDC key hash: eed519bb6e62b6735decd5ff93ff85d1450f3de4), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampFir_TrunkC.M_CampFir_TrunkC in PCD3D_SM5, Default, SM5, Game (DDC key hash: b910db7dde4fa2ec1eab8372c169147c31e4bceb), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampFir_Bark.M_CampFir_Bark in PCD3D_SM5, Default, SM5, Game (DDC key hash: 273bb0b6e47fd4349542a4f786c7a19f78ca88f9), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampFir_TrunkA.M_CampFir_TrunkA in PCD3D_SM5, Default, SM5, Game (DDC key hash: 0e3e9d27466822365f563191a52d4ec980d31a00), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_CampFir_Twig.M_CampFir_Twig in PCD3D_SM5, Default, SM5, Game (DDC key hash: 3191567a032d33a5d64e0ffaf479ec682fd3dcbb), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/GrassCards/Materials/GrassCards_material_0.GrassCards_material_0 in PCD3D_SM5, Default, SM5, Game (DDC key hash: af41eabf88efce6935caada8e79736d1f53962a5), compiling.
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/carp/Roughness.Roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1104.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/catfish/Normal.Normal (TFO_BC5, 4096x4096 x1x1x1)（预计所需内存：1152.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/crucian_carp/Normal.Normal (TFO_BC5, 4096x4096 x1x1x1)（预计所需内存：1152.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/crucian_carp/Roughness.Roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1104.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/catfish/Roughness.Roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1104.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/eel/Roughness.Roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1104.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/catfish/Color.Color (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1152.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/carp/Color.Color (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1152.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/carp/Normal.Normal (TFO_BC5, 4096x4096 x1x1x1)（预计所需内存：1152.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/crucian_carp/Color.Color (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1152.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/eel/Normal.Normal (TFO_BC5, 4096x4096 x1x1x1)（预计所需内存：1152.999984 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/eel/Color.Color (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1152.999984 MB）编码速度：Final
+LogCook: Display: Garbage collection triggered (Full). Triggered by conditions:
+  CookSettings.MemoryMinFreePhysical: Available physical memory 1148MiB is less than 2048MiB.
+LogCook: Display: Cooked packages 711 Packages Remain 921 Total 1632
+LogCookCommandlet: Display: GarbageCollection... (Exceeded Max Memory)
+LogCook: Display: GarbageCollection Results:
+	Type: Full
+	Duration: 0.310s
+	NumObjects:
+		Capacity:           25231360
+		Before GC:             70018
+		After GC:              62213
+		Freed by GC:            11.1%
+	NumPackages:
+		Before GC:              1849
+		After GC:               1079
+		Freed by GC:            41.6%
+	Virtual Memory:
+		Before GC:              6346 MB
+		After GC:               5460 MB
+		Freed by GC:            14.0%
+LogCook: Display: Garbage collection triggers ignored: Out of memory condition has been detected, but is only 0s after the last GC. It will be prevented until 60 seconds have passed and we may run out of memory.
+Garbage collection triggered by conditions:
+  CookSettings.MemoryMinFreePhysical: Available physical memory 1660MiB is less than 2048MiB.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/catfish/tripo_mat_d8fb01be.tripo_mat_d8fb01be in PCD3D_SM5, Default, SM5, Game (DDC key hash: dfd549347a107cdc8ff5ba28ab91c665d3e3c169), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/carp/tripo_mat_b2ce3e41.tripo_mat_b2ce3e41 in PCD3D_SM5, Default, SM5, Game (DDC key hash: 9fd24b92bcca130bc77862f1fa53fd6fde6ea7bb), compiling.
+LogStaticMesh: Display: 正在等待静态网格体就绪0/4（/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/SM_Tree）……
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[StaticMesh]！所需内存 = 0.000 MiB + 6119.359863 MiB，内存限制 = 1777.6875 MiB
+LogAsyncCompilation: Display: 注意：AssetCompile内存估计值大于可用值，但无论如何我们都会运行它[StaticMesh]！所需内存 = 0.000 MiB + 6119.359863 MiB，内存限制 = 1777.675781 MiB
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/crucian_carp/tripo_mat_e193cb21.tripo_mat_e193cb21 in PCD3D_SM5, Default, SM5, Game (DDC key hash: 7cec22b083e02174cc44baf61cfb80b9ad64bf66), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/black_bear/tripo_mat_7f5206d7.tripo_mat_7f5206d7 in PCD3D_SM5, Default, SM5, Game (DDC key hash: 531d835fab80a1dfd70a131aef5183d6c24062a6), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/hare/tripo_mat_588471a5.tripo_mat_588471a5 in PCD3D_SM5, Default, SM5, Game (DDC key hash: 12db10ae450f4bc5391576a817c9e3885af905bf), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/eel/tripo_mat_e473cc70.tripo_mat_e473cc70 in PCD3D_SM5, Default, SM5, Game (DDC key hash: 044c9c7b5bcf4823e803b9ba0f2363116ae6e23a), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/ram/tripo_mat_8334bd78.tripo_mat_8334bd78 in PCD3D_SM5, Default, SM5, Game (DDC key hash: e1c582922b14e7b099d58cfdff74504437125639), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/pheasant/tripo_mat_59a5036b.tripo_mat_59a5036b in PCD3D_SM5, Default, SM5, Game (DDC key hash: 4a151191bebfb1b14b56bd1ddffdfc52f5eb6c0c), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/goat/tripo_mat_d005ba13.tripo_mat_d005ba13 in PCD3D_SM5, Default, SM5, Game (DDC key hash: ffa6a727408f450ee30526768f70c1830311a67a), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/hen/tripo_mat_bcc1c840.tripo_mat_bcc1c840 in PCD3D_SM5, Default, SM5, Game (DDC key hash: 23ee37177618eb98f45850d23b6beea4d8553baa), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/stag_a/tripo_mat_6cda5dcd.tripo_mat_6cda5dcd in PCD3D_SM5, Default, SM5, Game (DDC key hash: 5d2120c7b910575e0e5428cedc7c63def00fa1b6), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/red_fox/tripo_mat_e976d24b.tripo_mat_e976d24b in PCD3D_SM5, Default, SM5, Game (DDC key hash: 3dc0f6a4f3f20881a4792bf5053a15af91313588), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/pig/tripo_mat_0059d8b0.tripo_mat_0059d8b0 in PCD3D_SM5, Default, SM5, Game (DDC key hash: b33fcdea8f2ff67413291ff404a8067269758b70), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/wolf/tripo_mat_4ca01192.tripo_mat_4ca01192 in PCD3D_SM5, Default, SM5, Game (DDC key hash: cbcdc58c5da761ef98f09a87176f2af47e6354ab), compiling.
+LogCook: Display: Cooked packages 783 Packages Remain 849 Total 1632
+LogCook: Display: Cooked packages 854 Packages Remain 778 Total 1632
+LogCook: Display: Cooked packages 933 Packages Remain 699 Total 1632
+LogCook: Display: Cooked packages 997 Packages Remain 635 Total 1632
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineSky/M_Sky_Panning_Clouds2.M_Sky_Panning_Clouds2 in PCD3D_SM6, Default, SM6, Game (DDC key hash: 0285c8f0025780420960889761aa87d7640800d8), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineSky/VolumetricClouds/m_SimpleVolumetricCloud.m_SimpleVolumetricCloud in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5e22335e762817fd03217bd128774da701a20ae8), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EditorMaterials/PreviewShadowIndicatorMaterial.PreviewShadowIndicatorMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 77c1993dfc669b90b555a669835cc21e97886732), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_Landscape.M_Landscape in PCD3D_SM6, Default, SM6, Game (DDC key hash: 4085b75b83cd4ac989ca8d2f89ae7008750a9475), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineSky/M_SimpleSkyDome.M_SimpleSkyDome in PCD3D_SM6, Default, SM6, Game (DDC key hash: 2d9a6fb28185f8b7090d31f8a8cb98ec8ebd2bb3), compiling.
+LogCook: Display: Cooked packages 1077 Packages Remain 555 Total 1632
+LogCook: Display: Cook Diagnostics: OpenFileHandles=3542, VirtualMemory=3606MiB, VirtualMemoryAvailable=7371MiB
+LogWorldPartition: Display: [Cook] Debug(TearDown): OwnerWorld=World /Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds
+LogCook: Display: Cooked packages 1117 Packages Remain 515 Total 1632
+LogCook: Display: Cooked packages 1120 Packages Remain 512 Total 1632
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/PPM_DefaultCalibrationColor.PPM_DefaultCalibrationColor in PCD3D_SM6, Default, SM6, Game (DDC key hash: cb795fbd2e1ec66b5955a54a4db2af538fc6a3c9), compiling.
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Brake_SK_catfish_Skeleton_Anim.AN_catfish_Brake_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.27 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Bite_In_SK_catfish_Skeleton_Anim.AN_catfish_Bite_In_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.31 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Brake_SK_catfish_Skeleton_Anim.AN_catfish_Brake_SK_catfish_Skeleton_Anim, at AnimationSequence/0e907a7b80549ed78d76cc05aae655592a8102a5
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Hover_SK_carp_Skeleton_Anim.AN_carp_Hover_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.38 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Hooked_In_SK_carp_Skeleton_Anim.AN_carp_Hooked_In_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.23 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Hooked_In_SK_carp_Skeleton_Anim.AN_carp_Hooked_In_SK_carp_Skeleton_Anim, at AnimationSequence/45285c5708f00c2ca4842fa761fd91e27919bf94
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_DisplayStill_SK_carp_Skeleton_Anim.AN_carp_DisplayStill_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.29 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Bite_In_SK_carp_Skeleton_Anim.AN_carp_Bite_In_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.28 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Coast_SK_carp_Skeleton_Anim.AN_carp_Coast_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.28 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Brake_SK_carp_Skeleton_Anim.AN_carp_Brake_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.24 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Burst_SK_carp_Skeleton_Anim.AN_carp_Burst_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.27 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_EscapeHide_SK_carp_Skeleton_Anim.AN_carp_EscapeHide_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.24 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_WhiskerSearch_SK_catfish_Skeleton_Anim.AN_catfish_WhiskerSearch_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.37 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_DisplayStill_SK_carp_Skeleton_Anim.AN_carp_DisplayStill_SK_carp_Skeleton_Anim, at AnimationSequence/9811b9420f3078697f408049927d1f3bfea9514f
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Brake_SK_carp_Skeleton_Anim.AN_carp_Brake_SK_carp_Skeleton_Anim, at AnimationSequence/827eabae1145e63758a55a8adfdb486a28eff781
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_EscapeHide_SK_carp_Skeleton_Anim.AN_carp_EscapeHide_SK_carp_Skeleton_Anim, at AnimationSequence/f8989e43e29f2d5b29dbead7fd77ed05d209d588
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Bite_In_SK_carp_Skeleton_Anim.AN_carp_Bite_In_SK_carp_Skeleton_Anim, at AnimationSequence/0a607e9b5fcfeff20c3166ff53e5c8d10a3d9740
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Burst_SK_carp_Skeleton_Anim.AN_carp_Burst_SK_carp_Skeleton_Anim, at AnimationSequence/e1b4ff28398a09dedf4f4a94b70fe32a97315a52
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_SwimCruise_SK_catfish_Skeleton_Anim.AN_catfish_SwimCruise_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.31 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Turn_L_SK_catfish_Skeleton_Anim.AN_catfish_Turn_L_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.40 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Turn_R_SK_catfish_Skeleton_Anim.AN_catfish_Turn_R_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.40 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_SwimSlow_SK_catfish_Skeleton_Anim.AN_catfish_SwimSlow_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.34 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Struggle_SK_catfish_Skeleton_Anim.AN_catfish_Struggle_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.31 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_WhiskerSearch_SK_catfish_Skeleton_Anim.AN_catfish_WhiskerSearch_SK_catfish_Skeleton_Anim, at AnimationSequence/ed7d8934eb9f41509e54078d2e405d9af5d73dcf
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Coast_SK_carp_Skeleton_Anim.AN_carp_Coast_SK_carp_Skeleton_Anim, at AnimationSequence/3e8af06e397f8cdd9a07563d08ee0937c32fbf8f
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Hover_SK_carp_Skeleton_Anim.AN_carp_Hover_SK_carp_Skeleton_Anim, at AnimationSequence/0d9abfc825019536674f1dca1804a91103f71e71
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Bite_In_SK_catfish_Skeleton_Anim.AN_catfish_Bite_In_SK_catfish_Skeleton_Anim, at AnimationSequence/572caa7fefe6eb5ec0689a968e0d1dc650558bc3
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_SwimSlow_SK_catfish_Skeleton_Anim.AN_catfish_SwimSlow_SK_catfish_Skeleton_Anim, at AnimationSequence/f20c9993cba4c6dd10bc84055ad6f7d275ba4f1b
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_SwimCruise_SK_catfish_Skeleton_Anim.AN_catfish_SwimCruise_SK_catfish_Skeleton_Anim, at AnimationSequence/176902fda4cac48af145ad2ef91e567b292210cf
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Turn_L_SK_catfish_Skeleton_Anim.AN_catfish_Turn_L_SK_catfish_Skeleton_Anim, at AnimationSequence/f48890f0779edbdc59126dc3bbba419f506163bb
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Struggle_SK_catfish_Skeleton_Anim.AN_catfish_Struggle_SK_catfish_Skeleton_Anim, at AnimationSequence/595b4e55aac57bf1e5cf08085d514ff855aab1fa
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Turn_R_SK_catfish_Skeleton_Anim.AN_catfish_Turn_R_SK_catfish_Skeleton_Anim, at AnimationSequence/c620a13f2fdcc85928236bdca4bb0e080449794a
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Settle_SK_catfish_Skeleton_Anim.AN_catfish_Settle_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.28 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_EscapeHide_SK_catfish_Skeleton_Anim.AN_catfish_EscapeHide_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.26 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Hooked_In_SK_catfish_Skeleton_Anim.AN_catfish_Hooked_In_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.25 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_LiftOut_SK_catfish_Skeleton_Anim.AN_catfish_LiftOut_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.29 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_LandFlop_SK_catfish_Skeleton_Anim.AN_catfish_LandFlop_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.40 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_HoverLow_SK_catfish_Skeleton_Anim.AN_catfish_HoverLow_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.48 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_DisplayStill_SK_catfish_Skeleton_Anim.AN_catfish_DisplayStill_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.33 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Burst_SK_catfish_Skeleton_Anim.AN_catfish_Burst_SK_catfish_Skeleton_Anim (Required Memory Estimate: 0.32 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Brake_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Brake_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.24 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Hooked_In_SK_catfish_Skeleton_Anim.AN_catfish_Hooked_In_SK_catfish_Skeleton_Anim, at AnimationSequence/afcd11008ab6425185ec4d73dde682f5a1d7b2a0
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_LiftOut_SK_catfish_Skeleton_Anim.AN_catfish_LiftOut_SK_catfish_Skeleton_Anim, at AnimationSequence/d4c9e0fcb510166f5556382f575fcad873ab7e3b
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_EscapeHide_SK_catfish_Skeleton_Anim.AN_catfish_EscapeHide_SK_catfish_Skeleton_Anim, at AnimationSequence/eea747fc370e9e9d0158c468c180627e392c4bc2
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_DisplayStill_SK_catfish_Skeleton_Anim.AN_catfish_DisplayStill_SK_catfish_Skeleton_Anim, at AnimationSequence/e64c1a2a9dddd35e3f6ed043ccb90dcadb6a829c
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Turn_L_SK_carp_Skeleton_Anim.AN_carp_Turn_L_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.32 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Turn_R_SK_carp_Skeleton_Anim.AN_carp_Turn_R_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.32 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Bite_In_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Bite_In_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.26 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Settle_SK_catfish_Skeleton_Anim.AN_catfish_Settle_SK_catfish_Skeleton_Anim, at AnimationSequence/1108ec82ad0daf0cb7992ff7390d8a6ba0bd70d1
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Bite_In_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Bite_In_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/a4f2f9add0894b64ac301fddcb4cf19f13bf6edd
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Brake_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Brake_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/1dfe643acd9f351cf4ace34596a872350ae197fa
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_SwimCruise_SK_carp_Skeleton_Anim.AN_carp_SwimCruise_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.26 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_SwimSlow_SK_carp_Skeleton_Anim.AN_carp_SwimSlow_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.29 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_SwimCruise_SK_carp_Skeleton_Anim.AN_carp_SwimCruise_SK_carp_Skeleton_Anim, at AnimationSequence/65a35ac65484fc321844a9b564a96b095d81ade2
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Settle_SK_carp_Skeleton_Anim.AN_carp_Settle_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.25 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Struggle_SK_carp_Skeleton_Anim.AN_carp_Struggle_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.28 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Settle_SK_carp_Skeleton_Anim.AN_carp_Settle_SK_carp_Skeleton_Anim, at AnimationSequence/78d5c0dabded7e84bf83094dbb7eeef1e9e505f6
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Struggle_SK_carp_Skeleton_Anim.AN_carp_Struggle_SK_carp_Skeleton_Anim, at AnimationSequence/d6fde5c93f3a32718358a33ced37f84792504761
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_HoverLow_SK_catfish_Skeleton_Anim.AN_catfish_HoverLow_SK_catfish_Skeleton_Anim, at AnimationSequence/1e99fdde651554aac3dee1ce957d9c2fe4ddaf4c
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineMaterials/PPM_DefaultCalibrationGrayscale.PPM_DefaultCalibrationGrayscale in PCD3D_SM6, Default, SM6, Game (DDC key hash: 8de2b0b314fa60e3ff34fc06e05b79a0d8454a59), compiling.
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Turn_R_SK_carp_Skeleton_Anim.AN_carp_Turn_R_SK_carp_Skeleton_Anim, at AnimationSequence/f347da4ee014147171887930cf12673a6bab2a00
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_Turn_L_SK_carp_Skeleton_Anim.AN_carp_Turn_L_SK_carp_Skeleton_Anim, at AnimationSequence/56a41e1a5ef88e50f4de9f2064f0425b813accf6
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_SwimSlow_SK_carp_Skeleton_Anim.AN_carp_SwimSlow_SK_carp_Skeleton_Anim, at AnimationSequence/45e7f465333ec93e124f9efc1f165776902b3102
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_LandFlop_SK_catfish_Skeleton_Anim.AN_catfish_LandFlop_SK_catfish_Skeleton_Anim, at AnimationSequence/25ce509c5784f20f9a474170533c076de812738f
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/catfish/Animations/AN_catfish_Burst_SK_catfish_Skeleton_Anim.AN_catfish_Burst_SK_catfish_Skeleton_Anim, at AnimationSequence/a7a9062940011ab5d104c9b1781122fa605a1b2c
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_Hooked_In_SK_eel_Skeleton_Anim.AN_eel_Hooked_In_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.27 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_LiftSupported_SK_eel_Skeleton_Anim.AN_eel_LiftSupported_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.34 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_LandWriggle_SK_eel_Skeleton_Anim.AN_eel_LandWriggle_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.50 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_EscapeHide_SK_eel_Skeleton_Anim.AN_eel_EscapeHide_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.29 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_LiftOut_SK_carp_Skeleton_Anim.AN_carp_LiftOut_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.26 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_LandFlop_SK_carp_Skeleton_Anim.AN_carp_LandFlop_SK_carp_Skeleton_Anim (Required Memory Estimate: 0.33 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_SettleArc_SK_eel_Skeleton_Anim.AN_eel_SettleArc_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.32 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_HoverWave_SK_eel_Skeleton_Anim.AN_eel_HoverWave_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.48 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_DisplayStill_SK_eel_Skeleton_Anim.AN_eel_DisplayStill_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.37 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_DisplayStill_SK_eel_Skeleton_Anim.AN_eel_DisplayStill_SK_eel_Skeleton_Anim, at AnimationSequence/07e0ac1c64c1295c580c1f3a3234c759ebf9eba6
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_Hooked_In_SK_eel_Skeleton_Anim.AN_eel_Hooked_In_SK_eel_Skeleton_Anim, at AnimationSequence/f4f9945acb01f83350f78b8d5d1bf7b9fb02520e
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_EscapeHide_SK_eel_Skeleton_Anim.AN_eel_EscapeHide_SK_eel_Skeleton_Anim, at AnimationSequence/02645ab657f44b38ef7449ee97f4130cc309bccc
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_Bite_In_SK_eel_Skeleton_Anim.AN_eel_Bite_In_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.34 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Turn_L_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Turn_L_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.30 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Turn_R_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Turn_R_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.30 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_LiftSupported_SK_eel_Skeleton_Anim.AN_eel_LiftSupported_SK_eel_Skeleton_Anim, at AnimationSequence/0d8cddb864417eefab26000ec87eb9552b0e0763
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_SettleArc_SK_eel_Skeleton_Anim.AN_eel_SettleArc_SK_eel_Skeleton_Anim, at AnimationSequence/9e6e178bee9152fc2ca25722d847ac6fdd7934b8
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_Bite_In_SK_eel_Skeleton_Anim.AN_eel_Bite_In_SK_eel_Skeleton_Anim, at AnimationSequence/6fd0af0ea08323548cbe8750e301f521e1fa9c61
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_SwimSlow_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_SwimSlow_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.28 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_HoverWave_SK_eel_Skeleton_Anim.AN_eel_HoverWave_SK_eel_Skeleton_Anim, at AnimationSequence/27266b915ef96ba0c00a7a59a1d676034fa25bd3
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Turn_L_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Turn_L_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/c0543ea36ba0bf2522b35565df740b15b4971cdb
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_LandWriggle_SK_eel_Skeleton_Anim.AN_eel_LandWriggle_SK_eel_Skeleton_Anim, at AnimationSequence/d381537eec653e2b93dfd1f8762bfc8f973896b7
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_LandFlop_SK_carp_Skeleton_Anim.AN_carp_LandFlop_SK_carp_Skeleton_Anim, at AnimationSequence/e76d686e243621277b75139e4ff5f3de3fc31f8c
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Struggle_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Struggle_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.26 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Settle_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Settle_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.24 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_SwimCruise_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_SwimCruise_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.26 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Settle_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Settle_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/a2a0fdeafe4cc00b0d505c43849f90a238993e41
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/carp/Animations/AN_carp_LiftOut_SK_carp_Skeleton_Anim.AN_carp_LiftOut_SK_carp_Skeleton_Anim, at AnimationSequence/95fbf53be672cb43d46749eb0e46d075a52e87c9
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Struggle_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Struggle_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/c07f72d459d296826cf6339dad3e465fda62a696
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_SwimSlow_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_SwimSlow_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/30eac6cd9580d8bd052d51a154b028105d7f900d
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_SwimCruise_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_SwimCruise_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/8116f2acb39781b4468a83faea9689e066239989
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Turn_R_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Turn_R_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/3ffd9824e9498d5dbad62763d8a4d78513f76db3
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Hover_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Hover_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.36 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_PauseGlide_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_PauseGlide_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.27 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_LiftOut_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_LiftOut_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.25 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_EscapeHide_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_EscapeHide_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.23 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Hooked_In_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Hooked_In_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.23 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_LandFlop_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_LandFlop_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.31 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Burst_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Burst_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.26 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_DisplayStill_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_DisplayStill_SK_crucian_carp_Skeleton_Anim (Required Memory Estimate: 0.29 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_EscapeHide_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_EscapeHide_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/94ce6c4ed03631118b4d0684ae5373e28cf03ca4
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Hooked_In_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Hooked_In_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/85004a750c20243c5c3a8a7ed976380cf7922db4
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_PauseGlide_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_PauseGlide_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/88017843ddfcc1fb646d080c97eeb9aeaef01a2e
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_LiftOut_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_LiftOut_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/31c6530e1cf864f16b27459dbcba69a75a842a3e
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_DisplayStill_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_DisplayStill_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/32fe90e5b5b9a4d81915aeb5839cd8f1be56de97
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_UndulateSlow_SK_eel_Skeleton_Anim.AN_eel_UndulateSlow_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.40 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Hover_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Hover_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/8b8bc3d7dfd3c38d9caba32a3d6d44336b7ac56b
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_UndulateFast_SK_eel_Skeleton_Anim.AN_eel_UndulateFast_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.39 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_UndulateCruise_SK_eel_Skeleton_Anim.AN_eel_UndulateCruise_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.35 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_Turn_L_SK_eel_Skeleton_Anim.AN_eel_Turn_L_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.47 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_UndulateCruise_SK_eel_Skeleton_Anim.AN_eel_UndulateCruise_SK_eel_Skeleton_Anim, at AnimationSequence/535bc33bc2767a53deb7f8fb40cf7048be017dee
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_Turn_R_SK_eel_Skeleton_Anim.AN_eel_Turn_R_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.47 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_LandFlop_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_LandFlop_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/e501f53224963db5888625916528952c355d0457
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_UndulateSlow_SK_eel_Skeleton_Anim.AN_eel_UndulateSlow_SK_eel_Skeleton_Anim, at AnimationSequence/63e46c118d2ebaf859ece2749236f7003cb3ab53
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/crucian_carp/Animations/AN_crucian_carp_Burst_SK_crucian_carp_Skeleton_Anim.AN_crucian_carp_Burst_SK_crucian_carp_Skeleton_Anim, at AnimationSequence/bc7e47f11d66a0128445b081813d098731e2d26d
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_UndulateFast_SK_eel_Skeleton_Anim.AN_eel_UndulateFast_SK_eel_Skeleton_Anim, at AnimationSequence/aa6ababb048033ed458aef6913ac73196c83823e
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_StruggleArc_SK_eel_Skeleton_Anim.AN_eel_StruggleArc_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.32 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_StruggleS_SK_eel_Skeleton_Anim.AN_eel_StruggleS_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.36 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_Turn_R_SK_eel_Skeleton_Anim.AN_eel_Turn_R_SK_eel_Skeleton_Anim, at AnimationSequence/405ac869f8dc67299299717aa2480dc935997db0
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_Turn_L_SK_eel_Skeleton_Anim.AN_eel_Turn_L_SK_eel_Skeleton_Anim, at AnimationSequence/aada8b2aa1310e768e5583ecea0b348bf0c83e04
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_StruggleArc_SK_eel_Skeleton_Anim.AN_eel_StruggleArc_SK_eel_Skeleton_Anim, at AnimationSequence/f7c97c5e1cc1c0f3a49b671579ff27645f697084
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_StruggleS_SK_eel_Skeleton_Anim.AN_eel_StruggleS_SK_eel_Skeleton_Anim, at AnimationSequence/366c805bf50d496304c5414df0292290b71de5a0
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_StopWave_SK_eel_Skeleton_Anim.AN_eel_StopWave_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.40 MB)
+LogAnimationCompression: Display: Building compressed animation data for AnimSequence /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_StartWave_SK_eel_Skeleton_Anim.AN_eel_StartWave_SK_eel_Skeleton_Anim (Required Memory Estimate: 0.34 MB)
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_StartWave_SK_eel_Skeleton_Anim.AN_eel_StartWave_SK_eel_Skeleton_Anim, at AnimationSequence/888e1b717581d77c65dd3b1d2c9f3adbc2f01061
+LogAnimationCompression: Display: Storing compressed animation data for /Game/Hearthward/Animals/MotionR3/eel/Animations/AN_eel_StopWave_SK_eel_Skeleton_Anim.AN_eel_StopWave_SK_eel_Skeleton_Anim, at AnimationSequence/74485b69b64b8eb8b8f1e8bae7fd8d59cdaffcd0
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/crucian_carp/Textures/T_crucian_carp_roughness.T_crucian_carp_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/crucian_carp/Textures/T_crucian_carp_metallic.T_crucian_carp_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/carp/Materials/M_carp_PBR.M_carp_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3761fe15534f993f57c87b2080a16a99db9588c3), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/crucian_carp/Materials/M_crucian_carp_PBR.M_crucian_carp_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 74017a77828a78a9618e27565c6e7ecf1ed72845), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/pheasant/Materials/M_pheasant_PBR.M_pheasant_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 9d4d4e5792ff54c0b928f8186b262e01a92db073), compiling.
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/carp/Textures/T_carp_roughness.T_carp_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/goat/Textures/T_goat_roughness.T_goat_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/goat/Textures/T_goat_metallic.T_goat_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/stag_a/Materials/M_stag_a_PBR.M_stag_a_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 960ee49506eb6a9b775688f5a9edff50d8ef6795), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/ram/Materials/M_ram_PBR.M_ram_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 71f93f4a5c1dfc164faadf0cebb6f84625fcfcd1), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/black_bear/Materials/M_black_bear_PBR.M_black_bear_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: e5a2b25b4eb6bebae5056420801ff40064dd73cf), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/wolf/Materials/M_wolf_PBR.M_wolf_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 936f0f3aaa94e710ab3b8d5c63e92637cf820ff9), compiling.
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/carp/Textures/T_carp_metallic.T_carp_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/carp/Materials/M_carp_PBR.M_carp_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: 4687b2ddc923bdd7612475b6dae02befb19b47a1), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/crucian_carp/Materials/M_crucian_carp_PBR.M_crucian_carp_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: 3e8eb0637af4988db582b48a20d9f2caf276b00e), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/pheasant/Materials/M_pheasant_PBR.M_pheasant_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: 8c75f01addb144a14ae92a70ad1b5967ea156a25), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/hen/Materials/M_hen_PBR.M_hen_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 81c0246bde9e4edbf2b0ac60156549e085fb7db1), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/hare/Materials/M_hare_PBR.M_hare_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 6c9b4b6fec248069f50cdcb05d1216e874e56ad4), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/eel/Materials/M_eel_PBR.M_eel_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: bba951d61f281b8a919f6e806b774fb01e86e576), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/goat/Materials/M_goat_PBR.M_goat_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 495305c77ca50e7db966309fac830e18ba6e5625), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/red_fox/Materials/M_red_fox_PBR.M_red_fox_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 3965ebcf691d69f3825eeae2221d1c7294025c0c), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/pig/Materials/M_pig_PBR.M_pig_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 56ea56938c1b21b2e9ced3b14dd1b344c7fe8acb), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/stag_a/Materials/M_stag_a_PBR.M_stag_a_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: 50f9b856b3a120e1fa67937c46de605a25eae68a), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/ram/Materials/M_ram_PBR.M_ram_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: c1d75a08b8308de791e3b32d9febfd7b821d3676), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/black_bear/Materials/M_black_bear_PBR.M_black_bear_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: b091318289da8896cb1ab2d62172653b7722498e), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/wolf/Materials/M_wolf_PBR.M_wolf_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: d88d6cca9a631e7f3b2a13f39e19bcd138d0abfe), compiling.
+LogCook: Display: Cooked packages 1457 Packages Remain 175 Total 1632
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/hen/Materials/M_hen_PBR.M_hen_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: f58a0f8c8bd8ec66c5a7c65a93b8d5afc0d4fae8), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/hare/Materials/M_hare_PBR.M_hare_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: bf0e3252793bece9abcadc2ae72e40977375d946), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/eel/Materials/M_eel_PBR.M_eel_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: babec2f57d3570821f13b8ef448c4c244d5b6457), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/goat/Materials/M_goat_PBR.M_goat_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: 34e357adbc1f9abbf31be518f4fc45d850626016), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/red_fox/Materials/M_red_fox_PBR.M_red_fox_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: e0ece7fd8d2aa7b864779a25fc03d6fd56f239d9), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/pig/Materials/M_pig_PBR.M_pig_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: 076c33d09cdcd75a546f5c2b0b0690a872cf0135), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/catfish/Materials/M_catfish_PBR.M_catfish_PBR in PCD3D_SM6, Default, SM6, Game (DDC key hash: 5b08b4a4edf9a509cfd832d11c9d01f5d424a764), compiling.
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/hen/Textures/T_hen_metallic.T_hen_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/backing/M_RoofBacking.M_RoofBacking in PCD3D_SM6, Default, SM6, Game (DDC key hash: 4461393c7eef1f1a143c0320fff417aee998c1e5), compiling.
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Assets/TASK-028/house/backing/M_FloorBacking.M_FloorBacking in PCD3D_SM6, Default, SM6, Game (DDC key hash: 75749f00fd399228ecb9996460f032a6c90c30f2), compiling.
+LogMaterial: Display: Missing cached shadermap for /Engine/EngineDebugMaterials/DebugEditorMaterial.DebugEditorMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 264cba4a5ca4cd579167dfea4d0174ba70c6b849), compiling.
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/pheasant/Textures/T_pheasant_roughness.T_pheasant_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/hen/Textures/T_hen_roughness.T_hen_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/hare/Textures/T_hare_metallic.T_hare_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogMaterial: Display: Missing cached shadermap for /Game/Hearthward/Animals/MotionR3/catfish/Materials/M_catfish_PBR.M_catfish_PBR in PCD3D_SM5, Default, SM5, Game (DDC key hash: 600afab69399b2917aee7c1c85de20e722c9525c), compiling.
+LogCook: Display: Cooked packages 1489 Packages Remain 143 Total 1632
+LogTextureFormatOodle: Display: Oodle Texture loading DLL: oo2tex_win64_2.9.13.dll
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/pheasant/Textures/T_pheasant_metallic.T_pheasant_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/hare/Textures/T_hare_roughness.T_hare_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/eel/Textures/T_eel_roughness.T_eel_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogMaterial: Display: Missing cached shadermap for /ControlRig/Controls/ControlRigGizmoMaterial.ControlRigGizmoMaterial in PCD3D_SM6, Default, SM6, Game (DDC key hash: 9171872f0f8f678738da7460378cc79d59ecc753), compiling.
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/eel/Textures/T_eel_metallic.T_eel_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/pig/Textures/T_pig_metallic.T_pig_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/red_fox/Textures/T_red_fox_metallic.T_red_fox_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/red_fox/Textures/T_red_fox_roughness.T_red_fox_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/pig/Textures/T_pig_roughness.T_pig_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/wolf/Textures/T_wolf_metallic.T_wolf_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogCook: Display: Cooked packages 1586 Packages Remain 46 Total 1632
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/stag_a/Textures/T_stag_a_metallic.T_stag_a_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/stag_a/Textures/T_stag_a_roughness.T_stag_a_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/wolf/Textures/T_wolf_roughness.T_wolf_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/ram/Textures/T_ram_metallic.T_ram_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/black_bear/Textures/T_black_bear_metallic.T_black_bear_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/ram/Textures/T_ram_roughness.T_ram_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/black_bear/Textures/T_black_bear_roughness.T_black_bear_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/catfish/Textures/T_catfish_metallic.T_catfish_metallic (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogTexture: Display: 正在构建纹理TwoD：/Game/Hearthward/Animals/MotionR3/catfish/Textures/T_catfish_roughness.T_catfish_roughness (TFO_AutoDXT, 4096x4096 x1x1x1)（预计所需内存：1072.999983 MB）编码速度：Final
+LogCook: Display: Cooked packages 1604 Packages Remain 28 Total 1632
+LogCook: Display: Cooked packages 1632 Packages Remain 0 Total 1632
+LogCook: Display: Cook Diagnostics: OpenFileHandles=8312, VirtualMemory=3493MiB, VirtualMemoryAvailable=8696MiB
+LogCook: Display: ---- Finalisation: Start ----
+LogShaderCompilers: Display: ================================================
+LogShaderCompilers: Display: === FShaderJobCache stats ===
+LogShaderCompilers: Display: Total job queries 6,504, among them cache hits 2,387 (36.70%), DDC hits 3,703 (56.93%), Duplicates 348 (5.35%)
+LogShaderCompilers: Display: Tracking 3,769 distinct input hashes that result in 2,474 distinct outputs (65.64%)
+LogShaderCompilers: Display: RAM used: 27.22 MiB of 819.20 MiB budget. Usage: 3.32%
+LogShaderCompilers: Display: === Shader Compilation stats ===
+LogShaderCompilers: Display: Shaders Compiled: 66
+LogShaderCompilers: Display: Jobs assigned 66, completed 66 (100%)
+LogShaderCompilers: Display: Average time worker was idle: 2.23 s
+LogShaderCompilers: Display: Time job spent in pending queue: average 2.33 s, longest 9.30 s
+LogShaderCompilers: Display: Job execution time: average 6.50 s, max 16.36 s
+LogShaderCompilers: Display: Job life time (pending + execution): average 8.84 s, max 19.63
+LogShaderCompilers: Display: Shader code size: total 876.582 KiB, numShaders 69, average 12.703 KiB, min 1.191 KiB, max 31.641 KiB
+LogShaderCompilers: Display: Time at least one job was in flight (either pending or executed): 26.99 s
+LogShaderCompilers: Display: Jobs were issued in 61 batches (only local compilation was used), average 1.08 jobs/batch
+LogShaderCompilers: Display: Average processing rate: 2.45 jobs/sec
+LogShaderCompilers: Display: Total thread time: 246.752 s
+LogShaderCompilers: Display: Total thread preprocess time: 162.42 s
+LogShaderCompilers: Display: Percentage time preprocessing: 65.82%
+LogShaderCompilers: Display: Effective parallelization: 9.14 (times faster than compiling all shaders on one thread). Compare with number of workers: 16 - 0.571365
+LogShaderCompilers: Display: Top 5 most expensive shader types by average time:
+LogShaderCompilers: Display:                                                 FLumenCardCS (compiled    1 times, average 10.44 sec, max 10.44 sec, min 10.44 sec)
+LogShaderCompilers: Display:                TBasePassCSFCachedPointIndirectLightingPolicy (compiled    1 times, average 9.09 sec, max 9.09 sec, min 9.09 sec)
+LogShaderCompilers: Display:      TBasePassCSFPrecomputedVolumetricLightmapLightingPolicy (compiled    1 times, average 8.39 sec, max 8.39 sec, min 8.39 sec)
+LogShaderCompilers: Display:                                 TBasePassCSFNoLightMapPolicy (compiled    1 times, average 6.43 sec, max 6.43 sec, min 6.43 sec)
+LogShaderCompilers: Display:               TBasePassCSFCachedVolumeIndirectLightingPolicy (compiled    1 times, average 4.61 sec, max 4.61 sec, min 4.61 sec)
+LogShaderCompilers: Display: Top 5 shader types by total compile time:
+LogShaderCompilers: Display:               TBasePassPSFCachedVolumeIndirectLightingPolicy - 20.70% of total time (compiled   15 times, average 3.40 sec, max 5.43 sec, min 1.42 sec)
+LogShaderCompilers: Display:      TBasePassPSFPrecomputedVolumetricLightmapLightingPolicy - 20.50% of total time (compiled   15 times, average 3.37 sec, max 7.13 sec, min 1.12 sec)
+LogShaderCompilers: Display:                TBasePassPSFCachedPointIndirectLightingPolicy - 20.32% of total time (compiled   15 times, average 3.34 sec, max 6.05 sec, min 1.08 sec)
+LogShaderCompilers: Display:                                 TBasePassPSFNoLightMapPolicy - 9.31% of total time (compiled    6 times, average 3.83 sec, max 6.19 sec, min 1.91 sec)
+LogShaderCompilers: Display:                                                FAnisotropyPS - 5.60% of total time (compiled    3 times, average 4.60 sec, max 6.54 sec, min 3.58 sec)
+LogShaderCompilers: Display: === Material stats ===
+LogShaderCompilers: Display: Materials Cooked:        581
+LogShaderCompilers: Display: Materials Translated:    214
+LogShaderCompilers: Display: Material Total Translate Time: 0.46 s
+LogShaderCompilers: Display: Material Translation Only: 0.30 s (65%)
+LogShaderCompilers: Display: Material DDC Serialization Only: 0.00 s (0%)
+LogShaderCompilers: Display: Material Cache Hits: 0 (0%)
+LogShaderCompilers: Display: ================================================
+LogAssetRegistryGenerator: Display: Saving asset registry v24.
+LogAssetRegistryGenerator: Display: Generated development asset registry F:/uagent-task-temp/task072-game-development-20261005/Cooked/Windows/Hearthward/Metadata/DevelopmentAssetRegistry.bin num assets 1635, size is 1201.98kb, XxHash64[LE] = 0x1FB0E4F672834F3B, waited on hash 0.00 seconds
+LogAssetRegistryGenerator: Display: Generated asset registry num assets 1628, size is 510.23kb
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Hearthward' (PCD3D_SM6-PCD3D_SM6) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 180, Unique Shadermaps: 128 (71.11%)
+LogShaderLibrary: Display: Total Shaders: 3410, Unique Shaders: 2506 (73.49%)
+LogShaderLibrary: Display: Total Shader Size: 30.79mb, Unique Shaders Size: 25.01mb (81.25%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 13
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 984
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     33, 29, 28, 27, 24, 22, 17, 17, 17, 17
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Compute: 588 shaders (23.46%), compressed size: 10.04 MB (17.48 KB avg per shader), uncompressed size: 13.43 MB (23.39 KB avg per shader)
+LogShaderLibrary: Display: SF_Pixel: 1198 shaders (47.81%), compressed size: 9.64 MB (8.24 KB avg per shader), uncompressed size: 12.66 MB (10.82 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 597 shaders (23.82%), compressed size: 4.18 MB (7.18 KB avg per shader), uncompressed size: 5.52 MB (9.47 KB avg per shader)
+LogShaderLibrary: Display: SF_Mesh: 121 shaders (4.83%), compressed size: 1.14 MB (9.62 KB avg per shader), uncompressed size: 1.37 MB (11.62 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.08%), compressed size: 0.01 MB (5.53 KB avg per shader), uncompressed size: 0.02 MB (7.81 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../GameFactory/Hearthward/.agent-local/task051/Saved/Shaders/PCD3D_SM6-PCD3D_SM6/ShaderDebug-Hearthward-PCD3D_SM6-PCD3D_SM6/Dump.txt'
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display:
+LogShaderLibrary: Display: Shader Library 'Hearthward' (PCD3D_SM5-PCD3D_SM5) Stats:
+LogShaderLibrary: Display: =================
+LogShaderLibrary: Display: Assets: 180, Unique Shadermaps: 127 (70.56%)
+LogShaderLibrary: Display: Total Shaders: 2211, Unique Shaders: 1497 (67.71%)
+LogShaderLibrary: Display: Total Shader Size: 6.36mb, Unique Shaders Size: 4.78mb (75.18%)
+LogShaderLibrary: Display: === Extended info:
+LogShaderLibrary: Display: Minimum number of shaders in shadermap: 1
+LogShaderLibrary: Display: Median number of shaders in shadermap: 9
+LogShaderLibrary: Display: Maximum number of shaders in shadermap: 476
+LogShaderLibrary: Display: Number of shadermaps referencing top 10 most shared shaders:
+LogShaderLibrary: Display:     28, 22, 22, 20, 19, 16, 16, 16, 16, 12
+LogShaderLibrary: Display: Unique shaders itemization (sorted by compressed size):
+LogShaderLibrary: Display: SF_Pixel: 886 shaders (59.19%), compressed size: 2.71 MB (3.13 KB avg per shader), uncompressed size: 9.67 MB (11.17 KB avg per shader)
+LogShaderLibrary: Display: SF_Vertex: 495 shaders (33.07%), compressed size: 1.24 MB (2.58 KB avg per shader), uncompressed size: 3.75 MB (7.76 KB avg per shader)
+LogShaderLibrary: Display: SF_Compute: 114 shaders (7.62%), compressed size: 0.83 MB (7.46 KB avg per shader), uncompressed size: 3.66 MB (32.87 KB avg per shader)
+LogShaderLibrary: Display: SF_Geometry: 2 shaders (0.13%), compressed size: 0.00 MB (1.75 KB avg per shader), uncompressed size: 0.01 MB (5.60 KB avg per shader)
+LogShaderLibrary: Display: Textual dump saved to '../../../../../GameFactory/Hearthward/.agent-local/task051/Saved/Shaders/PCD3D_SM5-PCD3D_SM5/ShaderDebug-Hearthward-PCD3D_SM5-PCD3D_SM5/Dump.txt'
+LogShaderLibrary: Display: =================
+LogCook: Display: Dependent plugin "UAF" referenced by "IK Rig" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Dependent plugin "UAFAnimGraph" referenced by "IK Rig" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Dependent plugin "SteamShared" referenced by "EOS Shared" wasn't found in enabled plugins list when creating cook metadata file... skipping
+LogCook: Display: Finalize package store(s)...
+LogCook: Display: Cook by the book total time in tick 46.079467s total time 52.920101
+LogCook: Display: Peak Used virtual 7649 MiB Peak Used physical 5599 MiB
+LogCook: Display: Packages Cooked: 1625, Packages Incrementally Skipped: 0, Packages Skipped by Platform: 7, Total Packages: 1632
+LogCookStats: Display: Hierarchy Timer Information:
+LogCookStats: Display:   Root: 0.000s (0)
+LogCookStats: Display:     CleanSandbox: 0.069s (1)
+LogCookStats: Display:     CollectFilesToCook: 0.035s (1)
+LogCookStats: Display:       CookModificationDelegate: 0.000s (1)
+LogCookStats: Display:     GenerateLongPackageName: 0.002s (1)
+LogCookStats: Display:     TickMainCookLoop: 46.079s (3)
+LogCookStats: Display:       PumpPollables: 0.042s (7)
+LogCookStats: Display:       PumpRequests: 0.038s (64)
+LogCookStats: Display:       LoadPackageForCooking: 5.562s (4463)
+LogCookStats: Display:       ValidateSourcePackage: 0.001s (1649)
+LogCookStats: Display:       SavingPackages: 33.914s (736)
+LogCookStats: Display:         PollPendingCookedPlatformDatas: 4.451s (45881)
+LogCookStats: Display:         PrepareSave: 6.998s (44783)
+LogCookStats: Display:         PrecachePlatformDataForNextPackage: 9.719s (1619)
+LogCookStats: Display:           PrepareSave: 9.718s (2372)
+LogCookStats: Display:         SaveCookedPackage: 12.303s (1632)
+LogCookStats: Display:           GEditorSavePackage: 11.908s (1632)
+LogCookStats: Display:             VerifyCanCookPackage: 0.015s (1625)
+LogCookStats: Display:         ClearAllCachedCookedPlatformData: 0.320s (1632)
+LogCookStats: Display:       PostLoadPackageFixup: 0.000s (3)
+LogCookStats: Display:       WaitForAsync: 5.990s (136858)
+LogCookStats: Display:     CookByTheBookFinished: 0.725s (1)
+LogCookStats: Display:       SavingCurrentIniSettings: 0.099s (1)
+LogCookStats: Display:         ProcessingAccessedStrings: 0.003s (1)
+LogCookStats: Display:       ChunkGeneration: 0.013s (1)
+LogCookStats: Display:       FinishPopulateShaderLibrary: 0.006s (1)
+LogCookStats: Display:       CalculateReferencedSet: 0.000s (1)
+LogCookStats: Display:       CookArtifacts.UpdateOplogPackages: 0.010s (1)
+LogCookStats: Display:       GeneratorPreSave: 0.000s (1)
+LogCookStats: Display:       BuildChunkManifest: 0.019s (1)
+LogCookStats: Display:         FixupPackageDependenciesForChunks: 0.007s (1)
+LogCookStats: Display:       SaveManifests: 0.000s (1)
+LogCookStats: Display:       SaveAssetRegistry: 0.069s (1)
+LogCookStats: Display:       WriteCookerOpenOrder: 0.064s (1)
+LogCookStats: Display:       WriteCookMetadata: 0.019s (1)
+LogCookStats: Display:       WriteReferencedSet: 0.002s (1)
+LogCookStats: Display:       FinalizePackageStore: 0.005s (1)
+LogCookStats: Display: Misc Cook Stats
+LogCookStats: Display: ===============
+LogCookStats: Display: Validation
+LogCookStats: Display:     Stats=[]
+LogCookStats: Display: Niagara
+LogCookStats: Display:     NiagaraScriptTranslationCount=0
+LogCookStats: Display:     NiagaraCpuScriptCompileCount=0
+LogCookStats: Display:     NiagaraCpuScriptDdcCacheHitCount=0
+LogCookStats: Display:     NiagaraCpuScriptDdcCacheMissCount=0
+LogCookStats: Display:     NiagaraGpuScriptCompileCount=0
+LogCookStats: Display:     NiagaraGpuScriptDdcCacheHitCount=0
+LogCookStats: Display:     NiagaraGpuScriptDdcCacheMissCount=0
+LogCookStats: Display:     NiagaraSystemWaitForCompilationCompleteTime=0.000000
+LogCookStats: Display: ComputeKernelShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: NiagaraShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: ShaderCompiler
+LogCookStats: Display:     BlockingTimeSec=0.000119
+LogCookStats: Display:     AsyncCompileTimeSec=394.703039
+LogCookStats: Display:     GlobalBeginCompileShaderTimeSec=0.725820
+LogCookStats: Display:     GlobalBeginCompileShaderCalls=6680
+LogCookStats: Display:     ProcessAsyncResultsTimeSec=1.593609
+LogCookStats: Display: GlobalShader.Misc
+LogCookStats: Display:     ShadersCompiled=0
+LogCookStats: Display: Material
+LogCookStats: Display:     FinishCacheShadersSec=2.346115
+LogCookStats: Display: Cook.Profile.Params
+LogCookStats: Display:     CookProject=Hearthward
+LogCookStats: Display:     CookCultures=
+LogCookStats: Display:     CookLabel=
+LogCookStats: Display:     TargetPlatforms=Windows
+LogCookStats: Display:     IsCookAll=false
+LogCookStats: Display:     IsCookOnTheFly=false
+LogCookStats: Display:     IsIncrementalCook=false
+LogCookStats: Display:     IsIterativeCook=false
+LogCookStats: Display:     IsFastCook=false
+LogCookStats: Display:     IsUnversioned=true
+LogCookStats: Display: CookOnTheFlyServer.Package.Load
+LogCookStats: Display:     NumRequestedLoads=4318
+LogCookStats: Display:     NumPackagesLoaded=6076
+LogCookStats: Display:     NumInlineLoads=1758
+LogCookStats: Display: CookOnTheFlyServer.Package.Save
+LogCookStats: Display:     NumPackagesIncrementallySkipped=0
+LogCookStats: Display: CookOnTheFlyServer.QueueSize
+LogCookStats: Display:     PeakRequest=1309
+LogCookStats: Display:     PeakLoad=840
+LogCookStats: Display:     PeakSave=471
+LogCookStats: Display: Package.Load
+LogCookStats: Display:     LoadPackageTimeSec=7.839319
+LogCookStats: Display: Package.Save
+LogCookStats: Display:     NumPackagesSaved=1632
+LogCookStats: Display:     SavePackageTimeSec=10.687817
+LogCookStats: Display:     TagPackageExportsPresaveTimeSec=0.000000
+LogCookStats: Display:     TagPackageExportsTimeSec=0.000000
+LogCookStats: Display:     FullyLoadLoadersTimeSec=0.000000
+LogCookStats: Display:     ResetLoadersTimeSec=0.000000
+LogCookStats: Display:     TagPackageExportsGetObjectsWithOuter=0.000000
+LogCookStats: Display:     TagPackageExportsGetObjectsWithMarks=0.000000
+LogCookStats: Display:     SerializeImportsTimeSec=0.000000
+LogCookStats: Display:     SortExportsSeekfreeInnerTimeSec=0.000000
+LogCookStats: Display:     SerializeExportsTimeSec=0.000000
+LogCookStats: Display:     SerializeBulkDataTimeSec=0.021312
+LogCookStats: Display:     AsyncWriteTimeSec=0.000000
+LogCookStats: Display:     MBWritten=0.000000
+LogCookStats: Display: Package.DifferentPackagesSizeMBPerAsset
+LogCookStats: Display: Package.NumberOfDifferencesInPackagesPerAsset
+LogCookStats: Display: Package.PackageDifferencesSizeMBPerAsset
+LogCookStats: Display: Package.DiffTotal
+LogCookStats: Display:     NumberOfDifferentPackages=0
+LogCookStats: Display:     DifferentPackagesSizeMB=0.000000
+LogCookStats: Display:     NumberOfDifferencesInPackages=0
+LogCookStats: Display:     PackageDifferencesSizeMB=0.000000
+LogCookStats: Display: UnversionedProperties
+LogCookStats: Display:     SavedStructs=0
+LogCookStats: Display:     SavedMB=0
+LogCookStats: Display:     EquivalentTaggedMB=0
+LogCookStats: Display:     CompressionRatio=-nan(ind)
+LogCookStats: Display:     BitfieldWasteKB=0
+LogCookStats: Display:
+LogCookStats: Display: Cook Profile
+LogCookStats: Display: ============
+LogCookStats: Display:  0.CookWallTimeSec=91.125889
+LogCookStats: Display:  0. 0.StartupWallTimeSec=37.499894
+LogCookStats: Display:  0. 1.CookProcessingTime=53.625994
+LogCookStats: Display:  0. 1. 1.StartCookByTheBookTimeSec=6.389860
+LogCookStats: Display:  0. 1. 1. 0.BlockOnAssetRegistryTimeSec=1.422429
+LogCookStats: Display:  0. 1. 1. 1.GameCookModificationDelegateTimeSec=0.000076
+LogCookStats: Display:  0. 1. 2.TickCookOnTheSideTimeSec=19.289872
+LogCookStats: Display:  0. 1. 2. 0.TickCookOnTheSideLoadPackagesTimeSec=5.563357
+LogCookStats: Display:  0. 1. 2. 1.TickCookOnTheSideSaveCookedPackageTimeSec=12.303837
+LogCookStats: Display:  0. 1. 2. 1. 0.TickCookOnTheSideResolveRedirectorsTimeSec=0.000000
+LogCookStats: Display:  0. 1. 2. 2.TickCookOnTheSidePrepareSaveTimeSec=16.718849
+LogCookStats: Display:  0. 1. 3.TickLoopGCTimeSec=0.417833
+LogCookStats: Display:  0. 1. 4.TickLoopRecompileShaderRequestsTimeSec=0.000000
+LogCookStats: Display:  0. 1. 5.TickLoopShaderProcessAsyncResultsTimeSec=0.001756
+LogCookStats: Display:  0. 1. 6.TickLoopProcessDeferredCommandsTimeSec=0.000014
+LogCookStats: Display:  0. 1. 7.TickLoopTickCommandletStatsTimeSec=0.000003
+LogCookStats: Display:  0. 1. 8.TickLoopFlushRenderingCommandsTimeSec=0.039228
+LogCookStats: Display:  0. 1. 9.ShaderFlushTimeSec=0.000000
+LogCookStats: Display:  0. 1. 10.ValidationTimeSec=0.001163
+LogCookStats: Display:
+LogCookStats: Display: DDC Summary Stats
+LogCookStats: Display: =================
+LogCookStats: Display: BackEnd         = Installed
+LogCookStats: Display: HasLocalCache   =      true
+LogCookStats: Display: HasSharedCache  =     false
+LogCookStats: Display: HasCloudCache   =     false
+LogCookStats: Display: HasZenCache     =      true
+LogCookStats: Display: TotalGetHits    =     11802
+LogCookStats: Display: TotalGetMisses  =       523
+LogCookStats: Display: TotalGets       =     12325
+LogCookStats: Display: TotalGetHitPct  =  0.957566
+LogCookStats: Display: GetMissPct      =  0.042434
+LogCookStats: Display: TotalPutHits    =       759
+LogCookStats: Display: TotalPutMisses  =         0
+LogCookStats: Display: TotalPuts       =       759
+LogCookStats: Display: TotalPutHitPct  =  1.000000
+LogCookStats: Display: PutMissPct      =  0.000000
+LogCookStats: Display: LocalGetHits    =      6789
+LogCookStats: Display: LocalGetMisses  =       522
+LogCookStats: Display: LocalGetTotal   =      7311
+LogCookStats: Display: LocalGetHitPct  =  0.928601
+LogCookStats: Display: SharedGetHits   =         0
+LogCookStats: Display: SharedGetTotal  =         0
+LogCookStats: Display: SharedGetHitPct =  0.000000
+LogCookStats: Display: ZenLocalGetHits =      6789
+LogCookStats: Display: ZenLocalGetTotal=      7311
+LogCookStats: Display: ZenLocalGetHitPct=  0.928601
+LogCookStats: Display: ZenRemoteGetHits=         0
+LogCookStats: Display: ZenRemoteGetTotal=         0
+LogCookStats: Display: ZenRemoteGetHitPct=  0.000000
+LogCookStats: Display: ZenRemoteReadSpeed=  0.000000
+LogCookStats: Display: ZenRemoteWriteSpeed=  0.000000
+LogCookStats: Display: ZenRemoteLatency=  0.000000
+LogCookStats: Display: CloudGetHits    =         0
+LogCookStats: Display: CloudGetTotal   =         0
+LogCookStats: Display: CloudGetHitPct  =  0.000000
+LogCookStats: Display: LocalLatency    =  2.942475
+LogCookStats: Display: LocalReadSpeed  =102.990330
+LogCookStats: Display: LocalWriteSpeed = 13.254711
+LogCookStats: Display: SharedLatency   =  0.000000
+LogCookStats: Display: SharedReadSpeed =  0.000000
+LogCookStats: Display: SharedWriteSpeed=  0.000000
+LogCookStats: Display: CloudLatency    =  0.000000
+LogCookStats: Display: CloudReadSpeed  =  0.000000
+LogCookStats: Display: CloudWriteSpeed =  0.000000
+LogCookStats: Display:
+LogCookStats: Display: DDC Resource Stats
+LogCookStats: Display: =======================================================================================================
+LogCookStats: Display: Asset Type                          Total Time (Sec)  GameThread Time (Sec)  Assets Built  MB Processed
+LogCookStats: Display: ----------------------------------  ----------------  ---------------------  ------------  ------------
+LogCookStats: Display: BulkDataList                                   40.50                   0.00            76          0.64
+LogCookStats: Display: Texture                                        25.89                   0.00           280       1011.05
+LogCookStats: Display: MaterialShader                                 13.93                   2.02           214         14.37
+LogCookStats: Display: SkeletalMesh                                   12.69                   0.00             4        102.36
+LogCookStats: Display: Shader                                          8.72                   0.00            66         38.24
+LogCookStats: Display: AnimationSequence                               2.57                   0.00            65          1.64
+LogCookStats: Display: GlobalShader                                    1.98                   1.98             0        108.15
+LogCookStats: Display: StaticMesh                                      0.72                   0.00             0        381.48
+LogCookStats: Display: BodySetup                                       0.56                   0.00             0         85.61
+LogCookStats: Display: NavCollision                                    0.35                   0.00             4          0.09
+LogCookStats: Display: CardRepresentation                              0.34                   0.00             0          0.04
+LogCookStats: Display: MaterialTranslation                             0.30                   0.00            50          0.00
+LogCookStats: Display: STREAMEDAUDIO                                   0.03                   0.00             0          0.09
+LogCookStats: Display: Audio                                           0.00                   0.00             0          0.08
+LogCookStats: Display: CKERSM                                          0.00                   0.00             0          0.16
+LogCookStats: Display:
+LogCookStats: Display: Accumulated DDC Resource Stats Per Asset Type
+LogCookStats: Display: =======================================================================================================
+LogCookStats: Display: AnimationSequence                               2.57                   0.00            65          1.64
+LogCookStats: Display: Audio                                           0.00                   0.00             0          0.08
+LogCookStats: Display: CardRepresentation                              0.34                   0.00             0          0.04
+LogCookStats: Display: DistanceField                                   0.00                   0.00             0          0.00
+LogCookStats: Display: MaterialShader                                 13.93                   2.02           214         14.37
+LogCookStats: Display: MaterialTranslation                             0.30                   0.00            50          0.00
+LogCookStats: Display: NiagaraScript                                   0.00                   0.00             0          0.00
+LogCookStats: Display: SkeletalMesh                                   12.69                   0.00             4        102.36
+LogCookStats: Display: StaticMesh                                      0.72                   0.00             0        381.48
+LogCookStats: Display: Texture                                        25.89                   0.00           280       1011.05
+LogCookStats: Display: Other                                          52.15                   1.98           146        232.97
+LogPackageBuildDependencyTracker: Display: Package Accesses (1994 referencing packages with a total of 15677 unique accesses)
+LogConfigBuildDependencyTracker: Display: Config Accesses (980 referencing packages with a total of 1745 unique accesses). 1768 unique accesses that were not associated with a package.
+LogCook: Display: ---- Finalisation: End ----
+LogCook: Display: Done!
+LogSavePackage: Display: Took 0.002961s to verify the EDL loading graph.
+LogInit: Display:
+LogInit: Display: Success - 0 error(s), 0 warning(s)
+LogInit: Display:
+
+Execution of commandlet took:  53.65 seconds, PeakPhysMemoryMB=5599 MB, PeakVirtMemoryMB=7649 MB
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles (PostWrite): 1 .ref files found, 1 referenced binaries
+LogAssetRegistry: Display: CleanupOrphanedCacheFiles: 1 total binaries, 1 referenced (kept), 0 old-style pre-migration (kept), 0 orphans deleted, 0 orphans locked (kept)
+LogStreaming: Display: ============ Loader Stats ============
+LogStreaming: Display: Unique Partial Flushes: 0
+LogStreaming: Display: ============ Loader Stats End ============
+LogShaderCompilers: Display: Exiting ShaderCompilingThread
+Took 97.52s to run UnrealEditor-Cmd.exe, ExitCode=0
+Cook command time: 97.62 s
+********** COOK COMMAND COMPLETED **********
+********** STAGE COMMAND STARTED **********
+Creating Staging Manifest...
+Patching bootstrap executable; G:\GameFactory\Hearthward\.agent-local\task051\Intermediate\Staging\Hearthward.exe
+Begin update resource 'G:\GameFactory\Hearthward\.agent-local\task051\Intermediate\Staging\Hearthward.exe' (0)
+Add resource 101, length 104 (True)
+Add resource 1, length 1996 (True)
+Add resource 2, length 2447 (True)
+Add resource 3, length 2535 (True)
+Add resource 4, length 3037 (True)
+Add resource 5, length 3244 (True)
+Add resource 6, length 3531 (True)
+Add resource 7, length 6931 (True)
+Add resource 201, length 82 (True)
+Add resource 202, length 22 (True)
+Add resource 205, length 2 (True)
+End update resource (True/0)
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\Editor.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\Engine.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\RepairData.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\ToolTips.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\WindowsEditorPerProjectUserSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\Keywords.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\PortableObjectExport.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\WordCount.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\PortableObjectImport.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\Category.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseLightmass.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BasePakFileRules.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseSourceControlSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEditor.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEditorSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\WindowsEditorSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\Localization\PropertyNames.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseUnrealInsightsSettings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEditorKeyBindings.ini
+Excluding config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEditorPerProjectUserSettings.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseGame.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseEngine.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\VulkanPC\DataDrivenPlatformInfo.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\BaseWindowsGame.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\BaseWindowsEngine.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\DataDrivenPlatformInfo.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\BaseWindowsInput.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseMaterialExpressions.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseDeviceProfiles.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseCompat.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Base.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseInput.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseHardware.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseGameUserSettings.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\WindowsInput.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Windows\WindowsGame.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseScalability.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseRuntimeOptions.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\ConsoleVariables.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\ConfigRedirects.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\BaseInstallBundle.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Layouts\UE4ClassicLayout.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\Layouts\DefaultLayout.ini
+Including config file G:\UnrealEngine\UE_5.8\Engine\Config\PluginBase.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultInput.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultGame.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultScalability.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultGameUserSettings.ini
+Including config file G:\GameFactory\Hearthward\.agent-local\task051\Config\DefaultEngine.ini
+Cleaning Stage Directory: F:\uagent-task-temp\task072-game-development-20261005\Staged\Windows
+Creating pak using staging manifest.
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PrePak_Windows_NonUFSFiles.txt, NumItems: 150
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PrePak_Windows_NonUFSFilesDebug.txt, NumItems: 6
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PrePak_Windows_UFSFiles.txt, NumItems: 5286
+No matching platform for PakFileRules for Section ExcludeContentForMobile : Windows
+Using 0 pak order files:
+Running UnrealPak with arguments: "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject"  -cryptokeys="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json" -unattended -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken  -platform=Windows  -CreateMultiple="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PakCommands.txt"
+Running: G:\UnrealEngine\UE_5.8\Engine\Binaries\Win64\UnrealPak.exe "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject"  -cryptokeys="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json" -unattended -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken  -platform=Windows  -CreateMultiple="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\PakCommands.txt"
+OodleDataCompression: Display: Oodle v2.9.16 format for pak/iostore with method=Kraken, level=4=Normal
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogPakFile: Display: ProjectDir: ../../../../../GameFactory/Hearthward/.agent-local/task051/
+LogPakFile: Display: Parsing crypto keys from a crypto key cache file
+LogPakFile: Display: CompressionFormats in priority order: Oodle, Zlib
+LogPakFile: Display: Oodle enabled on 'NoPluginCompression' files
+LogPakFile: Display: Loading response file G:\UnrealEngine\UE_5.8\Engine\Programs\AutomationTool\Saved\ResponseFiles\PakList_Hearthward-Windows.txt
+LogPakFile: Display: Added 1749 entries to add to pak file.
+LogPakFile: Display: Collecting files to add to pak file...
+LogPakFile: Display: Collected 1749 files in 0.01s.
+LogPakFile: Display: Creating pak F:/uagent-task-temp/task072-game-development-20261005/Staged/Windows/Hearthward/Content/Paks/Hearthward-Windows.pak.
+LogPakFile: Display: Created pak file: F:/uagent-task-temp/task072-game-development-20261005/Staged/Windows/Hearthward/Content/Paks/Hearthward-Windows.pak
+LogPakFile: Display: CompressionFormat 0 [Oodle] : 403 files, 27839775 -> 9754522 bytes
+LogPakFile: Display: CompressionFormat 2 [None] : 1346 files, 789376 -> 789376 bytes
+LogPakFile: Display: Added 1749 files, 11219414 bytes total
+LogPakFile: Display: PrimaryIndex size: 24326 bytes
+LogPakFile: Display: PathHashIndex size: 55379 bytes
+LogPakFile: Display: FullDirectoryIndex size: 58499 bytes
+LogPakFile: Display: Compression summary: 35.04% of original size. Compressed Size 9754522 bytes, Original Size 27839775 bytes.
+LogPakFile: Display: Encryption - DISABLED
+LogPakFile: Display:
+LogPakFile: Display: Writer and Compression Threads exited.
+LogPakFile: Display: UnrealPak executed in 0.715686 seconds
+Took 1.64s to run UnrealPak.exe, ExitCode=0
+Running UnrealPak with arguments: "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject" G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject -CreateGlobalContainer="F:\uagent-task-temp\task072-game-development-20261005\Staged\Windows\Hearthward\Content\Paks\global.utoc" -PackageStoreManifest="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\packagestore.manifest" -CookedDirectory="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows" -Commands="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\IoStoreCommands.txt" -ScriptObjects="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\scriptobjects.bin" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken   -cryptokeys="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json" -compressionMinBytesSaved=1024 -compressionMinPercentSaved=5 -WriteBackMetadataToAssetRegistry=Disabled -platform=Windows  -unattended
+Running: G:\UnrealEngine\UE_5.8\Engine\Binaries\Win64\UnrealPak.exe "G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject" G:\GameFactory\Hearthward\.agent-local\task051\Hearthward.uproject -CreateGlobalContainer="F:\uagent-task-temp\task072-game-development-20261005\Staged\Windows\Hearthward\Content\Paks\global.utoc" -PackageStoreManifest="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\packagestore.manifest" -CookedDirectory="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows" -Commands="C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\IoStoreCommands.txt" -ScriptObjects="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\scriptobjects.bin" -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken   -cryptokeys="F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json" -compressionMinBytesSaved=1024 -compressionMinPercentSaved=5 -WriteBackMetadataToAssetRegistry=Disabled -platform=Windows  -unattended
+OodleDataCompression: Display: Oodle v2.9.16 format for pak/iostore with method=Kraken, level=4=Normal
+LogStreaming: Display: AsyncLoading2 - Created: Async Loading Thread: false, Async Post Load: false, Multithreaded: false
+LogPakFile: Display: ProjectDir: ../../../../../GameFactory/Hearthward/.agent-local/task051/
+LogIoStore: Display: ==================== IoStore Utils ====================
+LogIoStore: Display: Parsing crypto keys from a crypto key cache file 'F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows\Hearthward\Metadata\Crypto.json'
+LogIoStore: Display: Container signing - DISABLED
+LogIoStore: Display: Directory index - ENABLED
+LogIoStore: Display: Using compression format 'Oodle'
+LogConfig: Display: Read in platform Windows ini files took 0.04 seconds
+LogIoStore: Display: Using memory mapping alignment '16384'
+LogIoStore: Display: Using compression block size '65536'
+LogIoStore: Display: Using compression block alignment '2048'
+LogIoStore: Display: Using compression min bytes saved '1024'
+LogIoStore: Display: Using compression min percent saved '5'
+LogIoStore: Display: Using max partition size '0'
+LogIoStore: Display: Not using DDC for compression
+LogIoStore: Display: Container metadata disabled
+LogIoStore: Display: Using command list file: 'C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\IoStoreCommands.txt'
+LogIoStore: Display: Selected Oodle level 4 (Normal) from command line for shaders
+LogIoStore: Display: Fetched 1632 oplog items from Manifest in 0.00 seconds
+LogIoStore: Display: Parsed 1632 oplog items 0.00 seconds, 1908 chunks
+LogIoStore: Display: Using input asset registry: F:/uagent-task-temp/task072-game-development-20261005/Cooked/Windows/Hearthward/Metadata/DevelopmentAssetRegistry.bin
+LogIoStore: Display: Loaded 283 chunk hashes from AssetRegistry in 0.03 seconds, 283 hashes updated in 0.00 seconds
+LogIoStore: Display: Searching for cooked assets in folder 'F:\uagent-task-temp\task072-game-development-20261005\Cooked\Windows'
+LogIoStore: Display: Found '3541' files
+LogIoStore: Display: Creating container targets...
+LogIoStore: Display: Parsing packages...
+LogIoStore: Display: Reading package assets...
+LogIoStore: Display: Reading 1000/1625: 'F:/uagent-task-temp/task072-game-development-20261005/Cooked/Windows/Hearthward/Content/Hearthward/Animals/MotionR3/black_bear/Materials/M_black_bear_PBR.uasset'
+LogIoStore: Display: Packages read 1,625 files in 0.04 seconds, 4,046,336 total bytes, 92,780,122 bytes per second
+LogIoStore: Display: Processing shader libraries, compressing with Oodle Mermaid, level 4 (Normal)
+LogIoStore: Display: Shader library chunk override is disabled
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 382 groups (158 of them didn't need new indices), average uncompressed size 141073 bytes, min 249 bytes, max 1038208 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Global-PCD3D_SM5(PCD3D_SM5): Recompressed 3926 shaders as 382 groups. Library size changed from 11885 KB (4.43 : 1 ratio) to 5220 KB (10.08 : 1 ratio), 43.93% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Global-PCD3D_SM5-PCD3D_SM5' with ChunkId 'c3fad98e7ca0cc3100000008' for target file 'F:/uagent-task-temp/task072-game-development-20261005/Cooked/Windows/Hearthward/Content/ShaderArchive-Global-PCD3D_SM5-PCD3D_SM5.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 203 groups (80 of them didn't need new indices), average uncompressed size 88274 bytes, min 502 bytes, max 971733 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Hearthward-PCD3D_SM5(PCD3D_SM5): Recompressed 1497 shaders as 203 groups. Library size changed from 4899 KB (3.57 : 1 ratio) to 2062 KB (8.48 : 1 ratio), 42.10% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Hearthward-PCD3D_SM5-PCD3D_SM5' with ChunkId '57c76f866b9ed67400000008' for target file 'F:/uagent-task-temp/task072-game-development-20261005/Cooked/Windows/Hearthward/Content/ShaderArchive-Hearthward-PCD3D_SM5-PCD3D_SM5.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 236 groups (68 of them didn't need new indices), average uncompressed size 146626 bytes, min 2378 bytes, max 1023759 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Hearthward-PCD3D_SM6(PCD3D_SM6): Recompressed 2506 shaders as 236 groups. Library size changed from 25613 KB (1.32 : 1 ratio) to 16264 KB (2.08 : 1 ratio), 63.50% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Hearthward-PCD3D_SM6-PCD3D_SM6' with ChunkId '8c46efb1098300af00000008' for target file 'F:/uagent-task-temp/task072-game-development-20261005/Cooked/Windows/Hearthward/Content/ShaderArchive-Hearthward-PCD3D_SM6-PCD3D_SM6.ushaderbytecode'
+LogShaderLibrary: Display: Created IoStoreShaderArchive header: shaders grouped in 553 groups (182 of them didn't need new indices), average uncompressed size 242890 bytes, min 1249 bytes, max 1036717 bytes (r.ShaderCodeLibrary.MaxShaderGroupSize=1048576)
+LogIoStore: Display: Global-PCD3D_SM6(PCD3D_SM6): Recompressed 8095 shaders as 553 groups. Library size changed from 99337 KB (1.32 : 1 ratio) to 58984 KB (2.22 : 1 ratio), 59.38% of previous.
+LogIoStore: Display: Save IoStoreShaderCodeArchive 'Global-PCD3D_SM6-PCD3D_SM6' with ChunkId '1680bae1ae38d5b900000008' for target file 'F:/uagent-task-temp/task072-game-development-20261005/Cooked/Windows/Hearthward/Content/ShaderArchive-Global-PCD3D_SM6-PCD3D_SM6.ushaderbytecode'
+LogIoStore: Display: Shaders processed in 1.08 seconds
+LogIoStore: Display: Initialized WriteRequestManager with MaxConcurrentSourceReads=10 (20 cores), MaxSourceBufferMemory=3072MiB
+LogIoStore: Display: Processing redirects...
+LogIoStore: Display: Creating disk layout...
+LogIoStore: Display: Ordered 1625 packages using fallback bundle order
+LogIoStore: Display: Disabled WriteRequestManager memory throttling, MaxConcurrentSourceReads=10 (20 cores)
+LogIoStore: Display: Writing container(s)...
+LogIoStore: Display: Writing chunks 3043/3288... [1679 compressed] [6991 compression tasks] [Scheduled: 1861 MiB] [Physical: 3046 MiB, Virtual: 5565 MiB]
+LogIoStore: Display: Writing chunks 3147/3288... [1851 compressed] [1450 compression tasks] [Scheduled: 1097 MiB] [Physical: 2491 MiB, Virtual: 4197 MiB]
+LogIoStore: Display: Writing chunks 3237/3288... [1908 compressed] [Scheduled: 270 MiB] [Physical: 2206 MiB, Virtual: 3826 MiB]
+LogIoStore: Display: Writing and compressing took 6.88 seconds, writes to disk took 5.86 seconds for 1,572,492,848 bytes @ 268,330,814 bytes per second.
+LogIoStore: Display: global: Found perfect hashmap for 1 items.
+LogIoStore: Display: Hearthward-Windows: Found perfect hashmap for 3287 items.
+LogIoStore: Display: Finalize took 0.1 seconds for 2 writers to write 846,731 bytes, 15,249,600 bytes per second
+LogIoStore: Display: Writing tocs... [Physical: 2206 MiB, Virtual: 3826 MiB]
+LogIoStore: Display: 283 / 3,288 hashes were loaded from the hash database, by type:
+LogIoStore: Display:     BulkData                   283
+LogIoStore: Display: 1,908 / 3,288 chunks attempted to compress, by type:
+LogIoStore: Display:     ExportBundleData           1,625 / 1,625
+LogIoStore: Display:     BulkData                   283 / 283
+LogIoStore: Display:     ScriptObjects              0 / 1
+LogIoStore: Display:     ContainerHeader            0 / 1
+LogIoStore: Display:     ShaderCodeLibrary          0 / 4
+LogIoStore: Display:     ShaderCode                 0 / 1,374
+LogIoStore: Display: Source bytes read:
+LogIoStore: Display:     Zen:                                  0
+LogIoStore: Display:     Loose File:               3,629,785,367
+LogIoStore: Display:         ExportBundleData       1,224,392,250 bytes over 3,250 reads
+LogIoStore: Display:         BulkData               2,405,393,117 bytes over 283 reads
+LogIoStore: Display:     Memory:                     169,914,676
+LogIoStore: Display:         ShaderCodeLibrary           888,512 bytes over 8 reads
+LogIoStore: Display:         ShaderCode              169,026,164 bytes over 2,748 reads
+LogIoStore: Display: Calculating stats...
+LogIoStore: Display:
+LogIoStore: Display: Container Summary
+LogIoStore: Display: ==================
+LogIoStore: Display:
+LogIoStore: Display:            Container      Flags      Chunk(s) #       TOC (KiB)       Raw Size (MiB)           Size (MiB)
+LogIoStore: Display: ---------------------------------------------------------------------------------------------------------
+LogIoStore: Display:               global  -/-/-/-/-               1            0.78                 3.12                 3.12 -
+LogIoStore: Display:   Hearthward-Windows  C/-/-/I/-            3287          826.11              2964.03              1496.53 (49.51% Oodle)
+LogIoStore: Display: ---------------------------------------------------------------------------------------------------------
+LogIoStore: Display:                Total                       3288          826.89              2967.15              1499.65
+LogIoStore: Display:
+LogIoStore: Display: ** Flags: (C)ompressed / (E)ncrypted / (S)igned) / (I)ndexed) / (O)nDemand **
+LogIoStore: Display:
+LogIoStore: Display: Compression block padding:     2.65 MiB
+LogIoStore: Display:
+LogIoStore: Display: Container Directory Index
+LogIoStore: Display: ==========================
+LogIoStore: Display:
+LogIoStore: Display:            Container      Size (KiB)
+LogIoStore: Display: ------------------------------------
+LogIoStore: Display:               global            0.00
+LogIoStore: Display:   Hearthward-Windows           87.17
+LogIoStore: Display:
+LogIoStore: Display: Container Patch Report
+LogIoStore: Display: ========================
+LogIoStore: Display:
+LogIoStore: Display:            Container          Total #       Modified #          Added #   Modified (MiB)      Added (MiB)
+LogIoStore: Display: ---------------------------------------------------------------------------------------------------------
+LogIoStore: Display:               global                1                0                0             0.00             0.00
+LogIoStore: Display:   Hearthward-Windows             3287                0             3287             0.00          1493.87
+LogIoStore: Display: ---------------------------------------------------------------------------------------------------------
+LogIoStore: Display:
+LogIoStore: Display: PackageStore
+LogIoStore: Display: =============
+LogIoStore: Display:
+LogIoStore: Display:            Container      Size (KiB)      Packages #     Localized #
+LogIoStore: Display: --------------------------------------------------------------------
+LogIoStore: Display:   Hearthward-Windows              57            1625               0
+LogIoStore: Display: --------------------------------------------------------------------
+LogIoStore: Display:                Total              57            1625               0
+LogIoStore: Display:
+LogIoStore: Display:
+LogIoStore: Display: Input:      1625 Packages
+LogIoStore: Display: Input:    583.84 MiB UExp
+LogIoStore: Display: Input:      3.86 MiB UAsset
+LogIoStore: Display: Input:      2.24 GiB UBulk
+LogIoStore: Display: Input:     62.70 MiB for 935 Global shaders
+LogIoStore: Display: Input:      2.21 MiB for 198 Shared shaders
+LogIoStore: Display: Input:         0   B for 0 Unique shaders
+LogIoStore: Display: Input:     15.69 MiB for 241 Inline shaders
+LogIoStore: Display:
+LogIoStore: Display: Output:    15810 Name map entries
+LogIoStore: Display: Output:     3654 Imported package entries
+LogIoStore: Display: Output:      603 Packages without imports
+LogIoStore: Display: Output:        0 Public runtime script objects
+LogIoStore: Display: Output:     2.49 MiB HeaderData
+LogIoStore: Display: Output:     3.12 MiB InitialLoadData
+LogIoStore: Display:
+LogIoStore: Display: Success
+LogPakFile: Display: UnrealPak executed in 8.592032 seconds
+Took 9.48s to run UnrealPak.exe, ExitCode=0
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\FinalCopyWin64_UFSFiles.txt, NumItems: 5287
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\FinalCopyWin64_NonUFSFiles.txt, NumItems: 150
+DumpManifest: C:\Users\admin\AppData\Roaming\Unreal Engine\AutomationTool\Logs\G+UnrealEngine+UE_5.8\FinalCopyWin64_NonUFSFilesDebug.txt, NumItems: 6
+Copying NonUFSFiles to staging directory: F:\uagent-task-temp\task072-game-development-20261005\Staged\Windows
+Stage command time: 29.51 s
+********** STAGE COMMAND COMPLETED **********
+********** ARCHIVE COMMAND STARTED **********
+Archiving to F:\uagent-task-temp\task072-game-development-20261005\Archive
+Archive command time: 27.83 s
+********** ARCHIVE COMMAND COMPLETED **********
+BuildCookRun time: 204.89 s
+BUILD SUCCESSFUL
+AutomationTool executed for 0h 3m 25s
+AutomationTool exiting with ExitCode=0 (Success)

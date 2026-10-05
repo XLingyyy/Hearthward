@@ -1,0 +1,106 @@
+--- a/Source/Hearthward/Combat/HearthwardCombatRules.h
++++ b/Source/Hearthward/Combat/HearthwardCombatRules.h
+@@ -24,6 +24,38 @@
+ { return FVector::DotProduct(Facing.GetSafeNormal2D(),Direction.GetSafeNormal2D())>=.5; }
+ inline float ArmorDamage(float Raw,float PartArmor,float OtherArmor=0)
+ { return Raw*FMath::Max(.15f,(1-FMath::Clamp(PartArmor,0.f,1.f))*(1-FMath::Clamp(OtherArmor,0.f,1.f))); }
++inline FName HumanoidPart(FName Bone)
++{
++    static const FName HeadBones[]={
++        TEXT("neck_01"),TEXT("head")
++    };
++    for(FName Name:HeadBones)if(Name==Bone)return TEXT("head");
++    static const FName BodyBones[]={
++        TEXT("pelvis"),TEXT("spine_01"),TEXT("spine_02"),TEXT("spine_03"),
++        TEXT("clavicle_l"),TEXT("upperarm_l"),TEXT("lowerarm_l"),TEXT("hand_l"),
++        TEXT("index_01_l"),TEXT("index_02_l"),TEXT("index_03_l"),TEXT("middle_01_l"),
++        TEXT("middle_02_l"),TEXT("middle_03_l"),TEXT("pinky_01_l"),TEXT("pinky_02_l"),
++        TEXT("pinky_03_l"),TEXT("ring_01_l"),TEXT("ring_02_l"),TEXT("ring_03_l"),
++        TEXT("thumb_01_l"),TEXT("thumb_02_l"),TEXT("thumb_03_l"),TEXT("lowerarm_twist_01_l"),
++        TEXT("upperarm_twist_01_l"),TEXT("clavicle_r"),TEXT("upperarm_r"),TEXT("lowerarm_r"),
++        TEXT("hand_r"),TEXT("index_01_r"),TEXT("index_02_r"),TEXT("index_03_r"),
++        TEXT("middle_01_r"),TEXT("middle_02_r"),TEXT("middle_03_r"),TEXT("pinky_01_r"),
++        TEXT("pinky_02_r"),TEXT("pinky_03_r"),TEXT("ring_01_r"),TEXT("ring_02_r"),
++        TEXT("ring_03_r"),TEXT("thumb_01_r"),TEXT("thumb_02_r"),TEXT("thumb_03_r"),
++        TEXT("lowerarm_twist_01_r"),TEXT("upperarm_twist_01_r")
++    };
++    for(FName Name:BodyBones)if(Name==Bone)return TEXT("body");
++    static const FName LegsBones[]={
++        TEXT("thigh_l"),TEXT("calf_l"),TEXT("calf_twist_01_l"),TEXT("thigh_twist_01_l"),
++        TEXT("thigh_r"),TEXT("calf_r"),TEXT("calf_twist_01_r"),TEXT("thigh_twist_01_r")
++    };
++    for(FName Name:LegsBones)if(Name==Bone)return TEXT("legs");
++    static const FName FeetBones[]={
++        TEXT("foot_l"),TEXT("ball_l"),TEXT("foot_r"),TEXT("ball_r")
++    };
++    for(FName Name:FeetBones)if(Name==Bone)return TEXT("feet");
++    return NAME_None;
++}
+ inline bool SenseVisible(const FVector& From,const FVector& To)
+ { return FVector::DistSquared(From,To)<=FMath::Square(1500.) && FMath::Abs(From.Z-To.Z)<=400; }
+ struct FGuard
+--- a/Source/Hearthward/Combat/HearthwardCombatComponent.h
++++ b/Source/Hearthward/Combat/HearthwardCombatComponent.h
+@@ -66,6 +66,7 @@
+     bool CanSave() const;
+     void InterruptTravel() { Cancel(); DropBody(); Guard.Release(); Aiming=false; }
+     bool Damage(float Raw,FName Part,FVector Source,bool Heavy=false,bool Projectile=false,FGuid Event=FGuid());
++    static bool DamageActor(AActor* Target,float Raw,FName Part,FVector Source,bool Heavy=false,bool Projectile=false,FGuid Event=FGuid());
+     void HitTarget(UHearthwardCombatTargetComponent* Target,float Raw,FName Part,bool Projectile,FGuid Event,AActor* Source=nullptr);
+     void ObserveDamage(UHearthwardCombatTargetComponent* Target,AActor* Source=nullptr);
+     FString Snapshot() const;
+--- a/Source/Hearthward/Combat/HearthwardCombatComponent.cpp
++++ b/Source/Hearthward/Combat/HearthwardCombatComponent.cpp
+@@ -174,12 +174,31 @@
+     const FName Slot=Part==TEXT("body")?FName(TEXT("chest")):Part;
+     const float Armor=G()->EquippedDurability(Slot)>0?Number(R,TEXT("defense"))/100+G()->Effect(TEXT("local_armor_bonus")):0;
+     const float Actual=HearthwardCombat::ArmorDamage(Raw*(Projectile && Part==TEXT("head")?3:1),Armor,G()->Effect(TEXT("defense")));
++    auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
++    if(!S->ReceiveDamage(Actual,Event,Epoch()))return false;
+     Cancel(); DropBody(); Guard.Release();
+     if(Armor>0) G()->WearEquipment(Slot,1,true);
+-    auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
+-    S->ReceiveDamage(Actual,Event,Epoch());
+     if(S->Alive()) { Action=TEXT("hit"); Duration=.25; StartedAt=Now(); Elapsed=0; ActionEpoch=Epoch(); }
+     G()->OnChanged.Broadcast(); return true;
++}
++bool UHearthwardCombatComponent::DamageActor(AActor* Target,float Raw,FName Part,FVector Source,bool Heavy,bool Projectile,FGuid Event)
++{
++    if(!Target || Part.IsNone())return false;
++    if(auto* Combat=Target->FindComponentByClass<UHearthwardCombatComponent>())
++        return Combat->Damage(Raw,Part,Source,Heavy,Projectile,Event);
++    auto* Survival=Target->FindComponentByClass<UHearthwardSurvivalComponent>();
++    auto* Inventory=Target->FindComponentByClass<UHearthwardInventoryComponent>();
++    if(!Survival || !Inventory || Raw<=0 || !FMath::IsFinite(Raw))return false;
++    const FName Slot=Part==TEXT("body")?FName(TEXT("chest")):Part;
++    const FGuid ArmorId=Inventory->EquippedInstance(Slot);
++    const auto* Item=Inventory->FindInstance(ArmorId);
++    const float Armor=Item && Item->Durability>0?Number(Find(TEXT("items"),Item->Definition.ToString()),TEXT("defense"))/100:0;
++    const float Actual=HearthwardCombat::ArmorDamage(Raw*(Projectile && Part==TEXT("head")?3:1),Armor);
++    if(!Event.IsValid())Event=FGuid::NewGuid();
++    const FGuid Timeline=Target->GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
++    if(!Survival->ReceiveDamage(Actual,Event,Timeline))return false;
++    if(Armor>0)Inventory->WearInstance(ArmorId,1);
++    return true;
+ }
+ void UHearthwardCombatComponent::ObserveDamage(UHearthwardCombatTargetComponent* T,AActor* Source)
+ {
+--- a/Source/Hearthward/Combat/HearthwardProjectile.cpp
++++ b/Source/Hearthward/Combat/HearthwardProjectile.cpp
+@@ -35,10 +35,13 @@
+             auto* T=Hit.GetActor()?Hit.GetActor()->FindComponentByClass<UHearthwardCombatTargetComponent>():nullptr;
+             HitTarget=Hit.GetActor() && (T || Hit.GetActor()->IsA<APawn>());
+             if(T && !Bait && Shooter.IsValid()) Shooter->HitTarget(T,Power,T->HitPart(Hit),Item==TEXT("arrow"),Event);
+-            if(EnemyShooter.IsValid() && Hit.GetActor())
++            if(EnemyShooter.IsValid() && Hit.GetActor() && Hit.GetActor()->FindComponentByClass<UHearthwardSurvivalComponent>())
+             {
+-                if(auto* C=Hit.GetActor()->FindComponentByClass<UHearthwardCombatComponent>())C->Damage(Power,TEXT("body"),EnemyShooter->GetActorLocation(),false,true,Event);
+-                else if(auto* S=Hit.GetActor()->FindComponentByClass<UHearthwardSurvivalComponent>())S->ReceiveDamage(Power,Event,Epoch);
++                const FName Part=HearthwardCombat::HumanoidPart(Hit.BoneName);
++                if(Part.IsNone())
++                    UE_LOG(LogTemp,Error,TEXT("Enemy projectile hit unmapped body bone %s on %s (%s)"),
++                        *Hit.BoneName.ToString(),*GetNameSafe(Hit.GetActor()),*GetNameSafe(Hit.GetComponent()));
++                else UHearthwardCombatComponent::DamageActor(Hit.GetActor(),Power,Part,EnemyShooter->GetActorLocation(),false,true,Event);
+             }
+         }
+         else { SetActorLocation(GetActorLocation()+Move); RemainingRange-=Move.Size(); if(RemainingRange<=0) { Velocity.X=Velocity.Y=0; Power=0; } }

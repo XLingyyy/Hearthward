@@ -1,0 +1,112 @@
+diff --git a/Source/Hearthward/Nature/HearthwardNatureActor.cpp b/Source/Hearthward/Nature/HearthwardNatureActor.cpp
+index 4fb0c01..48a4066 100644
+--- a/Source/Hearthward/Nature/HearthwardNatureActor.cpp
++++ b/Source/Hearthward/Nature/HearthwardNatureActor.cpp
+@@ -128,6 +128,18 @@ void AHearthwardNatureActor::Refresh()
+         if(A->Health<=0){Shape->SetCollisionEnabled(ECollisionEnabled::QueryOnly);for(const auto& Part:Parts)Part->SetCollisionEnabled(ECollisionEnabled::NoCollision);}
+     }
+     else SetActorLocation(N->Position(Id));
++    if(Kind==TEXT("crop"))if(const auto* Crop=N->State.Crops.FindByPredicate([&](const auto& C){return C.Id==Id;}))
++    {
++        const double Duration=Number(HearthwardNature::Definition(TEXT("crops"),Crop->Definition),TEXT("days"))*1440;
++        const double Growth=N->State.Ready(*Crop)?1.:N->State.Calendar-Crop->Planted>=Duration*.5?.65:.3;
++        // Configure creates adjacent stem/leaf pairs for each of the nine planting positions.
++        for(int32 I=0;I<Parts.Num();++I)
++        {
++            const bool Leaf=I%2==1;const int32 Plant=I/2;
++            Parts[I]->SetWorldScale3D((Leaf?FVector(.3,.25,.12):FVector(.05,.05,.5))*Growth);
++            Parts[I]->SetWorldLocation(GetActorLocation()+FVector((Plant/3-1)*60,(Plant%3-1)*60,(Leaf?45:25)*Growth));
++        }
++    }
+     InteractionText=Name;
+     // The world-space engine font has no CJK glyphs; the existing HUD renders the localized prompt.
+     Label->SetText(FText::FromString(TEXT("E")));
+diff --git a/Source/Hearthward/UI/HearthwardScreenNature.cpp b/Source/Hearthward/UI/HearthwardScreenNature.cpp
+index 14f66c7..ea5ac71 100644
+--- a/Source/Hearthward/UI/HearthwardScreenNature.cpp
++++ b/Source/Hearthward/UI/HearthwardScreenNature.cpp
+@@ -3,6 +3,7 @@
+ #include "../Gameplay/HearthwardGameplayComponent.h"
+ #include "../Gameplay/HearthwardGameData.h"
+ #include "../Inventory/HearthwardStorageSubsystem.h"
++#include "../Inventory/HearthwardInventoryComponent.h"
+ #include "../Camp/HearthwardCampSubsystem.h"
+ #include "../AI/HearthwardLocalAISubsystem.h"
+ #include "../Companion/HearthwardCompanionFixture.h"
+@@ -43,11 +44,23 @@ void UHearthwardScreenWidget::ComposeNature()
+     const auto* P=N->State.Pens.FindByPredicate([&](const auto& R){return R.Id==NatureSelection;});
+     const auto* A=N->State.Animals.FindByPredicate([&](const auto& R){return R.Id==NatureSelection;});
+     const auto* F=N->State.Points.FindByPredicate([&](const auto& R){return R.Id==NatureSelection;});
+-    double Y=360;auto Button=[&](FString Text,FString Action){Element(TEXT("button"),Text,{880,Y},{590,40},19,Action);Y+=48;};
++    double Y=422;auto Button=[&](FString Text,FString Action){Element(TEXT("button"),Text,{880,Y},{590,36},19,Action);Y+=40;};
+     FString Info;
+     if(C)
+     {
+-        Info=FString::Printf(TEXT("预计产量 %d  ·  浇水 %s  ·  施肥 %s"),N->State.Yield(*C),C->Watered?TEXT("完成"):TEXT("未做"),C->Fertilized?TEXT("完成"):TEXT("未做"));
++        const auto CropDef=HearthwardNature::Definition(TEXT("crops"),C->Definition);
++        const double Duration=Number(CropDef,TEXT("days"))*1440;
++        const double Elapsed=FMath::Clamp(N->State.Calendar-C->Planted,0.,Duration);
++        const bool Ready=N->State.Ready(*C);
++        auto* Bag=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInventoryComponent>();
++        FHearthwardInventoryState Harvest;
++        const bool Fits=Bag && Harvest.Restore(Bag->Snapshot())
++            && Harvest.Add(FName(Text(CropDef,TEXT("output"))),N->State.Yield(*C))==EHearthwardInventoryResult::Success
++            && Harvest.Add(FName(Text(CropDef,TEXT("seed"))),1)==EHearthwardInventoryResult::Success;
++        Info=FString::Printf(TEXT("%s · 成长 %.0f%% · 剩余 %.0f W分钟\n预计产量 %d · 浇水 %s · 施肥 %s\n%s"),
++            Ready?TEXT("成熟"):TEXT("生长中"),Elapsed/Duration*100,Duration-Elapsed,N->State.Yield(*C),
++            C->Watered?TEXT("完成"):TEXT("未做"),C->Fertilized?TEXT("完成"):TEXT("未做"),
++            !Ready?TEXT("成熟后手动收获，返还一粒种子"):Fits?TEXT("可收获，返还一粒种子"):TEXT("背包容量不足，作物保留待收获"));
+         Button(TEXT("浇水"),TEXT("nature.water:"));Button(TEXT("施肥"),TEXT("nature.fertilize:"));Button(TEXT("收获并取回一粒种子"),TEXT("nature.harvest:"));
+         Button(TEXT("请弟弟浇水"),TEXT("nature.brother_water:"));Button(TEXT("请弟弟施肥"),TEXT("nature.brother_fertilize:"));Button(TEXT("请弟弟收获"),TEXT("nature.brother_harvest:"));
+     }
+@@ -55,8 +68,20 @@ void UHearthwardScreenWidget::ComposeNature()
+     {
+         const FName Product(*Text(HearthwardNature::Definition(TEXT("domestic"),P->Definition),TEXT("product")));
+         const auto ProductDef=Find(TEXT("items"),Product.ToString());
+-        Info=FString::Printf(TEXT("%d级栏舍  ·  动物及预留 %d / %d  ·  饲料 %d  ·  %s %d / %d"),P->Level,N->State.Occupants(P->Id),HearthwardNature::Capacity(P->Level),P->Feed,
+-            Product.IsNone()?TEXT("普通产物"):*Text(ProductDef,TEXT("name")),P->Products,HearthwardNature::ProductCapacity);
++        Info=FString::Printf(TEXT("%d级栏舍 · 动物及预留 %d / %d · 饲料 %d"),P->Level,N->State.Occupants(P->Id),HearthwardNature::Capacity(P->Level),P->Feed);
++        if(!Product.IsNone())
++        {
++            bool Adult=false;double NextProduct=DBL_MAX;
++            for(const auto& Animal:N->State.Animals)if(Animal.Pen==P->Id && Animal.Health>0 && !Animal.Juvenile)
++            {
++                Adult=true;
++                if(Animal.FedRemaining>0)NextProduct=FMath::Min(NextProduct,1440-Animal.ProductMinutes);
++            }
++            Info+=FString::Printf(TEXT("\n%s %d / %d\n"),*Text(ProductDef,TEXT("name")),P->Products,HearthwardNature::ProductCapacity);
++            if(P->Products>=HearthwardNature::ProductCapacity)Info+=TEXT("产物已满，溢出不补发");
++            else if(NextProduct<DBL_MAX)Info+=FString::Printf(TEXT("下份产出剩余 %.0f W分钟"),NextProduct);
++            else Info+=Adult?TEXT("缺料暂停：补料后继续"):TEXT("成年个体入栏并足料后产出");
++        }
+         Button(TEXT("放入10份饲料"),TEXT("nature.deposit_feed:"));Button(TEXT("取出全部饲料"),TEXT("nature.withdraw_feed:"));
+         Button(TEXT("请弟弟放入10份饲料"),TEXT("nature.brother_deposit_feed:"));
+         if(!Product.IsNone() && P->Products>0)
+@@ -70,7 +95,17 @@ void UHearthwardScreenWidget::ComposeNature()
+     }
+     if(A)
+     {
+-        Info=FString::Printf(TEXT("生命 %.0f  ·  %s  ·  已付饲养时间 %.1f 小时"),A->Health,A->Juvenile?TEXT("幼年"):TEXT("成年"),A->FedRemaining/60);
++        Info=FString::Printf(TEXT("生命 %.0f · %s · 已付饲养时间 %.1f 小时"),A->Health,A->Juvenile?TEXT("幼年"):TEXT("成年"),A->FedRemaining/60);
++        if(A->Domestic && A->Health>0)
++        {
++            const auto* Home=N->State.Pens.FindByPredicate([&](const auto& Pen){return Pen.Id==A->Pen;});
++            const FName Product(*Text(HearthwardNature::Definition(TEXT("domestic"),A->Definition),TEXT("product")));
++            if(A->Juvenile)Info+=FString::Printf(TEXT("\n幼年成长 %.0f%% · 剩余 %.0f W分钟"),A->Growth/2880*100,2880-A->Growth);
++            else if(!Product.IsNone())Info+=FString::Printf(TEXT("\n%s进度 %.0f%% · 剩余 %.0f W分钟"),*Text(Find(TEXT("items"),Product.ToString()),TEXT("name")),A->ProductMinutes/1440*100,1440-A->ProductMinutes);
++            if(!Home)Info+=TEXT("\n未入栏：成长与产出暂停");
++            else if(!A->Juvenile && !Product.IsNone() && Home->Products>=HearthwardNature::ProductCapacity)Info+=TEXT("\n产物已满，溢出不补发");
++            else if(A->FedRemaining<=0)Info+=TEXT("\n缺料暂停：补料后继续");
++        }
+         if(A->Health<=0)Button(TEXT("取走肉与皮革"),TEXT("nature.loot:"));
+         else if(A->Domestic)
+         {Button(A->Captured?TEXT("继续牵引 / 转移到另一空栏"):TEXT("捕捉：消耗1饲料和1绳索"),A->Captured?TEXT("nature.lead:"):TEXT("nature.capture:"));Button(TEXT("请弟弟同行捕捉 / 牵引入栏"),TEXT("nature.brother_capture:"));if(A->Captured)Button(TEXT("屠宰（确认后执行）"),TEXT("ask:nature.slaughter:confirmed"));}
+@@ -87,7 +122,7 @@ void UHearthwardScreenWidget::ComposeNature()
+         {Button(TEXT("请弟弟采集并入库 4 份"),TEXT("nature.brother_collect:4"));Button(TEXT("请弟弟采集并入库 1 份"),TEXT("nature.brother_collect:1"));}
+         else Button(TEXT("领取留存物品"),TEXT("nature.claim:"));
+     }
+-    Element(TEXT("text"),Info,{880,290},{610,60},19);
++    Element(TEXT("text"),Info,{880,290},{610,120},19);
+     Element(TEXT("text"),Message.IsEmpty()?N->Feedback:Message,{180,815},{1310,70},18);
+ }
+ bool UHearthwardScreenWidget::ExecuteNatureAction(const FString& Action)

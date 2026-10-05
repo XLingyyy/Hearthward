@@ -1,0 +1,102 @@
+{
+  "ok": false,
+  "dataset": "task068-advanced-public-api-v1",
+  "backend": "vulkan",
+  "run_id": "7eb1a7d6-5fc2-4418-86e8-3add38b0f4b6",
+  "cases": [
+    {
+      "id": "ADV-N02",
+      "input": "从我指认的这处散石堆新采一份石材，并带回营地仓库",
+      "fixture_pass": false,
+      "raw_pass": false,
+      "execution_pass": false,
+      "e2e_pass": false,
+      "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py\", line 328, in run\n    yield from setup_case(case)\n  File \"G:/GameFactory/Hearthward/.agent-local/task051/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py\", line 261, in setup_case\n    yield wait(lambda: not unreal.NavigationSystemV1.is_navigation_being_built(st['world']), 20)\nTimeoutError: real runtime stage deadline\n",
+      "failure_diagnostics": {
+        "player_position": {
+          "x": -403.2312643500743,
+          "y": 2736.40500397711,
+          "z": 42.150005447133545
+        },
+        "brother_position": {
+          "x": -183.2312643500743,
+          "y": 2736.40500397711,
+          "z": 32.15000179146893
+        },
+        "camp_position": {
+          "x": 316.76873564992565,
+          "y": 2856.40500397711,
+          "z": 30.0
+        },
+        "target_position": null,
+        "player_movement": "<MovementMode.MOVE_WALKING: 1>",
+        "brother_movement": "<MovementMode.MOVE_WALKING: 1>",
+        "phase": "<HearthwardCompanionPhase.CANCELLED: 7>",
+        "execution_action": "None",
+        "block_reason": "",
+        "navigation_status": "",
+        "nature_feedback": "",
+        "nature_busy": false,
+        "resource_route_setup": {
+          "purpose": "Explicit prototype proxy camp on the actual source side; no authored-route credit",
+          "original_proxy": "<Struct 'Vector' (0x000001ADFFC9BCB0) {x: 300.000000, y: 200.000000, z: 92.150002}>",
+          "source_position": {
+            "x": -283.23126435007435,
+            "y": 2856.40500397711,
+            "z": -50
+          },
+          "ground_trace": "<Struct 'HitResult' (0x000001AF2C3B4600) {}>",
+          "ground_impact": "<Struct 'Vector' (0x000001ADFFCB19B0) {x: 316.768736, y: 2856.405004, z: -50.000000}>",
+          "ground_normal": "<Struct 'Vector' (0x000001ADFFC9BCB0) {x: 0.000000, y: 0.000000, z: 1.000000}>",
+          "ground_actor": "<Object '/Game/Hearthward/Tests/Graybox/UEDPIE_0_L_GrayboxValidation.L_GrayboxValidation:PersistentLevel.StaticMeshActor_22' (0x000001AE3A622800) Class 'StaticMeshActor'>",
+          "camp_radius_cm": 5000,
+          "original_site": "camp",
+          "proposed_site": "camp",
+          "proposed_proxy": "<Struct 'Vector' (0x000001AE0698D690) {x: 316.768736, y: 2856.405004, z: 30.000000}>",
+          "capsule_half_height": 80.0,
+          "capsule_radius": 30.0,
+          "max_step_height": 45.0
+        },
+        "plant_ground_expected": {
+          "front_query": {
+            "x": -153.2312643500743,
+            "y": 2736.40500397711,
+            "z": 42.150005447133545
+          },
+          "flat_normal_minimum": 0.966,
+          "requires_camp_and_clear_plot": true,
+          "temporary_cube_top_z": -50
+        }
+      }
+    }
+  ],
+  "method": "Real PIE SubmitPlayerText once per input; locked production model/config. Public prototype save/load and public Nature.Act/inventory setup. Explicit temporary ground/positioning is fixture setup; no normal-input or Owner credit.",
+  "task_complete": false,
+  "not_covered": [
+    "hunt",
+    "capture",
+    "camp_batch",
+    "escort",
+    "Owner voice",
+    "normal menu/input",
+    "frozen 60/20",
+    "joint performance/Shipping"
+  ],
+  "setup": {
+    "baseline": [
+      421397522,
+      1160988919,
+      1911024287,
+      1284771013
+    ],
+    "normal_input_credit": false,
+    "ground": "temporary tagged BlockAll cube; unsaved",
+    "uses_private_state_setters": false
+  },
+  "summary": {
+    "fixture_pass": 0,
+    "raw_pass": 0,
+    "execution_pass": 0,
+    "e2e_pass": 0
+  }
+}

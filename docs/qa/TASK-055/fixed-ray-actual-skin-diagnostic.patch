@@ -1,0 +1,56 @@
+--- a/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
++++ b/Source/Hearthward/Tests/ProjectileBodyProtectionTests.cpp
+@@ -189,6 +189,53 @@
+                     Intersects,Enter,Exit,*(Start+(End-Start)*Enter).ToString(),*(Start+(End-Start)*Exit).ToString()));
+             }
+         }
++#if WITH_EDITOR
++        if(Bone==TEXT("foot_l"))
++        {
++            const auto* Data=Mesh->GetSkeletalMeshAsset()->GetResourceForRendering();
++            const auto* Skin=Mesh->GetSkinWeightBuffer(0);
++            if(Data && Data->LODRenderData.IsValidIndex(0) && Skin)
++            {
++                const auto& LOD=Data->LODRenderData[0];
++                if(LOD.StaticVertexBuffers.PositionVertexBuffer.GetAllowCPUAccess() && Skin->GetNeedsCPUAccess())
++                {
++                    TArray<FMatrix44f> RefToLocal;Mesh->GetCurrentRefToLocalMatrices(RefToLocal,0);
++                    TArray<FVector3f> Positions;USkinnedMeshComponent::ComputeSkinnedPositions(Mesh,Positions,RefToLocal,LOD,*Skin);
++                    TArray<uint32> Indices;LOD.MultiSizeIndexContainer.GetIndexBuffer(Indices);
++                    TArray<FSkinWeightInfo> Weights;Skin->GetSkinWeights(Weights);
++                    double Nearest=DBL_MAX;FVector SkinImpact=FVector::ZeroVector;FString Corners;int32 Triangle=INDEX_NONE;
++                    for(const auto& Section:LOD.RenderSections)for(uint32 Face=0;Face<Section.NumTriangles && Section.BaseIndex+Face*3+2<uint32(Indices.Num());++Face)
++                    {
++                        const uint32 Offset=Section.BaseIndex+Face*3;
++                        const uint32 Vertices[]={Indices[Offset],Indices[Offset+1],Indices[Offset+2]};
++                        FVector Impact,Normal;
++                        if(!FMath::SegmentTriangleIntersection(Start,End,
++                            Mesh->GetComponentTransform().TransformPosition(FVector(Positions[Vertices[0]])),
++                            Mesh->GetComponentTransform().TransformPosition(FVector(Positions[Vertices[1]])),
++                            Mesh->GetComponentTransform().TransformPosition(FVector(Positions[Vertices[2]])),Impact,Normal))continue;
++                        const double Distance=FVector::Distance(Start,Impact);
++                        if(Distance>=Nearest)continue;
++                        Nearest=Distance;SkinImpact=Impact;Triangle=int32(Offset/3);TArray<FString> Bones;
++                        for(const uint32 Vertex:Vertices)
++                        {
++                            const auto& Weight=Weights[Vertex];uint16 Maximum=0;int32 Dominant=INDEX_NONE;
++                            for(int32 Influence=0;Influence<MAX_TOTAL_INFLUENCES;++Influence)
++                                if(Weight.InfluenceWeights[Influence]>Maximum)
++                                {Maximum=Weight.InfluenceWeights[Influence];Dominant=Weight.InfluenceBones[Influence];}
++                            const int32 GlobalBone=Section.BoneMap.IsValidIndex(Dominant)?Section.BoneMap[Dominant]:INDEX_NONE;
++                            const int32 Control=GlobalBone!=INDEX_NONE?Physics->FindControllingBodyIndex(Mesh->GetSkeletalMeshAsset(),GlobalBone):INDEX_NONE;
++                            Bones.Add(FString::Printf(TEXT("v%u:%s/%s"),Vertex,*Mesh->GetBoneName(GlobalBone).ToString(),
++                                Control!=INDEX_NONE?*Physics->SkeletalBodySetups[Control]->BoneName.ToString():TEXT("None")));
++                        }
++                        Corners=FString::Join(Bones,TEXT(","));
++                    }
++                    Test.AddInfo(FString::Printf(TEXT("SkinRay055 %s originalFootLine vertices=%d indices=%d triangle=%d distance=%.9f impact=%s dominant/control=%s"),
++                        *Character->GetName(),Positions.Num(),Indices.Num(),Triangle,Triangle!=INDEX_NONE?Nearest:-1.,*SkinImpact.ToString(),*Corners));
++                }
++                else Test.AddInfo(TEXT("SkinRay055 originalFootLine requires retained editor CPU vertex/skin data"));
++            }
++        }
++#endif
+         Enemy->SetActorLocation(Start-FVector(50,0,0));
+         FCollisionQueryParams Query(SCENE_QUERY_STAT(Projectile055ArmorBody),false,Enemy);
+         const bool Traced=World->LineTraceSingleByChannel(Hit,Start,End,ECC_Visibility,Query);

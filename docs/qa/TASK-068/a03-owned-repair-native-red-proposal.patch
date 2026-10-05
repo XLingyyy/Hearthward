@@ -1,0 +1,58 @@
+--- a/Source/Hearthward/Tests/CraftingPresentationTests.cpp
++++ b/Source/Hearthward/Tests/CraftingPresentationTests.cpp
+@@ -236,6 +236,55 @@
+     Nature->State.Crops.RemoveAll([&](const auto& C){return C.Id==IdentifiedCrop.Id;});
+     Nature->State.Pens.RemoveAll([&](const auto& P){return P.Id==IdentifiedPen.Id;});Nature->RebuildActors();
+ 
++    const auto BeforeRepairInventory=Brother->Bag->Snapshot();
++    const FString BeforeRepairCamp=CampStock->DescribeInventory();
++    FHearthwardAgentGoal Repair;
++    if(!TestTrue(TEXT("The unchanged CPU A03 model output parses"),HearthwardAgent::Parse(
++        TEXT(R"({"intent":"repair","item":"axe","quantity":1,"mode":"one_owned","source":"bag","limits":[],"unresolved":[],"npc_line":"哥，这张卡维修你背包里的石制战斧，请确认后再执行。"})"),Repair))
++        || !TestEqual(TEXT("The repair fixture starts without an axe"),Brother->Bag->GetItemCount(TEXT("axe")),0)
++        || !TestEqual(TEXT("Two actual owned axe instances are granted"),Brother->Bag->TryAdd(TEXT("axe"),2),EHearthwardInventoryResult::Success))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    Repair.Original=TEXT("修好你自己的斧头");
++    Repair.Station=Workbench->Id;
++    if(!TestEqual(TEXT("Two owned instances reach the actual repair ambiguity"),Brother->PreviewGoal(Repair),FString(TEXT("AMBIGUOUS_TARGET"))))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    Repair.Station.Invalidate();
++    const FString TwoAxes=Brother->Bag->DescribeInventory();
++    TestFalse(TEXT("An unspecified repair with two owned instances forms no executable card"),AI->SetStructuredGoal(Player,Brother,Repair));
++    TestEqual(TEXT("The public structured entry uses its actual canonical input"),AI->GetLastInput(),HearthwardAgent::GoalText(Repair));
++    TestEqual(TEXT("The public repair draft retains that canonical input, without claiming free-text replay"),AI->GetMemorySnapshot().WorkingGoal.Original,HearthwardAgent::GoalText(Repair));
++    TestEqual(TEXT("The actual repair ambiguity reason is retained"),AI->GetReasonCode(),FString(TEXT("AMBIGUOUS_TARGET")));
++    TestEqual(TEXT("Multiple owned repair targets ask for clarification"),AI->GetLastAppliedIntent(),FString(TEXT("clarify")));
++    TestEqual(TEXT("Repair ambiguity records exactly one clarification turn"),AI->GetClarificationTurns(),1);
++    TestEqual(TEXT("Unconfirmed ambiguous repair changes no equipment"),Brother->Bag->DescribeInventory(),TwoAxes);
++    TestEqual(TEXT("Unconfirmed ambiguous repair spends no camp stock"),CampStock->DescribeInventory(),BeforeRepairCamp);
++    Repair.Quantity=2;
++    TestFalse(TEXT("An invalid repair quantity cannot form a card"),AI->SetStructuredGoal(Player,Brother,Repair));
++    TestEqual(TEXT("Contract ambiguity still refuses even with two owned axes"),AI->GetLastAppliedIntent(),FString(TEXT("refuse")));
++    TestEqual(TEXT("Contract refusal records no target clarification"),AI->GetClarificationTurns(),0);
++    Repair.Quantity=1;
++    const FGuid RepairTarget=Brother->Bag->FirstInstance(TEXT("axe"));
++    if(!TestTrue(TEXT("The explicit repair target is an actual owned damaged instance"),Brother->Bag->WearInstance(RepairTarget,10)))
++    {Screen->RemoveFromParent();Cleanup();return false;}
++    Repair.EquipmentId=RepairTarget;
++    const bool ExplicitRepair=AI->SetStructuredGoal(Player,Brother,Repair);
++    TestTrue(TEXT("An explicit actual instance remains accepted among multiple owned axes"),ExplicitRepair);
++    if(ExplicitRepair)TestEqual(TEXT("Explicit repair retains the chosen instance GUID"),AI->GetCandidate().EquipmentId,RepairTarget);
++    AI->CancelPending();
++    const auto RepairAxes=Brother->Bag->Snapshot().Instances;
++    for(const auto& RepairInstance:RepairAxes)
++        if(RepairInstance.Definition==TEXT("axe") && RepairInstance.Id!=RepairTarget)Brother->Bag->RemoveInstance(RepairInstance.Id);
++    Repair.EquipmentId.Invalidate();
++    const bool UniqueRepair=AI->SetStructuredGoal(Player,Brother,Repair);
++    TestTrue(TEXT("A unique owned repair instance still binds automatically"),UniqueRepair);
++    if(UniqueRepair)TestEqual(TEXT("Automatic repair binding uses the remaining actual GUID"),AI->GetCandidate().EquipmentId,RepairTarget);
++    AI->CancelPending();Brother->Bag->RemoveInstance(RepairTarget);
++    TestFalse(TEXT("Zero owned repair instances form no card"),AI->SetStructuredGoal(Player,Brother,Repair));
++    TestEqual(TEXT("Missing ownership still refuses"),AI->GetLastAppliedIntent(),FString(TEXT("refuse")));
++    TestEqual(TEXT("Missing ownership does not ask to select an owned target"),AI->GetClarificationTurns(),0);
++    AI->CancelPending();
++    TestTrue(TEXT("The repair controls restore the original public inventory snapshot"),Brother->Bag->RestoreInventory(BeforeRepairInventory));
++
+     for(const FString& SourceRef:{FString(TEXT("camp")),FString(TEXT("bag"))})
+     {
+         const bool CampSource=SourceRef==TEXT("camp");

@@ -1,0 +1,86 @@
+--- a/docs/qa/TASK-071/verify_http_loadpoint_pie.py
++++ b/docs/qa/TASK-071/verify_http_loadpoint_pie.py
+@@ -16,7 +16,8 @@
+ out.mkdir(parents=True, exist_ok=True)
+ report = {'ok': False, 'method': 'Real Qwen HTTP, SavePoint and LoadPoint; prototype PIE positioning',
+           'pool': pool, 'checks': [], 'stage': 'fixture', 'human_menu_physical_input': 'NOTRUN',
+-          'forced_late_successful_response': 'NOTRUN', 'setup': {}}
++          'forced_late_successful_response': 'NOTRUN',
++          'npc_receipt_operation_checks': 'NOTRUN: no public Python API', 'setup': {}}
+ # runpy creates a dormant generator. No Slate tick runs inside this synchronous Python call.
+ base = runpy.run_path(str(root/'docs/qa/TASK-068/verify_model_matrix_pie.py'))
+ g = base['run'].__globals__
+@@ -42,11 +43,10 @@
+     check(name+' actual SavePoint', st['save'].save_point(True))
+     nodes = [p for p in st['save'].get_points() if key(p.save_id) not in known]
+     check(name+' single new node', len(nodes) == 1)
+-    snap = nodes[0].get_editor_property('World')
+-    return {'save_id': list(key(nodes[0].save_id)),
+-            'receipts': len(snap.get_editor_property('NPCReceipts')),
+-            'operations': len(snap.get_editor_property('NPCOperations')),
+-            'command_active': bool(snap.get_editor_property('CommandActive'))}
++    c = st['brother']
++    return {'save_id': list(key(nodes[0].save_id)), 'phase': str(c.get_phase()),
++            'requested': c.get_requested(), 'delivered': c.get_delivered(),
++            'acquired': c.get_acquired(), 'carried': c.get_carried()}
+ 
+ 
+ def load_baseline():
+@@ -72,7 +72,9 @@
+ 
+ def watch(expected, deadline, cleared):
+     while time.monotonic() < deadline:
+-        check('no extra inventory or task effect', same_world(expected, authority()))
++        actual = authority()
++        check('no extra inventory or task effect', same_world(expected, actual)
++              and actual['phase'] == expected['phase'])
+         check('no stale candidate', not st['ai'].has_candidate())
+         check('no old pending request', not st['ai'].is_busy())
+         if cleared:
+@@ -88,10 +90,11 @@
+                        'opponents_positioned_outside_camp': True}
+     baseline = authority()
+     baseline_node = next(p for p in st['save'].get_points() if key(p.save_id) == key(st['baseline']))
+-    snap = baseline_node.get_editor_property('World')
+-    check('baseline has no active command', not snap.get_editor_property('CommandActive'))
+-    check('baseline settlement is empty', not snap.get_editor_property('NPCReceipts')
+-          and not snap.get_editor_property('NPCOperations'))
++    check('baseline actual saved ID retained', key(baseline_node.save_id) == key(st['baseline']))
++    c = st['brother']
++    check('baseline public task is idle', c.get_phase() == unreal.HearthwardCompanionPhase.IDLE
++          and c.get_requested() == 0 and c.get_delivered() == 0
++          and c.get_acquired() == 0 and c.get_carried() == 0)
+ 
+     report['stage'] = 'real_candidate_across_load'
+     ai = st['ai']
+@@ -118,8 +121,9 @@
+     load_baseline()
+     yield from watch(baseline, time.monotonic()+3, True)
+     checkpoint = save_now('cancelled HTTP checkpoint')
+-    check('cancelled HTTP creates no settlement', checkpoint['receipts'] == 0
+-          and checkpoint['operations'] == 0 and not checkpoint['command_active'])
++    check('cancelled HTTP leaves inventory and public task unchanged', same_world(baseline, authority())
++          and checkpoint['phase'] == baseline['phase'] and checkpoint['requested'] == 0
++          and checkpoint['delivered'] == 0 and checkpoint['acquired'] == 0 and checkpoint['carried'] == 0)
+     report['cancelled_checkpoint'] = checkpoint
+ 
+     report['stage'] = 'fresh_actual_model_and_execution'
+@@ -138,14 +142,15 @@
+           and count(after, 'brother', 'wood') == count(baseline, 'brother', 'wood')
+           and after['player'] == baseline['player'])
+     settled = save_now('fresh completed checkpoint')
+-    check('fresh real settlement present', settled['receipts'] > 0 and settled['operations'] > 0)
++    check('fresh saved public task completed once', settled['phase'] == str(unreal.HearthwardCompanionPhase.COMPLETED)
++          and settled['requested'] == 1 and settled['delivered'] == 1)
+     report['fresh_checkpoint'] = settled
+     report['stage'] = 'old_request_timeout_horizon'
+     # Existing Generate timeout/activity timeout is 120s; no blocked sleep or synthetic callback.
+     yield from watch(after, max(time.monotonic()+3, dispatch_at+125), False)
+     final = save_now('final quiet checkpoint')
+-    check('no extra settlement after old request horizon', final['receipts'] == settled['receipts']
+-          and final['operations'] == settled['operations'])
++    check('no extra public completion after old request horizon', same_world(after, authority())
++          and all(final[k] == settled[k] for k in ('phase', 'requested', 'delivered', 'acquired', 'carried')))
+     report['final_checkpoint'] = final
+     report['observed_seconds_after_old_dispatch'] = time.monotonic()-dispatch_at
+     report['stage'] = 'done'

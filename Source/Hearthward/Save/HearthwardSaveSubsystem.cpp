@@ -253,7 +253,7 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
         S.CompanionTimer = TimerSnapshot(Companion->Action->State, S.ActiveSeconds);
         S.NPCMemory = GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemorySnapshot();
         S.AgentGoal=Companion->Command.Goal;S.Acquired=Companion->Command.Acquired;S.Carried=Companion->Command.Carried;S.CampBatchBaseline=Companion->CampBatchBaseline;
-        S.CommandId=Companion->Command.GetActive().Id;S.NPCDurability.Reset();S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
+        S.CommandId=Companion->Command.GetActive().Id;S.CommandRevision=Companion->Command.GetActive().Revision;S.NPCDurability.Reset();S.NPCSpent=Companion->Spent;S.NPCOperations=Companion->AppliedOperations.Array();
         S.NPCReceipts=Companion->Receipts;
     }
     return true;
@@ -327,6 +327,9 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
         return Restore(Upgraded,bNewProgress);
     }
+    int64 CommandRevision;
+    if(!HearthwardSave::ResolveCommandRevision(S,CommandRevision))
+    {Status=TEXT("伙伴命令回执版本不一致，原档已保留");return false;}
     APawn* Player = nullptr;
     AHearthwardCompanionFixture* Companion = nullptr;
     if (!Participants(Player, Companion)) { Status = TEXT("恢复参与者缺失"); return false; }
@@ -370,7 +373,8 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
         Companion->Command = FHearthwardCompanionCommand();
         Companion->Command.ItemId = S.Item; Companion->Command.Requested = S.Requested; Companion->Command.Delivered = S.Delivered;
         Companion->Command.bActive = S.CommandActive;
-        Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), 1};
+        Companion->Command.Active = {S.CommandId.IsValid()?S.CommandId:FGuid::NewGuid(), Storage->GetTimelineEpoch(), CommandRevision};
+        Companion->Command.Revision=CommandRevision;
         Companion->Command.Acquired=S.Acquired;Companion->Command.Carried=S.Carried;Companion->Command.Goal=S.AgentGoal;Companion->CampBatchBaseline=S.CampBatchBaseline;
         Companion->Spent=S.NPCSpent;Companion->AppliedOperations=TSet<FGuid>(S.NPCOperations);
         Companion->Receipts=S.NPCReceipts;

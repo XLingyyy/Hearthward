@@ -25,7 +25,7 @@ class HEARTHWARD_API AHearthwardCompanionFixture : public ACharacter
 public:
     virtual void FellOutOfWorld(const class UDamageType& DamageType) override;
     virtual void Landed(const FHitResult& Hit) override;
-    AHearthwardCompanionFixture();
+    AHearthwardCompanionFixture(const FObjectInitializer& ObjectInitializer);
     virtual void Tick(float DeltaSeconds) override;
     void InitializeFixture(UHearthwardInventoryComponent* Resource, AActor* CampActor);
     void InitializeCompanion(UHearthwardInventoryComponent* Resource, AActor* CampActor);

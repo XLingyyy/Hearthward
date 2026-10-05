@@ -1,0 +1,16 @@
+--- a/Source/Hearthward/AI/HearthwardAgentContract.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentContract.cpp
+@@ -393,11 +393,11 @@
+     if((G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect")) && !G.Original.IsEmpty())
+     {
+         const FString Text=Normalize(G.Original);
+-        FRegexMatcher Excluded(FRegexPattern(TEXT("(?:别|不要|不许|不准|禁止|不得|不能|不)\\s*(?:去|到|前往|进入|靠近)|(?:避开|绕开)\\s*[^，,。；;\\n]+")),Text);
++        FRegexMatcher Excluded(FRegexPattern(TEXT("(?:别|不要|不许|不准|禁止|不得|不能|勿|不)\\s*(?:去|到|往|前往|进入|靠近)|(?:避开|绕开)\\s*[^，,。；;\\n]+")),Text);
+         if(Excluded.FindNext())return TEXT("UNRESOLVED_COLLECTION_LOCATION");
+         if(G.Intent==TEXT("collect"))
+         {
+-            FRegexMatcher Acquisition(FRegexPattern(TEXT("(?:^|[，,。；;：:\\n])\\s*(?:(?:请|帮我|去|从|到|麻烦)(?:(?!不|别|禁止|无需)[^，,。；;\\n])*?)?(?:新采(?:集)?|采集|收集|采(?=\\s*(?:[0-9零一二两三四五六七八九十百千万些点]|")+ItemText(G.Item)+TEXT("|")+G.Item.ToString()+TEXT(")))")),Text);
++            FRegexMatcher Acquisition(FRegexPattern(TEXT("(?:^|[，,。；;：:\\n])\\s*(?:(?:请|帮我|帮忙|给我|去|从|到|麻烦)(?:(?!不|别|勿|禁止|无需|(?:之前|已经|曾经|已)\\s*(?:新采(?:集)?|采集|收集|采))[^，,。；;\\n])*?)?(?:新采(?:集)?|采集|收集|采)(?=\\s*(?:[0-9零一二两三四五六七八九十百千万些点]|")+ItemText(G.Item)+TEXT("|")+G.Item.ToString()+TEXT("))")),Text);
+             if(!Acquisition.FindNext())return TEXT("UNRESOLVED_COLLECTION_SOURCE");
+         }
+     }

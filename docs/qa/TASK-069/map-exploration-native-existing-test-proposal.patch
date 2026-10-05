@@ -1,0 +1,35 @@
+--- a/Source/Hearthward/Tests/MapGuidanceTests.cpp
++++ b/Source/Hearthward/Tests/MapGuidanceTests.cpp
+@@ -234,6 +234,32 @@
+     // The production minimum at the explicit 100% fixture scale is 24 design pixels.
+     FSlateFontInfo Font(Typeface,18);
+     const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
++    TSharedPtr<FJsonObject> Exploration,ProgressBar;
++    for(const auto& Value:Components)
++    {
++        const auto Row=Value->AsObject();FString Bind;
++        if(Row->TryGetStringField(TEXT("bind"),Bind) && Bind==TEXT("exploration"))Exploration=Row;
++        if(Row->GetStringField(TEXT("parent"))==TEXT("map.sidebar")
++            && Row->GetStringField(TEXT("id")).StartsWith(TEXT("dynamic:bar:")))ProgressBar=Row;
++    }
++    if(!TestTrue(TEXT("The real default-size map exposes exploration text and its progress bar"),Exploration.IsValid() && ProgressBar.IsValid()))
++    {
++        Screen->RemoveFromParent();Cleanup();return false;
++    }
++    const float ExplorationSize=Exploration->GetNumberField(TEXT("font"));
++    TestTrue(TEXT("The resolved exploration label keeps the actual 24-pixel body minimum"),ExplorationSize>=24.f);
++    FSlateFontInfo ExplorationFont(Typeface,FMath::RoundToInt(ExplorationSize*.75f));
++    ExplorationFont.LetterSpacing=Exploration->GetNumberField(TEXT("tracking"));
++    const auto ExplorationBounds=Measure->Measure(Exploration->GetStringField(TEXT("text")),ExplorationFont);
++    const auto& ExplorationRect=Exploration->GetArrayField(TEXT("rect"));
++    const double ExplorationBottom=ExplorationRect[1]->AsNumber()+ExplorationBounds.Y;
++    TestTrue(TEXT("The complete resolved exploration label fits its real width"),ExplorationBounds.X<=ExplorationRect[2]->AsNumber()+.1);
++    TestTrue(TEXT("The exploration label's measured font height fits its real rectangle"),ExplorationBounds.Y<=ExplorationRect[3]->AsNumber()+.1);
++    TestTrue(TEXT("The exploration label's measured font bounds stay above its actual progress bar"),
++        ExplorationBottom<=ProgressBar->GetArrayField(TEXT("rect"))[1]->AsNumber()+.1);
++    AddInfo(FString::Printf(TEXT("Map069 actual exploration font=%.1f tracking=%.1f measured=%.1fx%.1f bottom=%.1f barY=%.1f"),
++        ExplorationSize,Exploration->GetNumberField(TEXT("tracking")),ExplorationBounds.X,ExplorationBounds.Y,ExplorationBottom,
++        ProgressBar->GetArrayField(TEXT("rect"))[1]->AsNumber()));
+     for(const auto& Row:{Description,Objective})
+     {
+         const auto& Rect=Row->GetArrayField(TEXT("rect"));

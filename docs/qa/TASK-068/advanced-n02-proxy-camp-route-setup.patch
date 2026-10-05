@@ -1,0 +1,64 @@
+--- a/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py
++++ b/docs/qa/TASK-068/verify_advanced_model_pie_proposal.py
+@@ -117,6 +117,7 @@
+             'phase': str(c.get_phase()), 'execution_action': c.get_execution_action(),
+             'block_reason': str(c.get_editor_property('block_reason')), 'navigation_status': c.navigation.get_status(),
+             'nature_feedback': str(st['nature'].get_editor_property('feedback')), 'nature_busy': st['nature'].busy(),
++            'resource_route_setup': st.get('resource_route_setup'),
+             'plant_ground_expected': {'front_query': xyz(position+p.get_actor_forward_vector()*250),
+                                       'flat_normal_minimum': .966, 'requires_camp_and_clear_plot': True,
+                                       'temporary_cube_top_z': -50}}
+@@ -202,6 +203,7 @@
+ 
+ 
+ def setup_case(case):
++    st['resource_route_setup'] = None
+     st['game'].order_companion('wait')
+     st['game'].set_component_tick_enabled(False)
+     clear(st['bag']); clear(st['brother'].bag)
+@@ -229,6 +231,45 @@
+             require('normal public rod equip', st['brother'].bag.equip_instance(st['brother'].bag.first_instance('fishing_rod')))
+     st['target'] = guid(point['id']); identify(point['position'])
+     yield delay(.5)
++    if case['setup'] == 'loose_stones':
++        c = st['brother']; position = vector(point['position'], 600, 0, 100)
++        detail = {'purpose': 'Explicit prototype proxy camp on the actual source side; no authored-route credit',
++                  'original_proxy': str(c.camp.get_actor_location()), 'source_position': point['position']}
++        st['resource_route_setup'] = detail
++        hit = unreal.SystemLibrary.line_trace_single(st['world'], position+unreal.Vector(0,0,500), position-unreal.Vector(0,0,500),
++                unreal.TraceTypeQuery.TRACE_TYPE_QUERY1, False, [st['player'], c], unreal.DrawDebugTrace.NONE, True)
++        detail['ground_trace'] = str(hit)
++        require('proxy camp has a real blocking ground trace', hit)
++        parts = hit.to_tuple(); detail['ground_impact'] = str(parts[5]); detail['ground_normal'] = str(parts[7])
++        detail['ground_actor'] = str(parts[9])
++        require('proxy camp trace hits the actual flat tagged temporary ground', parts[0] and parts[7].z >= .966
++                and parts[9] and 'Hearthward.NatureGround' in [str(tag) for tag in parts[9].tags])
++        capsule = c.get_component_by_class(unreal.CapsuleComponent); half_height = capsule.get_scaled_capsule_half_height()
++        proxy = parts[5]+unreal.Vector(0,0,half_height)
++        snapshot = json.loads(st['camp'].describe())
++        radius = next(row['radius_m'] for row in catalog['campEconomy']['camp_tiers'] if row['tier'] == snapshot['tier'])*100
++        old = c.camp.get_actor_location()
++        old_site = next((row['id'] for row in snapshot['camps'] if math.hypot(old.x-row['position']['x'], old.y-row['position']['y']) <= radius), None)
++        new_site = next((row['id'] for row in snapshot['camps'] if math.hypot(proxy.x-row['position']['x'], proxy.y-row['position']['y']) <= radius), None)
++        detail.update(camp_radius_cm=radius, original_site=old_site, proposed_site=new_site,
++                      proposed_proxy=str(proxy), capsule_half_height=half_height,
++                      capsule_radius=capsule.get_scaled_capsule_radius(),
++                      max_step_height=c.get_component_by_class(unreal.CharacterMovementComponent).get_editor_property('max_step_height'))
++        require('prototype proxy remains inside the same actual task camp', old_site and old_site == new_site)
++        c.camp.set_actor_location(proxy, False, True)
++        yield wait(lambda: c.get_component_by_class(unreal.CharacterMovementComponent).get_editor_property('movement_mode') == unreal.MovementMode.MOVE_WALKING, 10)
++        yield wait(lambda: (route := unreal.NavigationSystemV1.find_path_to_location_synchronously(st['world'], c.get_actor_location(), proxy, c))
++                   and route.is_valid() and not route.is_partial(), 20)
++        path = unreal.NavigationSystemV1.find_path_to_location_synchronously(st['world'], c.get_actor_location(), proxy, c)
++        distance = math.hypot(c.get_actor_location().x-proxy.x, c.get_actor_location().y-proxy.y)
++        detail.update(actual_start=str(c.get_actor_location()), start_distance_cm=distance,
++                      path_valid=path.is_valid() if path else False, path_partial=path.is_partial() if path else None,
++                      path_points=[str(v) for v in path.path_points] if path else [],
++                      collision_bounds=[{'actor': a.get_name(), 'tags': [str(tag) for tag in a.tags], 'bounds': str(a.get_actor_bounds(True))}
++                        for a in unreal.GameplayStatics.get_all_actors_of_class(st['world'], unreal.Actor)
++                        if any(str(tag) in ('Ground', 'BoundaryWest', 'BoundaryNorth', 'Hearthward.NatureGround') for tag in a.tags)])
++        require('return requires an actual five-to-eight metre walk', 500 <= distance <= 800)
++        require('actual public return path is complete', path and path.is_valid() and not path.is_partial() and len(path.path_points) >= 2)
+     # StageCandidate requires exactly one matching target near the player; assert that before model submission.
+     snapshot = nature(); p = st['player'].get_actor_location()
+     if case['setup'] == 'plant_greens':

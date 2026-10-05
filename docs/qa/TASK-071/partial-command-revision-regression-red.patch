@@ -1,0 +1,193 @@
+diff --git a/Source/Hearthward/Tests/SavePartialSettlementFixture.h b/Source/Hearthward/Tests/SavePartialSettlementFixture.h
+new file mode 100644
+--- /dev/null
++++ b/Source/Hearthward/Tests/SavePartialSettlementFixture.h
+@@ -0,0 +1,30 @@
++#pragma once
++
++#include "CoreMinimal.h"
++#include "../Inventory/HearthwardStorageSubsystem.h"
++#include "Misc/Crc.h"
++#include "SavePartialSettlementFixture.generated.h"
++
++// Test observer: a real competing reservation starts only after the first committed transfer.
++UCLASS(Transient)
++class UHearthwardSavePartialSettlementFixture : public UObject
++{
++    GENERATED_BODY()
++public:
++    UPROPERTY() TObjectPtr<UHearthwardStorageSubsystem> Storage;
++    TMap<FName,int32> Materials;
++    FGuid Command,Reservation;
++    FName FirstTaken;
++    bool Triggered=false,Reserved=false;
++
++    UFUNCTION()
++    void OnTransferred(FGuid OperationId,bool ToCamp,FName ItemId,int32 Count)
++    {
++        if(Triggered || ToCamp || !Storage || Count<=0 || Materials.FindRef(ItemId)!=Count)return;
++        const FGuid Expected(Command.A,Command.B,Command.C^0xCA01^FCrc::StrCrc32(*ItemId.ToString()),Command.D);
++        if(OperationId!=Expected)return;
++        Triggered=true;FirstTaken=ItemId;
++        auto Remaining=Materials;Remaining.Remove(ItemId);
++        Reserved=!Remaining.IsEmpty() && Storage->Reserve(Reservation,Remaining);
++    }
++};
+diff --git a/Source/Hearthward/Tests/SavePartialSettlementTests.cpp b/Source/Hearthward/Tests/SavePartialSettlementTests.cpp
+new file mode 100644
+--- /dev/null
++++ b/Source/Hearthward/Tests/SavePartialSettlementTests.cpp
+@@ -0,0 +1,153 @@
++#include "SavePartialSettlementFixture.h"
++#include "../HearthwardCharacter.h"
++#include "../AI/HearthwardAgentContract.h"
++#include "../Actions/HearthwardTimedActionComponent.h"
++#include "../Building/HearthwardBuildingComponent.h"
++#include "../Building/HearthwardWorkshopService.h"
++#include "../Camp/HearthwardCampSubsystem.h"
++#include "../Companion/HearthwardCompanionFixture.h"
++#include "../Gameplay/HearthwardGameplayComponent.h"
++#include "../Inventory/HearthwardInventoryComponent.h"
++#include "../Save/HearthwardSaveSubsystem.h"
++#include "Components/BoxComponent.h"
++#include "Components/SceneComponent.h"
++#include "Engine/Engine.h"
++#include "Engine/GameInstance.h"
++#include "Engine/World.h"
++#include "GameFramework/PlayerController.h"
++#include "Kismet/GameplayStatics.h"
++#include "Misc/AutomationTest.h"
++#include "Misc/CommandLine.h"
++#include "Misc/Parse.h"
++#include "Misc/ScopeExit.h"
++#include "UObject/StrongObjectPtr.h"
++
++#if WITH_DEV_AUTOMATION_TESTS
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSavePartialMaterialRevision071Test,
++    "Hearthward.Save.ActualLoadPointPreservesPartialMaterialSettlementRevision",
++    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
++bool FSavePartialMaterialRevision071Test::RunTest(const FString&)
++{
++    FString PoolArgument;FGuid PoolId;
++    if(!TestTrue(TEXT("Partial settlement uses the runner's isolated actual save pool"),
++        FParse::Value(FCommandLine::Get(),TEXT("HearthwardSaveTestPool="),PoolArgument) && FGuid::Parse(PoolArgument,PoolId)))return false;
++    auto* Instance=NewObject<UGameInstance>(GEngine);
++    Instance->InitializeStandalone(FName(TEXT("Task071PartialSettlementFixture")),CreatePackage(TEXT("/Temp/Task071PartialSettlementFixture")));
++    auto* World=Instance->GetWorld();
++    ON_SCOPE_EXIT { Instance->Shutdown();GEngine->DestroyWorldContext(World);World->DestroyWorld(false); };
++    FActorSpawnParameters Spawn;Spawn.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
++    auto* Player=World->SpawnActor<AHearthwardCharacter>(FVector(0,0,100),FRotator::ZeroRotator,Spawn);
++    auto* Controller=World->SpawnActor<APlayerController>();World->AddController(Controller);Controller->Possess(Player);
++    auto* Building=Player->FindComponentByClass<UHearthwardBuildingComponent>();
++    auto* Gameplay=Player->FindComponentByClass<UHearthwardGameplayComponent>();
++    auto* Economy=World->GetSubsystem<UHearthwardCampSubsystem>();
++    auto* Storage=World->GetSubsystem<UHearthwardStorageSubsystem>();
++    auto* Save=World->GetSubsystem<UHearthwardSaveSubsystem>();
++    auto* Floor=World->SpawnActor<AActor>();auto* Box=NewObject<UBoxComponent>(Floor);
++    Floor->AddInstanceComponent(Box);Floor->SetRootComponent(Box);Box->SetBoxExtent(FVector(1000,1000,10));
++    Box->SetCollisionObjectType(ECC_WorldStatic);Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
++    Box->SetCollisionResponseToAllChannels(ECR_Block);Box->RegisterComponent();Floor->SetActorLocation(FVector(0,0,-10));
++    Economy->State.AddCamp(TEXT("camp"),FVector::ZeroVector);
++    if(!TestTrue(TEXT("Actual controlled player has a normal timer and a known multi-material recipe"),
++        UGameplayStatics::GetPlayerPawn(World,0)==Player && Player->FindComponentByClass<UHearthwardTimedActionComponent>()
++        && Gameplay && Gameplay->KnowsRecipe(TEXT("firepot")))
++        || !TestTrue(TEXT("Actual building geometry creates the registered workbench"),Building && Building->AddGift(TEXT("workbench"),FVector(200,0,0))))return false;
++    const auto* Facility=Economy->State.Facilities.FindByPredicate([](const auto& F){return F.Kind==TEXT("workbench");});
++    if(!TestTrue(TEXT("The actual registered workshop resolves"),Facility && Building->ResolveFacility(Facility->Id)))return false;
++    const FGuid StationId=Facility->Id;
++    const FVector AtCamp(200,-100,80);
++    auto* Camp=World->SpawnActor<AActor>();auto* CampRoot=NewObject<USceneComponent>(Camp);
++    Camp->AddInstanceComponent(CampRoot);Camp->SetRootComponent(CampRoot);CampRoot->RegisterComponent();Camp->SetActorLocation(AtCamp);
++    auto* Stock=NewObject<UHearthwardInventoryComponent>(Camp);Camp->AddInstanceComponent(Stock);Stock->RegisterComponent();
++    auto* Brother=World->SpawnActor<AHearthwardCompanionFixture>(AtCamp,FRotator::ZeroRotator,Spawn);Brother->InitializeFixture(Stock,Camp);
++    const auto Cost=HearthwardWorkshop::Materials(TEXT("craft"),TEXT("firepot"),1);
++    if(!TestTrue(TEXT("The actual recipe has multiple inputs and exactly one firepot output"),
++        Cost.Num()>1 && HearthwardWorkshop::Outputs(TEXT("firepot"),1).FindRef(TEXT("firepot"))==1)
++        || !TestEqual(TEXT("Fixture supplies the real source through inventory API"),Stock->TryAdd(TEXT("wood"),8),EHearthwardInventoryResult::Success)
++        || !TestTrue(TEXT("Actual fixture enables save coordination"),Save->EnablePrototype()))return false;
++
++    const auto SaveActualPoint=[&](FHearthwardSavePoint& Out)
++    {
++        TSet<FGuid> Previous;
++        for(const auto& Point:Save->GetPoints())Previous.Add(Point.SaveId);
++        if(!TestTrue(TEXT("The actual safe boundary writes a SavePoint"),Save->SavePoint(true)))
++        {AddInfo(Save->GetStatus());return false;}
++        const auto Points=Save->GetPoints();
++        const auto* New=Points.FindByPredicate([&](const auto& Point){return !Previous.Contains(Point.SaveId);});
++        if(!TestTrue(TEXT("The real disk-backed save pool publishes the new point"),New!=nullptr))return false;
++        Out=*New;return true;
++    };
++    for(const bool LoadBeforeResume:{false,true})
++    {
++        const FString Label=LoadBeforeResume?TEXT("LoadPoint recovery"):TEXT("Live recovery positive control");
++        if(!TestTrue(*(Label+TEXT(" starts new progress through the real save coordinator")),Save->StartNewProgress()))
++        {AddInfo(Save->GetStatus());return false;}
++        if(!TestTrue(*(Label+TEXT(" retains the saved actual facility and communicable camp position")),
++            Building->ResolveFacility(StationId) && Brother->IsAtCamp() && Brother->CanCommunicate(Player))
++            || !TestTrue(*(Label+TEXT(" supplies exactly one recipe through the real camp API")),Storage->Adjust({},Cost)))return false;
++        for(const auto& Input:Cost)
++        {
++            if(!TestEqual(*(Label+TEXT(" starts with no held recipe material")),Brother->Bag->GetItemCount(Input.Key),0)
++                || !TestEqual(*(Label+TEXT(" starts with every authorized camp input")),Storage->Available(Input.Key),Input.Value))return false;
++        }
++        FHearthwardAgentGoal Goal;Goal.Intent=TEXT("craft");Goal.Item=TEXT("firepot");Goal.Quantity=1;
++        Goal.QuantityMode=TEXT("batches");Goal.SourceRef=TEXT("camp");Goal.Station=StationId;Goal.Original=HearthwardAgent::GoalText(Goal);
++        const auto Earlier=Brother->Request(Player,Goal.Original);Brother->DiscardProposal(Earlier);
++        const auto Ticket=Brother->Request(Player,Goal.Original);
++        if(!TestTrue(*(Label+TEXT(" obtains a genuine later command revision")),Ticket.Id.IsValid() && Ticket.Revision>1)
++            || !TestEqual(*(Label+TEXT(" accepts through the production goal interface")),Brother->SubmitGoal(Player,Ticket,Goal),EHearthwardProposalResult::Accepted))return false;
++        TStrongObjectPtr<UHearthwardSavePartialSettlementFixture> Observer(NewObject<UHearthwardSavePartialSettlementFixture>(Storage));
++        Observer->Storage=Storage;Observer->Materials=Cost;Observer->Command=Ticket.Id;Observer->Reservation=FGuid::NewGuid();
++        Storage->OnTransferred.AddDynamic(Observer.Get(),&UHearthwardSavePartialSettlementFixture::OnTransferred);
++        for(int32 Step=0;Step<16 && Brother->GetPhase()!=EHearthwardCompanionPhase::WaitingAtCamp;++Step)Brother->Tick(.01f);
++        Storage->OnTransferred.RemoveDynamic(Observer.Get(),&UHearthwardSavePartialSettlementFixture::OnTransferred);
++        if(!TestTrue(*(Label+TEXT(" observes a real first committed transfer and reserves remaining material")),Observer->Triggered && Observer->Reserved)
++            || !TestTrue(*(Label+TEXT(" reaches the normal safe blocked boundary after a partial take")),Brother->GetPhase()==EHearthwardCompanionPhase::WaitingAtCamp)
++            || !TestEqual(*(Label+TEXT(" has not produced any firepot before recovery")),Storage->GetItemCount(TEXT("firepot")),0))return false;
++        FHearthwardSavePoint Partial;
++        if(!SaveActualPoint(Partial))return false;
++        const FString TakePayload=FString::Printf(TEXT("take:%s:%d:r%lld"),*Observer->FirstTaken.ToString(),Cost.FindChecked(Observer->FirstTaken),Ticket.Revision);
++        const FGuid TakeOp(Ticket.Id.A,Ticket.Id.B,Ticket.Id.C^0xCA01^FCrc::StrCrc32(*Observer->FirstTaken.ToString()),Ticket.Id.D);
++        if(!TestTrue(*(Label+TEXT(" saves the unchanged command and actual successful versioned receipt")),
++            Partial.World.CommandId==Ticket.Id && Partial.World.CommandActive && Partial.World.AgentGoal.SourceRef==TEXT("camp")
++            && Partial.World.Phase==EHearthwardCompanionPhase::WaitingAtCamp && Partial.World.NPCReceipts.Num()==1
++            && Partial.World.NPCReceipts[0].Id==TakeOp && Partial.World.NPCReceipts[0].Command==Ticket.Id && Partial.World.NPCReceipts[0].Payload==TakePayload))return false;
++        for(const auto& Input:Cost)
++        {
++            const bool AlreadyTaken=Input.Key==Observer->FirstTaken;
++            TestEqual(*(Label+TEXT(" saves exactly the still-unclaimed camp input")),Partial.World.StorageItems.Stacks.FindRef(Input.Key),AlreadyTaken?0:Input.Value);
++            TestEqual(*(Label+TEXT(" saves exactly the already-claimed held input")),Partial.World.BrotherItems.Stacks.FindRef(Input.Key),AlreadyTaken?Input.Value:0);
++        }
++        Storage->Release(Observer->Reservation);
++        if(LoadBeforeResume && !TestTrue(TEXT("Actual LoadPoint restores the partial command"),Save->LoadPoint(Partial.SaveId)))
++        {AddInfo(Save->GetStatus());return false;}
++        TestEqual(*(Label+TEXT(" keeps the same saved command identity")),Brother->GetCommandId(),Ticket.Id);
++        for(const auto& Input:Cost)
++        {
++            TestEqual(*(Label+TEXT(" restore/release does not alter camp input")),Storage->GetItemCount(Input.Key),Partial.World.StorageItems.Stacks.FindRef(Input.Key));
++            TestEqual(*(Label+TEXT(" restore/release does not alter held input")),Brother->Bag->GetItemCount(Input.Key),Partial.World.BrotherItems.Stacks.FindRef(Input.Key));
++        }
++        if(!TestTrue(*(Label+TEXT(" accepts a normal resume of the same command")),Brother->ResumeBlocked(Player)))return false;
++        for(int32 Step=0;Step<16 && Brother->GetPhase()!=EHearthwardCompanionPhase::Completed;++Step)Brother->Tick(.01f);
++        TestTrue(*(Label+TEXT(" completes through the real executor")),Brother->GetPhase()==EHearthwardCompanionPhase::Completed);
++        TestEqual(*(Label+TEXT(" delivers exactly one real product")),Storage->GetItemCount(TEXT("firepot")),1);
++        TestEqual(*(Label+TEXT(" records exactly one delivered product")),Brother->GetDelivered(),1);
++        for(const auto& Input:Cost)
++        {
++            TestEqual(*(Label+TEXT(" consumes authorized camp inputs exactly once")),Storage->GetItemCount(Input.Key),0);
++            TestEqual(*(Label+TEXT(" leaves no duplicated or unconsumed held recipe input")),Brother->Bag->GetItemCount(Input.Key),0);
++        }
++        FHearthwardSavePoint Finished;
++        if(!SaveActualPoint(Finished))return false;
++        const FString CommitPayload=FString::Printf(TEXT("craft:firepot:1:r%lld"),Ticket.Revision);
++        TestEqual(*(Label+TEXT(" records one real craft settlement with the original command revision")),
++            Finished.World.NPCReceipts.FilterByPredicate([&](const auto& R){return R.Command==Ticket.Id && R.Payload==CommitPayload;}).Num(),1);
++        TestTrue(*(Label+TEXT(" retains the original successful take receipt unchanged")),
++            Finished.World.NPCReceipts.ContainsByPredicate([&](const auto& R){return R.Id==TakeOp && R.Command==Ticket.Id && R.Payload==TakePayload;}));
++        for(int32 Step=0;Step<4;++Step)Brother->Tick(.01f);
++        TestEqual(*(Label+TEXT(" completed ticks cannot mint another product")),Storage->GetItemCount(TEXT("firepot")),1);
++        AddInfo(FString::Printf(TEXT("%s: actual revision=%lld first=%s result=%s reason=%s"),*Label,Ticket.Revision,*Observer->FirstTaken.ToString(),*UEnum::GetValueAsString(Brother->GetPhase()),*Brother->BlockReason));
++    }
++    return true;
++}
++#endif

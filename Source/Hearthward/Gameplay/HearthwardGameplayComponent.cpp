@@ -185,7 +185,7 @@ bool UHearthwardGameplayComponent::UseItem(FName Id)
     if(!Text(R,TEXT("blueprint")).IsEmpty())return LearnBlueprint(Id);
     const float Healing=Number(R,TEXT("healing"));
     auto* Survival=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
-    if(Healing>0) return Result(Survival && Survival->BeginMedicine(Id),TEXT("药品需站定使用3秒"));
+    if(Healing>0) {const bool Started=Survival && Survival->BeginMedicine(Id);return Result(Started,Survival?Survival->Status:TEXT("当前无法用药"));}
     if(Number(R,TEXT("throwDamage"))>0) return ThrowItem(Id);
     if(Food<=0) return Equip(Id);
     const bool Ate=Survival && Survival->Eat(Id);
@@ -346,9 +346,9 @@ void UHearthwardGameplayComponent::DamageOpponent(FName Target,float Damage,AAct
     auto* Combat=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();
     for(auto* T:Combat->Targets())if(T->Id==Target){Combat->HitTarget(T,Damage,TEXT("body"),false,FGuid::NewGuid(),Source);break;}
 }
-void UHearthwardGameplayComponent::CommitOpponentHealth(FName Target,float NewHealth,float PreviousHealth)
+void UHearthwardGameplayComponent::CommitOpponentHealth(FName Target,float NewHealth,float PreviousHealth,AActor* Source)
 {
-    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->DamageAnimal(Target,NewHealth))return;
+    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->DamageAnimal(Target,NewHealth,Source?Source:GetOwner()))return;
     GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Damage(Target,NewHealth);
     const float Previous=PreviousHealth>=0?PreviousHealth:Opponents.FindRef(Target);
     if(Opponents.Contains(Target)) Opponents[Target]=NewHealth;
@@ -427,8 +427,6 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     AHearthwardCompanionFixture* Companion=nullptr;
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Companion=*It;break;}
     if(!Companion)return;
-    if(GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->BrotherWorking())
-    {Companion->StopNavigation();CompanionRoutineActivity=TEXT("camp_production");return;}
     auto* Survival=Companion->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(!Survival->Alive() || Survival->Busy() || Health<=0) return;
 

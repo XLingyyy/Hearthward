@@ -1,0 +1,33 @@
+{
+  "pool": "c5eb9b97-b99d-41e9-8a1f-ce19708dc24e",
+  "output": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task069\\normal-c5eb9b97-b99d-41e9-8a1f-ce19708dc24e-d83fd129-1e59-4f1f-a7be-b4ee094ab154",
+  "method": "Uncooked Editor -game; actual Root OS input",
+  "fixture": false,
+  "owner_acceptance": "NOT_EVALUATED",
+  "shipping_credit": false,
+  "host_result": "ROOT_FINISHED",
+  "finish_marker": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\Saved\\Task069\\normal-c5eb9b97-b99d-41e9-8a1f-ce19708dc24e-d83fd129-1e59-4f1f-a7be-b4ee094ab154\\finish.json",
+  "process_id": 23232,
+  "root_observation": {
+    "normal_settings_apply_then_continue": "RED",
+    "actual_os_keys": [
+      "Escape",
+      "Tab"
+    ],
+    "observed": "HUD remains with clock ticking after both keys, no Pause or Inventory",
+    "loading_logs": [
+      "[2026.10.04-20.53.58:400][  0]LogTemp: Hearthward loading begin (restoreIgnoreInput=0)",
+      "[2026.10.04-20.54.00:455][154]LogTemp: Hearthward loading input restore (before=1, saved=0)",
+      "[2026.10.04-20.54.00:456][155]LogTemp: Hearthward loading end (2.09 s)",
+      "[2026.10.04-20.54.48:347][963]LogTemp: Hearthward loading begin (restoreIgnoreInput=1)",
+      "[2026.10.04-20.54.48:354][963]LogTemp: Hearthward loading begin (restoreIgnoreInput=1)",
+      "[2026.10.04-20.54.50:385][963]LogTemp: Hearthward loading begin (restoreIgnoreInput=1)",
+      "[2026.10.04-20.54.54:534][981]LogTemp: Hearthward loading input restore (before=0, saved=1)",
+      "[2026.10.04-20.54.54:537][982]LogTemp: Hearthward loading end (4.15 s)"
+    ],
+    "root_cause": "Loading Hide restores saved IgnoreInput=true after actual HUD GameOnly set false; cold bootstrap path saved false",
+    "shipping_credit": false,
+    "normal_quit": "NOT_RUN"
+  },
+  "stop_ok": true
+}

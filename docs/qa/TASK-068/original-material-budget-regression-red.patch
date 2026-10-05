@@ -1,0 +1,28 @@
+--- a/Source/Hearthward/Tests/NPCAgentTests.cpp
++++ b/Source/Hearthward/Tests/NPCAgentTests.cpp
+@@ -150,6 +150,25 @@
+     G.Original=HearthwardAgent::GoalText(G);TestTrue(TEXT("Structured craft GoalText preserves exact batches"),HearthwardAgent::OriginalQuantityMatches(G));
+     return true;
+ }
++IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentOriginalBudgetTest,"Hearthward.NPCAgent.OriginalMaterialBudget",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
++bool FNPCAgentOriginalBudgetTest::RunTest(const FString&)
++{
++    FHearthwardAgentGoal G;G.Intent=TEXT("craft");G.Item=TEXT("arrows");G.Quantity=3;
++    G.QuantityMode=TEXT("batches");G.SourceRef=TEXT("bag");
++    G.Original=TEXT("制作三批箭矢，最多消耗三份木材");
++    TestTrue(TEXT("Target batches are independently valid before checking its material budget"),HearthwardAgent::OriginalQuantityMatches(G));
++    TestFalse(TEXT("An explicit original material budget cannot disappear from a valid proposal"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("max:wood:4")};
++    TestFalse(TEXT("An explicit original material budget cannot be enlarged by the proposal"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Limits={TEXT("max:wood:3")};
++    TestTrue(TEXT("The exact explicit material budget remains a valid proposal"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=HearthwardAgent::GoalText(G);
++    TestTrue(TEXT("The public structured GoalText retains a material budget"),HearthwardAgent::Validate(G).IsEmpty());
++    G.Original=TEXT("制作三批箭矢");
++    TestTrue(TEXT("An applicable confirmed rule can still supply an unspoken material limit"),HearthwardAgent::Validate(G).IsEmpty());
++    return true;
++}
++
+ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNPCAgentReceiptTest,"Hearthward.NPCAgent.EffectReceiptsAndProgress",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+ bool FNPCAgentReceiptTest::RunTest(const FString&)
+ {

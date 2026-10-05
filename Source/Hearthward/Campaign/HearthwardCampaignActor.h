@@ -10,11 +10,18 @@ class HEARTHWARD_API AHearthwardCampaignActor : public ACharacter
 public:
     AHearthwardCampaignActor();
     UPROPERTY(BlueprintReadOnly) FName Identity;
+    UPROPERTY(BlueprintReadOnly) FName LaborRegion;
+    UPROPERTY(BlueprintReadOnly) FString LaborStatus;
     UPROPERTY() TObjectPtr<class UHearthwardCombatTargetComponent> Target;
     void Initialize(FName Id,bool Hostile);
+    void PresentLabor(FName Region,const FString& Status,bool Working);
     virtual void Tick(float Delta) override;
     bool WalkTo(FVector Goal,float Acceptance=100);
 private:
     float DecisionIn=0,AttackIn=0,Pause=0,OffNavigation=0;
     bool Enemy=false;
+    bool LaborPresented=false,LaborWorking=false;
+    UPROPERTY() TObjectPtr<class UWidgetComponent> LaborLabel;
+    TSharedPtr<class STextBlock> LaborText;
+    TSharedPtr<struct FCompositeFont> LaborTypeface;
 };

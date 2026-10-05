@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Combat/HearthwardCombatComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
 #include "../Interaction/HearthwardResourceInteractionComponent.h"
 #include "../Interaction/HearthwardHarvestSubsystem.h"
@@ -71,12 +72,21 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         Players[2].SetPlayRate(FMath::Clamp(Hero->GroundSpeed / 600.f, 0.4f, 1.8f));
         for (int32 Index = 0; Index < 5; ++Index)
             Layers[Index].bAlphaBoolEnabled = Hero->ActionState == Index + 1;
-        Players[6].SetPlayRate(Hero->CombatRate);
-        if (SeenAttack != Hero->AttackRevision)
+        Players[6].SetPlayRate(Hero->IsStoneAxe ? 0.f : Hero->CombatRate);
+        if (Hero->IsStoneAxe)
         {
-            Players[6].SetAccumulatedTime(0.f);
-            SeenAttack = Hero->AttackRevision;
+            const auto* Combat=Hero->GetOwningActor()->FindComponentByClass<UHearthwardCombatComponent>();
+            const float Position=float(HearthwardCombat::StoneAxeClipTime(Combat->Elapsed,Hero->Clips[6]->GetPlayLength(),Hero->StoneAxeMove));
+            // Child activation initializes from StartPosition after this PreUpdate.
+            Players[6].SetStartPosition(Position);
+            Players[6].SetAccumulatedTime(Position);
         }
+        else
+        {
+            Players[6].SetStartPosition(0.f);
+            if (SeenAttack != Hero->AttackRevision) Players[6].SetAccumulatedTime(0.f);
+        }
+        SeenAttack = Hero->AttackRevision;
     }
 };
 }
@@ -97,6 +107,7 @@ void UHearthwardHeroAnimInstance::PlayAttack()
 {
     if (Clips.IsValidIndex(6) && Clips[6])
     {
+        IsStoneAxe=false;
         AttackRemaining = Clips[6]->GetPlayLength();
         ++AttackRevision;
     }
@@ -113,7 +124,12 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     const bool Falling = Character->GetCharacterMovement()->IsFalling();
     if (bWasFalling && !Falling) LandRemaining = 0.2f;
     bWasFalling = Falling;
-    AttackRemaining = FMath::Max(0.f, AttackRemaining - DeltaSeconds);
+    if(IsStoneAxe)
+    {
+        const auto* Combat=Character->FindComponentByClass<UHearthwardCombatComponent>();
+        AttackRemaining=float(FMath::Max(0.,Combat->Duration-Combat->Elapsed));
+    }
+    else AttackRemaining = FMath::Max(0.f, AttackRemaining - DeltaSeconds);
     LandRemaining = FMath::Max(0.f, LandRemaining - DeltaSeconds);
     ActionState = 0;
     MotionState = GroundSpeed < 5.f ? TEXT("Idle") : GroundSpeed > 400.f ? TEXT("Sprint") : TEXT("Walk");
@@ -121,6 +137,7 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     {
         AttackRemaining = LandRemaining = 0.f;
         MotionState = TEXT("Idle");
+        if(IsStoneAxe) for(auto& Layer:GetProxyOnGameThread<FHeroAnimProxy>().Layers) Layer.bAlphaBoolEnabled=false;
         return;
     }
     const auto* Interaction = Character->FindComponentByClass<UHearthwardInteractionComponent>();
@@ -139,14 +156,21 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         ActionState = Character->GetVelocity().Z > 0.f ? 1 : 2;
         MotionState = ActionState == 1 ? TEXT("JumpStart") : TEXT("Fall");
     }
+    if(IsStoneAxe)
+    {
+        auto& Proxy=GetProxyOnGameThread<FHeroAnimProxy>();
+        for(int32 Index=0;Index<5;++Index) Proxy.Layers[Index].bAlphaBoolEnabled=ActionState==Index+1;
+    }
 }
 
 FAnimInstanceProxy* UHearthwardHeroAnimInstance::CreateAnimInstanceProxy() { return new FHeroAnimProxy(this); }
 void UHearthwardHeroAnimInstance::DestroyAnimInstanceProxy(FAnimInstanceProxy* Proxy) { delete Proxy; }
 
-void UHearthwardHeroAnimInstance::PlayCombat(float Duration,bool Execution)
+void UHearthwardHeroAnimInstance::PlayCombat(float Duration,bool Execution,const HearthwardCombat::FMove* InStoneAxeMove)
 {
     if(Duration<=0 || !Clips.IsValidIndex(6) || !Clips[6]) return;
-    AttackRemaining=Duration; CombatRate=Clips[6]->GetPlayLength()/Duration; IsExecution=Execution; ++AttackRevision;
+    AttackRemaining=Duration; CombatRate=Clips[6]->GetPlayLength()/Duration; IsExecution=Execution; IsStoneAxe=InStoneAxeMove!=nullptr;
+    if(InStoneAxeMove)StoneAxeMove=*InStoneAxeMove;
+    ++AttackRevision;
 }
-void UHearthwardHeroAnimInstance::StopCombat() { AttackRemaining=0; CombatRate=1; IsExecution=false; }
+void UHearthwardHeroAnimInstance::StopCombat() { AttackRemaining=0; CombatRate=1; IsExecution=false; IsStoneAxe=false; }

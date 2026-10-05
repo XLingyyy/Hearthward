@@ -1,0 +1,290 @@
+{
+  "source": "G:\\GameFactory\\Hearthward\\.agent-local\\task051\\docs\\qa\\TASK-068\\vulkan-semantic-prompt-red-10-results.json",
+  "raw_pass_count": 5,
+  "case_count": 10,
+  "method": "Read actual persisted report only; no execution or inferred model thoughts",
+  "cases": [
+    {
+      "id": "C01",
+      "input": "请新采一份木材并带回仓库",
+      "raw_pass": true,
+      "e2e_pass": true,
+      "reason": "",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "collect",
+        "item": "wood",
+        "quantity": 1,
+        "mode": "additional_acquired",
+        "source": "S1",
+        "limits": [],
+        "unresolved": [],
+        "npc_line": "哥已确认新采一份木材并带回仓库，请前往指定采集点。"
+      }
+    },
+    {
+      "id": "C08",
+      "input": "用你背包的材料制作三批箭矢，最多消耗三份木材",
+      "raw_pass": true,
+      "e2e_pass": true,
+      "reason": "",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "craft",
+        "item": "arrows",
+        "quantity": 3,
+        "mode": "batches",
+        "source": "bag",
+        "limits": [
+          "max:wood:3"
+        ],
+        "unresolved": [],
+        "npc_line": "收到，我将使用背包中的材料制作三批箭矢，且木材消耗不超过三份。"
+      }
+    },
+    {
+      "id": "C09",
+      "input": "这次授权使用营地仓库材料制作一批绳索",
+      "raw_pass": false,
+      "e2e_pass": false,
+      "reason": "",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "craft",
+        "item": "rope",
+        "quantity": 1,
+        "mode": "batches",
+        "source": "camp",
+        "limits": [
+          "max:rope:1"
+        ],
+        "unresolved": [],
+        "npc_line": "收到，已记录为使用营地仓库材料制作一批绳索。"
+      }
+    },
+    {
+      "id": "C18",
+      "input": "从我的背包接收二份药草并送入营地仓库",
+      "raw_pass": false,
+      "e2e_pass": false,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "receive",
+        "item": "herb",
+        "quantity": 2,
+        "mode": "player_to_bag",
+        "source": "player_bag",
+        "limits": [],
+        "unresolved": [],
+        "npc_line": "哥已确认接收背包中的两份药草，但需您亲自将物品交付至弟弟处，货物暂留弟弟背包，待您明确交付后才会送入营地仓库。"
+      }
+    },
+    {
+      "id": "C19",
+      "input": "从营地仓库取二份木材，留在你背包",
+      "raw_pass": true,
+      "e2e_pass": true,
+      "reason": "",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "fetch",
+        "item": "wood",
+        "quantity": 2,
+        "mode": "camp_to_bag",
+        "source": "camp",
+        "limits": [],
+        "unresolved": [],
+        "npc_line": "哥，从营地仓库取出两份木材放入我背包，已确认。"
+      }
+    },
+    {
+      "id": "C27",
+      "input": "从我背包接收一份药草到你背包",
+      "raw_pass": true,
+      "e2e_pass": true,
+      "reason": "",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "receive",
+        "item": "herb",
+        "quantity": 1,
+        "mode": "player_to_bag",
+        "source": "player_bag",
+        "limits": [],
+        "unresolved": [],
+        "npc_line": "收到指令，正在前往你背包位置接收一份药草。"
+      }
+    },
+    {
+      "id": "C40",
+      "input": "取消当前委托",
+      "raw_pass": true,
+      "e2e_pass": true,
+      "reason": "",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "cancel",
+        "item": "none",
+        "quantity": 0,
+        "mode": "none",
+        "source": "none",
+        "limits": [],
+        "unresolved": [],
+        "npc_line": "收到，取消当前委托。"
+      }
+    },
+    {
+      "id": "A01",
+      "input": "帮我采些木材",
+      "raw_pass": false,
+      "e2e_pass": true,
+      "reason": "AMBIGUOUS_TARGET",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "collect",
+        "item": "wood",
+        "quantity": 1,
+        "mode": "additional_acquired",
+        "source": "S1",
+        "limits": [],
+        "unresolved": [
+          "缺确切数量",
+          "缺明确采集地点（需指定S1或已知安全采集点）"
+        ],
+        "npc_line": "哥，采木材需指定具体地点和数量。请告诉我要去哪个安全区域（如S1），要采多少根，以及是否携带工具。"
+      }
+    },
+    {
+      "id": "U01",
+      "input": "新采负三份木材带回仓库",
+      "raw_pass": false,
+      "e2e_pass": true,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "collect",
+        "item": "wood",
+        "quantity": 3,
+        "mode": "additional_acquired",
+        "source": "S1",
+        "limits": [],
+        "unresolved": [
+          "负数数量无效，请确认具体采集数量",
+          "当前无明确采集点S1，请指定采集地点"
+        ],
+        "npc_line": "哥无法采集负数木材，且目前未指定具体采集地点，请确认要采集多少木材以及去哪里采集。"
+      }
+    },
+    {
+      "id": "U03",
+      "input": "新采三十三份木材带回仓库",
+      "raw_pass": false,
+      "e2e_pass": true,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw_key_order": [
+        "intent",
+        "item",
+        "quantity",
+        "mode",
+        "source",
+        "limits",
+        "unresolved",
+        "npc_line"
+      ],
+      "raw_proposal": {
+        "intent": "collect",
+        "item": "wood",
+        "quantity": 32,
+        "mode": "additional_acquired",
+        "source": "S1",
+        "limits": [],
+        "unresolved": [
+          "数量33份超出单次采集上限32，实际执行将采集32份；剩余1份需确认是否允许多趟采集或需重新请求。"
+        ],
+        "npc_line": "哥已确认采集32份木材，因单次上限为32，剩余1份需确认是否继续采集或等待下次机会。"
+      }
+    }
+  ]
+}

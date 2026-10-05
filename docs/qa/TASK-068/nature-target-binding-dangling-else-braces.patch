@@ -1,0 +1,20 @@
+--- a/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
++++ b/Source/Hearthward/AI/HearthwardAgentInteraction.cpp
+@@ -173,13 +173,17 @@
+                     Targets.Add(Pen.Id);
+         }
+         else if(Goal.Item==TEXT("deposit_feed"))
++        {
+             for(const auto& P:Nature->State.Pens)
+                 if(FVector::Dist2D(PendingSpeaker->GetActorLocation(),P.Position)<=300)Targets.Add(P.Id);
++        }
+         else
++        {
+             for(const auto& C:Nature->State.Crops)
+                 if(FVector::Dist2D(PendingSpeaker->GetActorLocation(),C.Position)<=300
+                     && (Goal.Item==TEXT("water")&&!C.Watered || Goal.Item==TEXT("fertilize")&&!C.Fertilized
+                         || Goal.Item==TEXT("harvest")&&Nature->State.Ready(C)))Targets.Add(C.Id);
++        }
+         if(Targets.Num()==1)Goal.Station=Targets[0];
+     }
+     if(!Memory.WorkingGoal.Original.IsEmpty())Goal.Original=Memory.WorkingGoal.Original+TEXT("\n补充：")+Input;
