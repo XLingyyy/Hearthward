@@ -1,6 +1,6 @@
 # TASK-053—074施工交接
 
-2026-10-03，Owner／Reviewer XLingyyy 已批准整批设计并授权施工，无Issue。集成分支 codex/TASK-053-traversal，目录 G:/GameFactory/Hearthward/.agent-local/task051，HEAD基线67fb0784ca8c6d488173e587e7f95c4be0d9092a。本轮受测对象为该基线上的施工快照，不能把基线SHA当作包含这些改动的提交。Owner随后明确授权当前批次提交并推送到origin/codex/TASK-053-traversal；实施提交SHA由后续交接记录绑定。合并和发布仍未授权。
+2026-10-03，Owner／Reviewer XLingyyy 已批准整批设计并授权施工，无Issue。集成分支 codex/TASK-053-traversal，目录 G:/GameFactory/Hearthward/.agent-local/task051，HEAD基线67fb0784ca8c6d488173e587e7f95c4be0d9092a。本轮受测对象为该基线上的施工快照，不能把基线SHA当作包含这些改动的提交。Owner随后明确授权当前批次提交并推送到origin/codex/TASK-053-traversal；实施源码与资产提交SHA为aa174675e9bf2f3de797fde7cb6795c1152a9d1b。合并和发布仍未授权。
 
 ## 当前接续状态（2026-10-05）
 
@@ -84,3 +84,5 @@ Editor Development构建由 docs/qa/TASK-053/run_build.py 调用UEClient公开AP
 本轮归档后scripts/validate_repo.py通过：75份task、0错误，仅元数据信用；git diff --check Source/Config/Resources/scripts/docs/README通过，仅CRLF归一化提示。Shipping工程与保存Continue均有独立质量审阅，原始失败仍保留。Owner已随后授权本批提交推送，正在按该授权归档；未合并、发布或Owner代验。
 
 提交前范围核对：1048个文件全部属于053—074联合允许路径；44个lockable资产的现有LFS锁全部由XLingyyy持有。源码、脚本和维护文档的暂存空白检查通过；原始sources Markdown双空格换行、归档unified patch空上下文行、原始诊断txt及一份RemoteControl.ini末空行按证据格式保留，不把这些归档格式诊断改写成源码错误。构建、存档、模型二进制和本机密钥不在暂存范围。任务继续保持原验收状态。
+
+实施快照归档：aa174675e9bf2f3de797fde7cb6795c1152a9d1b，1048文件，提交主题feat(TASK-053-074): integrate approved gameplay and validation batch。该提交封装当前生产源码/资产及批准设计和原始证据；本次后续提交仅绑定文档，不修改Source/Content/Config/Resources。Game Development与Shipping打包、正常new及Shipping独立保存继续对应此生产快照；此前各Native/PIE结果仍绑定各原报告受测范围，不外推整批同SHA全套验收。已有正式main基线保持67fb0784；推送目标origin/codex/TASK-053-traversal。Owner/Reviewer XLingyyy、无Issue；保留原LFS锁，任务不代标Done。

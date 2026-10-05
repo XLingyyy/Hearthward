@@ -19,3 +19,5 @@ writer结束并由Root exactPID核实退出后，reader另池6b63a78e-b551-4e8f-
 当前没有CurrentSaveId公共getter；所获有限证据是磁盘中唯一最新手动节点、正常Continue的实际选点调用路径以及成功Restore与同进度ID。完整库存／装备GUID／跨世界权威逐项核对、物理键鼠操作和性能不由本项替代，inventory_verification=NOT_RUN。TASK-072/074保持Active。
 
 两池实际HTTP与results的独立质量复核通过，见[独立保存继续审阅](shipping-save-roundtrip-independent-review.md)。当前最终仓库元数据检查75份task、0错误；git diff --check通过（仅既有CRLF归一化提示）。这些静态结果不增加玩法或性能信用。
+
+本轮实际Game/Shipping生产源码与资产现归档为tested_commit=aa174675e9bf2f3de797fde7cb6795c1152a9d1b；运行当时为此提交的本地施工快照。提交后的证据绑定只改文档，不改已打包的Source/Content/Config/Resources，也不补计未运行的模型/帧/完整库存项目。

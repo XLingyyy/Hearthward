@@ -4,7 +4,7 @@ UE 5.8.2 单人第三人称生存冒险项目。截至2026-10-03，核对主干�
 
 [TASK-052](docs/tasks/TASK-052.md)对应原稿054，已在main复用043时间规则，统一生产／生态／战役推进、刷新、旅行及schema9回档。新档第1日20:00开始；靠近真实床可睡8小时，已建篝火设施页可等待1／4／8小时，加载和暂停冻结时间；旧档W和兼容备份保留，方案见[052 PLAN](docs/planning/TASK-052/PLAN.md)。固定录音继续暂缓；动物归档保留原有051标签。
 
-[TASK-053—074整批设计](docs/planning/TASK-053-074/REVIEW.md)已于2026-10-03获Owner批准，22项对应原稿055—076，按批准依赖开始施工。053—064、066—072及074已激活工程施工或定向调查；065／073的真人验收尚未执行。根集成目录为.agent-local/task051、分支codex/TASK-053-traversal，子Agent在独立目录交付精确增量；任务状态见各单JSON。固定录音暂缓，Owner／Reviewer均为XLingyyy，无Issue；本批已获Owner授权提交并推送至该施工分支，提交记录见交接。当前施工证据见[053交接](docs/handoffs/TASK-053.md)，依赖见[DEPENDENCIES](docs/planning/TASK-053-074/DEPENDENCIES.md)，设计核查保留于[REPORT](docs/qa/TASK-053-074/REPORT.md)。
+[TASK-053—074整批设计](docs/planning/TASK-053-074/REVIEW.md)已于2026-10-03获Owner批准，22项对应原稿055—076，按批准依赖开始施工。053—064、066—072及074已激活工程施工或定向调查；065／073的真人验收尚未执行。根集成目录为.agent-local/task051、分支codex/TASK-053-traversal，子Agent在独立目录交付精确增量；任务状态见各单JSON。固定录音暂缓，Owner／Reviewer均为XLingyyy，无Issue；本批实施提交为`aa174675`，已获Owner授权推送至该施工分支，提交记录见交接。当前施工证据见[053交接](docs/handoffs/TASK-053.md)，依赖见[DEPENDENCIES](docs/planning/TASK-053-074/DEPENDENCIES.md)，设计核查保留于[REPORT](docs/qa/TASK-053-074/REPORT.md)。
 
 2026-10-05施工接续：055石斧重击的时序与旧扇形误伤已真实Native RED→GREEN，重击三例及轻击回归均0错误0警告；唯一自然作物目标绑定也已RED→GREEN。068真实模型补充浇水、新采散石返营和普通钓鱼均分别取得实际成功；散石仅修订明确隔离的QA营地代理位置，生产导航不改。071首次交流Slate崩溃修复后的公共卡片/菜单跨Load96/96通过，新增真实OS键鼠读档确认/取消路线通过；069交流深底和真实中文IME组合、候选、Enter/Escape优先级局部验证通过。核心/成熟批次/图箱Pending/生态/双营地独立往返、Save13/13与真实HTTP跨读档保留既有定向证据。
 
