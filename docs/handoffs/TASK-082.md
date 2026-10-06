@@ -8,7 +8,7 @@
 
 储物箱按新版背包换深灰三栏、分类、物品格、详情与必要操作；删除归火标志、宣传语、暖火背景和皮革边框。制作、记忆与约定、营地、田野与牧场同步更新；对话去宣传并居中，维修入口仍转新版装备，旧维修配置也清理。保留生产存取API、容量/距离/时间线、配方成本、取消条件、物品属性与真实实例耐久。修复记忆硬断行和底部溢出、大字体页背景裁剪及田野缺布局字段。
 
-Editor与完整Shipping Build/Cook/Stage/Archive、77/77真实UI存取、4/4仓储／地图原生、18/18配置和33/33工具通过。原生2项保留初始化警告。隔离GUID档池、受控库存与访问设施，真实Slate点击和失败路径；不能替代完整真人体验。旧地图与三角尖端保持，本次未重跑旧98/37项流程。证据见[简约UI报告](../qa/TASK-078/SIMPLE-UI-REPORT.md)。
+Editor与完整Shipping Build/Cook/Stage/Archive、77/77真实UI存取、4/4仓储／地图原生、18/18配置和33/33工具通过。原生2项保留初始化警告。隔离GUID档池、受控库存与访问设施，真实Slate点击和失败路径；不能替代完整真人体验。旧地图与三角尖端保持，本次未重跑旧98/37项流程。证据见[简约UI报告](../qa/TASK-082/SIMPLE-UI-REPORT.md)。
 
 新包 `E:/AiAgent/XLingGame/Hearthward-Playable-20261006-SimpleUI/Windows`，根目录正式／简约UI／地图／矩形地图入口统一指向此包。Shipping SHA256 `ac76e39c914bf950f3af83f31f26c76ceea1b4e4d83f1de9d9fbc7536439f18f`。独立启动6次窗口响应采样及ZIP全部152成员CRC通过，源／资源绑定见报告，旧包和原QA保留。
 
@@ -16,7 +16,7 @@ README与任务单已同步用户新授权。基线无TASK-078批准快照，严
 
 同步前已fetch：`origin/main`推进至`d833c420ec849553fafc639e31ea392418a0a387`，另有伙伴、对话及任务指引更新；main的TASK-078与此分支地图任务同号但不同来源。当前成果独立推送到`codex/map-1000m-heading`，保留两方源码与证据。共享UI、README和任务文档存在交叉，后续main集成需处理冲突、消除编号歧义并重新构建验证。本次同步不把未整合版本的PASS当作集成PASS。
 
-只读上传审计检查全部待提交文件与QA：允许范围内，无玩家存档、令牌／密钥、个人配置、模型权重、构建二进制或发行ZIP；地图及截图按既有Git LFS规则上传，报告引用的7份构建／工具日志显式纳入。4.9GB可玩包继续位于上层项目根目录。提交SHA与最终远端核验见[同步记录](../qa/TASK-078/GITHUB-SYNC.md)。以下历史段落的未提交状态只描述对应阶段。
+只读上传审计检查全部待提交文件与QA：允许范围内，无玩家存档、令牌／密钥、个人配置、模型权重、构建二进制或发行ZIP；地图及截图按既有Git LFS规则上传，报告引用的7份构建／工具日志显式纳入。4.9GB可玩包继续位于上层项目根目录。提交SHA与最终远端核验见[同步记录](../qa/TASK-082/GITHUB-SYNC.md)。以下历史段落的未提交状态只描述对应阶段。
 
 ## 火焰尖端与此前地图版本历史
 
@@ -26,7 +26,7 @@ README与任务单已同步用户新授权。基线无TASK-078批准快照，严
 
 2026-10-06，Owner：XLingyyy，分支 `codex/map-1000m-heading`，基线 `ca21120cef4421d039c44248a0cfa5043c248feb`。接续用户要求，把玩家与弟弟指示朝向的尖端稍微加粗为小三角形；任务保持Active，成果未提交或推送，未代填人工验收。
 
-仅修改Paint.cpp：方向端增加宽11、长8设计单位三角形，绘在原火焰纹理下，共用实际Actor锚点及旋转，保留红蓝颜色、亮芯、纹理和闪动。没有修改位图、地图地理、输入、地点分类、传送条件或存档。完整效果、4倍真实截图细节与当前Source／DLL／程序绑定见[火焰尖端报告](../qa/TASK-078/FLAME-TIPS-REPORT.md)。
+仅修改Paint.cpp：方向端增加宽11、长8设计单位三角形，绘在原火焰纹理下，共用实际Actor锚点及旋转，保留红蓝颜色、亮芯、纹理和闪动。没有修改位图、地图地理、输入、地点分类、传送条件或存档。完整效果、4倍真实截图细节与当前Source／DLL／程序绑定见[火焰尖端报告](../qa/TASK-082/FLAME-TIPS-REPORT.md)。
 
 当前Editor与Shipping构建、4/4原生、98/98地图、37/37真实传送、44/44图像／地理、33/33工具检查通过。五组双方朝向、真实地图锚点、普通／超宽屏及拖动缩放已核验，原生各保留1项LocalPlayer初始化警告。没有新增镜像实现测试；使用既有回归和实际图像检查。
 
@@ -50,7 +50,7 @@ README、任务单已同步。基线无TASK-078批准快照，基线范围校验
 
 Editor与Shipping构建、4/4原生、98/98地图、37/37真实传送、44/44图像与地理、33/33工具测试通过。新游戏实际护符／跟随／后巷交互、公开E激活渡口、暂停地图发起渡口↔营地往返、加载冻结时间、独立弟弟不移动及故意无效地面导致传送取消已核实。原生各保留1项LocalPlayer初始化警告。初始12条原生失败和中间5项传送失败保留，最终PASS绑定新Source/DLL，不用旧PASS覆盖失败。
 
-当前证据与复验入口见[地图与传送修复报告](../qa/TASK-078/TRAVEL-FIX-REPORT.md)。运行夹具采用独立GUID档池，播种发现记录和重定位演员以触发交互；不是玩家存档、物理鼠标或完整真人通关验收。
+当前证据与复验入口见[地图与传送修复报告](../qa/TASK-082/TRAVEL-FIX-REPORT.md)。运行夹具采用独立GUID档池，播种发现记录和重定位演员以触发交互；不是玩家存档、物理鼠标或完整真人通关验收。
 
 最新版目录 `E:/AiAgent/XLingGame/Hearthward-Playable-20261006-TravelFix/Windows`，根目录三个启动脚本均已更新，完整ZIP为 `Hearthward-Playable-20261006-TravelFix.zip`。Shipping SHA256 `305c9381e5ca6be082cbc5cc45df10f96cb22811005f7e5202bb4c39511383ae`；Editor DLL SHA256 `ae5ee19b07c20da8c6bd439468cc2eb3d0ee541235c2585fe742e862bd802ad5`。独立Shipping启动6次窗口采样和ZIP全部152成员CRC通过。旧FullMap／RectMap／Map1000／Latest目录和ZIP保留。
 
@@ -70,7 +70,7 @@ M、菜单、任务定位及地点传送共用新版地图。灰暗地形、灰�
 
 整幅原始4.032公里图集保持原数据；范围约束到真实地形边界内，开场矩形中心X=516米。本次重新采集矩形内31×21地面碰撞点，全部命中，P99高度误差0.0266米；当前137项建筑组件位置及包围盒与图集输入一致。原图集SHA256未变，未修改Content或虚构边界外地形。
 
-Editor与Win64 Shipping构建、98/98地图运行检查、44/44图像与地理校验、3/3原生回归及33/33工具测试通过。六组图像探针覆盖普通屏、超宽屏、缩放平移与最小倍率，四周屏幕边缘也由实际地形覆盖。原生三项各有隔离LocalPlayer缺少PlayerInput的初始化警告，保留实际警告。最终Shipping包独立启动，6次窗口响应采样均通过。当前证据、截图、源码及程序指纹见 [全屏地图报告](../qa/TASK-078/FULLSCREEN-REPORT.md)。这不是完整真人通关、物理鼠标输入或第二机器验收。
+Editor与Win64 Shipping构建、98/98地图运行检查、44/44图像与地理校验、3/3原生回归及33/33工具测试通过。六组图像探针覆盖普通屏、超宽屏、缩放平移与最小倍率，四周屏幕边缘也由实际地形覆盖。原生三项各有隔离LocalPlayer缺少PlayerInput的初始化警告，保留实际警告。最终Shipping包独立启动，6次窗口响应采样均通过。当前证据、截图、源码及程序指纹见 [全屏地图报告](../qa/TASK-082/FULLSCREEN-REPORT.md)。这不是完整真人通关、物理鼠标输入或第二机器验收。
 
 最新可玩包为 `E:/AiAgent/XLingGame/Hearthward-Playable-20261006-FullMap/Windows`，根目录三个启动脚本指向此包，完整ZIP为 `Hearthward-Playable-20261006-FullMap.zip`。程序SHA256为 `75cd17bf12327f7302db2a310c7afcd0b07d14386c62d4d113e625ce323c73e1`。旧圆形、带留边矩形版本的目录、ZIP和报告保留；下方旧记录仅证明此前圆形版本，不代表当前Source/DLL重新通过。
 
@@ -86,7 +86,7 @@ Editor与Win64 Shipping构建、98/98地图运行检查、44/44图像与地理�
 
 主要代码位于 `Source/Hearthward/UI/HearthwardScreenMap.cpp`、`HearthwardScreenPaint.cpp`、`HearthwardScreenWorldMap.cpp` 与相关入口。配置为 `Resources/UI/interface.json` 和 `layout.json`，底图为 `Resources/UI/Art/map-local-terrain.png`。扩展底图制作脚本 `scripts/ui/cartograph_expanded_map.py` 读取真实观察数据与原高度源，使用4.032公里图集；UV覆盖2400×2400整图。火焰原图尖点朝下，实际旋转为yaw−90°，定位尖点始终对应真实Actor坐标。
 
-当前 Editor Development、Win64 Shipping 构建通过；地图原生2/2通过（隔离输入夹具警告各1）；最终独立地图运行74/74、图像校验17/17和工具33/33通过。最终Shipping归档程序已独立启动，6次窗口响应检查通过。完整报告、资源／Source／DLL／程序指纹与截图见 [TASK-078报告](../qa/TASK-078/REPORT.md)。这些定向检查不代表全游戏真人通关或第二机器验收。
+当前 Editor Development、Win64 Shipping 构建通过；地图原生2/2通过（隔离输入夹具警告各1）；最终独立地图运行74/74、图像校验17/17和工具33/33通过。最终Shipping归档程序已独立启动，6次窗口响应检查通过。完整报告、资源／Source／DLL／程序指纹与截图见 [TASK-078报告](../qa/TASK-082/REPORT.md)。这些定向检查不代表全游戏真人通关或第二机器验收。
 
 本地可玩包已更新至 `E:/AiAgent/XLingGame/Hearthward-Playable-20261006-Map1000/Windows`，便携ZIP在上层根目录；`启动地图更新版.cmd` 与 `启动正式游玩版.cmd` 指向此包。最后的C++修订已重建Shipping程序并替换归档，烘焙资产未改变；程序SHA256为 `f5b0fb6de761e4fbcbb9076cd9e2e28ab0ec898d559ac7de06b1960517ea628e`。旧 Latest 包保留。没有上传商店或GitHub Release。
 
