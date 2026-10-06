@@ -53,7 +53,7 @@ public:
 #if !UE_BUILD_SHIPPING
     bool IsActionHighlighted(const FString& Action) const;
     FString DescribeHUDPreview() const;
-    bool CaptureMapFogPair(const FString& Name,int32 Width,int32 Height,double TimeOffset=0);
+    bool CaptureMapVisibilityPair(const FString& Name,int32 Width,int32 Height);
 #endif
     void InitializeScreen(class AHearthwardHUD* HUD);
     void ApplyInputMode();
@@ -84,6 +84,9 @@ private:
     void LoadElements(const TArray<TSharedPtr<FJsonValue>>& Rows);
     void ComposeInventory(bool Storage);
     void ComposeInventoryScreen();
+    void ComposeStorage();
+    bool UsesSimpleUI() const;
+    void ApplySimpleUIStyle();
     FString InventoryCategory(const TSharedPtr<FJsonObject>& Item) const;
     int32 InventoryTarget(FVector2D Point) const;
     FReply InventoryMouseDown(const FGeometry& Geometry,const FPointerEvent& Event);
@@ -108,12 +111,20 @@ private:
     void ComposeMap();
     void ComposeWorldMap();
     bool WorldMap=false;
+    FVector2D MapCenter=FVector2D(92000,53500);
+    void ResetMapView();
+    void FocusMapLocation(FName Location);
     FVector MapOrigin() const;
-    double MapRadius() const;
-    double MapBoundaryFraction(double Angle,double* Feather=nullptr) const;
+    FVector2D MapWorldSize() const;
+    FSlateRect MapViewRect() const;
+    double MapScale() const;
+    float MapMinimumZoom() const;
+    void ClampMapPan();
+    void CenterMapRegion(FVector World);
+    bool MapCursorInside(FVector2D Point) const;
+    FVector MapWorldAt(FVector2D Point) const;
     FVector2D MapPoint(FVector World) const;
     bool MapVisible(FVector World) const;
-    double MapFogTime() const;
     void UpdateMapMarkers(bool ApplyComponent=true);
     void ComposeJournal();
     int32 JournalPageSize() const;
@@ -166,8 +177,7 @@ private:
     TMap<FName,FHUDFeedbackNotice> HUDFeedbackNotices;
 #if !UE_BUILD_SHIPPING
     bool HUDPreviewStarted=false,MapPreviewOpened=false;
-    bool MapFogProbe=false;
-    double MapFogCaptureTime=-1;
+    bool MapTerrainProbe=false;
 #endif
     void ComposeCompatibility();
     void ComposeUpdateNotice();
@@ -219,6 +229,9 @@ private:
     float RefreshDelay=0,MapZoom=1;
     double MessageUntil=0;
     FVector2D MapPan=FVector2D::ZeroVector;
+    FVector2D MapViewDesignSize=FVector2D(1672,941);
+    bool MapDragging=false;
+    FVector2D MapDragStart,MapDragPan;
     bool OwnPause=false,StorageToCamp=true;
     bool MenuPause=true;
     UPROPERTY() TObjectPtr<class USoundMix> SettingsSoundMix;

@@ -1,4 +1,4 @@
-"""Build, observe or verify the 500 m map in a disposable project-local game."""
+"""Build, observe or verify the uncovered 3000 by 2000 m rectangular map in a disposable project-local game."""
 import argparse
 import hashlib
 import json
@@ -25,9 +25,10 @@ def main():
     group.add_argument('--build', action='store_true')
     group.add_argument('--observe', action='store_true')
     group.add_argument('--verify', action='store_true')
+    group.add_argument('--travel', action='store_true', help='Verify real place guidance and activated-station travel in a disposable new game')
     args = parser.parse_args()
-    mode = 'build' if args.build else 'observe' if args.observe else 'verify' if args.verify else 'preview'
-    out = GAME / '.agent-local/qa/TASK-076/local-map-water' / (mode + '_' + uuid.uuid4().hex[:8])
+    mode = 'build' if args.build else 'observe' if args.observe else 'verify' if args.verify else 'travel' if args.travel else 'preview'
+    out = GAME / '.agent-local/qa/TASK-078' / ('rect_' + mode + '_' + uuid.uuid4().hex[:8])
     out.mkdir(parents=True)
     client = UEClient(project_path=GAME / 'Hearthward.uproject', ue_root=ue_root(), port=30161, runtime_port=30162)
     if args.build:
@@ -40,7 +41,7 @@ def main():
     sources = [p for p in (GAME / 'Source').rglob('*') if p.is_file()]
     sources += [GAME / name for name in ('Resources/Data/gameplay.json', 'Resources/UI/interface.json',
         'Resources/UI/layout.json', 'Resources/UI/Art/map-local-terrain.png', 'Resources/UI/Art/map-flames.png',
-        'Resources/UI/Art/map-surface-materials.png', 'Resources/UI/Art/map-dark-fog.png',
+        'Resources/UI/Art/map-surface-materials.png',
         'scripts/ui/map_relief.py', 'scripts/ui/draw_local_map.py',
         'scripts/ui/realistic_local_map.py', 'scripts/ui/launch_map_test.py', 'Binaries/Win64/UnrealEditor-Hearthward.dll')]
     (out / 'source-manifest.json').write_text(json.dumps(dict(
@@ -50,8 +51,9 @@ def main():
     extra = ['-game', '-NewConsole', '-CoreLimit=4', '-windowed', '-ResX=1600', '-ResY=1000', '-WinX=80', '-WinY=80',
         '-HearthwardHUDPreview', '-UserDir=' + str(profile), '-HearthwardSaveTestPool=' + str(uuid.uuid4()),
         '-abslog=' + str(out / 'runtime.log')]
-    if args.observe or args.verify:
-        extra += ['-RenderOffscreen', '-unattended', '-nosound', '-HearthwardMapVerify=' + str(out / 'report.json')]
+    if args.observe or args.verify or args.travel:
+        verify_flag='-HearthwardMapTravelVerify=' if args.travel else '-HearthwardMapVerify='
+        extra += ['-RenderOffscreen', '-unattended', '-nosound', verify_flag + str(out / 'report.json')]
         if args.observe:
             extra += ['-HearthwardMapObserve']
     else:
@@ -61,8 +63,8 @@ def main():
     print(json.dumps(dict(launch_ok=launch['ok'], evidence=str(out))), flush=True)
     if not launch['ok']:
         raise SystemExit(1)
-    if not (args.observe or args.verify):
-        print('地图测试版已启动，加载新游戏后自动打开地图。M／Esc 返回，WASD 移动人物，X 弟弟跟随，Z 等待；M 再次查看。滚轮缩放，方向键平移。每次使用独立测试档。', flush=True)
+    if not (args.observe or args.verify or args.travel):
+        print('地图测试版已启动，加载新游戏后自动打开地图。M／Esc 返回，WASD 移动人物，X 弟弟跟随，Z 等待；M 再次查看。按住左键拖动，滚轮缩放，方向键平移。每次使用独立测试档。', flush=True)
         return
     try:
         deadline = time.monotonic() + 300

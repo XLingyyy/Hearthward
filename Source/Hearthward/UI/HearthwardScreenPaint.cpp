@@ -20,16 +20,6 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     auto Box=[&](FVector2D P,FVector2D S,FLinearColor C,int32 L){ FSlateDrawElement::MakeBox(Out,L,Geometry(P,S),White,ESlateDrawEffect::None,C); };
     auto Frame=[&](FVector2D P,FVector2D S,FLinearColor C,int32 L)
     { Box(P,FVector2D(S.X,1),C,L); Box(P+FVector2D(0,S.Y-1),FVector2D(S.X,1),C,L); Box(P,FVector2D(1,S.Y),C,L); Box(P+FVector2D(S.X-1,0),FVector2D(1,S.Y),C,L); };
-    const FSlateBrush* FogArt=Page==TEXT("map")?Brush(TEXT("mapDarkFog")):nullptr;
-    FVector2f FogUVSpan(.88f,.88f);
-    if(FogArt)
-    {
-        const float ImageAspect=FogArt->ImageSize.X/FogArt->ImageSize.Y,ViewAspect=G.GetLocalSize().X/G.GetLocalSize().Y;
-        if(ViewAspect>ImageAspect)FogUVSpan.Y*=ImageAspect/ViewAspect;
-        else FogUVSpan.X*=ViewAspect/ImageAspect;
-    }
-    const double FogTime=MapFogTime();
-    const FVector2f FogUVStart=(FVector2f(1,1)-FogUVSpan)*.5f+FVector2f(.025f*FMath::Sin(FogTime*.025),.022f*FMath::Cos(FogTime*.019));
     if(Page==TEXT("pause"))
     {
         // Blur the live scene over the entire viewport, including aspect-ratio margins.
@@ -48,16 +38,9 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
         FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(G.GetLocalSize(),FSlateLayoutTransform()),White,ESlateDrawEffect::None,FLinearColor(.008f,.011f,.014f,.30f));
         ++Layer;
     }
-    else if(Page==TEXT("map"))
-    {
-        // The opaque smoky backdrop also covers viewport margins and conceals the live world.
-        FSlateBrush Cover=FogArt?*FogArt:*White;
-        if(FogArt)Cover.SetUVRegion(FBox2f(FogUVStart,FogUVStart+FogUVSpan));
-        FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(G.GetLocalSize(),FSlateLayoutTransform()),&Cover,ESlateDrawEffect::None,FogArt?FLinearColor::White:FLinearColor::Black);
-    }
     else if(Page==TEXT("title") || Page==TEXT("settings") || Page==TEXT("save") || Page==TEXT("inventory") || Page==TEXT("equipment") || Page==TEXT("skills") || Page==TEXT("journal"))
         FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(G.GetLocalSize(),FSlateLayoutTransform()),White,ESlateDrawEffect::None,FLinearColor::Black);
-    else if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue"))
+    else if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue") && Page!=TEXT("map"))
         Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
     if(Page==TEXT("dialogue"))
         Box(FVector2D::ZeroVector,DesignSize,Color(TEXT("panel")),Layer);
@@ -87,7 +70,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
         const float Opacity=E.Opacity();
         if(E.Hidden || E.TextScrollClipped || Opacity<=0) continue;
         const bool MapSidebar=ReadableLayout() && Page==TEXT("map") && E.Component==TEXT("map.sidebar");
-        const bool TextClip=MapSidebar || (ReadableLayout() && Page!=TEXT("map") && !(E.Type==TEXT("image") && E.Size.X>=1600));
+        const bool TextClip=MapSidebar || (ReadableLayout() && Page!=TEXT("map") && E.LayoutId!=TEXT("simple.backdrop") && E.LayoutId!=TEXT("simple.readable.surface") && !(E.Type==TEXT("image") && E.Size.X>=1600));
         if(TextClip)
         {
             const float Bottom=Page==TEXT("dialogue") || Page==TEXT("memory")?770:835;
@@ -103,15 +86,16 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
 
         if(E.MapClipped)
         {
-            // Map zoom may extend into aspect-ratio margins. Clip at the actual
-            // viewport so those margins do not cut a straight edge through terrain.
-            if(Page==TEXT("map") && !WorldMap)Out.PushClip(FSlateClippingZone(G));
-            else
-            {
-                const FVector2D A=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),WorldMap?FVector2D(407,95):FVector2D::ZeroVector)*Scale);
-                const FVector2D B=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),WorldMap?FVector2D(1517,855):DesignSize)*Scale);
-                Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
-            }
+            const auto View=MapViewRect();
+            const FVector2D Half=MapWorldSize()*.5;
+            const FVector2D AreaMin=MapPoint(MapOrigin()-FVector(Half.X,Half.Y,0));
+            const FVector2D AreaMax=MapPoint(MapOrigin()+FVector(Half.X,Half.Y,0));
+            const FVector2D Min(FMath::Max(double(View.Left),AreaMin.X),FMath::Max(double(View.Top),AreaMin.Y));
+            const FVector2D Max(FMath::Min(double(View.Right),AreaMax.X),FMath::Min(double(View.Bottom),AreaMax.Y));
+            if(Max.X<=Min.X || Max.Y<=Min.Y){if(TextClip)Out.PopClip();continue;}
+            const FVector2D A=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),Min)*Scale);
+            const FVector2D B=G.LocalToAbsolute(Offset+ComponentPoint(TEXT("map.canvas"),Max)*Scale);
+            Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
         }
         const int32 L=Layer+I*4+1;
         if(E.LayoutId==TEXT("background") && (Page==TEXT("title") || Page==TEXT("settings")))
@@ -138,7 +122,19 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
         }
         FLinearColor Ink=E.Enabled ? (Focus?Color(TEXT("gold")):E.Color) : Color(TEXT("muted"));
         Ink.A*=Opacity;
-        if(E.Type==TEXT("mapRegion"))
+        if(E.Type==TEXT("mapFlag"))
+        {
+            const TArray<FVector2D> Pole={{12,32},{12,2}},Flag={{12,3},{24,6},{20,14},{12,12},{12,3}};
+            FSlateDrawElement::MakeLines(Out,L,Geometry(E.Position,E.Size),Pole,ESlateDrawEffect::None,E.Color,true,2.f);
+            FSlateDrawElement::MakeLines(Out,L+1,Geometry(E.Position,E.Size),Flag,ESlateDrawEffect::None,E.Color,true,2.f);
+        }
+        else if(E.Type==TEXT("mapSite"))
+        {
+            const TArray<FVector2D> Points={E.Position,E.Position+E.Size};
+            FSlateDrawElement::MakeLines(Out,L,Geometry(FVector2D::ZeroVector,DesignSize),Points,ESlateDrawEffect::None,FLinearColor(.68f,.66f,.56f,.55f),true,1.f);
+            Box(E.Position-FVector2D(1.5,1.5),{3,3},FLinearColor(.9f,.86f,.72f,1),L+1);
+        }
+        else if(E.Type==TEXT("mapRegion"))
         {
             const FSlateFontInfo Font(DisplayTypeface,FMath::RoundToInt(E.Font*.75f));
             const FVector2D Extent=FSlateApplication::Get().GetRenderer()->GetFontMeasureService()->Measure(E.Text,Font);
@@ -156,57 +152,37 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                 const FBox2f UV=Art->GetUVRegion();
                 const FVector2f UVStart(UV.Min),UVSpan=FVector2f(UV.Max)-UVStart;
                 const float Pulse=1.f+FMath::Sin(FPlatformTime::Seconds()*5.5+E.Color.B*2)*.012f;
-                const float Lean=E.Color.B>.5f?5.f:-5.f;
+                const float Angle=FMath::DegreesToRadians(E.Value);
+                const float Cos=FMath::Cos(Angle),Sin=FMath::Sin(Angle);
+                const auto Rotate=[&](FVector2f Delta)
+                {
+                    return FVector2f(E.Size.X*.5f+Delta.X*Cos-Delta.Y*Sin,
+                        E.Size.Y*.9f+Delta.X*Sin+Delta.Y*Cos);
+                };
+                // A small, wider shoulder under the flame makes its heading readable.
+                // The triangle tip remains at the real actor anchor and rotates with it.
+                const float TipHalfWidth=5.5f,TipLength=8.f*Pulse;
+                TArray<FSlateVertex> TipVertices;
+                for(const FVector2f Delta:{FVector2f(-TipHalfWidth,-TipLength),FVector2f(TipHalfWidth,-TipLength),FVector2f(0,0)})
+                    TipVertices.Add(FSlateVertex::Make(Transform,Rotate(Delta),FVector2f(.5f,.5f),E.Color.ToFColorSRGB()));
+                const TArray<SlateIndex> TipIndices={0,1,2};
+                const auto TipHandle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(*White);
+                FSlateDrawElement::MakeCustomVerts(Out,L,TipHandle,TipVertices,TipIndices,nullptr,0,0);
                 TArray<FSlateVertex> Vertices;TArray<SlateIndex> Indices={0,1,2,0,2,3};
-                // Shear around the actual pointed root. Nearby flames separate above it,
-                // while the texture root at (.5,.9) remains the exact world XY anchor.
+                // Rotate the existing flame around its root, preserving the real actor XY.
+                // Its downward sharp point maps to +X at yaw zero in this projection.
                 for(const FVector2f Corner:{FVector2f(0,0),FVector2f(1,0),FVector2f(1,1),FVector2f(0,1)})
                 {
-                    const FVector2f Position(Corner.X*E.Size.X+Lean*(.9f-Corner.Y),
-                        E.Size.Y*(.9f+(Corner.Y-.9f)*Pulse));
-                    Vertices.Add(FSlateVertex::Make(Transform,Position,UVStart+Corner*UVSpan,FColor::White));
+                    const FVector2f Delta((Corner.X-.5f)*E.Size.X,(Corner.Y-.9f)*E.Size.Y*Pulse);
+                    Vertices.Add(FSlateVertex::Make(Transform,Rotate(Delta),UVStart+Corner*UVSpan,FColor::White));
                 }
-                FSlateDrawElement::MakeCustomVerts(Out,L,Handle,Vertices,Indices,nullptr,0,0);
+                FSlateDrawElement::MakeCustomVerts(Out,L+1,Handle,Vertices,Indices,nullptr,0,0);
             }
-        }
-        else if(E.Type==TEXT("mapFog"))
-        {
-            const auto Transform=Geometry(E.Position,DesignSize).GetAccumulatedRenderTransform();
-            const auto Handle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(FogArt?*FogArt:*White);
-            TArray<FSlateVertex> Vertices;TArray<SlateIndex> Indices;
-            const float Radius=E.Size.X,Outer=DesignSize.Size()*3;
-            const int32 Knots=FMath::Max(3,Theme->GetObjectField(TEXT("localMap"))->GetArrayField(TEXT("outlineFractions")).Num());
-            // Every corner is an exact mesh vertex, including the tips of concave cuts.
-            const int32 Segments=Knots*FMath::Max(8,FMath::DivideAndRoundUp(256,Knots)),Stride=Segments+1;
-            const float Fade[]={60,40,15,0,0};const uint8 Alpha[]={0,30,145,255,255};
-            for(int32 Ring=0;Ring<5;++Ring)
-                for(int32 PointIndex=0;PointIndex<=Segments;++PointIndex)
-                {
-                    const float Angle=PointIndex*2*PI/Segments;
-                    const float Wisps=1+.11f*FMath::Sin(Angle*5+FogTime*.035)+.06f*FMath::Cos(Angle*9-FogTime*.024);
-                    // The same fixed irregular contour drives drawing and actor visibility.
-                    // Smoke moves only along its inner feather; everything beyond it is opaque.
-                    double Feather=1;
-                    const float Boundary=Radius*MapBoundaryFraction(Angle,&Feather);
-                    const float R=Ring==4?Outer:FMath::Max(0.f,Boundary-float(Fade[Ring]*Wisps*Feather));
-                    const FVector2f Position(FMath::Cos(Angle)*R,FMath::Sin(Angle)*R);
-                    const FVector2D ViewPosition=Offset+(E.Position+FVector2D(Position))*Scale;
-                    const FVector2f ViewUV(ViewPosition/G.GetLocalSize());
-                    const FVector2f UV=FogArt?FogUVStart+ViewUV*FogUVSpan:FVector2f(.5f,.5f);
-                    FColor Tint=FogArt?FColor::White:FColor::Black;Tint.A=Alpha[Ring];
-                    Vertices.Add(FSlateVertex::Make(Transform,Position,UV,Tint));
-                    if(Ring>0 && PointIndex>0)
-                    {
-                        const int32 A=(Ring-1)*Stride+PointIndex-1,B=A+1,C=Ring*Stride+PointIndex-1,D=C+1;
-                        for(int32 Index:{A,C,D,A,D,B})Indices.Add(Index);
-                    }
-                }
-            FSlateDrawElement::MakeCustomVerts(Out,L,Handle,Vertices,Indices,nullptr,0,0);
         }
 #if !UE_BUILD_SHIPPING
         else if(E.Type==TEXT("mapProbe"))Box(E.Position,E.Size,FLinearColor(1,0,1,1),L);
 #endif
-        if(E.Type==TEXT("mapRegion") || E.Type==TEXT("mapFlame") || E.Type==TEXT("mapFog") || E.Type==TEXT("mapProbe"))
+        if(E.Type==TEXT("mapRegion") || E.Type==TEXT("mapFlame") || E.Type==TEXT("mapProbe") || E.Type==TEXT("mapFlag"))
         { if(E.MapClipped)Out.PopClip();if(TextClip)Out.PopClip();continue; }
         if(E.Type==TEXT("skillsBackdrop") || E.Type==TEXT("journalBackdrop"))
         {
@@ -548,17 +524,19 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             FSlateFontInfo Font(Display?DisplayTypeface:Typeface,FMath::RoundToInt(E.Font*.75f)); Font.LetterSpacing=E.Tracking;
             TArray<FString> SourceLines,Lines; E.Text.ParseIntoArrayLines(SourceLines,false);
             const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+            const bool MapInfo=Page==TEXT("map") && E.Type==TEXT("notice");
+            const float WrapWidth=MapInfo?float(E.Size.X-2*E.TextInset):float(E.Size.X);
             for(FString Line:SourceLines)
             {
-                while((E.Type==TEXT("text") || E.Type==TEXT("button") || E.Type==TEXT("titleOption") || E.Type==TEXT("menuAction") || E.Type==TEXT("menuTab")) && Line.Len()>1 && Measure->Measure(Line,Font).X>E.Size.X)
+                while((MapInfo || E.Type==TEXT("text") || E.Type==TEXT("button") || E.Type==TEXT("titleOption") || E.Type==TEXT("menuAction") || E.Type==TEXT("menuTab")) && Line.Len()>1 && Measure->Measure(Line,Font).X>WrapWidth)
                 {
-                    const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,E.Size.X)+1,1,Line.Len());
+                    const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,WrapWidth)+1,1,Line.Len());
                     Lines.Add(Line.Left(Count)); Line=Line.Mid(Count);
                 }
                 Lines.Add(Line);
             }
             FVector2D P=E.Position;
-            if(E.Type==TEXT("button") || E.Type==TEXT("titleOption") || E.Type==TEXT("titleUtility") || E.Type==TEXT("menuAction") || E.Type==TEXT("menuTab") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("notice")) P+=FVector2D(E.TextInset,FMath::Max(0.f,float(E.Size.Y-(MapSidebar?Lines.Num()*E.Font*1.6f:E.Font*1.3f))*.5f));
+            if(E.Type==TEXT("button") || E.Type==TEXT("titleOption") || E.Type==TEXT("titleUtility") || E.Type==TEXT("menuAction") || E.Type==TEXT("menuTab") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("notice")) P+=FVector2D(E.TextInset,FMath::Max(0.f,float(E.Size.Y-((MapSidebar || MapInfo)?Lines.Num()*E.Font*1.6f:E.Font*1.3f))*.5f));
             if(E.Type==TEXT("slot") || E.Type==TEXT("node")) P+=FVector2D(FMath::Max(4.,E.Size.X-E.Text.Len()*E.Font*.6-6),E.Size.Y-E.Font*1.3f);
             const int32 MaximumLines=Page==TEXT("hud")?FMath::Max(1,FMath::FloorToInt((E.Size.Y+E.Font*.3f)/(E.Font*1.6f))):Lines.Num();
             if(Lines.Num()>MaximumLines) {Lines.SetNum(MaximumLines);Lines.Last()=Lines.Last().LeftChop(FMath::Min(2,Lines.Last().Len()))+TEXT("…");}

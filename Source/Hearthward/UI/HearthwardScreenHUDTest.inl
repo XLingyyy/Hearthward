@@ -30,6 +30,7 @@ FString UHearthwardScreenWidget::DescribeHUDPreview() const
         Row->SetStringField(TEXT("equipment_slot"),E.EquipmentSlot.ToString());Row->SetStringField(TEXT("shortcut"),E.Shortcut);
         Row->SetNumberField(TEXT("inventory_position"),E.InventoryPosition);Row->SetNumberField(TEXT("quick_slot"),E.QuickSlot);
         Row->SetBoolField(TEXT("selected"),E.Selected); Row->SetBoolField(TEXT("visible"),!E.Hidden && E.Opacity()>0);
+        Row->SetBoolField(TEXT("enabled"),E.Enabled); Row->SetBoolField(TEXT("text_scroll_clipped"),E.TextScrollClipped);
         Row->SetNumberField(TEXT("opacity"),E.Opacity());
         Row->SetNumberField(TEXT("value"),E.Value); Row->SetNumberField(TEXT("font"),E.Font);
         Row->SetNumberField(TEXT("x"),E.Position.X); Row->SetNumberField(TEXT("y"),E.Position.Y);
@@ -41,6 +42,18 @@ FString UHearthwardScreenWidget::DescribeHUDPreview() const
     Root->SetArrayField(TEXT("elements"),Rows); Root->SetNumberField(TEXT("selection"),HUDQuickSelection);
     Root->SetNumberField(TEXT("quest_remaining"),GetHUDQuestNoticeRemaining());
     Root->SetBoolField(TEXT("inventory_dragging"),InventoryDragging);
+    if(Page==TEXT("map"))
+    {
+        auto Map=MakeShared<FJsonObject>();const auto View=MapViewRect();const auto Size=MapWorldSize();
+        auto Values=[](std::initializer_list<double> Items){TArray<TSharedPtr<FJsonValue>> Result;for(double V:Items)Result.Add(MakeShared<FJsonValueNumber>(V));return Result;};
+        Map->SetArrayField(TEXT("viewport"),Values({View.Left,View.Top,View.Right,View.Bottom}));
+        Map->SetArrayField(TEXT("regionCenterCm"),Values({MapCenter.X,MapCenter.Y}));
+        Map->SetArrayField(TEXT("sizeCm"),Values({Size.X,Size.Y}));
+        Map->SetArrayField(TEXT("pan"),Values({MapPan.X,MapPan.Y}));
+        Map->SetArrayField(TEXT("designViewSize"),Values({MapViewDesignSize.X,MapViewDesignSize.Y}));
+        Map->SetNumberField(TEXT("scaleDesignUnitsPerCm"),MapScale()*MapZoom);Map->SetNumberField(TEXT("zoom"),MapZoom);
+        Map->SetBoolField(TEXT("dragging"),MapDragging);Root->SetObjectField(TEXT("mapView"),Map);
+    }
     FString Json; FJsonSerializer::Serialize(Root,TJsonWriterFactory<>::Create(&Json)); return Json;
 }
 

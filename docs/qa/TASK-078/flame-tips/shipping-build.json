@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "operation": "build.project",
+  "artifacts": [
+    {
+      "type": "unreal_build",
+      "path": "E:\\AiAgent\\XLingGame\\Hearthward",
+      "state": "ready"
+    }
+  ],
+  "diagnostics": [],
+  "warnings": [],
+  "errors": [],
+  "payload": {
+    "command": [
+      "E:\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "Hearthward",
+      "Win64",
+      "Shipping",
+      "-Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "E:\\AiAgent\\XLingGame\\Hearthward",
+    "target": "Hearthward",
+    "platform": "Win64",
+    "configuration": "Shipping",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 0,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" Hearthward Win64 Shipping -Project=E:\\AiAgent\\XLingGame\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\nUsing 'git status' to determine working set for adaptive non-unity build (E:\\AiAgent\\XLingGame\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nCreating makefile for Hearthward (command line arguments changed)\nBuilding Hearthward...\n===== Toolchain Information =====\nUsing ISPC compiler (E:\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35220 toolchain (D:\\visual studio2022\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.26100.0 SDK (D:\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCampaignInteraction.cpp, HearthwardCampaignQuests.cpp, HearthwardCampaignWorld.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, CampaignEndStateTests.cpp, CampLaborPresentationTests.cpp, CraftingPresentationTests.cpp, FarmingPresentationTests.cpp, GameplayTests.cpp, MapGuidanceTests.cpp, HearthwardScreenActions.cpp, HearthwardScreenCamp.cpp, HearthwardScreenCapture.cpp, HearthwardScreenCompatibility.cpp, HearthwardScreenCrafting.cpp, HearthwardScreenEquipment.cpp, HearthwardScreenInventoryDrag.cpp, HearthwardScreenLayout.cpp, HearthwardScreenMap.cpp, HearthwardScreenMenu.cpp, HearthwardScreenNature.cpp, HearthwardScreenPaint.cpp, HearthwardScreenRepair.cpp, HearthwardScreenSettings.cpp, HearthwardScreenTitle.cpp, HearthwardScreenWidget.cpp, HearthwardScreenWorldMap.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 3 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 31.71 GB physical, 21.68 GB/38.46 GB committed\n  UBA Storage capacity 40 GB\n[1/3] Compile [x64] HearthwardScreenPaint.cpp\n[2/3] Link [x64] Hearthward-Win64-Shipping.exe\n  正在创建库 E:\\AiAgent\\XLingGame\\Hearthward\\Binaries\\Win64\\Hearthward-Win64-Shipping.lib 和对象 E:\\AiAgent\\XLingGame\\Hearthward\\Binaries\\Win64\\Hearthward-Win64-Shipping.exp\n[3/3] WriteMetadata Hearthward-Win64-Shipping.target [NoUba]\n\nTotal time in Unreal Build Accelerator local executor: 35.43 seconds\nOutput binary: E:\\AiAgent\\XLingGame\\Hearthward\\Binaries\\Win64\\Hearthward-Win64-Shipping.exe\n\nResult: Succeeded\nTotal execution time: 37.68 seconds\nTrace written to file C:\\Users\\22543\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 8.6kb\n",
+    "stderr": ""
+  }
+}

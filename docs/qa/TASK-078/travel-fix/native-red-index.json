@@ -1,0 +1,309 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "VIOLET",
+			"instance": "E27FF99145DEE1E11902BB913CF796C6",
+			"instanceName": "VIOLET-22436",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (25H2) [10.0.26200.9457] ",
+			"model": "Default",
+			"gPU": "Intel(R) UHD Graphics",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 32,
+			"renderMode": "D3D12_SM6",
+			"rHI": "D3D12 (SM6)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.06-08.41.44",
+	"succeeded": 0,
+	"succeededWithWarnings": 3,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 5.3143630027770996,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "ExplorationBoundaries",
+			"fullTestPath": "Hearthward.Map064.ExplorationBoundaries",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"E27FF99145DEE1E11902BB913CF796C6"
+			],
+			"duration": 1.3728362321853638,
+			"dateTime": "2026.10.06-08.41.38",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_0' does not have a valid PlayerInput object. Failed to load user settings.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.06-08.41.38"
+				}
+			],
+			"warnings": 1,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "LocationKindsAndTravelFeedback",
+			"fullTestPath": "Hearthward.Map078.LocationKindsAndTravelFeedback",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"E27FF99145DEE1E11902BB913CF796C6"
+			],
+			"duration": 1.4399452209472656,
+			"dateTime": "2026.10.06-08.41.40",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_1' does not have a valid PlayerInput object. Failed to load user settings.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.06-08.41.40"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Task objects and people are excluded from the location list: prologue_relic' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 231,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Task objects and people are excluded from the location list: loot_dwellings' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 231,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Task objects and people are excluded from the location list: camp_records' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 231,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Task objects and people are excluded from the location list: camp_hunter' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 231,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Task objects and people are excluded from the location list: slice_rescue' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 231,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'A discovered control flag is marked even without old exploration samples' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 232,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Flag detail identifies a capture point and explains five seconds' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 235,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogJson: Field enabled was not found.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogJson: Json Value of type 'Null' used as a 'Boolean'.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'The current reason replaces stale loading feedback' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 241,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Inactive destination explains which station and how to activate' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 245,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Source restriction states distance and a real source station' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 248,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Same-station feedback names the current place' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 251,
+					"timestamp": "2026.10.06-08.41.41"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'The task location rejection identifies its type' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "E:\\AiAgent\\XLingGame\\Hearthward\\Source\\Hearthward\\Tests\\MapGuidanceTests.cpp",
+					"lineNumber": 252,
+					"timestamp": "2026.10.06-08.41.41"
+				}
+			],
+			"warnings": 3,
+			"errors": 12,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "RectangularDragAndRelease",
+			"fullTestPath": "Hearthward.Map078.RectangularDragAndRelease",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"E27FF99145DEE1E11902BB913CF796C6"
+			],
+			"duration": 1.2209023237228394,
+			"dateTime": "2026.10.06-08.41.41",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_2' does not have a valid PlayerInput object. Failed to load user settings.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.06-08.41.41"
+				}
+			],
+			"warnings": 1,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "MapScaledGuidanceKeepsCompleteText",
+			"fullTestPath": "Hearthward.UI069.MapScaledGuidanceKeepsCompleteText",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"E27FF99145DEE1E11902BB913CF796C6"
+			],
+			"duration": 1.2806793451309204,
+			"dateTime": "2026.10.06-08.41.43",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_3' does not have a valid PlayerInput object. Failed to load user settings.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.06-08.41.43"
+				}
+			],
+			"warnings": 1,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw
 EXAGGERATION = 4.5
 
 
-def relief_shading(heights, small, metres_per_pixel):
+def relief_shading(heights, small, metres_per_pixel, sample_spacing=2):
     dy, dx = np.gradient(heights, metres_per_pixel)
     gx, gy = dx * EXAGGERATION, dy * EXAGGERATION
     light = (.58 * gx + .43 * gy + .69) / np.sqrt(1 + gx * gx + gy * gy)
@@ -20,7 +20,7 @@ def relief_shading(heights, small, metres_per_pixel):
             ix = np.clip(np.arange(n) + vx * step, 0, n - 1)
             iy = np.clip(np.arange(n) + vy * step, 0, n - 1)
             neighbour = small[np.ix_(iy, ix)]
-            distance = 2 * step * np.hypot(vx, vy)
+            distance = sample_spacing * step * np.hypot(vx, vy)
             obstruction = np.maximum(obstruction, (neighbour - small) * EXAGGERATION / distance)
         horizon += np.sin(np.arctan(obstruction)) / 8
     ambient = np.clip(np.asarray(Image.fromarray(horizon).resize(heights.shape[::-1], Image.Resampling.BICUBIC)), 0, 1)
@@ -28,14 +28,14 @@ def relief_shading(heights, small, metres_per_pixel):
     return shade, np.hypot(dx, dy), ambient
 
 
-def relief_contours(size, small):
+def relief_contours(size, small, sample_spacing=2):
     """Fine paired lines model the slope walls and curved crests of the observed surface."""
     image = Image.new('RGBA', (size, size))
     draw = ImageDraw.Draw(image)
     lookup = {1:[(3,0)],2:[(0,1)],3:[(3,1)],4:[(1,2)],5:[(3,0),(1,2)],6:[(0,2)],7:[(3,2)],
               8:[(2,3)],9:[(0,2)],10:[(0,1),(2,3)],11:[(1,2)],12:[(3,1)],13:[(0,1)],14:[(3,0)]}
     edge_vertices = [(0,1),(1,2),(2,3),(3,0)]
-    dy, dx = np.gradient(small, 2)
+    dy, dx = np.gradient(small, sample_spacing)
     factor = size / (small.shape[0] - 1)
     for level in np.arange(np.floor(small.min() / 2) * 2, small.max(), 2):
         pattern = ((small[:-1,:-1] >= level).astype(np.uint8) + 2*(small[:-1,1:] >= level)

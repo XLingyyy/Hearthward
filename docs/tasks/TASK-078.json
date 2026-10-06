@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "TASK-078",
+  "title": "地图与传送修复、三角火焰尖端及简约游戏UI",
+  "status": "Active",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/map-1000m-heading",
+  "source_refs": [
+    "用户2026-10-06地图四项更新要求",
+    "main@ca21120cef4421d039c44248a0cfa5043c248feb",
+    "用户2026-10-06追加：取消黑雾、3000米×2000米矩形地图、左键拖动、真实地形建筑与原风格",
+    "用户2026-10-06截图追加：保留右上地点与传送入口，删除四周深色背景及其他外围文字描述",
+    "用户2026-10-06追加四项bug修复：任务物品不进入地点列表、旗帜标记与指引、详细传送拒绝原因、已激活路标传送",
+    "用户2026-10-06追加：玩家与弟弟火焰指向尖端稍微加粗，形成小三角形",
+    "用户2026-10-06：储物箱对齐新版背包风格，清理其他旧火红UI与归火宣传装饰",
+    "用户2026-10-06明确要求：将更新同步到远端GitHub仓库，授权本轮成果提交并推送到当前任务分支"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-049-campaign.md",
+    "docs/contracts/CT-TASK-052-clock-refresh.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Tests/MapGuidanceTests.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignSubsystem.h",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "Resources/UI/Art/map-local-terrain.png",
+    "scripts/ui/",
+    "docs/tasks/TASK-078.json",
+    "docs/handoffs/TASK-078.md",
+    "docs/qa/TASK-078/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "取消地图黑雾和圆形遮挡，地图区域3000米×2000米",
+    "地图适应屏幕，初始显示局部视图；左键拖动、缩放与边界约束正常",
+    "地图铺满屏幕，四周背景、边框、尺寸标题及操作提示删除；右上地点与传送功能保留",
+    "底图与当前真实高度场、水域及建筑组件对应，保持原配色与地形质感",
+    "所有入口共用新版地图，红蓝火焰保持实际角色朝向",
+    "地点列表排除任务物品及人物，已发现占领旗帜以地点标记显示并给出占领指引",
+    "传送失败显示实际限制与解决方式；地图自己的暂停不阻止已激活站点传送，真实异步传送能够完成",
+    "红蓝火焰朝向尖端加宽为小三角形，保留纹理、颜色、实际位置与各自朝向",
+    "当前代码构建、定向运行验证与根目录可玩包更新",
+    "储物箱使用新版背包深灰三面板与物品格，清理制作、记忆、营地、田野、对话及旧维修配置中的旧火红背景与宣传装饰；真实存取、失败路径及字体截图验证后更新本地可玩包"
+  ],
+  "non_goals": [
+    "修改玩法规则、存档格式、主地图资产",
+    "合并main、公开发布新版可玩包"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "owner_authorized",
+    "push": "owner_authorized",
+    "merge": "not_granted"
+  },
+  "notes": [
+    "接续半径1000米、无黑雾3000米×2000米矩形及删除四周背景要求；当前保留真实全屏地形、右上地点入口、地名与朝向火焰、拖动缩放。",
+    "接续用户四项bug请求：使用实际地点分类过滤任务物品与人物；发现旗帜标记及占领指引；具体限制与解法；地图OwnPause释放与目的地导航就绪重试。",
+    "玩家与弟弟方向尖端以宽11、长8设计单位小三角形加粗，纹理、亮芯、尖点坐标和朝向保留；只改Paint.cpp，重新编译Shipping并继承已验证烘焙资源。历史地图截图、指纹及复验见FLAME-TIPS-REPORT。",
+    "最终Editor/Shipping构建、4/4原生、98/98地图、37/37真实传送、44/44图像与地理、33/33工具测试通过；原生初始化警告保留，修复前与中间失败证据保留。",
+    "真实剧情交互、渡口E激活、暂停地图发起往返、加载冻结时间、独立弟弟留在原地、异常落点取消不移动均已检查；非物理键鼠或完整真人通关。",
+    "651个分布式碰撞采样匹配原高度源，137项建筑轮廓匹配当前游戏；没有改动Content或补造地形。",
+    "历史可玩包Hearthward-Playable-20261006-FlameTips，独立Shipping启动6次窗口响应采样和ZIP全部成员CRC通过；旧TravelFix／FullMap等历史包保留。",
+    "用户已授权源码与必要QA提交并推送到codex/map-1000m-heading；任务保持Active，基线无批准快照，基线范围校验前置条件不满足。当前允许路径直接比对和普通仓库检查另行记录，未代填批准。",
+    "当前简约UI成果见SIMPLE-UI-REPORT：储物箱三栏物品格，制作/记忆/营地/田野/对话去旧火红背景和宣传；最终Editor/完整Shipping、77/77 UI存取、4/4原生、18/18页面配置、33/33工具通过。新包SimpleUI，旧地图/传送报告保留为历史证据。",
+    "SimpleUI独立Shipping启动6次窗口响应采样及ZIP全部152成员CRC通过；启动正式游玩版/简约UI更新版/地图更新版/矩形地图版统一指向新包；Source/DLL/Shipping/UI指纹匹配，普通仓库与当前允许路径检查通过。",
+    "同步时origin/main已推进至d833c420ec849553fafc639e31ea392418a0a387，另一批伙伴与对话更新复用TASK-078。此任务仅指codex/map-1000m-heading的地图与简约UI成果，独立推送不覆盖main；后续集成须处理编号、文档及共享UI冲突并复验。"
+  ]
+}
