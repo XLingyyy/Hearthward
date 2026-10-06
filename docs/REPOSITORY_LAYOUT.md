@@ -26,7 +26,7 @@
 
 UE目录职责参考[Epic官方目录说明](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-directory-structure)。本次没有移动UE资产、游戏源码、配置和打包依赖。
 
-## 2026-10-05旧路径迁移
+## 旧路径迁移与重复副本清理
 
 | 原位置 | 当前位置 | 处理 |
 |---|---|---|
@@ -34,6 +34,8 @@ UE目录职责参考[Epic官方目录说明](https://dev.epicgames.com/documenta
 | 弟弟outputs内3份不同的JSON | 同一outputs子目录内`*.legacy-resource.json` | 保留原始元数据，现有`task.json`与`rig_pipeline.json`不覆盖 |
 | `ui pic/`九张原始设计图 | `art_source/ui-reference/TASK-020/` | 作为旧版UI视觉依据，不作为当前运行时UI |
 | `2026-09-22/EvoX-21e5b7f8/` | `docs/assets/requests/2026-09-22/EvoX-21e5b7f8/` | 原始资产需求清单归档 |
+
+2026-10-06 TASK-083 发现旧根路径仍有18份重复副本；确认与下表规范归档逐字节相同后移除旧副本，清单见[文件整理记录](releases/demo-20261006-2/file-cleanup.json)。未移动运行时资产或删除规范制作源。
 
 历史任务授权、原始JSON绝对路径和受测记录保留当时写法；查找旧文件时按此表映射。不要根据历史记录重建重复目录。`resourceSummary.md`仍是既有资源清单入口，原链接保持兼容。
 
