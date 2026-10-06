@@ -193,6 +193,67 @@ bool UHearthwardCampSubsystem::BrotherWorking() const
     for(const auto& R:State.Regions)if(R.Enabled && R.Safe && R.Brother && Efficiency(Brother,R)>0)return true;
     return false;
 }
+FString UHearthwardCampSubsystem::PreviewWorkParty(FName Job,int32 Count,bool Stop,FGuid Epoch) const
+{
+    if(!CanManage(Epoch))return TEXT("请在安全营地内安排族人，战斗或忙碌时无法分工");
+    const auto* Player=CampPlayer(GetWorld());const auto* Brother=CampBrother(GetWorld());
+    if(!Brother || !Brother->CanCommunicate(const_cast<APawn*>(Player)))return TEXT("请靠近弟弟后安排工作");
+    const FName Camp=State.CampAt(Player->GetActorLocation());
+    if(State.CampAt(Brother->GetActorLocation())!=Camp)return TEXT("我需要先回到你所在的营地");
+    if(Stop)
+    {
+        return State.Regions.ContainsByPredicate([&](const auto& R){return R.Camp==Camp && R.Job==Job && R.Brother && !R.Facility.IsValid();})
+            ?FString():FString(TEXT("我没有带队执行这项采集工作"));
+    }
+    using P=EHearthwardCompanionPhase;
+    if(Brother->GetPhase()!=P::Idle && Brother->GetPhase()!=P::Completed && Brother->GetPhase()!=P::Cancelled)
+        return TEXT("我还有个人委托，请先完成或取消，再安排集体工作");
+    const auto* Survival=Brother->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(!Survival || !Survival->Alive() || Survival->Busy() || Survival->Resting)return TEXT("我现在无法带队，请等我恢复或结束当前动作");
+    FName Region;TArray<int32> Workers;return State.PlanWorkParty(Camp,Job,Count,Region,Workers);
+}
+bool UHearthwardCampSubsystem::ApplyWorkParty(FName Job,int32 Count,bool Stop,FGuid Epoch)
+{
+    Feedback=PreviewWorkParty(Job,Count,Stop,Epoch);if(!Feedback.IsEmpty())return false;
+    const FName Camp=State.CampAt(CampPlayer(GetWorld())->GetActorLocation());
+    FName Region;TArray<int32> Workers;
+    if(!Stop)
+    {
+        Feedback=State.PlanWorkParty(Camp,Job,Count,Region,Workers);if(!Feedback.IsEmpty())return false;
+    }
+    auto* Target=State.Regions.FindByPredicate([&](const auto& R){return R.Camp==Camp && R.Job==Job && !R.Facility.IsValid();});
+    if(!Stop)
+    {
+        // The complete assignment was checked before changing any worker or production state.
+        Target->Workers=MoveTemp(Workers);Target->Brother=true;
+        CampPlayer(GetWorld())->FindComponentByClass<UHearthwardGameplayComponent>()->OrderCompanion(TEXT("wait"));
+    }
+    Target->Enabled=!Stop;Target->ToRations=false;Target->Status=Stop?TEXT("已暂停"):TEXT("正在前往岗位");
+    if(!Stop)
+    {
+        auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->Record(TEXT("worker_assigned"));
+        if(Camp==TEXT("hometown"))Campaign->Record(TEXT("home_work"));
+    }
+    Feedback=Stop?TEXT("采集队已暂停，人员与已投入进度保留；可在营地分工中调岗。"):
+        FString::Printf(TEXT("我带%d名族人采集%s，产物进入营地仓库。持续工作到你暂停；资源不足时等待刷新。"),Count,Job==TEXT("wood")?TEXT("木材"):TEXT("石头"));
+    return true;
+}
+FString UHearthwardCampSubsystem::DescribeWorkParty() const
+{
+    const auto* Player=CampPlayer(GetWorld());if(!Player)return {};
+    const FName Camp=State.CampAt(Player->GetActorLocation());
+    for(const auto& R:State.Regions)if(R.Camp==Camp && R.Brother && !R.Facility.IsValid() && (R.Job==TEXT("wood") || R.Job==TEXT("stone")))
+    {
+        const FString Status=!R.Enabled?TEXT("已暂停"):!R.Safe?TEXT("区域不安全"):!R.Status.IsEmpty()?R.Status:
+            !R.Batch.Active && State.SourceIndex(R)==INDEX_NONE?TEXT("等待资源刷新"):TEXT("采集中");
+        const auto* Brother=CampBrother(GetWorld());
+        const FString BrotherState=!R.Enabled?TEXT("已暂停"):BrotherWorking()?TEXT("已到岗工作"):
+            Brother && !Brother->BlockReason.IsEmpty()?Brother->BlockReason:TEXT("暂未在岗，尚未计入劳动力");
+        return FString::Printf(TEXT("%s采集队：弟弟 + %d名族人\n%s · 岗位累计入库%d份\n弟弟：%s\n持续采集至暂停；产物进入营地仓库。"),
+            R.Job==TEXT("wood")?TEXT("木材"):TEXT("石头"),R.Workers.Num(),*Status,R.Completed*2,*BrotherState);
+    }
+    return {};
+}
 void UHearthwardCampSubsystem::Advance(double Minutes,bool Sleeping)
 {
     if(State.Camps.IsEmpty() || Settling)return;

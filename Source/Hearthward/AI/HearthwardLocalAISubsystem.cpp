@@ -343,6 +343,7 @@ FHearthwardNPCContextSnapshot UHearthwardLocalAISubsystem::CaptureContextSnapsho
     FHearthwardNPCContextSnapshot Snapshot;
     auto* Companion=PendingCompanion.Get();
     Snapshot.Query=Input;
+    Snapshot.CampTeamStatus=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->DescribeWorkParty();
     Snapshot.InputSource=LastInputSource;
     Snapshot.Memory=Memory;
     Snapshot.Coordination=HearthwardCoordination::Build(Memory.Events);
@@ -374,6 +375,10 @@ FHearthwardNPCContextSnapshot UHearthwardLocalAISubsystem::CaptureContextSnapsho
             Snapshot.OwnBag.Add(Item.Id,Companion->Bag->GetItemCount(Item.Id));
         Snapshot.PreviousGoalQuantity=Companion->GetRequested();
         Snapshot.PreviousGoalDelivered=Companion->GetDelivered();
+        Snapshot.ActiveGoal=Companion->GetGoal();
+        Snapshot.bHasActiveTask=Companion->GetCommandId().IsValid();
+        Snapshot.TaskCarried=Companion->GetCarried();
+        Snapshot.TaskBlockReason=Companion->BlockReason;
     }
 
     auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
@@ -419,6 +424,8 @@ void UHearthwardLocalAISubsystem::SendInference()
         +TEXT("起点→最终终点决定能力，弟弟接手是中转；craft/repair未指定材料bag，明确仓库camp，allow不授权仓库。quantity仅目标，不生成limits；只原话/相关有效规则的限制，无则[]。\n")
         +TEXT("limits格式ban:id禁采/no:id禁耗/max:id:N累计消耗预算/once:id本次例外/allow:id解禁耗/source:S1。不明限制原文留unresolved，不凭空添加。\n")
         +TEXT("inventory问当前，inventory_report报确数，recall问过去；库存未知写npc_line，按belief/episode的source/coverage，非complete不报全程总量，查询不续目标。\n")
+        +TEXT("问进度或停工原因：task_status,item=none,quantity=0,mode=none,source=current_task。继续个人原任务：resume,item=none,quantity=1,mode=directive,source=current_task。只询问或说不要继续时不resume。\n")
+        +TEXT("带族人一起采集：camp_team,item=wood或stone,quantity=族人人数1至4,mode=workers,source=current_camp。缺人数先clarify。集体为持续工作，指定物资数量或额外条件先clarify。暂停采集队：camp_team_stop,quantity=1,mode=directive,source=current_camp,item=对应资源；不清楚资源先clarify。\n")
         +TEXT("维修限弟弟自有唯一实例；未知地点/未指认目标/自由坐标/口述安全不给卡。现场/同行/成本/库存/距离/战术由UE复核。npc_line30–60字，复杂80–150，危险可短、无内部字段。\n")
         +TEXT("仅示范完整格式，示例参数不补本次缺项：\n")
         +TEXT("拿仓库材料冶炼七批金属锭→{\"intent\":\"craft\",\"item\":\"metal_ingot\",\"quantity\":7,\"mode\":\"batches\",\"source\":\"camp\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡用仓库材料炼七批金属锭，请确认；现场条件会在执行前复核。\"}\n")
@@ -565,6 +572,7 @@ void UHearthwardLocalAISubsystem::ApplyProposal()
         return;
     }
     Companion->DiscardProposal(Ticket);NPCLine=Proposal.Line;LastAppliedIntent=Proposal.Intent.ToString();
+    if(Proposal.Intent==TEXT("task_status"))NPCLine=DescribeCurrentTask();
     if(Proposal.Intent==TEXT("cancel"))
     {
         const auto Phase=Companion->GetPhase();

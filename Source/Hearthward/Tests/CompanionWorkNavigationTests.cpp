@@ -7,6 +7,8 @@
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
+#include "../Actions/HearthwardTimedActionComponent.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "AIController.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -280,6 +282,61 @@ bool FCompanionWorkSourceAvailabilityTest::RunTest(const FString&)
     Fixture.Camps->Advance(1,false);
     TestEqual(TEXT("A reserved final batch retains labor at its exhausted source"),Fixture.Region().BrotherEfficiency,3.);
     TestTrue(TEXT("The reserved final batch continues making real progress"),Fixture.Region().Batch.Work>Work);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCompanionGatheringDepletionTest,"Hearthward.Companion078.GatheringDepletionAndResume",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FCompanionGatheringDepletionTest::RunTest(const FString&)
+{
+    FScopedCompanionWorkWorld Fixture;
+    if(!Fixture.Ready(*this))return false;
+    auto* Brother=Fixture.Brother;
+    const auto Epoch=Fixture.World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    Fixture.Camps->AssignWorker(TEXT("camp_forage"),31,Epoch);
+    Fixture.Camps->SetProduction(TEXT("camp_forage"),false,false,Epoch);
+    auto* SourceActor=Fixture.World->SpawnActor<AActor>();
+    auto* Root=NewObject<USceneComponent>(SourceActor);
+    SourceActor->AddInstanceComponent(Root);SourceActor->SetRootComponent(Root);Root->RegisterComponent();
+    SourceActor->SetActorLocation(Fixture.Workplace);
+    auto* Source=NewObject<UHearthwardInventoryComponent>(SourceActor);
+    SourceActor->AddInstanceComponent(Source);Source->RegisterComponent();
+    Source->TryAdd(TEXT("wood"),14);
+    Brother->InitializeCompanion(Source,Brother->Camp);
+    if(!TestEqual(TEXT("Fixture supplies a real gathering tool"),Brother->Bag->TryAdd(TEXT("axe"),1),EHearthwardInventoryResult::Success))return false;
+    Brother->Action->BeginPlay();
+    const auto Ticket=Brother->Request(Fixture.Player,TEXT("采集32个木头"));
+    if(!TestEqual(TEXT("Accept the same 32 wood task"),Brother->Submit(Fixture.Player,Ticket,TEXT("wood"),32,
+        {TEXT("collect"),TEXT("return"),TEXT("deposit")}),EHearthwardProposalResult::Accepted))return false;
+    auto Step=[&]()
+    {
+        Fixture.World->GetSubsystem<UHearthwardWorldClockSubsystem>()->Tick(.1f);
+        Brother->Action->TickComponent(.1f,LEVELTICK_All,nullptr);
+        Fixture.Step();
+    };
+    Step();
+    TestTrue(TEXT("Delegated collection uses running speed"),Brother->GetCharacterMovement()->MaxWalkSpeed>=500.f);
+    const float LoadedSpeed=Brother->GetCharacterMovement()->MaxWalkSpeed;
+    TestTrue(TEXT("Tool weight still reduces running speed"),LoadedSpeed<600.f);
+    auto* Survival=Brother->FindComponentByClass<UHearthwardSurvivalComponent>();
+    Survival->State.SevereDue=1000;
+    Brother->Tick(.1f);
+    TestEqual(TEXT("Severe state still slows delegated movement"),Brother->GetCharacterMovement()->MaxWalkSpeed,LoadedSpeed*.8f);
+    Survival->State.SevereDue=-1;
+    for(int32 I=0;I<4000 && Brother->GetPhase()!=EHearthwardCompanionPhase::WaitingAtCamp;++I)Step();
+    AddInfo(FString::Printf(TEXT("Gathering stopped: delivered=%d phase=%s reason=%s"),Brother->GetDelivered(),*UEnum::GetValueAsString(Brother->GetPhase()),*Brother->BlockReason));
+    TestEqual(TEXT("All fourteen available wood are delivered"),Brother->GetDelivered(),14);
+    TestEqual(TEXT("The exhausted source is empty"),Source->GetItemCount(TEXT("wood")),0);
+    TestEqual(TEXT("No cargo is lost or left unaccounted"),Brother->GetCarried(),0);
+    TestEqual(TEXT("Incomplete task waits safely at camp"),Brother->GetPhase(),EHearthwardCompanionPhase::WaitingAtCamp);
+    TestTrue(TEXT("Depletion remains explained"),Brother->BlockReason.Contains(TEXT("资源")));
+    TestFalse(TEXT("Retry refuses an unchanged exhausted source"),Brother->ResumeBlocked(Fixture.Player));
+    TestEqual(TEXT("Failed retry preserves partial progress"),Brother->GetDelivered(),14);
+    Source->TryAdd(TEXT("wood"),18);
+    TestTrue(TEXT("Retry resumes once the source has real stock"),Brother->ResumeBlocked(Fixture.Player));
+    for(int32 I=0;I<4000 && Brother->GetPhase()!=EHearthwardCompanionPhase::Completed;++I)Step();
+    TestEqual(TEXT("Resumed task completes the remaining eighteen"),Brother->GetDelivered(),32);
+    TestEqual(TEXT("Completion is terminal"),Brother->GetPhase(),EHearthwardCompanionPhase::Completed);
+    TestEqual(TEXT("Exactly 32 wood reached shared storage"),Fixture.World->GetSubsystem<UHearthwardStorageSubsystem>()->GetItemCount(TEXT("wood")),32);
     return true;
 }
 #endif

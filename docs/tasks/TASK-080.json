@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "id": "TASK-080",
+  "title": "任务地点场景标记与屏幕外方向指引",
+  "status": "Active",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-080-quest-markers",
+  "source_refs": [
+    "main@ca21120c + 本会话TASK-078/079本地成果",
+    "用户要求类似原神的任务地点可视标点"
+  ],
+  "dependencies": [
+    "TASK-079"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Tests/QuestGuidanceTests.cpp",
+    "docs/tasks/TASK-080.json",
+    "docs/handoffs/TASK-080.md",
+    "docs/qa/TASK-080/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "Source/Hearthward/Save/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "追踪任务地点在HUD投影显示金色标记和距离",
+    "屏幕外及背后目标显示边缘方向，缩放与不同宽高比位置正确",
+    "目标随任务阶段切换，取消追踪或完成领取后不残留旧目标",
+    "实际UE定向与PIE画面验证"
+  ],
+  "non_goals": [
+    "修改任务完成判定、存档格式及关卡资产",
+    "自动寻路或路线地面光带",
+    "更新Release"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "owner_authorized",
+    "push": "owner_authorized",
+    "merge": "owner_authorized"
+  },
+  "notes": [
+    "复用现有QuestLocation与LocationPosition，不复制任务数据。保留本会话已知未提交修改。",
+    "2026-10-06 用户明确要求“提交并推送到main吧”，授权 TASK-078—081 成果提交、推送及 main 集成；本次不更新 Release，不代填人工验收。"
+  ]
+}

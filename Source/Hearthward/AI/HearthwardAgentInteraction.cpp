@@ -291,7 +291,17 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
         }
         if(ReasonCode.IsEmpty())
         {
-            if(Goal.Intent==TEXT("companion_order"))
+            if(Goal.Intent==TEXT("camp_team") || Goal.Intent==TEXT("camp_team_stop"))
+                ReasonCode=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->PreviewWorkParty(Goal.Item,Goal.Quantity,Goal.Intent==TEXT("camp_team_stop"),
+                    GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
+            else if(Goal.Intent==TEXT("resume"))
+            {
+                const auto Phase=PendingCompanion->GetPhase();
+                if(!PendingCompanion->GetCommandId().IsValid()
+                    || (Phase!=EHearthwardCompanionPhase::WaitingAtCamp && Phase!=EHearthwardCompanionPhase::HoldingSafely))
+                    ReasonCode=TEXT("TASK_NOT_RESUMABLE");
+            }
+            else if(Goal.Intent==TEXT("companion_order"))
             {
                 auto* Gameplay=PendingSpeaker.IsValid()?PendingSpeaker->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
                 ReasonCode=Gameplay?Gameplay->PreviewCompanionDirective(PendingSpeaker.Get(),Goal.Item):TEXT("PLAYER_UNAVAILABLE");
@@ -302,6 +312,16 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
     Memory.WorkingGoal=Goal;
     if(!ReasonCode.IsEmpty())
     {
+        if(Goal.Intent==TEXT("camp_team") || Goal.Intent==TEXT("camp_team_stop"))
+        {
+            NPCLine=ReasonCode==TEXT("TEAM_COUNT_REQUIRED")?TEXT("要带几名族人？请明确1至4名，例如：带2名族人一起采集木材。"):
+                ReasonCode==TEXT("TEAM_AMOUNT_UNSUPPORTED")?TEXT("集体采集目前是持续工作，不能按物资数量自动停工。请确认是否改为持续采集，或单独给我定量委托。"):
+                ReasonCode==TEXT("POLICY_CONFLICT")?TEXT("这项工作与已确认的采集限制冲突，请先调整约定。"):
+                ContractValid?ReasonCode:TEXT("集体工作条件不明确，请重新选择物资和族人人数。");
+            Status=NPCLine;LastAppliedIntent=TEXT("refuse");return;
+        }
+        if(ReasonCode==TEXT("TASK_NOT_RESUMABLE"))
+        {NPCLine=DescribeCurrentTask()+TEXT("\n当前没有可续接的受阻任务。");Status=NPCLine;LastAppliedIntent=TEXT("task_status");Memory.WorkingGoal={};return;}
         if(ContractValid && ReasonCode==TEXT("AMBIGUOUS_TARGET") && Goal.Intent==TEXT("repair")
             && !Goal.EquipmentId.IsValid() && PendingCompanion->Bag->GetItemCount(Goal.Item)>1)
         {
@@ -327,6 +347,8 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
         Status=TEXT("任务未就绪：")+ReasonCode;LastAppliedIntent=TEXT("refuse");return;
     }
     Candidate=Goal;CandidateId=FGuid::NewGuid();CandidateMemoryRevision=Memory.Revision;
+    CandidateCamp=PendingSpeaker.IsValid()?GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(PendingSpeaker->GetActorLocation()):NAME_None;
+    CandidateCommandId=Goal.Intent==TEXT("resume")?PendingCompanion->GetCommandId():FGuid();
     NPCLine=TEXT("请核对下面的任务卡，确认后我再开始。");Status=TEXT("等待确认");LastAppliedIntent=TEXT("proposal");
 }
 bool UHearthwardLocalAISubsystem::ConfirmCandidate(FGuid Id)
@@ -344,6 +366,25 @@ bool UHearthwardLocalAISubsystem::ConfirmCandidate(FGuid Id)
         NPCLine=Candidate.Limits[0].StartsWith(TEXT("allow:"))
             ? TEXT("对应的禁用约定已撤销。以后可用自有材料；取用仓库仍需单独授权。当前任务保持原状。")
             : TEXT("长期规则已确认，将用于后续接受的任务。当前任务保持原状。");
+    }
+    else if(Candidate.Intent==TEXT("camp_team") || Candidate.Intent==TEXT("camp_team_stop"))
+    {
+        auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+        if(!PendingSpeaker.IsValid() || CandidateCamp!=Camp->State.CampAt(PendingSpeaker->GetActorLocation()))
+        {ReasonCode=TEXT("STALE_CONFIRMATION");Status=TEXT("所在营地已改变，请重新安排");return false;}
+        if(!Camp->ApplyWorkParty(Candidate.Item,Candidate.Quantity,Candidate.Intent==TEXT("camp_team_stop"),
+            GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()))
+        {ReasonCode=TEXT("TEAM_UNAVAILABLE");NPCLine=Camp->Feedback;Status=NPCLine;return false;}
+        PendingCompanion->DiscardProposal(Ticket);NPCLine=Camp->Feedback;
+    }
+    else if(Candidate.Intent==TEXT("resume"))
+    {
+        if(CandidateCommandId!=PendingCompanion->GetCommandId())
+        {ReasonCode=TEXT("STALE_CONFIRMATION");Status=TEXT("原任务已改变，请重新交流");return false;}
+        if(!PendingCompanion->ResumeBlocked(PendingSpeaker.Get()))
+        {ReasonCode=TEXT("TASK_STILL_BLOCKED");NPCLine=DescribeCurrentTask()+TEXT("\n当前条件无法继续，原任务进度保留。");Status=NPCLine;return false;}
+        PendingCompanion->DiscardProposal(Ticket);
+        NPCLine=TEXT("继续原任务，已完成的数量和原有限制都保留。");
     }
     else if(Candidate.Intent==TEXT("companion_order"))
     {
@@ -377,7 +418,8 @@ bool UHearthwardLocalAISubsystem::ConfirmCandidate(FGuid Id)
 FString UHearthwardLocalAISubsystem::GetCandidateText() const
 {
     if(!HasCandidate())return Memory.WorkingGoal.Unresolved.IsEmpty()?FString():TEXT("原话：")+Memory.WorkingGoal.Original+TEXT("\n未解决的条件：")+FString::Join(Memory.WorkingGoal.Unresolved,TEXT("；"));
-    FString S=TEXT("原话：")+Candidate.Original+TEXT("\n")+HearthwardAgent::GoalText(Candidate);
+    const FString Summary=HearthwardAgent::GoalText(Candidate);
+    FString S=Candidate.Original==Summary?Summary:TEXT("原话：")+Candidate.Original+TEXT("\n")+Summary;
     if(Candidate.Intent==TEXT("craft") || Candidate.Intent==TEXT("repair"))
     {
         auto Cost=HearthwardWorkshop::Materials(Candidate.Intent,Candidate.Item,Candidate.Quantity);
@@ -389,8 +431,26 @@ FString UHearthwardLocalAISubsystem::GetCandidateText() const
         if(Candidate.Intent==TEXT("craft")){S+=TEXT("\n实际产量：");for(const auto& C:HearthwardWorkshop::Outputs(Candidate.Item,Candidate.Quantity))S+=FString::Printf(TEXT("%s %d "),*HearthwardAgent::ItemText(C.Key),C.Value);}
         if(Instance)S+=FString::Printf(TEXT("\n所选实例当前耐久：%.0f；修好后仍由弟弟持有"),Instance->Durability);
     }
-    if(PendingCompanion.IsValid() && PendingCompanion->GetRequested()>PendingCompanion->GetDelivered())S+=FString::Printf(TEXT("\n将替换任务 %s（已交付%d）"),*PendingCompanion->GetCommandId().ToString().Left(8),PendingCompanion->GetDelivered());
+    if(Candidate.Intent==TEXT("resume"))S+=TEXT("\n")+DescribeCurrentTask();
+    else if(PendingCompanion.IsValid() && PendingCompanion->GetRequested()>PendingCompanion->GetDelivered())S+=FString::Printf(TEXT("\n将替换任务 %s（已交付%d）"),*PendingCompanion->GetCommandId().ToString().Left(8),PendingCompanion->GetDelivered());
     return S;
+}
+FString UHearthwardLocalAISubsystem::DescribeCurrentTask() const
+{
+    const FString Team=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->DescribeWorkParty();
+    const auto* C=PendingCompanion.Get();
+    if(!C || !C->GetCommandId().IsValid())return Team.IsEmpty()?FString(TEXT("哥，我现在没有任务记录。")):Team;
+    using P=EHearthwardCompanionPhase;
+    const auto Phase=C->GetPhase();
+    if(!Team.IsEmpty() && (Phase==P::Idle || Phase==P::Completed || Phase==P::Cancelled))return Team;
+    const TCHAR* State=Phase==P::Completed?TEXT("已完成"):Phase==P::Cancelled?TEXT("已取消"):
+        Phase==P::WaitingAtCamp || Phase==P::HoldingSafely?TEXT("受阻等待"):TEXT("执行中");
+    FString S=FString::Printf(TEXT("哥，%s任务%s。进度 %d / %d，还差 %d，携带 %d。"),
+        *HearthwardAgent::ItemText(C->GetGoal().Item),State,C->GetDelivered(),C->GetRequested(),
+        FMath::Max(0,C->GetRequested()-C->GetDelivered()),C->GetCarried());
+    if(!C->BlockReason.IsEmpty())S+=TEXT("原因：")+(C->BlockReason==TEXT("TOOL_REQUIRED")
+        ?FString(TEXT("缺少可用采集工具，请补充或维修工具。")):C->BlockReason);
+    return Team.IsEmpty()?S:S+TEXT("\n")+Team;
 }
 bool UHearthwardLocalAISubsystem::AdjustCandidate(FGuid Id,int32 Delta)
 {

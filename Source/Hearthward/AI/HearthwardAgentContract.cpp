@@ -254,12 +254,16 @@ const TArray<FHearthwardAgentCapability>& HearthwardAgent::Capabilities()
             {TEXT("hunt"),TEXT("玩家同行指认单只野生猎物；弟弟真实击杀才完成；战利品留尸体。"),Wildlife,1,TEXT("one_animal"),{TEXT("known_target")},{},true},
             {TEXT("fish"),TEXT("玩家同行已指认鱼点钓1条；自有竿/饵/包；按实际鱼群和稀有奖励结算。"),{TEXT("fish")},1,TEXT("one_catch"),{TEXT("known_target")},{},true},
             {TEXT("capture"),TEXT("玩家同行指认单只家畜→当前同种栏舍；首次捕获消耗自有绳索/饲料，继续牵引不重复消耗。"),Domestic,1,TEXT("one_animal"),{TEXT("known_target")},{},true},
+            {TEXT("camp_team"),TEXT("带1至4名空闲族人持续采集木材或石头入库；quantity是族人数，不是物资量。"),{TEXT("wood"),TEXT("stone")},4,TEXT("workers"),{TEXT("current_camp")},{TEXT("ban")},true},
+            {TEXT("camp_team_stop"),TEXT("暂停弟弟所在木材或石头采集队，保留人员和进度。"),{TEXT("wood"),TEXT("stone")},1,TEXT("directive"),{TEXT("current_camp")},{},true},
             {TEXT("camp_batch"),TEXT("已配置且只分配弟弟的设施岗位；仓库结算有限批次，到数停产。"),CampRecipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("assigned_region")},{},true},
             {TEXT("craft"),TEXT("授权制作配方批数→产物入库。"),Recipes,Policy(TEXT("max_craft_batches")),TEXT("batches"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
             {TEXT("repair"),TEXT("工作台维修自有装备；量1。"),Repair,1,TEXT("one_owned"),{TEXT("bag"),TEXT("camp")},{TEXT("no"),TEXT("max"),TEXT("once")},true},
             {TEXT("escort"),TEXT("同行护送已接触指定族人→当前营地报到；玩家负责交谈，不能寻找未知人。"),People,1,TEXT("one_person"),{TEXT("known_person")},{},true},
             {TEXT("companion_order"),TEXT("伙伴高层指令，UE决定战术细节。"),{TEXT("hold"),TEXT("follow"),TEXT("assist"),TEXT("routine")},1,TEXT("directive"),{TEXT("player")},{},true},
             {TEXT("inventory"),TEXT("只读库存认知。"),All,0,TEXT("none"),{TEXT("none")},{},false},
+            {TEXT("task_status"),TEXT("只读当前任务的真实进度、剩余数量及受阻原因。"),{TEXT("none")},0,TEXT("none"),{TEXT("current_task")},{},false},
+            {TEXT("resume"),TEXT("确认后继续受阻的原任务；保留进度、来源和限制，不新建任务。"),{TEXT("none")},1,TEXT("directive"),{TEXT("current_task")},{},true},
             {TEXT("inventory_report"),TEXT("陈述库存报告。"),All,100000,TEXT("reported_exact"),{TEXT("player")},{},false},
             {TEXT("recall"),TEXT("仅有效原话和本人事件。"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{},false},
             {TEXT("rule_proposal"),TEXT("长期1条规则卡，确认生效：ban/source/no/max/allow。"),{TEXT("none")},0,TEXT("none"),{TEXT("none")},{TEXT("ban"),TEXT("source"),TEXT("no"),TEXT("max"),TEXT("allow")},false}
@@ -389,11 +393,21 @@ FString HearthwardAgent::Validate(const FHearthwardAgentGoal& G)
         if(InvalidQuantity.FindNext())return TEXT("UNRESOLVED_CONSTRAINT");
     }
     if(G.Intent==TEXT("nature_care") && G.Item!=TEXT("deposit_feed") && G.Quantity!=1)return TEXT("AMBIGUOUS_TARGET");
+    if(G.Intent==TEXT("camp_team") && !G.Original.IsEmpty())
+    {
+        FRegexMatcher People(FRegexPattern(TEXT("(?<![0-9零一二两三四五六七八九十百])([1-4一二两三四])\\s*(?:名|个|位)\\s*(?:空闲)?族人")),G.Original);
+        if(!People.FindNext())return TEXT("TEAM_COUNT_REQUIRED");
+        const FString N=People.GetCaptureGroup(1);
+        const int32 Count=N==TEXT("一")?1:N==TEXT("二") || N==TEXT("两")?2:N==TEXT("三")?3:N==TEXT("四")?4:FCString::Atoi(*N);
+        if(Count!=G.Quantity)return TEXT("TEAM_COUNT_REQUIRED");
+        FRegexMatcher Amount(FRegexPattern(TEXT("[0-9一二两三四五六七八九十百]+\\s*(?:份|根|块|单位)")),G.Original);
+        if(Amount.FindNext())return TEXT("TEAM_AMOUNT_UNSUPPORTED");
+    }
     for(const auto& L:G.Limits)
     {
         FString Type,Rest;L.Split(TEXT(":"),&Type,&Rest);
         if(!ValidLimit(L) || !C->Constraints.Contains(Type)) return TEXT("UNRESOLVED_CONSTRAINT");
-        if(Type==TEXT("ban") && Rest==G.Item.ToString() && (G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect"))) return TEXT("POLICY_CONFLICT");
+        if(Type==TEXT("ban") && Rest==G.Item.ToString() && (G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect") || G.Intent==TEXT("camp_team"))) return TEXT("POLICY_CONFLICT");
     }
     if((G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect")) && !G.Original.IsEmpty())
     {
@@ -479,6 +493,10 @@ FString HearthwardAgent::EventText(FName Kind)
 FString HearthwardAgent::GoalText(const FHearthwardAgentGoal& G)
 {
     if(G.Intent.IsNone())return TEXT("暂无待补充任务");
+    if(G.Intent==TEXT("task_status"))return TEXT("询问当前任务进度与受阻原因");
+    if(G.Intent==TEXT("resume"))return TEXT("继续原任务，保留已完成数量、原来源和限制；确认时复核现场条件");
+    if(G.Intent==TEXT("camp_team"))return FString::Printf(TEXT("弟弟带%d名空闲族人一起采集%s\n地点：当前营地安全采集岗位\n产物：进入营地仓库\n持续采集，直到暂停；资源不足时等待刷新。"),G.Quantity,*ItemText(G.Item));
+    if(G.Intent==TEXT("camp_team_stop"))return TEXT("暂停")+ItemText(G.Item)+TEXT("采集队；保留岗位人员与已投入进度。");
     const FString Name=ItemText(G.Item);
     FString Action=G.Intent==TEXT("collect") || G.Intent==TEXT("nature_collect")?TEXT("新采集"):G.Intent==TEXT("store")?TEXT("搬运已有"):G.Intent==TEXT("retrieve")?TEXT("仓库取出并交付"):G.Intent==TEXT("give")?TEXT("交给玩家"):G.Intent==TEXT("fetch")?TEXT("仓库取到弟弟背包"):G.Intent==TEXT("receive")?TEXT("从玩家背包接收"):G.Intent==TEXT("nature_care")?TEXT("照料"):
         G.Intent==TEXT("craft")?TEXT("制作"):G.Intent==TEXT("repair")?TEXT("维修自己的"):G.Intent==TEXT("inventory_report")?TEXT("玩家报告库存"):TEXT("新增长期规则");

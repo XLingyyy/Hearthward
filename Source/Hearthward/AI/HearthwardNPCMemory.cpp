@@ -239,9 +239,9 @@ TArray<FString> FHearthwardNPCMemory::ApplicableRules(FName Capability) const
     for(const auto& R:Records)
     {
         if(R.Revoked) continue;
-        if((Capability==TEXT("collect") || Capability==TEXT("nature_collect")) && R.Kind==TEXT("collection_ban")) Out.AddUnique(TEXT("ban:")+R.BlockedItem.ToString());
+        if((Capability==TEXT("collect") || Capability==TEXT("nature_collect") || Capability==TEXT("camp_team")) && R.Kind==TEXT("collection_ban")) Out.AddUnique(TEXT("ban:")+R.BlockedItem.ToString());
         if(R.Kind!=TEXT("typed_constraint")) continue;
-        if(((Capability==TEXT("collect") || Capability==TEXT("nature_collect")) && R.Constraint.StartsWith(TEXT("ban:")))
+        if(((Capability==TEXT("collect") || Capability==TEXT("nature_collect") || Capability==TEXT("camp_team")) && R.Constraint.StartsWith(TEXT("ban:")))
             || (Capability==TEXT("collect") && R.Constraint.StartsWith(TEXT("source:")))
             || ((Capability==TEXT("craft") || Capability==TEXT("repair")) && (R.Constraint.StartsWith(TEXT("no:")) || R.Constraint.StartsWith(TEXT("max:"))))) Out.AddUnique(R.Constraint);
     }

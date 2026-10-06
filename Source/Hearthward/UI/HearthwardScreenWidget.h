@@ -48,6 +48,7 @@ public:
     UFUNCTION(BlueprintCallable) bool SaveLayout();
     UFUNCTION(BlueprintCallable) bool ReloadLayout();
     UFUNCTION(BlueprintPure) FString DescribeLayout() const;
+    UFUNCTION(BlueprintPure) FString DescribeQuestGuidance() const;
     UFUNCTION(BlueprintPure) FString ActionAt(FVector2D Point) const;
     UFUNCTION(BlueprintCallable) bool CaptureUI(const FString& Name,int32 Width=1672,int32 Height=941,bool PreserveFocus=false);
 #if !UE_BUILD_SHIPPING
@@ -131,8 +132,12 @@ private:
     TArray<TSharedPtr<FJsonObject>> JournalEntries() const;
     bool JournalEntryKnown(const TSharedPtr<FJsonObject>& Entry) const;
     void ComposeDialogue();
+    bool ExecuteDialogueAction(const FString& Action);
+    FName DialogueView=TEXT("home"),DialogueJob=TEXT("wood");
+    int32 DialogueQuantity=16,DialogueWorkers=2,DialogueTransport=0;
     void ComposeMemory();
     void ComposeHUD();
+    void PaintQuestGuidance(const FGeometry& Geometry,FSlateWindowElementList& Out,int32 Layer) const;
     double HUDFeedbackDeadline(FName Id,const FString& Label,uint32 Revision,bool Eligible);
     void UpdateHUDQuestNotice();
     UFUNCTION() void ResetHUDQuestNotice();

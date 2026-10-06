@@ -11,7 +11,7 @@ using namespace HearthwardData;
 bool UHearthwardScreenWidget::UsesSimpleUI() const
 {
     return Page==TEXT("storage") || Page==TEXT("crafting") || Page==TEXT("repairing")
-        || Page==TEXT("memory") || Page==TEXT("camp") || Page==TEXT("nature") || Page==TEXT("dialogue");
+        || Page==TEXT("memory") || Page==TEXT("camp") || Page==TEXT("nature");
 }
 
 void UHearthwardScreenWidget::ApplySimpleUIStyle()

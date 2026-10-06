@@ -1,0 +1,80 @@
+{
+  "ok": true,
+  "checks": {
+    "isolated prototype enabled": true,
+    "isolated new progress": true,
+    "fixture retained physical cargo": true,
+    "fixture actual gathering tool": true,
+    "fixture task card": true,
+    "fixture requested quantity": true,
+    "fixture task confirmed": true,
+    "fixture actual delivery": true,
+    "model request accepted: 还差多少木头，为什么停下来了？": true,
+    "capture reply": true,
+    "raw intent: 还差多少木头，为什么停下来了？": true,
+    "query keeps command: 还差多少木头，为什么停下来了？": true,
+    "actual counts in reply: 还差多少木头，为什么停下来了？": true,
+    "query is read-only: 还差多少木头，为什么停下来了？": true,
+    "model request accepted: 先不要继续，我只是问刚才的任务还差多少": true,
+    "raw intent: 先不要继续，我只是问刚才的任务还差多少": true,
+    "query keeps command: 先不要继续，我只是问刚才的任务还差多少": true,
+    "actual counts in reply: 先不要继续，我只是问刚才的任务还差多少": true,
+    "query is read-only: 先不要继续，我只是问刚才的任务还差多少": true,
+    "model request accepted: 继续刚才没完成的采集任务": true,
+    "raw intent: 继续刚才没完成的采集任务": true,
+    "query keeps command: 继续刚才没完成的采集任务": true,
+    "resume needs confirmation": true,
+    "resume card preserves task": true,
+    "empty source confirmation rejected": true,
+    "empty source explained": true,
+    "failed retry retains delivery": true,
+    "resume original task": true,
+    "resume retains command ID": true,
+    "task reaches original 32": true,
+    "completed request accepted": true,
+    "completed status classified": true,
+    "completed status accurate": true,
+    "completed task cannot resume": true,
+    "boundary seed card": true,
+    "boundary quantity": true,
+    "boundary seed accepted": true,
+    "boundary resume card": true,
+    "stale resume rejected": true,
+    "stale card preserves progress": true
+  },
+  "method": "Isolated PIE: real local-model status/resume requests and UE confirmation/settlement.\nExplicit cargo and source fixtures seed 14/32; replenishment is test setup, not an AI action.\n",
+  "model_cases": [
+    {
+      "text": "还差多少木头，为什么停下来了？",
+      "raw": "{\"intent\":\"task_status\",\"item\":\"none\",\"quantity\":0,\"mode\":\"none\",\"source\":\"current_task\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，还差 18 份木头。因为 S1 营地实际资源不足，已采 14 份，无法完成 32 份的目标，所以任务暂停等待。\"}",
+      "reply": "哥，木材任务受阻等待。进度 14 / 32，还差 18，携带 0。原因：实际资源不足",
+      "reason": "",
+      "candidate": false
+    },
+    {
+      "text": "先不要继续，我只是问刚才的任务还差多少",
+      "raw": "{\"intent\":\"task_status\",\"item\":\"none\",\"quantity\":0,\"mode\":\"none\",\"source\":\"current_task\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，刚才采集木材的任务还剩 18 份，因为实际资源不足，目前无法继续。\"}",
+      "reply": "哥，木材任务受阻等待。进度 14 / 32，还差 18，携带 0。原因：实际资源不足",
+      "reason": "",
+      "candidate": false
+    },
+    {
+      "text": "继续刚才没完成的采集任务",
+      "raw": "{\"intent\":\"resume\",\"item\":\"none\",\"quantity\":1,\"mode\":\"directive\",\"source\":\"current_task\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认继续刚才在 S1 采集木材的任务吗？当前剩余 18 份，因实际资源不足已暂停，继续执行需再次确认现场安全与资源情况。\"}",
+      "reply": "请核对下面的任务卡，确认后我再开始。",
+      "reason": "",
+      "candidate": true
+    },
+    {
+      "text": "刚才的任务做完了吗？",
+      "raw": "{\"intent\":\"task_status\",\"item\":\"none\",\"quantity\":0,\"mode\":\"none\",\"source\":\"current_task\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，刚才采集木材的任务已完成，已交付32份，但实际资源不足导致采集量未达预期。\"}",
+      "reply": "哥，木材任务已完成。进度 32 / 32，还差 0，携带 0。"
+    }
+  ],
+  "resumed_execution": {
+    "phase": "<HearthwardCompanionPhase.COMPLETED: 6>",
+    "reason": "",
+    "delivered": 32,
+    "source": 0
+  }
+}

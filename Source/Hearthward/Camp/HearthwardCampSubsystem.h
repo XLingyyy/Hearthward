@@ -36,6 +36,9 @@ public:
     UFUNCTION(BlueprintCallable) bool ReclaimHometown(FName Victory,FVector Position);
     bool Restore(const FString& Json,int32 LegacyTier,FVector Camp,double Calendar);
     bool BrotherWorking() const;
+    FString PreviewWorkParty(FName Job,int32 Count,bool Stop,FGuid Epoch) const;
+    bool ApplyWorkParty(FName Job,int32 Count,bool Stop,FGuid Epoch);
+    UFUNCTION(BlueprintPure) FString DescribeWorkParty() const;
     bool BrotherWorkplace(FVector& Position,AActor*& Facility) const;
     void RefreshQuartermasters();
 protected:

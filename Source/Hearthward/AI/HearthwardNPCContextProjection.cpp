@@ -97,6 +97,19 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     Facts->SetStringField(TEXT("source"),TEXT("UE_authoritative_captured_snapshot"));
     Facts->SetStringField(TEXT("projection_tier"),Result.Tier);
     Facts->SetStringField(TEXT("input_source"),S.InputSource);
+    auto Task=MakeShared<FJsonObject>();
+    Task->SetBoolField(TEXT("available"),S.bHasActiveTask);
+    Task->SetStringField(TEXT("intent"),S.ActiveGoal.Intent.ToString());
+    Task->SetStringField(TEXT("item"),S.ActiveGoal.Item.ToString());
+    Task->SetStringField(TEXT("source"),S.ActiveGoal.SourceRef);
+    Task->SetStringField(TEXT("phase"),S.ExecutionPhase);
+    Task->SetNumberField(TEXT("requested"),S.PreviousGoalQuantity);
+    Task->SetNumberField(TEXT("delivered"),S.PreviousGoalDelivered);
+    Task->SetNumberField(TEXT("remaining"),FMath::Max(0,S.PreviousGoalQuantity-S.PreviousGoalDelivered));
+    Task->SetNumberField(TEXT("carried"),S.TaskCarried);
+    Task->SetStringField(TEXT("block_reason"),S.TaskBlockReason);
+    Facts->SetObjectField(TEXT("current_task"),Task);
+    if(!S.CampTeamStatus.IsEmpty())Facts->SetStringField(TEXT("camp_team"),S.CampTeamStatus);
 
     const FString Query=HearthwardAgent::Normalize(S.Query+TEXT(" ")+S.Memory.WorkingGoal.Original);
     const bool HistoryQuery=ContextProjectionContainsAny(Query,{TEXT("上次"),TEXT("过去"),TEXT("经历"),TEXT("为什么"),TEXT("受阻"),TEXT("实际交付"),TEXT("完成"),TEXT("任务"),TEXT("委托"),TEXT("replan"),TEXT("history")});

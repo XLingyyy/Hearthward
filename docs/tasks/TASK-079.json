@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "id": "TASK-079",
+  "title": "弟弟自然语言任务查询与续接",
+  "status": "Active",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-079-companion-dialogue",
+  "source_refs": [
+    "main@ca21120cef4421d039c44248a0cfa5043c248feb + 本地TASK-078修复",
+    "用户要求继续升级弟弟AI，理解玩家话语并做更多事情"
+  ],
+  "dependencies": [
+    "TASK-078"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "Source/Hearthward/AI/",
+    "Source/Hearthward/Tests/NPCAgentTests.cpp",
+    "Source/Hearthward/Tests/CompanionDialogueTests.cpp",
+    "docs/tasks/TASK-079.json",
+    "docs/handoffs/TASK-079.md",
+    "docs/qa/TASK-079/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "Source/Hearthward/Save/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "当前任务类型、进度、携带量、原因在上下文所有档位保留",
+    "自然语言查询真实当前进度与停滞原因，不执行或替换任务",
+    "自然语言继续任务生成待确认卡并恢复原任务，不重置已交付进度",
+    "过期续接卡不能恢复另一项任务；资源与安全条件仍由UE复核",
+    "定向原生及真实本地模型运行验证，保留失败与限制"
+  ],
+  "non_goals": [
+    "自动跨点或多步骤任务队列",
+    "更换模型、依赖或存档格式",
+    "覆盖上轮修复及用户存档",
+    "更新Release"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "owner_authorized",
+    "push": "owner_authorized",
+    "merge": "owner_authorized"
+  },
+  "notes": [
+    "先补全上下文及任务查询/续接能力；维持一次4B推理与UE校验架构。",
+    "当前工作区包含本会话已知TASK-078未提交文件，完整保留。",
+    "2026-10-06 用户明确要求“提交并推送到main吧”，授权 TASK-078—081 成果提交、推送及 main 集成；本次不更新 Release，不代填人工验收。"
+  ]
+}
