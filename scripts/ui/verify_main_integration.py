@@ -1,5 +1,6 @@
 """Verify the integrated map/UI and main companion/dialogue changes in isolated UE fixtures."""
 import argparse
+import ast
 import hashlib
 import json
 import os
@@ -20,8 +21,8 @@ from engine_adapters.ue5 import UEClient
 
 SCRIPTS = {
     'dialogue-final': ('docs/qa/TASK-081/verify_final.py', '.agent-local/qa/TASK-081/final-pie', '/Game/Hearthward/Bootstrap/L_Bootstrap'),
-    'dialogue-visual': ('docs/qa/TASK-081/verify_visual.py', '.agent-local/qa/TASK-081/visual', '/Game/Hearthward/World/Natural/L_NaturalWorld'),
-    'quest-guidance': ('docs/qa/TASK-080/verify_quest_guidance_pie.py', '.agent-local/qa/TASK-080/pie', '/Game/Hearthward/World/Natural/L_NaturalWorld'),
+    'dialogue-visual': ('docs/qa/TASK-081/verify_visual.py', '.agent-local/qa/TASK-081/visual', '/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds'),
+    'quest-guidance': ('docs/qa/TASK-080/verify_quest_guidance_pie.py', '.agent-local/qa/TASK-080', '/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds'),
 }
 NATIVE_FILTER = 'Hearthward.Inventory.Storage+Hearthward.Map078+Hearthward.Companion078+Hearthward.Companion079+Hearthward.Quest080+Hearthward.Dialogue081'
 NATIVE_TESTS = {
@@ -63,16 +64,23 @@ def main():
     original, old_output, level = SCRIPTS[args.suite]
     source_path = GAME / original
     source = source_path.read_text('utf-8')
-    old = "Path(unreal.Paths.project_dir())/'" + old_output + "'"
-    if source.count(old) != 1:
+    assignments = [node for node in ast.parse(source).body if isinstance(node, ast.Assign)
+        and any(isinstance(target, ast.Name) and target.id == 'out' for target in node.targets)]
+    if len(assignments) != 1 or old_output not in ast.get_source_segment(source, assignments[0].value):
         raise RuntimeError('Expected unique original output directory in ' + original)
-    adapted = source.replace(old, 'Path(' + repr(out.as_posix()) + ')', 1)
+    value = assignments[0].value
+    lines = source.splitlines(keepends=True)
+    start = sum(map(len, lines[:value.lineno - 1])) + value.col_offset
+    end = sum(map(len, lines[:value.end_lineno - 1])) + value.end_col_offset
+    adapted = source[:start] + 'Path(' + repr(out.as_posix()) + ')' + source[end:]
     script = out / 'verify_pie.py'
     script.write_text(adapted, encoding='utf-8')
     (out / 'script-adaptation.json').write_text(json.dumps({'original': original,
         'original_sha256': hashlib.sha256(source_path.read_bytes()).hexdigest(),
         'adapted_sha256': hashlib.sha256(script.read_bytes()).hexdigest(),
-        'change': 'Only redirect output to a unique TASK-082 run; original assertions and fixtures preserved'}, indent=2), encoding='utf-8')
+        'change': 'Only redirect output to a unique TASK-082 run; original assertions and fixtures preserved',
+        'launch_map': level,
+        'map_note': 'Natural suites launch the current L_HearthwardWilds map required by EnableNaturalWorld; avoids stale objects after travel from the old L_NaturalWorld'}, indent=2), encoding='utf-8')
     launch = client.runtime.launch_editor(map_path=level, extra_args=flags + ['-ExecutePythonScript=' + str(script),
         '-HearthwardAIBackend=vulkan', '-HearthwardAIGpuLayers=32', '-abslog=' + str(out / 'runtime.log')])
     (out / 'launch.json').write_text(json.dumps(launch, indent=2), encoding='utf-8')
