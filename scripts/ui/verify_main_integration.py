@@ -24,6 +24,13 @@ SCRIPTS = {
     'quest-guidance': ('docs/qa/TASK-080/verify_quest_guidance_pie.py', '.agent-local/qa/TASK-080/pie', '/Game/Hearthward/World/Natural/L_NaturalWorld'),
 }
 NATIVE_FILTER = 'Hearthward.Inventory.Storage+Hearthward.Map078+Hearthward.Companion078+Hearthward.Companion079+Hearthward.Quest080+Hearthward.Dialogue081'
+NATIVE_TESTS = {
+    'Hearthward.Inventory.Storage.AtomicTransfer', 'Hearthward.Inventory.Storage.ReplayAndEpoch',
+    'Hearthward.Map078.LocationKindsAndTravelFeedback', 'Hearthward.Map078.RectangularDragAndRelease',
+    'Hearthward.Companion078.GatheringDepletionAndResume', 'Hearthward.Companion078.InspectSavedGathering',
+    'Hearthward.Companion079.TaskContext', 'Hearthward.Companion079.TaskContract',
+    'Hearthward.Quest080.MarkerPlacement', 'Hearthward.Dialogue081.Contract', 'Hearthward.Dialogue081.WorkParty',
+}
 
 
 def main():
@@ -46,8 +53,13 @@ def main():
     if args.suite == 'native':
         result = client.testing.run_automation_tests(NATIVE_FILTER, report_dir=str(out), extra_args=flags, timeout=300)
         (out / 'result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
-        print(json.dumps({'ok': result['ok'], 'evidence': str(out), 'counts': {k:v for k,v in result['payload'].items() if k.startswith('tests_')}}, ensure_ascii=False), flush=True)
-        raise SystemExit(0 if result['ok'] and result['payload']['tests_found'] == 10 else 1)
+        index = json.loads((out / 'index.json').read_text('utf-8-sig'))
+        actual = {test['fullTestPath'] for test in index['tests']}
+        complete = actual == NATIVE_TESTS
+        print(json.dumps({'ok': result['ok'] and complete, 'evidence': str(out), 'expected_test_set_matches': complete,
+            'missing': sorted(NATIVE_TESTS - actual), 'unexpected': sorted(actual - NATIVE_TESTS),
+            'counts': {k:v for k,v in result['payload'].items() if k.startswith('tests_')}}, ensure_ascii=False), flush=True)
+        raise SystemExit(0 if result['ok'] and complete else 1)
     original, old_output, level = SCRIPTS[args.suite]
     source_path = GAME / original
     source = source_path.read_text('utf-8')
