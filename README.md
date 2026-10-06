@@ -2,7 +2,7 @@
 
 UE 5.8.2 单人第三人称生存冒险。本次代码整合保留main的TASK-078—081伙伴委托、自然语言续接、任务地点指引、简约右侧对话界面和族人采集队，并加入TASK-082地图、传送和简约UI更新：无黑雾的3000米×2000米全屏矩形地图、实际地形建筑与地名、可拖动缩放、红蓝三角朝向火焰、统一地图入口、详细传送限制和已激活路标传送修复。储物箱采用新版背包深灰物品格，制作、记忆、营地、田野等页面清理旧火红背景与宣传装饰。
 
-地图分支原TASK-078迁为TASK-082，main原TASK-078—081及其证据保留。用户授权通过[PR #61](https://github.com/XLingyyy/Hearthward/pull/61)整合并合并main，验证见[整合报告](docs/qa/TASK-082/INTEGRATION-REPORT.md)。本次 Windows Demo 更新版本为 `0.2.0-preview.20261006.2`，包含上述联合更新；构建、实机验证与发布状态以[当前发行报告](docs/releases/demo-20261006-2/REPORT.md)为准。精细美术与完整真人体验仍待验收。
+地图分支原TASK-078迁为TASK-082，main原TASK-078—081及其证据保留。用户授权通过[PR #61](https://github.com/XLingyyy/Hearthward/pull/61)整合并合并main，验证见[整合报告](docs/qa/TASK-082/INTEGRATION-REPORT.md)。已发布的 Windows Demo 更新版本为 `0.2.0-preview.20261006.2`，包含上述联合更新；构建、实机验证与发布状态以[当前发行报告](docs/releases/demo-20261006-2/REPORT.md)为准。精细美术与完整真人体验仍待验收。
 
 入口：[项目状态](docs/PROJECT_STATE.md) · [本次整合与验证](docs/qa/TASK-082/INTEGRATION-REPORT.md) · [文件目录](docs/REPOSITORY_LAYOUT.md) · [分支关系](docs/planning/BRANCH_INTEGRATION.md) · [测试端说明](TestClient/README.md)。
 

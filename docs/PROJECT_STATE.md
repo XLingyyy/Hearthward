@@ -1,6 +1,6 @@
 # Hearthward 项目状态
 
-2026-10-06 TASK-083：当前基线 `main@af08e1ab` 已通过 PR #61 整合 TASK-082 地图、传送与简约界面，并保留 TASK-078—081。用户授权整理 main 并发布 `0.2.0-preview.20261006.2`；当前发行和独立程序验证见[发行报告](releases/demo-20261006-2/REPORT.md)。当前 Shipping 和实机操作验证已通过，包位于 `F:/HearthwardDemo/20261006-2/Windows`。以下 .1 包及旧提交记录为历史交付。
+2026-10-06 TASK-083：当前基线 `main@af08e1ab` 已通过 PR #61 整合 TASK-082 地图、传送与简约界面，并保留 TASK-078—081。用户授权整理 main 并发布 `0.2.0-preview.20261006.2`；当前发行和独立程序验证见[发行报告](releases/demo-20261006-2/REPORT.md)。当前 Shipping 和实机操作验证已通过，已公开发布 [预览 Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.2)，五个附件核对通过。包位于 `F:/HearthwardDemo/20261006-2/Windows`。以下 .1 包及旧提交记录为历史交付。
 
 ## 历史实现与验收记录
 

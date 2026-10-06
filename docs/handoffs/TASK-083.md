@@ -4,4 +4,4 @@
 
 包含 TASK-078—082；保留历史 QA，整理当前入口和发行说明。验证与发行进度见 [发行报告](../releases/demo-20261006-2/REPORT.md)。人工完整体验验收仍待完成。
 
-已完成18份旧路径重复副本清理与入口整理，规范原始制作源保留。Shipping源码为 `0be7c5393f75789ea4cb5d3dace50dd3966844cf`。Editor／Shipping通过，原生10/10、对话显示10/10、到岗及模型26/26、仓储77/77、独立包操作15/15通过。4.88GB便携ZIP和三个分片已准备，等待上传及公开发布。
+已完成18份旧路径重复副本清理与入口整理，规范原始制作源保留。Shipping源码为 `0be7c5393f75789ea4cb5d3dace50dd3966844cf`。Editor／Shipping通过，原生10/10、对话显示10/10、到岗及模型26/26、仓储77/77、独立包操作15/15通过。4.88GB便携ZIP已完成，三个分片、合并脚本和下载说明已上传并核对名称、大小与 uploaded 状态；[预览 Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.2) 已公开。旧版 Release 保留。实现、验证证据和本次发布记录均纳入 main。

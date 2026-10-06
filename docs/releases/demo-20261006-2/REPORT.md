@@ -2,7 +2,7 @@
 
 基于最新 main `af08e1ab`，包含 TASK-078—082。用户授权整理并发布更新。
 
-状态：Editor、Shipping Build/Cook/Stage/Archive、定向整合与独立包检查已通过，已准备发布附件。采用独立 QA 存档目录，现有用户档与前版包保留。
+状态：Editor、Shipping Build/Cook/Stage/Archive、定向整合与独立包检查已通过，已公开发布 [GitHub 预览 Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.2)。五个附件的名称、大小及 uploaded 状态均已核对，见[发布记录](release-publication.json)。采用独立 QA 存档目录，现有用户档与前版包保留。
 
 流程参考 [Epic 打包文档](https://dev.epicgames.com/documentation/unreal-engine/packaging-your-project)。完整构建由公开 UEClient.build.package 执行，成功后实际运行归档程序。
 
@@ -26,7 +26,7 @@
 
 复验沿用 scripts/ui/verify_main_integration.py 对应的公开UEClient路径及原081脚本；本轮仅改写QA输出目录，断言和夹具保持。仓储使用现有 HearthwardStorageVerify 入口。所有测试使用隔离存档目录。
 
-范围检查记录：首次以 f7984b27 的任务快照检查时，快照尚不含刚发现的18个旧副本路径，报告 OUT_OF_SCOPE；用户本轮文件整理授权和随后更新的任务单覆盖这些路径，未修改验证器或代填人工审查。
+范围检查记录：首次以 f7984b27 的任务快照检查时，快照尚不含刚发现的18个旧副本路径，报告 OUT_OF_SCOPE；用户本轮文件整理授权和随后更新的任务单覆盖这些路径，未修改验证器或代填人工审查。最终以 0be7c539 为基线运行当前任务路径检查：84份任务快照、24条路径、0错误，PASS；git diff --check 通过。
 
 ## 独立包与交付
 
