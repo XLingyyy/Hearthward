@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "id": "TASK-078",
-  "title": "地图与传送修复、三角火焰尖端及简约游戏UI",
+  "id": "TASK-082",
+  "title": "地图、传送与简约UI整合main及PR交付",
   "status": "Active",
   "updated_at": "2026-10-06",
   "owner": "XLingyyy",
@@ -16,7 +16,11 @@
     "用户2026-10-06追加四项bug修复：任务物品不进入地点列表、旗帜标记与指引、详细传送拒绝原因、已激活路标传送",
     "用户2026-10-06追加：玩家与弟弟火焰指向尖端稍微加粗，形成小三角形",
     "用户2026-10-06：储物箱对齐新版背包风格，清理其他旧火红UI与归火宣传装饰",
-    "用户2026-10-06明确要求：将更新同步到远端GitHub仓库，授权本轮成果提交并推送到当前任务分支"
+    "用户2026-10-06明确要求：将更新同步到远端GitHub仓库，授权本轮成果提交并推送到当前任务分支",
+    "地图分支原TASK-078迁至TASK-082，保留main原TASK-078伙伴采集任务及TASK-079-081成果",
+    "地图分支原提交292fd6efced5b2c9ae5c2ab1b8cb4ad3ad05aa91；main d833c420ec849553fafc639e31ea392418a0a387",
+    "用户2026-10-06明确授权：给刚才的推送补上一个pull request，后续直接合并到main",
+    "https://github.com/XLingyyy/Hearthward/pull/61"
   ],
   "dependencies": [],
   "blocked_by": [],
@@ -36,9 +40,10 @@
     "Resources/UI/layout.json",
     "Resources/UI/Art/map-local-terrain.png",
     "scripts/ui/",
-    "docs/tasks/TASK-078.json",
-    "docs/handoffs/TASK-078.md",
-    "docs/qa/TASK-078/"
+    "docs/tasks/TASK-082.json",
+    "docs/handoffs/TASK-082.md",
+    "docs/qa/TASK-082/",
+    "docs/PROJECT_STATE.md"
   ],
   "forbidden_paths": [
     "Content/",
@@ -55,11 +60,12 @@
     "传送失败显示实际限制与解决方式；地图自己的暂停不阻止已激活站点传送，真实异步传送能够完成",
     "红蓝火焰朝向尖端加宽为小三角形，保留纹理、颜色、实际位置与各自朝向",
     "当前代码构建、定向运行验证与根目录可玩包更新",
-    "储物箱使用新版背包深灰三面板与物品格，清理制作、记忆、营地、田野、对话及旧维修配置中的旧火红背景与宣传装饰；真实存取、失败路径及字体截图验证后更新本地可玩包"
+    "储物箱使用新版背包深灰三面板与物品格，清理制作、记忆、营地、田野、对话及旧维修配置中的旧火红背景与宣传装饰；真实存取、失败路径及字体截图验证后更新本地可玩包",
+    "创建PR #61，解决与main的编号和UI冲突，构建与整合回归通过后按Owner授权合入main"
   ],
   "non_goals": [
     "修改玩法规则、存档格式、主地图资产",
-    "合并main、公开发布新版可玩包"
+    "公开发布新版可玩包、修改远端保护"
   ],
   "prototype_only": false,
   "prototype_approval": null,
@@ -71,7 +77,7 @@
     "install_dependencies": "not_granted",
     "commit": "owner_authorized",
     "push": "owner_authorized",
-    "merge": "not_granted"
+    "merge": "owner_authorized"
   },
   "notes": [
     "接续半径1000米、无黑雾3000米×2000米矩形及删除四周背景要求；当前保留真实全屏地形、右上地点入口、地名与朝向火焰、拖动缩放。",
@@ -85,6 +91,7 @@
     "当前简约UI成果见SIMPLE-UI-REPORT：储物箱三栏物品格，制作/记忆/营地/田野/对话去旧火红背景和宣传；最终Editor/完整Shipping、77/77 UI存取、4/4原生、18/18页面配置、33/33工具通过。新包SimpleUI，旧地图/传送报告保留为历史证据。",
     "SimpleUI独立Shipping启动6次窗口响应采样及ZIP全部152成员CRC通过；启动正式游玩版/简约UI更新版/地图更新版/矩形地图版统一指向新包；Source/DLL/Shipping/UI指纹匹配，普通仓库与当前允许路径检查通过。",
     "同步时origin/main已推进至d833c420ec849553fafc639e31ea392418a0a387，另一批伙伴与对话更新复用TASK-078。此任务仅指codex/map-1000m-heading的地图与简约UI成果，独立推送不覆盖main；后续集成须处理编号、文档及共享UI冲突并复验。",
-    "实现提交63f43adfd911868825f7832c7902e43a27afc82a已按用户授权推送GitHub，ls-remote确认分支SHA一致，额外Git LFS push成功；交付记录见GITHUB-SYNC.md。源码与资源未改，文档记录随后单独提交同步。"
+    "实现提交63f43adfd911868825f7832c7902e43a27afc82a已按用户授权推送GitHub，ls-remote确认分支SHA一致，额外Git LFS push成功；交付记录见GITHUB-SYNC.md。源码与资源未改，文档记录随后单独提交同步。",
+    "当前地图任务迁为TASK-082；此前TASK-078记录属于地图分支历史。main的TASK-078-081及其证据保留。PR合并已获本会话Owner明确授权；不代填Reviewer批准或人工体验。"
   ]
 }

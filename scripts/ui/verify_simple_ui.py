@@ -24,7 +24,7 @@ def main():
     parser.add_argument('--build', action='store_true')
     parser.add_argument('--suite', choices=['simple-ui'], default='simple-ui')
     args = parser.parse_args()
-    out = GAME / '.agent-local/qa/TASK-078' / args.suite / (('build_' if args.build else 'verify_') + uuid.uuid4().hex[:8])
+    out = GAME / '.agent-local/qa/TASK-082' / args.suite / (('build_' if args.build else 'verify_') + uuid.uuid4().hex[:8])
     out.mkdir(parents=True)
     client = UEClient(project_path=GAME / 'Hearthward.uproject', ue_root=ue_root())
     if args.build:

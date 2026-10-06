@@ -2,7 +2,7 @@
 
 UE 5.8.2 单人第三人称生存冒险。本分支实现基线为 `ca21120cef4421d039c44248a0cfa5043c248feb`，包含新版 UI、原有玩法、TASK-077 山地石堡开场与 Windows Demo `0.2.0-preview.20261006.1`。更新通过 `codex/map-1000m-heading` 分支交付：无黑雾的3000米×2000米矩形地图铺满屏幕，移除四周背景、边框与标题／操作提示，保留右上“地点与传送”入口、实际建筑与地名、左键拖动、朝向火焰及统一地图入口，红蓝火焰方向尖端加宽为小三角形，并修复任务物品混入地点、旗帜缺少标记与指引、拒绝原因不清晰和地图暂停阻止传送的问题。储物箱已对齐新版背包深灰三栏与物品格，制作、记忆、营地、田野和对话清除旧火红背景及宣传装饰。精细美术和完整真人体验仍待验收。
 
-同步时远端 `main` 为 `d833c420ec849553fafc639e31ea392418a0a387`，新增另一批伙伴、对话和任务指引更新，尚未整合到本分支。本分支的 TASK-078 指地图与简约UI；远端 main 同编号指伙伴任务，须结合分支区分。GitHub同步按用户授权提交、推送当前分支，集成main仍需处理共享UI与任务文档冲突并复验，见[本任务交接](docs/handoffs/TASK-078.md)。
+同步时远端 `main` 为 `d833c420ec849553fafc639e31ea392418a0a387`，新增另一批伙伴、对话和任务指引更新，尚未整合到本分支。本分支的 TASK-078 指地图与简约UI；远端 main 同编号指伙伴任务，须结合分支区分。GitHub同步按用户授权提交、推送当前分支，集成main仍需处理共享UI与任务文档冲突并复验，见[本任务交接](docs/handoffs/TASK-082.md)。
 
 入口：[项目状态](docs/PROJECT_STATE.md) · [本次整合与验证](docs/qa/TASK-076/REPORT.md) · [文件目录](docs/REPOSITORY_LAYOUT.md) · [分支关系](docs/planning/BRANCH_INTEGRATION.md) · [测试端说明](TestClient/README.md)。
 
@@ -18,7 +18,7 @@ UE 5.8.2 单人第三人称生存冒险。本分支实现基线为 `ca21120cef44
 
 需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。当前独立 Windows Demo 为 `0.2.0-preview.20261006.1`，便携包完整解压后运行“启动游戏.cmd”，无需UE或Python；公开下载见[GitHub Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.1)，交付路径及验证见[本次发行报告](docs/releases/demo-20261006/REPORT.md)。开发测试入口仍需要开发环境。
 
-本机最新简约UI更新版位于上层项目根目录：双击 `启动正式游玩版.cmd` 或 `启动简约UI更新版.cmd`，地图／矩形地图启动脚本也指向同一最新版本。完整目录 `../Hearthward-Playable-20261006-SimpleUI/Windows`，便携ZIP `../Hearthward-Playable-20261006-SimpleUI.zip`，包含本地模型与运行库。该包为本地Win64 Shipping开发预览，未上传GitHub Release；[本次预览与验证](docs/qa/TASK-078/SIMPLE-UI-REPORT.md)记录源码、程序和资源指纹。
+本机最新简约UI更新版位于上层项目根目录：双击 `启动正式游玩版.cmd` 或 `启动简约UI更新版.cmd`，地图／矩形地图启动脚本也指向同一最新版本。完整目录 `../Hearthward-Playable-20261006-SimpleUI/Windows`，便携ZIP `../Hearthward-Playable-20261006-SimpleUI.zip`，包含本地模型与运行库。该包为本地Win64 Shipping开发预览，未上传GitHub Release；[本次预览与验证](docs/qa/TASK-082/SIMPLE-UI-REPORT.md)记录源码、程序和资源指纹。
 
 ## 本次保留和整合的功能
 
@@ -65,7 +65,7 @@ main 的正式 TASK-053 保持“基础通行”含义；UI 分支曾复用该�
 
 本次构建、原生回归、独立游戏输入与界面检查的实际结果见 [TASK-076 报告](docs/qa/TASK-076/REPORT.md)。旧分支的 PASS 只证明原报告受测版本，不代表当前整合结果。UI 自动操作使用真实 UE Widget／Slate 事件，不能等同于完整真人通关。
 
-当前分支简约UI更新：Editor Development和完整Win64 Shipping构建／烘焙、储物箱与旧UI运行77/77、仓储／地图原生4/4、页面配置18/18和工具33/33通过；原生2项保留隔离LocalPlayer初始化警告。真实Slate存入与取出、数量／容量／距离／时间线拒绝及库存不变已检查，100%～150%字体、720p／超宽屏与大字体滚动已核验。独立Shipping启动、ZIP校验与Source／DLL／程序绑定见 [简约UI报告](docs/qa/TASK-078/SIMPLE-UI-REPORT.md)。之前地图98/98、旅行37/37、地理44/44见历史 [火焰尖端报告](docs/qa/TASK-078/FLAME-TIPS-REPORT.md)，不作为本次全游戏复验。未进行完整真人通关或第二台机器验收。
+当前分支简约UI更新：Editor Development和完整Win64 Shipping构建／烘焙、储物箱与旧UI运行77/77、仓储／地图原生4/4、页面配置18/18和工具33/33通过；原生2项保留隔离LocalPlayer初始化警告。真实Slate存入与取出、数量／容量／距离／时间线拒绝及库存不变已检查，100%～150%字体、720p／超宽屏与大字体滚动已核验。独立Shipping启动、ZIP校验与Source／DLL／程序绑定见 [简约UI报告](docs/qa/TASK-082/SIMPLE-UI-REPORT.md)。之前地图98/98、旅行37/37、地理44/44见历史 [火焰尖端报告](docs/qa/TASK-082/FLAME-TIPS-REPORT.md)，不作为本次全游戏复验。未进行完整真人通关或第二台机器验收。
 
 已有待验收项继续保留：AI 完整理解矩阵未达门槛，CPU 推理曾超时；正式武器握姿、动作观感、角色美术和完整地图性能仍需验收；首版 30—60 分钟完整体验、第二机器及正式发行 RC 尚未闭合。本次未重做模型或玩法平衡；已交付便携Shipping包，未生成新版安装器。原证据与限制见[053—074 交接](docs/handoffs/TASK-053.md)和[工程性能诊断](docs/qa/TASK-072/game-development-runtime-review.md)。
 

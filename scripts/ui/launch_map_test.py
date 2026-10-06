@@ -28,7 +28,7 @@ def main():
     group.add_argument('--travel', action='store_true', help='Verify real place guidance and activated-station travel in a disposable new game')
     args = parser.parse_args()
     mode = 'build' if args.build else 'observe' if args.observe else 'verify' if args.verify else 'travel' if args.travel else 'preview'
-    out = GAME / '.agent-local/qa/TASK-078' / ('rect_' + mode + '_' + uuid.uuid4().hex[:8])
+    out = GAME / '.agent-local/qa/TASK-082' / ('rect_' + mode + '_' + uuid.uuid4().hex[:8])
     out.mkdir(parents=True)
     client = UEClient(project_path=GAME / 'Hearthward.uproject', ue_root=ue_root(), port=30161, runtime_port=30162)
     if args.build:

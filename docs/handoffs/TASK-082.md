@@ -1,3 +1,7 @@
+# TASK-082 地图与简约UI整合main
+
+用户已明确授权创建PR并直接合并main。PR #61： https://github.com/XLingyyy/Hearthward/pull/61 。地图分支原TASK-078迁至TASK-082；下方保留原实施与同步交接，main原TASK-078伙伴任务不受影响。当前整合基线main `d833c420ec849553fafc639e31ea392418a0a387`，地图分支 `292fd6efced5b2c9ae5c2ab1b8cb4ad3ad05aa91`；后续整合结果单独绑定当前源码。
+
 # TASK-078 简约UI与储物箱更新
 
 2026-10-06，Owner：XLingyyy，构建基线 `ca21120cef4421d039c44248a0cfa5043c248feb`，分支 `codex/map-1000m-heading`。接续用户截图与紧急清理旧UI要求，以及随后“将更新同步到远端GitHub仓库”的明确授权。实现提交 `63f43adfd911868825f7832c7902e43a27afc82a` 已推送GitHub并核验远端SHA和LFS成功；同步范围为本轮源码、资源、工具与必要QA证据。任务保持Active，不代填人工验收。
