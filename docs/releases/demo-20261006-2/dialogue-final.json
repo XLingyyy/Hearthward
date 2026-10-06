@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "checks": {
+    "isolated prototype": true,
+    "new isolated progress": true,
+    "seed wood source": true,
+    "seed stone source": true,
+    "occupied worker fixture": true,
+    "team form final": true,
+    "team proposal final": true,
+    "confirmation summary has no duplicate": true,
+    "capture final card": true,
+    "final team confirmed": true,
+    "brother actually arrives and works": true,
+    "brother physically moved": true,
+    "work status final": true,
+    "capture final work status": true,
+    "final pause proposed": true,
+    "final pause accepted": true,
+    "resume button visible": true,
+    "resume keeps worker count": true,
+    "resume accepted": true,
+    "final status model request": true,
+    "expanded status fits model context": true,
+    "final status includes real brother arrival": true,
+    "full reply view": true,
+    "capture full reply": true,
+    "capture final home": true,
+    "capture final gather": true
+  },
+  "method": "Isolated graybox PIE. Real UI actions, real local model, camp allocation and live production. Explicit resource and floor fixtures; no user save changes.",
+  "model_cases": [
+    {
+      "input": "现在采集队进度怎么样？",
+      "raw": "{\"intent\":\"task_status\",\"item\": \"none\",\"quantity\": 0,\"mode\": \"none\",\"source\": \"current_task\",\"limits\": [], \"unresolved\": [], \"npc_line\": \"哥，木材采集队目前仍在持续工作中，弟弟已到岗，累计入库6份，暂无停工或受阻原因。\"}",
+      "line": "木材采集队：弟弟 + 2名族人\n采集中 · 岗位累计入库18份\n弟弟：已到岗工作\n持续采集至暂停；产物进入营地仓库。",
+      "status": "弟弟的回复"
+    }
+  ],
+  "movement_cm": 228.70686333164497
+}

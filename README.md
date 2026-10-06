@@ -2,7 +2,7 @@
 
 UE 5.8.2 单人第三人称生存冒险。本次代码整合保留main的TASK-078—081伙伴委托、自然语言续接、任务地点指引、简约右侧对话界面和族人采集队，并加入TASK-082地图、传送和简约UI更新：无黑雾的3000米×2000米全屏矩形地图、实际地形建筑与地名、可拖动缩放、红蓝三角朝向火焰、统一地图入口、详细传送限制和已激活路标传送修复。储物箱采用新版背包深灰物品格，制作、记忆、营地、田野等页面清理旧火红背景与宣传装饰。
 
-地图分支原TASK-078迁为TASK-082，main原TASK-078—081及其证据保留。用户授权通过[PR #61](https://github.com/XLingyyy/Hearthward/pull/61)整合并合并main，验证见[整合报告](docs/qa/TASK-082/INTEGRATION-REPORT.md)。本次发行目标为 `0.2.0-preview.20261006.2`，包含上述联合更新；构建与发布状态以[当前发行报告](docs/releases/demo-20261006-2/REPORT.md)为准。精细美术与完整真人体验仍待验收。
+地图分支原TASK-078迁为TASK-082，main原TASK-078—081及其证据保留。用户授权通过[PR #61](https://github.com/XLingyyy/Hearthward/pull/61)整合并合并main，验证见[整合报告](docs/qa/TASK-082/INTEGRATION-REPORT.md)。本次 Windows Demo 更新版本为 `0.2.0-preview.20261006.2`，包含上述联合更新；构建、实机验证与发布状态以[当前发行报告](docs/releases/demo-20261006-2/REPORT.md)为准。精细美术与完整真人体验仍待验收。
 
 入口：[项目状态](docs/PROJECT_STATE.md) · [本次整合与验证](docs/qa/TASK-082/INTEGRATION-REPORT.md) · [文件目录](docs/REPOSITORY_LAYOUT.md) · [分支关系](docs/planning/BRANCH_INTEGRATION.md) · [测试端说明](TestClient/README.md)。
 
@@ -74,6 +74,8 @@ TASK-078 加入委托奔跑、指定点余量提示、HUD 委托进度／携带�
 14 种动物配对骨骼、303 段动作、PBR 纹理和制作说明见[制作源索引](art_source/README.md)及[动物制作说明](art_source/TASK-051/制作说明.md)。独立实机入口为[启动动物实机演示.cmd](scripts/animals/启动动物实机演示.cmd)，采用临时档池；操作与验证边界见[使用说明](docs/qa/TASK-051/使用说明.md)。其他角色、武器及部件原始来源按目录索引保存，未统一重做资产。
 
 ## 验证与限制
+
+当前整合版已通过 Shipping 完整打包、10项原生回归、10项正式地图对话显示、26项弟弟到岗和真实模型回复、77项仓储与页面检查，以及独立发布包15项键鼠操作与存档恢复检查。详见[当前发行报告](docs/releases/demo-20261006-2/REPORT.md)。下面各旧任务结果仅绑定对应历史实现。
 
 当前对话与族人协作的最终 Editor 构建、原生 2/2、灰盒 PIE 48/48、到岗与状态反馈 26/26、正式地图界面 10/10 验证见 [TASK-081 报告](docs/qa/TASK-081/REPORT.md)。此前 UI 整合的构建、原生回归、独立游戏输入与界面检查结果见 [TASK-076 报告](docs/qa/TASK-076/REPORT.md)。旧分支的 PASS 只证明原报告受测版本，不代表当前整合结果。UI 自动操作使用真实 UE Widget／Slate 事件，不能等同于完整真人通关。
 
