@@ -25,6 +25,42 @@
 #include "Fonts/FontMeasure.h"
 
 using namespace HearthwardData;
+namespace
+{
+FString CompanionPhaseText(EHearthwardCompanionPhase Phase)
+{
+    using P=EHearthwardCompanionPhase;
+    switch(Phase)
+    {
+    case P::GoingToSource:return TEXT("前往采集点");
+    case P::Gathering:return TEXT("正在采集");
+    case P::Returning:return TEXT("返营入库");
+    case P::ReturningBlocked:return TEXT("受阻返营");
+    case P::WaitingAtCamp:return TEXT("营地等待");
+    case P::HoldingSafely:return TEXT("受阻停留");
+    case P::Completed:return TEXT("委托完成");
+    case P::GoingToWorkshop:return TEXT("前往工坊");
+    case P::TakingMaterials:return TEXT("领取材料");
+    case P::TakingCargo:return TEXT("领取物资");
+    case P::GoingToPlayer:return TEXT("前往会合");
+    case P::HandingOff:return TEXT("交付物资");
+    case P::LeadingAnimal:return TEXT("牵引牲畜");
+    case P::CampBatchWorking:return TEXT("营地生产");
+    default:return TEXT("等待指令");
+    }
+}
+FString CompanionBlockText(const AHearthwardCompanionFixture* Brother)
+{
+    const FString& Reason=Brother->BlockReason;
+    if(Reason.StartsWith(TEXT("实际资源不足")))return TEXT("指定采集点已采尽；请改派其他资源点");
+    if(Reason==TEXT("SOURCE_UNAVAILABLE"))return TEXT("指定资源点不可采；请检查余量或等待刷新");
+    if(Reason==TEXT("TOOL_REQUIRED"))return TEXT("缺少可用采集工具；请补充或维修工具");
+    if(Reason==TEXT("ACTIVE_COMBAT"))return TEXT("附近正在战斗；安全后再继续");
+    if(Reason==TEXT("AREA_UNSAFE") || Reason==TEXT("SOURCE_NOT_TRUSTED_SAFE") || Reason==TEXT("ROUTE_NOT_TRUSTED_SAFE"))return TEXT("采集区域或路线不安全；请先排除威胁");
+    if(Reason==TEXT("去程受阻") || Reason==TEXT("PATH_BLOCKED") || Reason==TEXT("ROUTE_UNAVAILABLE"))return TEXT("采集路线受阻；请检查通路后重试");
+    return Reason;
+}
+}
 FString UHearthwardScreenWidget::Resolve(const FString& Bind) const
 {
     const auto* G=Gameplay();
@@ -437,120 +473,6 @@ void UHearthwardScreenWidget::ComposeJournal()
     Add(TEXT("journal.footer.help"),TEXT("text"),Message.IsEmpty()?Help:Message,{230,883},{1178,44},16).Color=Color(Message.IsEmpty()?TEXT("muted"):TEXT("gold"));
     Add(TEXT("journal.footer.settings"),TEXT("menuAction"),TEXT("设置"),{1472,883},{160,44},18,TEXT("page:settings")).Align=TEXT("right");
 }
-void UHearthwardScreenWidget::ComposeDialogue()
-{
-    const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
-    const FString CardText=AI->GetCandidateText();const bool ShowCard=!CardText.IsEmpty();
-    Element(TEXT("choice"),TEXT("记忆与约定"),FVector2D(1405,240),FVector2D(150,36),16,TEXT("page:memory"));
-    Elements.Last().Component=TEXT("dialogue.panel");
-    if(AI->GetClarificationTurns()>0)
-    {
-        Element(TEXT("choice"),TEXT("结束本次澄清"),FVector2D(1370,160),FVector2D(185,36),16,TEXT("clearClarification"));
-        Elements.Last().Component=TEXT("dialogue.panel");
-    }
-    FString Reply=AI->CanDisplay()?AI->GetNPCLine():FString();
-    if(Reply.IsEmpty()) Reply=TEXT("我在这里。有什么需要一起做的？");
-    if(!ShowCard)Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,FMath::DivideAndRoundUp(Reply.Len(),23)-4));
-    const int32 ReplyScroll=ShowCard?0:Scroll;
-    TArray<FString> Lines; for(int32 I=ReplyScroll*23;I<FMath::Min(Reply.Len(),(ReplyScroll+4)*23);I+=23) Lines.Add(Reply.Mid(I,23));
-    Element(TEXT("text"),FString::Join(Lines,TEXT("\n")),FVector2D(993,362),FVector2D(510,128),20);
-    if(!ShowCard)
-    {
-        Element(TEXT("choice"),TEXT("刷新建议"),FVector2D(1260,240),FVector2D(140,36),16,TEXT("suggestRefresh"));
-        Elements.Last().Component=TEXT("dialogue.panel");
-        const auto Suggestions=AI->GetSuggestions();
-        const auto& Slots=Theme->GetArrayField(TEXT("dialogueChoices"));
-        if(Suggestions.IsEmpty())
-        {
-            Element(TEXT("text"),TEXT("建议不会自动刷新。点击上方按钮后生成；未选择的内容不会传给弟弟。"),
-                FVector2D(968,505),FVector2D(518,100),17);
-            Elements.Last().Component=TEXT("dialogue.panel");
-        }
-        for(int32 I=0;I<FMath::Min(3,Suggestions.Num()) && Slots.IsValidIndex(I);++I)
-        {
-            const auto Choice=Slots[I]->AsObject(); const auto& Rect=Choice->GetArrayField(TEXT("rect"));
-            const FVector2D P(Rect[0]->AsNumber(),Rect[1]->AsNumber());
-            Element(TEXT("choice"),Suggestions[I].Label,P,FVector2D(Rect[2]->AsNumber(),Rect[3]->AsNumber()),19,
-                TEXT("suggest:")+Suggestions[I].Id.ToString());
-            Elements.Last().TextInset=76;
-            Element(TEXT("image"),TEXT(""),P+FVector2D(23,11),FVector2D(32,33),18,TEXT(""),Text(Choice,TEXT("icon")));
-        }
-    }
-    if(ShowCard)
-    {
-        TArray<FString> Paragraphs,CardLines;CardText.ParseIntoArrayLines(Paragraphs,false);
-        for(const auto& P:Paragraphs)for(int32 I=0;I<P.Len();I+=30)CardLines.Add(P.Mid(I,30));
-        Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,CardLines.Num()-7));TArray<FString> Visible;
-        for(int32 I=Scroll;I<FMath::Min(Scroll+7,CardLines.Num());++I)Visible.Add(CardLines[I]);
-        Element(TEXT("text"),FString::Join(Visible,TEXT("\n")),FVector2D(975,495),FVector2D(590,174),16);Elements.Last().Component=TEXT("dialogue.panel");
-        if(CardLines.Num()>7){Element(TEXT("text"),TEXT("滚轮查看完整任务卡"),FVector2D(1150,675),FVector2D(400,36),14);Elements.Last().Component=TEXT("dialogue.panel");}
-    }
-    if(AI->HasCandidate())
-    {
-        const FString Id=AI->GetCandidateId().ToString();
-        Element(TEXT("choice"),TEXT("−"),FVector2D(975,675),FVector2D(65,36),19,TEXT("agentLess:")+Id);Elements.Last().Component=TEXT("dialogue.panel");
-        Element(TEXT("choice"),TEXT("+"),FVector2D(1050,675),FVector2D(65,36),19,TEXT("agentMore:")+Id);Elements.Last().Component=TEXT("dialogue.panel");
-        Element(TEXT("choice"),TEXT("确认这项任务"),FVector2D(975,716),FVector2D(285,42),19,TEXT("agentConfirm:")+Id);Elements.Last().Component=TEXT("dialogue.panel");
-        Element(TEXT("choice"),TEXT("放弃提案"),FVector2D(1280,716),FVector2D(275,42),19,TEXT("cancelReply"));Elements.Last().Component=TEXT("dialogue.panel");
-    }
-    TArray<const FHearthwardAgentCapability*> Caps;
-    for(const auto& C:HearthwardAgent::Capabilities())
-        if(C.Id==TEXT("collect") || C.Id==TEXT("store") || C.Id==TEXT("retrieve") || C.Id==TEXT("give") || C.Id==TEXT("fetch") || C.Id==TEXT("receive") || C.Id==TEXT("craft") || C.Id==TEXT("repair") || C.Id==TEXT("escort")) Caps.Add(&C);
-    AgentCapabilityIndex=FMath::Clamp(AgentCapabilityIndex,0,Caps.Num()-1);
-    AgentItemIndex=FMath::Clamp(AgentItemIndex,0,Caps[AgentCapabilityIndex]->Items.Num()-1);
-    const auto& Cap=*Caps[AgentCapabilityIndex];
-    Element(TEXT("choice"),Cap.Id==TEXT("craft")?TEXT("制作"):Cap.Id==TEXT("repair")?TEXT("维修"):Cap.Id==TEXT("store")?TEXT("入库"):Cap.Id==TEXT("retrieve")?TEXT("仓库交付"):Cap.Id==TEXT("give")?TEXT("弟弟交付"):Cap.Id==TEXT("fetch")?TEXT("取入弟弟背包"):Cap.Id==TEXT("receive")?TEXT("玩家交给弟弟"):TEXT("采集"),FVector2D(955,240),FVector2D(140,36),16,TEXT("agentTypeNext"));Elements.Last().Component=TEXT("dialogue.panel");
-    Element(TEXT("choice"),HearthwardAgent::ItemText(Cap.Items[AgentItemIndex]),FVector2D(1100,240),FVector2D(150,36),16,TEXT("agentItemNext"));Elements.Last().Component=TEXT("dialogue.panel");
-    if(Cap.Id==TEXT("store"))
-    {
-        AgentSourceIndex=FMath::Clamp(AgentSourceIndex,0,Cap.Sources.Num()-1);
-        Element(TEXT("choice"),Cap.Sources[AgentSourceIndex]==TEXT("player_bag")?TEXT("来源：玩家背包（需3米内）"):TEXT("来源：弟弟背包"),
-            FVector2D(955,285),FVector2D(330,36),15,TEXT("agentSourceNext"));Elements.Last().Component=TEXT("dialogue.panel");
-    }
-    if(Cap.Id==TEXT("repair"))
-    {
-        TArray<FHearthwardItemInstance> Instances;
-        for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
-        {
-            for(const auto& Instance:It->Bag->Snapshot().Instances)
-                if(Instance.Definition==Cap.Items[AgentItemIndex])Instances.Add(Instance);
-            break;
-        }
-        FString Label=TEXT("弟弟没有这件装备");
-        if(!Instances.IsEmpty())
-        {
-            AgentInstanceIndex=FMath::Clamp(AgentInstanceIndex,0,Instances.Num()-1);
-            const auto& Selected=Instances[AgentInstanceIndex];
-            Label=FString::Printf(TEXT("装备实例 %d/%d · 耐久 %.0f · %s"),AgentInstanceIndex+1,Instances.Num(),
-                Selected.Durability,*Selected.Id.ToString().Left(8));
-        }
-        Element(TEXT("choice"),Label,FVector2D(955,285),FVector2D(300,36),15,TEXT("agentInstanceNext"));Elements.Last().Component=TEXT("dialogue.panel");
-    }
-    Element(TEXT("choice"),TEXT("新建手动任务卡"),FVector2D(955,200),FVector2D(190,36),16,TEXT("agentCollectCard"));Elements.Last().Component=TEXT("dialogue.panel");
-    Element(TEXT("choice"),TEXT("查看木材库存"),FVector2D(1150,200),FVector2D(210,36),16,TEXT("agentInventory"));Elements.Last().Component=TEXT("dialogue.panel");
-    Element(TEXT("choice"),TEXT("重试返营"),FVector2D(1370,200),FVector2D(185,36),16,TEXT("agentRetryPath"));Elements.Last().Component=TEXT("dialogue.panel");
-    FString Status=AI->GetStatus();if(AI->IsBusy())Status+=FString::Printf(TEXT(" · %.1f秒"),AI->GetElapsedSeconds());
-    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
-        if(!AI->IsBusy() && !AI->HasCandidate() && !It->BlockReason.IsEmpty()
-            && It->GetPhase()!=EHearthwardCompanionPhase::Idle
-            && It->GetPhase()!=EHearthwardCompanionPhase::Completed
-            && It->GetPhase()!=EHearthwardCompanionPhase::Cancelled)
-        { Status=TEXT("委托受阻：")+It->BlockReason; break; }
-    Element(TEXT("text"),Status,FVector2D(965,824),FVector2D(620,30),15);
-    Element(TEXT("choice"),AI->IsBusy()?TEXT("取消回复"):TEXT("发送"),FVector2D(1484,766),FVector2D(105,51),19,AI->IsBusy()?TEXT("cancelReply"):TEXT("send"));
-    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
-    {
-        if(It->CanCommunicate(GetOwningPlayerPawn()))
-            Element(TEXT("text"),TEXT("T 与弟弟交流 / 下达委托"),FVector2D(1310,650),FVector2D(330,40),18);
-        if(It->GetRequested()>0)
-        {
-            const FString Progress=It->GetGoal().Intent==TEXT("repair")?FString::Printf(TEXT("维修%s：完成%d/%d"),*HearthwardAgent::ItemText(It->GetGoal().Item),It->GetDelivered(),It->GetRequested()):FString::Printf(TEXT("%s：取得%d · 携带%d · 完成%d/%d"),*HearthwardAgent::ItemText(It->GetGoal().Item),It->GetAcquired(),It->GetCarried(),It->GetDelivered(),It->GetRequested());
-            Element(TEXT("text"),Progress,FVector2D(960,858),FVector2D(440,32),15);
-            Element(TEXT("choice"),TEXT("取消委托"),FVector2D(1420,854),FVector2D(168,39),17,TEXT("cancelTask"));
-        }
-        break;
-    }
-}
 void UHearthwardScreenWidget::ComposeMemory()
 {
     const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
@@ -635,13 +557,15 @@ void UHearthwardScreenWidget::ComposeHUD()
         else if(RoutineActivity==TEXT("check_camp")) RoutineLabel=TEXT("查看营地");
         else if(RoutineActivity==TEXT("return_camp")) RoutineLabel=TEXT("回营");
         else if(RoutineActivity==TEXT("rest")) RoutineLabel=TEXT("休息");
-        const FString Order=G->CompanionOrder==TEXT("follow")?TEXT("跟随中"):G->CompanionOrder==TEXT("attack")?TEXT("协助进攻")
-            :It->GetRequested()>0?FString::Printf(TEXT("委托 %d / %d"),It->GetDelivered(),It->GetRequested())
+        const auto* Team=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Regions.FindByPredicate([](const auto& R)
+            {return R.Brother && !R.Facility.IsValid() && (R.Job==TEXT("wood") || R.Job==TEXT("stone"));});
+        const bool HasTask=It->GetRequested()>0 && It->GetPhase()!=EHearthwardCompanionPhase::Idle && It->GetPhase()!=EHearthwardCompanionPhase::Cancelled
+            && (!Team || It->GetPhase()!=EHearthwardCompanionPhase::Completed);
+        const FString Order=HasTask?CompanionPhaseText(It->GetPhase()):Team?(Team->Enabled?TEXT("营地采集 · T 查看进度"):TEXT("采集队已暂停")):G->CompanionOrder==TEXT("follow")?TEXT("跟随中"):G->CompanionOrder==TEXT("attack")?TEXT("协助进攻")
             :G->IsCompanionRoutineEnabled()?TEXT("自由活动")+(!RoutineLabel.IsEmpty()?TEXT(" · ")+RoutineLabel:TEXT("")):TEXT("原地等待");
-        const float Required=Number(Quest,TEXT("required"));
-        HUD(TEXT("text"),FString::Printf(TEXT("进度 %d / %.0f"),G->QuestProgress(G->TrackedQuest),Required),{CompanionTextX,CompanionY+37*TextScale},{370,30*TextScale},18,TEXT("hud.companion.progress"),TEXT("hud.companion"));
+        HUD(TEXT("text"),HasTask?FString::Printf(TEXT("委托 %d / %d · 携带 %d"),It->GetDelivered(),It->GetRequested(),It->GetCarried()):Team?FString::Printf(TEXT("%s · 与%d名族人协作"),*HearthwardAgent::ItemText(Team->Job),Team->Workers.Num()):TEXT("暂无委托"),{CompanionTextX,CompanionY+37*TextScale},{370,30*TextScale},18,TEXT("hud.companion.progress"),TEXT("hud.companion"));
         auto& Progress=HUD(TEXT("bar"),TEXT(""),{CompanionTextX,CompanionY+69*TextScale},{168*TextScale,7},18,TEXT("hud.companion.bar"),TEXT("hud.companion"));
-        Progress.Color=Color(TEXT("bronze")); Progress.Value=It->GetRequested()>0?float(It->GetDelivered())/It->GetRequested():Required>0?G->QuestProgress(G->TrackedQuest)/Required:0;
+        Progress.Color=Color(TEXT("bronze")); Progress.Value=HasTask?float(It->GetDelivered())/It->GetRequested():0;
         HUD(TEXT("text"),Order,{CompanionTextX,CompanionY+81*TextScale},{390,32*TextScale},18,TEXT("hud.companion.order"),TEXT("hud.companion"));
         break;
     }
@@ -701,6 +625,21 @@ void UHearthwardScreenWidget::ComposeHUD()
         HUD(TEXT("text"),Label,{1120,FeedbackY},{504,90*TextScale},18,Id,TEXT("hud.feedback")).FeedbackUntil=Deadline;
         FeedbackY+=98*TextScale;
     };
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+    {
+        const auto Phase=It->GetPhase();
+        if(!It->BlockReason.IsEmpty() && (Phase==EHearthwardCompanionPhase::ReturningBlocked
+            || Phase==EHearthwardCompanionPhase::WaitingAtCamp || Phase==EHearthwardCompanionPhase::HoldingSafely))
+        {
+            const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
+            const FString Help=It->BlockReason.StartsWith(TEXT("实际资源不足"))?TEXT("其他采集点：营地管理 → 田野与牧场")
+                :FString::Printf(TEXT("靠近后按 %s，选择「继续未完成委托」"),*HearthwardInput::Label(Bindings,TEXT("companion.dialogue")));
+            Feedback(FString::Printf(TEXT("弟弟 · %s · %d / %d\n%s\n%s"),
+                *CompanionPhaseText(Phase),It->GetDelivered(),It->GetRequested(),*CompanionBlockText(*It),
+                *Help),TEXT("hud.companion.blocked"),0,false);
+        }
+        break;
+    }
     const auto* Combat=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardCombatComponent>();
     if(Combat)
     {
@@ -773,7 +712,7 @@ void UHearthwardScreenWidget::ComposeBuilding()
     auto Rule=[&](FString Id,float X,float Y,float W){Add(Id,TEXT("line"),TEXT(""),{X,Y},{W,1}).Color=Color(TEXT("bronze"))*.55f;};
     Add(TEXT("background"),TEXT("journalBackdrop"),TEXT(""),{0,0},DesignSize);
     Add(TEXT("building.heading"),TEXT("text"),TEXT("营地建造"),{42,32},{850,66},36);
-    Add(TEXT("building.camp"),TEXT("menuAction"),TEXT("营地管理 ›"),{1300,40},{310,54},20,TEXT("page:camp")).Align=TEXT("right");
+    Add(TEXT("building.camp"),TEXT("menuAction"),TEXT("营地管理 · 族人分工 ›"),{1300,40},{310,54},20,TEXT("page:camp")).Align=TEXT("right");
     Rule(TEXT("building.header.rule"),40,112,1592);
     Add(TEXT("building.list.surface"),TEXT("menuSurface"),TEXT(""),{40,136},{664,706});
     Add(TEXT("building.detail.surface"),TEXT("menuSurface"),TEXT(""),{752,136},{880,706});

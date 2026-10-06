@@ -60,7 +60,11 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     else if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue"))
         Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
     if(Page==TEXT("dialogue"))
-        Box(FVector2D::ZeroVector,DesignSize,Color(TEXT("panel")),Layer);
+    {
+        Box({1030,24},{614,893},FLinearColor(.018f,.02f,.022f,.94f),Layer);
+        Frame({1030,24},{614,893},FLinearColor(.36f,.28f,.16f,.65f),Layer+1);
+        for(int32 I=0;I<12;++I)Box({1018.+I,24},{1,893},FLinearColor(.018f,.02f,.022f,.6f*I/12),Layer);
+    }
     if(Page==TEXT("inventory") && ReadableLayout())
         Box(FVector2D::ZeroVector,DesignSize,Color(TEXT("panel")),Layer);
     if(Page==TEXT("inventory") && !ReadableLayout())
@@ -357,6 +361,14 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                 Box(E.Position+Corner+FVector2D(0,FMath::Min(0.f,Y*20)),{1,20},Edge,L+2);
             }
         }
+        if(E.Type==TEXT("dialogueRule"))Box(E.Position,E.Size,Color(TEXT("bronze"))*.5f,L);
+        if(E.Type==TEXT("dialogueRow") || E.Type==TEXT("dialogueButton") || E.Type==TEXT("dialoguePrimary"))
+        {
+            const bool Primary=E.Type==TEXT("dialoguePrimary");
+            Box(E.Position,E.Size,Primary?FLinearColor(.31f,.20f,.075f,1):Focus?FLinearColor(.15f,.12f,.075f,.85f):FLinearColor(.06f,.055f,.043f,.55f),L);
+            if(E.Type==TEXT("dialogueRow"))Box(E.Position+FVector2D(0,E.Size.Y-1),{E.Size.X,1},Color(TEXT("bronze"))*.4f,L+1);
+            else Frame(E.Position,E.Size,Color(Focus?TEXT("gold"):TEXT("bronze"))*.7f,L+1);
+        }
         if(E.Type==TEXT("menuRow") || E.Type==TEXT("menuTab") || (Page==TEXT("pause") && E.Type==TEXT("menuAction")))
             Box(E.Position+FVector2D(0,E.Size.Y-1),{E.Size.X,1},Color(Focus?TEXT("gold"):TEXT("bronze"))*(Focus?.65f:.3f),L+1);
         if(E.Type==TEXT("titleArrow"))
@@ -558,9 +570,9 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                 Lines.Add(Line);
             }
             FVector2D P=E.Position;
-            if(E.Type==TEXT("button") || E.Type==TEXT("titleOption") || E.Type==TEXT("titleUtility") || E.Type==TEXT("menuAction") || E.Type==TEXT("menuTab") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("notice")) P+=FVector2D(E.TextInset,FMath::Max(0.f,float(E.Size.Y-(MapSidebar?Lines.Num()*E.Font*1.6f:E.Font*1.3f))*.5f));
+            if(E.Type==TEXT("dialogueButton") || E.Type==TEXT("dialoguePrimary") || E.Type==TEXT("button") || E.Type==TEXT("titleOption") || E.Type==TEXT("titleUtility") || E.Type==TEXT("menuAction") || E.Type==TEXT("menuTab") || E.Type==TEXT("choice") || E.Type==TEXT("tab") || E.Type==TEXT("notice")) P+=FVector2D(E.TextInset,FMath::Max(0.f,float(E.Size.Y-(MapSidebar?Lines.Num()*E.Font*1.6f:E.Font*1.3f))*.5f));
             if(E.Type==TEXT("slot") || E.Type==TEXT("node")) P+=FVector2D(FMath::Max(4.,E.Size.X-E.Text.Len()*E.Font*.6-6),E.Size.Y-E.Font*1.3f);
-            const int32 MaximumLines=Page==TEXT("hud")?FMath::Max(1,FMath::FloorToInt((E.Size.Y+E.Font*.3f)/(E.Font*1.6f))):Lines.Num();
+            const int32 MaximumLines=(Page==TEXT("hud") || Page==TEXT("dialogue"))?FMath::Max(1,FMath::FloorToInt((E.Size.Y+E.Font*.3f)/(E.Font*1.6f))):Lines.Num();
             if(Lines.Num()>MaximumLines) {Lines.SetNum(MaximumLines);Lines.Last()=Lines.Last().LeftChop(FMath::Min(2,Lines.Last().Len()))+TEXT("…");}
             for(const auto& Line:Lines)
             {
@@ -588,7 +600,8 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
         FSlateFontInfo Font(Typeface,FMath::RoundToInt(FontSize*.75f));
         const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
         const bool LargeHUD=Page==TEXT("hud") && Comfort.TextScale>100;
-        const float Width=LargeHUD?860:1100,Left=LargeHUD?740:286,Bottom=LargeHUD?850:680;
+        const bool Dialogue=Page==TEXT("dialogue");
+        const float Width=Dialogue?840:LargeHUD?860:1100,Left=Dialogue?84:LargeHUD?740:286,Bottom=Dialogue?830:LargeHUD?850:680;
         TArray<FString> Lines;FString Rest=Subtitle;
         while(!Rest.IsEmpty())
         {
@@ -630,5 +643,6 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     // SObjectWidget paints children before NativePaint. Keep the editable field above the illustration.
     if((Page==TEXT("dialogue") || Page==TEXT("memory")) && WidgetTree && WidgetTree->RootWidget)
         return WidgetTree->RootWidget->TakeWidget()->Paint(Args,G,Clip,Out,ContentLayer,Style,ParentEnabled);
-    return Super::NativePaint(Args,G,Clip,Out,ContentLayer,Style,ParentEnabled);
+    PaintQuestGuidance(G,Out,ContentLayer+1);
+    return Super::NativePaint(Args,G,Clip,Out,ContentLayer+5,Style,ParentEnabled);
 }

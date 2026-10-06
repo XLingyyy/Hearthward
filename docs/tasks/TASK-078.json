@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "TASK-078",
+  "title": "弟弟采集奔跑、停滞反馈与族人分工指引",
+  "status": "Active",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-078-companion-gathering",
+  "source_refs": [
+    "main@ca21120c",
+    "用户报告最新Demo任务单采集32木材，14后在营地仓储停滞，要求弟弟跑步并说明族人分工入口"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "Source/Hearthward/Companion/",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/Tests/CompanionWorkNavigationTests.cpp",
+    "Source/Hearthward/Tests/CompanionGatheringTests.cpp",
+    "docs/tasks/TASK-078.json",
+    "docs/handoffs/TASK-078.md",
+    "docs/qa/TASK-078/"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "Source/Hearthward/Save/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "复现并诊断32木材任务14后停止的原因",
+    "委托往返使用跑步速度并保留负重及重伤影响",
+    "未完成任务持续显示具体停滞原因和恢复入口",
+    "族人伐木采石操作可发现并有明确指引",
+    "定向原生与运行验证，不覆盖用户存档"
+  ],
+  "non_goals": [
+    "修改存档格式",
+    "伪造资源或忽略安全规则",
+    "重做语言模型",
+    "未经单独授权替换已发布Release"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "owner_authorized",
+    "push": "owner_authorized",
+    "merge": "owner_authorized"
+  },
+  "notes": [
+    "实际存档确认：32请求、14已交付、携带0、S1木材0、WaitingAtCamp、实际资源不足；仅分析副本。",
+    "本地实现及定向原生、PIE验证通过，未提交、未推送、未替换0.2.0 Release。",
+    "保留单指定点采集契约；耗尽后明确提示与恢复，未实现自动跨点采集。",
+    "2026-10-06 用户明确要求“提交并推送到main吧”，授权 TASK-078—081 成果提交、推送及 main 集成；本次不更新 Release，不代填人工验收。"
+  ]
+}

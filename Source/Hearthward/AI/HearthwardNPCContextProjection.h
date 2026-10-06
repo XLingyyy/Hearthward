@@ -33,6 +33,11 @@ struct FHearthwardNPCContextSnapshot
     TMap<FName,int32> OwnBag;
     int32 PreviousGoalQuantity = 0;
     int32 PreviousGoalDelivered = 0;
+    FHearthwardAgentGoal ActiveGoal;
+    bool bHasActiveTask = false;
+    int32 TaskCarried = 0;
+    FString TaskBlockReason;
+    FString CampTeamStatus;
 
     bool bCombatViewAvailable = false;
     FName RequestedOrder;

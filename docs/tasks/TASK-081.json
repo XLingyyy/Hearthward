@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "id": "TASK-081",
+  "title": "右侧对话面板与弟弟组织族人工作",
+  "status": "Active",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-081-dialogue-work-party",
+  "source_refs": [
+    "main@ca21120c + 本会话TASK-078/079/080本地成果",
+    "用户批准右侧对话与委托表单概念图，并要求弟弟调动族人一起工作"
+  ],
+  "dependencies": [
+    "TASK-080"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/AI/",
+    "Source/Hearthward/Camp/",
+    "Source/Hearthward/Tests/DialogueWorkPartyTests.cpp",
+    "docs/tasks/TASK-081.json",
+    "docs/handoffs/TASK-081.md",
+    "docs/qa/TASK-081/",
+    "docs/PROJECT_STATE.md"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "Source/Hearthward/Save/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "仅右侧对话区域有背景，清晰动作入口与物资数量目的地表单",
+    "弟弟可经自然语言及明确确认组织空闲族人一起采集木材或石头",
+    "复用营地岗位和产出规则，失败说明原因、不挪用忙碌人员、不覆盖原任务",
+    "实际UE构建、定向测试、PIE与画面验证"
+  ],
+  "non_goals": [
+    "更改关卡资产、存档格式或经济配表",
+    "更新Release"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "owner_authorized",
+    "push": "owner_authorized",
+    "merge": "owner_authorized"
+  },
+  "notes": [
+    "保留本会话已知未提交成果；族人协作复用当前营地队列和现有每岗五人上限。",
+    "2026-10-06 用户明确要求“提交并推送到main吧”，授权 TASK-078—081 成果提交、推送及 main 集成；本次不更新 Release，不代填人工验收。"
+  ]
+}

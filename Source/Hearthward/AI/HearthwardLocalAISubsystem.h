@@ -128,6 +128,9 @@ private:
     FHearthwardCommandTicket Ticket;
     FHearthwardAgentGoal Proposal, Candidate;
     FGuid CandidateId;
+    FGuid CandidateCommandId;
+    FName CandidateCamp;
+    FString DescribeCurrentTask() const;
     int64 CandidateMemoryRevision = 0;
     FString ReasonCode;
     int32 InputTokens = 0, OutputTokens = 0, FailureCount = 0, GenerationCalls = 0;

@@ -123,6 +123,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Selection!=HUDQuickSelection) if(auto* C=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardCombatComponent>()) C->Aim(false);
         HUDQuickSelection=Selection; Refresh(); return true;
     }
+    if(Action.StartsWith(TEXT("dialogue.")))return ExecuteDialogueAction(Action);
     if(Action.StartsWith(TEXT("camp.")))return ExecuteCampAction(Action);
     if(Action.StartsWith(TEXT("gear.")))return ExecuteEquipmentAction(Action);
     if(Action.StartsWith(TEXT("nature.")))return ExecuteNatureAction(Action);
@@ -225,10 +226,10 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action.StartsWith(TEXT("agentConfirm:")) || Action.StartsWith(TEXT("agentMore:")) || Action.StartsWith(TEXT("agentLess:")))
     {
         if(Page!=TEXT("dialogue"))return false;FString Verb,IdText;Action.Split(TEXT(":"),&Verb,&IdText);FGuid Id;if(!FGuid::Parse(IdText,Id))return false;
-        Success=Verb==TEXT("agentConfirm")?AI->ConfirmCandidate(Id):AI->AdjustCandidate(Id,Verb==TEXT("agentMore")?1:-1);Message=AI->GetStatus();Refresh();return Success;
+        Success=Verb==TEXT("agentConfirm")?AI->ConfirmCandidate(Id):AI->AdjustCandidate(Id,Verb==TEXT("agentMore")?1:-1);Message=AI->GetStatus();if(Success && Verb==TEXT("agentConfirm"))DialogueView=TEXT("home");Refresh();return Success;
     }
-    if(Action==TEXT("agentInventory")) {if(Page!=TEXT("dialogue"))return false;Success=AI->QueryInventory(GetOwningPlayerPawn(),Companion(GetWorld()),TEXT("wood"));Refresh();return Success;}
-    if(Action==TEXT("agentRetryPath")) {if(Page!=TEXT("dialogue"))return false;auto* C=Companion(GetWorld());Success=C && C->ResumeBlocked(GetOwningPlayerPawn());Refresh();return Success;}
+    if(Action==TEXT("agentInventory")) {if(Page!=TEXT("dialogue"))return false;Success=AI->QueryInventory(GetOwningPlayerPawn(),Companion(GetWorld()),TEXT("wood"));DialogueView=TEXT("home");Refresh();return Success;}
+    if(Action==TEXT("agentRetryPath")) {if(Page!=TEXT("dialogue"))return false;auto* C=Companion(GetWorld());Success=C && C->ResumeBlocked(GetOwningPlayerPawn());Message=Success?TEXT("原委托已继续"):C?C->BlockReason:TEXT("请靠近弟弟");Refresh();return Success;}
     if(Action==TEXT("agentTypeNext") || Action==TEXT("agentItemNext") || Action==TEXT("agentInstanceNext") || Action==TEXT("agentSourceNext"))
     {
         if(Page!=TEXT("dialogue"))return false;
@@ -316,6 +317,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     }
     if(Action==TEXT("back"))
     {
+        if(Page==TEXT("dialogue") && (DialogueView!=TEXT("home") || AI->HasCandidate()))return ExecuteDialogueAction(TEXT("dialogue.home"));
         if(Page==TEXT("equipment"))return ExecuteAction(TEXT("page:inventory"));
         return ExecuteAction(TEXT("page:")+(ReturnPages.IsEmpty()?(Page==TEXT("title")?FString(TEXT("title")):FString(TEXT("hud"))):ReturnPages.Last().ToString()));
     }

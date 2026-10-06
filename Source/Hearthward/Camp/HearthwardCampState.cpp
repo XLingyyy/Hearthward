@@ -107,6 +107,24 @@ bool FHearthwardCampState::Assign(FName Region,int32 Person)
     }
     return true;
 }
+FString FHearthwardCampState::PlanWorkParty(FName Camp,FName Job,int32 Count,FName& Region,TArray<int32>& Workers) const
+{
+    Region=NAME_None;Workers.Reset();
+    if((Job!=TEXT("wood") && Job!=TEXT("stone")) || Count<1 || Count>4)return TEXT("请选择木材或石头，以及1至4名族人");
+    const auto* Target=Regions.FindByPredicate([&](const auto& R){return R.Camp==Camp && R.Job==Job && !R.Facility.IsValid();});
+    if(!Target)return TEXT("当前营地没有对应采集岗位");
+    if(!Target->Safe)return TEXT("采集区域不安全，暂时不能安排族人");
+    if(Target->Player || Target->BatchStopAt>0 || (!Target->Brother && (!Target->Workers.IsEmpty() || Target->Batch.Active)))
+        return TEXT("这个岗位已有安排，请先在营地分工中调整");
+    for(const auto& R:Regions)if(R.Brother && R.Id!=Target->Id)return TEXT("我已有其他营地岗位，请先在营地分工中解除");
+    if(!Target->Batch.Active && SourceIndex(*Target)==INDEX_NONE)return TEXT("营地没有可采集的安全资源，请等待资源刷新");
+    if(Target->Workers.Num()>Count)return TEXT("岗位已有更多族人，请先在营地分工中调整人数");
+    Workers=Target->Workers;
+    for(int32 Person=0;Person<Population() && Workers.Num()<Count;++Person)
+        if(!Regions.ContainsByPredicate([&](const auto& R){return R.Workers.Contains(Person);}))Workers.Add(Person);
+    if(Workers.Num()!=Count){Workers.Reset();return TEXT("空闲族人不足，已有工作的人不会被自动调走");}
+    Region=Target->Id;return {};
+}
 bool FHearthwardCampState::Rescue(FName Person)
 {
     if(Person.IsNone() || Rescued.Num()>=10 || Rescued.Contains(Person)) return false;

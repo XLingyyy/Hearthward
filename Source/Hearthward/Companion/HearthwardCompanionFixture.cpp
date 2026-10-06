@@ -507,7 +507,9 @@ bool AHearthwardCompanionFixture::MoveTowards(const AActor* Target, float DeltaS
     if(Now-LastProgressAt>HearthwardAgent::Policy(TEXT("no_progress_seconds"))) return false;
     if(NavigationFailures>HearthwardAgent::Policy(TEXT("max_navigation_retries"))) return false;
     const bool Attempt=Navigation && Navigation->IsRetryReady();
-    if(NavigateTo(const_cast<AActor*>(Target),180,AcceptanceRadius))return true;
+    const float Speed=HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("tuning")),TEXT("sprintSpeed"))
+        *Bag->GetMoveSpeedMultiplier();
+    if(NavigateTo(const_cast<AActor*>(Target),Speed,AcceptanceRadius))return true;
     if(Attempt) ++NavigationFailures;
     return NavigationFailures<=HearthwardAgent::Policy(TEXT("max_navigation_retries"));
 }
@@ -1112,6 +1114,7 @@ void AHearthwardCompanionFixture::TickExecution(float DeltaSeconds)
         for(const auto& D:HearthwardBasicItems())if(!D.IsInstance())CargoWeight+=Bag->GetItemCount(D.Id)*D.WeightHundredths;
         const int32 Free=FMath::Max(0,FMath::Min(400-CargoWeight,FMath::RoundToInt((Bag->GetCapacity()-Bag->GetWeight())*100)));
         FGuid Tool;const int32 ToolYield=HearthwardHarvestTools::Yield(Bag,Item->Id,Tool);
+        if(ToolYield<=0){HandleExecutionFailure(TEXT("TOOL_REQUIRED"));return;}
         const int32 Count=FMath::Min(ToolYield,FMath::Min3(Free/Item->WeightHundredths,Source->GetItemCount(Item->Id),Command.GetRequested()-Command.GetAcquired()));
         if(Count<=0){HandleExecutionFailure(TEXT("本趟无法携带目标物品"));return;}
 
@@ -1481,6 +1484,11 @@ bool AHearthwardCompanionFixture::ResumeBlocked(AActor* Speaker)
 
     const auto Safety=HearthwardPerception::Evaluate(HearthwardPerception::Capture(this),Command.Goal);
     if(!Safety.IsAllowed()){BlockReason=Safety.Reason;return false;}
+    if(Command.Goal.Intent==TEXT("collect") && IsSourceValid() && Source->GetItemCount(Command.GetItem())<=0)
+    {BlockReason=TEXT("实际资源不足：指定采集点已采尽");return false;}
+    if(Command.Goal.Intent==TEXT("nature_collect"))
+        if(const FString Reason=ResourceTargetReason(Command.Goal,false);!Reason.IsEmpty())
+        {BlockReason=Reason;return false;}
     if(Command.Goal.Intent==TEXT("camp_batch") && CampBatchBaseline>=0)
     {
         auto* R=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Regions.FindByPredicate(

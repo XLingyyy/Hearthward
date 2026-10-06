@@ -100,6 +100,7 @@ struct FHearthwardCampState
     int32 SourceIndex(const FHearthwardCampRegion& Region) const;
     void AddCamp(FName Id,FVector Position);
     bool Assign(FName Region,int32 Person); // 0..29 ordinary; 30 player; 31 brother.
+    FString PlanWorkParty(FName Camp,FName Job,int32 Count,FName& Region,TArray<int32>& Workers) const;
     FString UpgradeReason() const;
     bool Rescue(FName Person);
     void Drain(double Minutes);

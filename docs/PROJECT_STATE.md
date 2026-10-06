@@ -1,5 +1,7 @@
 # Hearthward 项目状态
 
+2026-10-06 最新源码集成：用户明确授权 TASK-078—081 提交并推送 main，集成基线为 `ca21120cef4421d039c44248a0cfa5043c248feb`。包含弟弟委托奔跑与停工反馈、自然语言查询和续接、任务地点标点、右侧对话面板及族人采集队。最终 Editor 构建和本轮定向验证见 [TASK-081 报告](qa/TASK-081/REPORT.md)，各项历史测试仍绑定各自报告的受测实现。本次仅提交源码与必要证据，现有 Release 不变，任务保持 Active 等待人工体验验收。
+
 核对日期：2026-10-06。集成前已核对远端 `origin/main@53a1efd0ddf169a36265930aea63b58cabfaf061`，包含新版UI与既有玩法整合。用户明确授权将TASK-077最新成果提交推送到main；本次集成在该基线上加入山地石堡开场、Marble裁分立面、相应测试与Windows Demo发行脚本。没有改动主地图文件或存档格式。
 
 当前本地便携Demo为 `0.2.0-preview.20261006.1`，约4.88GB，目录 `F:/HearthwardDemo/20261006`。Shipping构建和打包通过；相关原生4/4、PIE撤离路线16/16通过，独立发布包实际完成新游戏、背包、地图、跟随和保存后重启恢复。详见[发行记录](releases/demo-20261006/REPORT.md)及[TASK-077交接](handoffs/TASK-077.md)。发布包不提交Git，已公开为[GitHub预览Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.1)，三个分片及合并脚本均已上传。主堡内室、精细建筑美术与完整夜袭演出仍待完成，TASK-077保持Active。

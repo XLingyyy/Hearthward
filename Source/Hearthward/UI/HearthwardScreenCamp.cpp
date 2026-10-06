@@ -55,6 +55,7 @@ void UHearthwardScreenWidget::ComposeCamp()
             Button(TEXT("提交材料升阶"),TEXT("camp.upgrade"),180,535,300);
         }
         Button(TEXT("打开建造目录"),TEXT("page:building"),540,535,300);
+        Button(TEXT("安排族人采集"),TEXT("camp.tab:workers"),900,535,300);
         FString Tiers=TEXT("营地阶级表 · 半径／两兄弟各自累计属性\n");
         for(int32 Tier=1;Tier<=8;++Tier)
         {
@@ -68,7 +69,13 @@ void UHearthwardScreenWidget::ComposeCamp()
     {
         if(State.Regions.IsEmpty()){Label(TEXT("尚未建立营地"),180,250);return;}
         auto* R=State.Regions.FindByPredicate([&](const auto& Entry){return Entry.Id==CampRegion;});if(!R){CampRegion=State.Regions[0].Id;R=&State.Regions[0];}
-        Label(RegionName(*R),180,235);Button(TEXT("切换生产区域"),TEXT("camp.regionNext"),1050,225,320);
+        Label(RegionName(*R),180,235,400);Button(TEXT("切换生产区域"),TEXT("camp.regionNext"),1050,225,320);
+        for(const auto& Job:TArray<TPair<FString,FString>>{{TEXT("wood"),TEXT("伐木区")},{TEXT("stone"),TEXT("采石区")}})
+        {
+            const auto* Region=State.Regions.FindByPredicate([&](const auto& Entry)
+                {return Entry.Camp==R->Camp && !Entry.Facility.IsValid() && Entry.Id.ToString().EndsWith(Job.Key);});
+            if(Region)Button(Job.Value,TEXT("camp.region:")+Region->Id.ToString(),Job.Key==TEXT("wood")?600:820,225,200);
+        }
         FString People;for(int32 P:R->Workers)People+=FString::Printf(TEXT("族人%d  "),P+1);if(R->Player)People+=TEXT("主角  ");if(R->Brother)People+=TEXT("弟弟");
         const auto* Facility=State.Facilities.FindByPredicate([&](const auto& F){return F.Id==R->Facility;});
         const bool Available=R->Enabled && R->Safe && (!R->Facility.IsValid() || (Facility && !Facility->Paused));
@@ -93,7 +100,7 @@ void UHearthwardScreenWidget::ComposeCamp()
             Button(TEXT("请弟弟生产3批"),TEXT("camp.brotherBatch:3"),550,610,340);
             Label(TEXT("先配置设施配方并分配弟弟；任务只接受空闲且仅由弟弟工作的区域。"),180,670);
         }
-        else Label(TEXT("需要区域内真实资源点；缺少来源时等待，不会凭空产出。"),180,630);
+        else Label(TEXT("选伐木区或采石区 → 选族人 → 分配 → 开始生产。\n产物进入共享仓储；资源采尽后等待刷新，可在上方查看状态。"),180,630,1200,80);
         Label(TEXT("兄弟须到达对应设施／源点旁并停止其他工作；睡眠不计兄弟劳动。"),180,745);
     }
     if(Category==TEXT("facilities"))
@@ -183,6 +190,12 @@ bool UHearthwardScreenWidget::ExecuteCampAction(const FString& Action)
     if(Action.StartsWith(TEXT("camp.tab:"))) {Category=Action.Mid(9);Scroll=0;}
     else if(Action==TEXT("camp.upgrade"))Success=E->UpgradeCamp(CampEpoch);
     else if(Action==TEXT("camp.regionNext")) {int32 I=E->State.Regions.IndexOfByPredicate([&](const auto& V){return V.Id==CampRegion;});if(!E->State.Regions.IsEmpty())CampRegion=E->State.Regions[(I+1)%E->State.Regions.Num()].Id;}
+    else if(Action.StartsWith(TEXT("camp.region:")))
+    {
+        const FName Id(*Action.Mid(12));
+        Success=E->State.Regions.ContainsByPredicate([&](const auto& Region){return Region.Id==Id;});
+        if(Success)CampRegion=Id;
+    }
     else if(Action==TEXT("camp.personNext") || Action==TEXT("camp.personPrev"))
     {TArray<int32> People;for(int32 I=0;I<E->State.Population();++I)People.Add(I);People.Add(30);People.Add(31);int32 I=People.IndexOfByKey(CampPerson);CampPerson=People[(I+(Action.EndsWith(TEXT("Next"))?1:People.Num()-1))%People.Num()];}
     else if(Action==TEXT("camp.assign"))Success=E->AssignWorker(CampRegion,CampPerson,CampEpoch);
