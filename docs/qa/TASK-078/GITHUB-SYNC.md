@@ -8,4 +8,6 @@
 
 受测源码、DLL、Shipping与UI资源保持原报告指纹；同步仅更新授权与交付说明。原77/77界面、4/4原生、18/18配置及33/33工具验证见[简约UI报告](SIMPLE-UI-REPORT.md)，不代表新远端main集成验证。提交前普通仓库、暂存区空白、当前路径范围与受测源码／DLL绑定全部通过，33/33工具测试再次通过，见[提交前核验](github-sync/precommit-checks.json)。7份交付日志仅统一CRCRLF／CRLF为LF，原日志副本保留本地；源码暂存内容与受测版本在Git换行规范化后完全一致。基线缺批准快照的严格范围检查限制继续保留。
 
-实现提交与GitHub远端核验将在同步完成时记录，当前尚未宣称推送成功。
+实现提交为 [`63f43adfd911868825f7832c7902e43a27afc82a`](https://github.com/XLingyyy/Hearthward/commit/63f43adfd911868825f7832c7902e43a27afc82a)，共199个文件。`git push -u origin codex/map-1000m-heading`成功；随后 `git ls-remote --heads origin main codex/map-1000m-heading`确认远端任务分支指向该提交，main仍为上述`d833c420`。既有Git LFS pre-push钩子正常执行，额外 `git lfs push origin codex/map-1000m-heading`返回0，资源同步成功。核验时间：2026-10-06 10:31:59 UTC。
+
+GitHub成果见[地图与简约UI分支](https://github.com/XLingyyy/Hearthward/tree/codex/map-1000m-heading)。本记录随单独文档提交同步，未修改受测源码或资源。任务状态仍为Active，未代填人工验收；未合并main。
