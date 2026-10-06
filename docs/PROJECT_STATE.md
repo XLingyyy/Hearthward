@@ -2,7 +2,7 @@
 
 核对日期：2026-10-06。集成前已核对远端 `origin/main@53a1efd0ddf169a36265930aea63b58cabfaf061`，包含新版UI与既有玩法整合。用户明确授权将TASK-077最新成果提交推送到main；本次集成在该基线上加入山地石堡开场、Marble裁分立面、相应测试与Windows Demo发行脚本。没有改动主地图文件或存档格式。
 
-当前本地便携Demo为 `0.2.0-preview.20261006.1`，约4.88GB，目录 `F:/HearthwardDemo/20261006`。Shipping构建和打包通过；相关原生4/4、PIE撤离路线16/16通过，独立发布包实际完成新游戏、背包、地图、跟随和保存后重启恢复。详见[发行记录](releases/demo-20261006/REPORT.md)及[TASK-077交接](handoffs/TASK-077.md)。发布包不提交Git，尚未上传GitHub Release。主堡内室、精细建筑美术与完整夜袭演出仍待完成，TASK-077保持Active。
+当前本地便携Demo为 `0.2.0-preview.20261006.1`，约4.88GB，目录 `F:/HearthwardDemo/20261006`。Shipping构建和打包通过；相关原生4/4、PIE撤离路线16/16通过，独立发布包实际完成新游戏、背包、地图、跟随和保存后重启恢复。详见[发行记录](releases/demo-20261006/REPORT.md)及[TASK-077交接](handoffs/TASK-077.md)。发布包不提交Git，已公开为[GitHub预览Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.1)，三个分片及合并脚本均已上传。主堡内室、精细建筑美术与完整夜袭演出仍待完成，TASK-077保持Active。
 
 TASK-076新版UI和玩法的整合证据见[整合报告](qa/TASK-076/REPORT.md)。以下各历史任务的测试继续绑定原报告源码，不据本次集成推定重跑通过。
 

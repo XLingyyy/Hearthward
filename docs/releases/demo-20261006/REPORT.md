@@ -1,6 +1,6 @@
 # Windows Demo 0.2.0-preview.20261006.1
 
-用户要求先完成开场地图并交付当前可玩的Demo。目标为本地Win64 Shipping便携发布包，打包目录 `F:/HearthwardDemo/20261006`；未上传GitHub Release或商店。
+用户要求先完成开场地图并交付当前可玩的Demo。目标为本地Win64 Shipping便携发布包，打包目录 `F:/HearthwardDemo/20261006`；已按用户后续授权发布GitHub预览Release，未上传商店。
 
 源码基线 `53a1efd0ddf169a36265930aea63b58cabfaf061`，分支 `codex/TASK-077-hometown-stonehold` 加当前未提交改动。随包BUILD-INFO.json记录版本、分支、基线和改动路径；保留打包时源码状态；随后按用户授权提交同一实现至main，提交后未重新打包。
 
@@ -37,3 +37,11 @@
 - 实际启动的Shipping包完成新游戏、Tab背包、M地图、X跟随、F6手动存档、关闭重启继续；恢复位置、跟随状态与1/3进度。测试存档位于独立QA/Profile，未装入发布包。
 - [标题](title.png)、[卧室](bedroom.png)、[背包](inventory.png)、[地图](map.png)。低帧率场景记录位于交付目录`QA/packaged-session.mp4`，不含UI且仅记录卧室会话，不代表完整通关视频。
 - 当前包为本机验证的开发预览；精细开场地图尚未完成最终美术验收。本轮工作按用户后续明确授权提交并集成main；Git记录为最终依据。
+
+## GitHub发布
+
+用户明确要求同时发布可执行Demo。已公开为[预览Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.1)，标签`v0.2.0-preview.20261006.1`对应游戏实现提交`e34a51864e2fb84a0541e0ca2fc7f33dc765444f`。
+
+GitHub单附件限制小于2GiB，原始4876019470字节ZIP按1887436800、1887436800、1101145870字节拆成三个分片，附`Combine-Demo.cmd`和`DOWNLOAD-README.txt`。下载五个文件到同目录，运行合并脚本后解压。发布前核对全部附件状态与大小，原始游戏二进制未改动。
+
+包内BUILD-INFO及RELEASE-NOTES保留打包时记录，发布页明确说明后续main集成与公开状态。此次仅发布分片并同步文档，没有重新编译或替换游戏资产。

@@ -14,7 +14,7 @@ UE 5.8.2 单人第三人称生存冒险。本次主干集成在 `53a1efd0` 的�
 
 需要 UE 5.8.2、GameFactory Python 环境及本地模型资源。本机路径读取被忽略的 `.agent-local/environment.json`；可用 `HEARTHWARD_FACTORY_ROOT`、`HEARTHWARD_UE_ROOT`、`HEARTHWARD_PYTHON` 覆盖。首次克隆先执行 `git lfs pull` 取回二进制资产。UE 工程为根目录 `Hearthward.uproject`，入口地图为 `/Game/Hearthward/Bootstrap/L_Bootstrap`。
 
-需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。当前独立 Windows Demo 为 `0.2.0-preview.20261006.1`，便携包完整解压后运行“启动游戏.cmd”，无需UE或Python；交付路径及验证见[本次发行报告](docs/releases/demo-20261006/REPORT.md)。开发测试入口仍需要开发环境。
+需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。当前独立 Windows Demo 为 `0.2.0-preview.20261006.1`，便携包完整解压后运行“启动游戏.cmd”，无需UE或Python；公开下载见[GitHub Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.1)，交付路径及验证见[本次发行报告](docs/releases/demo-20261006/REPORT.md)。开发测试入口仍需要开发环境。
 
 ## 本次保留和整合的功能
 
