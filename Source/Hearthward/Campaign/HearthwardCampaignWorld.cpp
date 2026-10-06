@@ -7,6 +7,7 @@
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Building/HearthwardTask028CampHouse.h"
+#include "../Building/HearthwardHometownFortress.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Combat/HearthwardCombatRegion.h"
@@ -163,17 +164,27 @@ void UHearthwardCampaignSubsystem::RefreshActors()
 {
     const FVector PlayerPosition=Player()->GetActorLocation();
     const auto& Labor=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State;
-    if(State.Phase==TEXT("prologue") && !Scenery.ContainsByPredicate([](const auto& A){return A.IsValid() && A->ActorHasTag(TEXT("CampaignPrologueHouse"));}))
+    const FVector HomeOrigin=HearthwardCampaign::XY(HearthwardCampaign::Find(TEXT("locations"),TEXT("prologue_relic")),TEXT("xy"));
+    if(FVector::Dist2D(PlayerPosition,HomeOrigin)<60000 && !Scenery.ContainsByPredicate([](const auto& A){return A.IsValid() && A->ActorHasTag(TEXT("CampaignHometownFortress"));}))
     {
-        FVector Floor;if(Ground(Position(TEXT("prologue_relic"))-FVector(150,0,0),Floor))
+        FVector Floor;if(Ground(HomeOrigin,Floor))
         {
-            FVector DoorFloor;
-            if(!Ground(Floor+FVector(270,-136,0),DoorFloor))return;
-            // The doorway is uphill of the room center. Seat the foundation at the door
-            // so terrain cannot reduce its headroom below the player capsule height.
-            Floor.Z=DoorFloor.Z;
-            auto* House=GetWorld()->SpawnActor<AHearthwardTask028CampHouse>(Floor,FRotator::ZeroRotator);House->Tags.Add(TEXT("CampaignPrologueHouse"));Scenery.Add(House);
-            State.Positions.Add(TEXT("prologue_relic"),Floor+FVector(150,0,133));
+            auto* Home=GetWorld()->SpawnActor<AHearthwardHometownFortress>(Floor,FRotator::ZeroRotator);
+            Scenery.Add(Home);
+            State.Positions.Add(TEXT("prologue_relic"),Home->RelicPosition());
+            // Old prologue saves can be standing below the replacement bedroom floor.
+            if(State.Phase==TEXT("prologue"))
+            {
+                auto Lift=[&](AActor* Person)
+                {
+                    if(!Person)return;
+                    const FVector Local=Person->GetActorLocation()-Floor;
+                    if(FMath::Abs(Local.X)<600 && FMath::Abs(Local.Y)<500 && Person->GetActorLocation().Z<Home->BedroomLanding().Z)
+                        Person->SetActorLocation(FVector(Person->GetActorLocation().X,Person->GetActorLocation().Y,Home->BedroomLanding().Z),false,nullptr,ETeleportType::TeleportPhysics);
+                };
+                Lift(Player());
+                for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)Lift(*It);
+            }
         }
     }
     auto Spawn=[&](FName Id,FVector P,bool Hostile)->AHearthwardCampaignActor*
@@ -420,8 +431,8 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
                 {
                     RefreshActors();IntroRemaining=3;
                     if(auto* Character=Cast<ACharacter>(Player()))
-                    {Character->SetActorLocation(Position(TEXT("prologue_relic"))+FVector(0,0,15));Character->GetCharacterMovement()->StopMovementImmediately();Character->GetCharacterMovement()->DisableMovement();}
-                    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)It->SetActorLocation(Position(TEXT("prologue_relic"))+FVector(0,140,0));
+                    {Character->SetActorLocation(Position(TEXT("prologue_relic"))+FVector(280,-70,20));Character->GetCharacterMovement()->StopMovementImmediately();Character->GetCharacterMovement()->DisableMovement();}
+                    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)It->SetActorLocation(Position(TEXT("prologue_relic"))+FVector(440,30,20));
                 }
             }
             else {FinishTravel();Feedback=TEXT("目的地落点不可通行，旅行已取消");}

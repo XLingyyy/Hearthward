@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "id": "TASK-077",
+  "title": "山地石堡聚落与卧室开场空间",
+  "status": "Active",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-077-hometown-stonehold",
+  "source_refs": [
+    "用户2026-10-05要求城堡式家乡、卧室开场、夜袭撤离，并确认山地石堡聚落风格",
+    "main@53a1efd0ddf169a36265930aea63b58cabfaf061"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "Source/Hearthward/Building/HearthwardHometownFortress.h",
+    "Source/Hearthward/Building/HearthwardHometownFortress.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Tests/HometownFortressTests.cpp",
+    "docs/tasks/TASK-077.json",
+    "docs/handoffs/TASK-077.md",
+    "docs/qa/TASK-077/",
+    "art_source/TASK-077/",
+    "Content/Hearthward/Assets/TASK-077/",
+    "Config/DefaultGame.ini",
+    "scripts/release/",
+    "docs/releases/demo-20261006/",
+    "Source/Hearthward/Update/HearthwardUpdateSubsystem.h",
+    "docs/PROJECT_STATE.md"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "Resources/",
+    "docs/design/archive/",
+    "Content/Hearthward/World/",
+    "Content/Hearthward/Bootstrap/"
+  ],
+  "acceptance": [
+    "独立石堡建筑布局，保留营地房屋与家乡四区玩法",
+    "兄弟在有两张床的卧室开场，通路支持撤离",
+    "构建及相关碰撞、开场与运行画面验证，明确白模与最终美术边界",
+    "开场地图整合后构建独立Windows Demo，验证实际启动、主要操作、撤离及保存恢复，交付本地发布包"
+  ],
+  "non_goals": [
+    "新增依赖",
+    "修改存档格式、战斗规则或UI"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "owner_authorized",
+    "push": "owner_authorized",
+    "merge": "owner_authorized",
+    "marble_subscription_credits": "owner_authorized"
+  },
+  "notes": [
+    "山地石堡可运行布局已增加六栋石屋、灰石外墙、坡屋顶与主堡扶壁；最终美术与新夜袭演出尚未完成。",
+    "用户后续明确允许使用Marble Pro现有积分并自行完成生成、导出；不再受此前5100积分询问限制。未授权购买积分或另付费API。",
+    "修正版世界高质量GLB已下载并试导入UE。材质Nanite标记修复后，网格仍有天空拉伸、碎裂与缺面，未通过游戏外观验收。运行场景已撤下该模型；来源与失败证据保留。",
+    "用户2026-10-06在下载完成后明确要求继续工作，承接已提出的网格检查、裁分和游戏接入；据此允许新增专属Content/Hearthward/Assets/TASK-077资产，主地图与已有共享资产保持禁改。",
+    "试导入资产移至.agent-local/qa/TASK-077/rejected-content，不进入Content交付。公开UEClient材质绑定补充used_with_nanite可选项；框架补丁与复现脚本保存在制作目录。",
+    "第二版两种GLB已完成UE试导入与画面对照。原始纹理版59.5万面在无光照视图下内庭可读；源材质声明KHR_materials_unlit，默认受光材质黑斑不能全部归因于模型损坏。外侧天空附着面、背面及屋顶仍需修整，尚未正式接入。试验资产隔离于.agent-local/qa/TASK-077/courtyard-v2-evaluation-content/；本轮三条LFS锁已释放，未新增积分消费。",
+    "用户最新明确要求继续完善开场地图并打包当前可玩的Demo；授权必要的打包配置、发行脚本与本地发行产物，不要求上传商店或GitHub Release。本轮限定Config/DefaultGame.ini为打包资产收录。",
+    "发行版本标识更新为0.2.0-preview.20261006.1，仅修改Update头文件中的版本常量。",
+    "第二版裁出103680面立面正式接入本任务运行资产，旧完整试验资产继续隔离。Win64 Shipping 0.2.0-preview.20261006.1已打包并完成独立程序菜单、跟随、手动保存、关闭重启继续检查；4项原生及16项PIE撤离路线通过。交付F:/HearthwardDemo/20261006；最终精细美术与完整夜袭演出仍待完成。",
+    "用户明确要求“最新成果推送提交到main”，授权本任务提交、推送及main集成；同步README、任务交接与项目状态。最终美术及完整真人体验验收仍保持待完成，不代填Reviewer。"
+  ]
+}

@@ -1,8 +1,10 @@
 # Hearthward 项目状态
 
-核对日期：2026-10-05。远端主干基线为`origin/main@ac6a302ba24ea6531ccdaf880d83e9a03779c51e`，已含043—050、PR #55的UI／加载／场景修复、PR #57的051操作基线、PR #56的动物／更新兼容、PR #58的052时间整合及PR #60的053—074玩法批次。各原始测试仍绑定其报告源码，不据main合并推定重跑通过。
+核对日期：2026-10-06。集成前已核对远端 `origin/main@53a1efd0ddf169a36265930aea63b58cabfaf061`，包含新版UI与既有玩法整合。用户明确授权将TASK-077最新成果提交推送到main；本次集成在该基线上加入山地石堡开场、Marble裁分立面、相应测试与Windows Demo发行脚本。没有改动主地图文件或存档格式。
 
-TASK-076已将新版UI与上述main玩法整合，交付分支为 `codex/TASK-076-ui-gameplay-integration`，用户已授权提交并更新main。运行入口为根目录 `启动测试版游戏.cmd`。本轮结果见[整合报告](qa/TASK-076/REPORT.md)，不能将历史任务的PASS当作本轮验证。
+当前本地便携Demo为 `0.2.0-preview.20261006.1`，约4.88GB，目录 `F:/HearthwardDemo/20261006`。Shipping构建和打包通过；相关原生4/4、PIE撤离路线16/16通过，独立发布包实际完成新游戏、背包、地图、跟随和保存后重启恢复。详见[发行记录](releases/demo-20261006/REPORT.md)及[TASK-077交接](handoffs/TASK-077.md)。发布包不提交Git，尚未上传GitHub Release。主堡内室、精细建筑美术与完整夜袭演出仍待完成，TASK-077保持Active。
+
+TASK-076新版UI和玩法的整合证据见[整合报告](qa/TASK-076/REPORT.md)。以下各历史任务的测试继续绑定原报告源码，不据本次集成推定重跑通过。
 
 052已由Owner通过PR #58合入main，包含批准的[工程方案](planning/TASK-052/PLAN.md)、schema9迁移和共享契约。Editor Development、相关原生34/34、渲染PIE82/82、工具33/33仍绑定受测源码`0bc1c3ee5d09cfca3f675cf657b6981f874f9138`，见[052报告](qa/TASK-052/REPORT.md)；任务元数据保持Active，不代填Owner体验／最终验收。canonical052对应原稿054；[交接](handoffs/TASK-052.md)保留本单证据。固定录音继续暂缓，动物051标签不改。
 

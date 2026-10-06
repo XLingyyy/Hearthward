@@ -1,6 +1,6 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险。TASK-076 整合版本：以 `main@ac6a302b` 的玩法为基线，接入 `codex/TASK-053-title-wheel@fa1828ed` 的新版 UI，并带入 TASK-075 文件整理。本轮整合分支为 `codex/TASK-076-ui-gameplay-integration`，经用户授权提交并更新 main。
+UE 5.8.2 单人第三人称生存冒险。本次主干集成在 `53a1efd0` 的新版 UI、原有玩法及文件整理基础上，加入 TASK-077 山地石堡开场与 Windows Demo `0.2.0-preview.20261006.1`。可运行布局及预览包已验证，精细美术和完整真人体验仍待验收。
 
 入口：[项目状态](docs/PROJECT_STATE.md) · [本次整合与验证](docs/qa/TASK-076/REPORT.md) · [文件目录](docs/REPOSITORY_LAYOUT.md) · [分支关系](docs/planning/BRANCH_INTEGRATION.md) · [测试端说明](TestClient/README.md)。
 
@@ -14,7 +14,7 @@ UE 5.8.2 单人第三人称生存冒险。TASK-076 整合版本：以 `main@ac6a
 
 需要 UE 5.8.2、GameFactory Python 环境及本地模型资源。本机路径读取被忽略的 `.agent-local/environment.json`；可用 `HEARTHWARD_FACTORY_ROOT`、`HEARTHWARD_UE_ROOT`、`HEARTHWARD_PYTHON` 覆盖。首次克隆先执行 `git lfs pull` 取回二进制资产。UE 工程为根目录 `Hearthward.uproject`，入口地图为 `/Game/Hearthward/Bootstrap/L_Bootstrap`。
 
-需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。开发测试端需要开发环境，既有 Windows Demo 安装包尚未同步本次源码；历史发行见[发行报告](docs/releases/demo-20260924/REPORT.md)。
+需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。当前独立 Windows Demo 为 `0.2.0-preview.20261006.1`，便携包完整解压后运行“启动游戏.cmd”，无需UE或Python；交付路径及验证见[本次发行报告](docs/releases/demo-20261006/REPORT.md)。开发测试入口仍需要开发环境。
 
 ## 本次保留和整合的功能
 
@@ -28,7 +28,11 @@ main 的正式 TASK-053 保持“基础通行”含义；UI 分支曾复用该�
 
 ## 玩法与操作
 
-正常新游戏从夜袭开始：E 取护符，X 跟随／Z 等待，带弟弟沿后巷撤离，进入营地后按 J 查看目标。标题页“继续游戏”恢复最新节点；F6 或暂停菜单进入存档。旧营地档按已有迁移逻辑处理，原件及兼容备份保留。
+当前新游戏从石堡双床卧室开场：靠近遗物包按 E 取护符，X 叫弟弟跟随；出门沿回廊右行，下楼梯进入庭院，再从有灯笼的城墙侧门前往原后巷撤离点。进入营地后按 J 查看目标。现有夜袭、四区夺回、营地和存档流程保持原规则。
+
+家乡建筑布局含主堡、角塔、灰石城墙、卧室、回廊、楼梯及六栋带坡屋顶的石屋。主堡与石屋目前只有外观，尚无可探索内室。第一版 Marble 网格未通过验收，已撤下；第二版裁出103680面立面接入主堡，原生结构补背墙、基座与收边，保留源贴图并按世界时钟调整昼夜颜色。完整生成世界未直接接入。精细建筑美术、完整街巷生活细节和新增夜袭演出未完成。验证与截图见 [TASK-077 报告](docs/qa/TASK-077/REPORT.md)，Marble 输入见[制作说明](art_source/TASK-077/README.md)。
+
+标题页“继续游戏”恢复最新节点；F6 或暂停菜单进入存档。旧营地档按已有迁移逻辑处理，原件及兼容备份保留。
 
 | 功能 | 默认操作 |
 |---|---|
@@ -57,6 +61,6 @@ main 的正式 TASK-053 保持“基础通行”含义；UI 分支曾复用该�
 
 本次构建、原生回归、独立游戏输入与界面检查的实际结果见 [TASK-076 报告](docs/qa/TASK-076/REPORT.md)。旧分支的 PASS 只证明原报告受测版本，不代表当前整合结果。UI 自动操作使用真实 UE Widget／Slate 事件，不能等同于完整真人通关。
 
-已有待验收项继续保留：AI 完整理解矩阵未达门槛，CPU 推理曾超时；正式武器握姿、动作观感、角色美术和完整地图性能仍需验收；首版 30—60 分钟完整体验、第二机器及正式发行 RC 尚未闭合。本次未重做模型、玩法平衡或安装包。原证据与限制见[053—074 交接](docs/handoffs/TASK-053.md)和[工程性能诊断](docs/qa/TASK-072/game-development-runtime-review.md)。
+已有待验收项继续保留：AI 完整理解矩阵未达门槛，CPU 推理曾超时；正式武器握姿、动作观感、角色美术和完整地图性能仍需验收；首版 30—60 分钟完整体验、第二机器及正式发行 RC 尚未闭合。本次未重做模型或玩法平衡；已交付便携Shipping包，未生成新版安装器。原证据与限制见[053—074 交接](docs/handoffs/TASK-053.md)和[工程性能诊断](docs/qa/TASK-072/game-development-runtime-review.md)。
 
 模型使用项目锁定的 Qwen3.5 4B／llama.cpp；运行资源置于本地 `Runtime/LocalAI`，准备入口 `scripts/local_ai/prepare_bundle.py`。权重、密钥、用户存档、构建缓存不提交。多人开发遵循[AGENTS](AGENTS.md)和[WORKFLOW](WORKFLOW.md)，新任务先核对远端编号与分支，再从已核实基线创建独立分支。

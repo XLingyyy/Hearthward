@@ -1,11 +1,11 @@
 #ifndef PackageRoot
-  #define PackageRoot "F:\HearthwardDemo\20260924\Windows"
+  #define PackageRoot "F:\HearthwardDemo\20261006\Windows"
 #endif
 #ifndef OutputRoot
   #define OutputRoot "F:\HearthwardDemo\Release"
 #endif
 #ifndef AppVersion
-  #define AppVersion "0.2.0-preview.20261003.2"
+  #define AppVersion "0.2.0-preview.20261006.1"
 #endif
 [Setup]
 AppId=Hearthward-Demo

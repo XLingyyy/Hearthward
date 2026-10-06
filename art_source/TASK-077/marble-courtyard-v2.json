@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-06",
+  "provider": "World Labs Marble",
+  "model": "Marble 1.1 Plus",
+  "authorization": "User requested another version; existing Pro subscription credits authorized",
+  "visibility_on_submit": "Private",
+  "create_url": "https://marble.worldlabs.ai/create/d2485849-3612-4f51-a928-8e387e469cae",
+  "title": "Medieval Mountain Stone Fortress Courtyard",
+  "status": "Cropped 103680-triangle facade integrated into native keep; full exported world remains an art source.",
+  "input_type": "Text",
+  "prompt": "A compact enclosed courtyard inside a rugged medieval mountain stone fortress settlement, realistic game environment. Ground-level human viewpoint, standing on continuous dry stone paving in a courtyard about 25 meters across. Three sides enclosed by connected solid buildings: a substantial grey fieldstone keep with a broad arched entry and square corner tower, a two-storey residential wing with a covered timber gallery, and three adjoining stone cottages with dark slate pitched roofs. Thick load-bearing stone walls, deep window reveals, closed roofs, fully grounded foundations. Clearly readable large architectural forms, restrained surface detail, coherent construction. A broad unobstructed walking route leads from the residential gallery through the courtyard to an open stone postern arch. The tall surrounding walls and roofs fill most of the view; only a narrow strip of plain overcast sky above the roofline. Soft even diffuse daylight, neutral grey stone and dark brown timber. Quiet inhabited place with a few barrels and warm lanterns along walls. All buildings intact. No distant landscape, no mountains visible, no cliffs, no trees, no vegetation, no fog, no smoke, no fire, no people, no rubble, no floating structures, no thin spires, no modern materials, no text.",
+  "changes_from_previous": "Contained courtyard, close architectural surfaces, no distant terrain, minimal sky; new generation rather than re-exporting the rejected mesh",
+  "mesh_export": {
+    "status": "Downloaded textured and vertex-colored GLB",
+    "confirmed_credit_cost": 3500,
+    "provider_estimate": "up to one hour",
+    "files": [
+      "courtyard-v2-textured.glb",
+      "courtyard-v2-vertex-colored.glb"
+    ]
+  },
+  "ue_import": true,
+  "credits_charged": null,
+  "mesh_qa_plan": [
+    "Inspect generated world before requesting high-quality export",
+    "Compare textured and vertex-colored exports; preserve original files",
+    "Check near-ground architecture, sky attachments, holes and grounded foundations",
+    "Only integrate portions passing visual inspection; keep gameplay collision separate"
+  ],
+  "world_url": "https://marble.worldlabs.ai/world/d7a06704-2d1c-4b9f-94db-37701016fbdc",
+  "visual_review": "Source textured GLB declares KHR_materials_unlit. UE unlit view displays coherent courtyard walls, arch and timber gallery. Default-lit black artifacts cannot all be attributed to source geometry. Exterior still contains sky surfaces and incomplete building enclosure. Retained as an interior art source; closure geometry, night material and gameplay collision require further work.",
+  "runtime_integrated": true,
+  "trial_assets_location": ".agent-local/qa/TASK-077/courtyard-v2-evaluation-content/",
+  "local_review_used_additional_credits": false,
+  "runtime_asset": "/Game/Hearthward/Assets/TASK-077/SM_StoneholdFacade/StaticMeshes/SM_StoneholdFacade",
+  "runtime_usage": "Only a cropped stone facade. Native masonry supplies closed backing, base and coping. Unlit material tinted by world clock; no generated-mesh collision or local-light response."
+}

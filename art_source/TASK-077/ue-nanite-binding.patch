@@ -1,0 +1,101 @@
+diff --git a/engine_adapters/ue5/assets/_internal/ue/scripts/material_scripts.py b/engine_adapters/ue5/assets/_internal/ue/scripts/material_scripts.py
+index 4d4a087..457e826 100644
+--- a/engine_adapters/ue5/assets/_internal/ue/scripts/material_scripts.py
++++ b/engine_adapters/ue5/assets/_internal/ue/scripts/material_scripts.py
+@@ -21,6 +21,9 @@ def build_pbr_material_binding_script(
+     *,
+     two_sided: bool = False,
+     opacity_mode: str = "masked",
++    used_with_nanite: bool = False,
++    use_vertex_color: bool = False,
++    unlit: bool = False,
+ ) -> str:
+     """Import textures, create a PBR material, and assign it to meshes."""
+     safe_asset_id = _safe_name(asset_id)
+@@ -151,6 +154,7 @@ def build_pbr_material_binding_script(
+ 
+         unreal.MaterialEditingLibrary.delete_all_material_expressions(material)
+         _set(material, "two_sided", two_sided)
++        _set_required(material, "shading_model", unreal.MaterialShadingModel.MSM_UNLIT if {bool(unlit)!r} else unreal.MaterialShadingModel.MSM_DEFAULT_LIT, "Material")
+         if "opacity" in imported_textures and opacity_mode == "masked":
+             _set(material, "blend_mode", unreal.BlendMode.BLEND_MASKED)
+             _set(material, "opacity_mask_clip_value", 0.333)
+@@ -239,7 +243,39 @@ def build_pbr_material_binding_script(
+                 + ", ".join(missing_expression_textures)
+             )
+ 
++        if {bool(use_vertex_color)!r}:
++            vertex_color = unreal.MaterialEditingLibrary.create_material_expression(
++                material, unreal.MaterialExpressionVertexColor, -400, -500
++            )
++            connected = unreal.MaterialEditingLibrary.connect_material_property(
++                vertex_color, "", unreal.MaterialProperty.MP_BASE_COLOR
++            )
++            if connected is False:
++                raise RuntimeError("Vertex color material binding failed")
++            expression_objects["base_color"] = vertex_color
++            expression_paths["base_color"] = vertex_color.get_path_name()
++        if {bool(unlit)!r}:
++            color = expression_objects.get("base_color")
++            if color is None:
++                raise RuntimeError("Unlit material requires base color or vertex color")
++            tint = unreal.MaterialEditingLibrary.create_material_expression(material, unreal.MaterialExpressionVectorParameter, -400, -700)
++            _set_required(tint, "parameter_name", "Tint", "UnlitTint")
++            _set_required(tint, "default_value", unreal.LinearColor(1, 1, 1, 1), "UnlitTint")
++            multiply = unreal.MaterialEditingLibrary.create_material_expression(material, unreal.MaterialExpressionMultiply, -100, -500)
++            links = [
++                unreal.MaterialEditingLibrary.connect_material_expressions(color, "" if {bool(use_vertex_color)!r} else "RGB", multiply, "A"),
++                unreal.MaterialEditingLibrary.connect_material_expressions(tint, "", multiply, "B"),
++                unreal.MaterialEditingLibrary.connect_material_property(multiply, "", unreal.MaterialProperty.MP_EMISSIVE_COLOR),
++            ]
++            if not all(links):
++                raise RuntimeError("Unlit tint material connection failed")
+         unreal.MaterialEditingLibrary.layout_material_expressions(material)
++        if {bool(used_with_nanite)!r}:
++            unreal.MaterialEditingLibrary.set_material_usage(
++                material, unreal.MaterialUsage.MATUSAGE_NANITE
++            )
++            if not material.get_editor_property("used_with_nanite"):
++                raise RuntimeError("Material Nanite usage was not applied")
+         unreal.MaterialEditingLibrary.recompile_material(material)
+         unreal.EditorAssetLibrary.save_loaded_asset(
+             material,
+diff --git a/engine_adapters/ue5/bindings/_internal/materials.py b/engine_adapters/ue5/bindings/_internal/materials.py
+index 6c84591..e21e1fc 100644
+--- a/engine_adapters/ue5/bindings/_internal/materials.py
++++ b/engine_adapters/ue5/bindings/_internal/materials.py
+@@ -48,7 +48,7 @@ class PBRMaterialBindingService:
+             explicit=explicit,
+             auto_discover=bool(config.get("auto", True)),
+         )
+-        if not texture_sources:
++        if not texture_sources and not config.get("use_vertex_color", False):
+             return {
+                 "ok": True,
+                 "skipped": True,
+@@ -63,6 +63,9 @@ class PBRMaterialBindingService:
+                 destination_root,
+                 two_sided=bool(config.get("two_sided", False)),
+                 opacity_mode=str(config.get("opacity_mode") or "masked"),
++                used_with_nanite=bool(config.get("used_with_nanite", False)),
++                use_vertex_color=bool(config.get("use_vertex_color", False)),
++                unlit=bool(config.get("unlit", False)),
+             ),
+             timeout=240,
+         )
+diff --git a/engine_adapters/ue5/bindings/client.py b/engine_adapters/ue5/bindings/client.py
+index 2d21b18..0c5ead7 100644
+--- a/engine_adapters/ue5/bindings/client.py
++++ b/engine_adapters/ue5/bindings/client.py
+@@ -28,6 +28,11 @@ class UEBindingsClient:
+         destination: str,
+         options: dict[str, Any] | None = None,
+     ) -> dict[str, Any]:
++        """Bind textures or vertex colors; optional unlit uses a runtime Tint parameter.
++
++        used_with_nanite enables Nanite usage. unlit defaults to False and is
++        intended for baked-color sources such as KHR_materials_unlit exports.
++        """
+         try:
+             resolved = self._assets._resolve_source(
+                 source,

@@ -1,0 +1,135 @@
+[
+  {
+    "file": "previous-1791198654.json",
+    "checks": {},
+    "positions": [],
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/TASK-077/verify_fortress_pie.py\", line 85, in tick\n    pending=next(runner);return\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/TASK-077/verify_fortress_pie.py\", line 39, in run\n    ui=pc.get_hud().get_editor_property('screen');ui.open_page('hud')\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nException: HUD: Failed to find property 'screen' for attribute 'screen' on 'HUD'\n"
+  },
+  {
+    "file": "previous-1791198802.json",
+    "checks": {
+      "one independent fortress": true,
+      "player in bedroom": true,
+      "brother in bedroom": true,
+      "walk to relic": true,
+      "relic interaction": true,
+      "follow command": true,
+      "walk to door": true,
+      "walk to gallery": true,
+      "walk to stairs": true,
+      "walk to court": true,
+      "walk to postern": true,
+      "walk to exit": true,
+      "brother reaches escape": false
+    },
+    "positions": [
+      {
+        "point": "relic",
+        "player": "<Struct 'Vector' (0x000001BECE3338F0) {x: 91855.952786, y: 53650.416525, z: 23368.381067}>",
+        "brother": "<Struct 'Vector' (0x000001BECE3338F0) {x: 92160.000000, y: 53700.000000, z: 23358.381064}>",
+        "distance": 59.28091346701851
+      },
+      {
+        "point": "door",
+        "player": "<Struct 'Vector' (0x000001BECE333850) {x: 91982.626778, y: 54288.129432, z: 23368.263571}>",
+        "brother": "<Struct 'Vector' (0x000001BECE333850) {x: 92160.000000, y: 53700.000000, z: 23358.381064}>",
+        "distance": 64.26348910711194
+      },
+      {
+        "point": "gallery",
+        "player": "<Struct 'Vector' (0x000001BECE333800) {x: 93439.814162, y: 54348.873957, z: 23368.263571}>",
+        "brother": "<Struct 'Vector' (0x000001BECE333800) {x: 92160.000000, y: 53700.000000, z: 23358.381064}>",
+        "distance": 60.19637104169494
+      },
+      {
+        "point": "stairs",
+        "player": "<Struct 'Vector' (0x000001BECE333850) {x: 93498.350882, y: 56335.023175, z: 22755.294302}>",
+        "brother": "<Struct 'Vector' (0x000001BECE333850) {x: 92160.000000, y: 53700.000000, z: 23358.381064}>",
+        "distance": 64.99774861917444
+      },
+      {
+        "point": "court",
+        "player": "<Struct 'Vector' (0x000001BECE333850) {x: 92028.761796, y: 59145.586078, z: 22031.723453}>",
+        "brother": "<Struct 'Vector' (0x000001BECE333850) {x: 92160.000000, y: 53700.000000, z: 23358.381064}>",
+        "distance": 61.54767090501099
+      },
+      {
+        "point": "postern",
+        "player": "<Struct 'Vector' (0x000001BECE333800) {x: 92001.075884, y: 60537.620950, z: 22036.013871}>",
+        "brother": "<Struct 'Vector' (0x000001BECE333800) {x: 92160.000000, y: 53700.000000, z: 23358.381064}>",
+        "distance": 62.388327157755434
+      },
+      {
+        "point": "exit",
+        "player": "<Struct 'Vector' (0x000001BECE3338F0) {x: 90050.540550, y: 61963.267964, z: 22156.112172}>",
+        "brother": "<Struct 'Vector' (0x000001BECE3338F0) {x: 92160.000000, y: 53700.000000, z: 23358.381064}>",
+        "distance": 62.47871410354086
+      }
+    ],
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/TASK-077/verify_fortress_pie.py\", line 86, in tick\n    pending=next(runner);return\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/TASK-077/verify_fortress_pie.py\", line 69, in run\n    check('brother reaches escape',(brother.get_actor_location()-pawn.get_actor_location()).length2d()<1000)\n  File \"G:/GameFactory/Hearthward/docs/qa/TASK-077/verify_fortress_pie.py\", line 18, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: brother reaches escape\n"
+  },
+  {
+    "file": "previous-1791199031.json",
+    "checks": {
+      "normal new game": true,
+      "one independent fortress": true,
+      "player in bedroom": true,
+      "brother in bedroom": true,
+      "walk to relic": true,
+      "relic interaction": true,
+      "follow command": true,
+      "walk to door": true,
+      "walk to gallery": true,
+      "walk to stairs": true,
+      "walk to court": true,
+      "walk to postern": true,
+      "walk to exit": true,
+      "brother reaches escape": false
+    },
+    "positions": [
+      {
+        "point": "relic",
+        "player": "<Struct 'Vector' (0x000002BFC885F760) {x: 91857.211486, y: 53649.975980, z: 23368.381067}>",
+        "brother": "<Struct 'Vector' (0x000002BFC885F760) {x: 92160.000000, y: 53700.000000, z: 23358.381064}>",
+        "distance": 60.614483213617525
+      },
+      {
+        "point": "door",
+        "player": "<Struct 'Vector' (0x000002BFC885F7B0) {x: 91985.024948, y: 54291.897327, z: 23368.334209}>",
+        "brother": "<Struct 'Vector' (0x000002BFC885F7B0) {x: 91974.153585, y: 54016.979641, z: 23358.381064}>",
+        "distance": 60.00143940160854
+      },
+      {
+        "point": "gallery",
+        "player": "<Struct 'Vector' (0x000002BFC885F850) {x: 93439.873147, y: 54349.004173, z: 23368.334209}>",
+        "brother": "<Struct 'Vector' (0x000002BFC885F850) {x: 92548.999999, y: 53960.000000, z: 23358.381064}>",
+        "distance": 60.135099376018765
+      },
+      {
+        "point": "stairs",
+        "player": "<Struct 'Vector' (0x000002BFC885F7B0) {x: 93498.607038, y: 56339.868602, z: 22754.601409}>",
+        "brother": "<Struct 'Vector' (0x000002BFC885F7B0) {x: 92548.999999, y: 53960.000000, z: 23358.381064}>",
+        "distance": 60.14753029761424
+      },
+      {
+        "point": "court",
+        "player": "<Struct 'Vector' (0x000002BFC885F850) {x: 92030.305344, y: 59142.754285, z: 22032.195590}>",
+        "brother": "<Struct 'Vector' (0x000002BFC885F850) {x: 92091.450862, y: 54015.906047, z: 23358.381064}>",
+        "distance": 64.77256988434783
+      },
+      {
+        "point": "postern",
+        "player": "<Struct 'Vector' (0x000002BFC885F800) {x: 92001.015226, y: 60539.832077, z: 22036.024630}>",
+        "brother": "<Struct 'Vector' (0x000002BFC885F800) {x: 92091.450862, y: 54015.906047, z: 23358.381064}>",
+        "distance": 60.17648785129785
+      },
+      {
+        "point": "exit",
+        "player": "<Struct 'Vector' (0x000002BFC885F760) {x: 90051.707179, y: 61962.590567, z: 22155.978708}>",
+        "brother": "<Struct 'Vector' (0x000002BFC885F760) {x: 92091.450862, y: 54015.906047, z: 23358.381064}>",
+        "distance": 63.820827607379655
+      }
+    ],
+    "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/docs/qa/TASK-077/verify_fortress_pie.py\", line 85, in tick\n    pending=next(runner);return\n            ^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/docs/qa/TASK-077/verify_fortress_pie.py\", line 68, in run\n    check('brother reaches escape',(brother.get_actor_location()-pawn.get_actor_location()).length2d()<1000)\n  File \"G:/GameFactory/Hearthward/docs/qa/TASK-077/verify_fortress_pie.py\", line 18, in check\n    if not value:raise AssertionError(name)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: brother reaches escape\n"
+  }
+]
