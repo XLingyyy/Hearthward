@@ -10,9 +10,16 @@ bool UHearthwardScreenWidget::CaptureUI(const FString& Name,int32 Width,int32 He
 #if UE_BUILD_SHIPPING
     return false;
 #else
+    const bool Captured=[&]()
+    {
+    const double ScreenScale=FMath::Min(double(Width)/DesignSize.X,double(Height)/DesignSize.Y);
+    const TGuardValue<FVector2D> PreserveView(MapViewDesignSize,FVector2D(Width,Height)/ScreenScale);
+    const TGuardValue<FVector2D> PreservePan(MapPan,MapPan);
+    const TGuardValue<float> PreserveZoom(MapZoom,MapZoom);
     const TGuardValue<int32> NeutralHover(Hover,PreserveFocus?Hover:INDEX_NONE),NeutralKeyboardFocus(KeyboardFocus,PreserveFocus?KeyboardFocus:INDEX_NONE);
     const TGuardValue<bool> NeutralInput(KeyboardNavigationActive,PreserveFocus && KeyboardNavigationActive);
     Refresh();
+    if(Page==TEXT("map"))FFileHelper::SaveStringToFile(DescribeHUDPreview(),*(FPaths::ProjectSavedDir()/TEXT("Task020")/(FPaths::MakeValidFileName(Name)+TEXT(".json"))),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
     FWidgetRenderer Renderer(false,true);
     UTextureRenderTarget2D* Target=NewObject<UTextureRenderTarget2D>();
     Target->ClearColor=FLinearColor::Transparent;
@@ -31,18 +38,19 @@ bool UHearthwardScreenWidget::CaptureUI(const FString& Name,int32 Width,int32 He
     TArray64<uint8> PNG;
     FImageUtils::PNGCompressImageArray(Width,Height,Pixels,PNG);
     return FFileHelper::SaveArrayToFile(PNG,*(FPaths::ProjectSavedDir()/TEXT("Task020")/(FPaths::MakeValidFileName(Name)+TEXT(".png"))));
+    }();
+    Refresh();return Captured;
 #endif
 }
 
 #if !UE_BUILD_SHIPPING
-bool UHearthwardScreenWidget::CaptureMapFogPair(const FString& Name,int32 Width,int32 Height,double TimeOffset)
+bool UHearthwardScreenWidget::CaptureMapVisibilityPair(const FString& Name,int32 Width,int32 Height)
 {
-    const TGuardValue<double> FreezeFog(MapFogCaptureTime,FPlatformTime::Seconds()+TimeOffset);
-    const TGuardValue<bool> RestoreProbe(MapFogProbe,false);
+    const TGuardValue<bool> RestoreProbe(MapTerrainProbe,false);
     const bool Base=CaptureUI(Name+TEXT("-base"),Width,Height);
-    MapFogProbe=true;
+    MapTerrainProbe=true;
     const bool Probe=CaptureUI(Name+TEXT("-probe"),Width,Height);
-    MapFogProbe=false;Refresh();
+    MapTerrainProbe=false;Refresh();
     return Base && Probe;
 }
 #endif
@@ -58,3 +66,6 @@ bool UHearthwardScreenWidget::CaptureMapFogPair(const FString& Name,int32 Width,
 #include "HearthwardScreenQuickTest.inl"
 #include "HearthwardScreenDragTest.inl"
 #include "HearthwardScreenMapTest.inl"
+#include "HearthwardScreenTravelTest.inl"
+
+#include "HearthwardScreenStorageTest.inl"

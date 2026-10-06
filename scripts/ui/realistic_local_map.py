@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFilter
 LAKE_WATER_RGB = np.array([53., 70., 75.])
 
 
-def render_realistic(scene, heights, levels, materials, origin, span, size):
+def render_realistic(scene, heights, levels, materials, origin, span, size, clip_circle=True):
     atlas = Image.open(materials).convert('RGB')
     tw, th = atlas.width // 3, atlas.height // 2
     if atlas.size != (tw * 3, th * 2):
@@ -42,7 +42,8 @@ def render_realistic(scene, heights, levels, materials, origin, span, size):
 
     from map_relief import relief_shading, relief_contours, EXAGGERATION
     small = np.asarray(scene['heightsM'],dtype=np.float32).reshape(scene['samples'],scene['samples'])
-    shade, slope, ambient = relief_shading(heights, small, span / size)
+    spacing=scene.get('spacingM',2)
+    shade, slope, ambient = relief_shading(heights, small, span / size, spacing)
     elevation = np.clip((heights - 212) / 33, 0, 1)
     grass = np.array([50., 60., 56.]) * (1 - elevation[..., None]) + np.array([126., 123., 109.]) * elevation[..., None]
     rock_amount = np.clip((slope - .14) / .44, 0, .90)
@@ -52,7 +53,7 @@ def render_realistic(scene, heights, levels, materials, origin, span, size):
     detail = meadow_detail * (1 - rock_amount) + stone_detail * rock_amount
     land = land * shade[..., None] + detail[..., None] + variation(31)[..., None] * 3
     relief_image = Image.fromarray(np.uint8(np.clip(land,0,255))).convert('RGBA')
-    relief_image = Image.alpha_composite(relief_image,relief_contours(size,small))
+    relief_image = Image.alpha_composite(relief_image,relief_contours(size,small,spacing))
     land = np.asarray(relief_image)[...,:3].astype(float)
     wet = np.isfinite(levels) & (heights < levels - .015)
     water = LAKE_WATER_RGB + texture(2, 230, .14)[..., None]
@@ -82,7 +83,7 @@ def render_realistic(scene, heights, levels, materials, origin, span, size):
         return tile.resize((width, height), Image.Resampling.LANCZOS).convert('RGBA')
 
     for row in scene['trees']:
-        x, y = at(row); r = 8; side = r * 2 + 1
+        x, y = at(row); r = max(2,round(2.2/span*size)); side = r * 2 + 1
         draw.ellipse((x - r + 3, y - r + 4, x + r + 3, y + r + 4), fill=(10, 15, 13, 105))
         crown = patch(4, side, side)
         cy, cx = np.mgrid[:side, :side]; nx = (cx - r) / r; ny = (cy - r) / r
@@ -93,12 +94,14 @@ def render_realistic(scene, heights, levels, materials, origin, span, size):
         cp[..., :3] = np.uint8(np.clip(cp[..., :3] * (.58 + .20 * (1 - nx - ny))[..., None], 0, 255))
         cp[..., 3] = np.uint8(alpha * 255)
         objects.alpha_composite(Image.fromarray(cp), (round(x) - r, round(y) - r))
+    rock_scale=max(.25,(size/span)/(1800/500))
     for row in scene['rocks']:
-        x, y = at(row)
-        draw.ellipse((x - 3, y, x + 6, y + 6), fill=(20, 21, 20, 90))
-        draw.polygon([(x - 4, y + 2), (x - 2, y - 4), (x + 3, y - 3), (x + 5, y + 1), (x + 2, y + 4)], fill=(101, 104, 101, 255))
-        draw.polygon([(x - 4, y + 2), (x - 2, y - 4), (x + 2, y - 1)], fill=(148, 149, 141, 245))
-        draw.line((x + 2, y - 1, x + 5, y + 1, x + 2, y + 4), fill=(68, 72, 69, 240), width=2)
+        x,y=at(row)
+        def point(dx,dy):return (x+dx*rock_scale,y+dy*rock_scale)
+        draw.ellipse((*point(-3,0),*point(6,6)),fill=(20,21,20,90))
+        draw.polygon([point(-4,2),point(-2,-4),point(3,-3),point(5,1),point(2,4)],fill=(101,104,101,255))
+        draw.polygon([point(-4,2),point(-2,-4),point(2,-1)],fill=(148,149,141,245))
+        draw.line([point(2,-1),point(5,1),point(2,4)],fill=(68,72,69,240),width=1)
     for row in scene['houses']:
         x, y = at(row)
         rx, ry = row['halfX'] / span * size, row['halfY'] / span * size
@@ -116,9 +119,10 @@ def render_realistic(scene, heights, levels, materials, origin, span, size):
     # The opaque atmosphere is rendered by the UI. Transparent outside this exact
     # reveal keeps its wisps visible instead of stamping a black square over them.
     output = np.asarray(image).copy()
-    output[..., 3] = np.uint8(np.clip((250 - radius) / .65, 0, 1) * 255)
-    output[radius >= 250] = 0
-    visible = output[(radius < 235) & ~wet, :3].astype(float)
+    if clip_circle:
+        output[..., 3] = np.uint8(np.clip((span/2 - radius) / .65, 0, 1) * 255)
+        output[radius >= span/2] = 0
+    visible = output[(radius < span*.47) & ~wet, :3].astype(float)
     saturation = (visible.max(axis=1) - visible.min(axis=1)) / np.maximum(visible.max(axis=1), 1)
     stats = dict(style='gray-dark relief with explicit valley walls, crests and airy atmospheric fog',
         display_vertical_exaggeration=EXAGGERATION, ambient_occlusion_range=[float(ambient.min()),float(ambient.max())],
@@ -130,6 +134,6 @@ def render_realistic(scene, heights, levels, materials, origin, span, size):
         water_base_rgb=LAKE_WATER_RGB.astype(int).tolist(),
         water_colour='Shared lake gray-blue; continuous original ripples across lake and river, independent of mesh surface level and depth',
         land_mean_luminance=float(np.mean(visible @ [.2126,.7152,.0722])), land_mean_saturation=float(np.mean(saturation)),
-        outside_circle_terrain_transparent=bool(np.all(output[radius >= 250,3] == 0)),
+        outside_circle_terrain_transparent=bool(np.all(output[radius >= span/2,3] == 0)) if clip_circle else False,
         geography='Original observed height field, original water triangles and original actor positions; materials add surface detail only')
     return Image.fromarray(output), stats

@@ -35,7 +35,7 @@ void UHearthwardScreenWidget::CancelInventoryDrag(bool ReleaseCapture)
 }
 void UHearthwardScreenWidget::NativeOnMouseCaptureLost(const FCaptureLostEvent& Event)
 {
-    CancelInventoryDrag(false);Super::NativeOnMouseCaptureLost(Event);
+    MapDragging=false;CancelInventoryDrag(false);Super::NativeOnMouseCaptureLost(Event);
 }
 FReply UHearthwardScreenWidget::InventoryMouseDown(const FGeometry& Geometry,const FPointerEvent& Event)
 {

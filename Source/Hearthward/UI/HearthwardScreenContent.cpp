@@ -81,144 +81,10 @@ FString UHearthwardScreenWidget::Resolve(const FString& Bind) const
 }
 void UHearthwardScreenWidget::ComposeInventory(bool Storage)
 {
-    if(!Storage) { ComposeInventoryScreen(); return; }
-    const auto* G=Gameplay(); const auto* Bag=Inventory(); auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
-    TArray<FString> Categories; const auto Layout=Theme->GetObjectField(TEXT("inventory"));
-    for(const auto& V:Layout->GetArrayField(TEXT("categories"))) Categories.Add(V->AsString());
-    for(int32 I=0;I<Categories.Num();++I)
-    {
-        const float X=Storage?70:57, Y=Storage?232:151, Width=Storage?83:70;
-        for(int32 Side=0;Side<(Storage?2:1);++Side)
-        {
-            const int32 FirstCategoryElement=Elements.Num();
-            const FVector2D P(X+Side*1029+I*Width,Y);
-            Element(TEXT("image"),TEXT(""),P+FVector2D(Storage?24:14,Storage?-9:6),FVector2D(31,31),18,TEXT(""),Layout->GetArrayField(TEXT("categoryIcons"))[I]->AsString());
-            Element(TEXT("tab"),TEXT(""),P-FVector2D(0,Storage?10:0),FVector2D(Width-3,Storage?62:44),16,TEXT("filter:")+Categories[I],TEXT(""),Category==Categories[I] || (Category.IsEmpty() && I==0));
-            if(Storage) Element(TEXT("text"),Categories[I],P+FVector2D(23,25),FVector2D(72,26),15);
-            for(int32 N=FirstCategoryElement;N<Elements.Num();++N) Elements[N].Component=Storage?(Side?TEXT("storage.stock"):TEXT("storage.bag")):TEXT("inventory.bag");
-        }
-    }
-    TArray<TSharedPtr<FJsonObject>> Owned,Stock;
-    for(const auto& V:Rows(TEXT("items")))
-    {
-        const auto R=V->AsObject(); const FName Id(*Text(R,TEXT("id")));
-        const FString StorageCategory=Text(R,TEXT("category"))==TEXT("药品")?TEXT("食物"):Text(R,TEXT("category"));
-        if(!Category.IsEmpty() && Category!=TEXT("全部") && Category!=StorageCategory) continue;
-        if(Bag->GetItemCount(Id)>0) Owned.Add(R);
-        if(Store->GetItemCount(Id)>0) Stock.Add(R);
-    }
-    if(!Storage) Owned.StableSort([](const auto& A,const auto& B){return Number(A,TEXT("displayOrder"))<Number(B,TEXT("displayOrder"));});
-    if(!Storage && !Owned.ContainsByPredicate([&](const auto& R){return FName(*Text(R,TEXT("id")))==SelectedItem;}))
-        SelectedItem=Owned.IsEmpty()?NAME_None:FName(*Text(Owned[0],TEXT("id")));
-    if(Storage) Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,FMath::Max(Owned.Num(),Stock.Num())-11));
-    if(Storage)
-    {
-        for(int32 Side=0;Side<2;++Side)
-        {
-            const auto& List=Side?Stock:Owned; const float X=Side?1091:62;
-            for(int32 I=Scroll;I<FMath::Min(List.Num(),Scroll+11);++I)
-            {
-                const auto R=List[I]; const FString Id=Text(R,TEXT("id")); const float Y=291+(I-Scroll)*49;
-                Element(TEXT("button"),TEXT("       ")+Text(R,TEXT("name")),FVector2D(X,Y),FVector2D(510,47),20,(Side?TEXT("withdraw:"):TEXT("deposit:"))+Id,TEXT(""),SelectedItem==FName(*Id) && StorageToCamp==(Side==0));
-                Element(TEXT("image"),TEXT(""),FVector2D(X+5,Y+3),FVector2D(39,39),18,TEXT(""),Text(R,TEXT("icon")));
-                Element(TEXT("text"),FString::FromInt(Side?Store->GetItemCount(FName(*Id)):Bag->GetItemCount(FName(*Id))),FVector2D(X+447,Y+12),FVector2D(60,30),19);
-            }
-            if(List.IsEmpty()) Element(TEXT("text"),TEXT("暂无物品"),FVector2D(X+26,310),FVector2D(440,40),20);
-        }
-        Element(TEXT("text"),FString::Printf(TEXT("%.1f / %.0f"),Bag->GetWeight(),Bag->GetCapacity()),FVector2D(422,176),FVector2D(165,35),17);
-        Element(TEXT("text"),FString::Printf(TEXT("%.1f / 无限"),Store->GetWeight()),FVector2D(1440,176),FVector2D(190,35),17);
-    }
-    else
-    {
-        const auto& Rect=Theme->GetObjectField(TEXT("regions"))->GetArrayField(TEXT("inventoryGrid"));
-        const FVector2D Start(Rect[0]->AsNumber(),Rect[1]->AsNumber());
-        const int32 Columns=Number(Layout,TEXT("columns")),RowCount=Number(Layout,TEXT("rows"));
-        const auto& Cell=Layout->GetArrayField(TEXT("cell")); const auto& SlotSize=Layout->GetArrayField(TEXT("slotSize"));
-        Scroll=FMath::Clamp(Scroll,0,FMath::Max(0,FMath::DivideAndRoundUp(Owned.Num(),Columns)-RowCount));
-        for(int32 N=0;N<Columns*RowCount;++N)
-        {
-            const FVector2D P=Start+FVector2D((N%Columns)*Cell[0]->AsNumber(),(N/Columns)*Cell[1]->AsNumber());
-            Element(TEXT("slot"),TEXT(""),P,FVector2D(SlotSize[0]->AsNumber(),SlotSize[1]->AsNumber()));
-        }
-        for(int32 I=Scroll*Columns;I<FMath::Min(Owned.Num(),Scroll*Columns+Columns*RowCount);++I)
-        {
-            const auto R=Owned[I]; const FString Id=Text(R,TEXT("id")); const int32 N=I-Scroll*Columns;
-            const FVector2D P=Start+FVector2D((N%Columns)*Cell[0]->AsNumber(),(N/Columns)*Cell[1]->AsNumber());
-            Element(TEXT("image"),TEXT(""),P+FVector2D(5,5),FVector2D(66,65),18,TEXT(""),Text(R,TEXT("icon")));
-            Element(TEXT("slot"),FString::FromInt(Bag->GetItemCount(FName(*Id))),P,FVector2D(SlotSize[0]->AsNumber(),SlotSize[1]->AsNumber()),16,TEXT("item:")+Id,TEXT(""),SelectedItem==FName(*Id));
-        }
-        if(Owned.IsEmpty()) Element(TEXT("text"),TEXT("背包为空"),Start+FVector2D(70,150),FVector2D(260,40),21);
-        for(const auto& V:Layout->GetArrayField(TEXT("equipmentSlots")))
-        {
-            const auto SlotRow=V->AsObject(); const auto& Coordinates=SlotRow->GetArrayField(TEXT("position"));
-            const FVector2D P(Coordinates[0]->AsNumber(),Coordinates[1]->AsNumber());
-            Element(TEXT("text"),Text(SlotRow,TEXT("name")),P-FVector2D(40,28),FVector2D(160,32),15); Elements.Last().Align=TEXT("center");
-            const FName Item=G->Equipment.FindRef(FName(*Text(SlotRow,TEXT("id")))); const auto R=Find(TEXT("items"),Item.ToString());
-            if(R) Element(TEXT("image"),TEXT(""),P+FVector2D(7,7),FVector2D(65,65),18,TEXT(""),Text(R,TEXT("icon")));
-            Element(TEXT("slot"),TEXT(""),P,FVector2D(80,82),18,R?TEXT("item:")+Item.ToString():TEXT(""));
-            if(R) Element(TEXT("image"),TEXT(""),P+FVector2D(62,64),FVector2D(15,16),18,TEXT(""),TEXT("equippedMark"));
-        }
-        Element(TEXT("text"),TEXT("等级"),FVector2D(1340,249),FVector2D(70,30),16);
-        Element(TEXT("text"),FString::FromInt(G->Level()),FVector2D(1405,234),FVector2D(110,50),32);
-        const auto Tuning=Catalog()->GetObjectField(TEXT("tuning"));
-        int32 LevelExperience=G->Experience;
-        for(int32 L=1;L<G->Level();++L) LevelExperience-=Number(Tuning,TEXT("xpBase"))+(L-1)*Number(Tuning,TEXT("xpGrowth"));
-        const int32 NextLevel=Number(Tuning,TEXT("xpBase"))+(G->Level()-1)*Number(Tuning,TEXT("xpGrowth"));
-        Element(TEXT("bar"),TEXT(""),FVector2D(1340,279),FVector2D(180,7)); Elements.Last().Value=float(LevelExperience)/NextLevel; Elements.Last().Color=Color(TEXT("gold"));
-        Element(TEXT("text"),FString::Printf(TEXT("%d / %d"),LevelExperience,NextLevel),FVector2D(1538,274),FVector2D(140,30),14);
-        const float Values[]={G->Health,G->Hunger,G->Stamina}; const float Max[]={G->MaxHealth(),100,G->MaxStamina()};
-        const FString Labels[]={TEXT("生命值"),TEXT("饱食度"),TEXT("体力")},Colors[]={TEXT("health"),TEXT("hunger"),TEXT("stamina")};
-        for(int32 I=0;I<3;++I)
-        {
-            const float Y=330+I*48;
-            Element(TEXT("text"),Labels[I],FVector2D(1380,Y),FVector2D(150,30),16);
-            Element(TEXT("text"),FString::Printf(TEXT("%.0f / %.0f"),Values[I],Max[I]),FVector2D(1500,Y),FVector2D(119,30),17); Elements.Last().Align=TEXT("right");
-            Element(TEXT("bar"),TEXT(""),FVector2D(1380,Y+28),FVector2D(239,7)); Elements.Last().Value=Values[I]/Max[I]; Elements.Last().Color=Color(Colors[I]);
-        }
-        float Defense=G->Effect(TEXT("defense"))*100;
-        Element(TEXT("text"),TEXT("攻击力\n全身减伤\n重击增伤\n耐力消耗"),FVector2D(1381,528),FVector2D(230,140),18);
-        Element(TEXT("text"),FString::Printf(TEXT("%.0f\n%.0f%%\n+%.0f%%\n−%.0f%%"),G->AttackPower(),FMath::Min(85.f,Defense),G->Effect(TEXT("heavy_damage"))*100,G->Effect(TEXT("cost"))*100),FVector2D(1519,528),FVector2D(100,140),18); Elements.Last().Align=TEXT("right");
-        Element(TEXT("text"),TEXT("负重"),FVector2D(1381,706),FVector2D(110,30),16);
-        Element(TEXT("text"),FString::Printf(TEXT("%.1f / %.0f"),Bag->GetWeight(),Bag->GetCapacity()),FVector2D(1480,705),FVector2D(139,30),18); Elements.Last().Align=TEXT("right");
-        Element(TEXT("bar"),TEXT(""),FVector2D(1380,730),FVector2D(239,6)); Elements.Last().Value=Bag->GetWeight()/Bag->GetCapacity(); Elements.Last().Color=Color(TEXT("gold"));
-        Element(TEXT("text"),TEXT("移动速度"),FVector2D(1381,748),FVector2D(140,30),16);
-        Element(TEXT("text"),FString::Printf(TEXT("%.0f%%"),Bag->GetMoveSpeedMultiplier()*100),FVector2D(1519,748),FVector2D(100,30),18); Elements.Last().Align=TEXT("right");
-        Element(TEXT("text"),FString::Printf(TEXT("负重   %.1f / %.0f"),Bag->GetWeight(),Bag->GetCapacity()),FVector2D(92,768),FVector2D(282,30),16);
-        Element(TEXT("bar"),TEXT(""),FVector2D(64,795),FVector2D(310,8)); Elements.Last().Value=Bag->GetWeight()/Bag->GetCapacity(); Elements.Last().Color=Color(TEXT("gold"));
-    }
-    const auto R=Find(TEXT("items"),SelectedItem.ToString()); if(!R) return;
-    bool Rare=false,KeyItem=false; R->TryGetBoolField(TEXT("rare"),Rare); R->TryGetBoolField(TEXT("key"),KeyItem);
-    if(const auto Base=Find(TEXT("items"),Text(R,TEXT("medicineBase"))))
-    {
-        bool BaseRare=false,BaseKey=false; Base->TryGetBoolField(TEXT("rare"),BaseRare); Base->TryGetBoolField(TEXT("key"),BaseKey);
-        Rare|=BaseRare; KeyItem|=BaseKey;
-    }
-    if(!Storage && (Rare || KeyItem) && (Number(R,TEXT("healing"))>0 || Number(R,TEXT("food"))>0))
-        for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
-        {
-            const auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();
-            Element(TEXT("button"),S->Permitted(SelectedItem)?TEXT("撤销弟弟自动使用授权"):TEXT("允许弟弟自动使用此物"),FVector2D(430,740),FVector2D(270,46),16,TEXT("autoPermission")); break;
-        }
-    const FVector2D P=Storage?FVector2D(645,366):FVector2D(439,411);
-    Element(TEXT("text"),Text(R,TEXT("name")),P,FVector2D(280,45),Storage?27:23); Elements.Last().Color=Color(TEXT("gold"));
-    Element(TEXT("text"),Text(R,TEXT("category")),P+FVector2D(0,33),FVector2D(240,32),16);
-    Element(TEXT("text"),Text(R,TEXT("description")),P+FVector2D(0,69),FVector2D(Storage?290:228,150),15);
-    const FVector2D Art=Storage?FVector2D(864,372):FVector2D(440,224);
-    Element(TEXT("image"),TEXT(""),Art,Storage?FVector2D(130,125):FVector2D(226,180),18,TEXT(""),SelectedItem==TEXT("axe")?TEXT("axeLarge"):Text(R,TEXT("icon")));
-    FString Properties;
-    if(!Text(R,TEXT("slot")).IsEmpty())
-        Properties=FString::Printf(TEXT("%s    %.0f\n耐久度    %.0f / %.0f\n重量      %.2f"),Number(R,TEXT("attack"))>0?TEXT("攻击力"):TEXT("防御力"),Number(R,TEXT("attack"),Number(R,TEXT("defense"))),G->Durability.Contains(SelectedItem)?G->Durability.FindRef(SelectedItem):Number(R,TEXT("durability"),100),Number(R,TEXT("durability"),100),Number(R,TEXT("weight"))/100);
-    else Properties=FString::Printf(TEXT("单重       %.2f\n拥有       %d\n%s"),Number(R,TEXT("weight"))/100,Bag->GetItemCount(SelectedItem),Number(R,TEXT("food"))>0?*FString::Printf(TEXT("饱食恢复   +%.0f"),Number(R,TEXT("food"))):TEXT("用于营地和旅途"));
-    Element(TEXT("text"),Properties,P+FVector2D(Storage?0:31,165),FVector2D(Storage?290:211,100),18);
-    if(Storage)
-    {
-        Element(TEXT("button"),TEXT("−"),FVector2D(646,697),FVector2D(60,45),25,TEXT("quantity:-1"));
-        Element(TEXT("text"),FString::FromInt(Quantity),FVector2D(762,705),FVector2D(150,40),25);
-        Element(TEXT("button"),TEXT("+"),FVector2D(935,697),FVector2D(60,45),25,TEXT("quantity:1"));
-        Element(TEXT("button"),StorageToCamp?TEXT("存入仓库"):TEXT("取到背包"),FVector2D(647,759),FVector2D(348,49),23,TEXT("transfer"));
-    }
-    else Element(TEXT("button"),TEXT("装备 / 使用"),FVector2D(442,683),FVector2D(228,43),19,TEXT("use"));
+    if(Storage) ComposeStorage();
+    else ComposeInventoryScreen();
 }
+
 void UHearthwardScreenWidget::ComposeSkills()
 {
     auto* G=Gameplay(); const auto& Branches=Theme->GetArrayField(TEXT("branches"));
@@ -488,8 +354,7 @@ void UHearthwardScreenWidget::ComposeMemory()
     }
     const auto* Selected=Active.FindByPredicate([&](const auto& R){return R.Id==SelectedMemory;});
     FString Detail=Selected?Selected->Text:TEXT("选择左侧记录可修改或撤销。采集限制会阻止对应的新委托；文字约定供交流参考。陈述仅代表你说过，无法改写事实或允许危险行动。");
-    TArray<FString> Lines; for(int32 I=0;I<Detail.Len();I+=25) Lines.Add(Detail.Mid(I,25));
-    Element(TEXT("text"),FString::Join(Lines,TEXT("\n")),FVector2D(795,255),FVector2D(570,200),20); Elements.Last().Component=TEXT("memory.details");
+    Element(TEXT("text"),Detail,FVector2D(795,255),FVector2D(570,200),20); Elements.Last().Component=TEXT("memory.details");
     if(Selected)
     {
         Element(TEXT("text"),FString::Printf(TEXT("来源：你的记录 · 记录于 %.0f 秒"),Selected->RecordedAt),FVector2D(795,448),FVector2D(560,30),17); Elements.Last().Component=TEXT("memory.details");

@@ -47,6 +47,8 @@ public:
     UFUNCTION(BlueprintPure) bool QuestAvailable(FName Id) const;
     UFUNCTION(BlueprintPure) int32 QuestProgress(FName Id) const;
     UFUNCTION(BlueprintPure) FName NearbyLocation() const;
+    bool IsTravelLocation(FName Id) const;
+    FName NearbyTravelStation() const;
     UFUNCTION(BlueprintCallable) bool Learn(FName Id);
     UFUNCTION(BlueprintCallable) void ResetSkills();
     UFUNCTION(BlueprintCallable) bool UseItem(FName Id);

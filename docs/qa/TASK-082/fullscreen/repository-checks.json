@@ -1,0 +1,151 @@
+{
+  "metadata": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py"
+    ],
+    "exit_code": 0,
+    "stdout": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 79\nPASS: repository checks only; 0 error(s)\n",
+    "stderr": ""
+  },
+  "baseline_scope": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py",
+      "--task",
+      "TASK-078",
+      "--base",
+      "ca21120cef4421d039c44248a0cfa5043c248feb"
+    ],
+    "exit_code": 1,
+    "stdout": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 79\nERROR: No usable approved task snapshot at base: TASK-078; approve task on baseline first\nFAIL: repository checks only; 1 error(s)\n",
+    "stderr": ""
+  },
+  "diff_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "warning: in the working copy of 'Resources/UI/interface.json', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Resources/UI/layout.json', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/Tests/MapGuidanceTests.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenActions.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenCapture.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenInventoryDrag.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenLayout.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenPaint.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenWidget.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenWorldMap.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/ui/draw_local_map.py', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/ui/launch_map_test.py', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/ui/realistic_local_map.py', CRLF will be replaced by LF the next time Git touches it\n"
+  },
+  "current_path_comparison": {
+    "passed": true,
+    "changed_paths": [
+      "README.md",
+      "Resources/UI/Art/map-local-terrain.png",
+      "Resources/UI/interface.json",
+      "Resources/UI/layout.json",
+      "Source/Hearthward/Tests/MapGuidanceTests.cpp",
+      "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+      "Source/Hearthward/UI/HearthwardScreenCapture.cpp",
+      "Source/Hearthward/UI/HearthwardScreenHUDTest.inl",
+      "Source/Hearthward/UI/HearthwardScreenInventoryDrag.cpp",
+      "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+      "Source/Hearthward/UI/HearthwardScreenMap.cpp",
+      "Source/Hearthward/UI/HearthwardScreenMapTest.inl",
+      "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+      "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
+      "Source/Hearthward/UI/HearthwardScreenWidget.h",
+      "Source/Hearthward/UI/HearthwardScreenWorldMap.cpp",
+      "docs/handoffs/TASK-078.md",
+      "docs/qa/TASK-078/FULLSCREEN-REPORT.md",
+      "docs/qa/TASK-078/RECTANGULAR-REPORT.md",
+      "docs/qa/TASK-078/REPORT.md",
+      "docs/qa/TASK-078/cartography.json",
+      "docs/qa/TASK-078/delivery.json",
+      "docs/qa/TASK-078/editor-build.json",
+      "docs/qa/TASK-078/expanded-audit.json",
+      "docs/qa/TASK-078/fullscreen/atlas-geography.json",
+      "docs/qa/TASK-078/fullscreen/current-geography.json",
+      "docs/qa/TASK-078/fullscreen/delivery.json",
+      "docs/qa/TASK-078/fullscreen/editor-build.json",
+      "docs/qa/TASK-078/fullscreen/map-dragged.png",
+      "docs/qa/TASK-078/fullscreen/map-locations.png",
+      "docs/qa/TASK-078/fullscreen/map-minimum-zoom.png",
+      "docs/qa/TASK-078/fullscreen/map-preview.png",
+      "docs/qa/TASK-078/fullscreen/map-ultrawide.png",
+      "docs/qa/TASK-078/fullscreen/native-index.json",
+      "docs/qa/TASK-078/fullscreen/package-result.json",
+      "docs/qa/TASK-078/fullscreen/rectangular-audit.json",
+      "docs/qa/TASK-078/fullscreen/repository-checks.json",
+      "docs/qa/TASK-078/fullscreen/runtime-report.json",
+      "docs/qa/TASK-078/fullscreen/shipping-build-info.json",
+      "docs/qa/TASK-078/fullscreen/shipping-startup.json",
+      "docs/qa/TASK-078/fullscreen/source-manifest.json",
+      "docs/qa/TASK-078/fullscreen/zip-integrity.json",
+      "docs/qa/TASK-078/heading-east.png",
+      "docs/qa/TASK-078/heading-south.png",
+      "docs/qa/TASK-078/map-locations.png",
+      "docs/qa/TASK-078/map-preview.png",
+      "docs/qa/TASK-078/native-index.json",
+      "docs/qa/TASK-078/package-result.json",
+      "docs/qa/TASK-078/rectangular/atlas-geography.json",
+      "docs/qa/TASK-078/rectangular/current-geography.json",
+      "docs/qa/TASK-078/rectangular/delivery.json",
+      "docs/qa/TASK-078/rectangular/editor-build.json",
+      "docs/qa/TASK-078/rectangular/map-dragged.png",
+      "docs/qa/TASK-078/rectangular/map-full-region.png",
+      "docs/qa/TASK-078/rectangular/map-locations.png",
+      "docs/qa/TASK-078/rectangular/map-preview.png",
+      "docs/qa/TASK-078/rectangular/map-ultrawide.png",
+      "docs/qa/TASK-078/rectangular/native-index.json",
+      "docs/qa/TASK-078/rectangular/package-result.json",
+      "docs/qa/TASK-078/rectangular/rectangular-audit.json",
+      "docs/qa/TASK-078/rectangular/repository-checks.json",
+      "docs/qa/TASK-078/rectangular/runtime-report.json",
+      "docs/qa/TASK-078/rectangular/shipping-build-info.json",
+      "docs/qa/TASK-078/rectangular/shipping-startup.json",
+      "docs/qa/TASK-078/rectangular/source-manifest.json",
+      "docs/qa/TASK-078/rectangular/zip-integrity.json",
+      "docs/qa/TASK-078/repository-checks.json",
+      "docs/qa/TASK-078/runtime-report.json",
+      "docs/qa/TASK-078/shipping-build-info.json",
+      "docs/qa/TASK-078/shipping-final-build.json",
+      "docs/qa/TASK-078/shipping-startup.json",
+      "docs/qa/TASK-078/source-manifest.json",
+      "docs/qa/TASK-078/zip-integrity.json",
+      "docs/tasks/TASK-078.json",
+      "scripts/ui/audit_expanded_map.py",
+      "scripts/ui/audit_rectangular_map.py",
+      "scripts/ui/cartograph_expanded_map.py",
+      "scripts/ui/draw_local_map.py",
+      "scripts/ui/launch_map_test.py",
+      "scripts/ui/map_relief.py",
+      "scripts/ui/realistic_local_map.py"
+    ],
+    "outside_allowed_paths": [],
+    "scope": "Direct comparison to current task allowed_paths, not a claim of approved task in baseline"
+  },
+  "packaged_ui": {
+    "Resources\\UI\\interface.json": {
+      "sha256": "727134f0aa7675b16849c3b87122f504188afdee78e0d7587447b1c991623817",
+      "matches_source": true
+    },
+    "Resources\\UI\\layout.json": {
+      "sha256": "2eb0866d15bfa31d5c174c01dbb927bafe69112a4cfc4d0f272bfe3252a11c2c",
+      "matches_source": true
+    },
+    "Resources\\UI\\Art\\map-local-terrain.png": {
+      "sha256": "62e3e14ede4abeb731edd50ba3a883752d52efe341ee64447ad71743e949832f",
+      "matches_source": true
+    }
+  },
+  "final_source_bindings": {
+    "passed": true,
+    "shipping_source_mismatch": [],
+    "runtime_source_mismatch": []
+  },
+  "final_shipping_executable": {
+    "passed": true,
+    "sha256": "75cd17bf12327f7302db2a310c7afcd0b07d14386c62d4d113e625ce323c73e1"
+  },
+  "ordinary_checks_passed": true,
+  "baseline_scope_limitation": "TASK-078 is newly created in this working tree; baseline has no usable approved task snapshot"
+}

@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py"
+    ],
+    "exit_code": 0,
+    "stdout": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 79\nPASS: repository checks only; 0 error(s)\n",
+    "stderr": ""
+  },
+  "baseline_scope": {
+    "command": [
+      "python",
+      "-X",
+      "utf8",
+      "scripts/validate_repo.py",
+      "--task",
+      "TASK-078",
+      "--base",
+      "ca21120cef4421d039c44248a0cfa5043c248feb"
+    ],
+    "exit_code": 1,
+    "stdout": "NOTE: M0/UE/gameplay/model checks were NOT run; use --launch-ready for configuration completeness, not actual game validation\nNOTE: Task snapshots inspected: 79\nERROR: No usable approved task snapshot at base: TASK-078; approve task on baseline first\nFAIL: repository checks only; 1 error(s)\n",
+    "stderr": ""
+  },
+  "diff_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "warning: in the working copy of 'Resources/UI/interface.json', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Resources/UI/layout.json', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/Tests/MapGuidanceTests.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenActions.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenLayout.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenWidget.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'Source/Hearthward/UI/HearthwardScreenWorldMap.cpp', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/ui/draw_local_map.py', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/ui/launch_map_test.py', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/ui/realistic_local_map.py', CRLF will be replaced by LF the next time Git touches it\n"
+  },
+  "current_path_comparison": {
+    "passed": true,
+    "changed_paths": [
+      "README.md",
+      "Resources/UI/Art/map-local-terrain.png",
+      "Resources/UI/interface.json",
+      "Resources/UI/layout.json",
+      "Source/Hearthward/Tests/MapGuidanceTests.cpp",
+      "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+      "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+      "Source/Hearthward/UI/HearthwardScreenMap.cpp",
+      "Source/Hearthward/UI/HearthwardScreenMapTest.inl",
+      "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+      "Source/Hearthward/UI/HearthwardScreenWidget.cpp",
+      "Source/Hearthward/UI/HearthwardScreenWidget.h",
+      "Source/Hearthward/UI/HearthwardScreenWorldMap.cpp",
+      "docs/handoffs/TASK-078.md",
+      "docs/qa/TASK-078/REPORT.md",
+      "docs/qa/TASK-078/cartography.json",
+      "docs/qa/TASK-078/delivery.json",
+      "docs/qa/TASK-078/editor-build.json",
+      "docs/qa/TASK-078/expanded-audit.json",
+      "docs/qa/TASK-078/heading-east.png",
+      "docs/qa/TASK-078/heading-south.png",
+      "docs/qa/TASK-078/map-locations.png",
+      "docs/qa/TASK-078/map-preview.png",
+      "docs/qa/TASK-078/native-index.json",
+      "docs/qa/TASK-078/package-result.json",
+      "docs/qa/TASK-078/repository-checks.json",
+      "docs/qa/TASK-078/runtime-report.json",
+      "docs/qa/TASK-078/shipping-build-info.json",
+      "docs/qa/TASK-078/shipping-final-build.json",
+      "docs/qa/TASK-078/shipping-startup.json",
+      "docs/qa/TASK-078/source-manifest.json",
+      "docs/qa/TASK-078/zip-integrity.json",
+      "docs/tasks/TASK-078.json",
+      "scripts/ui/audit_expanded_map.py",
+      "scripts/ui/cartograph_expanded_map.py",
+      "scripts/ui/draw_local_map.py",
+      "scripts/ui/launch_map_test.py",
+      "scripts/ui/map_relief.py",
+      "scripts/ui/realistic_local_map.py"
+    ],
+    "outside_allowed_paths": [],
+    "scope": "Direct comparison to current task allowed_paths, not a claim of approved task in baseline"
+  },
+  "packaged_ui": {
+    "Resources\\UI\\interface.json": {
+      "sha256": "a4f7e84930c5628f9325e4ec702a5112e9532563b41afdb849795bf9795e0849",
+      "matches_source": true
+    },
+    "Resources\\UI\\layout.json": {
+      "sha256": "2eb0866d15bfa31d5c174c01dbb927bafe69112a4cfc4d0f272bfe3252a11c2c",
+      "matches_source": true
+    },
+    "Resources\\UI\\Art\\map-local-terrain.png": {
+      "sha256": "62e3e14ede4abeb731edd50ba3a883752d52efe341ee64447ad71743e949832f",
+      "matches_source": true
+    }
+  },
+  "ordinary_checks_passed": true,
+  "baseline_scope_limitation": "TASK-078 is newly created in this working tree; baseline has no usable approved task snapshot"
+}

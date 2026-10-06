@@ -26,7 +26,7 @@ bool Contains(FVector2D P,FVector2D A,FVector2D S)
 FString LayoutFile() { return FPaths::ProjectDir()/TEXT("Resources/UI/layout.json"); }
 }
 TSharedPtr<FJsonObject> UHearthwardScreenWidget::PageLayout() const
-{ return Page==TEXT("map") && WorldMap?LayoutConfig->GetObjectField(TEXT("worldMap")):LayoutConfig->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString()); }
+{ return LayoutConfig->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString()); }
 bool UHearthwardScreenWidget::ReloadLayout()
 {
     FString Json; TSharedPtr<FJsonObject> Parsed;
@@ -104,6 +104,7 @@ void UHearthwardScreenWidget::ApplyLayout()
                 if(Contains(Center,FVector2D(R.X,R.Y),FVector2D(R.Z,R.W))) E.Component=Text(C,TEXT("id"));
             }
         }
+        if(Page==TEXT("map") && E.Component==TEXT("map.canvas"))E.MapClipped=true;
         if(E.MapClipped) E.Component=TEXT("map.canvas");
         const FVector2D OriginalSize=E.Size;
         const TSharedPtr<FJsonObject>* Override;
@@ -222,6 +223,7 @@ FReply UHearthwardScreenWidget::LayoutMouseDown(const FGeometry& G,const FPointe
 FReply UHearthwardScreenWidget::NativeOnMouseButtonUp(const FGeometry& G,const FPointerEvent& E)
 {
     if(!InventoryDragItem.IsNone() && E.GetEffectingButton()==EKeys::LeftMouseButton)return InventoryMouseUp(G,E);
+    if(MapDragging && E.GetEffectingButton()==EKeys::LeftMouseButton){MapDragging=false;return FReply::Handled().ReleaseMouseCapture();}
     if(LayoutDragging) { LayoutDragging=false; return FReply::Handled().ReleaseMouseCapture(); }
     return Super::NativeOnMouseButtonUp(G,E);
 }

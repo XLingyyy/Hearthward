@@ -455,6 +455,11 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Page!=TEXT("inventory")) return false;
         Scroll=FMath::Max(0,Scroll+(Action==TEXT("inventory.next")?1:-1)*(Category==TEXT("材料")?6:3));
     }
+    else if(Action==TEXT("storage.prev") || Action==TEXT("storage.next"))
+    {
+        if(Page!=TEXT("storage")) return false;
+        Scroll=FMath::Max(0,Scroll+(Action==TEXT("storage.next")?4:-4));
+    }
     else if(Action.StartsWith(TEXT("deposit:"))) { SelectedItem=FName(*Action.Mid(8)); StorageToCamp=true; Quantity=1; }
     else if(Action.StartsWith(TEXT("withdraw:"))) { SelectedItem=FName(*Action.Mid(9)); StorageToCamp=false; Quantity=1; }
     else if(Action.StartsWith(TEXT("quantity:"))) Quantity=FMath::Clamp(Quantity+FCString::Atoi(*Action.Mid(9)),1,9999);
@@ -539,29 +544,39 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     else if(Action==TEXT("questMap"))
     {
         if(Page==TEXT("journal") && (Category!=TEXT("main") && Category!=TEXT("side") || SelectedQuest.IsNone())) return false;
-        const FName Location(*Text(Find(TEXT("quests"),SelectedQuest.ToString()),TEXT("location")));
+        const auto* Story=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+        const FName Location=Story->Active()?Story->QuestLocation(SelectedQuest):FName(*Text(Find(TEXT("quests"),SelectedQuest.ToString()),TEXT("location")));
         if(G->Discovered.Contains(Location))
-        { SelectedLocation=Location;OpenPage(TEXT("map"));WorldMap=true;MapZoom=1.f;MapPan=FVector2D::ZeroVector; }
+        { SelectedLocation=Location;OpenPage(TEXT("map"));WorldMap=true;FocusMapLocation(Location); }
         else { Success=false; Message=TEXT("任务地点尚未发现，请先探索"); }
     }
     else if(Action==TEXT("track"))
     { if(Page==TEXT("journal") && (Category!=TEXT("main") && Category!=TEXT("side") || SelectedQuest.IsNone())) return false;Success=G->Track(SelectedQuest);Message=G->Feedback; }
     else if(Action==TEXT("claim"))
     { if(Page==TEXT("journal") && (Category!=TEXT("main") && Category!=TEXT("side") || SelectedQuest.IsNone())) return false;Success=G->Claim(SelectedQuest);Message=G->Feedback; }
-    else if(Action.StartsWith(TEXT("location:"))) SelectedLocation=FName(*Action.Mid(9));
+    else if(Action.StartsWith(TEXT("location:"))) { SelectedLocation=FName(*Action.Mid(9));if(Page==TEXT("map"))WorldMap=true;FocusMapLocation(SelectedLocation); }
+    else if(Action==TEXT("map.next")) ++Scroll;
+    else if(Action==TEXT("map.previous")) Scroll=FMath::Max(0,Scroll-1);
     else if(Action==TEXT("map.world") || Action==TEXT("map.local"))
     {
-        WorldMap=Action==TEXT("map.world");MapZoom=WorldMap?1.f:2.f;MapPan=FVector2D::ZeroVector;TextScroll=0;
+        WorldMap=Action==TEXT("map.world");TextScroll=0;Scroll=0;
         Hover=KeyboardFocus=INDEX_NONE;Message.Reset();
-        if(!WorldMap)
-        {
-            const auto Map=Theme->GetObjectField(TEXT("localMap"));
-            MapZoom=Number(Map,TEXT("initialZoom"),2);
-            const auto& Pan=Map->GetArrayField(TEXT("initialPan"));MapPan={Pan[0]->AsNumber(),Pan[1]->AsNumber()};
-        }
     }
     else if(Action==TEXT("mapFilter")) { Category=Category==TEXT("travel")?TEXT(""):TEXT("travel"); Message=Category.IsEmpty()?TEXT("显示全部已发现地点"):TEXT("仅显示传送路标"); }
-    else if(Action==TEXT("travel")) { Success=G->Travel(SelectedLocation); Message=G->Feedback; if(Success) OpenPage(TEXT("hud")); }
+    else if(Action==TEXT("travel"))
+    {
+        // Release only this widget's pause for synchronous travel validation.
+        // A rejection keeps the same map, focus and camera without advancing time.
+        const bool Resume=Page==TEXT("map") && OwnPause && GetWorld()->IsPaused();
+        if(Resume)UGameplayStatics::SetGamePaused(this,false);
+        Success=G->Travel(SelectedLocation);
+        if(Success)OpenPage(TEXT("hud"));
+        else
+        {
+            if(Resume)UGameplayStatics::SetGamePaused(this,true);
+            Message=G->Feedback;MessageUntil=FPlatformTime::Seconds()+12;
+        }
+    }
     else if(Action==TEXT("clearWaypoint")) { G->HasWaypoint=false; Message=TEXT("地图标记已清除"); }
     else if(Action==TEXT("cancelReply")) AI->CancelPending();
     else if(Action==TEXT("suggestRefresh"))

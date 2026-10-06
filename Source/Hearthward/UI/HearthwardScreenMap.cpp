@@ -1,90 +1,121 @@
 #include "HearthwardScreenWidget.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Companion/HearthwardCompanionFixture.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
 #include "EngineUtils.h"
 using namespace HearthwardData;
 
 FVector UHearthwardScreenWidget::MapOrigin() const
+{ return FVector(MapCenter.X,MapCenter.Y,0); }
+FVector2D UHearthwardScreenWidget::MapWorldSize() const
 {
-    const auto& Center=Theme->GetObjectField(TEXT("localMap"))->GetArrayField(TEXT("centerCm"));
-    return FVector(Center[0]->AsNumber(),Center[1]->AsNumber(),0);
+    const auto& Size=Theme->GetObjectField(TEXT("localMap"))->GetArrayField(TEXT("sizeCm"));
+    return {Size[0]->AsNumber(),Size[1]->AsNumber()};
 }
-double UHearthwardScreenWidget::MapRadius() const
-{ return Number(Theme->GetObjectField(TEXT("localMap")),TEXT("radiusCm"),25000); }
-double UHearthwardScreenWidget::MapBoundaryFraction(double Angle,double* Feather) const
+FSlateRect UHearthwardScreenWidget::MapViewRect() const
 {
-    if(Feather)*Feather=1;
+    const FVector2D Min=(DesignSize-MapViewDesignSize)*.5;
+    return FSlateRect(float(Min.X),float(Min.Y),float(Min.X+MapViewDesignSize.X),float(Min.Y+MapViewDesignSize.Y));
+}
+double UHearthwardScreenWidget::MapScale() const
+{
+    const FVector2D View=MapViewRect().GetSize(),World=MapWorldSize();
+    return FMath::Max(View.X/World.X,View.Y/World.Y);
+}
+float UHearthwardScreenWidget::MapMinimumZoom() const
+{
+    // MapScale covers the viewport without stretching. Keep that coverage at
+    // minimum zoom; dragging reveals the remaining part of the rectangle.
+    return 1.f;
+}
+void UHearthwardScreenWidget::ClampMapPan()
+{
+    MapZoom=FMath::Clamp(MapZoom,MapMinimumZoom(),3.f);
+    const FVector2D Extent=MapWorldSize()*MapScale()*MapZoom,View=MapViewRect().GetSize();
+    const FVector2D Limit(FMath::Max(0.,(Extent.X-View.X)*.5),FMath::Max(0.,(Extent.Y-View.Y)*.5));
+    MapPan.X=FMath::Clamp(MapPan.X,-Limit.X,Limit.X);MapPan.Y=FMath::Clamp(MapPan.Y,-Limit.Y,Limit.Y);
+}
+void UHearthwardScreenWidget::CenterMapRegion(FVector World)
+{
+    const auto Config=Theme->GetObjectField(TEXT("localMap"));
+    const auto& Origin=Config->GetArrayField(TEXT("terrainOriginCm"));
+    const FVector2D Min(Origin[0]->AsNumber(),Origin[1]->AsNumber()),Half=MapWorldSize()*.5;
+    const double Span=Number(Config,TEXT("terrainSpanCm"),403200);
+    // The rectangle stays inside the actual authored terrain, including at distant camps.
+    MapCenter={FMath::Clamp(World.X,Min.X+Half.X,Min.X+Span-Half.X),FMath::Clamp(World.Y,Min.Y+Half.Y,Min.Y+Span-Half.Y)};
+}
+void UHearthwardScreenWidget::ResetMapView()
+{
     const auto Map=Theme->GetObjectField(TEXT("localMap"));
-    const TArray<TSharedPtr<FJsonValue>>* Outline=nullptr;
-    if(!Map->TryGetArrayField(TEXT("outlineFractions"),Outline) || Outline->Num()<3)return 1;
-    const int32 Count=Outline->Num();
-    const double Sample=FMath::Fmod(FMath::Fmod(Angle/(2*PI),1.)+1.,1.)*Count;
-    const int32 Index=FMath::FloorToInt(Sample);
-    const auto At=[&](int32 I){return (*Outline)[(I+Count)%Count]->AsNumber();};
-    const TArray<TSharedPtr<FJsonValue>>* FeatherPoints=nullptr;
-    if(Feather && Map->TryGetArrayField(TEXT("outlineFeatherFractions"),FeatherPoints) && FeatherPoints->Num()==Count)
-        *Feather=FMath::Clamp(FMath::Lerp((*FeatherPoints)[Index]->AsNumber(),(*FeatherPoints)[(Index+1)%Count]->AsNumber(),Sample-Index),.2,1.);
-    const TArray<TSharedPtr<FJsonValue>>* Angular=nullptr;
-    if(Map->TryGetArrayField(TEXT("outlineAngularSegments"),Angular))
-        for(const auto& Value:*Angular)if(Value->AsNumber()==Index)
-        {
-            const double AAngle=Index*2*PI/Count,BAngle=(Index+1)*2*PI/Count;
-            const FVector2D A(FMath::Cos(AAngle)*At(Index),FMath::Sin(AAngle)*At(Index));
-            const FVector2D B(FMath::Cos(BAngle)*At(Index+1),FMath::Sin(BAngle)*At(Index+1));
-            const FVector2D Edge=B-A,Ray(FMath::Cos(Angle),FMath::Sin(Angle));
-            // Ray/segment intersection gives an actual straight edge with a sharp corner.
-            return FMath::Clamp((A.X*Edge.Y-A.Y*Edge.X)/(Ray.X*Edge.Y-Ray.Y*Edge.X),.8,1.);
-        }
-    // Smooth sections join the straight sections at the same radial knots.
-    // A positive bounded radial contour stays connected inside the observed circle.
-    return FMath::Clamp(FMath::CubicInterp(At(Index),(At(Index+1)-At(Index-1))*.5,
-        At(Index+1),(At(Index+2)-At(Index))*.5,Sample-Index),.8,1.);
+    const auto& Center=Map->GetArrayField(TEXT("centerCm"));
+    FVector Focus(Center[0]->AsNumber(),Center[1]->AsNumber(),0);
+    if(const auto* Pawn=GetOwningPlayerPawn())Focus=Pawn->GetActorLocation();
+    CenterMapRegion(Focus);
+    MapZoom=Number(Map,TEXT("initialZoom"),1.15);MapPan=-FVector2D(Focus.X-MapCenter.X,Focus.Y-MapCenter.Y)*MapScale()*MapZoom;
+    ClampMapPan();
+}
+void UHearthwardScreenWidget::FocusMapLocation(FName Location)
+{
+    const FVector World=Gameplay()->LocationPosition(Location);
+    if(!MapVisible(World))CenterMapRegion(World);
+    MapZoom=Number(Theme->GetObjectField(TEXT("localMap")),TEXT("initialZoom"),1.15);
+    MapPan=FVector2D(WorldMap?210:0,0)-FVector2D(World.X-MapCenter.X,World.Y-MapCenter.Y)*MapScale()*MapZoom;
+    ClampMapPan();
 }
 FVector2D UHearthwardScreenWidget::MapPoint(FVector World) const
 {
     const FVector Delta=World-MapOrigin();
-    const double Scale=Number(Theme->GetObjectField(TEXT("localMap")),TEXT("diameterPixels"),850)/(2*MapRadius());
-    // Same orientation as the overhead camera: +X right, +Y down. Z never changes map scale.
-    return DesignSize*.5+FVector2D(Delta.X,Delta.Y)*Scale*MapZoom+MapPan;
+    return MapViewRect().GetCenter()+FVector2D(Delta.X,Delta.Y)*MapScale()*MapZoom+MapPan;
+}
+FVector UHearthwardScreenWidget::MapWorldAt(FVector2D Point) const
+{
+    const FVector2D Delta=(Point-MapViewRect().GetCenter()-MapPan)/(MapScale()*MapZoom);
+    return MapOrigin()+FVector(Delta.X,Delta.Y,0);
 }
 bool UHearthwardScreenWidget::MapVisible(FVector World) const
 {
-    const FVector Delta=World-MapOrigin();
-    const double Boundary=MapRadius()*MapBoundaryFraction(FMath::Atan2(Delta.Y,Delta.X));
-    return Delta.Size2D()<=Boundary+.0001;
+    const FVector Delta=World-MapOrigin();const FVector2D Half=MapWorldSize()*.5;
+    return FMath::Abs(Delta.X)<=Half.X+.0001 && FMath::Abs(Delta.Y)<=Half.Y+.0001;
 }
-double UHearthwardScreenWidget::MapFogTime() const
+bool UHearthwardScreenWidget::MapCursorInside(FVector2D Point) const
 {
-#if !UE_BUILD_SHIPPING
-    if(MapFogCaptureTime>=0)return MapFogCaptureTime;
-#endif
-    return FPlatformTime::Seconds();
+    const auto View=MapViewRect();
+    return Point.X>=View.Left && Point.X<=View.Right && Point.Y>=View.Top && Point.Y<=View.Bottom
+        && (!WorldMap || Point.X<36 || Point.X>404 || Point.Y<100 || Point.Y>810) && MapVisible(MapWorldAt(Point));
 }
 void UHearthwardScreenWidget::ComposeMap()
 {
-    if(WorldMap)
-    {
-        ComposeWorldMap();
-        return;
-    }
-    Element(TEXT("menuAction"),TEXT("世界地图 ›"),{1330,34},{292,54},22,TEXT("map.world"));
-    Elements.Last().Align=TEXT("right");
-    Element(TEXT("menuAction"),TEXT("Esc 返回"),{40,875},{260,46},20,TEXT("back"));
+    ClampMapPan();
     const auto Config=Theme->GetObjectField(TEXT("localMap"));
-    const double Diameter=Number(Config,TEXT("diameterPixels"),850)*MapZoom;
-    Element(TEXT("image"),TEXT(""),DesignSize*.5+MapPan-FVector2D(Diameter*.5,Diameter*.5),{Diameter,Diameter},18,TEXT(""),TEXT("mapLocalTerrain"));
+    const auto& AtlasOrigin=Config->GetArrayField(TEXT("terrainOriginCm"));
+    const double AtlasSide=Number(Config,TEXT("terrainSpanCm"),403200)*MapScale()*MapZoom;
+    const FVector2D AtlasPoint=MapPoint(FVector(AtlasOrigin[0]->AsNumber(),AtlasOrigin[1]->AsNumber(),0));
+    Element(TEXT("image"),TEXT(""),AtlasPoint,{AtlasSide,AtlasSide},18,TEXT(""),TEXT("mapLocalTerrain"));
     auto& Terrain=Elements.Last();Terrain.LayoutId=TEXT("map.terrain");Terrain.Component=TEXT("map.canvas");Terrain.MapClipped=true;
+#if !UE_BUILD_SHIPPING
+    if(MapTerrainProbe)
+    {
+        Element(TEXT("mapProbe"),TEXT(""),AtlasPoint,{AtlasSide,AtlasSide});
+        Elements.Last().Component=TEXT("map.canvas");Elements.Last().MapClipped=true;
+    }
+#endif
     for(const auto& Value:Config->GetArrayField(TEXT("regions")))
     {
         const auto Region=Value->AsObject();const auto& XY=Region->GetArrayField(TEXT("xyCm"));
         const FVector World(XY[0]->AsNumber(),XY[1]->AsNumber(),0);
         if(!MapVisible(World))continue;
         const double Font=Number(Region,TEXT("font"),22);
-        Element(TEXT("mapRegion"),Text(Region,TEXT("name")),MapPoint(World)-FVector2D(110,Font*.65),{220,Font*1.6},Font);
+        const auto& Offset=Region->GetArrayField(TEXT("labelOffset"));
+        const FVector2D LabelOffset(Offset[0]->AsNumber(),Offset[1]->AsNumber());
+        if(!LabelOffset.IsNearlyZero())
+        {
+            Element(TEXT("mapSite"),TEXT(""),MapPoint(World),LabelOffset);
+            Elements.Last().Component=TEXT("map.canvas");Elements.Last().MapClipped=true;
+        }
+        Element(TEXT("mapRegion"),Text(Region,TEXT("name")),MapPoint(World)+LabelOffset-FVector2D(110,Font*.65),{220,Font*1.6},Font);
         auto& Label=Elements.Last();Label.LayoutId=TEXT("map.region.")+Text(Region,TEXT("id"));Label.Component=TEXT("map.canvas");Label.MapClipped=true;
         Label.Font=Font*FMath::Min(MapZoom,1.25f);Label.Tracking=0;Label.Align=TEXT("center");Label.FontRole=TEXT("display");
     }
-    // Both anchors are their actor's actual ground position. Never offset, clamp or invent a companion position.
     for(const FString Id:{FString(TEXT("brother")),FString(TEXT("player"))})
     {
         Element(TEXT("mapFlame"),TEXT(""),{0,0},{15,44});
@@ -93,17 +124,10 @@ void UHearthwardScreenWidget::ComposeMap()
         Marker.Color=Id==TEXT("player")?FLinearColor(1.f,.035f,.018f,1):FLinearColor(.02f,.35f,1.f,1);
     }
     UpdateMapMarkers(false);
-#if !UE_BUILD_SHIPPING
-    // An explicit capture-only sentinel tests opacity without exposing any real geography.
-    if(MapFogProbe)
-    {
-        Element(TEXT("mapProbe"),TEXT(""),FVector2D::ZeroVector,DesignSize);
-        auto& Probe=Elements.Last();Probe.Component=TEXT("map.canvas");Probe.MapClipped=true;
-    }
-#endif
-    Element(TEXT("mapFog"),TEXT(""),MapPoint(MapOrigin()),{Diameter*.5,Diameter*.5});
-    auto& Fog=Elements.Last();Fog.LayoutId=TEXT("map.fog");Fog.Component=TEXT("map.canvas");Fog.MapClipped=true;
-    Fog.Asset=TEXT("mapDarkFog");
+    ComposeWorldMap();
+    const auto View=MapViewRect();
+    Element(TEXT("menuAction"),WorldMap?TEXT("收起地点 ‹"):TEXT("地点与传送 ›"),{View.Right-316,View.Top+24},{292,54},22,WorldMap?TEXT("map.local"):TEXT("map.world"));
+    Elements.Last().LayoutId=TEXT("map.locations.toggle");Elements.Last().Align=TEXT("right");
 }
 void UHearthwardScreenWidget::UpdateMapMarkers(bool ApplyComponent)
 {
@@ -122,6 +146,8 @@ void UHearthwardScreenWidget::UpdateMapMarkers(bool ApplyComponent)
             const FVector2D Position=MapPoint(Actor->GetActorLocation())-FVector2D(Marker.Size.X*.5,Marker.Size.Y*.9);
             const FVector2D NewPosition=ApplyComponent?ComponentPoint(TEXT("map.canvas"),Position):Position;
             Changed|=!Marker.Position.Equals(NewPosition,.001);Marker.Position=NewPosition;
+            const float Heading=FMath::UnwindDegrees(Actor->GetActorRotation().Yaw-90.f);
+            Changed|=!FMath::IsNearlyEqual(Marker.Value,Heading,.001f);Marker.Value=Heading;
         }
     }
     if(Changed)InvalidateLayoutAndVolatility();

@@ -85,7 +85,9 @@ def surface_levels(scene):
             inside = (a >= -1e-5) & (b >= -1e-5) & (c >= -1e-5)
             block = levels[low[1]:high[1], low[0]:high[0]]
             height = a * z[face[0]] + b * z[face[1]] + c * z[face[2]]
-            block[inside] = height[inside]
+            # A distant sea plane may underlie lakes and rivers. Keep the upper
+            # actual water surface wherever mesh footprints overlap.
+            block[inside] = np.fmax(block[inside], height[inside])
     return levels, mappings
 
 

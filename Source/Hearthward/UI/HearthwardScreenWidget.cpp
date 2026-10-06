@@ -214,6 +214,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if(Name==TEXT("equipment"))EquipmentEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     if(DisplayDeadline>0) {FinishDisplayChange(false);}
     if(Elements.IsValidIndex(KeyboardFocus)) PageFocus.Add(Page,Elements[KeyboardFocus].Action);
+    MapDragging=false;
     CancelInventoryDrag();
     BindingCapture=NAME_None;
     if(auto* C=Cast<AHearthwardCharacter>(GetOwningPlayerPawn())) C->ResetHeldInput();
@@ -254,10 +255,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     if(Name==TEXT("map") && PreviousPage!=Name && !RestoringParent)
     {
         WorldMap=false;
-        const auto Map=Theme->GetObjectField(TEXT("localMap"));
-        MapZoom=FMath::Clamp(float(Number(Map,TEXT("initialZoom"),2)),1.f,2.f);
-        const auto& Pan=Map->GetArrayField(TEXT("initialPan"));
-        MapPan=FVector2D(FMath::Clamp(Pan[0]->AsNumber(),-450.,450.),FMath::Clamp(Pan[1]->AsNumber(),-300.,300.));
+        ResetMapView();
     }
     if(Name==TEXT("dialogue") && PreviousPage!=Name)DialogueView=TEXT("home");
     Page=Name; TextScroll=0; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset();GiveUpEpoch.Invalidate(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
@@ -370,9 +368,10 @@ void UHearthwardScreenWidget::Refresh()
         !Elements[KeyboardFocus].Hidden ? Elements[KeyboardFocus].Action : FString();
     const FString HoveredAction=Elements.IsValidIndex(Hover) && Elements[Hover].Enabled &&
         !Elements[Hover].Hidden ? Elements[Hover].Action : FString();
-    Elements.Reset(); const auto P=Page==TEXT("map") && WorldMap?Theme->GetObjectField(TEXT("worldMapPage")):Theme->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString());
+    Elements.Reset(); const auto P=Theme->GetObjectField(TEXT("pages"))->GetObjectField(Page.ToString());
     const FString Background=Text(P,TEXT("background"));
     if(Page!=TEXT("dialogue") && !Background.IsEmpty()) { Element(TEXT("image"),TEXT(""),FVector2D::ZeroVector,DesignSize,18,TEXT(""),Background); Elements.Last().LayoutId=TEXT("background"); }
+    if(UsesSimpleUI()) { Element(TEXT("journalBackdrop"),TEXT(""),{},DesignSize); Elements.Last().LayoutId=TEXT("simple.backdrop"); }
     if(Page!=TEXT("dialogue"))LoadComponents();
     if(Page!=TEXT("dialogue") && P->GetBoolField(TEXT("header"))) LoadElements(Theme->GetArrayField(TEXT("header")));
     if(Page!=TEXT("dialogue"))LoadElements(P->GetArrayField(TEXT("elements")));
@@ -407,8 +406,7 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("repairing")) ComposeRepair();
     if(Page==TEXT("save")) ComposeSave();
     if(Page==TEXT("title")) ComposeTitleControls();
-    if(!Message.TrimStartAndEnd().IsEmpty() && Page!=TEXT("dialogue") && Page!=TEXT("settings") && Page!=TEXT("save") && Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("equipment") && Page!=TEXT("skills") && Page!=TEXT("journal") && Page!=TEXT("map")) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
-    if(Page==TEXT("map") && WorldMap && !Message.IsEmpty()) Element(TEXT("notice"),Message,{440,860},{1100,44},20);
+    if(!Message.TrimStartAndEnd().IsEmpty() && Page!=TEXT("dialogue") && Page!=TEXT("settings") && Page!=TEXT("save") && Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("equipment") && Page!=TEXT("storage") && Page!=TEXT("nature") && Page!=TEXT("skills") && Page!=TEXT("journal") && Page!=TEXT("map")) Element(TEXT("notice"),Message,FVector2D(440,820),FVector2D(790,42),17);
     if(!ConfirmAction.IsEmpty())
     {
         if(ConfirmAction==TEXT("compat.resolve"))ComposeCompatibility();
@@ -436,6 +434,7 @@ void UHearthwardScreenWidget::Refresh()
     }
     ApplyLayout();
     ApplyReadableLayout();
+    ApplySimpleUIStyle();
     ApplyTitleMenuWindow();
     if(Draft)
     {
@@ -530,6 +529,12 @@ void UHearthwardScreenWidget::UpdateHUDQuestNotice()
 void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
 {
     Super::NativeTick(G,Delta);
+    if(G.GetLocalSize().X>0 && G.GetLocalSize().Y>0)
+    {
+        const double ScreenScale=FMath::Min(G.GetLocalSize().X/DesignSize.X,G.GetLocalSize().Y/DesignSize.Y);
+        const FVector2D View=G.GetLocalSize()/ScreenScale;
+        if(!MapViewDesignSize.Equals(View,.1)){MapViewDesignSize=View;if(Page==TEXT("map")){MapDragging=false;Refresh();}}
+    }
 #if !UE_BUILD_SHIPPING
     FString TestPool; FGuid PoolId;
     if(Page==TEXT("title") && !HUDPreviewStarted && FParse::Param(FCommandLine::Get(),TEXT("HearthwardHUDPreview"))
@@ -551,7 +556,7 @@ void UHearthwardScreenWidget::NativeTick(const FGeometry& G,float Delta)
     if(Page==TEXT("map"))
     {
         UpdateMapMarkers();
-        // Real-time smoke continues to drift while the map pauses the world.
+        // The two flame markers continue to pulse while the map pauses the world.
         if(const auto Cached=GetCachedWidget())Cached->Invalidate(EInvalidateWidgetReason::Paint);
     }
     if(Page==TEXT("hud"))
@@ -577,7 +582,7 @@ int32 UHearthwardScreenWidget::Hit(const FVector2D& P) const
                 || P.Y<Sidebar.Position.Y+16 || P.Y>Sidebar.Position.Y+Sidebar.Size.Y-8)continue;
         }
         const auto MapPoint=ComponentPoint(TEXT("map.canvas"),P,true);
-        if(E.MapClipped && (WorldMap?(MapPoint.X<407 || MapPoint.X>1517 || MapPoint.Y<95 || MapPoint.Y>855):(MapPoint.X<0 || MapPoint.X>DesignSize.X || MapPoint.Y<0 || MapPoint.Y>DesignSize.Y))) continue;
+        if(E.MapClipped && !MapCursorInside(MapPoint))continue;
         if(P.X>=E.Position.X && P.Y>=E.Position.Y && P.X<E.Position.X+E.Size.X && P.Y<E.Position.Y+E.Size.Y)
         {
             if(E.Enabled) return I;
@@ -618,18 +623,17 @@ FReply UHearthwardScreenWidget::NativeOnMouseButtonDown(const FGeometry& G,const
         if(!WorldMap)return FReply::Handled();
         if(const auto* Bounds=LayoutBounds.Find(TEXT("map.canvas"));Bounds && Bounds->Hidden) return FReply::Handled();
         const FVector2D P=ComponentPoint(TEXT("map.canvas"),CanvasPoint(G,E.GetScreenSpacePosition()),true);
-        if(P.X>=407 && P.X<=1517 && P.Y>=95 && P.Y<=855)
-        {
-            const FVector2D Local=(P-FVector2D(962,475)-MapPan)/MapZoom;
-            const bool Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active();
-            const double Extent=Campaign?403200:6000;
-            const FVector Origin=Campaign?FVector::ZeroVector:Gameplay()->LocationPosition(TEXT("camp"));
-            Gameplay()->SetWaypoint(Origin+FVector(Local.X*Extent/1110,-Local.Y*Extent/760,0)); Refresh();
-        }
+        if(MapCursorInside(P)){Gameplay()->SetWaypoint(MapWorldAt(P));Refresh();}
         return FReply::Handled();
     }
     if(E.GetEffectingButton()==EKeys::LeftMouseButton)
-    { Hover=Hit(CanvasPoint(G,E.GetScreenSpacePosition())); if(Elements.IsValidIndex(Hover)) { ExecuteAction(Elements[Hover].Action); return FReply::Handled(); } }
+    {
+        const FVector2D Point=CanvasPoint(G,E.GetScreenSpacePosition());Hover=Hit(Point);
+        if(Elements.IsValidIndex(Hover)){ExecuteAction(Elements[Hover].Action);return FReply::Handled();}
+        const FVector2D MapPoint=ComponentPoint(TEXT("map.canvas"),Point,true);
+        if(Page==TEXT("map") && ConfirmAction.IsEmpty() && MapCursorInside(MapPoint))
+        {MapDragging=true;MapDragStart=MapPoint;MapDragPan=MapPan;return FReply::Handled().CaptureMouse(TakeWidget());}
+    }
     return Super::NativeOnMouseButtonDown(G,E);
 }
 FReply UHearthwardScreenWidget::NativeOnMouseMove(const FGeometry& G,const FPointerEvent& E)
@@ -639,6 +643,13 @@ FReply UHearthwardScreenWidget::NativeOnMouseMove(const FGeometry& G,const FPoin
         InventoryDragCursor=CanvasPoint(G,E.GetScreenSpacePosition());
         InventoryDragging|=(InventoryDragCursor-InventoryDragStart).SizeSquared()>=25;
         return FReply::Handled();
+    }
+    if(MapDragging)
+    {
+        if(Page!=TEXT("map") || !E.IsMouseButtonDown(EKeys::LeftMouseButton))
+        {MapDragging=false;return FReply::Handled().ReleaseMouseCapture();}
+        const FVector2D Point=ComponentPoint(TEXT("map.canvas"),CanvasPoint(G,E.GetScreenSpacePosition()),true);
+        MapPan=MapDragPan+Point-MapDragStart;ClampMapPan();Refresh();return FReply::Handled();
     }
     if(LayoutEditing)
     {
@@ -711,7 +722,16 @@ FReply UHearthwardScreenWidget::NativeOnMouseWheel(const FGeometry& G,const FPoi
             && P.Y>=Sidebar->Position.Y && P.Y<=Sidebar->Position.Y+Sidebar->Size.Y))
         {TextScroll=FMath::Clamp(TextScroll-E.GetWheelDelta()*90,0.f,TextScrollMaximum);Refresh();return FReply::Handled();}
     }
-    if(Page==TEXT("map")) MapZoom=FMath::Clamp(MapZoom+E.GetWheelDelta()*.1f,1.f,2.f);
+    if(Page==TEXT("map"))
+    {
+        if(MapDragging)return FReply::Handled();
+        const FVector2D Point=ComponentPoint(TEXT("map.canvas"),CanvasPoint(G,E.GetScreenSpacePosition()),true);
+        if(!MapCursorInside(Point))return FReply::Handled();
+        const FVector World=MapWorldAt(Point);
+        MapZoom=FMath::Clamp(MapZoom+E.GetWheelDelta()*.1f,MapMinimumZoom(),3.f);
+        MapPan=Point-MapViewRect().GetCenter()-FVector2D(World.X-MapCenter.X,World.Y-MapCenter.Y)*MapScale()*MapZoom;
+        ClampMapPan();
+    }
     else Scroll=FMath::Max(0,Scroll-(E.GetWheelDelta()>0?1:-1));
     Refresh(); return FReply::Handled();
 }
@@ -787,7 +807,7 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     if(Page==TEXT("map") && !Confirming && KeyboardFocus==INDEX_NONE && (Key==EKeys::Left || Key==EKeys::Right || Key==EKeys::Up || Key==EKeys::Down))
     {
         MapPan+=FVector2D(Key==EKeys::Left?30:Key==EKeys::Right?-30:0,Key==EKeys::Up?30:Key==EKeys::Down?-30:0);
-        MapPan.X=FMath::Clamp(MapPan.X,-450.f,450.f);MapPan.Y=FMath::Clamp(MapPan.Y,-300.f,300.f);Refresh();return FReply::Handled();
+        ClampMapPan();Refresh();return FReply::Handled();
     }
     if(Key==EKeys::Up || Key==EKeys::Down || Key==EKeys::Left || Key==EKeys::Right || Key==EKeys::Tab)
     {
@@ -845,7 +865,7 @@ void UHearthwardScreenWidget::DraftCommitted(const FText& TextValue,ETextCommit:
 { if(Method==ETextCommit::OnEnter) ExecuteAction(Page==TEXT("memory")?TEXT("memorySave"):TEXT("send")); }
 
 bool UHearthwardScreenWidget::ReadableLayout() const
-{ return Page!=TEXT("dialogue") && Page!=TEXT("title") && Page!=TEXT("pause") && Page!=TEXT("dialogue") && Page!=TEXT("settings") && Page!=TEXT("save") && Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("equipment") && Page!=TEXT("skills") && Page!=TEXT("journal") && (Page!=TEXT("map") || WorldMap) && Page!=TEXT("building") && !LayoutEditing && ConfirmAction.IsEmpty() && GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale>100; }
+{ return Page!=TEXT("dialogue") && Page!=TEXT("title") && Page!=TEXT("pause") && Page!=TEXT("settings") && Page!=TEXT("save") && Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("equipment") && Page!=TEXT("storage") && Page!=TEXT("skills") && Page!=TEXT("journal") && Page!=TEXT("map") && Page!=TEXT("building") && !LayoutEditing && ConfirmAction.IsEmpty() && GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale>100; }
 void UHearthwardScreenWidget::ApplyReadableLayout()
 {
     if(!ReadableLayout()) return;
@@ -908,6 +928,11 @@ void UHearthwardScreenWidget::ApplyReadableLayout()
     {auto* CanvasSlot=CastChecked<UCanvasPanelSlot>(Draft->Slot);CanvasSlot->SetPosition({190,795});CanvasSlot->SetSize({1292,90});}
     const auto Original=Elements;TArray<FHearthwardUIElement> Rows;
     const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+    if(UsesSimpleUI())
+    {
+        for(const auto& E:Original) if(E.LayoutId==TEXT("simple.backdrop")) Rows.Add(E);
+        FHearthwardUIElement Surface; Surface.Type=TEXT("inventorySurface"); Surface.Position={180,54}; Surface.Size={1312,841}; Surface.LayoutId=TEXT("simple.readable.surface"); Rows.Add(Surface);
+    }
     float Y=70;
     for(const auto& Source:Original)
     {
@@ -951,7 +976,7 @@ void UHearthwardScreenWidget::ApplyReadableLayout()
     }
     const float Bottom=Page==TEXT("dialogue") || Page==TEXT("memory")?770:835;
     TextScrollMaximum=FMath::Max(0.f,Y-Bottom);TextScroll=FMath::Clamp(TextScroll,0.f,TextScrollMaximum);
-    for(auto& E:Rows) if(!(E.Type==TEXT("image") && E.Size.X>=1600))
+    for(auto& E:Rows) if(E.LayoutId!=TEXT("simple.backdrop") && E.LayoutId!=TEXT("simple.readable.surface") && !(E.Type==TEXT("image") && E.Size.X>=1600))
     {E.Position.Y-=TextScroll;E.TextScrollClipped=E.Position.Y+E.Size.Y<60 || E.Position.Y>Bottom;}
     Elements=MoveTemp(Rows);
 }

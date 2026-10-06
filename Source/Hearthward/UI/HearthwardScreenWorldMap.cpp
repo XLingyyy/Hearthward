@@ -2,7 +2,6 @@
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
-#include "GameFramework/PlayerController.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Fonts/FontMeasure.h"
 #include "Rendering/SlateRenderer.h"
@@ -10,97 +9,65 @@ using namespace HearthwardData;
 
 void UHearthwardScreenWidget::ComposeWorldMap()
 {
-    auto* G=Gameplay();
-    const bool Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Active();
-    const double Extent=Campaign?403200:6000;
-    const FVector2D Center(962,475),MapSize(1110,760);
-    const auto MapPoint=[&](FVector World){ return Center+FVector2D(World.X,-World.Y)*FVector2D(MapSize.X/Extent,MapSize.Y/Extent)*MapZoom+MapPan; };
-    const auto TextHeight=[&](const FHearthwardUIElement& E)
+    auto* G=Gameplay();auto* Story=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+    const bool Campaign=Story->Active();
+    const auto KindOf=[&](const TSharedPtr<FJsonObject>& Row)
     {
-        const bool Display=E.FontRole==TEXT("display") || (E.FontRole.IsEmpty() && E.Font>=30);
-        FSlateFontInfo Font(Display?DisplayTypeface:Typeface,FMath::RoundToInt(E.Font*.75f));Font.LetterSpacing=E.Tracking;
-        const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
-        TArray<FString> SourceLines;E.Text.ParseIntoArrayLines(SourceLines,false);int32 Lines=0;
-        for(FString Line:SourceLines)
-        {
-            while(Line.Len()>1 && Measure->Measure(Line,Font).X>E.Size.X)
-            {
-                const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,E.Size.X)+1,1,Line.Len());
-                Line=Line.Mid(Count);++Lines;
-            }
-            ++Lines;
-        }
-        return Lines*E.Font*1.6f;
+        const FName Id(*Text(Row,TEXT("id")));
+        return Campaign?Text(HearthwardCampaign::Find(TEXT("locations"),Id),TEXT("kind")):Text(Row,TEXT("kind"));
     };
-    if(ReadableLayout())
+    const auto Place=[&](const TSharedPtr<FJsonObject>& Row)
     {
-        Element(TEXT("text"),TEXT("滚轮阅读侧栏"),FVector2D(94,228),FVector2D(290,48),17);
-        Elements.Last().Component=TEXT("map.sidebar");Elements.Last().LayoutId=TEXT("map.scrollHint");
+        const FString Kind=KindOf(Row);
+        return !Kind.IsEmpty() && Kind!=TEXT("persistent_object") && Kind!=TEXT("person") && Kind!=TEXT("rescue");
+    };
+    const double RadiusSquared=FMath::Square(Number(Catalog()->GetObjectField(TEXT("tuning")),TEXT("fogRadius")));
+    const auto Known=[&](FVector World)
+    {
+        return MapVisible(World) && G->Explored.ContainsByPredicate([&](FVector2D Seen)
+        {return FVector2D::DistSquared(FVector2D(World.X,World.Y),Seen)<=RadiusSquared;});
+    };
+    // Discovered places survive sparse/old exploration samples. Objects and
+    // people belong to quest guidance rather than the place/travel catalogue.
+    for(const auto& Value:Rows(TEXT("locations")))
+    {
+        const auto Location=Value->AsObject();const FName Id(*Text(Location,TEXT("id")));
+        if(!G->Discovered.Contains(Id) || (Campaign && !Story->HasLocation(Id))
+            || !Place(Location))continue;
+        const FVector World=G->LocationPosition(Id);if(!MapVisible(World))continue;
+        const FVector2D Point=MapPoint(World);
+        const bool Flag=KindOf(Location)==TEXT("control_zone");
+        Element(Flag?TEXT("mapFlag"):TEXT("tab"),TEXT(""),Point-(Flag?FVector2D(12,32):FVector2D(10,10)),Flag?FVector2D(24,32):FVector2D(20,20),18,TEXT("location:")+Id.ToString());
+        Elements.Last().LayoutId=TEXT("map.location.marker.")+Id.ToString();
+        Elements.Last().Component=TEXT("map.canvas");Elements.Last().MapClipped=true;
+        if(Flag)
+        {
+            Elements.Last().Color=Story->State.Flags.Contains(FName(*Id.ToString().Mid(4)))?FLinearColor(.55f,.7f,.52f,1):Color(TEXT("gold"));
+            Element(TEXT("mapSite"),TEXT(""),Point,{-180,-90});Elements.Last().Component=TEXT("map.canvas");Elements.Last().MapClipped=true;
+        }
+        const FString Label=Text(Location,TEXT("name"))+(Flag?TEXT("（占领点）"):FString());
+        Element(TEXT("mapRegion"),Label,Point+(Flag?FVector2D(-290,-110):FVector2D(-110,17)),{220,38},20);
+        Elements.Last().Component=TEXT("map.canvas");Elements.Last().LayoutId=TEXT("map.location.")+Id.ToString();
+        Elements.Last().Font=20*FMath::Min(MapZoom,1.25f);Elements.Last().FontRole=TEXT("display");
     }
-    TArray<TPair<int32,double>> LocationLabels;
-    int32 RemainingHint=INDEX_NONE;
-    const int32 FirstMapElement=Elements.Num();
-    Element(TEXT("image"),TEXT(""),Center-MapSize*.5*MapZoom+MapPan,MapSize*MapZoom,18,TEXT(""),TEXT("mapTerrain"));
-    const float FogRadius=Number(Catalog()->GetObjectField(TEXT("tuning")),TEXT("fogRadius"));
-    const FVector Origin=Campaign?FVector::ZeroVector:G->LocationPosition(TEXT("camp"));
-    const double RadiusSquared=FMath::Square(double(FogRadius));
-    const auto ExploredAt=[&](FVector World)
-    {
-        return G->Explored.ContainsByPredicate([&](FVector2D Seen)
-        { return FVector2D::DistSquared(FVector2D(World.X,World.Y),Seen)<=RadiusSquared; });
-    };
-    const double PixelWorldSize=Extent/(MapSize.X*MapZoom);
-    const auto FogCell=[&](FVector2D Local,double Side,const auto& Subdivide)->void
-    {
-        const FVector2D Min=Local+FVector2D(Origin.X,Origin.Y),Max=Min+FVector2D(Side,Side);
-        bool Intersects=false;
-        for(const FVector2D Seen:G->Explored)
-        {
-            const double FarX=FMath::Max(FMath::Abs(Min.X-Seen.X),FMath::Abs(Max.X-Seen.X));
-            const double FarY=FMath::Max(FMath::Abs(Min.Y-Seen.Y),FMath::Abs(Max.Y-Seen.Y));
-            if(FMath::Square(FarX)+FMath::Square(FarY)<=RadiusSquared)return;
-            const FVector2D Nearest(FMath::Clamp(Seen.X,Min.X,Max.X),FMath::Clamp(Seen.Y,Min.Y,Max.Y));
-            Intersects|=FVector2D::DistSquared(Nearest,Seen)<=RadiusSquared;
-        }
-        // Keep distant fog coarse; refine only the explored boundary to a design pixel.
-        if(Intersects && Side>PixelWorldSize)
-        {
-            const double Half=Side*.5;
-            Subdivide(Local,Half,Subdivide);Subdivide(Local+FVector2D(Half,0),Half,Subdivide);
-            Subdivide(Local+FVector2D(0,Half),Half,Subdivide);Subdivide(Local+FVector2D(Half,Half),Half,Subdivide);
-            return;
-        }
-        Element(TEXT("fog"),TEXT(""),MapPoint(FVector(Local.X,Local.Y+Side,0)),MapSize*(Side/Extent*MapZoom)+FVector2D(1,1));
-    };
-    const int32 Cell=Extent/20;
-    for(int32 X=-Extent/2;X<Extent/2;X+=Cell)
-        for(int32 Y=-Extent/2;Y<Extent/2;Y+=Cell)
-            FogCell(FVector2D(X,Y),Cell,FogCell);
+    // The existing discovery and route rules share the new terrain projection.
     if(Campaign && G->QuestAvailable(TEXT("main_05")))
     {
         const auto& Route=Catalog()->GetObjectField(TEXT("campaign"))->GetArrayField(TEXT("route_trace"));
         for(int32 I=0;I<Route.Num();I+=3)
         {
-            const auto& P=Route[I]->AsArray();
-            const FVector World(P[0]->AsNumber()*100,P[1]->AsNumber()*100,0);
-            if(!ExploredAt(World))continue;
-            Element(TEXT("text"),TEXT("·"),MapPoint(World)-FVector2D(4,10),FVector2D(12,20),18);
-            Elements.Last().Color=Color(TEXT("gold"));
+            const auto& XY=Route[I]->AsArray();const FVector World(XY[0]->AsNumber()*100,XY[1]->AsNumber()*100,0);
+            if(!Known(World))continue;
+            Element(TEXT("text"),TEXT("·"),MapPoint(World)-FVector2D(4,10),{12,20},18);
+            Elements.Last().Color=Color(TEXT("gold"));Elements.Last().Component=TEXT("map.canvas");
         }
     }
-    for(const auto& V:Rows(TEXT("locations")))
+    if(G->HasWaypoint && MapVisible(G->Waypoint))
     {
-        const auto R=V->AsObject(); const FName Id(*Text(R,TEXT("id"))); if(!G->Discovered.Contains(Id)) continue;
-        if(Category==TEXT("travel") && Text(R,TEXT("kind"))==TEXT("landmark")) continue;
-        if(Campaign && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->HasLocation(Id))continue;
-        const FVector World=G->LocationPosition(Id);if(!ExploredAt(World))continue;
-        const FVector2D UI=MapPoint(World-Origin)-FVector2D(27,27);
-        Element(TEXT("image"),TEXT(""),UI+FVector2D(10,9),FVector2D(34,36),18,TEXT(""),G->Activated.Contains(Id)?TEXT("mapTravelIcon"):Text(R,TEXT("kind"))==TEXT("landmark")?TEXT("mapLandmarkIcon"):TEXT("mapCampIcon"));
-        Element(TEXT("tab"),TEXT(""),UI,FVector2D(54,54),32,TEXT("location:")+Id.ToString(),TEXT(""),SelectedLocation==Id);
-        Element(TEXT("text"),Text(R,TEXT("name")),UI+FVector2D(-27,58),FVector2D(200,35),19);
-        LocationLabels.Emplace(Elements.Num()-1,UI.Y);
+        Element(TEXT("text"),TEXT("◇"),MapPoint(G->Waypoint)-FVector2D(15,20),{40,40},30);
+        Elements.Last().Color=Color(TEXT("gold"));Elements.Last().Component=TEXT("map.canvas");
     }
-    if(const auto* Story=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign && Story->State.ShowRemaining())
+    if(Campaign && Story->State.ShowRemaining())
     {
         TSet<FIntPoint> Areas;
         for(const auto& Enemy:Story->State.Enemies)
@@ -108,66 +75,113 @@ void UHearthwardScreenWidget::ComposeWorldMap()
                 Areas.Add(FIntPoint(FMath::FloorToInt(Enemy.Combat.Position.X/5000),FMath::FloorToInt(Enemy.Combat.Position.Y/5000)));
         for(const auto& Area:Areas)
         {
-            Element(TEXT("text"),TEXT("○"),MapPoint(FVector((Area.X+.5)*5000,(Area.Y+.5)*5000,0))-FVector2D(16,20),FVector2D(40,40),30);
-            Elements.Last().Color=Color(TEXT("gold"));
+            const FVector World((Area.X+.5)*5000,(Area.Y+.5)*5000,0);if(!MapVisible(World))continue;
+            Element(TEXT("text"),TEXT("○"),MapPoint(World)-FVector2D(12,14),{30,30},22);
+            Elements.Last().Color=Color(TEXT("gold"));Elements.Last().Component=TEXT("map.canvas");
         }
-        Element(TEXT("text"),TEXT("○ 剩余驻军的大致区域"),FVector2D(1150,790),FVector2D(350,32),17);
-        RemainingHint=Elements.Num()-1;
-    }
-    const FVector Player=GetOwningPlayerPawn()->GetActorLocation()-Origin;
-    if(G->HasWaypoint)
-    {
-        Element(TEXT("text"),TEXT("◇"),MapPoint(G->Waypoint-Origin)-FVector2D(15,20),FVector2D(45,45),35);
-        Elements.Last().Color=Color(TEXT("gold"));
-        Element(TEXT("button"),TEXT("清除标记"),MapPoint(G->Waypoint-Origin)+FVector2D(12,10),FVector2D(150,35),16,TEXT("clearWaypoint"));
-    }
-    Element(TEXT("arrow"),TEXT(""),MapPoint(Player)+FVector2D(17,14),FVector2D(20,20)); Elements.Last().Value=GetOwningPlayer()->GetControlRotation().Yaw+90; Elements.Last().Color=Color(TEXT("teal"));
-    for(int32 I=FirstMapElement;I<Elements.Num();++I) Elements[I].MapClipped=true;
-    Element(TEXT("bar"),TEXT(""),FVector2D(94,223),FVector2D(280,4)); Elements.Last().Value=float(G->Discovered.Num())/Rows(TEXT("locations")).Num(); Elements.Last().Color=Color(TEXT("gold"));
-    const auto R=Find(TEXT("locations"),SelectedLocation.ToString());
-    Element(TEXT("text"),Text(R,TEXT("name")),FVector2D(91,639),FVector2D(320,40),25);
-    Element(TEXT("button"),G->Activated.Contains(SelectedLocation)?TEXT("传送至此"):TEXT("靠近路标并按 E 激活"),FVector2D(88,687),FVector2D(295,43),17,TEXT("travel"));
-    float GuidanceTop=Center.Y+MapSize.Y*.5f-8;
-    if(RemainingHint!=INDEX_NONE)
-    {
-        auto& Hint=Elements[RemainingHint];Hint.Size.X=600;Hint.Size.Y=TextHeight(Hint);
-        Hint.Position={Center.X+MapSize.X*.5f-16-Hint.Size.X,GuidanceTop-Hint.Size.Y};
     }
     if(!G->TrackedQuest.IsNone())
     {
         const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
-        Element(TEXT("text"),TEXT("◎ ")+Text(Q,TEXT("objective")),FVector2D(535,816),FVector2D(910,42),19);
-        auto& Objective=Elements.Last();
-        Objective.Size.Y=TextHeight(Objective);
-        Objective.Position.Y=GuidanceTop-Objective.Size.Y;GuidanceTop=Objective.Position.Y;
-        Objective.Component=TEXT("map.canvas");
-        if(RemainingHint!=INDEX_NONE)
+        const FName Target=Campaign?Story->QuestLocation(G->TrackedQuest):FName(*Text(Q,TEXT("location")));
+        const FVector World=G->LocationPosition(Target);
+        if(G->Discovered.Contains(Target) && Known(World))
         {
-            auto& Hint=Elements[RemainingHint];Hint.Position.Y=GuidanceTop-12-Hint.Size.Y;
-        }
-        const auto Target=Find(TEXT("locations"),Campaign?GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->QuestLocation(G->TrackedQuest).ToString():Text(Q,TEXT("location")));
-        if(Target)
-        {
-            const FVector World=G->LocationPosition(FName(*Text(Target,TEXT("id"))));
-            if(ExploredAt(World))
-            {
-                Element(TEXT("image"),TEXT(""),MapPoint(World-Origin)+FVector2D(25,-40),FVector2D(33,40),18,TEXT(""),TEXT("mapQuestIcon")); Elements.Last().MapClipped=true;
-            }
+            Element(TEXT("image"),TEXT(""),MapPoint(World)+FVector2D(12,-35),{24,30},18,TEXT(""),TEXT("mapQuestIcon"));
+            Elements.Last().Component=TEXT("map.canvas");Elements.Last().LayoutId=TEXT("map.questTarget");
         }
     }
-    for(const auto& Marker:LocationLabels)
+    if(!WorldMap)return;
+    const float FontScale=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f;
+    const int32 PageSize=FontScale>1.25f?6:9;const float RowHeight=FontScale>1.25f?67:48;
+    Element(TEXT("inventorySurface"),TEXT(""),{36,100},{368,710});Elements.Last().Color=FLinearColor(.025f,.03f,.032f,.96f);
+    Element(TEXT("text"),TEXT("已发现地点"),{60,119},{320,58},24);
+    Element(TEXT("menuAction"),Category==TEXT("travel")?TEXT("路标 · 显示全部"):TEXT("全部 · 只看路标"),{60,178},{320,54},18,TEXT("mapFilter"));
+    TArray<TSharedPtr<FJsonObject>> Locations;
+    for(const auto& Value:Rows(TEXT("locations")))
     {
-        auto& Label=Elements[Marker.Key];Label.Size.Y=TextHeight(Label);
-        double ClearTop=GuidanceTop;
-        if(RemainingHint!=INDEX_NONE)
+        const auto Location=Value->AsObject();const FName Id(*Text(Location,TEXT("id")));
+        if(!G->Discovered.Contains(Id) || (Campaign && !Story->HasLocation(Id)) || !Place(Location))continue;
+        if(Category==TEXT("travel") && !G->IsTravelLocation(Id))continue;
+        Locations.Add(Location);
+    }
+    if(!SelectedLocation.IsNone() && !Locations.ContainsByPredicate([&](const auto& Row){return Text(Row,TEXT("id"))==SelectedLocation.ToString();}))SelectedLocation=NAME_None;
+    const int32 Pages=FMath::Max(1,FMath::DivideAndRoundUp(Locations.Num(),PageSize));Scroll=FMath::Clamp(Scroll,0,Pages-1);
+    for(int32 I=Scroll*PageSize;I<FMath::Min(Locations.Num(),(Scroll+1)*PageSize);++I)
+    {
+        const auto Location=Locations[I];const FName Id(*Text(Location,TEXT("id")));
+        Element(TEXT("menuAction"),Text(Location,TEXT("name")),{60,235+(I%PageSize)*RowHeight},{320,RowHeight-4},19,TEXT("location:")+Id.ToString(),TEXT(""),SelectedLocation==Id);
+        Elements.Last().LayoutId=TEXT("map.location.list.")+Id.ToString();
+    }
+    Element(TEXT("menuAction"),TEXT("‹"),{60,670},{55,54},22,TEXT("map.previous"));Elements.Last().Enabled=Scroll>0;
+    Element(TEXT("text"),FString::Printf(TEXT("%d / %d"),Scroll+1,Pages),{140,676},{170,48},18);
+    Element(TEXT("menuAction"),TEXT("›"),{330,670},{55,54},22,TEXT("map.next"));Elements.Last().Enabled=Scroll+1<Pages;
+    const auto Selected=Find(TEXT("locations"),SelectedLocation.ToString());
+    const bool Station=G->IsTravelLocation(SelectedLocation),Flag=KindOf(Selected)==TEXT("control_zone");
+    Element(TEXT("menuAction"),Station?(G->Activated.Contains(SelectedLocation)?TEXT("传送至所选地点"):TEXT("路标未激活 · 查看说明"))
+        :Flag?TEXT("占领地点 · 无法传送"):TEXT("请选择传送路标"),{60,725},{320,60},18,TEXT("travel"));
+    Elements.Last().LayoutId=TEXT("map.travel");Elements.Last().Enabled=Station;
+    const auto Info=[&](const FString& TextValue,const FString& Id,double Top)
+    {
+        Element(TEXT("notice"),TextValue,{440,Top},{1100,64},18);auto& E=Elements.Last();E.LayoutId=Id;E.TextInset=20;E.FontRole=TEXT("body");
+        const FSlateFontInfo Font(Typeface,FMath::RoundToInt(E.Font*.75f));
+        const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+        TArray<FString> Lines;E.Text.ParseIntoArrayLines(Lines,false);int32 Count=0;
+        for(FString Line:Lines)
         {
-            const auto& Hint=Elements[RemainingHint];
-            if(Label.Position.X+Label.Size.X>Hint.Position.X && Label.Position.X<Hint.Position.X+Hint.Size.X
-                && Label.Position.Y+Label.Size.Y>Hint.Position.Y && Label.Position.Y<Hint.Position.Y+Hint.Size.Y)
-                ClearTop=FMath::Min(ClearTop,Hint.Position.Y);
+            while(Line.Len()>1 && Measure->Measure(Line,Font).X>E.Size.X-40)
+            {
+                const int32 N=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,E.Size.X-40)+1,1,Line.Len());
+                Line=Line.Mid(N);++Count;
+            }
+            ++Count;
         }
-        if(Label.Position.Y>=95 && Label.Position.Y<855 && Label.Position.Y+Label.Size.Y>ClearTop
-            && Label.Position.X+Label.Size.X>535 && Label.Position.X<1501)
-            Label.Position.Y=FMath::Min(Marker.Value-Label.Size.Y-8,ClearTop-Label.Size.Y-8);
+        E.Size.Y=Count*E.Font*1.6f+24;return Top+E.Size.Y+16;
+    };
+    double InfoTop=110;
+    if(Selected && Place(Selected))
+    {
+        FString Detail=Text(Selected,TEXT("name"));
+        if(Flag)
+        {
+            const FName Zone(*SelectedLocation.ToString().Mid(4));
+            Detail+=TEXT(" · 占领旗帜（地点，不能传送）\n");
+            Detail+=Story->State.Flags.Contains(Zone)?TEXT("此区已占领，旗帜显示当前控制状态。")
+                :Story->State.Phase==TEXT("prologue")?TEXT("夜袭序章先带弟弟从后巷撤离；返回故乡后，清理该区敌军，靠近旗帜按 E，站定5秒占领。")
+                :TEXT("先清理该区敌军，再靠近旗帜按 E，站定5秒完成占领；移动或受袭会中断。");
+        }
+        else if(Station)
+            Detail+=FString(TEXT(" · 传送路标\n"))+(G->Activated.Contains(SelectedLocation)
+                ?TEXT("目的地已激活。需在另一个已激活的路标旁选择传送；载入目的地区域后自动抵达。")
+                :TEXT("目的地未激活。请先步行到路标旁按 E 激活，再从另一个已激活路标传送。"));
+        else Detail+=TEXT(" · 地点（不能传送）\n")+Text(Selected,TEXT("description"));
+        InfoTop=Info(Detail,TEXT("map.location.detail"),InfoTop);
+    }
+    if(!Message.IsEmpty())Info(Message,TEXT("map.travel.feedback"),InfoTop);
+    if(G->HasWaypoint)Element(TEXT("menuAction"),TEXT("清除标记"),{430,850},{200,42},18,TEXT("clearWaypoint"));
+    double GuidanceTop=850;
+    if(!G->TrackedQuest.IsNone())
+    {
+        const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
+        Element(TEXT("text"),TEXT("◎ ")+Text(Q,TEXT("objective")),{450,750},{1080,58},18);
+        auto& Objective=Elements.Last();
+        const FSlateFontInfo Font(Objective.Font>=30?DisplayTypeface:Typeface,FMath::RoundToInt(Objective.Font*.75f));
+        const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+        TArray<FString> Lines;Objective.Text.ParseIntoArrayLines(Lines,false);int32 Count=0;
+        for(FString Line:Lines)
+        {
+            while(Line.Len()>1 && Measure->Measure(Line,Font).X>Objective.Size.X)
+            {
+                const int32 N=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,Objective.Size.X)+1,1,Line.Len());
+                Line=Line.Mid(N);++Count;
+            }
+            ++Count;
+        }
+        Objective.Size.Y=Count*Objective.Font*1.6f;Objective.Position.Y=GuidanceTop-Objective.Size.Y;
+        GuidanceTop=Objective.Position.Y-12;
+    }
+    if(Campaign && Story->State.ShowRemaining())
+    {
+        Element(TEXT("text"),TEXT("○ 剩余驻军的大致区域"),{450,GuidanceTop-58},{1000,58},18);
     }
 }

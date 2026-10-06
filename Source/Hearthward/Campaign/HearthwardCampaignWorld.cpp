@@ -91,13 +91,45 @@ void UHearthwardCampaignSubsystem::Damage(FName Id,float Health)
 }
 bool UHearthwardCampaignSubsystem::Travel(FName Id)
 {
+    const auto Reject=[&](const FString& Reason){Feedback=Reason;return false;};
+    auto* G=Gameplay();
+    const auto Destination=HearthwardCampaign::Find(TEXT("locations"),Id);
+    const FString Name=Text(Destination,TEXT("name"));
+    if(!Active() || !G)return Reject(TEXT("剧情尚未准备完成，当前不能传送；请等待进入游戏后重试"));
+    if(!G->IsTravelLocation(Id))return Reject(Name+TEXT("不是传送路标；占领旗帜、任务物品和普通地点不能用于传送"));
     auto* Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>();
     auto* Survival=Player()?Player()->FindComponentByClass<UHearthwardSurvivalComponent>():nullptr;
-    if(!Active() || State.Phase==TEXT("prologue") || !Survival || !Survival->Alive() || UHearthwardSurvivalComponent::HasFailed(GetWorld())
-        || Clock->Suspended() || Busy() || GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
-    if(auto* Building=Player()->FindComponentByClass<UHearthwardBuildingComponent>();Building && (Building->IsBuilding() || Building->IsPlacing()))return false;
-    const FName From=Gameplay()->NearbyLocation();
-    if(From.IsNone() || From==Id || !Gameplay()->Activated.Contains(From) || !Gameplay()->Activated.Contains(Id))return false;
+    if(UHearthwardSurvivalComponent::HasFailed(GetWorld()))return Reject(TEXT("兄弟已无法继续，传送不能恢复生存状态；请读取保存节点"));
+    if(!Survival || !Survival->Alive())return Reject(TEXT("玩家已倒地，当前不能传送；请先接受救助，或读取保存节点"));
+    if(State.Phase==TEXT("prologue"))return Reject(FString(TEXT("夜袭序章尚未结束，传送未开放。"))+(!State.Facts.Contains(TEXT("relic"))
+        ?TEXT("先在卧室遗物包旁按 E 取回护符，再叫弟弟跟随，从后巷撤离。")
+        :!State.Facts.Contains(TEXT("prologue_order"))?TEXT("先按 X 叫弟弟跟随，等他会合后到后巷撤离口按 E；进入营地后可用路标传送。")
+        :TEXT("带弟弟到后巷撤离口，等他会合后按 E；进入营地后可用路标传送。")));
+    if(Id==TEXT("hometown") && !State.Victory)return Reject(TEXT("故乡路标尚未开放。需清除故乡驻军、占领河门／工坊／住区／议场四面旗帜，并解决增援，永久夺回故乡后才能传送。"));
+    if(IsTraveling())return Reject(TEXT("已有前往")+Text(HearthwardCampaign::Find(TEXT("locations"),TravelDestination),TEXT("name"))+TEXT("的传送正在进行，请等待抵达后再选择地点"));
+    if(Busy())return Reject(TEXT("正在占领旗帜或进行剧情动作，暂时不能传送；请等待动作完成，或先移动取消占旗"));
+    if(Clock->Suspended())return Reject(GetWorld()->IsPaused()?TEXT("游戏被其他界面暂停，暂时不能传送；请返回游戏后再打开地图")
+        :Clock->Busy()?TEXT("世界正在结算休息或恢复进度，暂时不能传送；请等待结算结束")
+        :TEXT("世界或存档仍在加载，暂时不能传送；请等待加载画面结束后重试"));
+    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return Reject(TEXT("正在采集或垂钓，暂时不能传送；请先完成或取消当前动作"));
+    if(auto* Building=Player()->FindComponentByClass<UHearthwardBuildingComponent>();Building && (Building->IsBuilding() || Building->IsPlacing()))
+        return Reject(Building->IsPlacing()?TEXT("仍在建造预览中，暂时不能传送；请确认或退出预览后重试"):TEXT("正在施工，暂时不能传送；请先完成或取消建造动作"));
+    if(!G->Activated.Contains(Id))return Reject(Name+TEXT("尚未激活；请先步行到该地点，在路标旁按 E 激活后再传送"));
+    const FName From=G->NearbyTravelStation();
+    if(From.IsNone())
+    {
+        FName Nearest;double Distance=TNumericLimits<double>::Max();
+        for(const FName Station:G->Activated)if(G->IsTravelLocation(Station))
+        {
+            const double D=FVector::Dist2D(Player()->GetActorLocation(),G->LocationPosition(Station));
+            if(D<Distance){Distance=D;Nearest=Station;}
+        }
+        const double Radius=Number(Catalog()->GetObjectField(TEXT("tuning")),TEXT("interactRadius"))/100;
+        return Reject(Nearest.IsNone()?TEXT("当前附近没有已激活的传送路标；请先找到营地或渡口路标，靠近后按 E 激活")
+            :FString::Printf(TEXT("需站在已激活的路标旁才能传送。最近是%s，距离约%.0f米；请进入路标%.1f米范围后重试。"),*Text(Find(TEXT("locations"),Nearest.ToString()),TEXT("name")),FMath::CeilToDouble(Distance/100),Radius));
+    }
+    if(!G->Activated.Contains(From))return Reject(Text(Find(TEXT("locations"),From.ToString()),TEXT("name"))+TEXT("的出发路标尚未激活；请靠近按 E 激活后再传送"));
+    if(From==Id)return Reject(TEXT("你已在")+Name+TEXT("旁，无需传送；请选择另一个已激活的路标"));
     Sync();TravelParticipants.Reset();TravelEnemies.Reset();TravelParticipants.Add(Player());
     bool BrotherDown=false;
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
@@ -132,12 +164,14 @@ bool UHearthwardCampaignSubsystem::BeginTravel(FName Id)
             Stay->EnableStreamingSource();
         }
     auto* Source=GetWorld()->SpawnActor<AActor>();StreamSource=Source;
+    if(!Source){FinishTravel();Feedback=TEXT("未能准备目的地区域，传送已取消；位置保持不变，请稍后重试");return false;}
     auto* Root=NewObject<USceneComponent>(Source);Source->AddInstanceComponent(Root);Source->SetRootComponent(Root);Root->RegisterComponent();Source->SetActorLocation(Position(Id));
     auto* Component=NewObject<UWorldPartitionStreamingSourceComponent>(Source);Source->AddInstanceComponent(Component);Component->RegisterComponent();Component->EnableStreamingSource();
     if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))Nav->RegisterNavigationInvoker(Source,4000,5000);
     auto* Loading=GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardLoadingSubsystem>();
     if(!Loading->IsLoading()){Loading->BeginLoading();Loading->FinishSession(true);}
-    Feedback=TEXT("正在准备目的地，请稍候");return true;
+    TravelStartedAt=FPlatformTime::Seconds();
+    Feedback=TEXT("正在前往")+Text(HearthwardCampaign::Find(TEXT("locations"),Id),TEXT("name"))+TEXT("，加载目的地区域后会自动抵达");return true;
 }
 void UHearthwardCampaignSubsystem::FinishTravel()
 {
@@ -147,7 +181,7 @@ void UHearthwardCampaignSubsystem::FinishTravel()
         StreamSource->Destroy();
     }
     StreamSource.Reset();TravelDestination=NAME_None;
-    TravelParticipants.Reset();TravelEnemies.Reset();TravelEpoch.Invalidate();ScriptedTravel=false;
+    TravelParticipants.Reset();TravelEnemies.Reset();TravelEpoch.Invalidate();ScriptedTravel=false;TravelStartedAt=0;
 }
 bool UHearthwardCampaignSubsystem::ZoneOccupied(FName Zone) const
 {
@@ -383,21 +417,31 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
     if(!TravelDestination.IsNone())
     {
         if(TravelEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
-        {FinishTravel();Feedback=TEXT("旅行已中止，进度或生存状态发生变化");return;}
+        {FinishTravel();Feedback=TEXT("旅行已中止，进度或生存状态发生变化；请在当前进度的路标旁重新发起传送");Gameplay()->SetFeedback(Feedback);return;}
+        const FString DestinationName=Text(HearthwardCampaign::Find(TEXT("locations"),TravelDestination),TEXT("name"));
+        if(FPlatformTime::Seconds()-TravelStartedAt>45)
+        {FinishTravel();Feedback=DestinationName+TEXT("的区域或通路未能在45秒内准备完成，传送已取消；当前位置和状态保留，请稍后从路标重试。");Gameplay()->SetFeedback(Feedback);return;}
         FVector Floor;auto* Source=StreamSource.IsValid()?StreamSource->FindComponentByClass<UWorldPartitionStreamingSourceComponent>():nullptr;
         if(Source && Source->IsStreamingCompleted())
         {
-            TArray<FVector> Landings;bool Clear=true;
+            TArray<FVector> Landings;bool Clear=true;FString LandingIssue;
             auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-            if(!ScriptedTravel && UNavigationSystemV1::IsNavigationBeingBuiltOrLocked(GetWorld()))return;
+            // Unrelated navigation tiles can keep rebuilding across the world.
+            // Only the destination's actual projected landing is relevant.
             for(int32 I=0;I<TravelParticipants.Num();++I)
             {
                 auto* Participant=TravelParticipants[I].Get();FVector Point;FNavLocation Projected;
-                if(!Participant || !Ground(Position(TravelDestination)+FVector(0,I*180,0),Floor)) {Clear=false;break;}
+                if(!Participant || !Ground(Position(TravelDestination)+FVector(0,I*180,0),Floor)) {Clear=false;LandingIssue=TEXT("落点没有可站立的地面");break;}
                 Point=Floor+FVector(0,0,100);
-                if(!ScriptedTravel && (!Nav || !Nav->ProjectPointToNavigation(Floor,Projected,FVector(200,200,300)))) {Clear=false;break;}
+                if(!ScriptedTravel && (!Nav || !Nav->ProjectPointToNavigation(Floor,Projected,FVector(200,200,300))))
+                {
+                    // Streaming can finish before the invoker's next navigation update.
+                    // Retry this landing within the deadline even between build batches.
+                    if(Nav)return;
+                    Clear=false;LandingIssue=TEXT("路标附近没有可通行的落点");break;
+                }
                 if(!ScriptedTravel)Point=Projected.Location+FVector(0,0,100);
-                if(!GetWorld()->FindTeleportSpot(Participant,Point,Participant->GetActorRotation())) {Clear=false;break;}
+                if(!GetWorld()->FindTeleportSpot(Participant,Point,Participant->GetActorRotation())) {Clear=false;LandingIssue=TEXT("角色落点被障碍物占据");break;}
                 for(const auto& Existing:Landings)if(FVector::Dist2D(Existing,Point)<100)Clear=false;
                 Landings.Add(Point);
             }
@@ -425,7 +469,7 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
                 if(Opening)Record(TEXT("prologue_placed"));
                 const bool Escaped=TravelDestination==TEXT("camp") && State.Phase==TEXT("prologue");
                 if(Escaped){State.Phase=TEXT("occupied");Record(TEXT("prologue_complete"));Gameplay()->TrackedQuest=TEXT("main_01");}
-                FinishTravel();Feedback=TEXT("已抵达，按 J 查看当前目标");
+                FinishTravel();Feedback=TEXT("已抵达")+DestinationName+TEXT("，按 J 查看当前目标");Gameplay()->SetFeedback(Feedback);
                 if(Escaped)ResetActors();
                 if(Opening && !State.Facts.Contains(TEXT("prologue_intro")))
                 {
@@ -435,7 +479,7 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
                     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)It->SetActorLocation(Position(TEXT("prologue_relic"))+FVector(440,30,20));
                 }
             }
-            else {FinishTravel();Feedback=TEXT("目的地落点不可通行，旅行已取消");}
+            else {FinishTravel();Feedback=DestinationName+TEXT("的")+LandingIssue+TEXT("，传送已取消；当前位置和状态保留，请稍后重试。");Gameplay()->SetFeedback(Feedback);}
         }
         return;
     }

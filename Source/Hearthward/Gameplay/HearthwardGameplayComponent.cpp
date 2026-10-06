@@ -405,20 +405,48 @@ FName UHearthwardGameplayComponent::NearbyLocation() const
     }
     return NAME_None;
 }
+bool UHearthwardGameplayComponent::IsTravelLocation(FName Id) const
+{
+    if(Id.IsNone())return false;
+    if(const auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())
+        return HearthwardCampaign::Rows(TEXT("travel_stations")).ContainsByPredicate([&](const auto& Value)
+        {return Text(Value->AsObject(),TEXT("location"))==Id.ToString();});
+    const FString Kind=Text(Find(TEXT("locations"),Id.ToString()),TEXT("kind"));
+    return Kind==TEXT("camp") || Kind==TEXT("travel") || Kind==TEXT("waypoint");
+}
+FName UHearthwardGameplayComponent::NearbyTravelStation() const
+{
+    double Best=Tune(TEXT("interactRadius"));FName Found;
+    for(const auto& Value:Rows(TEXT("locations")))
+    {
+        const FName Id(*Text(Value->AsObject(),TEXT("id")));if(!IsTravelLocation(Id))continue;
+        const double Distance=FVector::Dist2D(GetOwner()->GetActorLocation(),LocationPosition(Id));
+        if(Distance<=Best){Best=Distance;Found=Id;}
+    }
+    return Found;
+}
 bool UHearthwardGameplayComponent::ActivateNearby()
 {
-    const FName Id=NearbyLocation(); const auto R=Find(TEXT("locations"),Id.ToString());
-    if (Id.IsNone() || Text(R,TEXT("kind"))==TEXT("landmark")) return false;
+    const FName Id=NearbyTravelStation();
+    if(Id.IsNone())return Result(false,TEXT("请靠近传送路标并按 E 激活；任务物品和占领旗帜不是传送点"));
+    if(const auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())
+    {
+        if(C->State.Phase==TEXT("prologue"))return Result(false,TEXT("夜袭序章先带弟弟从后巷撤离；进入营地后再激活路标"));
+        if(Id==TEXT("hometown") && !C->State.Victory)return Result(false,TEXT("故乡路标尚未开放；永久夺回故乡后才能激活"));
+    }
     if (Activated.Contains(Id)) return Result(false,TEXT("路标已激活"));
     Activated.Add(Id); Record(TEXT("activate"),Id); return Result(true,TEXT("传送路标已激活"));
 }
 bool UHearthwardGameplayComponent::Travel(FName Id)
 {
-    if(auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())return C->Travel(Id);
-    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy() || GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return false;
+    if(auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();C->Active())
+    {const bool Accepted=C->Travel(Id);return Result(Accepted,C->Feedback);}
+    if(!IsTravelLocation(Id))return Result(false,TEXT("所选地点不是传送路标，不能传送；请在地图选择营地或路标"));
+    if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return Result(false,TEXT("当前正在暂停、加载或结算时间，请结束后再从路标传送"));
+    if(GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy())return Result(false,TEXT("正在采集或垂钓，请先完成或取消当前动作，再从路标传送"));
     auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
-    if(!S->Alive() || UHearthwardSurvivalComponent::HasFailed(GetWorld())) return false;
-    const FName From=NearbyLocation();
+    if(!S || !S->Alive() || UHearthwardSurvivalComponent::HasFailed(GetWorld()))return Result(false,TEXT("角色已倒地或生存失败，当前不能传送；请先救助或读取保存节点"));
+    const FName From=NearbyTravelStation();
     if (From.IsNone() || !Activated.Contains(From)) return Result(false,TEXT("请站在已激活的路标旁"));
     if (!Activated.Contains(Id)) return Result(false,TEXT("目标传送点尚未激活"));
     if (From==Id) return Result(false,TEXT("你已在此处"));
@@ -688,7 +716,16 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
         if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp"))
         {const auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();if(!C->Active() || !C->HasLocation(Id))continue;}
         if (!Discovered.Contains(Id) && FVector::Dist2D(P,LocationPosition(Id))<=Tune(TEXT("discoverRadius"))*(1+Effect(TEXT("discover"))))
-        { Discovered.Add(Id); GrantExperience(TEXT("first_discovery"),EventKey(TEXT("discover"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()); Record(TEXT("discover"),Id); SetFeedback(TEXT("发现：")+Text(L->AsObject(),TEXT("name"))); }
+        {
+            Discovered.Add(Id);GrantExperience(TEXT("first_discovery"),EventKey(TEXT("discover"),Id),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());Record(TEXT("discover"),Id);
+            const auto* Story=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+            const auto Row=Story->Active()?HearthwardCampaign::Find(TEXT("locations"),Id):nullptr;
+            if(Text(Row,TEXT("kind"))==TEXT("control_zone"))
+                SetFeedback(TEXT("发现占领点：")+Text(L->AsObject(),TEXT("name"))+(Story->State.Phase==TEXT("prologue")
+                    ?TEXT("。M 查看旗帜位置；先带弟弟从后巷撤离，返回故乡后再争夺此区。")
+                    :TEXT("。M 查看旗帜位置；清理该区敌军后，靠近旗帜按 E，站定5秒占领。")));
+            else SetFeedback(TEXT("发现：")+Text(L->AsObject(),TEXT("name")));
+        }
     }
     OnChanged.Broadcast();
 }
