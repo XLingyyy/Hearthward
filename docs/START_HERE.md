@@ -1,6 +1,6 @@
 # 最短阅读路径
 
-核对日期：2026-10-05。远端主干基线`ac6a302b`已通过PR #60集成053—074玩法施工批次，包含此前043—052与动物／更新兼容同步。TASK-076已接入新版UI并保留main玩法，验证见[整合报告](qa/TASK-076/REPORT.md)，分支关系见[分支整合清单](planning/BRANCH_INTEGRATION.md)。当前源码、工程证据和未运行出口见[项目状态](PROJECT_STATE.md)及[施工交接](handoffs/TASK-053.md)。
+核对日期：2026-10-06。最新集成基线为 `main@af08e1ab`（PR #61），含 TASK-078—081 弟弟／对话／任务指引及 TASK-082 地图／传送／仓储界面。当前 Windows Demo 更新见[发行报告](releases/demo-20261006-2/REPORT.md)，源码和已知限制见[项目状态](PROJECT_STATE.md)。
 
 先按[目录说明](REPOSITORY_LAYOUT.md)定位文件；开发证据见[QA索引](qa/README.md)，素材见[制作源索引](../art_source/README.md)。
 

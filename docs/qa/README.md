@@ -42,6 +42,17 @@
 | [TASK-076](TASK-076/) | [新版UI与玩法整合报告](TASK-076/REPORT.md) |
 | [ui-fix](ui-fix/) | [REPORT.md](ui-fix/REPORT.md) |
 
+
+## 最新整合与发行
+
+- [TASK-077 报告](TASK-077/REPORT.md)
+- [TASK-078 报告](TASK-078/REPORT.md)
+- [TASK-079 报告](TASK-079/REPORT.md)
+- [TASK-080 报告](TASK-080/REPORT.md)
+- [TASK-081 报告](TASK-081/REPORT.md)
+- [TASK-082 报告](TASK-082/INTEGRATION-REPORT.md)
+- [TASK-083 当前 Demo 发行与验证](../releases/demo-20261006-2/REPORT.md)
+
 ## 保存规则
 
 - 新临时运行默认写到 `.agent-local/qa/<任务>/<运行>/`。交付时把必要报告、复现脚本及其引用的关键证据提升到本目录。

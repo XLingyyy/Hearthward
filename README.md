@@ -2,7 +2,7 @@
 
 UE 5.8.2 单人第三人称生存冒险。本次代码整合保留main的TASK-078—081伙伴委托、自然语言续接、任务地点指引、简约右侧对话界面和族人采集队，并加入TASK-082地图、传送和简约UI更新：无黑雾的3000米×2000米全屏矩形地图、实际地形建筑与地名、可拖动缩放、红蓝三角朝向火焰、统一地图入口、详细传送限制和已激活路标传送修复。储物箱采用新版背包深灰物品格，制作、记忆、营地、田野等页面清理旧火红背景与宣传装饰。
 
-地图分支原TASK-078迁为TASK-082，main原TASK-078—081及其证据保留。用户授权通过[PR #61](https://github.com/XLingyyy/Hearthward/pull/61)整合并合并main，验证见[整合报告](docs/qa/TASK-082/INTEGRATION-REPORT.md)。公开Windows Demo仍为`0.2.0-preview.20261006.1`，本机SimpleUI包仍对应整合前地图分支源码；两者不包含本次联合更新。精细美术与完整真人体验仍待验收。
+地图分支原TASK-078迁为TASK-082，main原TASK-078—081及其证据保留。用户授权通过[PR #61](https://github.com/XLingyyy/Hearthward/pull/61)整合并合并main，验证见[整合报告](docs/qa/TASK-082/INTEGRATION-REPORT.md)。本次发行目标为 `0.2.0-preview.20261006.2`，包含上述联合更新；构建与发布状态以[当前发行报告](docs/releases/demo-20261006-2/REPORT.md)为准。精细美术与完整真人体验仍待验收。
 
 入口：[项目状态](docs/PROJECT_STATE.md) · [本次整合与验证](docs/qa/TASK-082/INTEGRATION-REPORT.md) · [文件目录](docs/REPOSITORY_LAYOUT.md) · [分支关系](docs/planning/BRANCH_INTEGRATION.md) · [测试端说明](TestClient/README.md)。
 
@@ -16,9 +16,9 @@ UE 5.8.2 单人第三人称生存冒险。本次代码整合保留main的TASK-07
 
 需要 UE 5.8.2、GameFactory Python 环境及本地模型资源。本机路径读取被忽略的 `.agent-local/environment.json`；可用 `HEARTHWARD_FACTORY_ROOT`、`HEARTHWARD_UE_ROOT`、`HEARTHWARD_PYTHON` 覆盖。首次克隆先执行 `git lfs pull` 取回二进制资产。UE 工程为根目录 `Hearthward.uproject`，入口地图为 `/Game/Hearthward/Bootstrap/L_Bootstrap`。
 
-需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。当前独立 Windows Demo 为 `0.2.0-preview.20261006.1`，便携包完整解压后运行“启动游戏.cmd”，无需UE或Python；公开下载见[GitHub Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.1)，交付路径及验证见[本次发行报告](docs/releases/demo-20261006/REPORT.md)。开发测试入口仍需要开发环境。
+需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。当前独立 Windows Demo 为 `0.2.0-preview.20261006.2`，便携包完整解压后运行“启动游戏.cmd”，无需UE或Python；公开下载见[GitHub Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.2)，交付路径及验证见[本次发行报告](docs/releases/demo-20261006-2/REPORT.md)。开发测试入口仍需要开发环境。
 
-本机先前交付的简约UI更新版位于上层项目根目录：双击 `启动正式游玩版.cmd` 或 `启动简约UI更新版.cmd`，地图／矩形地图启动脚本也指向同一最新版本。完整目录 `../Hearthward-Playable-20261006-SimpleUI/Windows`，便携ZIP `../Hearthward-Playable-20261006-SimpleUI.zip`，包含本地模型与运行库。该包为本地Win64 Shipping开发预览，未上传GitHub Release；[本次预览与验证](docs/qa/TASK-082/SIMPLE-UI-REPORT.md)记录源码、程序和资源指纹。
+当前便携包交付目录为 `F:/HearthwardDemo/20261006-2/Windows`。历史 SimpleUI 包对应整合前地图分支，不代表当前 main；原包与原验证记录保留追溯。
 
 ## 本次保留和整合的功能
 
@@ -32,13 +32,13 @@ main 的正式 TASK-053 保持“基础通行”含义；UI 分支曾复用该�
 
 ## 玩法与操作
 
-TASK-081已重做弟弟交流页：背景仅留在右侧，按 T 后可选择“帮我采集物资”“帮我搬运物资”“带族人一起工作”“查看当前工作”。物资数量和运输方向先在表单中选择，再核对确认；较长回复可展开阅读。此前 TASK-078—080 的奔跑、任务续接和场景标点一并保留。上述源码已纳入本次 main 集成，独立 Demo 尚未更新，见[TASK-081 报告](docs/qa/TASK-081/REPORT.md)。
+TASK-081已重做弟弟交流页：背景仅留在右侧，按 T 后可选择“帮我采集物资”“帮我搬运物资”“带族人一起工作”“查看当前工作”。物资数量和运输方向先在表单中选择，再核对确认；较长回复可展开阅读。此前 TASK-078—080 的奔跑、任务续接和场景标点一并保留。上述源码已纳入本次 main 集成，本次 Demo 纳入该功能，见[TASK-081 报告](docs/qa/TASK-081/REPORT.md)。
 
 在安全营地内靠近弟弟，可选择木材／石头和 1–4 名空闲族人，也可直接说“带两名族人一起采集木材”。确认后分配岗位，弟弟实际到岗才计入他的劳动力，族人复用已有营地生产；产物进入共享仓储。“查看当前工作”显示人数、岗位累计入库量、弟弟是否到岗及停工原因，可暂停或继续。自然语言也可说“现在采集队做得怎么样了？”、“暂停木材采集队”。集体采集为持续生产，缺资源等待刷新；暂不支持按指定物资总量自动停队。不会自动调走已有岗位的族人，弟弟有未完成个人委托时须先完成或取消。
 
-TASK-080增加任务地点可视指引：在 J 日志中追踪任务后，场景HUD会显示金色菱形、地点名与直线距离；目标离开视野时显示边缘方向箭头。开场拾取遗物后自动改指撤离口，取消追踪或任务完成后隐藏旧标记。可穿过墙体提示方向，尚无地面路线或逐拐点导航。该功能已纳入 main，独立 Demo 尚未更新，见[TASK-080报告](docs/qa/TASK-080/REPORT.md)。
+TASK-080增加任务地点可视指引：在 J 日志中追踪任务后，场景HUD会显示金色菱形、地点名与直线距离；目标离开视野时显示边缘方向箭头。开场拾取遗物后自动改指撤离口，取消追踪或任务完成后隐藏旧标记。可穿过墙体提示方向，尚无地面路线或逐拐点导航。该功能已纳入 main，本次 Demo 纳入该功能，见[TASK-080报告](docs/qa/TASK-080/REPORT.md)。
 
-TASK-079已补充弟弟任务追问和续接：靠近弟弟按 T，可说“还差多少木头，为什么停下来了？”、“先不要继续，我只是问刚才的任务还差多少”、“继续刚才没完成的采集任务”或“刚才的任务做完了吗？”。查询根据真实任务回复；继续会生成确认卡，保留原任务进度，资源和安全条件仍需满足。已验证14/32续接至32/32。族人协作已由 TASK-081 加入；个人定量委托自动换资源点和多任务队列尚未加入。该功能已纳入 main，独立 Demo 尚未更新；验证及响应耗时限制见[TASK-079报告](docs/qa/TASK-079/REPORT.md)。
+TASK-079已补充弟弟任务追问和续接：靠近弟弟按 T，可说“还差多少木头，为什么停下来了？”、“先不要继续，我只是问刚才的任务还差多少”、“继续刚才没完成的采集任务”或“刚才的任务做完了吗？”。查询根据真实任务回复；继续会生成确认卡，保留原任务进度，资源和安全条件仍需满足。已验证14/32续接至32/32。族人协作已由 TASK-081 加入；个人定量委托自动换资源点和多任务队列尚未加入。该功能已纳入 main，本次 Demo 纳入该功能；验证及响应耗时限制见[TASK-079报告](docs/qa/TASK-079/REPORT.md)。
 
 当前新游戏从石堡双床卧室开场：靠近遗物包按 E 取护符，X 叫弟弟跟随；出门沿回廊右行，下楼梯进入庭院，再从有灯笼的城墙侧门前往原后巷撤离点。进入营地后按 J 查看目标。现有夜袭、四区夺回、营地和存档流程保持原规则。
 
@@ -67,7 +67,7 @@ TASK-079已补充弟弟任务追问和续接：靠近弟弟按 T，可说“还�
 
 族人分工：B → 营地管理 → 分工与生产，选择伐木区或采石区，用上一人／下一人选择族人，点击“分配 / 移出”，确认区域已开启生产。每区最多 5 人，产物进入共享仓储；缺少可采资源时等待刷新。普通族人为后台生产，不要求逐个寻找实体 NPC 下令。
 
-TASK-078 加入委托奔跑、指定点余量提示、HUD 委托进度／携带量／阶段及持续停滞原因；当前恢复入口为 T → 查看当前工作 → 尝试继续原委托。营地管理增加伐木区／采石区快捷选择与操作说明。这些修复已纳入 main，已发布的 0.2.0 Demo 不会自动更新；验证见 [TASK-078 报告](docs/qa/TASK-078/REPORT.md)。时间、存档、伙伴和世界玩法契约见[有效设计](docs/design/CURRENT.md)及[当前状态](docs/PROJECT_STATE.md)。
+TASK-078 加入委托奔跑、指定点余量提示、HUD 委托进度／携带量／阶段及持续停滞原因；当前恢复入口为 T → 查看当前工作 → 尝试继续原委托。营地管理增加伐木区／采石区快捷选择与操作说明。这些修复已纳入 main，旧发布包需要下载新版替换程序；验证见 [TASK-078 报告](docs/qa/TASK-078/REPORT.md)。时间、存档、伙伴和世界玩法契约见[有效设计](docs/design/CURRENT.md)及[当前状态](docs/PROJECT_STATE.md)。
 
 ## 制作源与动物演示
 
@@ -77,7 +77,7 @@ TASK-078 加入委托奔跑、指定点余量提示、HUD 委托进度／携带�
 
 当前对话与族人协作的最终 Editor 构建、原生 2/2、灰盒 PIE 48/48、到岗与状态反馈 26/26、正式地图界面 10/10 验证见 [TASK-081 报告](docs/qa/TASK-081/REPORT.md)。此前 UI 整合的构建、原生回归、独立游戏输入与界面检查结果见 [TASK-076 报告](docs/qa/TASK-076/REPORT.md)。旧分支的 PASS 只证明原报告受测版本，不代表当前整合结果。UI 自动操作使用真实 UE Widget／Slate 事件，不能等同于完整真人通关。
 
-当前分支简约UI更新：Editor Development和完整Win64 Shipping构建／烘焙、储物箱与旧UI运行77/77、仓储／地图原生4/4、页面配置18/18和工具33/33通过；原生2项保留隔离LocalPlayer初始化警告。真实Slate存入与取出、数量／容量／距离／时间线拒绝及库存不变已检查，100%～150%字体、720p／超宽屏与大字体滚动已核验。独立Shipping启动、ZIP校验与Source／DLL／程序绑定见 [简约UI报告](docs/qa/TASK-082/SIMPLE-UI-REPORT.md)。之前地图98/98、旅行37/37、地理44/44见历史 [火焰尖端报告](docs/qa/TASK-082/FLAME-TIPS-REPORT.md)，不作为本次全游戏复验。未进行完整真人通关或第二台机器验收。
+地图分支整合前的简约UI历史验证：Editor Development和完整Win64 Shipping构建／烘焙、储物箱与旧UI运行77/77、仓储／地图原生4/4、页面配置18/18和工具33/33通过；原生2项保留隔离LocalPlayer初始化警告。真实Slate存入与取出、数量／容量／距离／时间线拒绝及库存不变已检查，100%～150%字体、720p／超宽屏与大字体滚动已核验。独立Shipping启动、ZIP校验与Source／DLL／程序绑定见 [简约UI报告](docs/qa/TASK-082/SIMPLE-UI-REPORT.md)。之前地图98/98、旅行37/37、地理44/44见历史 [火焰尖端报告](docs/qa/TASK-082/FLAME-TIPS-REPORT.md)，不作为本次全游戏复验。未进行完整真人通关或第二台机器验收。
 
 已有待验收项继续保留：AI 完整理解矩阵未达门槛，CPU 推理曾超时；正式武器握姿、动作观感、角色美术和完整地图性能仍需验收；首版 30—60 分钟完整体验、第二机器及正式发行 RC 尚未闭合。本次未重做模型或玩法平衡；已交付便携Shipping包，未生成新版安装器。原证据与限制见[053—074 交接](docs/handoffs/TASK-053.md)和[工程性能诊断](docs/qa/TASK-072/game-development-runtime-review.md)。
 

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "id": "TASK-083",
+  "title": "最新 main 文件状态整理与 Windows Demo 更新发布",
+  "status": "Active",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-083-demo-update",
+  "source_refs": [
+    "origin/main@af08e1ab",
+    "用户要求整理 main 最新文件状态并发布更新"
+  ],
+  "dependencies": [
+    "TASK-082"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/REPOSITORY_LAYOUT.md",
+    "docs/qa/README.md",
+    "docs/tasks/TASK-083.json",
+    "docs/handoffs/TASK-083.md",
+    "docs/releases/demo-20261006-2/",
+    "scripts/release/",
+    "Source/Hearthward/Update/HearthwardUpdateSubsystem.h"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "Source/Hearthward/Save/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "同步最新 main 并整理有效状态与文件索引",
+    "基于明确源码提交构建 Windows Shipping 包",
+    "定向整合及独立发布包操作验证",
+    "上传新 GitHub 预览 Release、核对附件并同步 main"
+  ],
+  "non_goals": [
+    "玩法重构、资产搬迁或清理用户存档",
+    "正式版完整通关验收"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001"
+  ],
+  "permissions": {
+    "network": "read_write",
+    "install_dependencies": "not_granted",
+    "commit": "owner_authorized",
+    "push": "owner_authorized",
+    "merge": "owner_authorized",
+    "github_release": "owner_authorized"
+  },
+  "notes": [
+    "复用现有发行流程，保留前版 Release 与历史证据；任务 Active 不等同于未发布，人工完整体验验收不代填。"
+  ]
+}
