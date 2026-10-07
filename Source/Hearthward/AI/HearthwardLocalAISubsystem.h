@@ -97,6 +97,9 @@ public:
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 private:
+#if WITH_DEV_AUTOMATION_TESTS
+    friend struct FLocalAIReliabilityAccess;
+#endif
     bool SubmitPlayerTextInternal(AActor* Speaker, AHearthwardCompanionFixture* Companion, const FString& Text, const FString& Source);
     bool StartServer();
     void StopServer();

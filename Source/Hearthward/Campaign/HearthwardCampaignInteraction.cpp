@@ -8,6 +8,7 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
+#include "AIController.h"
 #include "EngineUtils.h"
 using namespace HearthwardData;
 FName UHearthwardCampaignSubsystem::Nearest() const
@@ -63,6 +64,8 @@ bool UHearthwardCampaignSubsystem::Use(FName Id)
         if(P->Stage==TEXT("arrived"))return false;
         P->Stage=P->Stage==TEXT("following")?FName(TEXT("waiting")):FName(TEXT("following"));
         P->Escort=TEXT("player");
+        if(P->Stage==TEXT("waiting"))if(auto* A=Actor(Id))
+            if(auto* AI=Cast<AAIController>(A->GetController()))AI->StopMovement();
         Feedback=P->Stage==TEXT("following")?TEXT("我会跟在你后面。遇到危险就先躲起来，记得回来接我。"):TEXT("我在这里等你。");return true;
     }
     if(Id==TEXT("prologue_relic") || (Id==TEXT("camp_relic") && State.Legacy))

@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "id": "TASK-088",
+  "title": "制作配方查找、可制作筛选与缺料追踪",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/UI/HearthwardScreenCrafting.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/Building/HearthwardBuildingComponent.h",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp"
+  ],
+  "dependencies": [
+    "TASK-085"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-088.md",
+    "docs/tasks/TASK-088.json",
+    "docs/handoffs/TASK-088.md",
+    "docs/qa/TASK-088/",
+    "docs/planning/TASK-084-103/TASK-088/",
+    "Source/Hearthward/UI/HearthwardScreenCrafting.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardCraftingTracker.h",
+    "Source/Hearthward/UI/HearthwardCraftingTracker.cpp",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.cpp",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/CraftingDiscoveryTests.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T088-C01：搜索稳定性；选择/详情属于同一RecipeId；无越界或错配。",
+    "T088-C02：可制作判定；与正式CraftingStatus一致，不只凭材料放行。",
+    "T088-C03：材料缺口；显示可用和参考库存有区别，缺口不负数、不双计仓储。",
+    "T088-C04：批量目标；追踪准确更新且不发起制造/分工，不预留或扣物品。",
+    "T088-C05：交易一致；只按原事务成功次数结算；显示预测与实际单位一致。",
+    "T088-C06：生命周期；跨页面保留；换时间线清空且无旧对象引用。",
+    "T088-C07：输入布局；不误触快捷键，主动作与全部材料可达可读。"
+  ],
+  "non_goals": [
+    "多目标自动制作计划、资源预留、配方解锁改制",
+    "自动向未知资源点导航或自动委托",
+    "新增持久化字段"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-004",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "初始任务包仅编写任务单；2026-10-07本会话用户已授权逐单本地实施，当前Active，实际实现与验证记录见REPORT。",
+    "Owner沿项目记录；Reviewer和Issue未指派。实际分支codex/TASK-084-103-iteration，完整HEAD6fcf5c22e965f0f7409438f19bc7b09e96ffb058加本轮未提交差异，未获远端发布权限。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 当前用户逐单本地实施授权下，必要范围增补ScreenWidget.cpp：仅复用原Draft中文搜索输入与原时间线重置钩子，避免平行输入控件/额外生命周期设施；不涉及玩法或保存格式。",
+    "2026-10-07最新原生子集docs/qa/TASK-088/native-green-20261007.json，原始.agent-local/qa/TASK-090-100/native-green-20261007/index.json；本单2/2 Success、1 warning/0 errors。首轮搜索失败及旧原始日志保留。构建build-green-repair-20261007/result.json ok=true；Source已释放并冻结，README/PROJECT_STATE归root。正常输入/IME、最终渲染、兼容档/独立Load、Owner/真人、二机、性能与发行分层未验。"
+  ]
+}

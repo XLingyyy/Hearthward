@@ -3,6 +3,8 @@
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
+#include "HearthwardPresentationReadModels.h"
+#include "HearthwardPreparationView.h"
 #include "../Experience/HearthwardTraversalComponent.h"
 #include "Engine/GameInstance.h"
 #include "../Camp/HearthwardCampSubsystem.h"
@@ -27,38 +29,9 @@
 using namespace HearthwardData;
 namespace
 {
-FString CompanionPhaseText(EHearthwardCompanionPhase Phase)
-{
-    using P=EHearthwardCompanionPhase;
-    switch(Phase)
-    {
-    case P::GoingToSource:return TEXT("前往采集点");
-    case P::Gathering:return TEXT("正在采集");
-    case P::Returning:return TEXT("返营入库");
-    case P::ReturningBlocked:return TEXT("受阻返营");
-    case P::WaitingAtCamp:return TEXT("营地等待");
-    case P::HoldingSafely:return TEXT("受阻停留");
-    case P::Completed:return TEXT("委托完成");
-    case P::GoingToWorkshop:return TEXT("前往工坊");
-    case P::TakingMaterials:return TEXT("领取材料");
-    case P::TakingCargo:return TEXT("领取物资");
-    case P::GoingToPlayer:return TEXT("前往会合");
-    case P::HandingOff:return TEXT("交付物资");
-    case P::LeadingAnimal:return TEXT("牵引牲畜");
-    case P::CampBatchWorking:return TEXT("营地生产");
-    default:return TEXT("等待指令");
-    }
-}
 FString CompanionBlockText(const AHearthwardCompanionFixture* Brother)
 {
-    const FString& Reason=Brother->BlockReason;
-    if(Reason.StartsWith(TEXT("实际资源不足")))return TEXT("指定采集点已采尽；请改派其他资源点");
-    if(Reason==TEXT("SOURCE_UNAVAILABLE"))return TEXT("指定资源点不可采；请检查余量或等待刷新");
-    if(Reason==TEXT("TOOL_REQUIRED"))return TEXT("缺少可用采集工具；请补充或维修工具");
-    if(Reason==TEXT("ACTIVE_COMBAT"))return TEXT("附近正在战斗；安全后再继续");
-    if(Reason==TEXT("AREA_UNSAFE") || Reason==TEXT("SOURCE_NOT_TRUSTED_SAFE") || Reason==TEXT("ROUTE_NOT_TRUSTED_SAFE"))return TEXT("采集区域或路线不安全；请先排除威胁");
-    if(Reason==TEXT("去程受阻") || Reason==TEXT("PATH_BLOCKED") || Reason==TEXT("ROUTE_UNAVAILABLE"))return TEXT("采集路线受阻；请检查通路后重试");
-    return Reason;
+    return HearthwardPresentation::CompanionBlockText(Brother->BlockReason);
 }
 }
 FString UHearthwardScreenWidget::Resolve(const FString& Bind) const
@@ -82,7 +55,11 @@ FString UHearthwardScreenWidget::Resolve(const FString& Bind) const
 void UHearthwardScreenWidget::ComposeInventory(bool Storage)
 {
     if(Storage) ComposeStorage();
-    else ComposeInventoryScreen();
+    else
+    {
+        if(!InventorySelectionEpoch.IsValid())InventorySelectionEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+        ComposeInventoryScreen();
+    }
 }
 
 void UHearthwardScreenWidget::ComposeSkills()
@@ -306,12 +283,19 @@ void UHearthwardScreenWidget::ComposeJournal()
         Add(TEXT("journal.detail.name"),TEXT("text"),Text(R,TEXT("name")),{788,158},{808,66},28).Color=Color(TEXT("gold"));
         if(Quests)
         {
-            const auto Location=Find(TEXT("locations"),Text(R,TEXT("location")));
-            Add(TEXT("journal.detail.location"),TEXT("text"),TEXT("相关地点 · ")+Text(Location,TEXT("name")),{788,240},{808,38},17).Color=Color(TEXT("muted"));
+            const auto* Story=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+            const auto Preparation=HearthwardPreparation::Read(G,Story,Selection);
+            const FName LocationId=Story->Active()?Story->QuestLocation(Selection):FName(*Text(R,TEXT("location")));
+            const auto Location=Find(TEXT("locations"),LocationId.ToString());
+            const FString LocationText=G->Claimed.Contains(Selection)?TEXT("已完成"):Preparation.ReadyToClaim?
+                TEXT("条件已达成 · 在本页领取奖励"):!Preparation.LocationLabel.IsEmpty()?
+                TEXT("相关目标 · ")+Preparation.LocationLabel:TEXT("相关地点 · ")+Text(Location,TEXT("name"));
+            Add(TEXT("journal.detail.location"),TEXT("text"),LocationText,{788,240},{808,38},17).Color=Color(TEXT("muted"));
             Add(TEXT("journal.detail.objectiveHeading"),TEXT("text"),TEXT("当前目标"),{788,294},{390,42},18);
             Add(TEXT("journal.detail.progress"),TEXT("text"),FString::Printf(TEXT("进度 %d / %.0f"),G->QuestProgress(Selection),Number(R,TEXT("required"))),{1330,298},{266,36},16).Align=TEXT("right");
             Add(TEXT("journal.detail.objectiveRule"),TEXT("line"),TEXT(""),{788,338},{808,1}).Color=Color(TEXT("bronze"))*.55f;
-            Add(TEXT("journal.detail.objective"),TEXT("text"),Text(R,TEXT("objective")),{788,359},{808,144},19).Color=Color(TEXT("gold"));
+            const FString Objective=Preparation.Visible?Preparation.NextStep+TEXT("\n")+Text(R,TEXT("objective")):Text(R,TEXT("objective"));
+            Add(TEXT("journal.detail.objective"),TEXT("text"),Objective,{788,359},{808,144},19).Color=Color(TEXT("gold"));
             Add(TEXT("journal.detail.descriptionHeading"),TEXT("text"),TEXT("任务详情"),{788,516},{390,42},18);
             Add(TEXT("journal.detail.reward"),TEXT("text"),FString::Printf(TEXT("经验值 +%.0f"),Number(R,TEXT("xp"))),{1315,520},{281,36},16).Align=TEXT("right");
             Add(TEXT("journal.detail.descriptionRule"),TEXT("line"),TEXT(""),{788,560},{808,1}).Color=Color(TEXT("bronze"))*.55f;
@@ -387,8 +371,7 @@ void UHearthwardScreenWidget::ComposeHUD()
         auto& E=Elements.Last(); E.Font=Font*TextScale; E.FontRole=TEXT("body"); E.TextInset=0;
         E.LayoutId=Id; E.Component=Component; return E;
     };
-
-    // Vitals and companion stay fixed; the quest occupies a transient area below the companion.
+    // Current guidance and the optional material target use separate rows below the companion.
     const float Values[]={G->Health,G->Hunger,G->Stamina},Maximum[]={G->MaxHealth(),100,G->MaxStamina()};
     const TCHAR* Labels[]={TEXT("生命"),TEXT("饱食"),TEXT("体力")},*Colors[]={TEXT("health"),TEXT("hunger"),TEXT("stamina")};
     const float VitalTop=28,VitalPitch=30*TextScale,VitalHeight=24*TextScale,VitalInset=3*TextScale;
@@ -402,13 +385,36 @@ void UHearthwardScreenWidget::ComposeHUD()
         HUD(TEXT("text"),FString::Printf(TEXT("%.0f / %.0f"),Values[I],Maximum[I]),{BarX+BarWidth+14,Y},{180,30*TextScale},18,Id+TEXT(".value"),TEXT("hud.vitals"));
     }
     const float CompanionY=VitalTop+2*VitalPitch+VitalInset+VitalHeight+14*TextScale,CompanionTextX=48+106*TextScale;
-    const float QuestY=CompanionY+114*TextScale+24,DescriptionY=QuestY+45*TextScale,DescriptionHeight=96*TextScale;
+    const float QuestY=CompanionY+114*TextScale+24,DescriptionY=QuestY+45*TextScale,DescriptionHeight=96;
     const auto Quest=Find(TEXT("quests"),G->TrackedQuest.ToString());
-    if(GetHUDQuestNoticeRemaining()>0)
+    const auto Preparation=HearthwardPreparation::Read(G,Campaign,G->TrackedQuest);
+    const auto* PlayerSurvival=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
+    bool Downed=PlayerSurvival && PlayerSurvival->State.Life==EHearthwardLife::Downed;
+    for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+    {
+        const auto* Survival=It->FindComponentByClass<UHearthwardSurvivalComponent>();
+        Downed|=Survival && Survival->State.Life==EHearthwardLife::Downed;break;
+    }
+    if(!Downed && Preparation.Visible)
+    {
+        HUD(TEXT("text"),TEXT("◇  ")+Preparation.Heading,{48,QuestY},{650,42*TextScale},24,TEXT("hud.quest.heading"),TEXT("hud.quest")).Color=Color(TEXT("gold"));
+        HUD(TEXT("text"),Preparation.NextStep,{72,DescriptionY},{650,DescriptionHeight},16,TEXT("hud.quest.objective"),TEXT("hud.quest"));
+        HUD(TEXT("button"),Preparation.ReadyToClaim?TEXT("打开日志领奖"):Preparation.Action==TEXT("page:camp")?TEXT("查看营地管理"):
+            Preparation.Action==TEXT("page:dialogue")?TEXT("查看交流与工作"):TEXT("查看任务详情"),{72,DescriptionY+DescriptionHeight},{270,42*TextScale},18,
+            TEXT("hud.quest.next"),TEXT("hud.quest")).Action=Preparation.Action;
+    }
+    else if(!Downed && GetHUDQuestNoticeRemaining()>0)
     {
         const auto Notice=Find(TEXT("quests"),HUDQuestNotice.ToString());
         HUD(TEXT("text"),TEXT("◇  ")+Text(Notice,TEXT("name")),{48,QuestY},{650,42*TextScale},24,TEXT("hud.quest.heading"),TEXT("hud.quest")).Color=Color(TEXT("gold"));
         HUD(TEXT("text"),Text(Notice,TEXT("objective")),{72,DescriptionY},{650,DescriptionHeight},20,TEXT("hud.quest.objective"),TEXT("hud.quest"));
+    }
+    const FString MaterialTarget=CraftingTrackerText(true);
+    if(!Downed && !MaterialTarget.IsEmpty())
+    {
+        const float TargetX=TextScale>1.25f?400:48,TargetY=DescriptionY+DescriptionHeight+42*TextScale+12;
+        HUD(TEXT("text"),MaterialTarget,{TargetX,TargetY},{700,60*TextScale},18,TEXT("hud.crafting.target"),TEXT("hud.quest"));
+        HUD(TEXT("button"),TEXT("查看材料详情"),{TargetX,TargetY+60*TextScale},{240,42*TextScale},18,TEXT("hud.crafting.open"),TEXT("hud.quest")).Action=TEXT("page:crafting");
     }
 
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
@@ -422,15 +428,17 @@ void UHearthwardScreenWidget::ComposeHUD()
         else if(RoutineActivity==TEXT("check_camp")) RoutineLabel=TEXT("查看营地");
         else if(RoutineActivity==TEXT("return_camp")) RoutineLabel=TEXT("回营");
         else if(RoutineActivity==TEXT("rest")) RoutineLabel=TEXT("休息");
-        const auto* Team=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.Regions.FindByPredicate([](const auto& R)
-            {return R.Brother && !R.Facility.IsValid() && (R.Job==TEXT("wood") || R.Job==TEXT("stone"));});
-        const bool HasTask=It->GetRequested()>0 && It->GetPhase()!=EHearthwardCompanionPhase::Idle && It->GetPhase()!=EHearthwardCompanionPhase::Cancelled
-            && (!Team || It->GetPhase()!=EHearthwardCompanionPhase::Completed);
-        const FString Order=HasTask?CompanionPhaseText(It->GetPhase()):Team?(Team->Enabled?TEXT("营地采集 · T 查看进度"):TEXT("采集队已暂停")):G->CompanionOrder==TEXT("follow")?TEXT("跟随中"):G->CompanionOrder==TEXT("attack")?TEXT("协助进攻")
+        const auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+        const auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+        const auto Personal=HearthwardPresentation::ReadCompanion(*It,Store,GetOwningPlayerPawn());
+        const auto Team=HearthwardPresentation::ReadWorkParty(Camp,Store,Camp->State.CampAt(GetOwningPlayerPawn()->GetActorLocation()));
+        const bool HasTask=Personal.Available && Personal.HasTask;
+        const bool PersonalForeground=HasTask && (!Personal.Terminal || !Team.HasTeam);
+        const FString Order=PersonalForeground?HearthwardPresentation::CompanionPhaseText(Personal.Phase):Team.HasTeam?
+            (Team.Enabled?Team.BrotherWorking?TEXT("营地采集 · 已到岗"):TEXT("营地采集 · 尚未计入劳动力"):TEXT("采集队已暂停")):G->CompanionOrder==TEXT("follow")?TEXT("跟随中"):G->CompanionOrder==TEXT("attack")?TEXT("协助进攻")
             :G->IsCompanionRoutineEnabled()?TEXT("自由活动")+(!RoutineLabel.IsEmpty()?TEXT(" · ")+RoutineLabel:TEXT("")):TEXT("原地等待");
-        HUD(TEXT("text"),HasTask?FString::Printf(TEXT("委托 %d / %d · 携带 %d"),It->GetDelivered(),It->GetRequested(),It->GetCarried()):Team?FString::Printf(TEXT("%s · 与%d名族人协作"),*HearthwardAgent::ItemText(Team->Job),Team->Workers.Num()):TEXT("暂无委托"),{CompanionTextX,CompanionY+37*TextScale},{370,30*TextScale},18,TEXT("hud.companion.progress"),TEXT("hud.companion"));
-        auto& Progress=HUD(TEXT("bar"),TEXT(""),{CompanionTextX,CompanionY+69*TextScale},{168*TextScale,7},18,TEXT("hud.companion.bar"),TEXT("hud.companion"));
-        Progress.Color=Color(TEXT("bronze")); Progress.Value=HasTask?float(It->GetDelivered())/It->GetRequested():0;
+        HUD(TEXT("text"),PersonalForeground?HearthwardAgent::ItemText(Personal.Item)+TEXT("委托 · T 查看工作"):Team.HasTeam?
+            FString::Printf(TEXT("%s · %d名族人 + 弟弟 · T"),*HearthwardAgent::ItemText(Team.Job),Team.Workers.Num()):TEXT("暂无委托"),{CompanionTextX,CompanionY+37*TextScale},{450,30*TextScale},18,TEXT("hud.companion.progress"),TEXT("hud.companion"));
         HUD(TEXT("text"),Order,{CompanionTextX,CompanionY+81*TextScale},{390,32*TextScale},18,TEXT("hud.companion.order"),TEXT("hud.companion"));
         break;
     }
@@ -490,6 +498,8 @@ void UHearthwardScreenWidget::ComposeHUD()
         HUD(TEXT("text"),Label,{1120,FeedbackY},{504,90*TextScale},18,Id,TEXT("hud.feedback")).FeedbackUntil=Deadline;
         FeedbackY+=98*TextScale;
     };
+    ObserveCampFeedback();
+    Feedback(CampFeedback.Notice,TEXT("hud.camp.return"),CampFeedback.Revision);
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
     {
         const auto Phase=It->GetPhase();
@@ -497,10 +507,9 @@ void UHearthwardScreenWidget::ComposeHUD()
             || Phase==EHearthwardCompanionPhase::WaitingAtCamp || Phase==EHearthwardCompanionPhase::HoldingSafely))
         {
             const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
-            const FString Help=It->BlockReason.StartsWith(TEXT("实际资源不足"))?TEXT("其他采集点：营地管理 → 田野与牧场")
-                :FString::Printf(TEXT("靠近后按 %s，选择「继续未完成委托」"),*HearthwardInput::Label(Bindings,TEXT("companion.dialogue")));
-            Feedback(FString::Printf(TEXT("弟弟 · %s · %d / %d\n%s\n%s"),
-                *CompanionPhaseText(Phase),It->GetDelivered(),It->GetRequested(),*CompanionBlockText(*It),
+            const FString Help=FString::Printf(TEXT("靠近后按 %s，选择「查看当前工作」"),*HearthwardInput::Label(Bindings,TEXT("companion.dialogue")));
+            Feedback(FString::Printf(TEXT("弟弟 · %s\n%s\n%s"),
+                *HearthwardPresentation::CompanionPhaseText(Phase),*CompanionBlockText(*It),
                 *Help),TEXT("hud.companion.blocked"),0,false);
         }
         break;
@@ -539,7 +548,6 @@ void UHearthwardScreenWidget::ComposeHUD()
     {
         if(const auto* S=It->FindComponentByClass<UHearthwardSurvivalComponent>();S && S->State.Life==EHearthwardLife::Downed)
             {
-            const auto* PlayerSurvival=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
             const FString Reason=PlayerSurvival->RescueBlockReason(S);
             const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
             HUD(TEXT("text"),Reason.IsEmpty()?HearthwardInput::Label(Bindings,TEXT("interact"))+TEXT(" 扶起弟弟（5秒；移动或受伤中断）"):Reason,

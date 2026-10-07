@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "id": "TASK-102",
+  "title": "游戏与本地模型联合性能、内存及运行优化",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/qa/TASK-072/normal-new-cpu-vulkan-runtime-review.md",
+    "docs/qa/TASK-072/game-development-runtime-review.md",
+    "config/local-ai.lock.json",
+    "Source/Hearthward/AI/HearthwardLocalAIRuntime.cpp",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+    "docs/qa/TASK-102/REPORT.md",
+    "docs/qa/TASK-102/EVIDENCE_INDEX.json",
+    "docs/qa/TASK-102/settled-dialogue-vulkan-20261007-01/summary.json",
+    "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/summary.json"
+  ],
+  "dependencies": [
+    "TASK-101"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-102.md",
+    "docs/tasks/TASK-102.json",
+    "docs/handoffs/TASK-102.md",
+    "docs/qa/TASK-102/",
+    "docs/planning/TASK-084-103/TASK-102/",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenMap.cpp",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAIRuntime.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "docs/assets/TASK-102/",
+    "Source/Hearthward/Tests/PerformanceLifecycleRegressionTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T102-C01：目标配置；符合批准配置，覆盖项明确，无隐藏降画质/限帧。",
+    "T102-C02：双后端场景；逐场独立报告全部帧时指标，不以最佳一场代表全局。",
+    "T102-C03：端到端延迟；按批准p95/ready/0.2秒门槛，缺失阶段不算成功。",
+    "T102-C04：内存；无持续增长、OOM或崩溃，<1GB风险清楚登记。",
+    "T102-C05：优化正确性；性能改善不改变玩法规则、显示实时性或保存结果。",
+    "T102-C06：视觉回归；无不可接受跳变/遮挡/交互破坏，Owner视觉结论单列。",
+    "T102-C07：最终可重算；第三方可重新计算指标；未测/失败场景未被隐藏。"
+  ],
+  "non_goals": [
+    "改验收阈值/降目标画质/换模型/虚构硬件数据",
+    "泛化全仓性能重构",
+    "用平均FPS、纯Editor或固定空镜宣称全局性能达标"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-020",
+    "T-021",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 Root授权新增docs/qa/TASK-102/run_standalone_joint.py与本单证据骨架；仅normal_new_initial_scene_dialogue_fixed_view稳定API诊断，不给完整序章/六场/OS/Shipping信用；新runner由Root实际运行，状态另见本单REPORT。",
+    "STATIC_CHECK7项通过为静态与既有真实CSV复算，CPU／Vulkan单场实际结果另记，六条件矩阵／暖p95／首次Paint／二机仍NOT_RUN。",
+    "首轮boot parser大小写失败已保留；Root仅QA解析修复并重解析同9000帧，116.4529097秒/p99 11.7866ms/1%Low 2.0998256263FPS/>50ms7帧。model generations0，输入在CaptureExit后，无联合证据。",
+    "第二次24000计划boot在Frame3 Renderer AV/Background Worker启动CRASH，无完整CSV/无模型，未到frame60画质命令。官方UE-230827仅相关breadcrumb线索，未证明同因；不关Nanite/降画质/归因OOM或驱动。",
+    "五个其他条件缺真实营地day/night设施时间receipt、持续三人战斗、真实路线移动/WorldPartition加载、经营生产与MenuPausefalse，均工程NOT_RUN/DEPENDENCY；不制作虚假进度。",
+    "当前实际HEAD6fcf5c22e965f0f7409438f19bc7b09e96ffb058+本地未提交批次改动，最终build/完整候选绑定及MasterREADME/公共检查由Root收尾；源代码/旧072/模型锁/保存格式未改。",
+    "2026-10-07 Root真实Vulkan稳定单场settled-dialogue-vulkan-20261007-01已归档：6183帧／61.1867968秒，p99 16.7755ms>16.67、1%Low49.0051591FPS<60为FAIL，>50ms0为PASS；actual1920×1080 D3D12 SM6 Development/sg3/100%原配置。单条API输入generation完整请求在CSV内，startup10.617秒／提交→HTTP24.407秒；HTTP正常raw nature_collect/known_target被TARGET_REQUIRED→clarify无candidate，语义FAIL，不计真实任务执行或六场通过。",
+    "Vulkan单场12次资源采样无读错误，可用物理RAM最低0.558826GiB、3次低于1GiB登记容量风险；UE/model WorkingSet峰4.640266/2.646286GiB，GPU总量不能归因单进程。未证明OOM／无持续增长，长路线／每进程VRAM、CPU另有独立实测，六场／正常OS／Shipping／暖p95／Paint／最终build绑定仍NOT_RUN，自有UE正常退出。",
+    "2026-10-07 CPU独立单场settled-dialogue-cpu-20261007-01实际11603帧／129.8656161秒：p99 16.5324ms PASS、1%Low51.3488456FPS FAIL、>50ms2/11603 PASS；actual1920×1080 D3D12 SM6 Development/sg3/100%保持。startup8.496秒／generation→HTTP失败120.007秒／提交128.69秒，完整区间在CSV；MODEL_UNAVAILABLE/raw空、未执行，分类HTTPtimeout与Vulkan语义错误分开。",
+    "CPU17资源样本读错0，RAM最低0.424530GiB／9次低于1GiB容量警告，UE/model WorkingSet峰4.639442/4.139626GiB，GPU总量1505—3932MiB不归因单进程。未证明timeout由RAM导致；两个单场独立分母，不借其代替六场／正常OS／Shipping／暖p95／Paint／Owner／二机，实际build/candidate绑定另记；根Agent验证自有UE与模型进程退出。"
+  ]
+}

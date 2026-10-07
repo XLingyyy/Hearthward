@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "id": "TASK-091",
+  "title": "地图可读性与关键入口转折引导",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/UI/HearthwardScreenMap.cpp",
+    "Source/Hearthward/UI/HearthwardQuestGuidance.cpp",
+    "Source/Hearthward/UI/HearthwardScreenMapTest.inl",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "docs/planning/TASK-084-103/ROUTE_MANIFEST.json",
+    ".agent-local/qa/TASK-091/native-stair-top-20261007-red/native/index.json",
+    ".agent-local/qa/TASK-091/native-stair-top-20261007-green/native/index.json",
+    ".agent-local/qa/TASK-091/native-stair-top-20261007-green/build.json",
+    ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-07/results.json",
+    ".agent-local/qa/TASK-091/native-side-gate-20261007-red/native/index.json",
+    ".agent-local/qa/TASK-091/native-side-gate-20261007-green/native/index.json",
+    ".agent-local/qa/TASK-091/native-side-gate-20261007-green/build.json",
+    ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-08/results.json",
+    "docs/qa/TASK-103/NAV08_FINAL_TARGET_FIRST_BLOCKER.json",
+    "docs/qa/TASK-103/NAV09_11_PROJECTION_HISTORY.json",
+    "docs/qa/TASK-103/NAV12_GROUNDED_FINAL_FIRST_BLOCKER.json",
+    ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-09/results.json",
+    ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-10/results.json",
+    ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-11/results.json",
+    ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-12/results.json"
+  ],
+  "dependencies": [
+    "TASK-090"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-091.md",
+    "docs/tasks/TASK-091.json",
+    "docs/handoffs/TASK-091.md",
+    "docs/qa/TASK-091/",
+    "docs/planning/TASK-084-103/TASK-091/",
+    "Source/Hearthward/UI/HearthwardScreenMap.cpp",
+    "Source/Hearthward/UI/HearthwardQuestGuidance.cpp",
+    "Source/Hearthward/UI/HearthwardQuestGuidance.h",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardGuidanceRoutes.cpp",
+    "Source/Hearthward/UI/HearthwardGuidanceRoutes.h",
+    "Resources/Data/quest_guidance.json",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/MapGuidanceRouteTests.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWorldMap.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T091-C01：坐标互逆；误差按原精度界限记录，人物与建筑位置对应，无横纵拉伸。",
+    "T091-C02：卧室转折；提示可解释实际入口，接近终点不指向错误高度层。",
+    "T091-C03：偏离返走；不强迫过点，不累积旧节点，不改任务进度。",
+    "T091-C04：时间线；旧标记清除，新阶段目标正确，未知信息不泄漏。",
+    "T091-C05：传送；拒绝有原因，合法地图暂停不误挡，落点可走。",
+    "T091-C06：布局；保持全屏矩形与比例，关键入口可识别且无深色留边。",
+    "T091-C07：无数据降级；普通目标标记仍安全工作，无崩溃、不阻断任务。"
+  ],
+  "non_goals": [
+    "改正式地图边界或任务触发/奖励",
+    "全地图地面导航线和室内分层系统",
+    "扩大传送权限、揭露未知剧情"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "Owner沿项目记录为XLingyyy；Reviewer和Issue未指派，实际共享分支codex/TASK-084-103-iteration，本地未提交。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。",
+    "历史截点（已被后续证据更新）：2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "历史截点（已被后续证据更新）：2026-10-07 本轮：已配置关键入口标签并实现加载后堡垒几何/地面高度派生节点；节点按当前位置重算，首次救援仅使用已知旧路岔口，不保存节点进度。HUD/地图消费者与实际堡垒夹具测试已接入；本轮build及原生1/1实际Success，正常实走尚NOT_RUN。",
+    "历史截点（已被后续证据更新）：2026-10-07 当前用户已授权本批本地执行；为已复现的倒地提示重叠/等待获救者HUD与地图不同步，最小扩展上述专用测试与地图目标消费者，不扩展Content/Save或远端权限。",
+    "历史截点（已被后续证据更新）：2026-10-07 build-green-repair-20261007实际Development Editor ok:true；native-green-20261007 LoadedFortressSpatialNodes 1/1 Success、0警告/错误，导出docs/qa/TASK-091/native-green-20261007.json，原test/devices/reportCreatedOn保留。仅本单1条子集，不借联合任务分母。正常OS实走、完整首救/渲染/坐标互逆/Load/传送仍NOT_RUN；任务Active。",
+    "历史截点（已被后续证据更新）：2026-10-07 Nav06普通API路径真实到达楼梯顶40.0558cm后提示未切，复现于既有LoadedFortressSpatialNodes新增相对到达偏移断言。root实际RED native-stair-top-20261007-red/native/index.json reportCreatedOn2026.10.07-01.35.33，同filter1Fail/0warning/1error（expected bottom实际top）；生产.4最小楼梯顶切换Source修复后公开Editor Win64 Development build.project oktrue/dryrunfalse/returncode0，GREEN native-stair-top-20261007-green/native/index.json reportCreatedOn2026.10.07-01.39.30，同filter1Success/0warning/0error。旧RED/先前GREEN保留，不合并为两条分母；程序位置采样保护指引解析，未执行正常OS或完整下楼通路。候选5未package，Nav07及最终SourceFreeze等root真实结果，任务Active、无新设计/Save/奖励/传送修改。",
+    "历史截点（已被后续证据更新）：2026-10-07 Nav07实际普通API导航在.4顶节点到达后已切bottom，bottom到46.580054861cm后切court；court目标89800/56300/22179.667687，实到89837.672909/56305.525727/22178.684158、38.088699693cm仍同routeID/坐标而停止，自有Editor退出true。没有发起后续final-world路径，不能推断终点障碍/碰撞；新gate NativeRED NOT_RUN，仅test-only准备，无新productionfix/GREEN。未到营地/保存/首救/OS，Shipping5和最终SourceFreeze待。",
+    "历史截点（已被后续证据更新）：2026-10-07 新侧门同case独立RED→GREEN：native-side-gate-red/native/index.json report01.44.03实际1Fail/0W/1E，唯一arrivalVisible期待false；生产.4侧门≤50cm三维到达圆内结束节点后public Editor Win64 Development build实际成功，native-side-gate-green/native/index.json report01.45.37同LoadedFortressSpatialNodes1Success/0W/0E，100cm内侧保留节点。旧top红绿两份与本次两份独立，不合两条分母或一次全套；程序位置解析夹具不代OS/Shipping。Nav08实际运行尚无结果，候选5未package/finalSourceFreeze，release准备/最终矩阵待。",
+    "历史截点（已被后续证据更新）：2026-10-07 Nav08普通API四NODE_REACHED真实door40.9494642/top39.92651791/bottom46.73882102/gate40.73301652cm，侧门后route_visible=false、world仍90000/62000/22145.612411，dist5696.434311756cm。两Source指引fix实际通过；随后final FindPath IsValid=false/IsPartial=false/Navbusyfalse/start projectiontrue z22103.4032/goal projectionfalse零向量无位置信用，FAILED_FIRST_BLOCKER，自有退出true，未开始final路径/未到终点、无camp/newsave/OS，普通步行或障碍根因未定。Nav09仅QA opt-in滚动≤2000候选→真实GeneratedNav投影→完整path/controller→普通实际移动准备，无Source节点/Invoker/猜点写入；Shipping5/finalfreeze/package/OS/ZIP待root实际，release仍准备。",
+    "2026-10-07当前：生产.4两项指引修复的四次独立同case Native红绿已验；Development/API实际四节点完成。Nav12确认地形后首段普通PathFollowing移动1976.913883cm，第二段FindPath valid=true/partial=true在SimpleMove前停止。自有Editor退出true，完整撤离/营地/首救/新保存/正常OS路线仍未完成；地图或碰撞根因未定。 顶/侧门四次独立Native单case各RED1F0W1E→GREEN1P0W0E保留；Shipping5实际构建成功，OS/渲染完整路线未验。"
+  ]
+}

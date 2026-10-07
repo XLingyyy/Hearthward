@@ -1,0 +1,212 @@
+{
+  "task": "TASK-090",
+  "source_report": ".agent-local/qa/TASK-090-100/native-red-20261007/index.json",
+  "subset": true,
+  "source_state": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058 + root coordinated uncommitted TASK-084-103 workspace",
+  "reportCreatedOn": "2026.10.06-20.57.42",
+  "devices": [
+    {
+      "deviceName": "LAPTOP-R8NPOP05",
+      "instance": "94B40CA8455B605981CC19B7EBA13792",
+      "instanceName": "LAPTOP-R8NPOP05-63092",
+      "platform": "WindowsEditor",
+      "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "model": "Default",
+      "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+      "rAMInGB": 16,
+      "renderMode": "SM6",
+      "rHI": "",
+      "appInstanceLog": ""
+    }
+  ],
+  "source_report_summary": {
+    "succeeded": 2,
+    "succeededWithWarnings": 2,
+    "failed": 3,
+    "notRun": 0,
+    "totalDuration": 3.677802562713623
+  },
+  "tests_found": 2,
+  "success": 0,
+  "fail": 2,
+  "warnings": 2,
+  "errors": 6,
+  "tests": [
+    {
+      "testDisplayName": "BrotherDownedSuppressesMaterials",
+      "fullTestPath": "Hearthward.Iteration.Task090.BrotherDownedSuppressesMaterials",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "94B40CA8455B605981CC19B7EBA13792"
+      ],
+      "duration": 1.1221070289611816,
+      "dateTime": "2026.10.06-20.57.38",
+      "entries": [
+        {
+          "event": {
+            "type": "Warning",
+            "message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_0' does not have a valid PlayerInput object. Failed to load user settings.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.38"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogStreaming: FlushAsyncLoading(372): 1 QueuedPackages, 0 AsyncPackages",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.38"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogSlate: Synchronously lazy loading font file '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' with subface index 0 in Game thread.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.39"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogSlate: Took 0.022350 seconds to synchronously load lazily loaded font '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' (24977K) on Game thread.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.39"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogSlate: Freetype font face in memory successfully created with synchronously loaded raw font file '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' subface 0 in Game thread.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.39"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogSlate: Font face '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' subface index 0 successfully added to font face map in Game thread.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.39"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Emergency HUD hides ordinary material details rather than overlapping rescue feedback' to be false.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CraftingDiscoveryTests.cpp",
+          "lineNumber": 153,
+          "timestamp": "2026.10.06-20.57.40"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Emergency HUD hides the ordinary material target row' to be false.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CraftingDiscoveryTests.cpp",
+          "lineNumber": 154,
+          "timestamp": "2026.10.06-20.57.40"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Emergency HUD has no alternate visible crafting entry action' to be false.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CraftingDiscoveryTests.cpp",
+          "lineNumber": 155,
+          "timestamp": "2026.10.06-20.57.40"
+        }
+      ],
+      "warnings": 1,
+      "errors": 3,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "PlayerDownedSuppressesMaterials",
+      "fullTestPath": "Hearthward.Iteration.Task090.PlayerDownedSuppressesMaterials",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "94B40CA8455B605981CC19B7EBA13792"
+      ],
+      "duration": 0.837893009185791,
+      "dateTime": "2026.10.06-20.57.40",
+      "entries": [
+        {
+          "event": {
+            "type": "Warning",
+            "message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_1' does not have a valid PlayerInput object. Failed to load user settings.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.40"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Emergency HUD hides ordinary material details rather than overlapping rescue feedback' to be false.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CraftingDiscoveryTests.cpp",
+          "lineNumber": 153,
+          "timestamp": "2026.10.06-20.57.40"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Emergency HUD hides the ordinary material target row' to be false.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CraftingDiscoveryTests.cpp",
+          "lineNumber": 154,
+          "timestamp": "2026.10.06-20.57.40"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Emergency HUD has no alternate visible crafting entry action' to be false.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CraftingDiscoveryTests.cpp",
+          "lineNumber": 155,
+          "timestamp": "2026.10.06-20.57.40"
+        }
+      ],
+      "warnings": 1,
+      "errors": 3,
+      "artifacts": []
+    }
+  ]
+}

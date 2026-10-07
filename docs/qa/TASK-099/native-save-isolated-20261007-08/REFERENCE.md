@@ -1,0 +1,1 @@
+本轮复用07成功构建的Development Editor。全新UUID隔离旧Save夹具，实际仅1项Hearthward.Save.ActualLoadPointInvalidatesOldCommandTicket，Success/0warnings/0errors；不与07同池重复执行。源码快照与运行前置保留于private同名run的tracked.patch、untracked-files.txt、profile。index/result按原字节归档；process启动13条Smoke错误单列，不加入测试分母。

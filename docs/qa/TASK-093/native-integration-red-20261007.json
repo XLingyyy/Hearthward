@@ -1,0 +1,172 @@
+{
+  "source": "Hearthward\\.agent-local\\qa\\TASK-088-101\\native-integration-20261007\\index.json",
+  "received_date": "2026-10-07",
+  "baseline_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "branch": "codex/TASK-084-103-iteration",
+  "source_state": "dirty first-run implementation before corrected fixture",
+  "devices": [
+    {
+      "deviceName": "LAPTOP-R8NPOP05",
+      "instance": "7C3CDB48427A858EA50CFA8591485F30",
+      "instanceName": "LAPTOP-R8NPOP05-63536",
+      "platform": "WindowsEditor",
+      "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "model": "Default",
+      "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+      "rAMInGB": 16,
+      "renderMode": "SM6",
+      "rHI": "",
+      "appInstanceLog": ""
+    }
+  ],
+  "tests": [
+    {
+      "testDisplayName": "LocalFacilitiesAndWork",
+      "fullTestPath": "Hearthward.Iteration.Task093.LocalFacilitiesAndWork",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "7C3CDB48427A858EA50CFA8591485F30"
+      ],
+      "duration": 0.8199684023857117,
+      "dateTime": "2026.10.06-20.46.10",
+      "entries": [
+        {
+          "event": {
+            "type": "Warning",
+            "message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_5' does not have a valid PlayerInput object. Failed to load user settings.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.10"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "LogPlayerController: InputMode:UIOnly - Attempting to focus Non-Focusable widget SObjectWidget [Widget.cpp(981)]!",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.11"
+        },
+        {
+          "event": {
+            "type": "Warning",
+            "message": "PIE: 控件HearthwardScreenWidget_0不支持聚焦。如这是一个UserWidget，则应该将bIsFocusable设为true。",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.11"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "LogPlayerController: InputMode:UIOnly - Attempting to focus Non-Focusable widget SObjectWidget [Widget.cpp(981)]!",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.11"
+        },
+        {
+          "event": {
+            "type": "Warning",
+            "message": "PIE: 控件HearthwardScreenWidget_0不支持聚焦。如这是一个UserWidget，则应该将bIsFocusable设为true。",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.11"
+        }
+      ],
+      "warnings": 3,
+      "errors": 2,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "ReceiptTimeline",
+      "fullTestPath": "Hearthward.Iteration.Task093.ReceiptTimeline",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "7C3CDB48427A858EA50CFA8591485F30"
+      ],
+      "duration": 0.016829397529363632,
+      "dateTime": "2026.10.06-20.46.11",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "UpgradePreviewAndReplay",
+      "fullTestPath": "Hearthward.Iteration.Task093.UpgradePreviewAndReplay",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "7C3CDB48427A858EA50CFA8591485F30"
+      ],
+      "duration": 0.8417806029319763,
+      "dateTime": "2026.10.06-20.46.11",
+      "entries": [
+        {
+          "event": {
+            "type": "Warning",
+            "message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_6' does not have a valid PlayerInput object. Failed to load user settings.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.11"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "LogPlayerController: InputMode:UIOnly - Attempting to focus Non-Focusable widget SObjectWidget [Widget.cpp(981)]!",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.11"
+        },
+        {
+          "event": {
+            "type": "Warning",
+            "message": "PIE: 控件HearthwardScreenWidget_0不支持聚焦。如这是一个UserWidget，则应该将bIsFocusable设为true。",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.11"
+        }
+      ],
+      "warnings": 2,
+      "errors": 1,
+      "artifacts": []
+    }
+  ],
+  "found": 3,
+  "success": 1,
+  "failed": 2,
+  "warnings": 5,
+  "errors": 3,
+  "correction": {
+    "path": "Source/Hearthward/Tests/CampLoopFeedbackTests.cpp",
+    "change": "SetIsFocusable(true) before TakeWidget",
+    "production_change": false,
+    "expected_error_suppression": false,
+    "corrected_run": "NOT_RUN"
+  }
+}

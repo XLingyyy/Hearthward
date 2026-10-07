@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "task": "TASK-103",
+  "source_task": "TASK-084",
+  "source_report": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-06/results.json",
+  "archived_at_utc": "2026-10-07T01:34:45.093983+00:00",
+  "state": "FAILED_FIRST_BLOCKER",
+  "stage": "actual_escape_walk",
+  "evidence_level": "Development standalone -game; public RC movement/actions; NOT_OS_INPUT",
+  "input_mode": "navigation",
+  "movement_api": "SimpleMoveToLocation / normal engine PathFollowing",
+  "guidance_api": "HearthwardScreenWidget.DescribeQuestGuidance / existing BlueprintPure",
+  "guidance_state": "NODE_REACHED_WITHOUT_TRANSITION_STOPPED",
+  "guidance_nodes": [
+    {
+      "at_monotonic": 288112.9492707,
+      "actual_position": {
+        "X": 91781.8337327185,
+        "Y": 53654.541566820386,
+        "Z": 23368.381066575428
+      },
+      "guidance": {
+        "visible": true,
+        "location": "prologue_exit",
+        "label": "后巷撤离口",
+        "distance_m": 86.20717551067857,
+        "route_visible": true,
+        "route_id": "bedroom_door",
+        "route_label": "先出卧室门，进入回廊",
+        "route_world": [
+          92000,
+          54150,
+          23376.231064572712
+        ],
+        "world": [
+          90000,
+          62000,
+          22145.612411306938
+        ]
+      },
+      "route_id": "bedroom_door",
+      "route_world": {
+        "X": 92000.0,
+        "Y": 54150.0,
+        "Z": 23376.231064572712
+      },
+      "distance_to_node_cm": 541.421463978755,
+      "state": "NODE_REACHED",
+      "arrival_cm": 50,
+      "arrived_position": {
+        "X": 91983.77549235449,
+        "Y": 54113.153931919434,
+        "Z": 23368.381066575428
+      },
+      "distance_at_arrival_cm": 41.018164877215085
+    },
+    {
+      "at_monotonic": 288116.2267848,
+      "actual_position": {
+        "X": 91983.77549235449,
+        "Y": 54113.153931919434,
+        "Z": 23368.381066575428
+      },
+      "guidance": {
+        "visible": true,
+        "location": "prologue_exit",
+        "label": "后巷撤离口",
+        "distance_m": 82.2392055469721,
+        "route_visible": true,
+        "route_id": "escape_stair_top",
+        "route_label": "沿回廊到撤离楼梯（下楼）",
+        "route_world": [
+          93500,
+          54550,
+          23376.231064572712
+        ],
+        "world": [
+          90000,
+          62000,
+          22145.612411306938
+        ]
+      },
+      "route_id": "escape_stair_top",
+      "route_world": {
+        "X": 93500.0,
+        "Y": 54550.0,
+        "Z": 23376.231064572712
+      },
+      "distance_to_node_cm": 1577.9204248791798,
+      "state": "NODE_REACHED",
+      "arrival_cm": 50,
+      "arrived_position": {
+        "X": 93462.25627186491,
+        "Y": 54539.12548956478,
+        "Z": 23368.381066575428
+      },
+      "distance_at_arrival_cm": 40.055791832123475
+    },
+    {
+      "at_monotonic": 288121.2705689,
+      "actual_position": {
+        "X": 93462.25627186491,
+        "Y": 54539.12548956478,
+        "Z": 23368.381066575428
+      },
+      "guidance": {
+        "visible": true,
+        "location": "prologue_exit",
+        "label": "后巷撤离口",
+        "distance_m": 83.15469327514654,
+        "route_visible": true,
+        "route_id": "escape_stair_top",
+        "route_label": "沿回廊到撤离楼梯（下楼）",
+        "route_world": [
+          93500,
+          54550,
+          23376.231064572712
+        ],
+        "world": [
+          90000,
+          62000,
+          22145.612411306938
+        ]
+      },
+      "route_id": "escape_stair_top",
+      "route_world": {
+        "X": 93500.0,
+        "Y": 54550.0,
+        "Z": 23376.231064572712
+      },
+      "distance_to_node_cm": 40.055791832123475
+    }
+  ],
+  "actual_path_evidence": [
+    {
+      "stage": "actual_escape_walk",
+      "nav_path": [
+        {
+          "X": 91781.8337327185,
+          "Y": 53654.541566820386,
+          "Z": 23280.0
+        },
+        {
+          "X": 92000.0,
+          "Y": 54150.0,
+          "Z": 23280.0
+        }
+      ],
+      "goal": {
+        "X": 92000.0,
+        "Y": 54150.0,
+        "Z": 23376.231064572712
+      },
+      "started_position": {
+        "X": 91781.8337327185,
+        "Y": 53654.541566820386,
+        "Z": 23368.381066575428
+      }
+    },
+    {
+      "stage": "actual_escape_walk",
+      "controller_actual_nav_path": [
+        {
+          "X": 91781.8337327185,
+          "Y": 53654.541566820386,
+          "Z": 23280.0
+        },
+        {
+          "X": 92000.0,
+          "Y": 54150.0,
+          "Z": 23280.0
+        }
+      ],
+      "goal": {
+        "X": 92000.0,
+        "Y": 54150.0,
+        "Z": 23376.231064572712
+      },
+      "movement": "engine PathFollowing; may use RequestDirectMove internally; no QA velocity setter"
+    },
+    {
+      "stage": "actual_escape_walk",
+      "nav_path": [
+        {
+          "X": 91983.77549235449,
+          "Y": 54113.153931919434,
+          "Z": 23280.0
+        },
+        {
+          "X": 93500.0,
+          "Y": 54550.0,
+          "Z": 23280.0
+        }
+      ],
+      "goal": {
+        "X": 93500.0,
+        "Y": 54550.0,
+        "Z": 23376.231064572712
+      },
+      "started_position": {
+        "X": 91983.77549235449,
+        "Y": 54113.153931919434,
+        "Z": 23368.381066575428
+      }
+    },
+    {
+      "stage": "actual_escape_walk",
+      "controller_actual_nav_path": [
+        {
+          "X": 91983.77549235449,
+          "Y": 54113.153931919434,
+          "Z": 23280.0
+        },
+        {
+          "X": 93500.0,
+          "Y": 54550.0,
+          "Z": 23280.0
+        }
+      ],
+      "goal": {
+        "X": 93500.0,
+        "Y": 54550.0,
+        "Z": 23376.231064572712
+      },
+      "movement": "engine PathFollowing; may use RequestDirectMove internally; no QA velocity setter"
+    }
+  ],
+  "binary_binding": {
+    "build_result": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-103\\package-20261007-4\\editor-build.json",
+    "path": "G:\\GameFactory\\Hearthward\\Binaries\\Win64\\UnrealEditor-Hearthward.dll",
+    "size_bytes": 7232000,
+    "mtime_ns": 1791334721665455800,
+    "new_working_source_validation": "NOT_RUN",
+    "auto_build": false
+  },
+  "owned_editor_stop": {
+    "ok": true,
+    "operation": "runtime.stop_editor",
+    "artifacts": [],
+    "diagnostics": [],
+    "warnings": [],
+    "errors": [],
+    "payload": {
+      "process_id": 64000
+    }
+  },
+  "owned_editor_exit_verified": true,
+  "first_error": "Actual guidance node was reached but its ID and coordinates did not change; no guessed onward movement",
+  "root_source_finding": "Original escape_stair_top goal local Y=1050 is below route transition Y=1100; reached-node guidance remains the same. Minimal project fix is root/MCP-owned and awaits separate Native/build/actual progression evidence.",
+  "no_design_change": "No new route/map/art target; reconcile existing guidance target with existing transition threshold.",
+  "scope": "Earned artifact/follow and bedroom node transition reached. No guessed onward movement; escape/camp/new save/first rescue/Shipping/OS route completion not reached.",
+  "candidate4_zip": "PAUSED_BY_ROOT_FOR_NEW_GUIDANCE_FIX_CANDIDATE5; existing candidate4 package and OS partial evidence retained",
+  "candidate5": "PREPARED_NOT_EXECUTED; target version.4, build/freeze/native/new OS/progression evidence not claimed",
+  "privacy": "No live profile/save reads, headers, credentials, model context or process command lines archived"
+}

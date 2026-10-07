@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "state": "BUILD_SUCCESS_INTERNAL_CANDIDATE_ZIP_CREATED",
+  "candidate_id": "iteration-084-103-20261007-5",
+  "proposed_version": "0.2.0-preview.20261007.4",
+  "configuration": "Win64 Shipping",
+  "engine": "UE 5.8.2",
+  "project": "G:/GameFactory/Hearthward/Hearthward.uproject",
+  "candidate_directory": "F:/HearthwardDemo/iteration-084-103-20261007-5",
+  "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "branch": "codex/TASK-084-103-iteration",
+  "implementation_commit": null,
+  "source_freeze": "FROZEN_FOR_CANDIDATE5_PACKAGE",
+  "workspace_changes": "UNCOMMITTED; candidate4 production snapshot plus Task091 actual-arrival stair-top and side-gate guidance fixes and version.4 header; QA and delivery docs continue",
+  "source_freeze_evidence": [
+    ".agent-local/qa/TASK-103/package-20261007-5/tracked.patch",
+    ".agent-local/qa/TASK-103/package-20261007-5/untracked-files.txt"
+  ],
+  "build_cook_stage_archive": "SUCCESS",
+  "actual_embedded_version": "0.2.0-preview.20261007.4",
+  "shipping_normal_input": "PARTIAL_NORMAL_INPUT_VERIFIED",
+  "shipping_os_evidence": ".agent-local/qa/TASK-103/os-launchers-candidate5-20261007/results.json",
+  "zip": "F:\\HearthwardDemo\\iteration-084-103-20261007-5.zip",
+  "distribution_hashes": [
+    {
+      "file": "F:\\HearthwardDemo\\iteration-084-103-20261007-5.zip",
+      "sha256": "361cd9acfe3f27264efc5d5e3933131ae0e9bf66bcc12b079c89d9c6a50e762b",
+      "sidecar": "F:\\HearthwardDemo\\iteration-084-103-20261007-5.zip.sha256",
+      "computations": 1
+    }
+  ],
+  "final_pass": null,
+  "acceptance": "NOT_EVALUATED",
+  "owner_acceptance": "NOT_RUN",
+  "second_physical_machine": "NOT_RUN",
+  "human_acceptance": "NOT_RUN",
+  "fixed_voice": "UNPRODUCED",
+  "subtitle_preview_owner_decision": "PENDING",
+  "published": false,
+  "release_url": null,
+  "commit_push_merge": "NOT_PERFORMED",
+  "remote_version_uniqueness": "UNKNOWN",
+  "launchers": {
+    "files": [
+      "Start-Hearthward-CPU.cmd",
+      "Start-Hearthward-Vulkan.cmd"
+    ],
+    "placement": "Windows root; both supplied CMD scripts actually launched and operated with normal game input",
+    "backend_selection": [
+      "cpu",
+      "vulkan"
+    ],
+    "configured_gpu_layers": 16,
+    "cpu_effective_gpu_layers": 0,
+    "profile": "%LOCALAPPDATA%\\Hearthward\\Candidates\\iteration-084-103-20261007-5",
+    "profile_shared_between_backends": true,
+    "old_or_qa_saves_copied": false,
+    "python_required": false,
+    "state": "SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED"
+  },
+  "native_selected": [
+    {
+      "task": "TASK-087",
+      "source_report": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+      "scope": "Lifecycle3 + Projection4; compatibility3 separate; original joint16=13Success/3Fail retained",
+      "selected_success": 7,
+      "selected_warnings": 0,
+      "selected_errors": 0
+    },
+    {
+      "task": "TASK-099",
+      "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+      "selected_success": 23,
+      "selected_clean": 23,
+      "selected_with_warning": 0,
+      "selected_warnings": 0,
+      "selected_errors": 0,
+      "process_log_source": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/result.json",
+      "startup_process_errors": 13,
+      "scope": "Actual empty swing producer and PCM consumer; hit/block/damage; actual player and brother clip notifies; loaded water geometry and continuous PCM; pause, death, actual LoadPoint and epoch cleanup",
+      "whole_batch_success": 28,
+      "whole_batch_warnings": 0,
+      "whole_batch_errors": 0,
+      "device_audition": "NOT_RUN",
+      "fixed_voice": "UNPRODUCED"
+    },
+    {
+      "task": "TASK-091",
+      "source_report": ".agent-local/qa/TASK-091/native-side-gate-20261007-green/native/index.json",
+      "selected_success": 1,
+      "selected_warnings": 0,
+      "selected_errors": 0,
+      "scope": "Combined actual Nav06 stair-top and Nav07 side-gate arrival regression plus entrance-strip and 100cm interior guards; one registered test",
+      "stair_top_red": ".agent-local/qa/TASK-091/native-stair-top-20261007-red/native/index.json",
+      "stair_top_green": ".agent-local/qa/TASK-091/native-stair-top-20261007-green/native/index.json",
+      "side_gate_red": ".agent-local/qa/TASK-091/native-side-gate-20261007-red/native/index.json"
+    }
+  ],
+  "native_credit": "Native13 audio/transaction source snapshot unchanged; Task091 latest single spatial regression and real API four nodes independently verified; candidate5 partial OS independently verified",
+  "real_model_quality": {
+    "state": "FAIL_OBSERVED_FIXED_CONTRACT",
+    "historical_full_vulkan_raw": "33/60",
+    "source2_diagnostic_subset_raw": "2/12",
+    "cpu_single_c01": "FAIL_MODEL_UNAVAILABLE; old PIE diagnostic 129.797s, not the final full CPU run",
+    "final_same_source_cpu60_vulkan60": "COMPLETE_ACTUAL_RESULTS; Source.2 original 60 per backend; both quality FAIL",
+    "cpu_final": {
+      "run_id": "final-cpu-20261007-01",
+      "raw": "33/60",
+      "guarded_raw": "3/20",
+      "clear_e2e": "33/40",
+      "execution": "25/30",
+      "boundaries": "20/20",
+      "unearned_item_cases": 0,
+      "report": "docs/qa/TASK-087/cpu-final-20261007-01.json",
+      "csv": "docs/qa/TASK-087/cpu-final-20261007-01.csv",
+      "private_source_binding": ".agent-local/qa/TASK-087/final-cpu-20261007-01/tracked.patch; untracked-files.txt; cpu-launch.json",
+      "private_runtime": ".agent-local/qa/TASK-087/final-cpu-20261007-01/cpu-runtime.log; cpu-slots.jsonl",
+      "cold_first_c01_seconds": 107.67200000002049,
+      "cold_restart_cases": []
+    },
+    "vulkan_final": {
+      "run_id": "final-vulkan-20261007-02",
+      "raw": "32/60",
+      "guarded_raw": "2/20",
+      "clear_e2e": "33/40",
+      "execution": "24/30",
+      "boundaries": "20/20",
+      "unearned_item_cases": 0,
+      "report": "docs/qa/TASK-087/vulkan-final-20261007-02.json",
+      "csv": "docs/qa/TASK-087/vulkan-final-20261007-02.csv"
+    },
+    "performance_only_warm_auxiliary": {
+      "scope": "component submission to final UE proposal/status; no Slate paint/confirmation/execution credit",
+      "original_warm_statistics": "59 per backend; INSUFFICIENT_SAMPLES and null p95 retained",
+      "method": "nearest rank; minimum 60; one predeclared C01 auxiliary per full backend; no retries or case denominator changes",
+      "cpu": {
+        "samples": 60,
+        "p95_seconds": 22.65600000001723,
+        "limit_seconds": 30,
+        "status": "PASS",
+        "auxiliary_failure_count": 0,
+        "auxiliary_jsonl": "docs/qa/TASK-087/cpu-final-performance-auxiliary-20261007-01.jsonl"
+      },
+      "vulkan": {
+        "samples": 60,
+        "p95_seconds": 8.672000000020489,
+        "limit_seconds": 10,
+        "status": "PASS",
+        "auxiliary_failure_count": 0,
+        "auxiliary_jsonl": "docs/qa/TASK-087/vulkan-final-performance-auxiliary-20261007-02.jsonl"
+      },
+      "ui_paint": "NOT_RUN",
+      "joint": "NOT_RUN"
+    },
+    "cpu_standalone_independent": {
+      "evidence_level": "Development/API, separate TASK-102 scene; no Shipping/OS credit",
+      "status": "CAPTURE_COMPLETE_MODEL_FAILED",
+      "http_timeout_seconds_observed": 120.007,
+      "capture_seconds": 129.8656161,
+      "frames": 11603,
+      "report": "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/results.json"
+    },
+    "owner_contract_decision": "PENDING",
+    "source": "docs/qa/TASK-087/MODEL_RETEST_DECISION.md",
+    "credit": "Fixed AI Source.2 original CPU60/Vulkan60 quality remains FAIL; candidate4 single Vulkan Shipping follow passed independently, not inherited as candidate5 model verification"
+  },
+  "historical_candidate2": {
+    "candidate_id": "iteration-084-103-20261007-2",
+    "version": "0.2.0-preview.20261007.1",
+    "state": "BUILD_SUCCESS",
+    "build_info": "docs/releases/iteration-084-103-rc/BUILD-INFO.json",
+    "candidate_build_info": "docs/releases/iteration-084-103-rc/CANDIDATE_BUILD_INFO.json",
+    "package_evidence": "docs/qa/TASK-103/PACKAGE_BUILD_SUCCESS.json",
+    "os_partial": "docs/qa/TASK-103/OS_PARTIAL_NORMAL_INPUT.json",
+    "continue_erratum": "docs/qa/TASK-103/OS_CONTINUE_ERRATUM.json",
+    "original_copy_compatibility": "docs/qa/TASK-101/OS_ORIGINAL_COPY_COMPATIBILITY.json",
+    "credit": "Historical candidate-2 only; no final candidate-3 credit"
+  },
+  "first_attempt_failure_evidence": "docs/qa/TASK-103/FIRST_COOK_FAIL.json",
+  "root_finalization_required": [
+    "Owner, real human, second physical machine, full routes and model/performance gates remain independent"
+  ],
+  "source_change_scope": [
+    "Task091 stair-top handover only within the existing staircase entrance strip",
+    "Task091 side-gate handover only within 50cm of the existing three-dimensional target",
+    "HearthwardVersion::Current version.4; AI Source.2 contract unchanged"
+  ],
+  "planned_zip": "F:/HearthwardDemo/iteration-084-103-20261007-5.zip",
+  "package_result": ".agent-local/qa/TASK-103/package-20261007-5/result.json",
+  "package_uat_exit_code": 0,
+  "package_stage_directory": "E:/HearthwardQA/TASK-103/package-20261007-5/Staged",
+  "package_file_manifest": ".agent-local/qa/TASK-103/package-20261007-5/final-file-manifest.json",
+  "historical_candidate4": {
+    "candidate_id": "iteration-084-103-20261007-4",
+    "version": "0.2.0-preview.20261007.3",
+    "build_info": "docs/releases/iteration-084-103-rc/CANDIDATE4_BUILD_INFO.json",
+    "actual_os": "docs/qa/TASK-103/OS_CANDIDATE4_PARTIAL_NORMAL_INPUT.json",
+    "original_copy_compatibility": "docs/qa/TASK-101/OS_CANDIDATE4_ORIGINAL_COPY_COMPATIBILITY.json",
+    "zip": "NOT_BUILT; preserved runtime/evidence, superseded before ZIP by actual guidance fixes"
+  },
+  "package_build_seconds": 71.7,
+  "package_cook_seconds": 63.43,
+  "package_stage_seconds": 39.73,
+  "package_archive_seconds": 58.81,
+  "package_total_seconds": 235.52,
+  "package_cook_errors": 0,
+  "package_cook_warnings": 1,
+  "package_cook_warning": "See actual package.log; MCP EULA notice is retained separately",
+  "shipping_os_safe_summary": "docs/qa/TASK-103/OS_CANDIDATE5_PARTIAL_NORMAL_INPUT.json",
+  "final_zip_record": "docs/qa/TASK-103/CANDIDATE5_FINALIZATION.json",
+  "package_secret_config": "ACTUAL_CANDIDATE5_KNOWN_FIELD_FILTERED",
+  "package_secret_config_evidence": ".agent-local/qa/TASK-103/known-config-secret-candidate5-20261007/inspection.json",
+  "metadata_snapshot": "This source metadata was finalized after ZIP; embedded runtime BUILD-INFO.json preserves the pre-ZIP build/partial OS snapshot",
+  "zip_bytes": 4645167974
+}

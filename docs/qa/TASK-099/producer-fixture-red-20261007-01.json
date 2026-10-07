@@ -1,0 +1,179 @@
+{
+  "task": "TASK-099",
+  "source_index": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+  "report_created_on": "2026.10.06-22.17.25",
+  "devices": [
+    {
+      "deviceName": "LAPTOP-R8NPOP05",
+      "instance": "8F2B7D8D4588CA661620909D06F3D6C9",
+      "instanceName": "LAPTOP-R8NPOP05-52864",
+      "platform": "WindowsEditor",
+      "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "model": "Default",
+      "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+      "rAMInGB": 16,
+      "renderMode": "SM6",
+      "rHI": "",
+      "appInstanceLog": ""
+    }
+  ],
+  "tests": [
+    {
+      "testDisplayName": "ActualLoadSeedsHistory",
+      "fullTestPath": "Hearthward.Iteration.Task099.ActualLoadSeedsHistory",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "8F2B7D8D4588CA661620909D06F3D6C9"
+      ],
+      "duration": 0.19261810183525085,
+      "dateTime": "2026.10.06-22.17.25",
+      "entries": [
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogStreaming: FlushAsyncLoading(372): 1 QueuedPackages, 0 AsyncPackages",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-22.17.25"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Actual save coordination enables: 兄弟状态不安全或动作正在结算，无法保存' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 326,
+          "timestamp": "2026.10.06-22.17.25"
+        }
+      ],
+      "warnings": 0,
+      "errors": 1,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "CommittedTransferAndIdentity",
+      "fullTestPath": "Hearthward.Iteration.Task099.CommittedTransferAndIdentity",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "8F2B7D8D4588CA661620909D06F3D6C9"
+      ],
+      "duration": 0.02247679978609085,
+      "dateTime": "2026.10.06-22.17.25",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "NPCCommittedSuccessUnbound",
+      "fullTestPath": "Hearthward.Iteration.Task099.NPCCommittedSuccessUnbound",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "8F2B7D8D4588CA661620909D06F3D6C9"
+      ],
+      "duration": 0.021460797637701035,
+      "dateTime": "2026.10.06-22.17.25",
+      "entries": [
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Public collection command reaches committed completion: Submit=2 preview=UNSUPPORTED_CAPABILITY' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 254,
+          "timestamp": "2026.10.06-22.17.25"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "Submit=2 preview=UNSUPPORTED_CAPABILITY",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-22.17.25"
+        }
+      ],
+      "warnings": 0,
+      "errors": 1,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "PauseAndLocalAccess",
+      "fullTestPath": "Hearthward.Iteration.Task099.PauseAndLocalAccess",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "8F2B7D8D4588CA661620909D06F3D6C9"
+      ],
+      "duration": 0.020533498376607895,
+      "dateTime": "2026.10.06-22.17.25",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "PlayerCommittedSuccessUnbound",
+      "fullTestPath": "Hearthward.Iteration.Task099.PlayerCommittedSuccessUnbound",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "8F2B7D8D4588CA661620909D06F3D6C9"
+      ],
+      "duration": 0.02292560040950775,
+      "dateTime": "2026.10.06-22.17.25",
+      "entries": [
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Actual craft products enter the player's inventory' to be 6, but it was 3.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 209,
+          "timestamp": "2026.10.06-22.17.25"
+        }
+      ],
+      "warnings": 0,
+      "errors": 1,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "TimelineAndShutdown",
+      "fullTestPath": "Hearthward.Iteration.Task099.TimelineAndShutdown",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "8F2B7D8D4588CA661620909D06F3D6C9"
+      ],
+      "duration": 0.020549699664115906,
+      "dateTime": "2026.10.06-22.17.25",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    }
+  ],
+  "counts": {
+    "selected": 6,
+    "success": 3,
+    "fail": 3,
+    "warnings": 0,
+    "errors": 3
+  },
+  "scope": "Actual selected Native tests; no normal-input, audible-device, Owner or shipping acceptance."
+}

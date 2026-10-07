@@ -3,6 +3,9 @@
 #include "HearthwardHUD.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "HearthwardScreenWidget.h"
+#include "HearthwardPresentationReadModels.h"
+#include "../Camp/HearthwardCampSubsystem.h"
+#include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
@@ -201,39 +204,19 @@ FString AHearthwardHUD::GetDialogueReply() const
 {
     if(!DialogueCompanion.IsValid() || !DialogueCompanion->CanCommunicate(GetOwningPawn())) return FString();
     const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
-    return AI && AI->CanDisplay() ? AI->GetNPCLine() : FString();
+    if(!AI || !AI->CanDisplay())return {};
+    if(AI->GetLastAppliedIntent()==TEXT("task_status") && !AI->IsBusy() && !AI->HasCandidate() && !AI->HasActiveInitiative())
+        return GetDialogueProgress();
+    return AI->GetNPCLine();
 }
 FString AHearthwardHUD::GetDialogueProgress() const
 {
     if(!DialogueCompanion.IsValid() || !DialogueCompanion->CanCommunicate(GetOwningPawn())) return FString();
-    const auto* C=DialogueCompanion.Get();
-    FString Phase;
-    using P=EHearthwardCompanionPhase;
-    switch(C->GetPhase())
-    {
-    case P::Idle: Phase=TEXT("等待委托"); break;
-    case P::GoingToSource: Phase=TEXT("前往资源点"); break;
-    case P::Gathering: Phase=TEXT("正在采集"); break;
-    case P::Returning: Phase=TEXT("携带物资返营"); break;
-    case P::ReturningBlocked: Phase=TEXT("受阻，尝试安全返营"); break;
-    case P::WaitingAtCamp: Phase=TEXT("已返营，等待玩家"); break;
-    case P::Completed: Phase=TEXT("目标已交付"); break;
-    case P::Cancelled: Phase=TEXT("已取消，保留携带物资"); break;
-    case P::TakingCargo: Phase=TEXT("从营地仓库取货"); break;
-    case P::GoingToPlayer: Phase=TEXT("前往玩家位置"); break;
-    case P::HandingOff: Phase=C->GetGoal().Intent==TEXT("receive")?TEXT("当面接收玩家物品"):TEXT("当面交付玩家"); break;
-    }
-    if(C->GetRequested()==0) return Phase;
-    const auto* Item=HearthwardBasicItems().FindByPredicate([C](const auto& Def){ return Def.Id==C->GetItem(); });
-    const bool Retrieve=C->GetGoal().Intent==TEXT("retrieve");
-    const bool ToPlayer=Retrieve || C->GetGoal().Intent==TEXT("give");
-    const bool ToBrother=C->GetGoal().Intent==TEXT("fetch") || C->GetGoal().Intent==TEXT("receive");
-    FString Result=FString::Printf(TEXT("%s · %s%s %d / %d · 携带 %d\n%s"),*Phase,
-        Item ? *Item->DisplayName.ToString() : TEXT("物资"),ToPlayer?TEXT("交付玩家"):ToBrother?TEXT("交入弟弟背包"):TEXT("入库"),C->GetDelivered(),C->GetRequested(),C->GetCarried(),
-        Retrieve?TEXT("仓库取货 → 玩家背包交付"):ToPlayer?TEXT("弟弟背包 → 玩家背包交付"):
-        C->GetGoal().Intent==TEXT("fetch")?TEXT("营地仓库 → 弟弟背包"):ToBrother?TEXT("玩家背包 → 弟弟背包"):TEXT("采集 → 返营 → 入库"));
-    if(!C->BlockReason.IsEmpty()) Result+=TEXT("\n")+C->BlockReason;
-    return Result;
+    const auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    const auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+    const auto Personal=HearthwardPresentation::ReadCompanion(DialogueCompanion.Get(),Store,GetOwningPawn());
+    const auto Team=HearthwardPresentation::ReadWorkParty(Camp,Store,Camp->State.CampAt(GetOwningPawn()->GetActorLocation()));
+    return HearthwardPresentation::CompanionWorkText(Personal)+TEXT("\n\n")+HearthwardPresentation::WorkPartyText(Team);
 }
 FString AHearthwardHUD::GetDialogueWeight() const
 {

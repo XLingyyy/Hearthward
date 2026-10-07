@@ -4,6 +4,7 @@
 #include "HearthwardCombatRules.h"
 #include "HearthwardCombatTargetComponent.h"
 #include "HearthwardProjectile.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardCombatComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -70,6 +71,7 @@ public:
     bool Damage(float Raw,FName Part,FVector Source,bool Heavy=false,bool Projectile=false,FGuid Event=FGuid());
     static bool DamageActor(AActor* Target,float Raw,FName Part,FVector Source,bool Heavy=false,bool Projectile=false,FGuid Event=FGuid());
     void HitTarget(UHearthwardCombatTargetComponent* Target,float Raw,FName Part,bool Projectile,FGuid Event,AActor* Source=nullptr);
+    FHearthwardCombatSuccessDelegate OnCombatSucceeded;
     void ObserveDamage(UHearthwardCombatTargetComponent* Target,AActor* Source=nullptr);
     FString Snapshot() const;
     static bool ValidateSnapshot(const FString& Json);

@@ -1,0 +1,147 @@
+{
+  "task": "TASK-087",
+  "source_report": ".agent-local/qa/TASK-085-088/native-baseline-20261007/index.json",
+  "reportCreatedOn": "2026.10.06-20.11.27",
+  "source_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "source_state": "dirty iteration worktree with TASK-085/086/088 and TASK-087 RED tests",
+  "evidence_level": "Real UE native RED reproduction; seeded request state, no model or language-understanding credit",
+  "succeeded": 1,
+  "failed": 2,
+  "tests": [
+    {
+      "testDisplayName": "BusyKeepsRequest",
+      "fullTestPath": "Hearthward.Iteration.Task087.BusyKeepsRequest",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "409E7C6642B083E201914FBC13678936"
+      ],
+      "duration": 0.1513693928718567,
+      "dateTime": "2026.10.06-20.11.26",
+      "entries": [
+        {
+          "event": {
+            "type": "Warning",
+            "message": "LogTemp: Local AI failure [MODEL_UNAVAILABLE]: 本地模型文件缺失，请修复游戏安装",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.11.26"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'original request remains pending' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAIReliabilityTests.cpp",
+          "lineNumber": 59,
+          "timestamp": "2026.10.06-20.11.26"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'original input remains unchanged' to be \"原始委托\", but it was \"第二条委托\".",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAIReliabilityTests.cpp",
+          "lineNumber": 59,
+          "timestamp": "2026.10.06-20.11.26"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'duplicate did not invalidate serial' to be 41, but it was 42.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAIReliabilityTests.cpp",
+          "lineNumber": 61,
+          "timestamp": "2026.10.06-20.11.26"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'original ticket remains current' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAIReliabilityTests.cpp",
+          "lineNumber": 62,
+          "timestamp": "2026.10.06-20.11.26"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'busy state has a distinct reason' to be \"REQUEST_BUSY\", but it was \"MODEL_UNAVAILABLE\".",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAIReliabilityTests.cpp",
+          "lineNumber": 62,
+          "timestamp": "2026.10.06-20.11.26"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'busy feedback explains cancel or wait' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAIReliabilityTests.cpp",
+          "lineNumber": 63,
+          "timestamp": "2026.10.06-20.11.26"
+        }
+      ],
+      "warnings": 1,
+      "errors": 6,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "CancelKeepsManualFallback",
+      "fullTestPath": "Hearthward.Iteration.Task087.CancelKeepsManualFallback",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "409E7C6642B083E201914FBC13678936"
+      ],
+      "duration": 0.019838199019432068,
+      "dateTime": "2026.10.06-20.11.26",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "FailureInvalidatesCallback",
+      "fullTestPath": "Hearthward.Iteration.Task087.FailureInvalidatesCallback",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "409E7C6642B083E201914FBC13678936"
+      ],
+      "duration": 0.0183291994035244,
+      "dateTime": "2026.10.06-20.11.26",
+      "entries": [
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'failure invalidates the captured callback serial' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\LocalAIReliabilityTests.cpp",
+          "lineNumber": 76,
+          "timestamp": "2026.10.06-20.11.26"
+        }
+      ],
+      "warnings": 0,
+      "errors": 1,
+      "artifacts": []
+    }
+  ]
+}

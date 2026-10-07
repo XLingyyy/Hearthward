@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "task": "TASK-101",
+  "evidence_level": "Shipping candidate4 / actual OS input / isolated original-copy compatibility",
+  "source_revision": {
+    "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "branch": "codex/TASK-084-103-iteration",
+    "working_tree": "uncommitted batch changes; candidate4 .3 freeze owned by root"
+  },
+  "source_result": ".agent-local/qa/TASK-101/os-original-copy-candidate4-20261007/results.json",
+  "archival_policy": "Derived safe summary only; no personal save, raw profile, source original path or launch command copied.",
+  "candidate_id": "iteration-084-103-20261007-4",
+  "actual_embedded_version": "0.2.0-preview.20261007.3",
+  "state": "PARTIAL_ORIGINAL_COPY_OS_COMPATIBILITY_VERIFIED",
+  "same_physical_machine": true,
+  "second_physical_machine": "NOT_RUN",
+  "original_user_save_written": false,
+  "immutable_original_copy_bytes_unchanged": true,
+  "immutable_original_copy_mtime_unchanged": true,
+  "hashes_computed_in_this_check": 0,
+  "owned_profile_has_chinese_and_spaces": true,
+  "launcher_candidate_profile_touched": false,
+  "legacy_nodes_listed": 4,
+  "legacy_node_loaded": "2026-09-27 15:07, latest original automatic node",
+  "normal_menu_load_and_confirmation": "PASS",
+  "actual_loaded_state": {
+    "scene": "outdoor night",
+    "quest": "把营地安顿下来",
+    "hp": "100/100",
+    "food_at_observation": "99/100",
+    "stamina": "100/100",
+    "brother_status": "原地等待",
+    "quick_slot_counts": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "camp_guidance_distance_m": 1243
+  },
+  "normal_manual_save": "PASS_4_TO_5_NODES",
+  "v8_pool_created": true,
+  "v8_pool_bytes_after_manual_save": 394263,
+  "second_independent_launch": "PASS_PUBLIC_API_LAUNCH",
+  "explicit_mouse_continue_after_restart": "PASS_SAME_OUTDOOR_QUEST_HEALTH_QUICK_SLOTS",
+  "nodes_after_continue": 5,
+  "new_auto_node_from_continue": false,
+  "four_new_earned_route_checkpoints": "NOT_RUN",
+  "all_four_legacy_nodes_loaded": "NOT_RUN_ONLY_LATEST_LOADED",
+  "full_field_snapshot_equality": "NOT_RUN",
+  "first_launch_receipt_error": "Public launch succeeded; metadata serialization attempted to_dict on dict and failed. Actual process and OS title recorded; no duplicate launch used for recovery.",
+  "first_exit": "PASS_OWNED_CHILD_AND_BOOTSTRAP_GONE",
+  "second_exit": "PASS_OWNED_CHILD_AND_BOOTSTRAP_GONE",
+  "second_launch_receipt": {
+    "ok": true,
+    "operation": "runtime.launch_packaged",
+    "warnings": [],
+    "errors": []
+  },
+  "actual_image_count": 6,
+  "actual_image_files": [
+    "manual-save-node-5.jpg",
+    "original-four-nodes.jpg",
+    "original-latest-loaded.jpg",
+    "restarted-continue-hud.jpg",
+    "restarted-five-nodes.jpg",
+    "title-version.jpg"
+  ],
+  "other_private_evidence_files": [
+    "copy-plan.json",
+    "actual-process.json",
+    "second-launch.json"
+  ],
+  "limits": [
+    "Latest one of four legacy nodes actually loaded; all four were listed, not all loaded.",
+    "Same physical machine; two independent game processes, not a second physical device.",
+    "Only visible scene/quest/health/quick slots and save-list count checked across restart; no full field equality.",
+    "New four naturally earned route checkpoints NOT_RUN.",
+    "Compatible-v8 directory name and 394263-byte pool do not independently prove serialization schema.",
+    "First launch receipt serialization error retained; actual already-running process and OS evidence used without a duplicate recovery launch."
+  ]
+}

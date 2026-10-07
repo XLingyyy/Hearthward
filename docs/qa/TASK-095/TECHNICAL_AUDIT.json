@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "task": "TASK-095",
+  "date": "2026-10-07",
+  "evidence_level": "STATIC_SOURCE_AND_CONFIG_ONLY",
+  "source_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "working_tree": "shared uncommitted iteration changes; runtime results bind separately",
+  "runtime_validation": "NOT_RUN",
+  "owner_visual": "NOT_RUN",
+  "source_candidate_manifest": "docs/assets/TASK-094/TASK-095-PACKAGES.json",
+  "content_candidate_count": 127,
+  "resource_candidate_count": 0,
+  "selected_for_change": [],
+  "lock_state": "NOT_ACQUIRED",
+  "hashes_computed": 0,
+  "locomotion_and_action_bindings": [
+    {
+      "role": "Idle",
+      "package": "/Game/Characters/Hero/AnimationV2/A_Hero_Idle",
+      "file": "Content/Characters/Hero/AnimationV2/A_Hero_Idle.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Walk",
+      "package": "/Game/Characters/Hero/AnimationV2/A_Hero_Walk",
+      "file": "Content/Characters/Hero/AnimationV2/A_Hero_Walk.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Run",
+      "package": "/Game/Characters/Hero/AnimationV2/A_Hero_Run",
+      "file": "Content/Characters/Hero/AnimationV2/A_Hero_Run.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "JumpStart",
+      "package": "/Game/Characters/Hero/AnimationV2/A_Hero_JumpStart",
+      "file": "Content/Characters/Hero/AnimationV2/A_Hero_JumpStart.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Fall",
+      "package": "/Game/Characters/Hero/AnimationV2/A_Hero_Fall",
+      "file": "Content/Characters/Hero/AnimationV2/A_Hero_Fall.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Land",
+      "package": "/Game/Characters/Hero/AnimationV2/A_Hero_Land",
+      "file": "Content/Characters/Hero/AnimationV2/A_Hero_Land.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Attack",
+      "package": "/Game/Characters/Hero/AnimationV2/A_Hero_Attack",
+      "file": "Content/Characters/Hero/AnimationV2/A_Hero_Attack.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Dig",
+      "package": "/Game/Characters/Hero/AnimationV2/A_Hero_Dig",
+      "file": "Content/Characters/Hero/AnimationV2/A_Hero_Dig.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Idle",
+      "package": "/Game/Characters/Brother/Animation/A_Brother_Idle",
+      "file": "Content/Characters/Brother/Animation/A_Brother_Idle.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Walk",
+      "package": "/Game/Characters/Brother/Animation/A_Brother_Walk",
+      "file": "Content/Characters/Brother/Animation/A_Brother_Walk.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Run",
+      "package": "/Game/Characters/Brother/Animation/A_Brother_Run",
+      "file": "Content/Characters/Brother/Animation/A_Brother_Run.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Dig",
+      "package": "/Game/Characters/Brother/Animation/A_Brother_Dig",
+      "file": "Content/Characters/Brother/Animation/A_Brother_Dig.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Attack",
+      "package": "/Game/Characters/Brother/Animation/A_Brother_Attack",
+      "file": "Content/Characters/Brother/Animation/A_Brother_Attack.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    },
+    {
+      "role": "Wait",
+      "package": "/Game/Characters/Brother/Animation/A_Brother_Wait",
+      "file": "Content/Characters/Brother/Animation/A_Brother_Wait.uasset",
+      "file_exists": true,
+      "ue_skeleton_pairing": "NOT_RUN"
+    }
+  ],
+  "campaign_enemy_clip_slots": {
+    "guard": [
+      "Idle",
+      "Walk",
+      "Run",
+      "Idle",
+      "Attack",
+      "Idle"
+    ],
+    "archer": "Guard mesh and the same clip slots",
+    "heavy": [
+      "Idle",
+      "Walk",
+      "Run",
+      "Idle",
+      "Attack",
+      "Idle"
+    ]
+  },
+  "known_representation_gaps": [
+    "No dedicated down/revive/draw-bow slot in these two native clip arrays",
+    "Hero HeldAxe is visible only for durable equipped axe outside ranged mode; this path does not bind the other twelve weapon item IDs",
+    "Campaign civilians use Brother; archer uses Guard; no independently selected approved replacement"
+  ],
+  "weapon_item_ids": [
+    "axe",
+    "shortblade",
+    "longblade",
+    "spear",
+    "shortblade_2",
+    "longblade_2",
+    "spear_2",
+    "blunt_2",
+    "shortblade_3",
+    "longblade_3",
+    "spear_3",
+    "blunt_3",
+    "hearth_blade"
+  ],
+  "source_evidence": [
+    {
+      "file": "Source/Hearthward/HearthwardCharacter.cpp",
+      "line": 150,
+      "text": "const bool HoldingAxe=Equipped && Equipped->Definition==TEXT(\"axe\") && Equipped->Durability>0"
+    },
+    {
+      "file": "Source/Hearthward/HearthwardCharacter.cpp",
+      "line": 152,
+      "text": "HeldAxe->SetVisibility(HoldingAxe);"
+    },
+    {
+      "file": "Source/Hearthward/Animation/HearthwardHeroAnimInstance.cpp",
+      "line": 79,
+      "text": "const float Position=float(HearthwardCombat::StoneAxeClipTime(Combat->Elapsed,Hero->Clips[6]->GetPlayLength(),Hero->StoneAxeMove));"
+    },
+    {
+      "file": "Source/Hearthward/Animation/HearthwardBrotherAnimInstance.cpp",
+      "line": 61,
+      "text": "Players[1].SetPlayRate(FMath::Clamp(Brother->GroundSpeed / 180.f, 0.25f, 1.6f));"
+    },
+    {
+      "file": "Source/Hearthward/Animation/HearthwardBrotherAnimInstance.cpp",
+      "line": 62,
+      "text": "Players[2].SetPlayRate(FMath::Clamp(Brother->GroundSpeed / 360.f, 0.4f, 1.6f));"
+    }
+  ],
+  "scope_constraint": "HearthwardCharacter.cpp and CampaignActor.cpp are not TASK-095 allowed write paths; source binding extensions require precise scope coordination",
+  "reuse_filters": [
+    "Hearthward.Equipment055.HeldAxeFollowsCurrentInstanceAndMode",
+    "Hearthward.Equipment055.StoneAxeLightUsesClipPhaseAndPhysicalBlade",
+    "Hearthward.Equipment055.StoneAxeHeavyUsesCurrentMoveAndPhysicalBlade"
+  ]
+}

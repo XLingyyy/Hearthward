@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "id": "TASK-089",
+  "title": "背包与仓储操作一致性、实例详情和可读性",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/UI/HearthwardScreenStorage.cpp",
+    "Source/Hearthward/UI/HearthwardScreenMenu.cpp",
+    "Source/Hearthward/UI/HearthwardHUDStorage.cpp",
+    "Source/Hearthward/UI/HearthwardScreenInventoryDrag.cpp",
+    "Source/Hearthward/UI/HearthwardScreenEquipment.cpp",
+    "Source/Hearthward/UI/HearthwardScreenRepair.cpp",
+    "docs/releases/demo-20261006-2/REPORT.md"
+  ],
+  "dependencies": [
+    "TASK-086",
+    "TASK-088"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-089.md",
+    "docs/tasks/TASK-089.json",
+    "docs/handoffs/TASK-089.md",
+    "docs/qa/TASK-089/",
+    "docs/planning/TASK-084-103/TASK-089/",
+    "Source/Hearthward/UI/HearthwardScreenStorage.cpp",
+    "Source/Hearthward/UI/HearthwardScreenMenu.cpp",
+    "Source/Hearthward/UI/HearthwardHUDStorage.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenInventoryDrag.cpp",
+    "Source/Hearthward/UI/HearthwardScreenEquipment.cpp",
+    "Source/Hearthward/UI/HearthwardScreenRepair.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.cpp",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/InventoryStorageUXTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T089-C01：实例唯一；始终操作正确实例，详情不串件。",
+    "T089-C02：稀疏拖放；布局和快捷栏不回退，不因过滤重排。",
+    "T089-C03：数量边界；合法数量可执行，非法值安全拒绝且不损物。",
+    "T089-C04：预览失效；重新校验，显示实际结果，无负库存。",
+    "T089-C05：距离与epoch；按原规则拒绝，不远程转移、不跨档执行。",
+    "T089-C06：重复提交；一次事务只结算一次；新操作仍可用。",
+    "T089-C07：可读可操作；无遮挡，分页和数量控件可达，焦点返回正确。",
+    "T089-C08：存档保真；保持原格式恢复，数量/耐久/实例ID一致。"
+  ],
+  "non_goals": [
+    "自动排序、快捷远程存取、共享仓储规则调整",
+    "新存档schema或复制物品容器",
+    "恢复旧火红背景/装饰界面"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-004",
+    "T-005",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "2026-10-06最初交付任务规划；2026-10-07已按用户授权派发实施，当前Active。",
+    "Owner沿项目记录；Reviewer和Issue未指派；实际分支codex/TASK-084-103-iteration。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 mcp_setup完成只读源码缺口/定向复现调查；首轮build结束后根Agent派发089源码窗口，UE生命周期及README仍由根Agent负责。",
+    "2026-10-07 根Agent依据用户当前逐单本地实施授权增补ScreenMenu.cpp：仅背包详情的明确装备实例身份/耐久与原选择入口，不修改InventorySlots/InventoryPositions/快捷栏布局算法。",
+    "2026-10-07 089本地源码和真实Widget测试源已落盘，共享源码窗口释放给root接090/091；本单构建、实际3项Native与真实地图/布局/恢复待root执行，当前NOT_RUN。",
+    "2026-10-07 根Agent通过公开UEClient实际Build成功，089注册发现/执行3项Native均Success、0 errors、3条Standalone EnhancedInput warning；证据docs/qa/TASK-089/native-first-20261007.json，真实OS/渲染/独立恢复未验。"
+  ]
+}

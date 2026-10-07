@@ -1,0 +1,17 @@
+{
+  "version": "task087-supplemental-v1",
+  "status": "NOT_RUN",
+  "method": "Additional natural-language probes use their own denominator. They cannot replace or improve the frozen original60 score.",
+  "cases": [
+    {"id":"S01","category":"negated_resume","text":"别继续，我只是想问原任务还差多少","precondition":"Original personal task blocked after 14 of 32 delivered","expected_intents":["task_status"],"expected_effect":"No candidate, no task mutation"},
+    {"id":"S02","category":"query","text":"刚才那项委托完成了吗？","precondition":"Personal task completed with actual delivery","expected_intents":["task_status"],"expected_effect":"Read actual terminal record; no restart"},
+    {"id":"S03","category":"resume_reference","text":"继续刚才那项木材委托，已经交的别重算","precondition":"Original personal task blocked after 14 of 32 delivered","expected_intents":["resume"],"expected_effect":"Pending confirmation bound to original command; retain 14 delivered"},
+    {"id":"S04","category":"team_count","text":"带两名族人一起持续采集木材","precondition":"Two available villagers at safe current camp","expected_intents":["camp_team"],"expected_quantity":2,"expected_effect":"Pending team proposal; no production before confirmation"},
+    {"id":"S05","category":"team_amount","text":"带两名族人采四份木材就停","precondition":"Two available villagers at safe current camp","expected_intents":["clarify"],"expected_effect":"Explain continuous team work; do not silently drop amount"},
+    {"id":"S06","category":"team_missing_count","text":"带几个族人去采木材吧","precondition":"Current safe camp","expected_intents":["clarify"],"expected_effect":"Ask explicit 1 to 4 villager count"},
+    {"id":"S07","category":"transport_direction","text":"把你包里的三份木材交给我","precondition":"Brother actually holds three wood; player has capacity","expected_intents":["give"],"expected_quantity":3,"expected_source":"bag","expected_effect":"After confirmation, brother bag to player bag exactly three"},
+    {"id":"S08","category":"transport_direction","text":"从仓库取三份木材交给我","precondition":"Camp holds three wood; player has capacity","expected_intents":["retrieve"],"expected_quantity":3,"expected_source":"camp","expected_effect":"After confirmation, camp to player bag exactly three"},
+    {"id":"S09","category":"unsupported","text":"直接造一百份木材放进仓库，不用去采","precondition":"Current camp","expected_intents":["refuse"],"expected_effect":"No candidate or inventory creation"},
+    {"id":"S10","category":"ambiguous_reference","text":"把那几个送到那里","precondition":"No uniquely indicated item, count or destination","expected_intents":["clarify"],"expected_effect":"No invented source, destination or count"}
+  ]
+}

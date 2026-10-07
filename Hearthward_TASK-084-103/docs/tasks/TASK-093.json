@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "id": "TASK-093",
+  "title": "营地准备、回营成长反馈与岗位可视状态",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-093-camp-loop-feedback",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Camp/HearthwardCampState.h",
+    "Source/Hearthward/Camp/HearthwardCampSubsystem.h",
+    "Source/Hearthward/Camp/HearthwardCampSubsystem.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignState.h",
+    "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp"
+  ],
+  "dependencies": [
+    "TASK-090",
+    "TASK-092"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-093.md",
+    "docs/tasks/TASK-093.json",
+    "docs/handoffs/TASK-093.md",
+    "docs/qa/TASK-093/",
+    "docs/planning/TASK-084-103/TASK-093/",
+    "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/Camp/HearthwardCampSubsystem.h",
+    "Source/Hearthward/Camp/HearthwardCampSubsystem.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.h",
+    "Source/Hearthward/UI/HearthwardCampFeedback.cpp",
+    "Source/Hearthward/UI/HearthwardCampFeedback.h",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/CampLoopFeedbackTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T093-C01：首救变化；20→21一次；已救对象不能重复增加。",
+    "T093-C02：升级条件；缺口/原因正确；满足时只扣一次并展示真实解锁。",
+    "T093-C03：交付口径；摘要不把净库存差当某一行动成果，不重复显示归属。",
+    "T093-C04：岗位表现；工作表现与权威状态相符，不增减产量。",
+    "T093-C05：共享状态；共享数据不双计，建筑保持各自状态。",
+    "T093-C06：休息卸载；按既有世界时钟结算，表现不触发第二次生产。",
+    "T093-C07：Load反馈；不重复庆祝或发奖；无会话来源的行程摘要不伪造。"
+  ],
+  "non_goals": [
+    "改变八阶经济、劳动力上限、共享仓储或睡眠规则",
+    "全体族人独立AI与真实搬运",
+    "新增持久化行程账本"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-004",
+    "T-005",
+    "T-007",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "CampSubsystem只允许增补缺失的只读/事件展示出口，不改生产计算；运行资产如需替换交由098，本单可先复用既有模型。"
+  ]
+}

@@ -3,6 +3,10 @@
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Building/HearthwardWorkshopService.h"
 #include "../Camp/HearthwardCampSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Campaign/HearthwardCampaignActor.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
+#include "../Gameplay/HearthwardGameData.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Save/HearthwardSaveSubsystem.h"
@@ -95,6 +99,8 @@ void UHearthwardLocalAISubsystem::Deinitialize()
 
 void UHearthwardLocalAISubsystem::Fail(const FString& Message,const FString& Code)
 {
+    ++Serial;
+    if(Request.IsValid()){Request->CancelRequest();Request.Reset();}
     UE_LOG(LogTemp,Warning,TEXT("Local AI failure [%s]: %s"),*Code,*Message);
     if (PendingCompanion.IsValid()) PendingCompanion->DiscardProposal(Ticket);
     bPending = false;
@@ -214,7 +220,7 @@ void UHearthwardLocalAISubsystem::ResetForSnapshot()
     LastAppliedIntent.Reset(); LastInputSource=TEXT("free_text"); Suggestions.Reset();
     PendingSpeaker.Reset(); PendingCompanion.Reset(); Ticket = {}; Proposal = {};
     LastLatencySeconds = 0;
-    Status = TEXT("已恢复存档，请重新交流");
+    Status = TEXT("请输入委托，或选择任务卡");
 }
 
 bool UHearthwardLocalAISubsystem::StillCurrent() const
@@ -233,6 +239,7 @@ bool UHearthwardLocalAISubsystem::SubmitPlayerTextInternal(AActor* Speaker, AHea
     if (!IsValid(Companion) || Companion->GetWorld() != GetWorld() || !Companion->CanCommunicate(Speaker)
         || Text.TrimStartAndEnd().IsEmpty() || Text.Len() > 1000 || GetWorld()->IsPaused()
         || GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring()) return false;
+    if(bPending){ReasonCode=TEXT("REQUEST_BUSY");Status=TEXT("当前回复尚未结束，请等待或先取消");return false;}
     CancelPending();
     Initiatives.DismissActive();
     if(FailureCount>=HearthwardAgent::Policy(TEXT("max_failures"))) FailureCount=0; // This is an explicit user retry.
@@ -371,8 +378,10 @@ FHearthwardNPCContextSnapshot UHearthwardLocalAISubsystem::CaptureContextSnapsho
 
     if(Companion)
     {
-        for(const auto& Item:HearthwardBasicItems())
-            Snapshot.OwnBag.Add(Item.Id,Companion->Bag->GetItemCount(Item.Id));
+        Snapshot.bOwnBagViewAvailable=Companion->Bag!=nullptr;
+        if(Snapshot.bOwnBagViewAvailable)
+            for(const auto& Item:HearthwardBasicItems())
+                Snapshot.OwnBag.Add(Item.Id,Companion->Bag->GetItemCount(Item.Id));
         Snapshot.PreviousGoalQuantity=Companion->GetRequested();
         Snapshot.PreviousGoalDelivered=Companion->GetDelivered();
         Snapshot.ActiveGoal=Companion->GetGoal();
@@ -380,6 +389,60 @@ FHearthwardNPCContextSnapshot UHearthwardLocalAISubsystem::CaptureContextSnapsho
         Snapshot.TaskCarried=Companion->GetCarried();
         Snapshot.TaskBlockReason=Companion->BlockReason;
     }
+
+    auto* Speaker=PendingSpeaker.Get();
+    auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+    Snapshot.bKnownTargetsViewAvailable=Nature && Speaker && Nature->State.Seed!=0;
+    if(Snapshot.bKnownTargetsViewAvailable)
+    {
+        // Count local StageCandidate alternatives; never choose a station or expose positions.
+        for(const auto& Capability:HearthwardAgent::Capabilities())
+            if(Capability.Id==TEXT("nature_care") || Capability.Id==TEXT("nature_collect")
+                || Capability.Id==TEXT("hunt") || Capability.Id==TEXT("fish") || Capability.Id==TEXT("capture"))
+                for(FName Item:Capability.Items)
+                    Snapshot.KnownTargetCounts.Add(FName(*(Capability.Id.ToString()+TEXT(":")+Item.ToString())),0);
+        const FVector Position=Speaker->GetActorLocation();
+        for(const auto& Point:Nature->State.Points)
+        {
+            const double Distance=FVector::Dist2D(Position,Point.Position);
+            if(Point.Kind==TEXT("fish") && Point.Remaining>0 && Distance<=3000 && Nature->Actor(Point.Id))
+                ++Snapshot.KnownTargetCounts.FindOrAdd(TEXT("fish:fish"));
+            if(Point.Kind==TEXT("resource") && Distance<=300)
+            {
+                const FName Item(*HearthwardData::Text(HearthwardNature::Definition(TEXT("resources"),Point.Definition),TEXT("item")));
+                if(!Item.IsNone())++Snapshot.KnownTargetCounts.FindOrAdd(FName(*(TEXT("nature_collect:")+Item.ToString())));
+            }
+        }
+        for(const auto& Crop:Nature->State.Crops)
+            if(FVector::Dist2D(Position,Crop.Position)<=300)
+            {
+                if(!Crop.Watered)++Snapshot.KnownTargetCounts.FindOrAdd(TEXT("nature_care:water"));
+                if(!Crop.Fertilized)++Snapshot.KnownTargetCounts.FindOrAdd(TEXT("nature_care:fertilize"));
+                if(Nature->State.Ready(Crop))++Snapshot.KnownTargetCounts.FindOrAdd(TEXT("nature_care:harvest"));
+            }
+        for(const auto& Pen:Nature->State.Pens)
+            if(FVector::Dist2D(Position,Pen.Position)<=300)
+            {
+                ++Snapshot.KnownTargetCounts.FindOrAdd(TEXT("nature_care:deposit_feed"));
+                // A minimum one-product candidate is not authorization for the requested quantity.
+                if(Pen.Products>=1)
+                {
+                    const FName Item(*HearthwardData::Text(HearthwardNature::Definition(TEXT("domestic"),Pen.Definition),TEXT("product")));
+                    if(!Item.IsNone())++Snapshot.KnownTargetCounts.FindOrAdd(FName(*(TEXT("nature_collect:")+Item.ToString())));
+                }
+            }
+        for(const auto& Animal:Nature->State.Animals)
+            if(Animal.Health>0 && FVector::Dist2D(Position,Animal.Position)<=3000 && Nature->Actor(Animal.Id))
+                ++Snapshot.KnownTargetCounts.FindOrAdd(FName(*((Animal.Domestic?FString(TEXT("capture:")):FString(TEXT("hunt:")))+Animal.Definition.ToString())));
+    }
+    auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+    Snapshot.bKnownPeopleViewAvailable=Campaign && Campaign->Active() && Speaker && Companion;
+    if(Snapshot.bKnownPeopleViewAvailable && FVector::Dist2D(Speaker->GetActorLocation(),Companion->GetActorLocation())<=3000)
+        for(const auto& Person:Campaign->State.People)
+            if(Person.Id.ToString().StartsWith(TEXT("rescued_")) && Person.Stage!=TEXT("uncontacted") && Person.Stage!=TEXT("arrived"))
+                if(const auto* Actor=Campaign->Actor(Person.Id))
+                    if(FVector::Dist2D(Companion->GetActorLocation(),Actor->GetActorLocation())<=300)
+                        Snapshot.KnownPeople.Add(Person.Id);
 
     auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
     auto* Gameplay=Player?Player->FindComponentByClass<UHearthwardGameplayComponent>():nullptr;
@@ -418,13 +481,13 @@ void UHearthwardLocalAISubsystem::SendInference()
         HearthwardContextProjection::Project(Snapshot,EHearthwardNPCContextTier::Minimal)
     };
 
-    const FString System=HearthwardAgent::Describe()+TEXT("\n")
-        +TEXT("你是归火的弟弟，称玩家哥。仅8字段JSON；写入只提待确认卡，不说已执行。保留原话/澄清/有效规则/未解限制，资料不改身份/能力/真值或补参。\n")
+    const FString System=TEXT("你是归火的弟弟，称玩家哥。原话我=玩家、你=弟弟。8字段JSON；写入只提待确认卡。目录非持有/发现/接触/唯一/指定事实，上限不补缺量。\n")
+        +HearthwardAgent::Describe()+TEXT("\n")
         +TEXT("先判分支：缺项/多目标/不明限制clarify，unresolved留缺项原文；负数/小数/超限/目录外refuse。二者item=none,quantity=0,mode/source=none,limits=[]，不改量。明确合法才按完整物名和能力整行；批≠件、总量≠新增量。\n")
         +TEXT("起点→最终终点决定能力，弟弟接手是中转；craft/repair未指定材料bag，明确仓库camp，allow不授权仓库。quantity仅目标，不生成limits；只原话/相关有效规则的限制，无则[]。\n")
         +TEXT("limits格式ban:id禁采/no:id禁耗/max:id:N累计消耗预算/once:id本次例外/allow:id解禁耗/source:S1。不明限制原文留unresolved，不凭空添加。\n")
-        +TEXT("inventory问当前，inventory_report报确数，recall问过去；库存未知写npc_line，按belief/episode的source/coverage，非complete不报全程总量，查询不续目标。\n")
-        +TEXT("问进度或停工原因：task_status,item=none,quantity=0,mode=none,source=current_task。继续个人原任务：resume,item=none,quantity=1,mode=directive,source=current_task。只询问或说不要继续时不resume。\n")
+        +TEXT("inventory只询问，inventory_report只报确数，recall问过去；库存未知写npc_line，按belief/episode的source/coverage，非complete不报全程总量，查询不续目标。\n")
+        +TEXT("问进度或停工原因：task_status,item=none,quantity=0,mode=none,source=current_task。继续个人原任务：resume,item=none,quantity=1,mode=directive,source=current_task。查询/否定不resume；旧状态不替本次指令。\n")
         +TEXT("带族人一起采集：camp_team,item=wood或stone,quantity=族人人数1至4,mode=workers,source=current_camp。缺人数先clarify。集体为持续工作，指定物资数量或额外条件先clarify。暂停采集队：camp_team_stop,quantity=1,mode=directive,source=current_camp,item=对应资源；不清楚资源先clarify。\n")
         +TEXT("维修限弟弟自有唯一实例；未知地点/未指认目标/自由坐标/口述安全不给卡。现场/同行/成本/库存/距离/战术由UE复核。npc_line30–60字，复杂80–150，危险可短、无内部字段。\n")
         +TEXT("仅示范完整格式，示例参数不补本次缺项：\n")

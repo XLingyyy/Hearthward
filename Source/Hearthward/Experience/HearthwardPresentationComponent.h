@@ -1,7 +1,11 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/EngineTypes.h"
+#include "Engine/HitResult.h"
 #include "HearthwardPresentationComponent.generated.h"
+struct FHearthwardCombatFeedbackReceipt;
+struct FHearthwardFootContactReceipt;
 UCLASS(ClassGroup=(Hearthward),meta=(BlueprintSpawnableComponent))
 class HEARTHWARD_API UHearthwardPresentationComponent : public UActorComponent
 {
@@ -16,12 +20,62 @@ public:
     UFUNCTION(BlueprintPure) FString GetSubtitle() const;
     UFUNCTION(BlueprintPure) FName GetCue() const {return CurrentCue;}
     UFUNCTION(BlueprintPure) FString GetVoiceStatus() const {return VoiceStatus;}
+    bool FootContactSucceeded(const FHearthwardFootContactReceipt& Receipt);
 private:
+    friend struct FAudioFeedbackLifecycleAccess;
     UFUNCTION() void Restored();
+    UFUNCTION() void StorageTransferred(FGuid Operation,bool ToCamp,FName Item,int32 Count);
+    UFUNCTION() void GameplayChanged();
+    UFUNCTION() void CharacterLanded(const FHitResult& Hit);
+    UFUNCTION() void CharacterMovementChanged(class ACharacter* Character,EMovementMode PreviousMode,uint8 PreviousCustomMode);
+    void SeedSuccessEvents();
+    void ObserveProgressSuccess(bool Seed);
+    void ObserveNPCSuccess(class AHearthwardCompanionFixture* Brother);
+    void BindCombatSources(class AHearthwardCompanionFixture* Brother);
+    void UnbindCombatSources();
+    void CombatSucceeded(const FHearthwardCombatFeedbackReceipt& Receipt);
+    bool PlaySoundEvent(FName Event,FGuid Operation,const FVector* Position=nullptr,bool Remember=true);
+    void StopEffects();
+    void InitializeEnvironment();
+    bool PrepareEnvironmentWave();
+    void CacheEnvironmentActor(class AActor* Actor);
+    void EnvironmentActorSpawned(class AActor* Actor);
+    void EnvironmentLevelAdded(class ULevel* Level,class UWorld* World);
+    void EnvironmentLevelRemoved(class ULevel* Level,class UWorld* World);
+    void UpdateEnvironment();
+    void StopEnvironment();
+    void ReleaseEnvironment();
     UPROPERTY() TObjectPtr<class UAudioComponent> Voice;
     UPROPERTY() TObjectPtr<class USoundWaveProcedural> Wave;
-    struct FCue {FString Speaker,Text,Group;};
+    UPROPERTY() TArray<TObjectPtr<class UAudioComponent>> Effects;
+    UPROPERTY() TObjectPtr<class UAudioComponent> EnvironmentSource;
+    UPROPERTY() TObjectPtr<class UHearthwardEnvironmentLoopWave> EnvironmentWave;
+    TArray<FVector> EnvironmentVertices;
+    TArray<FIntVector> EnvironmentTriangles;
+    FString EnvironmentMesh;
+    FName EnvironmentTag,EnvironmentEvent;
+    bool EnvironmentWaveAttempted=false;
+    TArray<TWeakObjectPtr<class UStaticMeshComponent>> EnvironmentCandidates;
+    TArray<TWeakObjectPtr<class AActor>> PendingEnvironmentActors;
+    TWeakObjectPtr<class UStaticMeshComponent> EnvironmentSurface;
+    FDelegateHandle EnvironmentSpawnHandle,EnvironmentRegisterHandle;
+    TArray<float> EffectRemaining;
+    struct FCue {FString Speaker,Text,Group,ProductionStatus;};
+    struct FSoundCue {FString File;FName Channel;};
     TMap<FName,FCue> Cues;
+    TMap<FName,FSoundCue> SoundCues;
+    TSet<FGuid> ObservedTransfers;
+    TSet<FGuid> ObservedNPCEvents;
+    TMap<FGuid,FVector> ObservedCombatEvents;
+    TMap<FGuid,FVector> ObservedFootContacts;
+    uint64 ObservedFootFrame=0;
+    TWeakObjectPtr<class UHearthwardCombatComponent> BoundCombat;
+    TWeakObjectPtr<class UHearthwardSurvivalComponent> BoundSurvival,BoundBrotherSurvival;
+    TMap<FName,int32> ObservedPlayerEvents;
+    TMap<FName,int32> ObservedMovementEvents;
+    EMovementMode ObservedMovementMode=MOVE_None;
+    bool AwaitingLanding=false;
+    FGuid PendingLanding;
     TSet<FGuid> PlayedEvents;
     FName CurrentCue;
     FGuid Epoch;

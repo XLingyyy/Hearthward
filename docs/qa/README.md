@@ -4,6 +4,18 @@
 
 基础入口：[构建与测试](BUILD_AND_TEST.md) · [测试矩阵](TEST_MATRIX.md) · [项目状态](../PROJECT_STATE.md)。
 
+当前本地迭代：[TASK-084—103执行记录](../planning/TASK-084-103/EXECUTION_STATUS.md)。各单 `TASK-084` 至 `TASK-103` 的 REPORT 区分工程/原生/正常输入/真实模型/性能/人工层级；UE连接见 [MCP](MCP/20261007/SETUP.md)。声音工程Editor构建和联合原生28/28通过，其中[TASK-099为23/23](TASK-099/REPORT.md)，所选测试0警告/0错误；启动13条frame0 Smoke错误与1条MCP告警单列，原RED保留。099为17个声音事件/12个独立运行时WAV，`NoSound/NullRHI`不提供实际听感信用。
+
+[087 Source.2完整原60](TASK-087/REPORT.md)CPU原始33/60、Vulkan32/60，语言均FAIL；边界各20/20、未观察到白得物品。独立辅助后的60暖组件p95 CPU22.656秒/Vulkan8.672秒为局部PASS，Paint/联合性能不继承。[102稳定单场](TASK-102/REPORT.md)CPU/Vulkan 1%Low分别51.3488/49.0052 FPS，均未达60；完整六场与最终同版Shipping性能仍未验收。
+
+当前内部候选5 `0.2.0-preview.20261007.4` 已完成 Shipping Build/Cook/Stage/Archive，运行树 `F:/HearthwardDemo/iteration-084-103-20261007-5/Windows`；ZIP已生成：`F:/HearthwardDemo/iteration-084-103-20261007-5.zip`，4,645,167,974字节，166个运行时文件，文件名/大小清单匹配，旁有 `.zip.sha256`。17个声音事件/12个独立WAV及9份必要许可文件存在，完整资产来源/许可验收仍见094。局部OS检查通过：CPU新档卧室、F6保存1→2；Vulkan显式鼠标继续恢复同卧室/Main01和原手动/自动共2节点，F6仍2；两路径中性交流提示及正常退出通过。该轮没有模型请求、Unicode/IME、原档兼容或完整路线信用；Explorer双击未验。ZIP内BUILDINFO为ZIP创建前的实际快照，最终状态以[候选报告](TASK-103/REPORT.md)和[最终整理记录](TASK-103/CANDIDATE5_FINALIZATION.json)为准。该候选仅本地内部交付，未发布，整批未取得正式验收。
+
+两处正式空间节点结束逻辑修复分别完成定向原生回归；[Nav12](TASK-103/NAV12_GROUNDED_FINAL_FIRST_BLOCKER.json)实际到达卧室门、楼梯顶、楼梯底、院门四节点，并通过一段1976.913883cm的grounded普通PathFollowing。第二段NavPath `valid=true/partial=true`，严格停止在移动前；正式目标稳定，院门route再次显示已记录。完整撤离、自然营地checkpoint、首次救援及OS连续路线未通过。候选位于角塔/底座XY覆盖，但Nav层归属及partial原因仍UNKNOWN，未自动改游戏几何或玩法。
+
+[UE MCP最终配置与检查](MCP/20261007/SETUP.md)已完成：正常Editor检查时HTTP在线、三个元工具握手、Bootstrap只读查询及RC/Python/CLI启用状态通过。服务依赖该Editor进程。当前Codex聊天的原生工具目录未热挂载；需要在Hearthward项目中新建聊天加载配置，实际新聊天挂载仍未验。
+
+候选4/候选2的启动、模型单例或原档兼容结果保留各自历史绑定，不迁移到候选5。087 Source.2完整语言质量矩阵及102帧门槛仍FAIL；7项设计确认与后续技术项见[本批执行记录](../planning/TASK-084-103/EXECUTION_STATUS.md)，真人和二机验收未完成。
+
 ## 任务与专题
 
 | 目录 | 报告入口 |
@@ -51,7 +63,7 @@
 - [TASK-080 报告](TASK-080/REPORT.md)
 - [TASK-081 报告](TASK-081/REPORT.md)
 - [TASK-082 报告](TASK-082/INTEGRATION-REPORT.md)
-- [TASK-083 当前 Demo 发行与验证](../releases/demo-20261006-2/REPORT.md)
+- [TASK-083 已公开历史 Demo 发行与验证](../releases/demo-20261006-2/REPORT.md)
 
 ## 保存规则
 

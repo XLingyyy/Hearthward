@@ -31,6 +31,12 @@ struct FHearthwardNPCContextSnapshot
     FString CollectionSafetyReason;
 
     TMap<FName,int32> OwnBag;
+    bool bOwnBagViewAvailable = false;
+    bool bKnownTargetsViewAvailable = false;
+    // Only observed candidate counts, keyed by capability:item; omitted keys remain unknown.
+    TMap<FName,int32> KnownTargetCounts;
+    bool bKnownPeopleViewAvailable = false;
+    TArray<FName> KnownPeople;
     int32 PreviousGoalQuantity = 0;
     int32 PreviousGoalDelivered = 0;
     FHearthwardAgentGoal ActiveGoal;

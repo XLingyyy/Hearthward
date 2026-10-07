@@ -1,0 +1,33 @@
+{
+  "task": "TASK-099",
+  "source_archive": "kenney_rpg-audio.zip",
+  "source_archive_members": [
+    "Audio/bookClose.ogg",
+    "Audio/bookOpen.ogg",
+    "Audio/chop.ogg",
+    "Audio/dropLeather.ogg",
+    "Audio/handleSmallLeather2.ogg",
+    "Audio/metalClick.ogg",
+    "Audio/metalLatch.ogg",
+    "Audio/metalPot2.ogg",
+    "Audio/footstep00.ogg"
+  ],
+  "command_arguments": [
+    "-hide_banner",
+    "-loglevel",
+    "error",
+    "-i",
+    "<source.ogg>",
+    "-map_metadata",
+    "-1",
+    "-ac",
+    "1",
+    "-ar",
+    "44100",
+    "-c:a",
+    "pcm_s16le",
+    "<candidate.wav>"
+  ],
+  "runtime_requires_python_or_ffmpeg": false,
+  "audition": "NOT_RUN"
+}

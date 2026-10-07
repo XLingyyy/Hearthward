@@ -3,6 +3,8 @@
 #include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "HearthwardScreenWidget.h"
+#include "HearthwardQuestGuidance.h"
+#include "HearthwardPresentationReadModels.h"
 #include "../HearthwardCharacter.h"
 #include "Misc/ConfigCacheIni.h"
 #include "../Building/HearthwardBuildingComponent.h"
@@ -36,12 +38,6 @@ namespace
 const FName NaturalMap(TEXT("/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds"));
 AHearthwardCompanionFixture* Companion(UWorld* World)
 { for(TActorIterator<AHearthwardCompanionFixture> It(World);It;++It) return *It; return nullptr; }
-bool NearStorage(UWorld* World,AActor* Player)
-{
-    for(TActorIterator<AActor> It(World);It;++It)
-        if(const auto* R=It->FindComponentByClass<UHearthwardResourceInteractionComponent>(); R && R->CanAccessStorage(Player)) return true;
-    return false;
-}
 }
 bool UHearthwardScreenWidget::PrepareSession()
 {
@@ -110,6 +106,14 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(ConfirmAction==TEXT("settings.display") && (Action==TEXT("confirm") || Action==TEXT("cancel")))
     {FinishDisplayChange(Action==TEXT("confirm"));return true;}
     MessageUntil=FPlatformTime::Seconds()+4;
+    if(Action.StartsWith(TEXT("preparation.journal:")))
+    {
+        if(Page!=TEXT("hud"))return false;
+        const FName Quest(*Action.Mid(20));const auto* G=Gameplay();
+        if(!G->QuestAvailable(Quest) || G->Claimed.Contains(Quest))return false;
+        const auto Row=Find(TEXT("quests"),Quest.ToString());if(!Row)return false;
+        OpenPage(TEXT("journal"));Category=Text(Row,TEXT("kind"));SelectedQuest=Quest;Refresh();return true;
+    }
     if(Action.StartsWith(TEXT("hud.quick.")))
     {
         if(Page!=TEXT("hud")) return false;
@@ -128,6 +132,10 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(Action.StartsWith(TEXT("gear.")))return ExecuteEquipmentAction(Action);
     if(Action.StartsWith(TEXT("nature.")))return ExecuteNatureAction(Action);
     if(Action.StartsWith(TEXT("settings.")))return ExecuteSettingsAction(Action);
+    if(Action.StartsWith(TEXT("storage.")) || Action.StartsWith(TEXT("deposit:")) || Action.StartsWith(TEXT("withdraw:"))
+        || Action.StartsWith(TEXT("depositInstance:")) || Action.StartsWith(TEXT("withdrawInstance:"))
+        || Action.StartsWith(TEXT("quantity:")) || Action==TEXT("transfer") || Action.StartsWith(TEXT("transfer:")))
+        return ExecuteStorageAction(Action);
     if(Action==TEXT("buildPrev") || Action==TEXT("buildNext"))
     {
         const auto& Buildings=Rows(TEXT("buildings"));
@@ -229,7 +237,19 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         Success=Verb==TEXT("agentConfirm")?AI->ConfirmCandidate(Id):AI->AdjustCandidate(Id,Verb==TEXT("agentMore")?1:-1);Message=AI->GetStatus();if(Success && Verb==TEXT("agentConfirm"))DialogueView=TEXT("home");Refresh();return Success;
     }
     if(Action==TEXT("agentInventory")) {if(Page!=TEXT("dialogue"))return false;Success=AI->QueryInventory(GetOwningPlayerPawn(),Companion(GetWorld()),TEXT("wood"));DialogueView=TEXT("home");Refresh();return Success;}
-    if(Action==TEXT("agentRetryPath")) {if(Page!=TEXT("dialogue"))return false;auto* C=Companion(GetWorld());Success=C && C->ResumeBlocked(GetOwningPlayerPawn());Message=Success?TEXT("原委托已继续"):C?C->BlockReason:TEXT("请靠近弟弟");Refresh();return Success;}
+    if(Action==TEXT("agentRetryPath") || Action.StartsWith(TEXT("agentRetryPath:")))
+    {
+        if(Page!=TEXT("dialogue"))return false;
+        auto* C=Companion(GetWorld());
+        const auto View=Action==TEXT("agentRetryPath")?DialoguePersonalWork:HearthwardPresentation::ReadCompanion(C,Store,GetOwningPlayerPawn());
+        const bool Bound=Action==TEXT("agentRetryPath") || Action==HearthwardPresentation::PersonalActionToken(TEXT("agentRetryPath"),View);
+        Success=Bound && HearthwardPresentation::CanApplyPersonalAction(View,C,Store,GetOwningPlayerPawn(),true)
+            && C->ResumeBlocked(GetOwningPlayerPawn());
+        Message=Success?TEXT("原委托已继续"):!Bound || (C && !View.Matches(Store->GetTimelineEpoch(),C->GetCommandId()))
+            ?TEXT("这张委托状态卡已失效，请重新查看当前工作"):!View.ResumeReason.IsEmpty()?View.ResumeReason:
+            !View.Reason.IsEmpty()?View.Reason:C?HearthwardPresentation::CompanionBlockText(C->BlockReason):TEXT("请靠近弟弟");
+        Refresh();return Success;
+    }
     if(Action==TEXT("agentTypeNext") || Action==TEXT("agentItemNext") || Action==TEXT("agentInstanceNext") || Action==TEXT("agentSourceNext"))
     {
         if(Page!=TEXT("dialogue"))return false;
@@ -284,6 +304,29 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Page!=TEXT("repairing") || !Find(TEXT("repairRecipes"),Id.ToString()) || Inventory()->GetItemCount(Id)<1) return false;
         SelectedRepair=Id; Message.Reset(); Refresh(); return true;
     }
+    if(Action.StartsWith(TEXT("craftSearch:")) || Action==TEXT("craftCategory") || Action==TEXT("craftAvailable") || Action==TEXT("craftClearFilters") || Action==TEXT("craftTrack") || Action==TEXT("craftUntrack"))
+    {
+        if(Page!=TEXT("crafting"))return false;
+        if(Action.StartsWith(TEXT("craftSearch:")))
+        {CraftingSearch=Action.Mid(12);Draft->SetText(FText::FromString(CraftingSearch));Scroll=0;}
+        else if(Action==TEXT("craftCategory"))
+        {
+            TArray<FString> Categories;Categories.Add(FString());
+            for(const auto& Value:Rows(TEXT("craftingRecipes")))Categories.AddUnique(HearthwardCraftingDiscovery::Category(Value->AsObject()));
+            Categories.Sort();const int32 Current=Categories.IndexOfByKey(CraftingCategory);
+            CraftingCategory=Categories[(Current+1)%Categories.Num()];
+        }
+        else if(Action==TEXT("craftAvailable"))CraftingOnlyAvailable=!CraftingOnlyAvailable;
+        else if(Action==TEXT("craftClearFilters")){CraftingSearch.Reset();CraftingCategory.Reset();CraftingOnlyAvailable=false;Draft->SetText(FText::GetEmpty());}
+        else if(Action==TEXT("craftUntrack"))CraftingTracker.Clear();
+        else
+        {
+            const auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+            if(CraftingEpoch!=Storage->GetTimelineEpoch() || !Find(TEXT("craftingRecipes"),SelectedRecipe.ToString()))return false;
+            CraftingTracker.Set(SelectedRecipe,CraftingBatches,CraftingEpoch);
+        }
+        Scroll=0;Refresh();return true;
+    }
     if(Action==TEXT("craft"))
     {
         auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
@@ -295,12 +338,15 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     {
         const FName Id(*Action.Mid(7));
         if(Page!=TEXT("crafting") || !Find(TEXT("craftingRecipes"),Id.ToString())) return false;
-        SelectedRecipe=Id; CraftingBatches=1; Message.Reset(); Refresh(); return true;
+        SelectedRecipe=Id; CraftingBatches=1;
+        if(CraftingTracker.IsCurrent(CraftingEpoch) && CraftingTracker.Recipe==Id)CraftingTracker.Batches=CraftingBatches;
+        Message.Reset(); Refresh(); return true;
     }
     if(Action==TEXT("craftMore") || Action==TEXT("craftLess"))
     {
         if(Page!=TEXT("crafting")) return false;
         CraftingBatches=FMath::Clamp(CraftingBatches+(Action==TEXT("craftMore")?1:-1),1,int32(Number(Catalog()->GetObjectField(TEXT("crafting")),TEXT("maxBatches"))));
+        if(CraftingTracker.IsCurrent(CraftingEpoch) && CraftingTracker.Recipe==SelectedRecipe)CraftingTracker.Batches=CraftingBatches;
         Message.Reset(); Refresh(); return true;
     }
     if(Action.StartsWith(TEXT("build:")))
@@ -350,7 +396,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     {
         const FName Next(*Action.Mid(5));
         if(Next==TEXT("save") && !Save->LoadPointIndex()) { Message=Save->GetStatus(); Refresh(); return false; }
-        if(Next==TEXT("storage") && !NearStorage(GetWorld(),GetOwningPlayerPawn())) { Message=TEXT("请靠近营地仓储"); Refresh(); return false; }
+        if(Next==TEXT("storage") && !G->NearStorage()) { Message=TEXT("请靠近可用的营地仓储设施"); Refresh(); return false; }
         if(Next==TEXT("dialogue") || Next==TEXT("memory"))
         { auto* C=Companion(GetWorld()); if(!C || !C->CanCommunicate(GetOwningPlayerPawn())) { Message=TEXT("请靠近弟弟，交流范围30米"); Refresh(); return false; } }
         if(Next==TEXT("hud") && !Save->GetCampaignId().IsValid()) { OpenPage(TEXT("title")); return false; }
@@ -408,6 +454,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         SelectedItem=FName(*Action.Mid(5));
         if(Page==TEXT("inventory"))
         {
+            InventorySelectionEpoch=Store->GetTimelineEpoch();
             const FString ItemCategory=InventoryCategory(Find(TEXT("items"),SelectedItem.ToString()));
             if(Category!=ItemCategory) { Category=ItemCategory;Scroll=0; }
         }
@@ -455,24 +502,6 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Page!=TEXT("inventory")) return false;
         Scroll=FMath::Max(0,Scroll+(Action==TEXT("inventory.next")?1:-1)*(Category==TEXT("材料")?6:3));
     }
-    else if(Action==TEXT("storage.prev") || Action==TEXT("storage.next"))
-    {
-        if(Page!=TEXT("storage")) return false;
-        Scroll=FMath::Max(0,Scroll+(Action==TEXT("storage.next")?4:-4));
-    }
-    else if(Action.StartsWith(TEXT("deposit:"))) { SelectedItem=FName(*Action.Mid(8)); StorageToCamp=true; Quantity=1; }
-    else if(Action.StartsWith(TEXT("withdraw:"))) { SelectedItem=FName(*Action.Mid(9)); StorageToCamp=false; Quantity=1; }
-    else if(Action.StartsWith(TEXT("quantity:"))) Quantity=FMath::Clamp(Quantity+FCString::Atoi(*Action.Mid(9)),1,9999);
-    else if(Action==TEXT("transfer"))
-    {
-        if(Page!=TEXT("storage") || StorageEpoch!=Store->GetTimelineEpoch() || !NearStorage(GetWorld(),GetOwningPlayerPawn())) { Success=false; Message=TEXT("仓储访问已失效，请重新靠近打开"); }
-        else
-        {
-            const auto R=Store->Transfer(Inventory(),StorageToCamp,SelectedItem,Quantity,FGuid::NewGuid(),StorageEpoch);
-            Success=R.Result==EHearthwardInventoryResult::Success;
-            Message=Success?TEXT("物品已转移"):R.Result==EHearthwardInventoryResult::CapacityExceeded?TEXT("背包容量不足"):TEXT("物品数量不足，转移未执行");
-        }
-    }
     else if(Action==TEXT("menuPause"))
     {
         MenuPause=!MenuPause;
@@ -500,8 +529,13 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     {
         const FName UsedItem=SelectedItem;
         const auto Item=Find(TEXT("items"),UsedItem.ToString());
+        const bool InstanceEquipment=Page==TEXT("inventory") && !Text(Item,TEXT("slot")).IsEmpty();
+        const FGuid UsedInstance=EquipmentSelection;
+        if(InstanceEquipment && (InventorySelectionEpoch!=Store->GetTimelineEpoch() || EquipmentOwner!=TEXT("player")
+            || !Inventory()->FindInstance(UsedInstance) || Inventory()->FindInstance(UsedInstance)->Definition!=UsedItem))
+        {Message=TEXT("装备选择已过期，请重新选择具体实例");Refresh();return false;}
         if(Number(Item,TEXT("healing"))>0 || Number(Item,TEXT("food"))>0 || !Text(Item,TEXT("slot")).IsEmpty() || Number(Item,TEXT("throwDamage"))>0) OpenPage(TEXT("hud"));
-        Success=G->UseItem(UsedItem); Message=G->Feedback;
+        Success=InstanceEquipment?G->EquipInstance(UsedInstance):G->UseItem(UsedItem); Message=G->Feedback;
     }
     else if(Action==TEXT("repair"))
     {
@@ -546,9 +580,10 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
         if(Page==TEXT("journal") && (Category!=TEXT("main") && Category!=TEXT("side") || SelectedQuest.IsNone())) return false;
         const auto* Story=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
         const FName Location=Story->Active()?Story->QuestLocation(SelectedQuest):FName(*Text(Find(TEXT("quests"),SelectedQuest.ToString()),TEXT("location")));
-        if(G->Discovered.Contains(Location))
-        { SelectedLocation=Location;OpenPage(TEXT("map"));WorldMap=true;FocusMapLocation(Location); }
-        else { Success=false; Message=TEXT("任务地点尚未发现，请先探索"); }
+        const auto Guidance=HearthwardQuestGuidance::Resolve(GetOwningPlayer(),SelectedQuest);
+        if(Guidance.Visible && G->Discovered.Contains(Location))
+        { SelectedLocation=Location;OpenPage(TEXT("map"));WorldMap=true;FocusMapPoint(Guidance.World); }
+        else { Success=false; Message=TEXT("当前没有可定位的已知任务目标"); }
     }
     else if(Action==TEXT("track"))
     { if(Page==TEXT("journal") && (Category!=TEXT("main") && Category!=TEXT("side") || SelectedQuest.IsNone())) return false;Success=G->Track(SelectedQuest);Message=G->Feedback; }
@@ -597,8 +632,18 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
             if(Success) G->Record(TEXT("talk"),TEXT("brother"));
         }
     }
-    else if(Action==TEXT("cancelTask"))
-    { auto* C=Companion(GetWorld()); Success=C && AI->CancelExecution(GetOwningPlayerPawn(),C); Message=Success?TEXT("委托已取消"):TEXT("请靠近弟弟后取消委托"); }
+    else if(Action==TEXT("cancelTask") || Action.StartsWith(TEXT("cancelTask:")))
+    {
+        if(Page!=TEXT("dialogue"))return false;
+        auto* C=Companion(GetWorld());
+        const auto View=Action==TEXT("cancelTask")?DialoguePersonalWork:HearthwardPresentation::ReadCompanion(C,Store,GetOwningPlayerPawn());
+        const bool Bound=Action==TEXT("cancelTask") || Action==HearthwardPresentation::PersonalActionToken(TEXT("cancelTask"),View);
+        Success=Bound && HearthwardPresentation::CanApplyPersonalAction(View,C,Store,GetOwningPlayerPawn(),false)
+            && AI->CancelExecution(GetOwningPlayerPawn(),C);
+        Message=Success?TEXT("委托已取消，已取得物资保留"):!Bound || (C && !View.Matches(Store->GetTimelineEpoch(),C->GetCommandId()))
+            ?TEXT("这张委托状态卡已失效，请重新查看当前工作"):!View.CancelReason.IsEmpty()?View.CancelReason:
+            !View.Reason.IsEmpty()?View.Reason:TEXT("请靠近弟弟后取消委托");
+    }
     else if(Action==TEXT("send") || Action.StartsWith(TEXT("say:")))
     {
         if(Page!=TEXT("dialogue"))return false;

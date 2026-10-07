@@ -1,0 +1,59 @@
+{
+  "schema": "hearthward.native_mcp_final_resident.v1",
+  "status": "FINAL_RESIDENT_MCP_VERIFIED",
+  "runner_recorded_utc": "2026-10-07T02:29:25.535341+00:00",
+  "recorded_time_semantics": "runner record created before launch; not a fabricated wall-clock completion time",
+  "startup_wait_seconds": 49.37684509996325,
+  "elapsed_seconds": 52.31618620001245,
+  "endpoint": "http://127.0.0.1:8000/mcp",
+  "protocol_version": "2025-06-18",
+  "transport": "streamable_http",
+  "editor": {
+    "owned_process_id": 52580,
+    "mode": "normal Editor",
+    "map": "/Game/Hearthward/Bootstrap/L_Bootstrap",
+    "left_alive_at_final_verification": true,
+    "mcp_port": 8000,
+    "remote_control_port": 30010,
+    "runtime_input_port_configured": 30020,
+    "game_or_pie_started": false
+  },
+  "checks": {
+    "initialize_http": 200,
+    "session_header_present": true,
+    "initialized_http": 202,
+    "tools_list_http": 200,
+    "native_meta_tools": [
+      "call_tool",
+      "describe_toolset",
+      "list_toolsets"
+    ],
+    "native_meta_tool_count": 3,
+    "toolsets_discovery_this_final_run": "NOT_RUN; initial 52-toolset discovery remains historical",
+    "current_level_http": 200,
+    "current_level": "/Game/Hearthward/Bootstrap/L_Bootstrap",
+    "ueclient_environment": {
+      "operation": "observe.check_status",
+      "ok": true,
+      "remote_control_ok": true,
+      "python_execution_ok": true
+    },
+    "startup_initialize_attempts": 11
+  },
+  "codex_configuration": {
+    "server_name": "unreal-mcp",
+    "cwd": "G:\\GameFactory",
+    "returncode": 0,
+    "enabled": true,
+    "endpoint_matches": true,
+    "configuration_read_verified": true
+  },
+  "current_chat_native_tools": "NOT_AVAILABLE; no hot-mount was performed",
+  "reload_step": "Create a new chat in the Hearthward project, then confirm unreal-mcp tools appear",
+  "availability": "Service was online with the owned normal Editor at final verification; closing that Editor takes this endpoint offline",
+  "private_safe_evidence": ".agent-local/qa/MCP/final-resident-20261007-01/results.json",
+  "private_safe_launch": ".agent-local/qa/MCP/final-resident-20261007-01/launch.json",
+  "private_runtime_log": ".agent-local/qa/MCP/final-resident-20261007-01/editor-runtime.log",
+  "initial_historical_evidence": "connection.json",
+  "privacy": "Only session-header presence is retained; no session ID, credential, environment dump or raw protocol body is copied"
+}

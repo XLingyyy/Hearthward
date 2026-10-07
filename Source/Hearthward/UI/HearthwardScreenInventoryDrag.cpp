@@ -48,6 +48,9 @@ FReply UHearthwardScreenWidget::InventoryMouseDown(const FGeometry& Geometry,con
     InventoryDragQuick=Cell.QuickSlot;InventoryDragSource=Cell.LayoutId;InventoryDragAsset=Cell.Asset;
     InventoryDragEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     InventoryDragStart=InventoryDragCursor=Point;SelectedItem=Cell.InventoryItem;
+    InventorySelectionEpoch=InventoryDragEpoch;
+    if(Cell.InventoryInstance.IsValid())
+    {EquipmentSelection=Cell.InventoryInstance;EquipmentOwner=TEXT("player");EquipmentStack=NAME_None;}
     Refresh();return FReply::Handled().CaptureMouse(TakeWidget()).SetUserFocus(TakeWidget());
 }
 FReply UHearthwardScreenWidget::InventoryMouseUp(const FGeometry& Geometry,const FPointerEvent& Event)

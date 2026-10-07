@@ -1,0 +1,32 @@
+Hearthward 0.2.0-preview.20261007.4 — 内部候选
+CandidateID: iteration-084-103-20261007-5
+状态: BUILD_SUCCESS / OS_PARTIAL_VERIFIED / ZIP_EXTERNAL_RECORD_PENDING / INTERNAL_NOT_PUBLISHED
+
+本次变化
+- 个人/队伍状态卡显示真实计数与停工原因；恢复/取消仍由原事务复核。
+- 交流忙请求保护、失败回调失效，以及角色、容器归属和可知候选投影。
+- 制作搜索、可制作筛选、材料追踪，具体装备GUID、数量/耐久预览与仓储转移复核。
+- HUD/日志准备提示与双方倒地优先、堡垒节点、未知支线/等待人物目标及实际等待停步修复。
+- 营地升级成本预览、旧tier卡拒绝与会话反馈；保存格式、奖励和经济规则保持原契约。
+- 真实事务和进度音效、战斗hit/block/damage/有效空挥、双角色四条Walk/Run脚步Notify，以及当前加载湖水的循环声。17个事件配置对应12个独立运行WAV；落地与入出水回调已观察，专用cue仍未绑定。
+- 沿用候选4的新游戏/读档中性AI提示；候选4正常新游戏与显式鼠标Continue已取得历史OS提示GREEN，候选3误提示原RED保留，候选5正常新游戏和明确鼠标Continue后的中性提示均已有真实OS证据。
+- 候选5已修复楼梯顶指引切换和侧门≤50cm三维到达圆交接。导航06/07分别提供真实到达仍同指引的RED；091同一用例两次独立RED1Fail→GREEN1Success，各轮0warning且GREEN0error，四个原件独立保留。版本Header.4，不新增地图或设计目标；Development/API四节点切换已实际验证，本包Shipping构建与OS开局/保存继续局部验证已取得，完整路线仍未通过。
+- 095—098完成来源、绑定和生命周期调查及既有行为回归；待审风格资产未批量替换。
+
+已取得的技术证据
+099 Native13为23/23成功，与既有战斗/生存/存档5项共28/28，0测试warning/error；13条frame0 Smoke错误及1条MCP启动告警独立保留。真实public Attack空挥、实际clip/弟弟脚步绑定、已加载水面最近点和连续PCM/Load生命周期均有定向断言。NoSound/NullRHI不提供设备实听或本包Shipping路线信用。
+087生命周期与投影7/7原生成功，兼容3项单列。Source.2/version.2固定CPU原60原始33/60、受限3/20、明确E2E33/40、执行25/30；Vulkan分别32/60、2/20、33/40、24/30。边界各20/20、未观察到白得物品，语言质量均FAIL。候选4文字修订与候选5窄路线修复不改Prompt、模型、Schema、参数、预算或质量门槛，不宣称重跑矩阵。固定AI contract仍Source.2。
+独立辅助后60暖组件p95为CPU22.656秒、Vulkan8.672秒，局部延迟PASS；不包含UI绘制、确认执行或Shipping联合性能。102稳定单场CPU/Vulkan 1%Low为51.349/49.005 FPS，均未达60；CPU实际请求超时，Vulkan单条语义FAIL，余五场及本候选Shipping未验。
+候选3/version.2实际CPU.cmd/新游戏/J/F6保存1→2/中文原文粘贴/退出通过；随包CPU模型请求“跟随我”最终失败或超时，未执行动作，原始回复与精确请求时延未读。候选3Vulkan启动器、Continue和真实IME未验，这些局部结果不迁移到候选4。
+
+构建与交付
+候选5/version.4在准确冻结Source上已实际公开Shipping Build/Cook/Stage/Archive成功：UAT0/dry_run=false，总235.52秒；Build71.70/Cook63.43/Stage39.73/Archive58.81秒，Cook0错误/1条MCP EULA提示保留。当前BUILD_SUCCESS_READY_FOR_INTERNAL_ZIP；两启动器脚本启动＋OS局部输入已验，最终清单/ZIP/hash由包外实测record及sidecar提供，准确Source冻结与实际结果见随包BUILD-INFO.json。历史候选4/version.3公开Shipping Build/Cook/Stage/Archive成功（UAT0，Cook0错误/1条MCP EULA提示）、标题.3实见和局部OS通过；因导航06指引门槛冲突，候选4 ZIP已暂停，旧Stage/archive与五份发行源资料snapshot完整保留。
+候选5 CPU/Vulkan启动器共用独立LocalAppData profile尾号5，GpuLayers参数16（CPU后端实际0），直接运行随包exe，无Python或旧档复制；脚本启动与OS局部输入已实际验证，状态SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED。历史候选4两脚本曾通过隐藏命令进程实际运行，CPU新游戏/F6保存1→2/退出、Vulkan明确鼠标Continue恢复同卧室和原2节点、新/续中性提示通过；实际Vulkan16层Unicode“跟随我”生成候选，鼠标确认后HUD跟随中，仅该Shipping CASE通过。39.122秒最后pending、60.985秒已见候选为观察时刻，精确HTTP/UE Paint耗时未读；原60和性能分母不变，CPU4无新请求信用。Explorer双击和真实IME未验，候选5双CMD已实际通过隐藏脚本启动＋正常OS游戏输入，状态SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED；双标题实见0.2.0-preview.20261007.4，共9张真实游戏窗口截图。新profile运行前不存在，未复制旧档或QA档。CPU新游戏卧室/main01，T中性提示，F6自动节点1后鼠标手动保存至2；Vulkan明确鼠标点击继续游戏恢复同一卧室/main01，F6仍为原手动02:26/自动02:25共2节点，T中性提示通过。两后端正常退出后各游戏与bootstrap进程已不在，未遗留模型进程。本轮没有模型请求、中文字面输入、真实IME、完整路线或旧档兼容样本；这些项目仍未验。
+candidate-2/version.1、candidate-3/version.2、candidate-4/version.3的构建和局部输入结果、首轮Cook失败与修复、原Continue声明撤回及隔离副本恢复证据保留于docs/qa/TASK-103/REPORT.md，不用旧包结果补本版验收。
+
+未验与需要Owner决定的项
+路线技术回归已通过四个既有节点的实际到达/切换。09—11末段原投影失败保留，11只读确认插值QA Z未跟随真实地形；宽Z诊断点未用于移动。12用实际地形+Z100、固定XY250/Z220查询，首段真实完整路径普通移动1976.914cm；第二段FindPath valid=true/partial=true后严格停止，未移动该段，自有Editor退出已确认。没有完整撤离/营地/首救/新保存或OS路线通过信用，也不据此认定普通步行无法通过或碰撞根因。Source仍仅两项指引修复，未改地图/Invoker/移动速度/时钟/进度。
+正常连续首切片、四新进度节点、全主线/支线、交易制作、Shipping语言、六场联合性能、真人5名首切片/3名全流程和第二实体机没有完整本轮样本。
+近远实听、湖水设备循环接缝和混音、角色/武器/石堡/作物/设施图标首件及字幕预览待Owner；实际许可文件和既有Content逐项来源闭合尚未完成。固定录音UNPRODUCED，动态回复无TTS。
+固定模型质量仍FAIL；模型、预算或部署策略变更需要Owner契约决定，不硬编码答案或放宽门槛。活动火源、风声状态与脚步材质命名没有已批准的完整事件契约。
+运行树内资料属于ZIP制作前的实测元数据快照；最终ZIP/hash结果仅由外部finalization-record及sidecar提供，不在包内资料提前声明成功或写入自身ZIP哈希。远端tag唯一性UNKNOWN；本候选未提交、推送、合并、上传或创建Release。

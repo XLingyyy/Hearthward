@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "id": "TASK-091",
+  "title": "地图可读性与关键入口转折引导",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-091-map-route-guidance",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/UI/HearthwardScreenMap.cpp",
+    "Source/Hearthward/UI/HearthwardQuestGuidance.cpp",
+    "Source/Hearthward/UI/HearthwardScreenMapTest.inl",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "docs/planning/TASK-084-103/ROUTE_MANIFEST.json"
+  ],
+  "dependencies": [
+    "TASK-090"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-091.md",
+    "docs/tasks/TASK-091.json",
+    "docs/handoffs/TASK-091.md",
+    "docs/qa/TASK-091/",
+    "docs/planning/TASK-084-103/TASK-091/",
+    "Source/Hearthward/UI/HearthwardScreenMap.cpp",
+    "Source/Hearthward/UI/HearthwardQuestGuidance.cpp",
+    "Source/Hearthward/UI/HearthwardQuestGuidance.h",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardGuidanceRoutes.cpp",
+    "Source/Hearthward/UI/HearthwardGuidanceRoutes.h",
+    "Resources/Data/quest_guidance.json",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/MapGuidanceRouteTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T091-C01：坐标互逆；误差按原精度界限记录，人物与建筑位置对应，无横纵拉伸。",
+    "T091-C02：卧室转折；提示可解释实际入口，接近终点不指向错误高度层。",
+    "T091-C03：偏离返走；不强迫过点，不累积旧节点，不改任务进度。",
+    "T091-C04：时间线；旧标记清除，新阶段目标正确，未知信息不泄漏。",
+    "T091-C05：传送；拒绝有原因，合法地图暂停不误挡，落点可走。",
+    "T091-C06：布局；保持全屏矩形与比例，关键入口可识别且无深色留边。",
+    "T091-C07：无数据降级；普通目标标记仍安全工作，无崩溃、不阻断任务。"
+  ],
+  "non_goals": [
+    "改正式地图边界或任务触发/奖励",
+    "全地图地面导航线和室内分层系统",
+    "扩大传送权限、揭露未知剧情"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

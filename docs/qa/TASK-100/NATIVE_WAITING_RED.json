@@ -1,0 +1,111 @@
+{
+  "source_report": ".agent-local/qa/TASK-090-100/native-red-20261007/index.json",
+  "report_created_on": "2026.10.06-20.57.42",
+  "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "implementation": "uncommitted shared source before root waiting-person presentation repair; unknown-side gate already fixed",
+  "layer": "REAL_GAME_WORLD_CONTROLLER_RESOLVER_AND_ACTUAL_CAMPAIGN_ACTOR_FIXTURE",
+  "devices": [
+    {
+      "deviceName": "LAPTOP-R8NPOP05",
+      "instance": "94B40CA8455B605981CC19B7EBA13792",
+      "instanceName": "LAPTOP-R8NPOP05-63092",
+      "platform": "WindowsEditor",
+      "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "model": "Default",
+      "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+      "rAMInGB": 16,
+      "renderMode": "SM6",
+      "rHI": "",
+      "appInstanceLog": ""
+    }
+  ],
+  "succeeded": 0,
+  "failed": 1,
+  "warnings": 0,
+  "errors": 4,
+  "tests": [
+    {
+      "testDisplayName": "WaitingRescueUsesCurrentPersonPosition",
+      "fullTestPath": "Hearthward.Iteration.Task100.Fixture.WaitingRescueUsesCurrentPersonPosition",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "94B40CA8455B605981CC19B7EBA13792"
+      ],
+      "duration": 0.02106969803571701,
+      "dateTime": "2026.10.06-20.57.42",
+      "entries": [
+        {
+          "event": {
+            "type": "Info",
+            "message": "Task100 waiting rescue fallback: world=X=-38000.000 Y=-84500.000 Z=20000.000 person=X=-81000.000 Y=-80000.000 Z=100.000 route=1 route_id=route_fork",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.42"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'An unloaded waiting rescue points to the recorded current person position' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampaignCompletionRouteTests.cpp",
+          "lineNumber": 114,
+          "timestamp": "2026.10.06-20.57.42"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'An already contacted rescue does not reuse the outbound fork route' to be false.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampaignCompletionRouteTests.cpp",
+          "lineNumber": 116,
+          "timestamp": "2026.10.06-20.57.42"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Loaded waiting guidance uses the live actor before the next snapshot sync' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampaignCompletionRouteTests.cpp",
+          "lineNumber": 123,
+          "timestamp": "2026.10.06-20.57.42"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Loaded waiting guidance still omits the outbound fork route' to be false.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampaignCompletionRouteTests.cpp",
+          "lineNumber": 124,
+          "timestamp": "2026.10.06-20.57.42"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "Layer: isolated real Game world/controller/player, actual campaign refresh and live person actor; fixture movement is diagnostic, not normal rescue completion.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.57.42"
+        }
+      ],
+      "warnings": 0,
+      "errors": 4,
+      "artifacts": []
+    }
+  ]
+}

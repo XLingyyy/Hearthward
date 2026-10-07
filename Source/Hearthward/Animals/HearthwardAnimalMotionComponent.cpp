@@ -44,8 +44,10 @@ bool UHearthwardAnimalMotionComponent::Configure(FName InSpecies,float Scale)
     for(const auto& V:Data->GetArrayField(TEXT("species")))
         if(V->AsObject()->GetStringField(TEXT("slug"))==Species.ToString()){Profile=V->AsObject();break;}
     if(!Profile){UE_LOG(LogTemp,Error,TEXT("Animal profile missing: %s"),*Species.ToString());return false;}
-    auto* Asset=LoadObject<USkeletalMesh>(nullptr,*Profile->GetStringField(TEXT("mesh")));
-    if(!Asset)return false;
+    auto* BoundsAsset=LoadObject<USkeletalMesh>(nullptr,*Profile->GetStringField(TEXT("mesh")));
+    auto* Asset=InSpecies==TEXT("boar")
+        ?LoadObject<USkeletalMesh>(nullptr,TEXT("/Game/Hearthward/Assets/TASK-097/Boar/SK_Boar_Practical")):BoundsAsset;
+    if(!BoundsAsset || !Asset)return false;
     for(const auto& Entry:Profile->GetObjectField(TEXT("clips"))->Values)
     {
         const auto C=Entry.Value->AsObject();const FName Name(*Entry.Key);
@@ -93,7 +95,7 @@ bool UHearthwardAnimalMotionComponent::Configure(FName InSpecies,float Scale)
     Random.Initialize(int32(GetTypeHash(Species)^GetTypeHash(GetOwner()->GetName())));
     CycleIndex=Random.RandRange(0,FMath::Max(0,Cycles.Num()-1));
     FVector Floor;if(!Aquatic && Ground(Home,Floor))RootHeight=Home.Z-Floor.Z;
-    BodyRadius=Asset->GetBounds().BoxExtent.Size2D()*Scale*1.15f+45;
+    BodyRadius=BoundsAsset->GetBounds().BoxExtent.Size2D()*Scale*1.15f+45;
     SetHabitat(FBox(Home-FVector(1800,1800,400),Home+FVector(1800,1800,400)));
     if(auto* Nature=Cast<AHearthwardNatureActor>(GetOwner()))
     {

@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "id": "TASK-092",
+  "title": "首次救援往返路线与遭遇灰盒打磨",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-092-rescue-route",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Resources/Data/gameplay.json",
+    "docs/design/DSGN-003-first-release-slice.md",
+    "docs/planning/TASK-084-103/ROUTE_MANIFEST.json"
+  ],
+  "dependencies": [
+    "TASK-091"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-092.md",
+    "docs/tasks/TASK-092.json",
+    "docs/handoffs/TASK-092.md",
+    "docs/qa/TASK-092/",
+    "docs/planning/TASK-084-103/TASK-092/",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "docs/planning/TASK-084-103/ROUTE_MANIFEST.json",
+    "Resources/Data/quest_guidance.json",
+    "Source/Hearthward/Tests/RescueRouteTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T092-C01：正向通行；无卡死/掉地/必须调试传送；弟弟自然到达。",
+    "T092-C02：观察与撤退；存在可解释选择，警戒/追击遵守原规则。",
+    "T092-C03：救援对象；对象真实移动，安全条件正确，人口最多加一次。",
+    "T092-C04：伙伴留营；不强迫互斥任务并发；是否可完成按正式条件给反馈。",
+    "T092-C05：双向碰撞；无单向卡路，角色/弟弟/被救者均按其能力通过。",
+    "T092-C06：存读档流送；任务/敌人/族人/掉落不重置套利，路线仍可走。",
+    "T092-C07：资料交接；所有受影响包/坐标/触发区可追溯，091显示对应实际位置。"
+  ],
+  "non_goals": [
+    "扩大世界面积、重配敌军总数/奖励/任务规则",
+    "新建营救剧情或随机事件系统",
+    "把一处路线测试当完整四区通关"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-007",
+    "T-011",
+    "T-014"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "本单允许候选C++文件；地图资产和gameplay.json默认不开放。确需修改时以准确包/JSON指针追加范围，取得授权并在基线记录，不用绕改其他文件规避。"
+  ]
+}

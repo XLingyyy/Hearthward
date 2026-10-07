@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "id": "TASK-100",
+  "title": "四区差异化内容与首版全流程接续",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Campaign/HearthwardCampaignState.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+    "Resources/Data/gameplay.json",
+    "docs/qa/TASK-100/REPORT.md",
+    "docs/qa/TASK-100/CONFIG_COVERAGE.json",
+    "docs/qa/TASK-100/CONFIG_COVERAGE.csv",
+    "docs/planning/TASK-084-103/TASK-100/ZONE_COVERAGE.md",
+    "docs/assets/TASK-100/PACKAGE_SCOPE.json",
+    "Source/Hearthward/Tests/CampaignCompletionRouteTests.cpp",
+    "docs/qa/TASK-100/NATIVE_GREEN.json",
+    "docs/qa/TASK-100/NATIVE_WAITING_RED.json",
+    "docs/design/DSGN-004-iteration-art-local-ai.md"
+  ],
+  "dependencies": [
+    "TASK-087",
+    "TASK-090",
+    "TASK-091",
+    "TASK-092",
+    "TASK-093",
+    "TASK-095",
+    "TASK-096",
+    "TASK-097",
+    "TASK-098",
+    "TASK-099"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-100.md",
+    "docs/tasks/TASK-100.json",
+    "docs/handoffs/TASK-100.md",
+    "docs/qa/TASK-100/",
+    "docs/planning/TASK-084-103/TASK-100/",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Resources/Data/quest_guidance.json",
+    "docs/assets/TASK-100/",
+    "Source/Hearthward/Tests/CampaignCompletionRouteTests.cpp",
+    "art_source/TASK-100/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T100-C01：覆盖表一致；实际ID全部可追溯，缺口有归属，无编造完成项。",
+    "T100-C02：四区可走；每区有可读空间与合法退路，无必须调试的阻断。",
+    "T100-C03：清敌占旗；严格沿原胜利规则，一生命代次只结算一次。",
+    "T100-C04：主线全程；连续进度无强制跳阶段，必要资源真实取得。",
+    "T100-C05：支线唯一；奖励/人口不重复，不可获得条目明确原因而非假PASS。",
+    "T100-C06：第二营地；共享/独立字段正确，不新增两地搬运或复制建筑。",
+    "T100-C07：通关继续；永久清敌/奖励/救援/第二营地状态保留，游戏可继续。"
+  ],
+  "non_goals": [
+    "首版边界外剧情与战争系统",
+    "未经实玩依据任意调资源/经验/时长",
+    "用旧049传送脚本冒充完整游玩"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-005",
+    "T-011",
+    "T-015",
+    "T-022"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 主Agent派发本单技术子范围；已运行127行静态覆盖脚本，8main/15side/4zones/80base/2x4增援/10rescues全部精确追溯、结构错误0；C01静态PASS，正常流程C02—07 NOT_RUN。",
+    "095—099区域首件样板和Owner空间审核待定；源代码每区4座同一028房屋/相同原生旗已如实登记，未假落新掩体/退路几何。现有原生/合法全流程可独立继续。",
+    "未改设计、gameplay/economy、Save、Content或共享生产源码；selected_for_change=[]。根README和引擎操作归主Agent；旧传送/清兵夹具不当正常通关。",
+    "2026-10-07 UnknownSide首轮真实RED（1error）与WaitingRescue真实RED（4error）分别保留；root在091展示窗口最小修复，最新native-green三条100夹具全部Success/0warning/0error。原7Campaign复用本轮integration Success/7warnings，快照各自绑定。",
+    "091显示修复消费waiting当前有效Actor或Located State.Position、不复用旧fork，地图消费同一Resolver.World，未知side只过滤未发现地点；未改Campaign::QuestLocation/Available/救援/奖励、economy、Save或Content。正常通关和Owner样板仍未验。",
+    "2026-10-07 Owner明确回复都按推荐去做，批准DSGN-004中1A至6A、7B的制作方向与必要实现范围；首件视觉及实际模型/性能验收另记，不自动Done。",
+    "DSGN-004批准作坊区首件：新增art_source/TASK-100/制作源范围，复用098设施，仅源场景样板，主地图与巡逻数据尚未改动。",
+    "2026-10-07 方向已由DSGN-004批准。已复用098三个设施建立作坊入口到旗点的可编辑源场景，图见samples/Workshop-entry.png和Workshop-inside.png。尚未布入正式四区地图；入口、退路、巡逻和战斗净空的实机验证未完成。"
+  ]
+}

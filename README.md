@@ -1,8 +1,23 @@
 # Hearthward（归火）
 
+2026-10-07 最新Owner决定：[七项推荐方向已批准](docs/design/DSGN-004-iteration-art-local-ai.md)，按1A—6A、7B继续制作与本地模型对照。以下候选5与测试记录保留其原版本范围；新首件尚未视觉签收，新模型尚未选定。 已落地三个设施网格与四类武器图标；工作台/仓储真实付费建造PIE通过。六个作物网格及材料20包已保存并接入现有成长呈现，Editor编译成功，作物两项原生测试2/2通过、1条警告；新资产目录已纳入Cook配置，实际新版本Cook尚未运行。野猪已绑定专用网格并复用原R3骨架/物理资产/动作，家猪与活动边界保持；四类动作逐骨姿态兼容测试通过。角色、门洞昼夜与工坊布局目前仍为制作源样板。离线候选Qwen3-4B-Instruct-2507原60题26/60，质量FAIL；8B的32/37层为部分诊断，37层暖请求36—38秒，按固定时延门槛提前拒绝，未替换正式模型。
+
+
+2026-10-07 当前本地迭代为 `codex/TASK-084-103-iteration`，基线 `6fcf5c22e965f0f7409438f19bc7b09e96ffb058`，本批成果在该任务分支提交，尚未合并main。已接入工作状态、制作搜索/缺料追踪、装备实例与仓储预览、阶段准备提示、实际入口途经点、营地回执及实际事务/战斗/脚步/水面声音事件；修复等待获救者指向、显式停步、倒地提示重叠及未知支线地点泄漏。声音工程 Development Editor 构建与联合原生28/28通过，其中[TASK-099](docs/qa/TASK-099/REPORT.md)为23/23，所选测试0警告/0错误；启动13条frame0 Smoke错误与1条MCP告警单列。声音配置为17个事件、12个独立运行时WAV；该轮使用 `NoSound/NullRHI`，实际听感和正常路线仍待验收。
+
+[TASK-087](docs/qa/TASK-087/REPORT.md) Source.2完整原60已实际运行：CPU原始理解33/60、Vulkan32/60，语言门槛均FAIL；确定性边界各20/20、未观察到白得物品。独立辅助后的60暖请求p95为CPU22.656秒、Vulkan8.672秒，仅组件时延通过。[TASK-102](docs/qa/TASK-102/REPORT.md)稳定单场1%Low为CPU51.3488、Vulkan49.0052 FPS，均未达60；完整六场、Paint、最终同版Shipping性能及真人/二机门槛未闭合，美术样板待Owner。
+
+当前内部候选5 `0.2.0-preview.20261007.4` 已完成 Shipping Build/Cook/Stage/Archive，运行树 `F:/HearthwardDemo/iteration-084-103-20261007-5/Windows`；ZIP已生成：`F:/HearthwardDemo/iteration-084-103-20261007-5.zip`，4,645,167,974字节，166个运行时文件，文件名/大小清单匹配，旁有 `.zip.sha256`。17个声音事件/12个独立WAV及9份必要许可文件存在，完整资产来源/许可验收仍见094。局部OS检查通过：CPU新档卧室、F6保存1→2；Vulkan显式鼠标继续恢复同卧室/Main01和原手动/自动共2节点，F6仍2；两路径中性交流提示及正常退出通过。该轮没有模型请求、Unicode/IME、原档兼容或完整路线信用；Explorer双击未验。ZIP内BUILDINFO为ZIP创建前的实际快照，最终状态以[候选报告](docs/qa/TASK-103/REPORT.md)和[最终整理记录](docs/qa/TASK-103/CANDIDATE5_FINALIZATION.json)为准。该候选仅本地内部交付，未发布，整批未取得正式验收。
+
+两处正式空间节点结束逻辑修复已完成定向原生回归；[Nav15](docs/qa/TASK-084/NAV15_EARNED_CAMP_CHECKPOINT.json)完成正常新开局、遗物交互、跟随、四个空间节点、真实正式终点完整导航路径、撤离交互与营地转场。游戏产生prologue_complete，加载完成后保存1→2，自有测试进程正常退出。该证据属于Development/API；首次救援、OS连续路线与Shipping全流程仍未验。Nav12—14失败记录保留。
+
+[UE MCP最终配置与检查](docs/qa/MCP/20261007/SETUP.md)已完成：正常Editor检查时HTTP在线、三个元工具握手、Bootstrap只读查询及RC/Python/CLI启用状态通过。服务依赖该Editor进程。当前Codex聊天的原生工具目录未热挂载；需要在Hearthward项目中新建聊天加载配置，实际新聊天挂载仍未验。
+
+候选4/候选2的启动、模型单例或原档兼容结果保留各自历史绑定，不迁移到候选5。087 Source.2完整语言质量矩阵及102帧门槛仍FAIL；7项已批准方向与后续技术项见[本批执行记录](docs/planning/TASK-084-103/EXECUTION_STATUS.md)，真人和二机验收未完成。
+
 UE 5.8.2 单人第三人称生存冒险。本次代码整合保留main的TASK-078—081伙伴委托、自然语言续接、任务地点指引、简约右侧对话界面和族人采集队，并加入TASK-082地图、传送和简约UI更新：无黑雾的3000米×2000米全屏矩形地图、实际地形建筑与地名、可拖动缩放、红蓝三角朝向火焰、统一地图入口、详细传送限制和已激活路标传送修复。储物箱采用新版背包深灰物品格，制作、记忆、营地、田野等页面清理旧火红背景与宣传装饰。
 
-地图分支原TASK-078迁为TASK-082，main原TASK-078—081及其证据保留。用户授权通过[PR #61](https://github.com/XLingyyy/Hearthward/pull/61)整合并合并main，验证见[整合报告](docs/qa/TASK-082/INTEGRATION-REPORT.md)。已发布的 Windows Demo 更新版本为 `0.2.0-preview.20261006.2`，包含上述联合更新；构建、实机验证与发布状态以[当前发行报告](docs/releases/demo-20261006-2/REPORT.md)为准。精细美术与完整真人体验仍待验收。
+地图分支原TASK-078迁为TASK-082，main原TASK-078—081及其证据保留。用户授权通过[PR #61](https://github.com/XLingyyy/Hearthward/pull/61)整合并合并main，验证见[整合报告](docs/qa/TASK-082/INTEGRATION-REPORT.md)。最近已公开的 TASK-083 Windows Demo 为 `0.2.0-preview.20261006.2`，包含上述联合更新；构建、实机验证与发布状态以[该公开版发行报告](docs/releases/demo-20261006-2/REPORT.md)为准。精细美术与完整真人体验仍待验收。
 
 入口：[项目状态](docs/PROJECT_STATE.md) · [本次整合与验证](docs/qa/TASK-082/INTEGRATION-REPORT.md) · [文件目录](docs/REPOSITORY_LAYOUT.md) · [分支关系](docs/planning/BRANCH_INTEGRATION.md) · [测试端说明](TestClient/README.md)。
 
@@ -16,9 +31,9 @@ UE 5.8.2 单人第三人称生存冒险。本次代码整合保留main的TASK-07
 
 需要 UE 5.8.2、GameFactory Python 环境及本地模型资源。本机路径读取被忽略的 `.agent-local/environment.json`；可用 `HEARTHWARD_FACTORY_ROOT`、`HEARTHWARD_UE_ROOT`、`HEARTHWARD_PYTHON` 覆盖。首次克隆先执行 `git lfs pull` 取回二进制资产。UE 工程为根目录 `Hearthward.uproject`，入口地图为 `/Game/Hearthward/Bootstrap/L_Bootstrap`。
 
-需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。当前独立 Windows Demo 为 `0.2.0-preview.20261006.2`，便携包完整解压后运行“启动游戏.cmd”，无需UE或Python；公开下载见[GitHub Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.2)，交付路径及验证见[本次发行报告](docs/releases/demo-20261006-2/REPORT.md)。开发测试入口仍需要开发环境。
+需要一次性独立测试档时运行 `python -X utf8 scripts/ui/launch_test_client.py --fresh-profile`。单独查看新版地图可使用[地图测试版.cmd](地图测试版.cmd)。最近已公开的 TASK-083 Windows Demo 为 `0.2.0-preview.20261006.2`，便携包完整解压后运行“启动游戏.cmd”，无需UE或Python；公开下载见[GitHub Release](https://github.com/XLingyyy/Hearthward/releases/tag/v0.2.0-preview.20261006.2)，交付路径及验证见[该公开版发行报告](docs/releases/demo-20261006-2/REPORT.md)。开发测试入口仍需要开发环境。
 
-当前便携包交付目录为 `F:/HearthwardDemo/20261006-2/Windows`。历史 SimpleUI 包对应整合前地图分支，不代表当前 main；原包与原验证记录保留追溯。
+该公开版便携包交付目录为 `F:/HearthwardDemo/20261006-2/Windows`。历史 SimpleUI 包对应整合前地图分支，不代表当前 main；原包与原验证记录保留追溯。
 
 ## 本次保留和整合的功能
 
@@ -75,12 +90,12 @@ TASK-078 加入委托奔跑、指定点余量提示、HUD 委托进度／携带�
 
 ## 验证与限制
 
-当前整合版已通过 Shipping 完整打包、10项原生回归、10项正式地图对话显示、26项弟弟到岗和真实模型回复、77项仓储与页面检查，以及独立发布包15项键鼠操作与存档恢复检查。详见[当前发行报告](docs/releases/demo-20261006-2/REPORT.md)。下面各旧任务结果仅绑定对应历史实现。
+已公开的 TASK-083 `.20261006.2` 版通过 Shipping 完整打包、10项原生回归、10项正式地图对话显示、26项弟弟到岗和真实模型回复、77项仓储与页面检查，以及独立发布包15项键鼠操作与存档恢复检查。详见[该公开版发行报告](docs/releases/demo-20261006-2/REPORT.md)。下面各旧任务结果仅绑定对应历史实现。
 
-当前对话与族人协作的最终 Editor 构建、原生 2/2、灰盒 PIE 48/48、到岗与状态反馈 26/26、正式地图界面 10/10 验证见 [TASK-081 报告](docs/qa/TASK-081/REPORT.md)。此前 UI 整合的构建、原生回归、独立游戏输入与界面检查结果见 [TASK-076 报告](docs/qa/TASK-076/REPORT.md)。旧分支的 PASS 只证明原报告受测版本，不代表当前整合结果。UI 自动操作使用真实 UE Widget／Slate 事件，不能等同于完整真人通关。
+TASK-081 对话与族人协作的历史最终 Editor 构建、原生 2/2、灰盒 PIE 48/48、到岗与状态反馈 26/26、正式地图界面 10/10 验证见 [TASK-081 报告](docs/qa/TASK-081/REPORT.md)。此前 UI 整合的构建、原生回归、独立游戏输入与界面检查结果见 [TASK-076 报告](docs/qa/TASK-076/REPORT.md)。旧分支的 PASS 只证明原报告受测版本，不代表当前整合结果。UI 自动操作使用真实 UE Widget／Slate 事件，不能等同于完整真人通关。
 
 地图分支整合前的简约UI历史验证：Editor Development和完整Win64 Shipping构建／烘焙、储物箱与旧UI运行77/77、仓储／地图原生4/4、页面配置18/18和工具33/33通过；原生2项保留隔离LocalPlayer初始化警告。真实Slate存入与取出、数量／容量／距离／时间线拒绝及库存不变已检查，100%～150%字体、720p／超宽屏与大字体滚动已核验。独立Shipping启动、ZIP校验与Source／DLL／程序绑定见 [简约UI报告](docs/qa/TASK-082/SIMPLE-UI-REPORT.md)。之前地图98/98、旅行37/37、地理44/44见历史 [火焰尖端报告](docs/qa/TASK-082/FLAME-TIPS-REPORT.md)，不作为本次全游戏复验。未进行完整真人通关或第二台机器验收。
 
-已有待验收项继续保留：AI 完整理解矩阵未达门槛，CPU 推理曾超时；正式武器握姿、动作观感、角色美术和完整地图性能仍需验收；首版 30—60 分钟完整体验、第二机器及正式发行 RC 尚未闭合。本次未重做模型或玩法平衡；已交付便携Shipping包，未生成新版安装器。原证据与限制见[053—074 交接](docs/handoffs/TASK-053.md)和[工程性能诊断](docs/qa/TASK-072/game-development-runtime-review.md)。
+已有待验收项继续保留：[087双后端完整理解矩阵](docs/qa/TASK-087/REPORT.md)语言FAIL，[102双后端稳定单场](docs/qa/TASK-102/REPORT.md)1%Low均未达门槛，CPU实际请求有超时；正式武器握姿、动作观感、角色美术和完整地图性能仍需验收；首版 30—60 分钟完整体验、第二机器及正式发行 RC 尚未闭合。本次未重做模型或玩法平衡；已公开交付的便携Shipping包为上述TASK-083版，本批内部候选状态见[103报告](docs/qa/TASK-103/REPORT.md)，未生成新版安装器。旧批次证据与限制见[053—074 交接](docs/handoffs/TASK-053.md)和[历史工程性能诊断](docs/qa/TASK-072/game-development-runtime-review.md)。
 
 模型使用项目锁定的 Qwen3.5 4B／llama.cpp；运行资源置于本地 `Runtime/LocalAI`，准备入口 `scripts/local_ai/prepare_bundle.py`。权重、密钥、用户存档、构建缓存不提交。多人开发遵循[AGENTS](AGENTS.md)和[WORKFLOW](WORKFLOW.md)，新任务先核对远端编号与分支，再从已核实基线创建独立分支。

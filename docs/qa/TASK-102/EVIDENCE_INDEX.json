@@ -1,0 +1,62 @@
+{
+  "updated_at": "2026-10-07",
+  "source_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "branch": "codex/TASK-084-103-iteration",
+  "local_uncommitted_changes": true,
+  "boot_first": {
+    "evidence": ".agent-local/qa/TASK-102/prologue-vulkan-20261007-01/reparsed-result.json",
+    "original_error": "Parser expected uppercase Commandline, actual UE emits lowercase commandline; no numeric frames discarded",
+    "reparse_state": "BOOT_DIAGNOSTIC_REPARSED_AFTER_CASE_FIX",
+    "csv": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-102\\prologue-vulkan-20261007-01\\profile\\Saved\\Profiling\\CSV\\Profile(20261007_062331).csv",
+    "frame_statistics": {
+      "numeric_frames": 9000,
+      "seconds": 116.4529097,
+      "p99_ms": 11.7866,
+      "one_percent_low_fps": 2.0998256262803423,
+      "over_50ms": 7,
+      "over_50ms_fraction": 0.0007777777777777777,
+      "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames"
+    },
+    "model_generation_count": 0,
+    "formal_matrix": "NOT_RUN"
+  },
+  "boot_second": {
+    "evidence": ".agent-local/qa/TASK-102/prologue-joint-vulkan-20261007-02/failure.json",
+    "state": "FAILED_STARTUP_RENDERER_ACCESS_VIOLATION",
+    "frames_planned": 24000,
+    "model_started": false,
+    "numeric_csv": "NOT_COMPLETE",
+    "formal_six_scene_matrix": "NOT_RUN",
+    "cause": "UNCONFIRMED; no driver/cache/model attribution"
+  },
+  "stable_runner": {
+    "file": "docs/qa/TASK-102/run_standalone_joint.py",
+    "static_evidence": "docs/qa/TASK-102/STATIC_CHECK.json",
+    "scope": "normal_new_initial_scene_dialogue_fixed_view",
+    "cpu": "CAPTURE_COMPLETE_MODEL_FAILED",
+    "vulkan": "CAPTURE_COMPLETE_MODEL_FAILED",
+    "six_scene_matrix": "NOT_RUN",
+    "vulkan_evidence": "docs/qa/TASK-102/settled-dialogue-vulkan-20261007-01/results.json",
+    "vulkan_summary": "docs/qa/TASK-102/settled-dialogue-vulkan-20261007-01/summary.json",
+    "vulkan_csv": "docs/qa/TASK-102/settled-dialogue-vulkan-20261007-01/frames.csv",
+    "vulkan_frame_gates": {
+      "p99": "FAIL",
+      "one_percent_low": "FAIL",
+      "over_50ms_fraction": "PASS"
+    },
+    "vulkan_semantics": "FAIL: TARGET_REQUIRED -> clarify/no candidate; HTTP_RESPONSE_TIMINGS/raw received",
+    "vulkan_memory_risk": "Observed free physical RAM min0.5588264465GiB,3/12samples below1GiB",
+    "build_source_binding": "NOT_VERIFIED_BY_RUNNER; actual build/candidate evidence separate",
+    "cpu_evidence": "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/results.json",
+    "cpu_summary": "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/summary.json",
+    "cpu_csv": "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/frames.csv",
+    "cpu_frame_gates": {
+      "p99": "PASS",
+      "one_percent_low": "FAIL",
+      "over_50ms_fraction": "PASS"
+    },
+    "cpu_transport": "FAIL_HTTP_TIMEOUT: generation to failed HTTP120.007s/submission128.69s -> MODEL_UNAVAILABLE/raw empty",
+    "cpu_semantics": "NOT_EVALUABLE_HTTP_TIMEOUT_RAW_EMPTY",
+    "cpu_memory_risk": "Observed free physical RAM min0.4245300293GiB,9/17samples below1GiB"
+  }
+}

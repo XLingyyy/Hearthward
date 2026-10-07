@@ -1,0 +1,86 @@
+{
+  "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+  "build_report": ".agent-local/qa/TASK-085-099/build-repair-20261007/result.json",
+  "report_created_on": "2026.10.06-20.35.14",
+  "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "implementation": "shared uncommitted source tree before the Task092 wait repair",
+  "devices": [
+    {
+      "deviceName": "LAPTOP-R8NPOP05",
+      "instance": "61F3DC1B4763E65ABF8932BE1C5E432D",
+      "instanceName": "LAPTOP-R8NPOP05-64336",
+      "platform": "WindowsEditor",
+      "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "model": "Default",
+      "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+      "rAMInGB": 16,
+      "renderMode": "SM6",
+      "rHI": "",
+      "appInstanceLog": ""
+    }
+  ],
+  "layer": "REGISTERED_NATIVE_BEHAVIOR_FIXTURES",
+  "succeeded": 3,
+  "warnings": 1,
+  "errors": 0,
+  "tests": [
+    {
+      "testDisplayName": "FrameBoundaryAndEscape",
+      "fullTestPath": "Hearthward.Animals.FrameBoundaryAndEscape",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "61F3DC1B4763E65ABF8932BE1C5E432D"
+      ],
+      "duration": 0.01595810055732727,
+      "dateTime": "2026.10.06-20.35.04",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "CropGeometryConsumesCalendarStage",
+      "fullTestPath": "Hearthward.Farming062.CropGeometryConsumesCalendarStage",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "61F3DC1B4763E65ABF8932BE1C5E432D"
+      ],
+      "duration": 0.02070390060544014,
+      "dateTime": "2026.10.06-20.35.06",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "IndividualGrowthAndProductProgress",
+      "fullTestPath": "Hearthward.Farming062.IndividualGrowthAndProductProgress",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "61F3DC1B4763E65ABF8932BE1C5E432D"
+      ],
+      "duration": 0.8138412237167358,
+      "dateTime": "2026.10.06-20.35.06",
+      "entries": [
+        {
+          "event": {
+            "type": "Warning",
+            "message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_2' does not have a valid PlayerInput object. Failed to load user settings.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.06"
+        }
+      ],
+      "warnings": 1,
+      "errors": 0,
+      "artifacts": []
+    }
+  ]
+}

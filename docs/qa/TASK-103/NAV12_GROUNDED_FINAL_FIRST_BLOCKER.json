@@ -1,0 +1,348 @@
+{
+  "schema_version": 1,
+  "task": "TASK-084",
+  "release_context": "TASK-103",
+  "private_result_reference": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-12/results.json",
+  "status": "FAILED_FIRST_BLOCKER",
+  "first_error": "Actual NavPath is invalid or partial; no guessed geometry fallback",
+  "evidence_level": "Development standalone -game; public RC movement/actions; NOT_OS_INPUT",
+  "normal_os_input": "NOT_RUN",
+  "source_changes_for_this_qa": false,
+  "method": {
+    "bounded_final_navigation": true,
+    "grounded_final_navigation": true,
+    "candidate_max_step_cm": 2000,
+    "query_extent": {
+      "X": 250.0,
+      "Y": 250.0,
+      "Z": 220
+    },
+    "actual_terrain_required": true,
+    "diagnostic_wide_z_point_used": false,
+    "game_route_nodes_added": false
+  },
+  "owned_editor": {
+    "pid": 62796,
+    "stop_ok": true,
+    "exit_verified": true
+  },
+  "formal_nodes": [
+    {
+      "route_id": "bedroom_door",
+      "route_world": {
+        "X": 92000.0,
+        "Y": 54150.0,
+        "Z": 23376.231064572712
+      },
+      "arrived_position": {
+        "X": 91983.35968598207,
+        "Y": 54114.029344833994,
+        "Z": 23368.381066575428
+      },
+      "distance_at_arrival_cm": 40.40310077511904
+    },
+    {
+      "route_id": "escape_stair_top",
+      "route_world": {
+        "X": 93500.0,
+        "Y": 54550.0,
+        "Z": 23376.231064572712
+      },
+      "arrived_position": {
+        "X": 93461.4471550546,
+        "Y": 54538.91766959246,
+        "Z": 23368.381066575428
+      },
+      "distance_at_arrival_cm": 40.87496017372044
+    },
+    {
+      "route_id": "escape_stair_bottom",
+      "route_world": {
+        "X": 93500.0,
+        "Y": 56300.500162124634,
+        "Z": 22791.238022580525
+      },
+      "arrived_position": {
+        "X": 93499.11098134823,
+        "Y": 56259.87852461132,
+        "Z": 22766.35117277208
+      },
+      "distance_at_arrival_cm": 47.647277800672626
+    },
+    {
+      "route_id": "courtyard_side_gate",
+      "route_world": {
+        "X": 89800.0,
+        "Y": 56300.0,
+        "Z": 22179.66768711376
+      },
+      "arrived_position": {
+        "X": 89837.8840929635,
+        "Y": 56305.6331466685,
+        "Z": 22178.74744166901
+      },
+      "distance_at_arrival_cm": 38.311665230512574
+    }
+  ],
+  "formal_final_world": {
+    "X": 90000.0,
+    "Y": 62000.0,
+    "Z": 22145.612411306938
+  },
+  "first_grounded_segment": {
+    "state": "PROJECTED_POINT_REACHED",
+    "actual_start": {
+      "X": 89837.8840929635,
+      "Y": 56305.6331466685,
+      "Z": 22178.74744166901
+    },
+    "qa_query_candidate": {
+      "X": 89894.79911489188,
+      "Y": 58304.789307529434,
+      "Z": 22167.11452412175
+    },
+    "confirmed_ground": {
+      "X": 89894.79911489188,
+      "Y": 58304.789307529434,
+      "Z": 21871.2258220004
+    },
+    "navigation_query_point": {
+      "X": 89894.79911489188,
+      "Y": 58304.789307529434,
+      "Z": 21971.2258220004
+    },
+    "actual_projected_goal": {
+      "X": 89908.0,
+      "Y": 58304.789307529434,
+      "Z": 21879.741107135033
+    },
+    "actual_arrival": {
+      "X": 89908.00041297036,
+      "Y": 58269.96509515015,
+      "Z": 21967.389453708474
+    },
+    "actual_displacement_cm": 1976.9138831096707,
+    "distance_at_arrival_cm": 94.31308724172885,
+    "surface_evidence": [
+      {
+        "state": "READ",
+        "kind": "first_blocking_collision",
+        "actor_class": "/Script/Hearthward.HearthwardHometownFortress",
+        "component_tags": [
+          "CloisterRoof"
+        ],
+        "impact_point": {
+          "X": 89894.79911489188,
+          "Y": 58304.789307529434,
+          "Z": 22413.10966564693
+        },
+        "surface_classification": "CONFIRMED_FORTRESS_COLLISION"
+      },
+      {
+        "state": "READ",
+        "kind": "same_ray_ignore_confirmed_home",
+        "actor_class": "/Script/Landscape.LandscapeStreamingProxy",
+        "component_tags": [],
+        "impact_point": {
+          "X": 89894.79911489188,
+          "Y": 58304.789307529434,
+          "Z": 21871.2258220004
+        },
+        "surface_classification": "CONFIRMED_GROUND_COLLISION"
+      }
+    ],
+    "actual_complete_paths": {
+      "nav_path": [
+        {
+          "X": 89837.8840929635,
+          "Y": 56305.6331466685,
+          "Z": 22103.165567438904
+        },
+        {
+          "X": 89908.0,
+          "Y": 57076.0,
+          "Z": 22050.0
+        },
+        {
+          "X": 89908.0,
+          "Y": 58292.0,
+          "Z": 21880.0
+        },
+        {
+          "X": 89908.0,
+          "Y": 58304.789307529434,
+          "Z": 21880.0
+        }
+      ],
+      "controller_actual_nav_path": [
+        {
+          "X": 89837.8840929635,
+          "Y": 56305.6331466685,
+          "Z": 22103.165567438904
+        },
+        {
+          "X": 89908.0,
+          "Y": 57076.0,
+          "Z": 22050.0
+        },
+        {
+          "X": 89908.0,
+          "Y": 58292.0,
+          "Z": 21880.0
+        },
+        {
+          "X": 89908.0,
+          "Y": 58304.789307529434,
+          "Z": 21880.0
+        }
+      ]
+    },
+    "movement": "ordinary engine PathFollowing; no QA position/velocity/mode/clock setter"
+  },
+  "second_grounded_segment": {
+    "state": "STOPPED_BEFORE_SIMPLEMOVE_PARTIAL_QUERY",
+    "actual_start": {
+      "X": 89908.00041297036,
+      "Y": 58269.96509515015,
+      "Z": 21967.389453708474
+    },
+    "qa_query_candidate": {
+      "X": 89957.25832992743,
+      "Y": 60267.08003362105,
+      "Z": 22062.812617318974
+    },
+    "confirmed_ground": {
+      "X": 89957.25832992743,
+      "Y": 60267.08003362105,
+      "Z": 21965.25354982453
+    },
+    "navigation_query_point": {
+      "X": 89957.25832992743,
+      "Y": 60267.08003362105,
+      "Z": 22065.25354982453
+    },
+    "actual_projected_goal": {
+      "X": 89957.25832992743,
+      "Y": 60267.08003362105,
+      "Z": 22150.0
+    },
+    "surface_evidence": [
+      {
+        "state": "READ",
+        "kind": "first_blocking_collision",
+        "actor_class": "/Script/Hearthward.HearthwardHometownFortress",
+        "component_tags": [
+          "TowerCornice"
+        ],
+        "impact_point": {
+          "X": 89957.25832992743,
+          "Y": 60267.08003362105,
+          "Z": 23679.372788205525
+        },
+        "surface_classification": "CONFIRMED_FORTRESS_COLLISION"
+      },
+      {
+        "state": "READ",
+        "kind": "same_ray_ignore_confirmed_home",
+        "actor_class": "/Script/Landscape.LandscapeStreamingProxy",
+        "component_tags": [],
+        "impact_point": {
+          "X": 89957.25832992743,
+          "Y": 60267.08003362105,
+          "Z": 21965.25354982453
+        },
+        "surface_classification": "CONFIRMED_GROUND_COLLISION"
+      }
+    ],
+    "actual_find_path_valid": true,
+    "actual_find_path_partial": true,
+    "navigation_building_or_locked": false,
+    "start_projection": {
+      "Point": {
+        "X": 89908.00041297036,
+        "Y": 58269.96509515015,
+        "Z": 21967.389453708474
+      },
+      "ProjectedLocation": {
+        "X": 89908.00041297036,
+        "Y": 58269.96509515015,
+        "Z": 21882.618771338806
+      },
+      "ReturnValue": true
+    },
+    "goal_projection": {
+      "Point": {
+        "X": 89957.25832992743,
+        "Y": 60267.08003362105,
+        "Z": 22150
+      },
+      "ProjectedLocation": {
+        "X": 89957.25832992743,
+        "Y": 60267.08003362105,
+        "Z": 22150
+      },
+      "ReturnValue": true
+    },
+    "partial_path_points": "NOT_READ",
+    "controller_path_for_second_segment": "NOT_REQUESTED",
+    "movement_for_second_segment": "NOT_REQUESTED"
+  },
+  "final_world_stable_in_observations": true,
+  "courtyard_route_reappeared": true,
+  "completion_credit": {
+    "prologue_exit_interaction": "NOT_RUN",
+    "natural_travel_to_camp": "NOT_RUN",
+    "phase_or_exit_complete_fact": "NOT_EARNED",
+    "camp_checkpoint_save": "NOT_RUN",
+    "first_rescue": "NOT_RUN",
+    "full_route": "FAILED_FIRST_BLOCKER",
+    "shipping_route": "NOT_RUN",
+    "OS_route": "NOT_RUN"
+  },
+  "geometry_facts": {
+    "source": "Source/Hearthward/Building/HearthwardHometownFortress.cpp:87-104,183",
+    "northwest_corner_tower_center_local": [
+      -2200,
+      6500
+    ],
+    "tower_width": 800,
+    "foundation_width": 960,
+    "tower_footprint_x": [
+      -2600,
+      -1800
+    ],
+    "tower_footprint_y": [
+      6100,
+      6900
+    ],
+    "foundation_footprint_x": [
+      -2680,
+      -1720
+    ],
+    "foundation_footprint_y": [
+      6020,
+      6980
+    ],
+    "second_candidate_local_xy": [
+      -2042.7416700725735,
+      6767.080033621052
+    ],
+    "candidate_in_both_footprints": true,
+    "observed_second_surface": "actual TowerCornice then LandscapeStreamingProxy after ignoring exact Home",
+    "nav_goal_minus_actual_terrain_z_cm": 184.74645017546936
+  },
+  "inference": {
+    "status": "UNCONFIRMED_NAV_POLYGON_ASSOCIATION",
+    "detail": "Second projected point overlaps the corner tower/base XY and is about 184.746cm above actual terrain; a separate structure-height nav polygon is plausible. Which component/poly produced Z22150 and why its path is partial have not been proven. No general terrain-route or geometry-defect conclusion.",
+    "required_follow_up": "Read actual registered TowerFoundation/Tower bounds and nav-poly association or a bounded normal route around the structure; retain strict rejection. No guessed waypoint, position writes, source fixes or additional UE run in this handoff."
+  },
+  "historical_runs_preserved": [
+    "09 fixed XY100 projection false",
+    "10 fixed XY250 projection false",
+    "11 readonly collision/wide-Z diagnostic only; no movement from diagnostic"
+  ],
+  "privacy": {
+    "no_profile_or_save_contents_copied": true,
+    "no_raw_stdout_or_commands_copied": true
+  }
+}

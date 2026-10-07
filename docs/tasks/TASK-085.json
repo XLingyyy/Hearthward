@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "id": "TASK-085",
+  "title": "共享显示契约、动作语义与UI增量接入基础",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Camp/HearthwardCampSubsystem.h",
+    "Resources/UI/LAYOUT.md"
+  ],
+  "dependencies": [
+    "TASK-084"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-085.md",
+    "docs/tasks/TASK-085.json",
+    "docs/handoffs/TASK-085.md",
+    "docs/qa/TASK-085/",
+    "docs/planning/TASK-084-103/TASK-085/",
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.h",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/PresentationReadModelTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T085-C01：投影无副作用；所有余额/任务ID/事务记录不变。",
+    "T085-C02：无对象与销毁；无崩溃/野指针，显示不可用且动作禁用。",
+    "T085-C03：时间线；旧引用失效，不能跨epoch提交。",
+    "T085-C04：动作分离；四种语义不互相代替，实际任务变化符合原契约。",
+    "T085-C05：布局兼容；有用信息不重叠、不越界，主动作始终可达。",
+    "T085-C06：刷新成本；无重复订阅增长、后台无限刷新或每帧全表重建。"
+  ],
+  "non_goals": [
+    "完整MVVM/UMG/CommonUI迁移",
+    "新增保存格式、资源预留或新的任务执行系统",
+    "用显示层修正真实数量错误"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-025",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "2026-10-07本地实现：个人/队伍只读投影与原动作现值检查完成，主代理实际Development Editor构建成功，定向原生4/4成功无警告/错误；渲染/真实输入/模型待验证，不能代填人工验收。",
+    "Owner沿项目记录；Reviewer和Issue未指派，实际分支codex/TASK-084-103-iteration；旧任务远端授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "本轮用户授权执行批次既定展示适配；085核对实际读取与动作API后采用CT，不改变业务规则。086绑定状态卡epoch/CommandId并实际消费，材料/导航/回营类型按后续单需要实现。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。"
+  ]
+}

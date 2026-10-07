@@ -1,0 +1,64 @@
+{
+  "state": "STATIC_CHECK_PASS",
+  "updated_at": "2026-10-07",
+  "runner": "G:\\GameFactory\\Hearthward\\docs\\qa\\TASK-102\\run_standalone_joint.py",
+  "checks": [
+    {
+      "check": "AST compile and side-effect-free module import",
+      "state": "PASS",
+      "ue_started": false
+    },
+    {
+      "check": "CLI --help exits 0 before engine import/output creation",
+      "state": "PASS",
+      "ue_started": false
+    },
+    {
+      "check": "Reparse same real complete CSV; exact original 9000-frame statistics preserved",
+      "state": "PASS",
+      "csv": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-102\\prologue-vulkan-20261007-01\\profile\\Saved\\Profiling\\CSV\\Profile(20261007_062331).csv",
+      "frame_statistics": {
+        "numeric_frames": 9000,
+        "seconds": 116.4529097,
+        "p99_ms": 11.7866,
+        "one_percent_low_fps": 2.0998256262803423,
+        "over_50ms": 7,
+        "over_50ms_fraction": 0.0007777777777777777,
+        "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames"
+      },
+      "actual_resolution": [
+        1920,
+        1080
+      ]
+    },
+    {
+      "check": "Invalid numeric rows fail; valid zero preserved; lowercase comma-bearing final commandline metadata parsed",
+      "state": "PASS",
+      "scope": "Parser-only synthetic edge cases"
+    },
+    {
+      "check": "Win32 current host PID alive / nonexistent PID exited",
+      "state": "PASS",
+      "scope": "Read-only process query; no UE PID operation"
+    },
+    {
+      "check": "Fatal guard recognizes saved real Frame3 Renderer crash",
+      "state": "PASS",
+      "scope": "Static guard over historical log; no UE execution",
+      "source": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-102\\prologue-joint-vulkan-20261007-02\\runtime.log"
+    },
+    {
+      "check": "Exactly one public Submit call and fixed new action is assigned before use",
+      "state": "PASS",
+      "scope": "AST/symbol-table control-flow check"
+    }
+  ],
+  "runtime_ue": "NOT_RUN",
+  "model_request": "NOT_RUN",
+  "stable_scene_sample": "NOT_RUN",
+  "six_scene_matrix": "NOT_RUN",
+  "warnings": [
+    "Static checks do not verify real RemoteControl policy/public APIs or performance/model success.",
+    "Actual root-owned CPU and Vulkan stable runs remain pending."
+  ]
+}

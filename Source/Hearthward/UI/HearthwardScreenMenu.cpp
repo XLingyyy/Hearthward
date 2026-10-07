@@ -127,12 +127,23 @@ void UHearthwardScreenWidget::ComposeInventoryScreen()
     Rule(624,220,518,TEXT("inventory.detail.titleRule"),TEXT("inventory.detail"));
     if(Selected)
     {
+        const auto* DetailInstance=EquipmentOwner==TEXT("player")?Bag->FindInstance(EquipmentSelection):nullptr;
+        if(DetailInstance && DetailInstance->Definition!=SelectedItem)DetailInstance=nullptr;
+        const bool MissingSelectedInstance=EquipmentOwner==TEXT("player") && EquipmentSelection.IsValid() && !Bag->FindInstance(EquipmentSelection);
+        if(!DetailInstance && !MissingSelectedInstance)
+        {
+            for(const auto& Equipped:Bag->Snapshot().Equipped)
+                if(const auto* Instance=Bag->FindInstance(Equipped.Value);Instance && Instance->Definition==SelectedItem){DetailInstance=Instance;break;}
+            if(!DetailInstance)DetailInstance=Bag->FindInstance(Bag->FirstInstance(SelectedItem,true));
+            if(DetailInstance){EquipmentSelection=DetailInstance->Id;EquipmentOwner=TEXT("player");EquipmentStack=NAME_None;}
+        }
         Inv(TEXT("text"),TEXT("类型  ")+HearthwardData::Text(Selected,TEXT("category")),{624,238},{252,38},17,TEXT("inventory.detail.category"),TEXT("inventory.detail")).Color=Color(TEXT("muted"));
-        auto& Count=Inv(TEXT("text"),FString::Printf(TEXT("持有  ×%d"),Bag->GetItemCount(SelectedItem)),{888,238},{254,38},17,TEXT("inventory.detail.quantity"),TEXT("inventory.detail")); Count.Align=TEXT("right");
+        auto& Count=Inv(TEXT("text"),FString::Printf(TEXT("持有 %d · 可用 %d"),Bag->GetItemCount(SelectedItem),Bag->Available(SelectedItem)),{888,238},{254,38},17,TEXT("inventory.detail.quantity"),TEXT("inventory.detail")); Count.Align=TEXT("right");
         Inv(TEXT("image"),TEXT(""),{754,282},{260,182},18,TEXT("inventory.detail.art"),TEXT("inventory.detail"),TEXT(""),SelectedItem==TEXT("axe")?TEXT("axeLarge"):HearthwardData::Text(Selected,TEXT("icon")));
         Inv(TEXT("text"),TEXT("物品说明"),{624,468},{518,42},21,TEXT("inventory.detail.descriptionHeading"),TEXT("inventory.detail")).Color=Color(TEXT("gold"));
         Rule(624,513,518,TEXT("inventory.detail.descriptionRule"),TEXT("inventory.detail"));
-        const FString Description=HearthwardData::Text(Selected,TEXT("description"));
+        const FString Description=(DetailInstance?TEXT("实例 ")+DetailInstance->Id.ToString(EGuidFormats::Digits).Left(8)
+            +(Bag->IsEquipped(DetailInstance->Id)?TEXT(" · 已装备\n"):TEXT(" · 未装备\n")):FString())+HearthwardData::Text(Selected,TEXT("description"));
         const float DescriptionFont=19*TextScale;
         const FSlateFontInfo Font(Typeface,FMath::RoundToInt(DescriptionFont*.75f));
         const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
@@ -156,7 +167,7 @@ void UHearthwardScreenWidget::ComposeInventoryScreen()
             if(HearthwardData::Number(Selected,TEXT("attack"))>0) Property(TEXT("攻击力"),FString::Printf(TEXT("%.0f"),HearthwardData::Number(Selected,TEXT("attack"))));
             if(HearthwardData::Number(Selected,TEXT("defense"))>0) Property(TEXT("防御力"),FString::Printf(TEXT("%.0f"),HearthwardData::Number(Selected,TEXT("defense"))));
             const float Maximum=HearthwardData::Number(Selected,TEXT("durability"),100);
-            Property(TEXT("耐久度"),FString::Printf(TEXT("%.0f / %.0f"),G->Durability.Contains(SelectedItem)?G->Durability.FindRef(SelectedItem):Maximum,Maximum));
+            Property(TEXT("耐久度"),DetailInstance?FString::Printf(TEXT("%.2f / %.0f"),DetailInstance->Durability,Maximum):TEXT("所选实例不可用"));
         }
         else
         {

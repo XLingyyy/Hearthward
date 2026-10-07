@@ -1,0 +1,8 @@
+{
+  "status": "FAILED_TEST_FIXTURE",
+  "evidence": ".agent-local/qa/TASK-097/boar-build-20261007-01/tests.json",
+  "first_error": "Cannot generate unique name for WorldSettings",
+  "cause": "Test called InitializeNewWorld after CreateWorld, which already invokes it (UE World.cpp:2850).",
+  "repair": "Pass initialization values into CreateWorld once; production code unchanged by this repair.",
+  "subsequent_result": "boar-r3-native-20261007.json"
+}

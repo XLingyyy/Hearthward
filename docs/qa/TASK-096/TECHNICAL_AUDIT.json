@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "task": "TASK-096",
+  "date": "2026-10-07",
+  "evidence_level": "STATIC_SOURCE_AND_CONFIG_ONLY",
+  "source_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "working_tree": "shared uncommitted iteration changes; runtime results bind separately",
+  "runtime_validation": "NOT_RUN",
+  "owner_visual": "NOT_RUN",
+  "source_candidate_manifest": "docs/assets/TASK-094/TASK-096-PACKAGES.json",
+  "content_candidate_count": 3,
+  "resource_candidate_count": 0,
+  "selected_for_change": [],
+  "lock_state": "NOT_ACQUIRED",
+  "hashes_computed": 0,
+  "geometry_input": "docs/planning/TASK-084-103/ROUTE_MANIFEST.json#prologue",
+  "approved_direction": "TASK-077 mountain stonehold, Owner direction confirmation 2026-10-05; final near-field material sample unreviewed",
+  "formal_facade": [
+    "/Game/Hearthward/Assets/TASK-077/Materials/M_StoneholdFacade_PBR",
+    "/Game/Hearthward/Assets/TASK-077/SM_StoneholdFacade/StaticMeshes/SM_StoneholdFacade",
+    "/Game/Hearthward/Assets/TASK-077/Textures/T_StoneholdFacade_base_color"
+  ],
+  "facade_material": "Historic source KHR_materials_unlit; WorldClock tint; not a demonstrated lit/PBR near-field material",
+  "near_field_and_collision": "Native HometownFortress blocking parts; facade/furniture NoCollision; exact ground Z and natural following remain NOT_RUN",
+  "lifecycle_source_evidence": [
+    {
+      "file": "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+      "line": 65,
+      "text": "StreamingHandle=FWorldDelegates::LevelAddedToWorld.AddUObject(this,&UHearthwardWorldPresentation::ConfigureSky);"
+    },
+    {
+      "file": "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+      "line": 86,
+      "text": "FWorldDelegates::LevelAddedToWorld.Remove(StreamingHandle);"
+    },
+    {
+      "file": "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+      "line": 33,
+      "text": "GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this,&UHearthwardPresentationComponent::Restored);"
+    },
+    {
+      "file": "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+      "line": 37,
+      "text": "{StopFixedCue();GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.RemoveDynamic(this,&UHearthwardPresentationComponent::Restored);Super::EndPlay(Reason);}"
+    }
+  ],
+  "reuse_filters": [
+    "Hearthward.Hometown077.BedroomAndEscapeClearance"
+  ],
+  "clearance_status": "WAITING_084_092"
+}

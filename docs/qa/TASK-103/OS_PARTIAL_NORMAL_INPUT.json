@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "candidate_id": "iteration-084-103-20261007-2",
+  "state": "PARTIAL_NORMAL_INPUT_VERIFIED",
+  "source_result": ".agent-local/qa/TASK-103/os-cpu-20261007/result.json",
+  "returned_result": {
+    "state": "PARTIAL_NORMAL_INPUT_VERIFIED",
+    "candidate_id": "iteration-084-103-20261007-2",
+    "embedded_version_observed": "0.2.0-preview.20261007.1",
+    "startup": "Windows Run dialog; direct packaged Hearthward.exe; no UE or Python launcher",
+    "backend_requested": "cpu",
+    "first_shipping_pid": 7656,
+    "restart_shipping_pid": 63156,
+    "isolation": "Distinct -UserDir; Shipping compiles out HearthwardSaveTestPool, so UserDir provides actual isolation",
+    "save_file": "profile/Saved/SaveGames/HearthwardPrototype/Compatible-v8/pool.hws",
+    "normal_actions": [
+      {
+        "action": "new game",
+        "observed": "loaded formal prologue bedroom with player and brother",
+        "evidence": "bedroom-loaded.jpg"
+      },
+      {
+        "action": "J journal",
+        "observed": "main01 related target 家中的遗物包; stage 0/3 and preparation text",
+        "evidence": "journal-main01.jpg"
+      },
+      {
+        "action": "F6 then click save current",
+        "observed": "1/50 to 2/50; new manual node",
+        "evidence": "save-before.jpg, save-after.jpg"
+      },
+      {
+        "action": "Alt+F4",
+        "observed": "first game window exited before fresh startup"
+      },
+      {
+        "action": "fresh Windows Run startup, Return default New game",
+        "observed": "Independent process retained prior save-list nodes and created a new automatic prologue node, total3. This action did not establish Continue.",
+        "evidence": "restart-continue-save-composited.jpg",
+        "reported_action_before_erratum": "fresh Windows Run startup, Enter continue",
+        "reported_observation_before_erratum": "new process entered same bedroom and retained manual/automatic nodes; new automatic continue node made count 3/50",
+        "state": "INVALID_CONTINUE_CLAIM",
+        "erratum": "docs/qa/TASK-103/OS_CONTINUE_ERRATUM.json",
+        "source_raw_result_preserved": true
+      },
+      {
+        "action": "Alt+F4",
+        "observed": "requested normal close of second process"
+      }
+    ],
+    "screenshot_limitation": "Second process game-target capture returned foreground window did not report a process id; visible result captured from occluded Explorer window compositor. Original composite retained, not passed off as direct game capture.",
+    "not_run": [
+      "continuous exit/rescue/camp route",
+      "normal inventory/storage/crafting loop",
+      "real model response",
+      "four save stages",
+      "full campaign",
+      "second physical machine",
+      "human acceptance",
+      "owner audiovisual approval"
+    ],
+    "task103_complete": false
+  },
+  "source_launch": ".agent-local/qa/TASK-103/os-cpu-20261007/launch.json",
+  "launch_metadata": {
+    "method": "Windows Run dialog via native OS UI",
+    "binary": "F:/HearthwardDemo/iteration-084-103-20261007-2/Windows/Hearthward.exe",
+    "profile": "Hearthward\\.agent-local\\qa\\TASK-103\\os-cpu-20261007\\profile",
+    "save_test_pool": "CA71D9A591E148A8952083F0387B1C8F",
+    "backend": "cpu",
+    "ue_or_python_launcher": false,
+    "normal_input": true
+  },
+  "screenshot_metadata": [
+    {
+      "path": ".agent-local/qa/TASK-103/os-cpu-20261007/bedroom-loaded.jpg",
+      "bytes": 182454,
+      "capture": "original game-window evidence; provenance retained in root result",
+      "width": 1922,
+      "height": 1128,
+      "format": "JPEG"
+    },
+    {
+      "path": ".agent-local/qa/TASK-103/os-cpu-20261007/journal-main01.jpg",
+      "bytes": 99423,
+      "capture": "original game-window evidence; provenance retained in root result",
+      "width": 1922,
+      "height": 1128,
+      "format": "JPEG"
+    },
+    {
+      "path": ".agent-local/qa/TASK-103/os-cpu-20261007/new-game-bedroom.jpg",
+      "bytes": 150320,
+      "capture": "original game-window evidence; provenance retained in root result",
+      "width": 1922,
+      "height": 1128,
+      "format": "JPEG"
+    },
+    {
+      "path": ".agent-local/qa/TASK-103/os-cpu-20261007/pause.jpg",
+      "bytes": 134080,
+      "capture": "original game-window evidence; provenance retained in root result",
+      "width": 1922,
+      "height": 1128,
+      "format": "JPEG"
+    },
+    {
+      "path": ".agent-local/qa/TASK-103/os-cpu-20261007/restart-continue-save-composited.jpg",
+      "bytes": 90180,
+      "capture": "EXPLORER_OCCLUDED_COMPOSITOR_NOT_DIRECT_GAME_TARGET",
+      "width": 1453,
+      "height": 853,
+      "format": "JPEG"
+    },
+    {
+      "path": ".agent-local/qa/TASK-103/os-cpu-20261007/save-after.jpg",
+      "bytes": 99358,
+      "capture": "original game-window evidence; provenance retained in root result",
+      "width": 1922,
+      "height": 1128,
+      "format": "JPEG"
+    },
+    {
+      "path": ".agent-local/qa/TASK-103/os-cpu-20261007/save-before.jpg",
+      "bytes": 95737,
+      "capture": "original game-window evidence; provenance retained in root result",
+      "width": 1922,
+      "height": 1128,
+      "format": "JPEG"
+    },
+    {
+      "path": ".agent-local/qa/TASK-103/os-cpu-20261007/title-version.jpg",
+      "bytes": 92749,
+      "capture": "original game-window evidence; provenance retained in root result",
+      "width": 1922,
+      "height": 1128,
+      "format": "JPEG"
+    }
+  ],
+  "metadata_only_no_hashes": true,
+  "actual_isolation": "Distinct UserDir; SaveTestPool parameter is compiled out in Shipping and did not supply isolation.",
+  "version_evidence": ".agent-local/qa/TASK-103/os-cpu-20261007/title-version.jpg",
+  "version_observation": "Shipping title UI observed embedded version; not a PE file-version inspection.",
+  "capture_limitation": "Second process game-target capture returned foreground window did not report a process id; visible result captured from occluded Explorer window compositor. Original composite retained, not passed off as direct game capture.",
+  "fixture_or_synthetic": false,
+  "model_request": "NOT_RUN",
+  "human_or_second_machine_acceptance": "NOT_RUN",
+  "agent_actions": "Read root result and screenshot metadata; no engine calls, executable launch, Saved reads or F writes.",
+  "continue_claim": "INVALID_CONTINUE_CLAIM_FOR_RETURN_ACTION",
+  "continue_erratum": "docs/qa/TASK-103/OS_CONTINUE_ERRATUM.json",
+  "separate_explicit_continue_evidence": "docs/qa/TASK-101/OS_ORIGINAL_COPY_COMPATIBILITY.json",
+  "evidence_candidate_scope": "Candidate-2/version.1 only; current version.2 is not built",
+  "original_private_raw_result_preserved": true
+}

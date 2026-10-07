@@ -1,0 +1,121 @@
+{
+  "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+  "report_created_on": "2026.10.06-21.07.52",
+  "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "implementation": "uncommitted shared source after root presentation repair in TASK-091 window",
+  "layer": "REAL_GAME_WORLD_CONTROLLER_RESOLVER_AND_ACTUAL_CAMPAIGN_ACTOR_FIXTURE",
+  "devices": [
+    {
+      "deviceName": "LAPTOP-R8NPOP05",
+      "instance": "9223F5A146F283B8F779E098195DB0CB",
+      "instanceName": "LAPTOP-R8NPOP05-67036",
+      "platform": "WindowsEditor",
+      "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "model": "Default",
+      "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+      "rAMInGB": 16,
+      "renderMode": "SM6",
+      "rHI": "",
+      "appInstanceLog": ""
+    }
+  ],
+  "succeeded": 3,
+  "failed": 0,
+  "warnings": 0,
+  "errors": 0,
+  "tests": [
+    {
+      "testDisplayName": "PrologueActionGoalRemainsVisible",
+      "fullTestPath": "Hearthward.Iteration.Task100.Fixture.PrologueActionGoalRemainsVisible",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "9223F5A146F283B8F779E098195DB0CB"
+      ],
+      "duration": 0.019182998687028885,
+      "dateTime": "2026.10.06-21.07.47",
+      "entries": [
+        {
+          "event": {
+            "type": "Info",
+            "message": "Layer: isolated real-world/controller resolver fixture; no normal-input, rendering or campaign-completion claim.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-21.07.47"
+        }
+      ],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "UnknownSideGoalIsHidden",
+      "fullTestPath": "Hearthward.Iteration.Task100.Fixture.UnknownSideGoalIsHidden",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "9223F5A146F283B8F779E098195DB0CB"
+      ],
+      "duration": 0.018230203539133072,
+      "dateTime": "2026.10.06-21.07.47",
+      "entries": [
+        {
+          "event": {
+            "type": "Info",
+            "message": "Task100 actual HUD resolver: side_05 available=1 location=loc_dwellings visible=0 world=X=0.000 Y=0.000 Z=0.000",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-21.07.47"
+        }
+      ],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "WaitingRescueUsesCurrentPersonPosition",
+      "fullTestPath": "Hearthward.Iteration.Task100.Fixture.WaitingRescueUsesCurrentPersonPosition",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "9223F5A146F283B8F779E098195DB0CB"
+      ],
+      "duration": 0.021106798201799393,
+      "dateTime": "2026.10.06-21.07.47",
+      "entries": [
+        {
+          "event": {
+            "type": "Info",
+            "message": "Task100 waiting rescue fallback: world=X=-81000.000 Y=-80000.000 Z=100.000 person=X=-81000.000 Y=-80000.000 Z=100.000 route=0 route_id=None",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-21.07.47"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "Layer: isolated real Game world/controller/player, actual campaign refresh and live person actor; fixture movement is diagnostic, not normal rescue completion.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-21.07.47"
+        }
+      ],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "HearthwardQuestGuidance.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Fonts/FontMeasure.h"
 #include "Rendering/SlateRenderer.h"
@@ -82,10 +83,9 @@ void UHearthwardScreenWidget::ComposeWorldMap()
     }
     if(!G->TrackedQuest.IsNone())
     {
-        const auto Q=Find(TEXT("quests"),G->TrackedQuest.ToString());
-        const FName Target=Campaign?Story->QuestLocation(G->TrackedQuest):FName(*Text(Q,TEXT("location")));
-        const FVector World=G->LocationPosition(Target);
-        if(G->Discovered.Contains(Target) && Known(World))
+        const auto Guidance=HearthwardQuestGuidance::Resolve(GetOwningPlayer());
+        const FVector World=Guidance.World;
+        if(Guidance.Visible && G->Discovered.Contains(Guidance.Location) && Known(World))
         {
             Element(TEXT("image"),TEXT(""),MapPoint(World)+FVector2D(12,-35),{24,30},18,TEXT(""),TEXT("mapQuestIcon"));
             Elements.Last().Component=TEXT("map.canvas");Elements.Last().LayoutId=TEXT("map.questTarget");

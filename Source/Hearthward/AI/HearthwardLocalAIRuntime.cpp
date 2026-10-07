@@ -76,7 +76,7 @@ bool FHearthwardLocalAIRuntime::EnsureStarted(FString& OutError)
     BaseUrl=FString::Printf(TEXT("http://127.0.0.1:%d"),Port);
     const FString Args=FString::Printf(
         TEXT("-m \"%s\" --host 127.0.0.1 --port %d --api-key %s --alias hearthward-qwen-local -c 4096 -np 1 -t 4 -tb 4 -ngl %d --reasoning off --jinja --no-webui --cache-prompt"),
-        *Model,Port,*ApiKey,Backend==TEXT("cpu")?0:FMath::Clamp(Layers,0,32));
+        *Model,Port,*ApiKey,Backend==TEXT("cpu")?0:FMath::Max(Layers,0));
 
     Process=FPlatformProcess::CreateProc(*Exe,*Args,true,true,true,&ProcessId,0,*BinDir,nullptr);
     if(!Process.IsValid())

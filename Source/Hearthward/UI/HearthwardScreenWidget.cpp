@@ -59,6 +59,7 @@ TSharedRef<SWidget> UHearthwardScreenWidget::RebuildWidget()
     Draft->SetWidgetStyle(Style);
     auto* CanvasSlot=Canvas->AddChildToCanvas(Draft); CanvasSlot->SetPosition(FVector2D(960,766)); CanvasSlot->SetSize(FVector2D(510,52));
     Draft->OnTextCommitted.AddDynamic(this,&UHearthwardScreenWidget::DraftCommitted);
+    Draft->OnTextChanged.AddDynamic(this,&UHearthwardScreenWidget::CraftingSearchChanged);
     Draft->SetVisibility(ESlateVisibility::Collapsed);
     WidgetTree->RootWidget=Scale;
     return Super::RebuildWidget();
@@ -226,9 +227,12 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     {
         auto* B=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
         Workbench=B->NearbyWorkbench();
-        if(!Workbench.IsValid()) { Message=TEXT("请在安全处靠近已建成的工作台"); MessageUntil=FPlatformTime::Seconds()+4; Refresh(); return; }
-        CraftingEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
-        CraftingBatches=1;
+        const auto Timeline=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+        const bool ViewTarget=Name==TEXT("crafting") && CraftingTracker.IsCurrent(Timeline);
+        if(!Workbench.IsValid() && !ViewTarget) { Message=TEXT("请在安全处靠近已建成的工作台"); MessageUntil=FPlatformTime::Seconds()+4; Refresh(); return; }
+        CraftingEpoch=Timeline;
+        CraftingBatches=ViewTarget?CraftingTracker.Batches:1;
+        if(ViewTarget)SelectedRecipe=CraftingTracker.Recipe;
         if(!Find(TEXT("craftingRecipes"),SelectedRecipe.ToString()) && !Rows(TEXT("craftingRecipes")).IsEmpty())
             SelectedRecipe=FName(*Text(Rows(TEXT("craftingRecipes"))[0]->AsObject(),TEXT("id")));
     }
@@ -270,8 +274,10 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
     ApplyInputMode();
     if (Draft)
     {
-        Draft->SetVisibility(Name==TEXT("dialogue") || Name==TEXT("memory")?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
-        Draft->SetHintText(FText::FromString(Name==TEXT("memory")?TEXT("填写你要告诉弟弟的记录，最多120字…"):TEXT("输入想说的话…")));
+        if(PreviousPage==TEXT("crafting") && Name!=PreviousPage)Draft->SetText(FText::GetEmpty());
+        Draft->SetVisibility(Name==TEXT("dialogue") || Name==TEXT("memory") || Name==TEXT("crafting")?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
+        Draft->SetHintText(FText::FromString(Name==TEXT("crafting")?TEXT("搜索中文配方名称…"):Name==TEXT("memory")?TEXT("填写你要告诉弟弟的记录，最多120字…"):TEXT("输入想说的话…")));
+        if(Name==TEXT("crafting"))Draft->SetText(FText::FromString(CraftingSearch));
         if(Name==TEXT("memory") && !RestoringMemoryDraft) Draft->SetText(FText::GetEmpty());
     }
     if(Name==TEXT("memory") && !RestoringMemoryDraft) { MemoryEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(); MemoryRevision=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetMemoryRevision(); SelectedMemory.Invalidate(); MemoryKind=TEXT("claim"); }
@@ -447,6 +453,11 @@ void UHearthwardScreenWidget::Refresh()
             Draft->SetVisibility(DialogueView==TEXT("home") && !GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->HasCandidate()?ESlateVisibility::Visible:ESlateVisibility::Collapsed);
             Draft->SetHintText(FText::FromString(TEXT("例如：带2名族人采集木材")));
         }
+        else if(Page==TEXT("crafting"))
+        {
+            auto* InputSlot=CastChecked<UCanvasPanelSlot>(Draft->Slot);InputSlot->SetPosition({318,229});InputSlot->SetSize({370,44});
+            Draft->SetHintText(FText::FromString(TEXT("搜索中文配方名称…")));
+        }
     }
     KeyboardFocus=FocusedAction.IsEmpty()?INDEX_NONE:Elements.IndexOfByPredicate([&](const FHearthwardUIElement& E)
     { return E.Action==FocusedAction && E.Enabled && !E.Hidden; });
@@ -491,6 +502,7 @@ double UHearthwardScreenWidget::HUDFeedbackDeadline(FName Id,const FString& Labe
 void UHearthwardScreenWidget::ResetHUDQuestNotice()
 {
     CancelInventoryDrag();
+    CraftingTracker.Clear();
     HUDFeedbackNotices.Reset();
     HUDKnownQuests.Reset(); HUDQuestNotice=HUDPendingQuest=NAME_None; HUDQuestNoticeUntil=0;
     HUDQuestsObserved=HUDAnnounceInitialQuest=false;
@@ -862,7 +874,10 @@ FReply UHearthwardScreenWidget::NativeOnKeyDown(const FGeometry& G,const FKeyEve
     return FReply::Handled();
 }
 void UHearthwardScreenWidget::DraftCommitted(const FText& TextValue,ETextCommit::Type Method)
-{ if(Method==ETextCommit::OnEnter) ExecuteAction(Page==TEXT("memory")?TEXT("memorySave"):TEXT("send")); }
+{
+    if(Page==TEXT("crafting")){if(Method==ETextCommit::OnEnter)CraftingSearchChanged(TextValue);return;}
+    if(Method==ETextCommit::OnEnter) ExecuteAction(Page==TEXT("memory")?TEXT("memorySave"):TEXT("send"));
+}
 
 bool UHearthwardScreenWidget::ReadableLayout() const
 { return Page!=TEXT("dialogue") && Page!=TEXT("title") && Page!=TEXT("pause") && Page!=TEXT("settings") && Page!=TEXT("save") && Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("equipment") && Page!=TEXT("storage") && Page!=TEXT("skills") && Page!=TEXT("journal") && Page!=TEXT("map") && Page!=TEXT("building") && !LayoutEditing && ConfirmAction.IsEmpty() && GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale>100; }

@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "id": "TASK-100",
+  "title": "四区差异化内容与首版全流程接续",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-100-campaign-content-completion",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Campaign/HearthwardCampaignState.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+    "Resources/Data/gameplay.json",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md"
+  ],
+  "dependencies": [
+    "TASK-087",
+    "TASK-090",
+    "TASK-091",
+    "TASK-092",
+    "TASK-093",
+    "TASK-095",
+    "TASK-096",
+    "TASK-097",
+    "TASK-098",
+    "TASK-099"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-100.md",
+    "docs/tasks/TASK-100.json",
+    "docs/handoffs/TASK-100.md",
+    "docs/qa/TASK-100/",
+    "docs/planning/TASK-084-103/TASK-100/",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Resources/Data/quest_guidance.json",
+    "docs/assets/TASK-100/",
+    "Source/Hearthward/Tests/CampaignCompletionRouteTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T100-C01：覆盖表一致；实际ID全部可追溯，缺口有归属，无编造完成项。",
+    "T100-C02：四区可走；每区有可读空间与合法退路，无必须调试的阻断。",
+    "T100-C03：清敌占旗；严格沿原胜利规则，一生命代次只结算一次。",
+    "T100-C04：主线全程；连续进度无强制跳阶段，必要资源真实取得。",
+    "T100-C05：支线唯一；奖励/人口不重复，不可获得条目明确原因而非假PASS。",
+    "T100-C06：第二营地；共享/独立字段正确，不新增两地搬运或复制建筑。",
+    "T100-C07：通关继续；永久清敌/奖励/救援/第二营地状态保留，游戏可继续。"
+  ],
+  "non_goals": [
+    "首版边界外剧情与战争系统",
+    "未经实玩依据任意调资源/经验/时长",
+    "用旧049传送脚本冒充完整游玩"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-005",
+    "T-011",
+    "T-015",
+    "T-022"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}
