@@ -94,7 +94,12 @@ void AHearthwardNatureActor::Configure(FGuid Entity,FName Type,FName Def)
     if(Kind==TEXT("crop"))
     {
         if(auto* M=Shape->CreateAndSetMaterialInstanceDynamic(0))M->SetVectorParameterValue(TEXT("Color"),FLinearColor(.16f,.08f,.025f));
-        for(int32 X:{-60,0,60})for(int32 Y:{-60,0,60}){Part(FVector(X,Y,25),FVector(.05,.05,.5),FLinearColor(.12f,.35f,.04f));Part(FVector(X,Y,45),FVector(.3,.25,.12),FLinearColor(.2f,.5f,.06f));}
+        for(int32 Plant=0;Plant<9;++Plant)
+        {
+            auto* P=NewObject<UStaticMeshComponent>(this);P->SetupAttachment(RootComponent);
+            P->SetCollisionEnabled(ECollisionEnabled::NoCollision);P->SetCanEverAffectNavigation(false);
+            P->RegisterComponent();Parts.Add(P);
+        }
     }
     if(Kind==TEXT("treasure")){Part(FVector(0,0,30),FVector(.85,.7,.12),FLinearColor(.25f,.13f,.04f));for(int32 X:{-25,25})Part(FVector(X,0,0),FVector(.07,.68,.55),FLinearColor(.45f,.4f,.22f));}
     Label->SetWorldScale3D(FVector(1));Label->SetRelativeLocation(FVector(0,0,Kind==TEXT("animal")?120:160)/Scale);
@@ -132,12 +137,15 @@ void AHearthwardNatureActor::Refresh()
     {
         const double Duration=Number(HearthwardNature::Definition(TEXT("crops"),Crop->Definition),TEXT("days"))*1440;
         const double Growth=N->State.Ready(*Crop)?1.:N->State.Calendar-Crop->Planted>=Duration*.5?.65:.3;
-        // Configure creates adjacent stem/leaf pairs for each of the nine planting positions.
+        const FString PlantName=Definition==TEXT("greens")?TEXT("Greens"):Definition==TEXT("grain")?TEXT("Grain"):TEXT("Herb");
+        const FString Stage=N->State.Ready(*Crop)?TEXT("Mature"):TEXT("Young");
+        const FString Stem=PlantName+TEXT("_")+Stage;
+        auto* PlantMesh=LoadObject<UStaticMesh>(nullptr,*(TEXT("/Game/Hearthward/Assets/TASK-097/Crops/")+Stem+TEXT("/SM_")+Stem+TEXT(".SM_")+Stem));
         for(int32 I=0;I<Parts.Num();++I)
         {
-            const bool Leaf=I%2==1;const int32 Plant=I/2;
-            Parts[I]->SetWorldScale3D((Leaf?FVector(.3,.25,.12):FVector(.05,.05,.5))*Growth);
-            Parts[I]->SetWorldLocation(GetActorLocation()+FVector((Plant/3-1)*60,(Plant%3-1)*60,(Leaf?45:25)*Growth));
+            if(Parts[I]->GetStaticMesh()!=PlantMesh)Parts[I]->SetStaticMesh(PlantMesh);
+            Parts[I]->SetWorldScale3D(FVector(Growth));
+            Parts[I]->SetWorldLocation(GetActorLocation()+FVector((I/3-1)*60,(I%3-1)*60,4));
         }
     }
     InteractionText=Name;

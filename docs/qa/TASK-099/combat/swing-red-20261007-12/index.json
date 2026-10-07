@@ -1,0 +1,105 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "58B793D641F3A1CABBA7DB9633CDEC36",
+			"instanceName": "LAPTOP-R8NPOP05-32692",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.07-00.23.04",
+	"succeeded": 0,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.18559299409389496,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "ActualEmptySwing",
+			"fullTestPath": "Hearthward.Iteration.Task099.Combat.ActualEmptySwing",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"58B793D641F3A1CABBA7DB9633CDEC36"
+			],
+			"duration": 0.18559299409389496,
+			"dateTime": "2026.10.07-00.23.03",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'An actual active empty swing publishes one receipt' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CombatAudioFeedbackTests.cpp",
+					"lineNumber": 230,
+					"timestamp": "2026.10.07-00.23.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'A second tick in the same strike cannot repeat its swing' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CombatAudioFeedbackTests.cpp",
+					"lineNumber": 234,
+					"timestamp": "2026.10.07-00.23.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Recovery does not publish another swing' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CombatAudioFeedbackTests.cpp",
+					"lineNumber": 236,
+					"timestamp": "2026.10.07-00.23.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Crossing the whole active window in one real tick still publishes once' to be 2, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CombatAudioFeedbackTests.cpp",
+					"lineNumber": 238,
+					"timestamp": "2026.10.07-00.23.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Fresh legal attack is not suppressed by earlier rejected actions' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CombatAudioFeedbackTests.cpp",
+					"lineNumber": 262,
+					"timestamp": "2026.10.07-00.23.04"
+				}
+			],
+			"warnings": 0,
+			"errors": 5,
+			"artifacts": []
+		}
+	]
+}

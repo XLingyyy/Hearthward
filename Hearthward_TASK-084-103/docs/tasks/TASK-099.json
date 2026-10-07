@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "id": "TASK-099",
+  "title": "动作音效、环境声与事件反馈同步",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-099-audio-feedback",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Resources/Data/experience.json",
+    "Resources/Audio/",
+    "docs/planning/TASK-053-074/TASK-070.md"
+  ],
+  "dependencies": [
+    "TASK-095",
+    "TASK-096",
+    "TASK-097",
+    "TASK-098"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-099.md",
+    "docs/tasks/TASK-099.json",
+    "docs/handoffs/TASK-099.md",
+    "docs/qa/TASK-099/",
+    "docs/planning/TASK-084-103/TASK-099/",
+    "art_source/TASK-099/",
+    "docs/assets/TASK-099/",
+    "Resources/Audio/TASK-099/",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Resources/Data/experience.json",
+    "Source/Hearthward/Tests/AudioFeedbackLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T099-C01：事件同步；只有正确事件播对应声，不未命中播成功、不取消播完成。",
+    "T099-C02：去重；前者一次，后者各一次，不以粗暴节流隐藏错误。",
+    "T099-C03：材质位置；来源位置、接触类别与衰减合理，无明显循环接缝。",
+    "T099-C04：音量暂停；遵守设置及现有世界运行例外，恢复无音量突变叠声。",
+    "T099-C05：生命周期；当前音源数量有界，不重放历史事件或残留旧循环。",
+    "T099-C06：无配音状态；文字可用，voice仍未生产，不以静音文件冒充完成。",
+    "T099-C07：实听Cook；音效资源完整，主观试听与技术检查分别记录。"
+  ],
+  "non_goals": [
+    "固定人声录制/TTS、重写剧情和音乐系统大改",
+    "声音触发伤害/奖励或改变AI听觉规则",
+    "用空音频/静帧冒充完整音频验收"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

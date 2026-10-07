@@ -1,0 +1,114 @@
+{
+  "runs": [
+    {
+      "run": "fresh-prologue-navigation-api-20261007-13",
+      "status": "FAILED_FIRST_BLOCKER",
+      "stage": "bootstrap_title",
+      "first_error": "GET /remote/info HTTP/1.1\r\n",
+      "owned_editor_exit_verified": true
+    },
+    {
+      "run": "fresh-prologue-navigation-api-20261007-14",
+      "status": "FAILED_FIRST_BLOCKER",
+      "stage": "genuine_safe_save",
+      "first_error": "Real safe SavePoint transaction refused; no raw checkpoint manufactured",
+      "owned_editor_exit_verified": true
+    }
+  ],
+  "nav14": {
+    "formal_nodes": [
+      {
+        "id": "bedroom_door",
+        "state": "NODE_REACHED"
+      },
+      {
+        "id": "escape_stair_top",
+        "state": "NODE_REACHED"
+      },
+      {
+        "id": "escape_stair_bottom",
+        "state": "NODE_REACHED"
+      },
+      {
+        "id": "courtyard_side_gate",
+        "state": "NODE_REACHED"
+      },
+      {
+        "id": null,
+        "state": "FINAL_TARGET_REACHED"
+      }
+    ],
+    "final_segments": [
+      {
+        "state": "PROJECTED_POINT_REACHED",
+        "formal_goal_probe": {
+          "formal_world": {
+            "X": 90000.0,
+            "Y": 62000.0,
+            "Z": 22145.612411306938
+          },
+          "projection": {
+            "Point": {
+              "X": 90000,
+              "Y": 62000,
+              "Z": 22145.612411306938
+            },
+            "ProjectedLocation": {
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "ReturnValue": false
+          },
+          "complete_path": false
+        },
+        "actual_arrival": {
+          "X": 89907.99982981739,
+          "Y": 58296.75577101846,
+          "Z": 21965.04613392416
+        }
+      },
+      {
+        "state": "FORMAL_TARGET_REACHED",
+        "formal_goal_probe": {
+          "formal_world": {
+            "X": 90000.0,
+            "Y": 62000.0,
+            "Z": 22145.612411306938
+          },
+          "projection": {
+            "Point": {
+              "X": 90000,
+              "Y": 62000,
+              "Z": 22145.612411306938
+            },
+            "ProjectedLocation": {
+              "X": 90000,
+              "Y": 62000,
+              "Z": 22074.129554655872
+            },
+            "ReturnValue": true
+          },
+          "complete_path": true,
+          "path": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:NavigationSystemV1_0.NavigationPath_2808",
+          "valid": true,
+          "partial": false,
+          "projected_goal": {
+            "X": 90000.0,
+            "Y": 62000.0,
+            "Z": 22074.129554655872
+          }
+        },
+        "actual_arrival": {
+          "X": 90034.40856209218,
+          "Y": 61954.23070327156,
+          "Z": 22155.453623100533
+        }
+      }
+    ],
+    "save_accepted": false,
+    "save_points_before": 1,
+    "save_points_after": 1,
+    "limit": "Development API only; save rejected; loading state was not captured in Nav14"
+  }
+}

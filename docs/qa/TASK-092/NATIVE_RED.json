@@ -1,0 +1,134 @@
+{
+  "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+  "build_report": ".agent-local/qa/TASK-085-099/build-repair-20261007/result.json",
+  "report_created_on": "2026.10.06-20.35.14",
+  "layer": "ISOLATED_REAL_NAVIGATION_FIXTURE",
+  "tests": [
+    {
+      "testDisplayName": "FollowWaitAndPhysicalArrival",
+      "fullTestPath": "Hearthward.Iteration.Task092.Fixture.FollowWaitAndPhysicalArrival",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "61F3DC1B4763E65ABF8932BE1C5E432D"
+      ],
+      "duration": 0.59934002161026,
+      "dateTime": "2026.10.06-20.35.13",
+      "entries": [
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogStreaming: FlushAsyncLoading(377): 1 QueuedPackages, 0 AsyncPackages",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.13"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogNavigationDataBuild: UNavigationSystemV1::Build started...",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.13"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogNavigationDataBuild:    RebuildAll building NavData:  Name Default class /Script/NavigationSystem.RecastNavMesh agent radius 35.0.",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.13"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogNavigationDataBuild:    ANavigationData::RebuildAll load time: 0.00s",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.13"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogNavigationDataBuild:    FRecastNavMeshGenerator::ProcessTileTasksAndGetUpdatedTiles build time: 0.20s",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "LogNavigationDataBuild: UNavigationSystemV1::Build total execution time: 0.20s",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Info",
+            "message": "Layer: isolated flat navigation diagnostic; player destination reposition is fixture setup, not normal input route proof.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Explicit wait cancels the active production AI path' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RescueRouteTests.cpp",
+          "lineNumber": 124,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Waiting person does not move toward camp' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RescueRouteTests.cpp",
+          "lineNumber": 127,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Warning",
+            "message": "LogCrowdFollowing: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.35.14"
+        }
+      ],
+      "warnings": 1,
+      "errors": 2,
+      "artifacts": []
+    }
+  ]
+}

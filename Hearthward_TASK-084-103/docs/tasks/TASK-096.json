@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "id": "TASK-096",
+  "title": "石堡开场必经区域、近景材质与夜袭氛围",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-096-stonehold-opening",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/qa/TASK-077/REPORT.md",
+    "art_source/TASK-077/README.md",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Resources/Data/quest_guidance.json"
+  ],
+  "dependencies": [
+    "TASK-091",
+    "TASK-094",
+    "TASK-095"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-096.md",
+    "docs/tasks/TASK-096.json",
+    "docs/handoffs/TASK-096.md",
+    "docs/qa/TASK-096/",
+    "docs/planning/TASK-084-103/TASK-096/",
+    "art_source/TASK-096/",
+    "docs/assets/TASK-096/",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.h",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Resources/Data/quest_guidance.json",
+    "Source/Hearthward/Tests/StoneholdOpeningPolishTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T096-C01：新档撤离；全程自然通行和推进，导航不中断。",
+    "T096-C02：近景几何；无阻断通路的穿插/浮空/缺面，关键对象可识别。",
+    "T096-C03：昼夜材质；源与补面协调；临时Unlit/日光诊断不冒充正式效果。",
+    "T096-C04：表现生命周期；火烟正确重建和清理，不无限叠加音光/VFX。",
+    "T096-C05：可读与舒适；路面与入口可辨，烟火不遮关键动作/救援。",
+    "T096-C06：原规则；无免费物资或新增危险判定，游戏规则不变。",
+    "T096-C07：独立包；所有新模块/材质/效果可加载，无编辑器依赖。"
+  ],
+  "non_goals": [
+    "整城内室、完整新电影过场或战斗剧情重写",
+    "整份Marble试验网格直接作为碰撞",
+    "把诊断Unlit视口当正式日夜材质"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-011",
+    "T-021"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

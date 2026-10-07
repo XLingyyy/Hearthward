@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "id": "TASK-089",
+  "title": "背包与仓储操作一致性、实例详情和可读性",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-089-inventory-storage-ux",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/UI/HearthwardScreenStorage.cpp",
+    "Source/Hearthward/UI/HearthwardHUDStorage.cpp",
+    "Source/Hearthward/UI/HearthwardScreenInventoryDrag.cpp",
+    "Source/Hearthward/UI/HearthwardScreenEquipment.cpp",
+    "Source/Hearthward/UI/HearthwardScreenRepair.cpp",
+    "docs/releases/demo-20261006-2/REPORT.md"
+  ],
+  "dependencies": [
+    "TASK-086",
+    "TASK-088"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-089.md",
+    "docs/tasks/TASK-089.json",
+    "docs/handoffs/TASK-089.md",
+    "docs/qa/TASK-089/",
+    "docs/planning/TASK-084-103/TASK-089/",
+    "Source/Hearthward/UI/HearthwardScreenStorage.cpp",
+    "Source/Hearthward/UI/HearthwardHUDStorage.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenInventoryDrag.cpp",
+    "Source/Hearthward/UI/HearthwardScreenEquipment.cpp",
+    "Source/Hearthward/UI/HearthwardScreenRepair.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.cpp",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/InventoryStorageUXTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T089-C01：实例唯一；始终操作正确实例，详情不串件。",
+    "T089-C02：稀疏拖放；布局和快捷栏不回退，不因过滤重排。",
+    "T089-C03：数量边界；合法数量可执行，非法值安全拒绝且不损物。",
+    "T089-C04：预览失效；重新校验，显示实际结果，无负库存。",
+    "T089-C05：距离与epoch；按原规则拒绝，不远程转移、不跨档执行。",
+    "T089-C06：重复提交；一次事务只结算一次；新操作仍可用。",
+    "T089-C07：可读可操作；无遮挡，分页和数量控件可达，焦点返回正确。",
+    "T089-C08：存档保真；保持原格式恢复，数量/耐久/实例ID一致。"
+  ],
+  "non_goals": [
+    "自动排序、快捷远程存取、共享仓储规则调整",
+    "新存档schema或复制物品容器",
+    "恢复旧火红背景/装饰界面"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-004",
+    "T-005",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

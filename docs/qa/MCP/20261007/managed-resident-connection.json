@@ -1,0 +1,141 @@
+{
+  "schema": "hearthward.final_resident_mcp.v1",
+  "created_utc": "2026-10-07T14:12:12.094772+00:00",
+  "status": "FINAL_RESIDENT_MCP_VERIFIED",
+  "endpoint": "http://127.0.0.1:8000/mcp",
+  "protocol_version": "2025-06-18",
+  "project": "G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+  "map": "/Game/Hearthward/Bootstrap/L_Bootstrap",
+  "mode": "normal Editor",
+  "leave_alive": true,
+  "owned_process_id": 78676,
+  "stage": "complete",
+  "session_id_present": true,
+  "startup_limit_seconds": 180,
+  "network_timeout_limit_seconds": 30,
+  "exchanges": [
+    {
+      "method": "initialize",
+      "at_monotonic": 333873.7197241,
+      "request_id": 1,
+      "timeout_seconds": 5,
+      "session_header_present": false,
+      "error_type": "URLError"
+    },
+    {
+      "method": "initialize",
+      "at_monotonic": 333877.8143939,
+      "request_id": 1,
+      "timeout_seconds": 5,
+      "session_header_present": false,
+      "error_type": "URLError"
+    },
+    {
+      "method": "initialize",
+      "at_monotonic": 333881.8860509,
+      "request_id": 1,
+      "timeout_seconds": 5,
+      "session_header_present": false,
+      "error_type": "URLError"
+    },
+    {
+      "method": "initialize",
+      "at_monotonic": 333885.950779,
+      "request_id": 1,
+      "timeout_seconds": 5,
+      "session_header_present": false,
+      "error_type": "URLError"
+    },
+    {
+      "method": "initialize",
+      "at_monotonic": 333890.0199852,
+      "request_id": 1,
+      "timeout_seconds": 5,
+      "session_header_present": false,
+      "http_status": 200,
+      "response_session_header_present": true,
+      "safe_json": {
+        "jsonrpc": true,
+        "id_matches": true,
+        "result": {
+          "protocol_version_matches": true,
+          "server_info_present": true,
+          "capabilities_present": true
+        }
+      }
+    },
+    {
+      "method": "notifications/initialized",
+      "at_monotonic": 333893.3432926,
+      "request_id": null,
+      "timeout_seconds": 30,
+      "session_header_present": true,
+      "http_status": 202,
+      "response_session_header_present": false,
+      "safe_json": {
+        "json_body_present": false
+      }
+    },
+    {
+      "method": "tools/list",
+      "at_monotonic": 333895.150255,
+      "request_id": 2,
+      "timeout_seconds": 30,
+      "session_header_present": true,
+      "http_status": 200,
+      "response_session_header_present": false,
+      "safe_json": {
+        "jsonrpc": true,
+        "id_matches": true,
+        "result": {
+          "tools_array_present": true,
+          "tool_count": 3,
+          "known_native_tools": [
+            "call_tool",
+            "describe_toolset",
+            "list_toolsets"
+          ],
+          "unknown_tool_count": 0
+        }
+      }
+    },
+    {
+      "method": "tools/call",
+      "at_monotonic": 333895.7076361,
+      "request_id": 3,
+      "timeout_seconds": 30,
+      "session_header_present": true,
+      "http_status": 200,
+      "response_session_header_present": true,
+      "safe_json": {
+        "jsonrpc": true,
+        "id_matches": true,
+        "result": {
+          "is_error": false,
+          "bootstrap_matches": true,
+          "current_level": "/Game/Hearthward/Bootstrap/L_Bootstrap"
+        }
+      }
+    }
+  ],
+  "original_chat_native_tools": "NOT_AVAILABLE; no hot-mount was performed",
+  "next_step": "Open a new chat in the Hearthward project to reload unreal-mcp tools",
+  "ueclient_status": {
+    "operation": "observe.check_status",
+    "ok": true,
+    "remote_control_ok": true,
+    "python_execution_ok": true
+  },
+  "startup_wait_seconds": 23.176865999994334,
+  "codex_configuration": {
+    "command": "codex.exe mcp list --json",
+    "cwd": "G:\\GameFactory",
+    "returncode": 0,
+    "server_found": true,
+    "server_name": "unreal-mcp",
+    "enabled": true,
+    "endpoint_matches": true
+  },
+  "current_level": "/Game/Hearthward/Bootstrap/L_Bootstrap",
+  "elapsed_seconds": 26.294078000006266
+}

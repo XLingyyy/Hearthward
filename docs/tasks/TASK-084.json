@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "id": "TASK-084",
+  "title": "连续体验基线、断点复现与本轮范围冻结",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/design/DSGN-003-first-release-slice.md",
+    "docs/qa/TASK-077/REPORT.md",
+    "docs/qa/TASK-081/REPORT.md",
+    "Resources/Data/gameplay.json",
+    "Resources/Data/experience.json"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-084.md",
+    "docs/tasks/TASK-084.json",
+    "docs/handoffs/TASK-084.md",
+    "docs/qa/TASK-084/",
+    "docs/planning/TASK-084-103/TASK-084/",
+    "docs/planning/TASK-084-103/BASELINE.md",
+    "docs/planning/TASK-084-103/ROUTE_MANIFEST.json",
+    "docs/planning/TASK-084-103/DEFECTS.csv",
+    "docs/planning/TASK-084-103/DISPATCH.md"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T084-C01：入口与版本；版本关系可追溯；不可获得的包明确 NOT_RUN。",
+    "T084-C02：序章连续性；完整路线录像或首个阻塞复现，阶段推进来自真实交互。",
+    "T084-C03：首次分工；任务参数、实际交付、岗位产量各有前后快照，不混为同一任务。",
+    "T084-C04：救援成长；人口20→21、奖励/扣料与等阶变化有真实证据；失败不补材料掩盖。",
+    "T084-C05：继续游戏；地点、任务、伙伴、库存、人口与营地阶段前后对照，差异逐项登记。",
+    "T084-C06：路线数据；不含虚构坐标、未定义ID或未来故事泄漏；下游任务可直接定位。",
+    "T084-C07：调查交付；下游Agent能只凭记录复现；不将调查完成写成游戏验收完成。"
+  ],
+  "non_goals": [
+    "玩法代码修复和跨模块重构",
+    "扩大地图、新建任务奖励、修改资源/成长数值",
+    "补写过去任务的PASS或Owner验收"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-007",
+    "T-011",
+    "T-021"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "2026-10-07 当前Nav12安全摘要 docs/qa/TASK-103/NAV12_GROUNDED_FINAL_FIRST_BLOCKER.json：4正式空间节点+1grounded普通PathFollowing段实际通过；第2段valid=true/partial=true严格停止、无该段移动。无完整撤离/travel/camp-save/首次救援/OS路线信用，保持Active。角塔/底座附近不同高度Nav层为推断待核，未修Source/Invoker/位置或继续运行；09/10/11原证据保持。",
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "激活084仅授权调查与测试资料，不自动授权修改运行时。依赖的旧任务按已集成SHA读取，不要求把旧单人工验收伪填Done。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。"
+  ]
+}

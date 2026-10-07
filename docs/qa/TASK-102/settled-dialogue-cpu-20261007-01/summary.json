@@ -1,0 +1,180 @@
+{
+  "task": "TASK-102",
+  "run": "settled-dialogue-cpu-20261007-01",
+  "status": "CAPTURE_COMPLETE_MODEL_FAILED",
+  "backend": "cpu",
+  "scene": "normal_new_initial_scene_dialogue_fixed_view",
+  "evidence_level": "Uncooked standalone -game; public API injected UI/model input; stable one-scene diagnostic",
+  "build_source_binding": "NOT_VERIFIED_BY_RUNNER; bind actual build/candidate evidence separately",
+  "csv_archive": "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/frames.csv",
+  "original_csv": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-102\\settled-dialogue-cpu-20261007-01\\profile\\Saved\\Profiling\\CSV\\Task102-028ea3f0-ef7c-4cb1-9ba2-f179dd1d892b.csv",
+  "csv_bytes": 24924094,
+  "csv_modified": false,
+  "hashes_computed": false,
+  "frame_report": {
+    "numeric_frames": 11603,
+    "seconds": 129.8656161,
+    "p99_ms": 16.5324,
+    "one_percent_low_fps": 51.34884564253696,
+    "over_50ms": 2,
+    "over_50ms_fraction": 0.00017236921485822633,
+    "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames",
+    "dropped_frames": 0,
+    "frame_exclusions": [],
+    "distribution": "Every numeric frame in this complete stable-capture CSV; no fixed boot trimming",
+    "diagnostic_frame_target_pass": false,
+    "csv_metadata": {
+      "hasheaderrowatend": "1",
+      "eventtimestamps": "1",
+      "platform": "Windows",
+      "config": "Development",
+      "buildversion": "++UE5+Release-5.8-CL-56702186",
+      "engineversion": "5.8.2-56702186+++UE5+Release-5.8",
+      "enginereleaseversion": "5.8.2",
+      "os": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+      "pgoenabled": "0",
+      "pgoprofilingenabled": "0",
+      "ltoenabled": "0",
+      "asan": "0",
+      "mergedmodules": "0",
+      "compacttset": "0",
+      "loginid": "a82aa7934b238d42e0d65a84d8c108c4",
+      "llm": "0",
+      "zenstreaming": "0",
+      "systemresolution.resx": "1920",
+      "systemresolution.resy": "1080",
+      "extradevelopmentmemorymb": "0",
+      "verbatimrhiname": "D3D12",
+      "rhiname": "D3D12",
+      "rhifeaturelevel": "SM6",
+      "shaderplatform": "PCD3D_SM6",
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "gpudriver": "577.00",
+      "deviceprofile": "WindowsEditor",
+      "largeworldcoordinates": "1",
+      "raytracing": "0",
+      "streamingpoolsizemb": "2048",
+      "csvid": "3AC3850843100B5BE0AB0289C82EF762",
+      "targetframerate": "165",
+      "starttimestamp": "1791328088",
+      "namedevents": "0",
+      "hasgtstalls": "0",
+      "vsyncenabled": "0",
+      "csvbench_timingstat_ns": "52.310000",
+      "csvbench_customstat_ns": "25.225000",
+      "csvbench_duration_ms": "3.101700",
+      "endtimestamp": "1791328218",
+      "captureduration": "129.869153",
+      "csvmaxfilebytesreached": "0"
+    },
+    "actual_system_resolution": [
+      "1920",
+      "1080"
+    ],
+    "actual_resolution_matches": true,
+    "actual_rhi_matches": true
+  },
+  "diagnostic_frame_gates": {
+    "p99_ms_max": 16.67,
+    "p99_result": "PASS",
+    "one_percent_low_min_fps": 60,
+    "one_percent_low_result": "FAIL",
+    "over_50ms_max_fraction": 0.001,
+    "over_50ms_result": "PASS"
+  },
+  "model": {
+    "actual_generations": 1,
+    "raw_returned": false,
+    "transport_result": "FAIL_HTTP_TIMEOUT",
+    "http_terminal_kind": "HTTP_FAILED",
+    "original_single_semantic_expectation": "FAIL",
+    "semantic_evaluable": false,
+    "semantic_result": "NOT_EVALUABLE_HTTP_TIMEOUT_RAW_EMPTY",
+    "reason": "MODEL_UNAVAILABLE",
+    "applied_intent": "",
+    "has_candidate": false,
+    "input_tokens": 3221,
+    "output_tokens": 0,
+    "context_tier": "required_minimal",
+    "startup_to_ready_log_seconds": 8.496,
+    "generation_to_http_terminal_log_seconds": 120.007,
+    "submission_to_http_terminal_log_seconds": 128.69,
+    "public_getter_submission_to_response_seconds": 0,
+    "public_getter_latency_scope": "0 on failed request; not evidence of zero waiting time",
+    "public_terminal_observed_seconds": 129.7950765999849,
+    "complete_request_inside_capture": true,
+    "generation_overlap_seconds": 120.007,
+    "whole_capture_under_generation": false,
+    "source_wood_before": 16,
+    "source_wood_after": 16,
+    "confirmation_or_execution": "NOT_RUN",
+    "warm_p95": "NOT_RUN",
+    "ttft": "NOT_RUN; non-streaming",
+    "ui_first_paint": "NOT_RUN"
+  },
+  "resources": {
+    "samples": 17,
+    "memory_read_errors": 0,
+    "free_physical_GiB_min": 0.424530029296875,
+    "free_physical_GiB_max": 7.083854675292969,
+    "free_physical_below1GiB_samples": [
+      {
+        "at_monotonic": 279638.3949952,
+        "free_physical_GiB": 0.424530029296875
+      },
+      {
+        "at_monotonic": 279648.85797,
+        "free_physical_GiB": 0.4850883483886719
+      },
+      {
+        "at_monotonic": 279659.3389198,
+        "free_physical_GiB": 0.8036270141601562
+      },
+      {
+        "at_monotonic": 279669.8086146,
+        "free_physical_GiB": 0.8110313415527344
+      },
+      {
+        "at_monotonic": 279680.1793141,
+        "free_physical_GiB": 0.7405967712402344
+      },
+      {
+        "at_monotonic": 279690.5887164,
+        "free_physical_GiB": 0.7685470581054688
+      },
+      {
+        "at_monotonic": 279701.0227508,
+        "free_physical_GiB": 0.6348991394042969
+      },
+      {
+        "at_monotonic": 279711.5126294,
+        "free_physical_GiB": 0.6779518127441406
+      },
+      {
+        "at_monotonic": 279721.9237516,
+        "free_physical_GiB": 0.5786819458007812
+      }
+    ],
+    "process_sample_counts": {
+      "UE": 17,
+      "model": 12
+    },
+    "process_peak_working_set_GiB": {
+      "UE": 4.639442443847656,
+      "model": 4.139625549316406
+    },
+    "whole_gpu_memory_MiB_range": [
+      1505.0,
+      3932.0
+    ],
+    "per_process_vram": "NOT_RUN",
+    "capacity_risk": "OBSERVED_FREE_PHYSICAL_RAM_BELOW_1_GIB",
+    "oom_attribution": "NOT_ESTABLISHED"
+  },
+  "process_exit_verified": true,
+  "six_scene_joint_acceptance": "NOT_RUN",
+  "shipping": "NOT_RUN",
+  "normal_os_input": "NOT_RUN",
+  "owner": "NOT_RUN"
+}

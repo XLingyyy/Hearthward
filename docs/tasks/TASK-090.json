@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "id": "TASK-090",
+  "title": "HUD与日志目标层级、首次准备引导",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.cpp",
+    "Source/Hearthward/UI/HearthwardQuestGuidance.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Resources/Data/gameplay.json"
+  ],
+  "dependencies": [
+    "TASK-086",
+    "TASK-088",
+    "TASK-089"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-090.md",
+    "docs/tasks/TASK-090.json",
+    "docs/handoffs/TASK-090.md",
+    "docs/qa/TASK-090/",
+    "docs/planning/TASK-084-103/TASK-090/",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardPreparationView.h",
+    "Source/Hearthward/UI/HearthwardPreparationView.cpp",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/HUDJournalPreparationTests.cpp",
+    "Source/Hearthward/Tests/CraftingDiscoveryTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T090-C01：新档阶段；提示随真实阶段出现/隐藏，不提前剧透。",
+    "T090-C02：旧档恢复；不强制重走新手步骤，不重复奖励。",
+    "T090-C03：两类追踪；互不覆盖进度或标记状态。",
+    "T090-C04：待领取目标；清楚指向提交动作，领取后旧标记消失。",
+    "T090-C05：页面链路；焦点与暂停状态正确，无输入丢失或无法退出。",
+    "T090-C06：紧急状态；重要操作可达，文本不重叠；普通通知不遮挡救援。",
+    "T090-C07：可读性；完整文字可读，状态不只靠颜色分辨。"
+  ],
+  "non_goals": [
+    "改写主线任务、自动领奖或新手强制流程",
+    "新建全屏百科/技能系统",
+    "将引导时间冒充真人节奏数据"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-011",
+    "T-013",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "初始任务包仅编写任务单；2026-10-07本会话用户已授权逐单本地实施，当前Active，实际实现与验证记录见REPORT。",
+    "Owner沿项目记录；Reviewer和Issue未指派。实际分支codex/TASK-084-103-iteration，完整HEAD6fcf5c22e965f0f7409438f19bc7b09e96ffb058加本轮未提交差异，未获远端发布权限。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 本轮：只读PreparationView与HUD/日志已经接入；开场地点、waiting实际位置及任一人物倒地的普通目标抑制均已修。原生3项实际Success，含新增journal/map同步段及两项150%真实伤害Widget回归；合计2 warnings/0 errors。未将原生语义作为最终渲染/正常OS验收。",
+    "2026-10-07 当前用户已授权本批本地执行；为已复现的倒地提示重叠/等待获救者HUD与地图不同步，最小扩展上述专用测试与地图目标消费者，不扩展Content/Save或远端权限。",
+    "2026-10-07最新原生子集docs/qa/TASK-090/native-green-20261007.json，原始.agent-local/qa/TASK-090-100/native-green-20261007/index.json；本单3/3 Success、2 warnings/0 errors。两项真实Downed RED原日志保留于native-urgent-red-20261007.json。构建build-green-repair-20261007/result.json ok=true；Source已释放并冻结，README/PROJECT_STATE归root。正常输入/IME、最终渲染、兼容档/独立Load、Owner/真人、二机、性能与发行分层未验。"
+  ]
+}

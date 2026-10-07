@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "validation_scope": "task_document_package_static_only",
+  "task_json_count": 20,
+  "task_markdown_count": 20,
+  "handoff_count": 20,
+  "local_case_count": 142,
+  "markdown_files_checked": 47,
+  "dependency_graph": "acyclic",
+  "errors": [],
+  "notes": [
+    "Planning baseline: 6fcf5c22e965f0f7409438f19bc7b09e96ffb058.",
+    "Global test IDs were checked against the retrieved TEST_MATRIX snapshot, or --repo when supplied.",
+    "This checks the document package, not the original full repository validator or UE project.",
+    "The GitHub connection was used for source reads; a full container Git clone was unavailable.",
+    "UE build, gameplay, real model, LFS locks, human tests, two-machine tests and publishing: NOT_RUN."
+  ],
+  "full_repository_validation": "NOT_RUN",
+  "ue_build_and_runtime_validation": "NOT_RUN",
+  "git_write_actions": "NOT_PERFORMED",
+  "validator_negative_control_tests": [
+    {
+      "case": "unregistered_global_test",
+      "detected": true,
+      "error_count": 1
+    },
+    {
+      "case": "dependency_cycle",
+      "detected": true,
+      "error_count": 1
+    },
+    {
+      "case": "ungranted_commit",
+      "detected": true,
+      "error_count": 1
+    },
+    {
+      "case": "unsafe_path",
+      "detected": true,
+      "error_count": 1
+    },
+    {
+      "case": "false_done_state",
+      "detected": true,
+      "error_count": 1
+    },
+    {
+      "case": "broken_relative_link",
+      "detected": true,
+      "error_count": 1
+    }
+  ]
+}

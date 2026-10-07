@@ -185,7 +185,15 @@ bool UHearthwardCombatComponent::Damage(float Raw,FName Part,FVector Source,bool
     {
         const float Cost=(Heavy?40:20)*Bag()->GetStaminaCostMultiplier()*FMath::Max(.1f,1-G()->Effect(TEXT("cost")));
         if(Guard.Hit(Now(),Cost,G()->Stamina))
-        { GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.RecoveryDelay=.5; G()->WearEquipment(TEXT("offhand"),Heavy?2:1); if(G()->EquippedDurability(TEXT("offhand"))<=0)Guard.Release(); return true; }
+        {
+            GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.RecoveryDelay=.5;
+            G()->WearEquipment(TEXT("offhand"),Heavy?2:1); if(G()->EquippedDurability(TEXT("offhand"))<=0)Guard.Release();
+            FHearthwardCombatFeedbackReceipt Receipt;
+            Receipt.SuccessId=FGuid::NewGuid(); Receipt.OperationId=Event; Receipt.Epoch=Epoch();
+            Receipt.Kind=TEXT("block"); Receipt.TargetPosition=GetOwner()->GetActorLocation();
+            OnCombatSucceeded.Broadcast(Receipt);
+            return true;
+        }
     }
     const FName Item=G()->Equipment.FindRef(Part==TEXT("body")?FName(TEXT("chest")):Part); const auto R=Find(TEXT("items"),Item.ToString());
     const FName Slot=Part==TEXT("body")?FName(TEXT("chest")):Part;
@@ -235,6 +243,10 @@ void UHearthwardCombatComponent::HitTarget(UHearthwardCombatTargetComponent* T,f
     T->Health=FMath::Max(0.f,T->Health-Actual); T->Memory.HitRemaining=.25;
     G()->CommitOpponentHealth(T->Id,T->Health,PreviousHealth,Source?Source:GetOwner());
     if(T->Health<=0) T->SetCorpse();
+    FHearthwardCombatFeedbackReceipt Receipt;
+    Receipt.SuccessId=FGuid::NewGuid(); Receipt.OperationId=Event; Receipt.Epoch=Epoch();
+    Receipt.Kind=TEXT("hit"); Receipt.TargetPosition=T->GetOwner()->GetActorLocation();
+    OnCombatSucceeded.Broadcast(Receipt);
 }
 void UHearthwardCombatComponent::Sweep(double From,double To)
 {
@@ -270,6 +282,13 @@ void UHearthwardCombatComponent::Sweep(double From,double To)
             UE_LOG(LogTemp,Error,TEXT("Stone axe strike requires the real held mesh, BladeBase/BladeTip sockets, attack clip and hand_r compact pose"));
             Cancel(); return;
         }
+    }
+    if(From<=Move.Windup && To>Move.Windup)
+    {
+        FHearthwardCombatFeedbackReceipt Receipt;
+        Receipt.SuccessId=FGuid::NewGuid(); Receipt.OperationId=ActionId; Receipt.Epoch=ActionEpoch;
+        Receipt.Kind=TEXT("swing"); Receipt.TargetPosition=GetOwner()->GetActorLocation();
+        OnCombatSucceeded.Broadcast(Receipt);
     }
     FMemMark Mark(FMemStack::Get());
     const FTransform CurrentMeshWorld=StoneAxe ? Character->GetMesh()->GetComponentTransform() : FTransform::Identity;

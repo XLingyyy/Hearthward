@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "candidate_id": "iteration-084-103-20261007-2",
+  "state": "BUILD_SUCCESS",
+  "version_from_source": "0.2.0-preview.20261007.1",
+  "candidate_directory": "F:/HearthwardDemo/iteration-084-103-20261007-2",
+  "source_result": ".agent-local/qa/TASK-103/package-20261007-2/result.json",
+  "returned_result": {
+    "ok": true,
+    "operation": "build.package",
+    "artifacts": [
+      {
+        "type": "unreal_package",
+        "path": "F:\\HearthwardDemo\\iteration-084-103-20261007-2",
+        "state": "ready"
+      }
+    ],
+    "diagnostics": [],
+    "warnings": [],
+    "errors": [],
+    "payload": {
+      "command": [
+        "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\RunUAT.bat",
+        "BuildCookRun",
+        "-project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+        "-noP4",
+        "-platform=Win64",
+        "-clientconfig=Shipping",
+        "-build",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-iostore",
+        "-archive",
+        "-archivedirectory=F:\\HearthwardDemo\\iteration-084-103-20261007-2",
+        "-prereqs",
+        "-utf8output",
+        "-unattended",
+        "-NoLiveCoding",
+        "-map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds",
+        "-stagingdirectory=F:\\HearthwardDemo\\iteration-084-103-20261007-2\\Staged",
+        "-nodebuginfo"
+      ],
+      "archive_dir": "F:\\HearthwardDemo\\iteration-084-103-20261007-2",
+      "log_path": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-103\\package-20261007-2\\package.log",
+      "dry_run": false,
+      "returncode": 0
+    }
+  },
+  "source_log": ".agent-local/qa/TASK-103/package-20261007-2/package.log",
+  "source_freeze": [
+    {
+      "path": ".agent-local/qa/TASK-103/package-20261007-2/tracked.patch",
+      "bytes": 156619
+    },
+    {
+      "path": ".agent-local/qa/TASK-103/package-20261007-2/untracked-files.txt",
+      "bytes": 11565
+    }
+  ],
+  "configuration_microfix": {
+    "owner": "root and MCP agent",
+    "path": "Config/DefaultGame.ini",
+    "confirmed_rule": "GameFeatureData PrimaryAssetTypesToScan, empty Directories/SpecificAssets, CookRule AlwaysCook",
+    "source_line": 10,
+    "ignore_cook_errors": false,
+    "old_plugins_removed": false
+  },
+  "build_steps": {
+    "shipping_cpp": "SUCCESS",
+    "cook": "SUCCESS",
+    "stage": "SUCCESS",
+    "archive": "SUCCESS",
+    "cook_errors": 0,
+    "cook_warnings": 1,
+    "wrapper_warnings": [],
+    "build_cook_run_seconds": 124.78,
+    "exit_code": 0
+  },
+  "warning_preserved": "MCP Licensed Technology / LLM-training UE EULA warning remains in original log; no legal interpretation made.",
+  "log_excerpts": [
+    {
+      "line": 26,
+      "text": "Result: Succeeded"
+    },
+    {
+      "line": 173,
+      "text": "LogModelContextProtocol: Warning: Data transmitted via this plugin to your connected LLM service is Licensed Technology under the UE EULA. You are responsible for ensuring your LLM provider does not use it as training input. See Section 6(e) of the UE EULA for full terms."
+    },
+    {
+      "line": 635,
+      "text": "LogInit: Display: Warning/Error Summary (Unique only)"
+    },
+    {
+      "line": 637,
+      "text": "LogInit: Display: LogModelContextProtocol: Warning: Data transmitted via this plugin to your connected LLM service is Licensed Technology under the UE EULA. You are responsible for ensuring your LLM provider does not use it as training input. See Section 6(e) of the UE EULA for full terms."
+    },
+    {
+      "line": 639,
+      "text": "LogInit: Display: Success - 0 error(s), 1 warning(s)"
+    },
+    {
+      "line": 654,
+      "text": "********** COOK COMMAND COMPLETED **********"
+    },
+    {
+      "line": 903,
+      "text": "********** STAGE COMMAND COMPLETED **********"
+    },
+    {
+      "line": 907,
+      "text": "********** ARCHIVE COMMAND COMPLETED **********"
+    },
+    {
+      "line": 908,
+      "text": "BuildCookRun time: 124.78 s"
+    },
+    {
+      "line": 909,
+      "text": "BUILD SUCCESSFUL"
+    },
+    {
+      "line": 910,
+      "text": "AutomationTool executed for 0h 2m 6s"
+    },
+    {
+      "line": 911,
+      "text": "AutomationTool exiting with ExitCode=0 (Success)"
+    }
+  ],
+  "initial_run_tree": {
+    "source_manifest": ".agent-local/qa/TASK-103/package-20261007-2/initial-manifest.json",
+    "layer": "INITIAL_ARCHIVE_NOT_FINAL_CLEANED_DISTRIBUTION",
+    "count": 150,
+    "bytes": 4885690146,
+    "critical_files": [
+      {
+        "path": "Hearthward.exe",
+        "bytes": 171520
+      },
+      {
+        "path": "Hearthward/Runtime/LocalAI/models/Qwen3.5-4B-Q4_K_M.gguf",
+        "bytes": 2740937888
+      },
+      {
+        "path": "Hearthward/Binaries/Win64/Hearthward-Win64-Shipping.exe",
+        "bytes": 172093440
+      }
+    ]
+  },
+  "actual_embedded_version": "NOT_RUN",
+  "final_file_manifest": "NOT_RUN",
+  "final_distribution_hash": "NOT_RUN",
+  "independent_os_normal_input": "NOT_RUN",
+  "packaged_model_run": "NOT_RUN",
+  "owner_acceptance": "NOT_RUN",
+  "human_acceptance": "NOT_RUN",
+  "second_machine": "NOT_RUN",
+  "published": false,
+  "first_attempt_failure": "docs/qa/TASK-103/FIRST_COOK_FAIL.json",
+  "agent_actions": "Read QA metadata only; no UE calls, Source/Config changes, forbidden Runtime/Fonts content reads, F writes or executable launches."
+}

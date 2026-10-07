@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "id": "TASK-087",
+  "title": "自然语言委托可靠性、取消回退与真实模型全矩阵",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/AI/HearthwardNPCContextProjection.cpp",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "config/local-ai.lock.json",
+    "docs/qa/TASK-079/REPORT.md",
+    "docs/design/DSGN-004-iteration-art-local-ai.md"
+  ],
+  "dependencies": [
+    "TASK-086"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-087.md",
+    "docs/tasks/TASK-087.json",
+    "docs/handoffs/TASK-087.md",
+    "docs/qa/TASK-087/",
+    "docs/planning/TASK-084-103/TASK-087/",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAIContext.cpp",
+    "Source/Hearthward/AI/HearthwardNPCContextProjection.cpp",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/UI/HearthwardScreenDialogue.cpp",
+    "Source/Hearthward/UI/HearthwardHUDDialogue.cpp",
+    "Source/Hearthward/UI/HearthwardDialogueWidget.cpp",
+    "Source/Hearthward/Tests/LocalAIReliabilityTests.cpp",
+    "Source/Hearthward/AI/HearthwardNPCContextProjection.h",
+    "Source/Hearthward/Tests/LocalAIContextProjectionTests.cpp",
+    "docs/design/DSGN-004-iteration-art-local-ai.md",
+    "config/local-ai.lock.json",
+    "Runtime/LocalAI/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T087-C01：明确指令；理解与实际动作分开统计，目标/数量/来源目的地一致。",
+    "T087-C02：歧义与拒绝；该问则澄清、该拒则拒绝；不把不理解的一律拒绝记正确。",
+    "T087-C03：否定查询；查询不改任务，续接只有确认后执行。",
+    "T087-C04：生命周期；旧结果不显示为新确认卡、不执行、不重复结算。",
+    "T087-C05：模型不可用；界面可退出，既有采集/搬运玩法不被模型故障阻断。",
+    "T087-C06：中文IME；不误发未完成文字，不丢输入，不双重执行。",
+    "T087-C07：真实行为；按批准指标报告，完整交付而非只输出合法JSON。",
+    "T087-C08：最终同版；所有原始记录可重算指标；不拼接不同实现的最佳成绩。"
+  ],
+  "non_goals": [
+    "训练模型、接云端LLM、增加Embedding或多层生成链（DSGN-004已批准离线模型与参数对照）",
+    "扩展危险自主行为/任意任务队列",
+    "将结构化假输入算作自然语言理解"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-008",
+    "T-010",
+    "T-011",
+    "T-020",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "2026-10-07已授权本地实施：生命周期3+投影4实际RED→GREEN7/7，兼容3项单列；Source.2最终CPU原60为33/60原始、3/20受限、33/40明确E2E、25/30行为，Vulkan为32/60、2/20、33/40、24/30，双后端质量FAIL；各边界20/20、白得0。各原59暖不足保持；各唯一固定performance-only辅助后60暖，CPU p95=22.65600000001723秒≤30秒、Vulkan8.672000000020489秒≤10秒组件窗口PASS，UIpaint/joint不代填。旧完整33/60、定位2/12、CPU旧单C01 FAIL与102 Standalone单场超时独立保留；IME/Owner/真人/二机未验。",
+    "Owner沿项目记录；Reviewer和Issue未指派，实际使用共享分支codex/TASK-084-103-iteration。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 repair Development Editor build成功，native-first-20261007实际087 3/3 Success、0警告/0错误，导出docs/qa/TASK-087/native-green-20261007.json；真实模型双后端完整60及IME仍NOT_RUN。",
+    "2026-10-07 CPU原C01单条PIE诊断实际FAIL：generation1/input3206、空回复、MODEL_UNAVAILABLE，submit到最终status129.797秒，start→ready日志9.472秒；原结果导出docs/qa/TASK-087/cpu-c01-diagnostic-20261007.json，diagnostic_subset=true、原60分母保留，不作为完整矩阵成绩。完整CPU/Vulkan60及真实IME尚NOT_RUN。",
+    "2026-10-07 full-vulkan-20261007-01原60完整真实RED：原始33/60、澄清拒绝2/20、明确E2E34/40、行为26/30，语言门槛FAIL；边界20/20、白得物品0，暖59不足/p95=null。原JSON/CSV导出docs/qa/TASK-087/vulkan-full-red-20261007.*。受限AI工程修复待真实投影RED后实施；完整CPU、最终同版双后端、额外10条及真实IME仍NOT_RUN，旧单条诊断历史保留。",
+    "2026-10-07 Projection新增4项真实RED 0Success/4Fail已原样导出docs/qa/TASK-087/projection-red-20261007-01.json；build-repaired-syntax实际SUCCESS。随后仅获准Subsystem.cpp补一次公开Bag/局部自然候选/当前接触人物快照与最小System替换前移（字面+4字符），没有Schema/模型/参数/Save更改；投影及其Native GREEN、实际token预算和最终双后端仍待主代理运行。",
+    "2026-10-07后续同版build-green-20261007-01实际SUCCESS97.97s，native-green-20261007-01联合16项13Success/3Fail（099新项3Fail原index保留，不标全Green）。087新投影真实RED4→GREEN4及生命周期同次3P共7/7、0warnings/errors；原test/devices/time导出docs/qa/TASK-087/native-green-20261007-01.json。复用079 TaskContext/TaskContract和BoundedContextProjection另3/3P单列native-compatibility-green-20261007-01.json，不加本单7分母。frame0 Smoke13 ERROR属此前启动日志另留。源087冻结，真实token/模型最终双后端/性能/IME未通过不得由Native代填，原Vulkan完整RED不改。",
+    "2026-10-07主代理明确委派NPCContextProjection.h/.cpp及LocalAIContextProjectionTests.cpp增补，真实Projection RED4/4后最小实施，随后同版GREEN4/4；范围声明补齐头文件与测试路径，没有Save/Schema/模型/参数变化。",
+    "2026-10-07 projection-subset-20261007-01 Vulkan Source.2实际12条（6明确+6受限）原始2/12、明确E2E2/6、行为2/6、受限0/6；原JSON/CSV原样导出docs/qa/TASK-087/vulkan-projection-subset-20261007-01.*。input3169—3312≤3328，generation1，完整8字段回复，无输出截断；当前未确认可修请求构造/模板/Schema工程缺陷，语义门槛FAIL保持，12条不得代原60全矩阵。",
+    "2026-10-07公开runner静态确认完整case_limit60且无CaseIds时原60后固定一次原C01 performance-only暖辅助，subset无辅助；独立jsonl与report，不确认世界写入、不重试筛选、不改变原60/30/20分母。原warm统计和combined独立，下限60及nearest-rank Vulkan10秒/CPU30秒不变；py_compile与原60匹配解析检查已通过，最终同版full及aux尚NOT_RUN。",
+    "2026-10-07 Core Source.2绑定build-green/native-green-20261007-01，087 7P及compatibility3P单列，联合原16项13P3F保留；后续Audio/099单独构建不能代替087模型复测。Owner需决定固定4B/冻结参数语义门槛失败后的契约路径，更换模型/预算/部署策略均须明确决定，不能硬编码答案或放宽阈值；本单Active、最终同版全量/IME/Owner/二机/发布未完成。复测决策框架见docs/qa/TASK-087/MODEL_RETEST_DECISION.md。",
+    "2026-10-07 final-vulkan-20261007-02真实Source.2完整复测，ok=false且无顶层runner异常：原60/40/20/30/20不变，原始32/60、受限2/20、明确E2E33/40、行为24/30、边界20/20、白得0。原JSON/CSV及performance_auxiliary.jsonl原样导出docs/qa/TASK-087/vulkan-final-20261007-02.*及vulkan-final-performance-auxiliary-20261007-02.jsonl；run根tracked.patch/untracked-files.txt保留差异，不把AI源冻结等同其他音频源码最终冻结。原暖59/INSUFFICIENT/p95=null保留；唯一WARM-C01-01已ready且warm、generation1、不确认/无世界写入/不计语言行为，合并60暖p95原值8.672000000020489秒PASS仅proposal/status组件窗口，nearest-rank下限60及Vulkan10秒/CPU30秒不改。CPU完整60/辅助、UIpaint/joint、IME、Owner/真人/二机仍NOT_RUN；Owner固定模型失败契约决策待定，禁止硬编码应答或放宽阈值。",
+    "2026-10-07 final-cpu-20261007-01真实Source.2完整原60+20边界完成，公开stop成功，ok=false/error=null质量FAIL：原始33/60、受限3/20、明确E2E33/40、行为25/30、边界20/20、白得0。原JSON/CSV及独立aux按原字节导出docs/qa/TASK-087/cpu-final-20261007-01.*和cpu-final-performance-auxiliary-20261007-01.jsonl；run根tracked.patch/untracked-files、cpu-launch、runtime/slots和隔离profile保留私有。C01 cold_first107.67200000002049秒完成，raw/E2E/execution true，无cold_restart；原59暖不足/p95=null保持。唯一预先声明WARM-C01-01提交前ready=true、warm_followup、generation1、20.32800000003772秒、不确认/无世界写入、不计原60/30/20分母；合并60暖p95=22.65600000001723秒≤CPU30秒组件窗口PASS，辅助失败0，UIpaint/joint仍NOT_RUN。旧PIE单C01 129.797秒失败与TASK102 Development/API Standalone HTTP120.007秒失败（129.8656161秒/11603帧）分别保留，不跨场景套时延/质量，不获Shipping/OS信用。双后端固定契约语义FAIL，Owner模型/预算/部署策略决策PENDING，任务Active；无确认工程根因，不调参/模板/模型、不硬编码答案或放宽阈值。",
+    "2026-10-07 Owner明确回复都按推荐去做，批准DSGN-004中1A至6A、7B的制作方向与必要实现范围；首件视觉及实际模型/性能验收另记，不自动Done。",
+    "DSGN-004允许较大离线模型/参数比较；实际Qwen3-8B有36个隐藏层，现有启动器硬截到32层会阻止37层含输出层对照。仅取消显式非负GPU层数的32上限，CPU仍0、默认仍16；正式模型及预算不变，改动待编译/实测。正在进行的8B首轮使用改动前二进制和32层，源码快照另存。"
+  ]
+}

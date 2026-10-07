@@ -1,0 +1,263 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "438370AD44D769495665058F3BBF2D60",
+			"instanceName": "LAPTOP-R8NPOP05-7204",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.07-00.08.04",
+	"succeeded": 2,
+	"succeededWithWarnings": 0,
+	"failed": 3,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.34209421277046204,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "ActualLoadPauseAndExit",
+			"fullTestPath": "Hearthward.Iteration.Task099.Environment.ActualLoadPauseAndExit",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"438370AD44D769495665058F3BBF2D60"
+			],
+			"duration": 0.23898740112781525,
+			"dateTime": "2026.10.07-00.08.03",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogStreaming: FlushAsyncLoading(372): 1 QueuedPackages, 0 AsyncPackages",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.07-00.08.03"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'The current loaded region starts exactly one real environment component' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 176,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Resume reconstructs one current source without queue backlog' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 179,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Post-load observation rebuilds only one current loaded-region source' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 193,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Repeated post-load frames keep source count bounded to one' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 194,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'BeginPlay rebuilds one current source with no persistent loop history' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 196,
+					"timestamp": "2026.10.07-00.08.04"
+				}
+			],
+			"warnings": 0,
+			"errors": 5,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "ContinuousPCM",
+			"fullTestPath": "Hearthward.Iteration.Task099.Environment.ContinuousPCM",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"438370AD44D769495665058F3BBF2D60"
+			],
+			"duration": 0.030180100351572037,
+			"dateTime": "2026.10.07-00.08.04",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Continuous PCM comes from the actual registered environment consumer' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 208,
+					"timestamp": "2026.10.07-00.08.04"
+				}
+			],
+			"warnings": 0,
+			"errors": 1,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "LoadedMeshAssociationAndTransform",
+			"fullTestPath": "Hearthward.Iteration.Task099.Environment.LoadedMeshAssociationAndTransform",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"438370AD44D769495665058F3BBF2D60"
+			],
+			"duration": 0.0316941998898983,
+			"dateTime": "2026.10.07-00.08.04",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Actual registered begun matching mesh/tag produces one environment source' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 131,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'A listener beside actual surface beyond the actor centre retains one loop' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 145,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Approach reconstructs only the current water source' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 154,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Making the same current mesh visible creates one source' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 158,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Real re-registration creates at most one current source' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 161,
+					"timestamp": "2026.10.07-00.08.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Multiple loaded matching candidates do not duplicate the region loop' to be 1, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\EnvironmentAudioLifecycleTests.cpp",
+					"lineNumber": 164,
+					"timestamp": "2026.10.07-00.08.04"
+				}
+			],
+			"warnings": 0,
+			"errors": 6,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "ActualClipDispatch",
+			"fullTestPath": "Hearthward.Iteration.Task099.FootContact.ActualClipDispatch",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"438370AD44D769495665058F3BBF2D60"
+			],
+			"duration": 0.021420300006866455,
+			"dateTime": "2026.10.07-00.08.04",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "GroundGuards",
+			"fullTestPath": "Hearthward.Iteration.Task099.FootContact.GroundGuards",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"438370AD44D769495665058F3BBF2D60"
+			],
+			"duration": 0.019812200218439102,
+			"dateTime": "2026.10.07-00.08.04",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

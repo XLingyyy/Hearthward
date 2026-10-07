@@ -18,6 +18,30 @@ AHearthwardCompanionFixture* DialogueBrother(UWorld* World)
 const FName TransportIntents[]={TEXT("store"),TEXT("retrieve"),TEXT("give"),TEXT("fetch"),TEXT("receive")};
 const TCHAR* TransportRoutes[]={TEXT("弟弟背包 → 营地仓库"),TEXT("营地仓库 → 我的背包"),TEXT("弟弟背包 → 我的背包"),TEXT("营地仓库 → 弟弟背包"),TEXT("我的背包 → 弟弟背包")};
 }
+FString UHearthwardScreenWidget::GetCurrentWorkContent() const
+{
+    auto* Brother=DialogueBrother(GetWorld());
+    const auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    const auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+    auto* Player=GetOwningPlayerPawn();
+    const auto Personal=HearthwardPresentation::ReadCompanion(Brother,Store,Player);
+    const auto Party=HearthwardPresentation::ReadWorkParty(Camp,Store,Player?Camp->State.CampAt(Player->GetActorLocation()):NAME_None);
+    FString Detail=HearthwardPresentation::CompanionWorkText(Personal)+TEXT("\n\n")+HearthwardPresentation::WorkPartyText(Party);
+    if(Party.Available && Party.HasTeam)
+    {
+        const FString Reason=Camp->PreviewWorkParty(Party.Job,Party.Workers.Num(),Party.Enabled,Party.Epoch);
+        if(!Reason.IsEmpty())Detail+=TEXT("\n队伍操作条件：")+Reason;
+    }
+    return Detail;
+}
+FString UHearthwardScreenWidget::GetCurrentDialogueReply() const
+{
+    const auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
+    if(!AI->CanDisplay())return {};
+    if(AI->GetLastAppliedIntent()==TEXT("task_status") && !AI->IsBusy() && !AI->HasCandidate() && !AI->HasActiveInitiative())
+        return GetCurrentWorkContent();
+    return AI->GetNPCLine();
+}
 void UHearthwardScreenWidget::ComposeDialogue()
 {
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();
@@ -32,8 +56,8 @@ void UHearthwardScreenWidget::ComposeDialogue()
     };
     auto Text=[&](FString Label,float Y,float H=38,float Font=22)->FHearthwardUIElement&
     {return Add(TEXT("text"),Label,1070,Y,532,H,Font);};
-    auto Button=[&](FString Label,float Y,FString Action,bool Primary=false)->FHearthwardUIElement&
-    {auto& E=Add(Primary?TEXT("dialoguePrimary"):TEXT("dialogueButton"),Label,1070,Y,532,54,23,Action);E.Align=TEXT("center");return E;};
+    auto Button=[&](FString Label,float Y,FString Action,bool Primary=false,bool Enabled=true)->FHearthwardUIElement&
+    {auto& E=Add(Primary?TEXT("dialoguePrimary"):TEXT("dialogueButton"),Label,1070,Y,532,54,23,Action);E.Align=TEXT("center");E.Enabled=Enabled;return E;};
     auto Row=[&](FString Label,FString Sub,float Y,FString Action)
     {
         Add(TEXT("dialogueRow"),TEXT(""),1070,Y,532,80,22,Action);
@@ -63,9 +87,12 @@ void UHearthwardScreenWidget::ComposeDialogue()
     };
     Add(TEXT("portrait"),TEXT(""),1070,64,64,64,20).Asset=TEXT("portrait");
     Add(TEXT("text"),TEXT("弟弟"),1154,62,225,45,34).Color=Color(TEXT("gold"));
-    const FString Team=Camp->DescribeWorkParty();
-    const bool Active=Brother && Brother->GetRequested()>Brother->GetDelivered() && Brother->GetPhase()!=EHearthwardCompanionPhase::Cancelled;
-    Add(TEXT("text"),!Team.IsEmpty()?TEXT("营地采集队"):Active?TEXT("有个人委托"):TEXT("暂无委托"),1154,108,288,32,18).Color=Color(TEXT("muted"));
+    const auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    DialoguePersonalWork=HearthwardPresentation::ReadCompanion(Brother,Store,GetOwningPlayerPawn());
+    DialoguePartyWork=HearthwardPresentation::ReadWorkParty(Camp,Store,Camp->State.CampAt(GetOwningPlayerPawn()->GetActorLocation()));
+    const bool Active=DialoguePersonalWork.Available && DialoguePersonalWork.HasTask && !DialoguePersonalWork.Terminal;
+    Add(TEXT("text"),DialoguePartyWork.HasTeam?TEXT("营地采集队"):Active?TEXT("有个人委托"):
+        DialoguePersonalWork.HasTask?HearthwardPresentation::CompanionPhaseText(DialoguePersonalWork.Phase):TEXT("暂无委托"),1154,108,288,32,18).Color=Color(TEXT("muted"));
     Add(TEXT("menuAction"),TEXT("Esc 关闭"),1457,66,145,40,18,TEXT("page:hud")).Align=TEXT("right");
     Add(TEXT("dialogueRule"),TEXT(""),1070,156,532,1,18);
     if(Card)
@@ -84,8 +111,8 @@ void UHearthwardScreenWidget::ComposeDialogue()
     }
     else if(DialogueView==TEXT("home"))
     {
-        FString Reply=AI->CanDisplay()?AI->GetNPCLine():FString();
-        Text(Reply.IsEmpty()?TEXT("哥，我在。今天需要我帮你做什么？"):Reply,188,85,24);
+        FString Reply=GetCurrentDialogueReply();
+        Text(Reply.IsEmpty()?TEXT("哥，我在。今天需要我帮你做什么？"):Reply.Len()>45?Reply.Left(45)+TEXT("…"):Reply,188,85,24);
         if(Reply.Len()>45)Add(TEXT("menuAction"),TEXT("查看完整回复 ›"),1070,278,532,34,18,TEXT("dialogue.reply")).Color=Color(TEXT("gold"));
         Row(TEXT("帮我采集物资"),TEXT("选择数量，采好后送回营地仓库"),322,TEXT("dialogue.gather"));
         Row(TEXT("帮我搬运物资"),TEXT("选清从哪里拿、送到谁的背包"),408,TEXT("dialogue.routes"));
@@ -102,7 +129,7 @@ void UHearthwardScreenWidget::ComposeDialogue()
     {
         Add(TEXT("menuAction"),TEXT("‹ 返回对话"),1070,178,532,40,20,TEXT("dialogue.home"));
         if(DialogueView==TEXT("reply"))
-        {Text(TEXT("弟弟的回复"),237,54,29);ScrolledText(AI->GetNPCLine(),314,460);}
+        {Text(TEXT("弟弟的回复"),237,54,29);ScrolledText(GetCurrentDialogueReply(),314,460);}
         else if(DialogueView==TEXT("routes"))
         {
             Text(TEXT("物资从哪里拿，送到哪里？"),237,54,27);
@@ -111,22 +138,25 @@ void UHearthwardScreenWidget::ComposeDialogue()
         else if(DialogueView==TEXT("status"))
         {
             Text(TEXT("当前工作"),236,50,29).Color=Color(TEXT("gold"));
-            FString Detail=Team;
-            if(Active)Detail+=FString::Printf(TEXT("\n个人委托：%s %d / %d，携带%d\n%s"),*HearthwardAgent::ItemText(Brother->GetGoal().Item),Brother->GetDelivered(),Brother->GetRequested(),Brother->GetCarried(),*Brother->BlockReason);
-            Text(Detail.IsEmpty()?TEXT("当前没有进行中的工作。"):Detail,307,304,23);
-            if(!Team.IsEmpty())
+            ScrolledText(GetCurrentWorkContent(),307,230);
+            float ActionY=580;
+            if(Active)
             {
-                const FName Id=Camp->State.CampAt(GetOwningPlayerPawn()->GetActorLocation());
-                const auto* R=Camp->State.Regions.FindByPredicate([&](const auto& V){return V.Camp==Id && V.Brother && !V.Facility.IsValid();});
-                Button(R && R->Enabled?TEXT("暂停采集队"):TEXT("继续采集队"),658,R && R->Enabled?TEXT("dialogue.stopTeam"):TEXT("dialogue.resumeTeam"));
+                Button(TEXT("尝试继续个人委托"),ActionY,HearthwardPresentation::PersonalActionToken(TEXT("agentRetryPath"),DialoguePersonalWork),false,DialoguePersonalWork.CanResume);
+                ActionY+=62;
+                Button(TEXT("取消个人委托"),ActionY,HearthwardPresentation::PersonalActionToken(TEXT("cancelTask"),DialoguePersonalWork),false,DialoguePersonalWork.CanCancel);
+                ActionY+=62;
             }
-            else if(Active)
+            if(DialoguePartyWork.Available && DialoguePartyWork.HasTeam)
             {
-                Button(TEXT("尝试继续原委托"),588,TEXT("agentRetryPath"));
-                Button(TEXT("取消个人委托"),658,TEXT("cancelTask"));
+                const bool Stop=DialoguePartyWork.Enabled;
+                const bool Allowed=Camp->PreviewWorkParty(DialoguePartyWork.Job,DialoguePartyWork.Workers.Num(),Stop,DialoguePartyWork.Epoch).IsEmpty();
+                Button(Stop?TEXT("暂停采集队"):TEXT("继续采集队"),ActionY,
+                    HearthwardPresentation::WorkPartyActionToken(Stop?TEXT("dialogue.stopTeam"):TEXT("dialogue.resumeTeam"),DialoguePartyWork),false,Allowed);
+                ActionY+=62;
             }
-            Button(TEXT("打开营地分工"),736,TEXT("page:camp"),true);
-            Text(Message,805,70,18).Color=Color(TEXT("gold"));
+            Button(TEXT("打开营地分工"),ActionY,TEXT("page:camp"),true);
+            Text(Message,838,40,18).Color=Color(TEXT("gold"));
         }
         else if(DialogueView==TEXT("more"))
         {
@@ -175,7 +205,10 @@ bool UHearthwardScreenWidget::ExecuteDialogueAction(const FString& Action)
 {
     if(Page!=TEXT("dialogue"))return false;
     auto* AI=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>();auto* Brother=DialogueBrother(GetWorld());
-    const FString Verb=Action.Mid(9);bool Success=true;
+    const FString RawVerb=Action.Mid(9);FString Verb=RawVerb;
+    if(RawVerb.StartsWith(TEXT("stopTeam:")))Verb=TEXT("stopTeam");
+    else if(RawVerb.StartsWith(TEXT("resumeTeam:")))Verb=TEXT("resumeTeam");
+    bool Success=true;
     if(Verb==TEXT("home"))
     {
         if(AI->HasCandidate() || AI->IsBusy() || AI->GetClarificationTurns()>0)AI->ClearClarification();
@@ -197,11 +230,20 @@ bool UHearthwardScreenWidget::ExecuteDialogueAction(const FString& Action)
         if(Goal.Intent==TEXT("camp_team"))Goal.Quantity=DialogueWorkers;
         if(Verb==TEXT("stopTeam") || Verb==TEXT("resumeTeam"))
         {
-            Goal.Intent=Verb==TEXT("stopTeam")?TEXT("camp_team_stop"):TEXT("camp_team");Goal.Quantity=1;
-            auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();const FName Id=Camp->State.CampAt(GetOwningPlayerPawn()->GetActorLocation());
-            const auto* Region=Camp->State.Regions.FindByPredicate([&](const auto& R){return R.Camp==Id && R.Brother && !R.Facility.IsValid();});
-            if(!Region)return false;Goal.Item=Region->Job;
-            if(Verb==TEXT("resumeTeam"))Goal.Quantity=FMath::Max(1,Region->Workers.Num());
+            auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
+            const auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+            const auto Current=HearthwardPresentation::ReadWorkParty(Camp,Store,Camp->State.CampAt(GetOwningPlayerPawn()->GetActorLocation()));
+            const FString Base=TEXT("dialogue.")+Verb;
+            const auto& Bound=RawVerb==Verb?DialoguePartyWork:Current;
+            const bool Stop=Verb==TEXT("stopTeam");
+            if(!Bound.Available || !Bound.HasTeam || !Current.Available || !Current.HasTeam
+                || Bound.Epoch!=Current.Epoch || Bound.Region!=Current.Region || Bound.Workers!=Current.Workers
+                || Current.Enabled!=Stop || (RawVerb!=Verb && Action!=HearthwardPresentation::WorkPartyActionToken(Base,Current)))
+            {Message=TEXT("这张队伍状态卡已失效，请重新查看当前工作");Refresh();return false;}
+            Goal.Intent=Stop?TEXT("camp_team_stop"):TEXT("camp_team");
+            Goal.Item=Current.Job;Goal.Quantity=Stop?1:Current.Workers.Num();
+            const FString Reason=Camp->PreviewWorkParty(Current.Job,Current.Workers.Num(),Stop,Current.Epoch);
+            if(!Reason.IsEmpty()){Message=Reason;Refresh();return false;}
         }
         const auto* C=HearthwardAgent::FindCapability(Goal.Intent);Goal.QuantityMode=C->QuantityMode;Goal.SourceRef=C->Sources[0];
         Success=AI->SetStructuredGoal(GetOwningPlayerPawn(),Brother,Goal);Message=AI->GetNPCLine();Scroll=0;

@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "id": "TASK-101",
+  "title": "存读档、时间线和跨页面集成回归",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Save/",
+    "Source/Hearthward/UI/HearthwardLoadingSubsystem.cpp",
+    "Source/Hearthward/UI/HearthwardSaveWidget.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "docs/qa/update-compatibility-20260930.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md"
+  ],
+  "dependencies": [
+    "TASK-100"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-101.md",
+    "docs/tasks/TASK-101.json",
+    "docs/handoffs/TASK-101.md",
+    "docs/qa/TASK-101/",
+    "docs/planning/TASK-084-103/TASK-101/",
+    "Source/Hearthward/Save/",
+    "Source/Hearthward/UI/HearthwardLoadingSubsystem.cpp",
+    "Source/Hearthward/UI/HearthwardSaveWidget.cpp",
+    "Source/Hearthward/UI/HearthwardHUDSave.cpp",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.cpp",
+    "Source/Hearthward/UI/HearthwardCraftingTracker.cpp",
+    "Source/Hearthward/UI/HearthwardCampFeedback.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/Tests/IterationSaveInputRegressionTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T101-C01：字段恢复；数量/实例/任务/人口/区域/营地/时钟一致或有现行规则解释。",
+    "T101-C02：旧响应；旧回包不执行或进入新档UI；无跨时间线写入。",
+    "T101-C03：货物生产；不丢货、不重复入库、不误多算弟弟劳动力。",
+    "T101-C04：输入恢复；可移动、可打开关闭菜单，无焦点/暂停残留。",
+    "T101-C05：时间推进；继续原时间顺序，不因视觉/通知/保存复算。",
+    "T101-C06：重复事务；每次合法事务仅结算一次，重复操作无收益。",
+    "T101-C07：兼容拒绝；合法迁移备份，未知/坏档不覆盖，原件哈希不变。",
+    "T101-C08：暂态清理；符合本批约定，不残留旧世界引用。"
+  ],
+  "non_goals": [
+    "重写Save系统、增加云存档或新存档schema",
+    "清空用户档池解决测试失败",
+    "复用不同版本PASS拼接集成通过"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-004",
+    "T-005",
+    "T-007",
+    "T-010",
+    "T-011",
+    "T-012",
+    "T-013",
+    "T-016",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 root派发独立技术回归，原用户档已只读复制并按本单明确要求SHA登记一次；本代理不重复hash、不写原件、不改Save格式/字段、时钟规则或共享UI源。",
+    "已选7条现有实际Save/Time/Input最小相关filters供root统一同版运行；字段/暂态矩阵与原始copy来源见docs/qa/TASK-101。正常四阶段独立重启、Shipping、真实OS输入/IME、原用户pool运行兼容性及新暂态ActualLoad UI组合仍NOT_RUN，不宣称整单完成。",
+    "2026-10-07最终整合build成功，7条选定既有原生同版全Success、0错误；LoadingRestoresLatestPageInputMode有1条EnhancedInput warning，原样保留于docs/qa/TASK-101/native-green-20261007.json；四阶段/原用户档读取/真实OS/ActualLoad新UI组合NOT_RUN，Active/partial。",
+    "2026-10-07后续实际Shipping OS证据：candidate-2/version.1，在独立UserDir另复制原只读pool，显示原4 locked节点并加载最新；营地准备/100生命/空快捷物品恢复，保存总5；第二进程Return误选New game总6不计Continue，重载营地手动档保存最新总7；第三独立进程明确mouse-click Continue恢复同阶段且F6仍7。legacy/backup各35262B，Compatible输出660502B，原件/readonlycopy未写且未重复hash。原result及12实际游戏截图导出docs/qa/TASK-101/os-original-copy-20261007/；该历史截点version.2/candidate-3尚未构建，四新节点/完整原节点字段等值/最终兼容/HTTP晚包仍NOT_RUN。",
+    "2026-10-07 candidate4/version.3实际Shipping旧副本兼容：中文空格独立UserDir接收readonlycopy的再复制件，原4节点列表/最新2026-09-27 15:07正常Load确认恢复室外夜main02/HP100/快捷栏0；manualSave4→5，隔离Compatible-v8 pool394263B；新独立public API进程显式mouseContinue恢复同场景/任务/生命/空快捷栏，F6仍5，两次正常退出。原件未写、readonlycopy大小/mtime不变、共享launcher profile未触、无新hash。首launch已成功但dict.to_dict元数据回执异常保留，以真实process/OS补证且不重复启动。安全summary见docs/qa/TASK-101/OS_CANDIDATE4_ORIGINAL_COPY_COMPATIBILITY.json，当前实存6图；仅最新旧node1实加载，四新路线checkpoint/完整字段等值/二机NOT_RUN，任务保持Active。"
+  ]
+}

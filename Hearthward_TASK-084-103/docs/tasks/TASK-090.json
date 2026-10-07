@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "id": "TASK-090",
+  "title": "HUD与日志目标层级、首次准备引导",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-090-hud-journal-onboarding",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.cpp",
+    "Source/Hearthward/UI/HearthwardQuestGuidance.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Resources/Data/gameplay.json"
+  ],
+  "dependencies": [
+    "TASK-086",
+    "TASK-088",
+    "TASK-089"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-090.md",
+    "docs/tasks/TASK-090.json",
+    "docs/handoffs/TASK-090.md",
+    "docs/qa/TASK-090/",
+    "docs/planning/TASK-084-103/TASK-090/",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardHUD.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardPreparationView.h",
+    "Source/Hearthward/UI/HearthwardPreparationView.cpp",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/HUDJournalPreparationTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T090-C01：新档阶段；提示随真实阶段出现/隐藏，不提前剧透。",
+    "T090-C02：旧档恢复；不强制重走新手步骤，不重复奖励。",
+    "T090-C03：两类追踪；互不覆盖进度或标记状态。",
+    "T090-C04：待领取目标；清楚指向提交动作，领取后旧标记消失。",
+    "T090-C05：页面链路；焦点与暂停状态正确，无输入丢失或无法退出。",
+    "T090-C06：紧急状态；重要操作可达，文本不重叠；普通通知不遮挡救援。",
+    "T090-C07：可读性；完整文字可读，状态不只靠颜色分辨。"
+  ],
+  "non_goals": [
+    "改写主线任务、自动领奖或新手强制流程",
+    "新建全屏百科/技能系统",
+    "将引导时间冒充真人节奏数据"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-011",
+    "T-013",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

@@ -1,0 +1,534 @@
+{
+  "schema_version": 1,
+  "task": "TASK-084",
+  "producer": "route_audit subagent",
+  "evidence_level": "STATIC_SOURCE_ONLY",
+  "runtime_validation": "PARTIAL: title/new-game/bedroom/journal/save UI observed; continuous route and terrain Z not verified",
+  "source_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "coordinate_policy": {
+    "config_campaign_xy_units": "metres",
+    "ue_units": "centimetres",
+    "conversion": "xy_cm = xy_m * 100",
+    "config_z_is_runtime_coordinate": false,
+    "projection": "Campaign::Ground traces WorldStatic from z=80000 to z=-30000; accepts Landscape / Hearthward.NatureGround, normal.z > 0.65. Nodes/persons usually add 80 cm; travel participants add 100 cm.",
+    "runtime_z": null,
+    "runtime_z_status": "Capture required in loaded L_HearthwardWilds; no terrain height is inferred from config's fallback z=20000."
+  },
+  "entry": {
+    "title_map": "L_Bootstrap",
+    "world_map": "L_HearthwardWilds",
+    "start_quest": "main_01",
+    "start_phase": "prologue",
+    "source": "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp:62",
+    "start_operation": "Start resets actors, initializes campaign, tracks main_01, and BeginTravel(prologue_relic)."
+  },
+  "prologue": {
+    "quest_id": "main_01",
+    "quest_name": "带火离开",
+    "runtime_actor_tag": "CampaignHometownFortress",
+    "fortress_base_xy_cm": [
+      92000,
+      53500
+    ],
+    "fortress_base_z": null,
+    "fortress_base_source": "CampaignWorld.cpp:201-208; Ground(HearthwardCampaign::XY(prologue_relic, xy))",
+    "floor_formula": "BedroomFloor = max(120, Terrain(X,Y)+120 for X in [-650,0,1850], Y in [-550,500,1050]); offsets are cm relative to fortress base.",
+    "nodes": [
+      {
+        "stable_runtime_id": "prologue_relic",
+        "name": "家中的遗物包",
+        "config_xy_m": [
+          920,
+          535
+        ],
+        "runtime_xy_cm": [
+          91720,
+          53670
+        ],
+        "runtime_z_formula": "fortress_base_z + BedroomFloor + 80",
+        "position_override": "State.Positions[prologue_relic] = Fortress::RelicPosition()",
+        "source": "CampaignWorld.cpp:208; Building/HearthwardHometownFortress.cpp:109",
+        "interaction": "Nearest() uses 3D distance <260 cm; E requires Safe() and !Busy(). Grants one protected amulet to player inventory under campaign_start_amulet then records relic."
+      },
+      {
+        "stable_runtime_id": null,
+        "name": "玩家正式开场落点",
+        "runtime_xy_cm": [
+          92000,
+          53600
+        ],
+        "runtime_z_formula": "fortress_base_z + BedroomFloor + 100",
+        "source": "CampaignWorld.cpp:Opening block; prologue_relic + [280,-70,20]",
+        "note": "No separate campaign location ID; same coordinates as BedroomLanding(). Intro lasts 3 seconds and only then records prologue_intro and re-enables walking."
+      },
+      {
+        "stable_runtime_id": null,
+        "name": "弟弟正式开场落点",
+        "runtime_xy_cm": [
+          92160,
+          53700
+        ],
+        "runtime_z_formula": "fortress_base_z + BedroomFloor + 100",
+        "source": "CampaignWorld.cpp:Opening block; prologue_relic + [440,30,20]"
+      },
+      {
+        "stable_runtime_id": null,
+        "name": "卧室门口",
+        "runtime_component_tags": [
+          "BedroomDoorPier",
+          "BedroomDoorLintel"
+        ],
+        "local_xy_cm": [
+          0,
+          550
+        ],
+        "opening_width_cm": 280,
+        "source": "HearthwardHometownFortress.cpp:141-142",
+        "note": "Geometry tags are existing identifiers; there is no named campaign location or separate phase trigger."
+      },
+      {
+        "stable_runtime_id": null,
+        "name": "回廊",
+        "runtime_component_tags": [
+          "GalleryFloor",
+          "GalleryRoof",
+          "GalleryRail",
+          "GalleryColumn"
+        ],
+        "local_floor_center_cm": [
+          550,
+          800
+        ],
+        "floor_size_cm": [
+          2500,
+          600,
+          60
+        ],
+        "source": "HearthwardHometownFortress.cpp:152-161"
+      },
+      {
+        "stable_runtime_id": null,
+        "name": "撤离楼梯",
+        "runtime_component_tags": [
+          "EscapeStair"
+        ],
+        "local_x_cm": 1500,
+        "local_y_begin_cm": 1100,
+        "run_formula_cm": "max(1600, ceil(max(0, BedroomFloor-(Terrain(1500,2700)+10))/20)*35)",
+        "source": "HearthwardHometownFortress.cpp:163-172",
+        "note": "Actual step count and bottom depend on loaded terrain. No static exact exit height is available."
+      },
+      {
+        "stable_runtime_id": null,
+        "name": "庭院侧门开口",
+        "local_wall_x_cm": -2200,
+        "local_gap_y_cm": [
+          2000,
+          3600
+        ],
+        "source": "HearthwardHometownFortress.cpp:177-178",
+        "note": "No campaign node exists for courtyard or gate; geometry gaps identify it without inventing a runtime stable ID."
+      },
+      {
+        "stable_runtime_id": "prologue_exit",
+        "name": "后巷撤离口",
+        "config_xy_m": [
+          900,
+          620
+        ],
+        "xy_cm": [
+          90000,
+          62000
+        ],
+        "runtime_z_formula": "Campaign::Ground(xy).z + 80",
+        "source": "gameplay.json:campaign.locations; CampaignInteraction.cpp:82-86",
+        "conditions": [
+          "relic fact",
+          "prologue_order fact",
+          "brother survival Alive()",
+          "brother to player Dist2D <1000 cm",
+          "Safe()",
+          "!Busy()"
+        ],
+        "success": "BeginTravel(camp), then successful travel commits phase occupied, fact prologue_complete, tracked quest main_01, ResetActors()."
+      }
+    ],
+    "order_fact": {
+      "id": "prologue_order",
+      "trigger": "Gameplay::ApplyCompanionDirective succeeds (follow/hold/routine/assist); normal X follow or Z hold is sufficient.",
+      "source": "Gameplay/HearthwardGameplayComponent.cpp:539-560"
+    },
+    "enemies": [
+      {
+        "id": "prologue_guard_01",
+        "kind": "guard",
+        "xy_m": [
+          940,
+          480
+        ],
+        "group": "prologue",
+        "zone": "prologue",
+        "stage": 1
+      },
+      {
+        "id": "prologue_guard_02",
+        "kind": "guard",
+        "xy_m": [
+          960,
+          480
+        ],
+        "group": "prologue",
+        "zone": "prologue",
+        "stage": 1
+      }
+    ],
+    "enemy_patrol_offsets_cm": [
+      [
+        -500,
+        -500
+      ],
+      [
+        500,
+        -500
+      ],
+      [
+        500,
+        500
+      ],
+      [
+        -500,
+        500
+      ]
+    ],
+    "quest_claim": "Claim main_01 only after relic, prologue_order, prologue_complete; reward:main_01 -> main_milestone XP 2000, no items. Claim enables main_02."
+  },
+  "camp_rescue_slice": {
+    "ordered_location_ids": [
+      "camp",
+      "route_fork",
+      "slice_rescue",
+      "camp"
+    ],
+    "coordinate_nodes": [
+      {
+        "id": "camp",
+        "name": "隐蔽营地",
+        "xy_m": [
+          -980,
+          -750
+        ],
+        "xy_cm": [
+          -98000,
+          -75000
+        ],
+        "z_policy": "Camp economic site's initial z=16200 derives Gameplay Origin [-98000,-75000,16100] + top-level camp [0,0,100]; campaign node/travel later ground-project independently."
+      },
+      {
+        "id": "route_fork",
+        "name": "旧路岔口",
+        "xy_m": [
+          -630,
+          -890
+        ],
+        "xy_cm": [
+          -63000,
+          -89000
+        ],
+        "z_policy": "Ground +80"
+      },
+      {
+        "id": "slice_rescue",
+        "name": "近郊避难者",
+        "xy_m": [
+          -380,
+          -845
+        ],
+        "xy_cm": [
+          -38000,
+          -84500
+        ],
+        "z_policy": "Ground +80"
+      }
+    ],
+    "full_existing_route_location_ids": [
+      "camp",
+      "route_fork",
+      "slice_rescue",
+      "route_mine",
+      "route_south_pass",
+      "route_west_bank",
+      "route_ford",
+      "route_east_bank",
+      "route_terrace",
+      "route_ridge",
+      "route_watch",
+      "route_north_trail",
+      "home_entry"
+    ],
+    "source_route_trace": "Resources/Data/gameplay.json:campaign.route_trace; current terrain path samples, not claimed live walk validation.",
+    "first_person": {
+      "id": "rescued_01",
+      "spawn_xy_m": [
+        -380,
+        -845
+      ],
+      "initial_stage": "uncontacted",
+      "follow_start": "E within 3D <260 cm under Safe()/!Busy() toggles following vs waiting and sets escort=player; no main_03 claim requirement on this interaction.",
+      "ground_policy": "Ground +80; if initial uncontacted actor spawn collides, project to nearby nav within [1200,1200,600] cm. Actual initial actor location may differ from configured XY.",
+      "follow_stop_conditions": [
+        "Any alive State.Enemy has Dist2D to person <2200 cm",
+        "person to leader Dist2D >7000 cm",
+        "WalkTo(leader, 180) returns Failed",
+        "brother escort disappears"
+      ],
+      "brother_escort_pause": "brother to player >3000 cm stops AI but keeps following stage; assign escort requires contacted/not arrived, safe/current epoch, brother to person <=300 cm and brother to player <=3000 cm.",
+      "arrive_conditions": [
+        "person is following",
+        "Danger false",
+        "WalkTo not failed",
+        "CampAt(person) returns any active camp ID",
+        "player G->InCombat() false"
+      ],
+      "arrival_effect": "Camp::RecordRescue(rescued_01) inserts rescued ID once, population 20->21, first_rescue XP 600 under rescue:rescued_01. Person stage becomes arrived.",
+      "source": "CampaignInteraction.cpp:61-66,111-120; CampaignWorld.cpp:escort Tick block; CampSubsystem.cpp:333-344"
+    },
+    "patrol": {
+      "encounter_id": "slice_patrol",
+      "zone_id": "field_slice",
+      "group": "field",
+      "enemies": [
+        {
+          "id": "field_slice_01",
+          "kind": "guard",
+          "stage": 1,
+          "spawn_xy_m": [
+            -415,
+            -865
+          ]
+        },
+        {
+          "id": "field_slice_02",
+          "kind": "guard",
+          "stage": 1,
+          "spawn_xy_m": [
+            -390,
+            -865
+          ]
+        },
+        {
+          "id": "field_slice_03",
+          "kind": "guard",
+          "stage": 1,
+          "spawn_xy_m": [
+            -365,
+            -865
+          ]
+        }
+      ],
+      "patrol_relative_m": [
+        [
+          -35,
+          -20
+        ],
+        [
+          35,
+          -20
+        ],
+        [
+          35,
+          20
+        ],
+        [
+          -35,
+          20
+        ]
+      ],
+      "patrol_world_xy_cm": [
+        [
+          -41500,
+          -86500
+        ],
+        [
+          -34500,
+          -86500
+        ],
+        [
+          -34500,
+          -82500
+        ],
+        [
+          -41500,
+          -82500
+        ]
+      ],
+      "patrol_logic": "All three share those four points; keep saved PatrolPoint, pause 3 active seconds at point 0, advance when within150 cm, ground-project each goal then WalkTo.",
+      "bypass_clearance_config_m": 35,
+      "source": "gameplay.json:campaign.field_encounter/field_enemies; CampaignActor.cpp:156-177",
+      "respawn": "On death field RefreshDue set via Clock FieldRefreshDue; boundary respawn only if no non-arrived person within5000 cm of Home and Actor(enemy_id) absent; generation increments; config says approved 4-day field generations."
+    },
+    "quests": [
+      {
+        "id": "main_02",
+        "requires_claimed": [
+          "main_01"
+        ],
+        "conditions": [
+          "harvest:wood >0 and harvest:stone >0",
+          "any workbench facility exists and worker_assigned fact",
+          "camp_order fact"
+        ],
+        "claim_reward_id": "reward:main_02",
+        "claim_xp": 2000,
+        "claim_storage_items": {
+          "cooked_food": 2
+        }
+      },
+      {
+        "id": "main_03",
+        "requires_claimed": [
+          "main_02"
+        ],
+        "conditions": [
+          "G.Discovered contains slice_rescue",
+          "rescued_01 stage !=uncontacted",
+          "Camp.Rescued contains rescued_01"
+        ],
+        "target_switch": "If rescued_01 is following, QuestLocation(main_03)=camp; otherwise configured slice_rescue.",
+        "claim_reward_id": "reward:main_03",
+        "claim_xp": 2000,
+        "claim_storage_items": {
+          "medicine": 2
+        }
+      },
+      {
+        "id": "main_04",
+        "requires_claimed": [
+          "main_03"
+        ],
+        "conditions": [
+          "any workbench facility exists and rescued_01 arrived",
+          "Camp Tier >=2",
+          "tier2_viewed fact from successfully opening camp UI after upgrade"
+        ],
+        "claim_reward_id": "reward:main_04",
+        "claim_xp": 2000,
+        "claim_storage_items": {}
+      }
+    ],
+    "population": {
+      "ordinary_initial": 20,
+      "ordinary_after_first_rescue": 21,
+      "initial_stable_ids": "civilian_initial_01..civilian_initial_20",
+      "brothers_count_as_population": false
+    },
+    "camp_radius_s1_cm": 5000,
+    "camp_radius_s2_cm": 6000,
+    "defined_facility": {
+      "definition_id": "workbench",
+      "level": 1,
+      "cost": {
+        "wood": 72
+      },
+      "instance_guid": null,
+      "runtime_capture_required": true,
+      "facility_region_id_formula": "facility_<actual GUID>",
+      "construction_time_seconds": 5
+    },
+    "gather_region_ids": [
+      "camp_forage",
+      "camp_wood",
+      "camp_stone",
+      "camp_ore"
+    ],
+    "gather_transaction": {
+      "wood": {
+        "source_units": 2,
+        "outputs": 2,
+        "worker_W": 15
+      },
+      "stone": {
+        "source_units": 2,
+        "outputs": 2,
+        "worker_W": 15
+      }
+    },
+    "s2_upgrade": {
+      "requirements": [
+        "workbench level>=1",
+        "rescued population>=1",
+        "player in safe camp/current timeline epoch/no conflicting action"
+      ],
+      "storage_cost": {
+        "wood": 48,
+        "stone": 24
+      },
+      "applied_hp_bonus": 10,
+      "applied_stamina_bonus": 5,
+      "operation": "CampSubsystem::UpgradeCamp"
+    },
+    "initial_loadout_note": "gameplay.loadout amulet=1 is explicitly omitted in natural world initial player/brother bags; normal prologue relic interaction supplies player amulet. Both bags receive other approved equipment/arrow24/roast4/medicine3."
+  },
+  "fixed_dialogue": {
+    "source": "Resources/Data/experience.json:fixed_dialogue",
+    "cue_ids": [
+      "fixed.main_01.intro",
+      "fixed.main_01.complete",
+      "fixed.main_02.intro",
+      "fixed.main_02.complete",
+      "fixed.main_03.intro",
+      "fixed.main_03.complete",
+      "fixed.main_04.intro",
+      "fixed.main_04.complete"
+    ],
+    "voice_status": "UNPRODUCED",
+    "text_trigger_policy": "intro requires quest available and current speaker knowledge condition; complete requires real quest conditions plus observation/permitted receipt."
+  },
+  "static_discrepancies_and_repro_leads": [
+    {
+      "id": "STATIC-01",
+      "confirmed_fact": "main_01.success prose says prologue_exited; runtime Conditions/main travel records prologue_complete. Runtime main_01.location also says loc_dwellings, but QuestLocation correctly overrides to relic/exit.",
+      "classification": "configuration prose/runtime fact naming discrepancy",
+      "runtime_failure": "NOT_RUN; no evidence this blocks actual runtime",
+      "source": "gameplay.json:campaign.quests(main_01); CampaignQuests.cpp:38,75; CampaignWorld travel Escaped block",
+      "candidate_task": "TASK-090"
+    },
+    {
+      "id": "STATIC-02",
+      "confirmed_fact": "travel_stations interaction_m=2.4 and discovery_m=30; active gameplay NearbyTravelStation uses tuning.interactRadius=200 cm, Campaign Nearest uses 3D <260 cm, generic location discovery uses tuning.discoverRadius=650 cm. These differ and code does not read travel station radius fields.",
+      "classification": "radius configuration is not authoritative in current interaction implementations",
+      "runtime_failure": "NOT_RUN; reproduce activating camp/ford at2.1-2.5m then opening map Travel from same position to test possible activate-success/travel-rejection discrepancy",
+      "candidate_tasks": [
+        "TASK-091",
+        "TASK-092"
+      ]
+    },
+    {
+      "id": "STATIC-03",
+      "confirmed_fact": "Field patrol origin is hardcoded [-38000,-84500] in CampaignActor instead of reading field_encounter.location. It matches current slice_rescue config exactly.",
+      "classification": "existing current route works with current config; moved future route would diverge",
+      "runtime_failure": "NOT_RUN; no current failure inferred",
+      "source": "CampaignActor.cpp:159-160",
+      "candidate_task": "TASK-092",
+      "note": "Do not repair speculatively unless task needs relocation and design authorizes it."
+    },
+    {
+      "id": "STATIC-04",
+      "confirmed_fact": "Re-contacted rescue person immediately changes following->waiting when any alive enemy is within22m or WalkTo fails. Following via brother additionally pauses when brother is beyond30m from player; UI main_03 target changes to camp only while stage following.",
+      "classification": "existing behavior to reproduce on first rescue route, not a confirmed defect",
+      "runtime_failure": "NOT_RUN",
+      "candidate_tasks": [
+        "TASK-090",
+        "TASK-092"
+      ],
+      "repro": "Contact rescued_01 while patrol passes within22m, observe waiting feedback, re-contact after danger clears, walk back without teleport and track whether J/map points back to slice despite saved person having moved."
+    }
+  ],
+  "no_design_decision_required_for_static_inventory": true,
+  "remaining_runtime_capture": [
+    "Loaded fortress ground Z/BedroomFloor and actual generated stair count",
+    "Actual person nav-adjusted spawn position and patrol navigation",
+    "Workbench instance GUID/location and selected labor region before/after",
+    "Natural resource point GUID plus stable Key and world position",
+    "Actual continuous prologue/first rescue movement and save/continue snapshots"
+  ]
+}

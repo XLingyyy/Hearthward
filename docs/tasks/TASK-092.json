@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "id": "TASK-092",
+  "title": "首次救援往返路线与遭遇灰盒打磨",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "Resources/Data/gameplay.json",
+    "docs/design/DSGN-003-first-release-slice.md",
+    "docs/planning/TASK-084-103/ROUTE_MANIFEST.json",
+    "Source/Hearthward/Tests/RescueRouteTests.cpp",
+    "docs/qa/TASK-092/REPORT.md",
+    "docs/planning/TASK-084-103/TASK-092/CLEARANCE_PLAN.md",
+    "docs/planning/TASK-084-103/TASK-092/TECHNICAL_HANDOFF_095_098.md",
+    "docs/qa/TASK-092/NATIVE_RED.json",
+    "docs/qa/TASK-092/NATIVE_GREEN.json"
+  ],
+  "dependencies": [
+    "TASK-091"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-092.md",
+    "docs/tasks/TASK-092.json",
+    "docs/handoffs/TASK-092.md",
+    "docs/qa/TASK-092/",
+    "docs/planning/TASK-084-103/TASK-092/",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignInteraction.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignQuests.cpp",
+    "docs/planning/TASK-084-103/ROUTE_MANIFEST.json",
+    "Resources/Data/quest_guidance.json",
+    "Source/Hearthward/Tests/RescueRouteTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T092-C01：正向通行；无卡死/掉地/必须调试传送；弟弟自然到达。",
+    "T092-C02：观察与撤退；存在可解释选择，警戒/追击遵守原规则。",
+    "T092-C03：救援对象；对象真实移动，安全条件正确，人口最多加一次。",
+    "T092-C04：伙伴留营；不强迫互斥任务并发；是否可完成按正式条件给反馈。",
+    "T092-C05：双向碰撞；无单向卡路，角色/弟弟/被救者均按其能力通过。",
+    "T092-C06：存读档流送；任务/敌人/族人/掉落不重置套利，路线仍可走。",
+    "T092-C07：资料交接；所有受影响包/坐标/触发区可追溯，091显示对应实际位置。"
+  ],
+  "non_goals": [
+    "扩大世界面积、重配敌军总数/奖励/任务规则",
+    "新建营救剧情或随机事件系统",
+    "把一处路线测试当完整四区通关"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-007",
+    "T-011",
+    "T-014"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "本单允许候选C++文件；地图资产和gameplay.json默认不开放。确需修改时以准确包/JSON指针追加范围，取得授权并在基线记录，不用绕改其他文件规避。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 root派发092独立工程调查；采用084静态路由，091尚无本轮新实现。未改任务/敌军/资源位置、奖励、Content或根README。",
+    "已准备Fixture.FollowWaitAndPhysicalArrival及Live.LoadedSegmentClearance两项原生源码；构建/运行交root，本轮正式通行与净空尚NOT_RUN，不冻结碰撞。",
+    "2026-10-07 UEClient实际构建成功，首轮092真实导航Fixture Fail：2 error/1 warning；明确等待未取消活动AI路径且实际继续移动。修改前保存docs/qa/TASK-092/NATIVE_RED.json；只在已允许CampaignInteraction.cpp补AI StopMovement，同一Fixture已实际重跑Success，0 error/1 warning；NATIVE_GREEN.json保留实际条目。",
+    "2026-10-07 integration同一092 Fixture Success（warnings1/errors0），保持正式路线/Live/普通输入/净空NOT_RUN，不冻结碰撞；旧RED和新GREEN分别保存。"
+  ]
+}

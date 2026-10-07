@@ -1,0 +1,407 @@
+{
+  "run": "settled-dialogue-cpu-20261007-01",
+  "pool": "028ea3f0-ef7c-4cb1-9ba2-f179dd1d892b",
+  "output": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-102\\settled-dialogue-cpu-20261007-01",
+  "backend_requested": "cpu",
+  "status": "CAPTURE_COMPLETE_MODEL_FAILED",
+  "stage": "complete",
+  "timeout_seconds": 600,
+  "scene": "normal_new_initial_scene_dialogue_fixed_view",
+  "evidence_level": "Uncooked standalone -game; public API injected UI/model input; stable one-scene diagnostic",
+  "acceptance": "NOT_EVALUATED",
+  "six_scene_joint_matrix": "NOT_RUN",
+  "shipping_credit": false,
+  "os_input_credit": false,
+  "owner_acceptance": "NOT_RUN",
+  "model_parameter_changes": false,
+  "actor_position_changes": false,
+  "progress_fixture_changes": false,
+  "model_request_count": 1,
+  "references": {
+    "bootstrap": {
+      "pawn": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.HearthwardCharacter_0",
+      "level": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel",
+      "world": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap",
+      "current_level": "L_Bootstrap",
+      "controller": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.PlayerController_0",
+      "hud": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap:PersistentLevel.HearthwardHUD_0",
+      "screen": "/Engine/Transient.GameEngine_0:GameInstance_0.HearthwardScreenWidget_0"
+    },
+    "game_instance": "/Engine/Transient.GameEngine_0:GameInstance_0",
+    "natural": {
+      "pawn": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCharacter_0",
+      "level": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel",
+      "world": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds",
+      "current_level": "L_HearthwardWilds",
+      "controller": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.PlayerController_0",
+      "hud": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardHUD_0",
+      "screen": "/Engine/Transient.GameEngine_0:GameInstance_0.HearthwardScreenWidget_1"
+    },
+    "loading": "/Engine/Transient.GameEngine_0:GameInstance_0.HearthwardLoadingSubsystem_0",
+    "players": [
+      "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCharacter_0"
+    ],
+    "companions": [
+      "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardCompanionFixture_0"
+    ],
+    "local_ai": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:HearthwardLocalAISubsystem_0",
+    "save": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:HearthwardSaveSubsystem_0"
+  },
+  "observations": {
+    "campaign_id": {
+      "A": 1344328883,
+      "B": 1153432913,
+      "C": 1606523780,
+      "D": -274648184
+    },
+    "busy": false,
+    "ready": false,
+    "generation_calls": 0,
+    "server_process_id": 0
+  },
+  "frame_exclusions": [],
+  "warm_p95": "NOT_RUN",
+  "ttft": "NOT_RUN; non-streaming",
+  "ui_first_paint_latency": "NOT_RUN",
+  "other_scene_conditions": [
+    {
+      "scene": "camp_day",
+      "status": "NOT_RUN",
+      "missing": "A real safe-camp checkpoint with actual facilities/population and observed daylight."
+    },
+    {
+      "scene": "camp_night",
+      "status": "NOT_RUN",
+      "missing": "A real safe-camp checkpoint and paid real Sleep/Wait facility receipt producing observed night; no clock injection."
+    },
+    {
+      "scene": "three_person_combat",
+      "status": "NOT_RUN",
+      "missing": "Actual player, brother and enemy combat maintained over the sample without invulnerability or fake damage."
+    },
+    {
+      "scene": "route_streaming",
+      "status": "NOT_RUN",
+      "missing": "An unlocked real route/checkpoint, actual character movement and WorldPartition cell-load evidence; no teleport within capture."
+    },
+    {
+      "scene": "camp_management",
+      "status": "NOT_RUN",
+      "missing": "A real safe camp with facilities/workers/active production, actual management UI and MenuPause false."
+    }
+  ],
+  "source_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "build_source_binding": "NOT_VERIFIED_BY_RUNNER; bind actual build/candidate evidence separately",
+  "remote_function_policy": {
+    "allow_any": false,
+    "child_classes": false,
+    "exact_rules": {
+      "/Script/Engine.KismetSystemLibrary": [
+        "IsValid",
+        "GetOuterObject",
+        "GetPathName",
+        "ExecuteConsoleCommand",
+        "GetProjectSavedDirectory",
+        "GetConsoleVariableStringValue"
+      ],
+      "/Script/Engine.GameplayStatics": [
+        "GetPlayerPawn",
+        "GetCurrentLevelName",
+        "GetPlayerController",
+        "GetGameInstance",
+        "GetAllActorsOfClass",
+        "IsGamePaused"
+      ],
+      "/Script/Hearthward.HearthwardCharacter": [
+        "GetLevel"
+      ],
+      "/Script/Engine.PlayerController": [
+        "GetHUD"
+      ],
+      "/Script/Engine.SubsystemBlueprintLibrary": [
+        "GetGameInstanceSubsystem",
+        "GetWorldSubsystem"
+      ],
+      "/Script/Hearthward.HearthwardScreenWidget": [
+        "GetPage",
+        "ExecuteAction"
+      ],
+      "/Script/Hearthward.HearthwardLoadingSubsystem": [
+        "IsLoading"
+      ],
+      "/Script/Hearthward.HearthwardSaveSubsystem": [
+        "IsNaturalWorldEnabled",
+        "GetCampaignId"
+      ],
+      "/Script/Hearthward.HearthwardCompanionFixture": [
+        "CanCommunicate"
+      ],
+      "/Script/Hearthward.HearthwardInventoryComponent": [
+        "GetItemCount"
+      ],
+      "/Script/Hearthward.HearthwardLocalAISubsystem": [
+        "IsBusy",
+        "IsModelReady",
+        "GetGenerationCalls",
+        "GetServerProcessId",
+        "SubmitPlayerText",
+        "GetStatus",
+        "GetLastInput",
+        "GetLastStructuredResult",
+        "GetLastLatencySeconds",
+        "GetInputTokens",
+        "GetOutputTokens",
+        "GetContextTier",
+        "GetReasonCode",
+        "GetLastAppliedIntent",
+        "HasCandidate",
+        "GetCandidate"
+      ]
+    },
+    "file": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-102\\settled-dialogue-cpu-20261007-01\\RemoteControl.ini",
+    "scope": "owned session ini only"
+  },
+  "process_id": 52556,
+  "bootstrap_seed_attempt": {
+    "path": "/Game/Hearthward/Bootstrap/L_Bootstrap.L_Bootstrap",
+    "source": "requested map asset object path; unverified until actual pawn/world returned",
+    "validated": true,
+    "engine_path_attempt": null
+  },
+  "model_csv": {
+    "scene": "normal_new_initial_scene_dialogue_fixed_view",
+    "backend_requested": "cpu",
+    "bundle": "G:\\GameFactory\\Hearthward\\Runtime\\LocalAI",
+    "gpu_layers_requested": 16,
+    "public_submit_calls": 1,
+    "text": "采集1份木材送入营地仓库",
+    "csv_minimum_seconds": 60,
+    "warm_p95": "NOT_RUN",
+    "ttft": "NOT_RUN",
+    "ui_first_paint_latency": "NOT_RUN",
+    "process_memory_vram_available_ram": "NOT_RUN",
+    "task102_acceptance": "NOT_EVALUATED",
+    "source": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.Actor_1.HearthwardInventoryComponent_0",
+    "camp": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.Actor_0",
+    "source_wood_before": 16,
+    "render_cvars": {
+      "sg.ViewDistanceQuality": "3",
+      "sg.AntiAliasingQuality": "3",
+      "sg.ShadowQuality": "3",
+      "sg.GlobalIlluminationQuality": "3",
+      "sg.ReflectionQuality": "3",
+      "sg.PostProcessQuality": "3",
+      "sg.TextureQuality": "3",
+      "sg.EffectsQuality": "3",
+      "sg.FoliageQuality": "3",
+      "sg.ShadingQuality": "3",
+      "sg.LandscapeQuality": "3",
+      "r.ScreenPercentage": "100",
+      "r.DynamicRes.OperationMode": "0",
+      "t.MaxFPS": "0",
+      "r.VSync": "0",
+      "r.AntiAliasingMethod": "2",
+      "r.Shadow.Virtual.Enable": "1",
+      "r.Nanite": "1"
+    },
+    "excluded_before_capture_seconds": 10,
+    "csv": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-102\\settled-dialogue-cpu-20261007-01\\profile\\Saved\\Profiling\\CSV\\Task102-028ea3f0-ef7c-4cb1-9ba2-f179dd1d892b.csv",
+    "submit_returned_after_seconds": 0.05457889998797327,
+    "capture_started_observed_monotonic": 279630.523308,
+    "submission_monotonic": 279630.5233099,
+    "terminal_observed_monotonic": 279760.3183865,
+    "capture_stop_requested_monotonic": 279760.3810901,
+    "busy_observed": true,
+    "cold_ready_observed_seconds": 9.57320779998554,
+    "full_ue_terminal_observed_seconds": 129.7950765999849,
+    "poll_interval_seconds": 1,
+    "model_request_count": 1,
+    "terminal": {
+      "last_input": "采集1份木材送入营地仓库",
+      "raw": "",
+      "submission_to_response_seconds": 0,
+      "input_tokens": 3221,
+      "output_tokens": 0,
+      "reason": "MODEL_UNAVAILABLE",
+      "applied_intent": "",
+      "has_candidate": false,
+      "candidate": {
+        "Intent": "None",
+        "Item": "None",
+        "Quantity": 0,
+        "QuantityMode": "",
+        "SourceRef": "",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "",
+        "Original": "",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 0,
+        "CapabilityVersion": 2
+      },
+      "context_tier": "required_minimal",
+      "server_process_id": 0
+    },
+    "expected_collect_candidate": false,
+    "source_wood_after": 16,
+    "unconfirmed_source_unchanged": true,
+    "render_cvars_after": {
+      "sg.ViewDistanceQuality": "3",
+      "sg.AntiAliasingQuality": "3",
+      "sg.ShadowQuality": "3",
+      "sg.GlobalIlluminationQuality": "3",
+      "sg.ReflectionQuality": "3",
+      "sg.PostProcessQuality": "3",
+      "sg.TextureQuality": "3",
+      "sg.EffectsQuality": "3",
+      "sg.FoliageQuality": "3",
+      "sg.ShadingQuality": "3",
+      "sg.LandscapeQuality": "3",
+      "r.ScreenPercentage": "100",
+      "r.DynamicRes.OperationMode": "0",
+      "t.MaxFPS": "0",
+      "r.VSync": "0",
+      "r.AntiAliasingMethod": "2",
+      "r.Shadow.Virtual.Enable": "1",
+      "r.Nanite": "1"
+    },
+    "frame_report": {
+      "numeric_frames": 11603,
+      "seconds": 129.8656161,
+      "p99_ms": 16.5324,
+      "one_percent_low_fps": 51.34884564253696,
+      "over_50ms": 2,
+      "over_50ms_fraction": 0.00017236921485822633,
+      "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames",
+      "dropped_frames": 0,
+      "frame_exclusions": [],
+      "distribution": "Every numeric frame in this complete stable-capture CSV; no fixed boot trimming",
+      "diagnostic_frame_target_pass": false,
+      "csv_metadata": {
+        "hasheaderrowatend": "1",
+        "eventtimestamps": "1",
+        "platform": "Windows",
+        "config": "Development",
+        "buildversion": "++UE5+Release-5.8-CL-56702186",
+        "engineversion": "5.8.2-56702186+++UE5+Release-5.8",
+        "enginereleaseversion": "5.8.2",
+        "os": "Windows 11 (24H2) [10.0.26100.4351] ",
+        "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+        "pgoenabled": "0",
+        "pgoprofilingenabled": "0",
+        "ltoenabled": "0",
+        "asan": "0",
+        "mergedmodules": "0",
+        "compacttset": "0",
+        "loginid": "a82aa7934b238d42e0d65a84d8c108c4",
+        "llm": "0",
+        "zenstreaming": "0",
+        "systemresolution.resx": "1920",
+        "systemresolution.resy": "1080",
+        "extradevelopmentmemorymb": "0",
+        "verbatimrhiname": "D3D12",
+        "rhiname": "D3D12",
+        "rhifeaturelevel": "SM6",
+        "shaderplatform": "PCD3D_SM6",
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "gpudriver": "577.00",
+        "deviceprofile": "WindowsEditor",
+        "largeworldcoordinates": "1",
+        "raytracing": "0",
+        "streamingpoolsizemb": "2048",
+        "csvid": "3AC3850843100B5BE0AB0289C82EF762",
+        "targetframerate": "165",
+        "starttimestamp": "1791328088",
+        "namedevents": "0",
+        "hasgtstalls": "0",
+        "vsyncenabled": "0",
+        "csvbench_timingstat_ns": "52.310000",
+        "csvbench_customstat_ns": "25.225000",
+        "csvbench_duration_ms": "3.101700",
+        "endtimestamp": "1791328218",
+        "captureduration": "129.869153",
+        "csvmaxfilebytesreached": "0"
+      },
+      "actual_system_resolution": [
+        "1920",
+        "1080"
+      ],
+      "actual_resolution_matches": true,
+      "actual_rhi_matches": true
+    },
+    "same_log_generation_interval_contained": true,
+    "model_terminal_observed": true,
+    "model_reply_received": false,
+    "single_semantic_expectation": "FAIL"
+  },
+  "model_log_diagnostic": {
+    "timing_basis": "Same engine log timestamps; no UI completion or TTFT inferred",
+    "capture_start_estimate_log_at": "2026-10-06T23:08:08.990000",
+    "capture_started_marker_log_at": "2026-10-06T23:08:08.990000",
+    "capture_stop_marker_log_at": "2026-10-06T23:10:18.865000",
+    "boot_start_offset_seconds": null,
+    "capture_boundary_precision": "Boot start estimated from offset rounded to 0.01s; stop marker may include end-frame bookkeeping",
+    "capture_window_known": true,
+    "runtime_startups": [
+      {
+        "pid": 39956,
+        "backend": "cpu",
+        "started_log_at": "2026-10-06T23:08:09.037000",
+        "ready_log_at": "2026-10-06T23:08:17.533000",
+        "start_to_ready_seconds": 8.496
+      }
+    ],
+    "observed_generation_count": 1,
+    "generations": [
+      {
+        "observed_request": 1,
+        "generation": 1,
+        "tier": "required_minimal",
+        "input_tokens": 3221,
+        "started_log_at": "2026-10-06T23:08:17.691000",
+        "http_terminal_log_at": "2026-10-06T23:10:17.698000",
+        "http_terminal_kind": "HTTP_FAILED",
+        "generation_to_http_terminal_seconds": 120.007,
+        "submission_to_http_terminal_seconds": 128.69,
+        "http_success": 0,
+        "http_code": 0,
+        "generation_start_in_capture": true,
+        "capture_contains_whole_generation_interval": true,
+        "whole_capture_under_generation": false,
+        "overlap_seconds": 120.007,
+        "http_terminal_not_observed": false
+      }
+    ],
+    "failures": [
+      {
+        "log_at": "2026-10-06T23:10:17.732000",
+        "reason_code": "MODEL_UNAVAILABLE",
+        "detail": "本地推理失败或超时，未执行动作"
+      }
+    ],
+    "capture_contains_observed_generation": true,
+    "capture_contains_whole_observed_request": true,
+    "game_ui_completion": "NOT_MEASURED; requires normal UI evidence",
+    "cold_start_benchmark": "NOT_EVALUATED; recorded start-to-ready only",
+    "warm_p95": "NOT_RUN",
+    "ttft": "NOT_RUN; non-streaming response"
+  },
+  "configuration_scope": "All render CVars read back before 10-second pre-capture stable window; actual resolution from completed CSV metadata",
+  "performance": "ONE_SCENE_DIAGNOSTIC_ONLY",
+  "normal_quit_return": {
+    "ReturnValue": true
+  },
+  "stop_request_ok": true,
+  "process_exit_verified": true
+}

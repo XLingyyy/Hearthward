@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "id": "TASK-086",
+  "title": "弟弟工作状态卡、停工原因和恢复入口",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/UI/HearthwardScreenDialogue.cpp",
+    "Source/Hearthward/UI/HearthwardHUDDialogue.cpp",
+    "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+    "docs/qa/TASK-081/REPORT.md",
+    "docs/tasks/TASK-078.json"
+  ],
+  "dependencies": [
+    "TASK-085"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-086.md",
+    "docs/tasks/TASK-086.json",
+    "docs/handoffs/TASK-086.md",
+    "docs/qa/TASK-086/",
+    "docs/planning/TASK-084-103/TASK-086/",
+    "Source/Hearthward/UI/HearthwardScreenDialogue.cpp",
+    "Source/Hearthward/UI/HearthwardHUDDialogue.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenCamp.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenActions.cpp",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.cpp",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.h",
+    "Resources/UI/layout.json",
+    "Resources/UI/interface.json",
+    "Source/Hearthward/Tests/CompanionStatusViewTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T086-C01：个人进度；显示14/32与携带6分开；入库后按真实交易更新，未到营地不提前完成。",
+    "T086-C02：耗尽；显示资源不足/等待或原支持恢复条件；不补资源、不换来源。",
+    "T086-C03：队伍到岗；人数与到岗状态正确；弟弟未到岗不能计入他的劳动力。",
+    "T086-C04：暂停续接；暂停停止相应生产；进度保留，各动作只影响所属工作。",
+    "T086-C05：查询无执行；只读回答；任务状态和生产开关不变。",
+    "T086-C06：过期重复；无重复分工/入库，旧时间线动作被拒绝。",
+    "T086-C07：布局；状态及合法操作可读，输入框不被确认卡遮住。",
+    "T086-C08：真实恢复；显示由恢复的真实状态产生；无假终态/丢货/重复生产。"
+  ],
+  "non_goals": [
+    "新增委托类型、自动跨来源和定量停队",
+    "修改营地人数/产量/资源刷新",
+    "在UI层直接修正货物或任务阶段"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-007",
+    "T-009",
+    "T-010",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "2026-10-06最初交付任务规划；2026-10-07用户授权实施，当前Active。未运行结果仍明确NOT_RUN。",
+    "Owner沿项目记录；Reviewer和Issue未指派；实际实施分支codex/TASK-084-103-iteration。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 086实现已落盘：消费085投影、实时工作文本与终态、绑定个人/队伍状态卡标识并原入口重验。",
+    "2026-10-07 root通过公开UEClient构建成功、Hearthward.Iteration.Task086.实际3/3 Success且零警告错误，证据见QA REPORT。真实地图/布局/存读档与人工验收NOT_RUN；README由root负责。"
+  ]
+}

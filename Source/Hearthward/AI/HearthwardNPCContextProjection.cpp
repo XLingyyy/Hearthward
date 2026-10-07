@@ -97,19 +97,14 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     Facts->SetStringField(TEXT("source"),TEXT("UE_authoritative_captured_snapshot"));
     Facts->SetStringField(TEXT("projection_tier"),Result.Tier);
     Facts->SetStringField(TEXT("input_source"),S.InputSource);
-    auto Task=MakeShared<FJsonObject>();
-    Task->SetBoolField(TEXT("available"),S.bHasActiveTask);
-    Task->SetStringField(TEXT("intent"),S.ActiveGoal.Intent.ToString());
-    Task->SetStringField(TEXT("item"),S.ActiveGoal.Item.ToString());
-    Task->SetStringField(TEXT("source"),S.ActiveGoal.SourceRef);
-    Task->SetStringField(TEXT("phase"),S.ExecutionPhase);
-    Task->SetNumberField(TEXT("requested"),S.PreviousGoalQuantity);
-    Task->SetNumberField(TEXT("delivered"),S.PreviousGoalDelivered);
-    Task->SetNumberField(TEXT("remaining"),FMath::Max(0,S.PreviousGoalQuantity-S.PreviousGoalDelivered));
-    Task->SetNumberField(TEXT("carried"),S.TaskCarried);
-    Task->SetStringField(TEXT("block_reason"),S.TaskBlockReason);
-    Facts->SetObjectField(TEXT("current_task"),Task);
-    if(!S.CampTeamStatus.IsEmpty())Facts->SetStringField(TEXT("camp_team"),S.CampTeamStatus);
+    Facts->SetStringField(TEXT("speaker"),TEXT("player"));
+    Facts->SetStringField(TEXT("listener"),TEXT("brother"));
+    Facts->SetStringField(TEXT("pronouns"),TEXT("原话我=player，你=brother"));
+    auto Containers=MakeShared<FJsonObject>();
+    Containers->SetStringField(TEXT("bag"),TEXT("弟弟背包"));
+    Containers->SetStringField(TEXT("player_bag"),TEXT("玩家背包"));
+    Containers->SetStringField(TEXT("camp"),TEXT("当前营地共享仓库"));
+    Facts->SetObjectField(TEXT("containers"),Containers);
 
     const FString Query=HearthwardAgent::Normalize(S.Query+TEXT(" ")+S.Memory.WorkingGoal.Original);
     const bool HistoryQuery=ContextProjectionContainsAny(Query,{TEXT("上次"),TEXT("过去"),TEXT("经历"),TEXT("为什么"),TEXT("受阻"),TEXT("实际交付"),TEXT("完成"),TEXT("任务"),TEXT("委托"),TEXT("replan"),TEXT("history")});
@@ -117,7 +112,38 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     const bool InventoryQuery=ContextProjectionContainsAny(Query,{TEXT("库存"),TEXT("报告")})
         || (Query.Contains(TEXT("仓库")) && ContextProjectionContainsAny(Query,{TEXT("多少"),TEXT("几份"),TEXT("数量"),TEXT("还有"),TEXT("里面有")}));
     const bool CollectionQuery=ContextProjectionContainsAny(Query,{TEXT("采"),TEXT("收集"),TEXT("木材"),TEXT("collect")});
+    const bool RepairQuery=ContextProjectionContainsAny(Query,{TEXT("修"),TEXT("repair")});
+    const bool TaskQuery=HistoryQuery || ContextProjectionContainsAny(Query,{TEXT("进度"),TEXT("还差"),TEXT("剩余"),TEXT("停了"),TEXT("继续"),TEXT("resume"),TEXT("task_status")});
+    const bool TeamQuery=ContextProjectionContainsAny(Query,{TEXT("一起"),TEXT("队"),TEXT("人数"),TEXT("集体"),TEXT("camp_team")})
+        || (Query.Contains(TEXT("带")) && Query.Contains(TEXT("采")));
+    const bool CareQuery=ContextProjectionContainsAny(Query,{TEXT("照顾"),TEXT("地块"),TEXT("作物"),TEXT("浇"),TEXT("施肥"),TEXT("收获"),TEXT("喂"),TEXT("nature_care")});
+    const bool NatureCollectQuery=ContextProjectionContainsAny(Query,{TEXT("采"),TEXT("收集"),TEXT("产物"),TEXT("nature_collect")});
+    const bool FishQuery=ContextProjectionContainsAny(Query,{TEXT("钓"),TEXT("鱼点"),TEXT("fish")});
+    const bool HuntQuery=ContextProjectionContainsAny(Query,{TEXT("猎"),TEXT("狩"),TEXT("杀"),TEXT("hunt")});
+    const bool CaptureQuery=ContextProjectionContainsAny(Query,{TEXT("捕"),TEXT("捉"),TEXT("牵"),TEXT("家畜"),TEXT("capture")});
+    const bool PeopleQuery=ContextProjectionContainsAny(Query,{TEXT("护送"),TEXT("族人"),TEXT("escort")})
+        || (Query.Contains(TEXT("带")) && Query.Contains(TEXT("人")));
     const TArray<FName> Relevant=ContextProjectionRelevantItems(Query);
+
+    if(TaskQuery)
+    {
+        auto Task=MakeShared<FJsonObject>();
+        Task->SetStringField(TEXT("semantics"),TEXT("仅记录当前任务"));
+        Task->SetBoolField(TEXT("available"),S.bHasActiveTask);
+        Task->SetStringField(TEXT("intent"),S.ActiveGoal.Intent.ToString());
+        Task->SetStringField(TEXT("item"),S.ActiveGoal.Item.ToString());
+        Task->SetStringField(TEXT("source"),S.ActiveGoal.SourceRef);
+        Task->SetStringField(TEXT("phase"),S.ExecutionPhase);
+        Task->SetNumberField(TEXT("requested"),S.PreviousGoalQuantity);
+        Task->SetNumberField(TEXT("delivered"),S.PreviousGoalDelivered);
+        Task->SetNumberField(TEXT("remaining"),FMath::Max(0,S.PreviousGoalQuantity-S.PreviousGoalDelivered));
+        Task->SetNumberField(TEXT("carried"),S.TaskCarried);
+        Task->SetStringField(TEXT("block_reason"),S.TaskBlockReason);
+        Facts->SetObjectField(TEXT("current_task"),Task);
+    }
+    else ContextProjectionAddDropped(Result.DroppedFields,TEXT("unrelated_current_task"));
+    if(TeamQuery && !S.CampTeamStatus.IsEmpty())Facts->SetStringField(TEXT("camp_team"),S.CampTeamStatus);
+    else if(!S.CampTeamStatus.IsEmpty())ContextProjectionAddDropped(Result.DroppedFields,TEXT("unrelated_camp_team"));
 
     auto Perception=MakeShared<FJsonObject>();
     Perception->SetBoolField(TEXT("paused"),S.bPaused);
@@ -160,9 +186,64 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     if(BagFields>0 && Tier!=EHearthwardNPCContextTier::Minimal)Facts->SetObjectField(TEXT("own_bag"),Bag);
     else ContextProjectionAddDropped(Result.DroppedFields,TEXT("own_bag_optional"));
 
+    if(RepairQuery)
+    {
+        // A colloquial equipment name must not hide multiple owned repair candidates during trimming.
+        auto Owned=MakeShared<FJsonObject>();
+        auto Counts=MakeShared<FJsonObject>();
+        const auto* Repair=HearthwardAgent::FindCapability(TEXT("repair"));
+        if(S.bOwnBagViewAvailable && Repair)
+            for(FName Item:Repair->Items)
+                if(S.OwnBag.FindRef(Item)>0)Counts->SetNumberField(Item.ToString(),S.OwnBag.FindRef(Item));
+        Owned->SetBoolField(TEXT("available"),S.bOwnBagViewAvailable);
+        Owned->SetObjectField(TEXT("counts"),Counts);
+        Owned->SetStringField(TEXT("rule"),TEXT("自有实例数；多件需明确选择；false为unknown"));
+        Facts->SetObjectField(TEXT("owned_repair_candidates"),Owned);
+    }
+
+    if(CareQuery || NatureCollectQuery || FishQuery || HuntQuery || CaptureQuery)
+    {
+        auto Targets=MakeShared<FJsonObject>();
+        auto Counts=MakeShared<FJsonObject>();
+        if(S.bKnownTargetsViewAvailable)
+        {
+            TArray<FName> Keys;S.KnownTargetCounts.GetKeys(Keys);
+            Keys.Sort([](FName A,FName B){return A.LexicalLess(B);});
+            for(FName Key:Keys)
+            {
+                FString Intent,Item;
+                if(!Key.ToString().Split(TEXT(":"),&Intent,&Item))continue;
+                const bool KindRelevant=(Intent==TEXT("nature_care") && CareQuery)
+                    || (Intent==TEXT("nature_collect") && NatureCollectQuery)
+                    || (Intent==TEXT("fish") && FishQuery)
+                    || (Intent==TEXT("hunt") && HuntQuery)
+                    || (Intent==TEXT("capture") && CaptureQuery);
+                const bool ItemRelevant=Relevant.IsEmpty() || Relevant.Contains(FName(*Item))
+                    || Intent==TEXT("nature_care") || Intent==TEXT("fish");
+                if(KindRelevant && ItemRelevant)Counts->SetNumberField(Key.ToString(),S.KnownTargetCounts.FindRef(Key));
+            }
+        }
+        Targets->SetBoolField(TEXT("available"),S.bKnownTargetsViewAvailable);
+        Targets->SetObjectField(TEXT("counts"),Counts);
+        Targets->SetStringField(TEXT("rule"),TEXT("intent:item最小量候选数；非执行授权；false或缺key为unknown"));
+        Facts->SetObjectField(TEXT("known_targets"),Targets);
+    }
+    if(PeopleQuery)
+    {
+        auto People=MakeShared<FJsonObject>();
+        TArray<TSharedPtr<FJsonValue>> Ids;
+        if(S.bKnownPeopleViewAvailable)
+            for(FName Id:S.KnownPeople)Ids.Add(MakeShared<FJsonValueString>(Id.ToString()));
+        People->SetBoolField(TEXT("available"),S.bKnownPeopleViewAvailable);
+        People->SetArrayField(TEXT("ids"),Ids);
+        People->SetStringField(TEXT("rule"),TEXT("仅已接触可观察人；非执行授权；false为unknown"));
+        Facts->SetObjectField(TEXT("known_people"),People);
+    }
+
     if(Tier==EHearthwardNPCContextTier::Full || OrderQuery)
     {
         auto Combat=MakeShared<FJsonObject>();
+        Combat->SetStringField(TEXT("semantics"),TEXT("仅记录当前状态"));
         Combat->SetBoolField(TEXT("available"),S.bCombatViewAvailable);
         if(S.bCombatViewAvailable)
         {
@@ -271,7 +352,7 @@ FHearthwardNPCContextProjectionResult HearthwardContextProjection::Project(const
     Facts->SetArrayField(TEXT("unresolved_original_constraints"),Unresolved);
 
     Facts->SetBoolField(TEXT("known_workbench"),S.bKnownWorkbench);
-    Facts->SetStringField(TEXT("source_refs"),TEXT("S1=当前已知采集点；bag=弟弟背包；camp=仅限玩家明确授权共享仓库材料；未知地点不可绑定S1"));
+    Facts->SetStringField(TEXT("source_refs"),TEXT("S1=当前已知采集点；仓库材料取用仍需明确授权"));
     Facts->SetStringField(TEXT("capabilities_version"),TEXT("npc-v2"));
 
     Result.Json=ContextProjectionJson(Facts);

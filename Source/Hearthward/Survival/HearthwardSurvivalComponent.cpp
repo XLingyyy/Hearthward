@@ -189,6 +189,10 @@ bool UHearthwardSurvivalComponent::ReceiveDamage(float Amount,FGuid Event,FGuid 
         if(auto* C=Cast<AHearthwardCompanionFixture>(GetOwner())) C->StopForSurvival();
     }
     if(InventoryNotificationPending) { InventoryNotificationPending=false; Bag()->OnInventoryChanged.Broadcast(); }
+    FHearthwardCombatFeedbackReceipt Receipt;
+    Receipt.SuccessId=FGuid::NewGuid(); Receipt.OperationId=Event; Receipt.Epoch=Timeline;
+    Receipt.Kind=TEXT("damage"); Receipt.TargetPosition=GetOwner()->GetActorLocation();
+    OnDamageSucceeded.Broadcast(Receipt);
     return true;
 }
 void UHearthwardSurvivalComponent::NativeDamage(AActor*,float Amount,const UDamageType*,AController*,AActor*)

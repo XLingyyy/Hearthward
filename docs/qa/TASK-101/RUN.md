@@ -1,0 +1,23 @@
+# TASK-101 最小技术回归集合
+
+root统一使用UEClient公开运行入口，在本轮整合Development Editor构建上发现并运行以下7个完整过滤器。每轮提供新的 `HearthwardSaveTestPool=<UUID>`，不带071RestartPhase/RestartEcology/RestartTwoCamps参数；不得使用原用户pool。
+
+```text
+Hearthward.Save.ActualLoadPointInvalidatesOldCommandTicket
+Hearthward.Save.ActualLoadPointPreservesPartialMaterialSettlementRevision
+Hearthward.Save.FileIntegrityAndSnapshot
+Hearthward.Save.CompatibilityPreviewAndConsent
+Hearthward.Time.DomainPartitionRefreshAndEpoch
+Hearthward.Camp.PartitionSleepAndRestoration
+Hearthward.UI069.LoadingRestoresLatestPageInputMode
+```
+
+预期发现7条。先核对发现数，缺失不算通过。Save前两条使用实际SavePoint/LoadPoint接口；文件/兼容条目在隔离测试文件做真实读写和拒绝，不接触用户原件。Time条目使用真实世界子系统分段推进与旧epoch拒绝；Camp条目为状态与真实库存交换的睡眠分段测试；UI069使用真实Slate widget/loading completion/input mode。
+
+这些不包含四个自然进度节点、独立进程重启、原用户pool的当前读取、真实HTTP晚回复、真实OS键鼠、IME或正常8小时设施操作。Loading夹具沿用普通LocalPlayer/PlayerController；若出现现有EnhancedInput设置加载warning，应保留记录，不能将warnings涂掉。
+
+本批085/086/087/089/093/099局部原生可作为受影响消费者回归，由root同一运行批次采集；它们的旧执行结果不能与本轮7条拼接成整单通过。材料追踪、仓储旧卡和093回营摘要的真正ActualLoad集成UI组合当前没有新增测试，明确NOT_RUN。
+
+2026-10-07实际运行发现7条，7/7 Success、0错误；LoadingRestoresLatestPageInputMode记录1条EnhancedInput LocalPlayer_7无有效PlayerInput设置加载warning，保留于 native-green-20261007.json。其他6条无警告。原联合index：.agent-local/qa/TASK-088-101/native-integration-20261007/index.json。
+
+另有独立真实OS原档副本记录，见OS_ORIGINAL_COPY_COMPATIBILITY.json：已构建candidate-2/version.1、隔离UserDir、旧4节点列表/最新旧节点加载、保存总5、第二进程Return误选New game总6（不计Continue）、重载营地手动档再存总7、第三进程明确鼠标Continue恢复同阶段且节点仍7。12张实际游戏窗口截图及原result副本完整保留。当前version.2/candidate-3未构建，本记录不补四个新进度节点或最终兼容；不再hash或触碰用户原件/只读copy。

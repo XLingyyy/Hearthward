@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "id": "TASK-097",
+  "title": "救援路线自然环境、生态外观与远近景收尾",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-097-nature-route-art",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/planning/TASK-053-074/TASK-070.md",
+    "docs/design/DSGN-R15-nature-production.md",
+    "art_source/TASK-051/制作说明.md",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Resources/Data/animal_motion.json",
+    "docs/assets/TASK-094/ASSET_REGISTER.csv"
+  ],
+  "dependencies": [
+    "TASK-092",
+    "TASK-094",
+    "TASK-096"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-097.md",
+    "docs/tasks/TASK-097.json",
+    "docs/handoffs/TASK-097.md",
+    "docs/qa/TASK-097/",
+    "docs/planning/TASK-084-103/TASK-097/",
+    "art_source/TASK-097/",
+    "docs/assets/TASK-097/",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.h",
+    "Resources/Data/animal_motion.json",
+    "Source/Hearthward/Tests/NatureRoutePresentationTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T097-C01：路线辨识；地标辅助方向，关键入口/观察视线未被植被堵住。",
+    "T097-C02：交互通行；原交互/导航范围可用，装饰不抢目标。",
+    "T097-C03：自然阶段；外形符合现有物种ID，成熟可辨，不改变成长/掉落。",
+    "T097-C04：LOD材质；无严重跳变/贴图缺失/破面，问题逐件记录。",
+    "T097-C05：性能对照；提交原始帧时和资源占用，不以单截图或Editor帧率宣称全局达标。",
+    "T097-C06：持久恢复；采集/刷新/动物状态沿原规则，布景不复制资源。",
+    "T097-C07：Cook与来源；运行引用完整，制作源/许可/包路径可追溯。"
+  ],
+  "non_goals": [
+    "扩大地图面积、随机散布新资源和怪物",
+    "全量重做动物动作或新生态模拟",
+    "降低全局目标画质来掩盖资产开销"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

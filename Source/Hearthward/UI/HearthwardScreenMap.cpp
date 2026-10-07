@@ -2,6 +2,7 @@
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "HearthwardQuestGuidance.h"
 #include "EngineUtils.h"
 using namespace HearthwardData;
 
@@ -56,7 +57,10 @@ void UHearthwardScreenWidget::ResetMapView()
 }
 void UHearthwardScreenWidget::FocusMapLocation(FName Location)
 {
-    const FVector World=Gameplay()->LocationPosition(Location);
+    FocusMapPoint(Gameplay()->LocationPosition(Location));
+}
+void UHearthwardScreenWidget::FocusMapPoint(FVector World)
+{
     if(!MapVisible(World))CenterMapRegion(World);
     MapZoom=Number(Theme->GetObjectField(TEXT("localMap")),TEXT("initialZoom"),1.15);
     MapPan=FVector2D(WorldMap?210:0,0)-FVector2D(World.X-MapCenter.X,World.Y-MapCenter.Y)*MapScale()*MapZoom;
@@ -125,6 +129,17 @@ void UHearthwardScreenWidget::ComposeMap()
     }
     UpdateMapMarkers(false);
     ComposeWorldMap();
+    const auto Guidance=HearthwardQuestGuidance::Resolve(GetOwningPlayer());
+    if(!Guidance.Visible)
+        for(auto& Marker:Elements)if(Marker.LayoutId==TEXT("map.questTarget"))Marker.Hidden=true;
+    if(Guidance.Visible && Guidance.HasRoute && MapVisible(Guidance.RouteWorld))
+    {
+        const FVector2D At=MapPoint(Guidance.RouteWorld);
+        Element(TEXT("text"),TEXT("◇"),At-FVector2D(12,16),{28,34},24);
+        auto& Marker=Elements.Last();Marker.LayoutId=TEXT("map.route.step");Marker.Component=TEXT("map.canvas");Marker.MapClipped=true;Marker.Color=FLinearColor(.3f,.88f,.92f,1);
+        Element(TEXT("text"),TEXT("途经 · ")+Guidance.RouteLabel,At+FVector2D(28,32),{440,54},18);
+        auto& Label=Elements.Last();Label.LayoutId=TEXT("map.route.label");Label.Component=TEXT("map.canvas");Label.MapClipped=true;Label.Color=FLinearColor(.3f,.88f,.92f,1);
+    }
     const auto View=MapViewRect();
     Element(TEXT("menuAction"),WorldMap?TEXT("收起地点 ‹"):TEXT("地点与传送 ›"),{View.Right-316,View.Top+24},{292,54},22,WorldMap?TEXT("map.local"):TEXT("map.world"));
     Elements.Last().LayoutId=TEXT("map.locations.toggle");Elements.Last().Align=TEXT("right");

@@ -1,0 +1,67 @@
+{
+  "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+  "report_created_on": "2026.10.06-20.46.13",
+  "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "implementation": "shared uncommitted source with CampaignInteraction waiting StopMovement repair",
+  "layer": "ISOLATED_REAL_NAVIGATION_AND_CHARACTER_MOVEMENT_FIXTURE",
+  "devices": [
+    {
+      "deviceName": "LAPTOP-R8NPOP05",
+      "instance": "7C3CDB48427A858EA50CFA8591485F30",
+      "instanceName": "LAPTOP-R8NPOP05-63536",
+      "platform": "WindowsEditor",
+      "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "model": "Default",
+      "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+      "rAMInGB": 16,
+      "renderMode": "SM6",
+      "rHI": "",
+      "appInstanceLog": ""
+    }
+  ],
+  "succeeded": 1,
+  "failed": 0,
+  "warnings": 1,
+  "errors": 0,
+  "tests": [
+    {
+      "testDisplayName": "FollowWaitAndPhysicalArrival",
+      "fullTestPath": "Hearthward.Iteration.Task092.Fixture.FollowWaitAndPhysicalArrival",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "7C3CDB48427A858EA50CFA8591485F30"
+      ],
+      "duration": 0.5830428004264832,
+      "dateTime": "2026.10.06-20.46.09",
+      "entries": [
+        {
+          "event": {
+            "type": "Info",
+            "message": "Layer: isolated flat navigation diagnostic; player destination reposition is fixture setup, not normal input route proof.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.10"
+        },
+        {
+          "event": {
+            "type": "Warning",
+            "message": "LogCrowdFollowing: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance",
+            "context": "log",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "",
+          "lineNumber": -1,
+          "timestamp": "2026.10.06-20.46.10"
+        }
+      ],
+      "warnings": 1,
+      "errors": 0,
+      "artifacts": []
+    }
+  ]
+}

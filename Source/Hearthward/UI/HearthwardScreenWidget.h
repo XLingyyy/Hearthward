@@ -4,6 +4,9 @@
 #include "Dom/JsonObject.h"
 #include "Styling/SlateBrush.h"
 #include "../Experience/HearthwardPlayerSettings.h"
+#include "HearthwardCraftingTracker.h"
+#include "HearthwardPresentationReadModels.h"
+#include "HearthwardCampFeedback.h"
 #include "HearthwardScreenWidget.generated.h"
 
 struct FHearthwardUIElement
@@ -38,6 +41,9 @@ public:
     UFUNCTION(BlueprintPure) FName GetPage() const { return Page; }
     UFUNCTION(BlueprintPure) FString GetCategory() const { return Category; }
     UFUNCTION(BlueprintPure) FString GetMessage() const { return Message; }
+    UFUNCTION(BlueprintPure) FString GetCraftingTrackerText();
+    UFUNCTION(BlueprintPure) FString GetCurrentWorkContent() const;
+    UFUNCTION(BlueprintPure) FString GetCurrentDialogueReply() const;
     UFUNCTION(BlueprintPure) FString GetTitleSelection() const { return TitleSelection; }
     UFUNCTION(BlueprintPure) int32 GetHUDQuickSelection() const { return HUDQuickSelection; }
     UFUNCTION(BlueprintPure) float GetHUDQuestNoticeRemaining() const;
@@ -76,6 +82,7 @@ private:
     UPROPERTY() TArray<TObjectPtr<class UTexture2D>> Textures;
     UPROPERTY() TObjectPtr<class UEditableTextBox> Draft;
     UFUNCTION() void DraftCommitted(const FText& Text,ETextCommit::Type Method);
+    UFUNCTION() void CraftingSearchChanged(const FText& Text);
     class UHearthwardGameplayComponent* Gameplay() const;
     class UHearthwardInventoryComponent* Inventory() const;
     void LoadTheme();
@@ -86,6 +93,10 @@ private:
     void ComposeInventory(bool Storage);
     void ComposeInventoryScreen();
     void ComposeStorage();
+    bool ExecuteStorageAction(const FString& Action);
+    FString StorageTransferStatus(double& AfterWeight) const;
+    FString StorageTransferToken() const;
+    void ResetStorageTransfer();
     bool UsesSimpleUI() const;
     void ApplySimpleUIStyle();
     FString InventoryCategory(const TSharedPtr<FJsonObject>& Item) const;
@@ -96,6 +107,7 @@ private:
     bool InventoryDropAllowed(const FHearthwardUIElement& Target) const;
     FName InventoryDragItem,InventoryDragEquipment;
     FGuid InventoryDragInstance,InventoryDragEpoch;
+    FGuid InventorySelectionEpoch;
     int32 InventoryDragQuick=INDEX_NONE;
     FVector2D InventoryDragStart,InventoryDragCursor;
     FString InventoryDragAsset,InventoryDragSource;
@@ -105,8 +117,11 @@ private:
     bool ExecuteNatureAction(const FString& Action);
     FGuid NatureSelection,NatureEpoch;
     bool ExecuteEquipmentAction(const FString& Action);
+    FString EquipmentActionToken(const FString& Action) const;
     FName EquipmentOwner=TEXT("player");
     FGuid EquipmentSelection,EquipmentEpoch;
+    FGuid EquipmentOperation;
+    FString EquipmentAppliedTransfer;
     FName EquipmentStack;
     void ComposeSkills();
     void ComposeMap();
@@ -115,6 +130,7 @@ private:
     FVector2D MapCenter=FVector2D(92000,53500);
     void ResetMapView();
     void FocusMapLocation(FName Location);
+    void FocusMapPoint(FVector World);
     FVector MapOrigin() const;
     FVector2D MapWorldSize() const;
     FSlateRect MapViewRect() const;
@@ -135,6 +151,8 @@ private:
     bool ExecuteDialogueAction(const FString& Action);
     FName DialogueView=TEXT("home"),DialogueJob=TEXT("wood");
     int32 DialogueQuantity=16,DialogueWorkers=2,DialogueTransport=0;
+    FHearthwardCompanionWorkView DialoguePersonalWork;
+    FHearthwardCampWorkView DialoguePartyWork;
     void ComposeMemory();
     void ComposeHUD();
     void PaintQuestGuidance(const FGeometry& Geometry,FSlateWindowElementList& Out,int32 Layer) const;
@@ -244,7 +262,9 @@ private:
     int32 SettingsAutoMinutes=10,SettingsFrameLimit=0,SettingsQuality=2,SettingsShadow=2;
     int32 SettingsTexture=2,SettingsViewDistance=2,SettingsEffects=2,SettingsVolume=100,SettingsSensitivity=5;
     bool SettingsMenuPause=true,SettingsFullscreen=true,SettingsVSync=false,SettingsInvertY=false,SettingsDirty=false;
-    FGuid StorageEpoch;
+    FGuid StorageEpoch,StorageViewEpoch,StorageSelection,StorageOperation;
+    bool StorageTransferCommitted=false;
+    int32 StorageDetailScroll=0;
     FGuid MemoryEpoch, SelectedMemory;
     int64 MemoryRevision = 0;
     int32 AgentCapabilityIndex=0,AgentItemIndex=0,AgentInstanceIndex=0,AgentSourceIndex=0;
@@ -255,7 +275,14 @@ private:
     FName SelectedBuilding=TEXT("workbench");
     FName SelectedRepair;
     int32 CraftingBatches=1;
+    FString CraftingSearch,CraftingCategory;
+    bool CraftingOnlyAvailable=false;
+    FHearthwardCraftingTracker CraftingTracker;
+    TArray<TSharedPtr<FJsonObject>> FilteredCraftingRecipes() const;
+    FString CraftingTrackerText(bool Compact);
     FGuid CampEpoch,CampFacility;
+    FHearthwardCampFeedback CampFeedback;
+    void ObserveCampFeedback();
     FName CampRegion,CampRecipe;
     int32 CampPerson=0,CampFood=0;
     FVector2D DesignSize=FVector2D(1672,941);

@@ -1,0 +1,161 @@
+{
+  "source_report": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-085-099\\native-first-20261007\\index.json",
+  "head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "worktree": "codex/TASK-084-103-iteration dirty; native-first-20261007 compiled before TASK-099 production接入",
+  "filter": "Hearthward.Iteration.Task099.",
+  "reportCreatedOn": "2026.10.06-20.35.14",
+  "devices": [
+    {
+      "deviceName": "LAPTOP-R8NPOP05",
+      "instance": "61F3DC1B4763E65ABF8932BE1C5E432D",
+      "instanceName": "LAPTOP-R8NPOP05-64336",
+      "platform": "WindowsEditor",
+      "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "model": "Default",
+      "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+      "rAMInGB": 16,
+      "renderMode": "SM6",
+      "rHI": "",
+      "appInstanceLog": ""
+    }
+  ],
+  "tests": [
+    {
+      "testDisplayName": "CommittedTransferAndIdentity",
+      "fullTestPath": "Hearthward.Iteration.Task099.CommittedTransferAndIdentity",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "61F3DC1B4763E65ABF8932BE1C5E432D"
+      ],
+      "duration": 0.016998298466205597,
+      "dateTime": "2026.10.06-20.35.14",
+      "entries": [
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Committed receipt enters the sound event ledger' to be 1, but it was 0.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 70,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'A PCM sound source is created for the effects channel' to be true.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 71,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Duplicate delivery of the same receipt cannot play again' to be 1, but it was 0.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 74,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Distinct operations are not swallowed by global throttling' to be 2, but it was 0.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 76,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Rejection cannot produce a success sound' to be 2, but it was 0.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 78,
+          "timestamp": "2026.10.06-20.35.14"
+        }
+      ],
+      "warnings": 0,
+      "errors": 5,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "PauseAndLocalAccess",
+      "fullTestPath": "Hearthward.Iteration.Task099.PauseAndLocalAccess",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "61F3DC1B4763E65ABF8932BE1C5E432D"
+      ],
+      "duration": 0.02086779847741127,
+      "dateTime": "2026.10.06-20.35.14",
+      "entries": [
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Fresh nearby transaction remains audible in the new context' to be 1, but it was 0.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 117,
+          "timestamp": "2026.10.06-20.35.14"
+        }
+      ],
+      "warnings": 0,
+      "errors": 1,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "TimelineAndShutdown",
+      "fullTestPath": "Hearthward.Iteration.Task099.TimelineAndShutdown",
+      "tags": [],
+      "state": "Fail",
+      "deviceInstance": [
+        "61F3DC1B4763E65ABF8932BE1C5E432D"
+      ],
+      "duration": 0.02048569917678833,
+      "dateTime": "2026.10.06-20.35.14",
+      "entries": [
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'Pre-restore success is observed' to be 1, but it was 0.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 88,
+          "timestamp": "2026.10.06-20.35.14"
+        },
+        {
+          "event": {
+            "type": "Error",
+            "message": "Expected 'New timeline observes only its own fresh operation' to be 1, but it was 0.",
+            "context": "",
+            "artifact": "00000000000000000000000000000000"
+          },
+          "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\AudioFeedbackLifecycleTests.cpp",
+          "lineNumber": 95,
+          "timestamp": "2026.10.06-20.35.14"
+        }
+      ],
+      "warnings": 0,
+      "errors": 2,
+      "artifacts": []
+    }
+  ]
+}

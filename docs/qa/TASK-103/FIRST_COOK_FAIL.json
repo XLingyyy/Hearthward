@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "attempt_id": "iteration-084-103-20261007-1",
+  "candidate_version": "0.2.0-preview.20261007.1",
+  "state": "FIRST_COOK_FAIL",
+  "candidate_state": "NOT_BUILT",
+  "published": false,
+  "source_result": ".agent-local/qa/TASK-103/package-20261007-1/result.json",
+  "source_log": ".agent-local/qa/TASK-103/package-20261007-1/package.log",
+  "source_log_bytes": 66500,
+  "result": {
+    "ok": false,
+    "operation": "build.package",
+    "artifacts": [],
+    "diagnostics": [],
+    "warnings": [],
+    "errors": [
+      "UAT failed: 25; see G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-103\\package-20261007-1\\package.log"
+    ],
+    "payload": {
+      "command": [
+        "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\RunUAT.bat",
+        "BuildCookRun",
+        "-project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+        "-noP4",
+        "-platform=Win64",
+        "-clientconfig=Shipping",
+        "-build",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-iostore",
+        "-archive",
+        "-archivedirectory=F:\\HearthwardDemo\\iteration-084-103-20261007-1",
+        "-prereqs",
+        "-utf8output",
+        "-unattended",
+        "-NoLiveCoding",
+        "-map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds",
+        "-stagingdirectory=F:\\HearthwardDemo\\iteration-084-103-20261007-1\\Staged",
+        "-nodebuginfo"
+      ],
+      "archive_dir": "F:\\HearthwardDemo\\iteration-084-103-20261007-1",
+      "log_path": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-103\\package-20261007-1\\package.log",
+      "dry_run": false,
+      "returncode": 25
+    }
+  },
+  "shipping_cpp_build": "SUCCESS: original log line112 Result: Succeeded",
+  "cook_package_counts": {
+    "processed_total": 1637,
+    "actually_cooked": 1630,
+    "platform_skipped": 7,
+    "source_log_line": 484
+  },
+  "cook_final_summary": {
+    "errors": 2,
+    "warnings": 1,
+    "status": "Failure",
+    "source_log_line": 714
+  },
+  "uat_returncode": 25,
+  "runtime_tree_exe_exists_at_audit": false,
+  "first_output": "F:/HearthwardDemo/iteration-084-103-20261007-1",
+  "failure_confirmed": "AssetManager PrimaryAssetTypesToScan has no GameFeatureData rule; confirmed by original errors",
+  "dependency_attribution": "root/MCP agent identified newly enabled AllToolsets GameFeatures dependency; current uproject explicitly enables AllToolsets",
+  "raw_log_excerpts": [
+    {
+      "line": 112,
+      "text": "Result: Succeeded"
+    },
+    {
+      "line": 257,
+      "text": "LogGameFeatures: Error: Asset manager settings do not include a rule for assets of type GameFeatureData, which is required for game feature plugins to function"
+    },
+    {
+      "line": 259,
+      "text": "LoadErrors: Error: 资产管理器设置不包含类型为GameFeatureData的资产的条目，而这是游戏功能插件正常运行所必需的内容。 是否将条目添加到PrimaryAssetTypesToScan？"
+    },
+    {
+      "line": 433,
+      "text": "LogCook: Display: Cooked packages 1637 Packages Remain 0 Total 1637"
+    },
+    {
+      "line": 484,
+      "text": "LogCook: Display: Packages Cooked: 1630, Packages Incrementally Skipped: 0, Packages Skipped by Platform: 7, Total Packages: 1637"
+    },
+    {
+      "line": 710,
+      "text": "LogInit: Display: LogGameFeatures: Error: Asset manager settings do not include a rule for assets of type GameFeatureData, which is required for game feature plugins to function"
+    },
+    {
+      "line": 711,
+      "text": "LogInit: Display: LoadErrors: Error: 资产管理器设置不包含类型为GameFeatureData的资产的条目，而这是游戏功能插件正常运行所必需的内容。 是否将条目添加到PrimaryAssetTypesToScan？"
+    },
+    {
+      "line": 712,
+      "text": "LogInit: Display: LogModelContextProtocol: Warning: Data transmitted via this plugin to your connected LLM service is Licensed Technology under the UE EULA. You are responsible for ensuring your LLM provider does not use it as training input. See Section 6(e) of the UE EULA for full terms."
+    },
+    {
+      "line": 714,
+      "text": "LogInit: Display: Failure - 2 error(s), 1 warning(s)"
+    },
+    {
+      "line": 717,
+      "text": "Execution of commandlet took:  38.46 seconds, PeakPhysMemoryMB=4619 MB, PeakVirtMemoryMB=4625 MB"
+    },
+    {
+      "line": 727,
+      "text": "Took 68.99s to run UnrealEditor-Cmd.exe, ExitCode=1"
+    },
+    {
+      "line": 728,
+      "text": "Cook failed."
+    },
+    {
+      "line": 730,
+      "text": "AutomationTool executed for 0h 6m 56s"
+    },
+    {
+      "line": 731,
+      "text": "AutomationTool exiting with ExitCode=25 (Error_UnknownCookFailure)"
+    },
+    {
+      "line": 732,
+      "text": "BUILD FAILED"
+    }
+  ],
+  "followup": {
+    "configuration_microfix_owner": "root and MCP agent",
+    "configuration_fix_authorized_by_root": true,
+    "ignore_cook_errors": false,
+    "delete_old_plugins": false,
+    "retry_version": "0.2.0-preview.20261007.1",
+    "retry_candidate_id": "iteration-084-103-20261007-2",
+    "retry_output": "F:/HearthwardDemo/iteration-084-103-20261007-2",
+    "retry_directory_unoccupied_at_audit": true,
+    "retry_result": "NOT_RUN",
+    "new_header_change_required": false
+  },
+  "scope": "docs-only; no runtime metadata copy, no build/config/source change by this agent",
+  "hashes_computed": 0
+}

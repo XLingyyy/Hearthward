@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "id": "TASK-094",
+  "title": "关键资产盘点、风格样板与逐包制作清单",
+  "status": "Active",
+  "updated_at": "2026-10-07",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-084-103-iteration",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/planning/TASK-053-074/TASK-070.md",
+    "docs/qa/TASK-077/REPORT.md",
+    "art_source/README.md",
+    "resourceSummary.md",
+    "docs/REPOSITORY_LAYOUT.md",
+    "docs/planning/TASK-084-103/ROUTE_MANIFEST.json",
+    "docs/assets/TASK-094/ASSET_REGISTER.csv",
+    "docs/assets/TASK-094/PACKAGES.json",
+    "docs/assets/TASK-094/STYLE_REVIEW.md",
+    "docs/qa/TASK-094/REPORT.md",
+    "docs/assets/TASK-094/ACTUAL_SOURCE_PAIRING.csv",
+    "docs/qa/TASK-094/registry-sources-20261007-01/asset-sources.json",
+    "docs/qa/TASK-094/registry-sources-20261007-01/summary.json"
+  ],
+  "dependencies": [
+    "TASK-084"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-094.md",
+    "docs/tasks/TASK-094.json",
+    "docs/handoffs/TASK-094.md",
+    "docs/qa/TASK-094/",
+    "docs/planning/TASK-084-103/TASK-094/",
+    "art_source/TASK-094/",
+    "docs/assets/TASK-094/"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T094-C01：引用配对；能从运行引用定位制作源和来源记录，反向也能说明是否实际使用。",
+    "T094-C02：来源状态；缺证据标UNKNOWN和发行阻塞，不写“已授权”空结论。",
+    "T094-C03：样板评审；三类风格边界清楚，Owner结论与Agent技术结论分开。",
+    "T094-C04：包范围；无同包双写、无整Content许可，待确定项明确不能先改。",
+    "T094-C05：净空关联；未冻结净空的项目禁止进入碰撞替换；不阻挡无关源制作。",
+    "T094-C06：存储规范；符合art_source/Content/Resources分工，无重复根目录。"
+  ],
+  "non_goals": [
+    "整仓素材搬家或清理历史失败证据",
+    "未经批准批量新生成/采购",
+    "以概念图、源预览冒充UE运行效果"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "可在085—093进行时并行盘点/制作源准备；修改Content和确认碰撞前必须等相关路线净空就绪。094完成表示清单和已批准样板可用，不代表全部资产已制作。",
+    "2026-10-07 用户在当前Codex会话授权配置UE MCP并逐个执行TASK-084—103；遇到需确认的设计问题可暂缓，其余自主继续。授权本地实现和验证，不含推送/合并/Release或付费服务。",
+    "未获提交授权；范围基线校验需含任务快照的真实提交，当前明确NOT_RUN；不修改验证器。",
+    "2026-10-07 根Agent派发094静态子范围：845行资产台账、095—099精确候选／单包写者、070／077样图对照和技术预算提案已本地交付；未启动或构建UE、未编辑Content、未重新计算资产hash。",
+    "本单未验084 G0和092净空正式实走；当前工程进展以其报告为准。未批准／未实测碰撞仍保持WAITING_084_092。070 Owner样板待确认，094保持Active部分完成。",
+    "Sources UNKNOWN与未生产声音有明确发行阻塞；所有candidate selected_for_change为空，精确包仍需所属任务批准范围与LFS锁；README由根Agent统一更新。",
+    "2026-10-07 根Agent公开UEClient NullRHI读取150精确包，READ_COMPLETE_WITH_UNKNOWN_PROVENANCE，Registry／依赖／referencers全部READ无异常，自有Editor已停止；自然97包自身源指向96个PRESENT制作文件，25生成类有直接依赖源旁证，2草相关项仅外部来源。17个实际导入路径不同于原静态候选，已新增160行派生表；845行原CSV与许可字段未改，无hash／包写／全目录扫描。",
+    "Bootstrap6／Wilds1349直接依赖与150目标交集均0；使用已有Wilds ExternalActor依赖与目标referencers可确认33自然包的两边保存引用，未证明运行加载／可见。150许可原值75 UNKNOWN／72 CC0_SOURCE_RECORDED_PACKAGE_PAIRING_PENDING／3逐件Sketchfab未知保留，10需求仍UNRESOLVED。C01为PARTIAL，整单／Owner／发行未通过。"
+  ]
+}

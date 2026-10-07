@@ -1,0 +1,63 @@
+{
+  "task": "TASK-099",
+  "scope": "water environment RED preparation",
+  "geometry": {
+    "state": "READ",
+    "actual_ue_report": ".agent-local/qa/TASK-099/water-source-20261006T235439Z-44d9531a/metadata.json",
+    "vertices": 98,
+    "triangles": 96,
+    "cpu_access": false,
+    "runtime_geometry": "Resources/Data/TASK-099-water-audio.json",
+    "saved_actor_is_live": false
+  },
+  "resources": {
+    "source": "art_source/TASK-099/randommind-vistula/VistulaShort_0.mp3",
+    "source_bytes": 12004407,
+    "license": "CC0 1.0 Universal",
+    "runtime_pcm": "Resources/Audio/TASK-099/candidate-water-west.wav",
+    "frames": 683550,
+    "duration_seconds": 15.5,
+    "event": "environment.water.lake_west",
+    "all_event_count": 17,
+    "all_unique_runtime_wav_count": 12,
+    "owner_audition": "NOT_RUN",
+    "actual_ue_playback": "NOT_RUN"
+  },
+  "test_source": "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp",
+  "test_filter": "Hearthward.Iteration.Task099.Environment.",
+  "registered_tests": [
+    "LoadedMeshAssociationAndTransform",
+    "ActualLoadPauseAndExit",
+    "ContinuousPCM"
+  ],
+  "native_state": "ACTUAL_NATIVE13_ENVIRONMENT_3_SUCCESS_0_TEST_WARNING_ERROR",
+  "production_environment_loop": "IMPLEMENTED_COMPILED_NATIVE_13_PASS",
+  "static_resource_check": "PASS",
+  "engine_cpp_compile": "NOT_RUN",
+  "parent_only_ue_build_run": true,
+  "raw_red_archive": "docs/qa/TASK-099/water/red-20261007-09",
+  "red_engine_cpp_compile": "SUCCESS",
+  "red_joint_results": {
+    "environment_fail": 3,
+    "foot_success": 2,
+    "warnings": 0,
+    "test_errors": 12
+  },
+  "pcm_after_source_boundary": "NOT_REACHED_IN_RED",
+  "production_compile": "SUCCESS_ROOT_BUILD13",
+  "production_native": "SUCCESS_ENVIRONMENT_3",
+  "water_production_compile_at_build12": "SUCCESS",
+  "swing_receipt_red12": {
+    "build": "SUCCESS",
+    "native": "1_FAIL",
+    "test_errors": 5,
+    "warnings": 0,
+    "actual_preconditions": "PASS",
+    "credit": "producer missing receipt only; no pre-patch audio assertion"
+  },
+  "swing_consumer": "PASS_ROOT_NATIVE13_ACTUAL_PUBLIC_ATTACK_TO_AUDIO_COMPONENT_SAME_CASE",
+  "swing_red12_archive": "docs/qa/TASK-099/water/swing-red-20261007-12",
+  "historical_native_state_before_production": "ACTUAL_RED09_3_FAIL_ONLY_MISSING_SOURCE",
+  "native13_source": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+  "native13_credit": "NoSound/NullRHI components/PCM/guards, not device hearing"
+}

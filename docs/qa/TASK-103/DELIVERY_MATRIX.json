@@ -1,0 +1,3823 @@
+{
+  "schema_version": 1,
+  "audited_at_utc": "2026-10-07T02:34:25.521351+00:00",
+  "candidate_id": "iteration-084-103-20261007-5",
+  "candidate_version_proposed": "0.2.0-preview.20261007.4",
+  "candidate_directory": "F:/HearthwardDemo/iteration-084-103-20261007-5",
+  "planned_zip": "F:/HearthwardDemo/iteration-084-103-20261007-5.zip",
+  "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "final_source_freeze": "FROZEN_FOR_CANDIDATE5_PACKAGE",
+  "final_source_freeze_evidence": [
+    ".agent-local/qa/TASK-103/package-20261007-5/tracked.patch",
+    ".agent-local/qa/TASK-103/package-20261007-5/untracked-files.txt"
+  ],
+  "final_build": "SUCCESS",
+  "package_result": ".agent-local/qa/TASK-103/package-20261007-5/result.json",
+  "package": {
+    "uat_exit_code": 0,
+    "build_seconds": 71.7,
+    "cook_seconds": 63.43,
+    "stage_seconds": 39.73,
+    "archive_seconds": 58.81,
+    "cook_errors": 0,
+    "cook_warnings": 1,
+    "cook_warning": "See actual package.log; MCP EULA notice is retained separately",
+    "total_uat_seconds": 235.52,
+    "configuration": "Win64 Shipping"
+  },
+  "delivery_metadata_state": "BUILD_SUCCESS_PARTIAL_OS_VERIFIED; runtime pre-ZIP snapshot; external finalization=INTERNAL_CANDIDATE_ZIP_CREATED",
+  "document_install": {
+    "source_report": ".agent-local/qa/TASK-103/package-20261007-5/document-install.json",
+    "state": "REFRESHED_FROM_FINAL_SOURCE_DOCS",
+    "file_count": 5,
+    "hashes_computed": 0,
+    "bounded_text_secret_scan": "BOUNDED_TEXT_CLEAN_AT_INSTALL_AND_FINALIZATION; actual bounded-secret-scan.json retained"
+  },
+  "candidate_build_info": "docs/releases/iteration-084-103-rc/CANDIDATE5_BUILD_INFO.json",
+  "shipping_normal_input": "PARTIAL_NORMAL_INPUT_VERIFIED",
+  "shipping_normal_input_evidence": "docs/qa/TASK-103/OS_CANDIDATE5_PARTIAL_NORMAL_INPUT.json",
+  "shipping_os_partial": {
+    "candidate_id": "iteration-084-103-20261007-5",
+    "actual_embedded_version": "0.2.0-preview.20261007.4",
+    "observed_utc": "2026-10-07T02:29:04.829061+00:00",
+    "state": "PARTIAL_NORMAL_INPUT_VERIFIED",
+    "launcher_state": "SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED",
+    "launcher_execution": "Actual supplied CMDs started by hidden OS process launch; game operated with normal mouse/keyboard",
+    "explorer_double_click_launcher": "NOT_RUN",
+    "cpu": {
+      "bootstrap_pid": 23280,
+      "game_pid": 59620,
+      "title_version_observed": true,
+      "new_game": "PASS_BEDROOM_MAIN01_ARTIFACT_TARGET",
+      "new_game_hud": {
+        "health": "102/102",
+        "stamina": "101/101",
+        "food": "99/100",
+        "quick_items": {
+          "med": 3,
+          "food": 4,
+          "arrows": 24,
+          "thrown": 0
+        }
+      },
+      "manual_save": "PASS_NODE_COUNT_1_TO_2",
+      "new_game_reset_hint": "PASS_NEUTRAL",
+      "normal_exit": "PASS_OWNED_GAME_AND_BOOTSTRAP_GONE"
+    },
+    "vulkan": {
+      "bootstrap_pid": 65020,
+      "game_pid": 67664,
+      "title_version_observed": true,
+      "explicit_mouse_continue": "PASS_SAME_BEDROOM_MAIN01_ARTIFACT_TARGET",
+      "continued_hud": {
+        "health": "102/102",
+        "stamina": "101/101",
+        "food": "98/100",
+        "quick_items": {
+          "med": 3,
+          "food": 4,
+          "arrows": 24,
+          "thrown": 0
+        }
+      },
+      "shared_save": "PASS_NODE_COUNT_STILL_2_AND_ORIGINAL_TIMESTAMPS",
+      "restore_reset_hint": "PASS_NEUTRAL",
+      "normal_exit": "PASS_OWNED_GAME_AND_BOOTSTRAP_GONE_NO_CANDIDATE_MODEL_REMAINING"
+    },
+    "shared_save_nodes": [
+      {
+        "type": "manual",
+        "displayed_utc": "2026-10-07 02:26"
+      },
+      {
+        "type": "automatic",
+        "displayed_utc": "2026-10-07 02:25"
+      }
+    ],
+    "fresh_shared_candidate_profile": true,
+    "old_or_qa_saves_copied_to_launcher_profile": false,
+    "screenshots": "Nine actual QA screenshots in the private evidence directory; no profiles or saves copied",
+    "screenshot_count": 9,
+    "chinese_text_input": "NOT_RUN_THIS_CANDIDATE",
+    "ime_composition": "NOT_RUN",
+    "full_prologue_escape_camp_rescue": "NOT_RUN",
+    "model_requests": "NOT_RUN_THIS_CANDIDATE; Source.2 AI contract unchanged",
+    "gpu_layers_observed": "NOT_READ_THIS_CANDIDATE; no model request",
+    "full_model_quality": "FAIL_OBSERVED_FIXED_SOURCE2_CONTRACT; original CPU60/Vulkan60 retained",
+    "joint_performance": "FAIL_OBSERVED_IN_TASK_102; no performance credit from this OS sample",
+    "real_human_acceptance": "NOT_RUN",
+    "second_physical_machine": "NOT_RUN",
+    "published": false,
+    "private_evidence": ".agent-local/qa/TASK-103/os-launchers-candidate5-20261007/results.json"
+  },
+  "formal_acceptance_passed": false,
+  "finalization_external_summary": "docs/qa/TASK-103/CANDIDATE5_FINALIZATION.json",
+  "zip": "INTERNAL_CANDIDATE_ZIP_CREATED",
+  "finalization_result": {
+    "candidate_id": "iteration-084-103-20261007-5",
+    "status": "INTERNAL_CANDIDATE_ZIP_CREATED",
+    "published": false,
+    "source_qa_profiles_included": false,
+    "sha256_computations": 1,
+    "zip": "F:\\HearthwardDemo\\iteration-084-103-20261007-5.zip",
+    "zip_bytes": 4645167974,
+    "sha256": "361cd9acfe3f27264efc5d5e3933131ae0e9bf66bcc12b079c89d9c6a50e762b",
+    "runtime_files": 166,
+    "closure": {
+      "required_licences": [
+        "NOTICES.txt",
+        "Hearthward/Runtime/LocalAI/LICENSE-Qwen.txt",
+        "Hearthward/Runtime/LocalAI/LICENSE-llama.cpp.txt",
+        "Hearthward/Runtime/LocalAI/bin/cpu/LICENSE-LLVM-OpenMP",
+        "Hearthward/Runtime/LocalAI/bin/vulkan/LICENSE-LLVM-OpenMP",
+        "Hearthward/Resources/UI/Fonts/OFL.txt",
+        "Hearthward/Resources/UI/Fonts/LXGW-OFL.txt",
+        "Hearthward/Resources/Audio/TASK-099/License-Kenney-RPG-Audio.txt",
+        "Hearthward/Resources/Audio/TASK-099/License-RandomMind-Vistula.txt"
+      ],
+      "actual_sound_events": 17,
+      "actual_unique_wavs": [
+        "Hearthward/Resources/Audio/TASK-099/candidate-bookClose.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-bookOpen.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-chop.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-dropLeather.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-footstep00.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-handleSmallLeather2.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-knifeSlice.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-metalClick.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-metalLatch.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-metalPot2.wav",
+        "Hearthward/Resources/Audio/TASK-099/candidate-water-west.wav",
+        "Hearthward/Resources/Audio/TASK-099/storage-transfer.wav"
+      ],
+      "water_geometry": {
+        "state": "ACTUAL_READ_REPORT_PAIRED",
+        "runtime_data": "Hearthward/Resources/Data/TASK-099-water-audio.json",
+        "mesh": "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/Lake_0/StaticMeshes/SM_Lake_0.SM_Lake_0",
+        "vertices": 98,
+        "triangles": 96,
+        "source_report": "docs/qa/TASK-099/water/second-read-water-source-20261006T235439Z-44d9531a.json",
+        "source_report_bundled": false,
+        "hashes_computed": 0,
+        "licence_or_gameplay_activity_proven": false
+      },
+      "licence_file_presence": "PRESENT",
+      "content_provenance": "UNKNOWN_GAPS_REMAIN_TASK_094",
+      "full_licence_acceptance": "NOT_PASSED",
+      "owner_audio_audition": "NOT_RUN"
+    },
+    "formal_acceptance": "NOT_PASSED",
+    "zip_payload_hashes": 0
+  },
+  "finalization_source": ".agent-local/qa/TASK-103/package-20261007-5/finalization-result.json",
+  "distribution_hashes": [
+    {
+      "algorithm": "SHA256",
+      "value": "361cd9acfe3f27264efc5d5e3933131ae0e9bf66bcc12b079c89d9c6a50e762b",
+      "source": ".agent-local/qa/TASK-103/package-20261007-5/finalization-result.json",
+      "computations": 1
+    }
+  ],
+  "runtime_build_info_zip": "F:\\HearthwardDemo\\iteration-084-103-20261007-5.zip",
+  "native_source_reports": [
+    ".agent-local/qa/TASK-085-088/native-baseline-20261007/index.json",
+    ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+    ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+    ".agent-local/qa/TASK-090-100/native-red-20261007/index.json",
+    ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+    ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+    ".agent-local/qa/TASK-099/native-green-20261007-03/native/index.json",
+    ".agent-local/qa/TASK-099/native-pre-contact-20261007-06/native/index.json",
+    ".agent-local/qa/TASK-099/native-post-contact-20261007-07/native/index.json",
+    ".agent-local/qa/TASK-099/native-save-isolated-20261007-08/native/index.json",
+    ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+    ".agent-local/qa/TASK-091/native-stair-top-20261007-red/native/index.json",
+    ".agent-local/qa/TASK-091/native-stair-top-20261007-green/native/index.json",
+    ".agent-local/qa/TASK-091/native-side-gate-20261007-red/native/index.json",
+    ".agent-local/qa/TASK-091/native-side-gate-20261007-green/native/index.json"
+  ],
+  "real_model_reports": {
+    "cpu": "docs/qa/TASK-087/cpu-final-20261007-01.json",
+    "vulkan": "docs/qa/TASK-087/vulkan-final-20261007-02.json"
+  },
+  "single_scene_performance_reports": {
+    "cpu": "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/summary.json",
+    "vulkan": "docs/qa/TASK-102/settled-dialogue-vulkan-20261007-01/summary.json"
+  },
+  "mcp": {
+    "source_doc": "docs/qa/MCP/20261007/SETUP.md",
+    "source_connection": "docs/qa/MCP/20261007/connection.json",
+    "configuration": "UE5.8.2 native ModelContextProtocol/AllToolsets; project/workspace Codex config uses loopback8000/mcp",
+    "historical_read_only_connection": "VERIFIED: initialize/initialized/tools/list/SceneTools Bootstrap query/Codex configuration discovery",
+    "current_turn_native_tool_mount": "NOT_VERIFIED; existing turn lacks Unreal MCP tool entries, configuration is not a hot-load result",
+    "current_endpoint_liveness": "Root actual final resident check passed; depends on Editor life, not chat catalog hot-mount",
+    "final_resident_evidence": "docs/qa/MCP/20261007/final-resident-connection.json",
+    "final_resident_safe_summary": {
+      "schema": "hearthward.native_mcp_final_resident.v1",
+      "status": "FINAL_RESIDENT_MCP_VERIFIED",
+      "runner_recorded_utc": "2026-10-07T02:29:25.535341+00:00",
+      "recorded_time_semantics": "runner record created before launch; not a fabricated wall-clock completion time",
+      "startup_wait_seconds": 49.37684509996325,
+      "elapsed_seconds": 52.31618620001245,
+      "endpoint": "http://127.0.0.1:8000/mcp",
+      "protocol_version": "2025-06-18",
+      "transport": "streamable_http",
+      "editor": {
+        "owned_process_id": 52580,
+        "mode": "normal Editor",
+        "map": "/Game/Hearthward/Bootstrap/L_Bootstrap",
+        "left_alive_at_final_verification": true,
+        "mcp_port": 8000,
+        "remote_control_port": 30010,
+        "runtime_input_port_configured": 30020,
+        "game_or_pie_started": false
+      },
+      "checks": {
+        "initialize_http": 200,
+        "session_header_present": true,
+        "initialized_http": 202,
+        "tools_list_http": 200,
+        "native_meta_tools": [
+          "call_tool",
+          "describe_toolset",
+          "list_toolsets"
+        ],
+        "native_meta_tool_count": 3,
+        "toolsets_discovery_this_final_run": "NOT_RUN; initial 52-toolset discovery remains historical",
+        "current_level_http": 200,
+        "current_level": "/Game/Hearthward/Bootstrap/L_Bootstrap",
+        "ueclient_environment": {
+          "operation": "observe.check_status",
+          "ok": true,
+          "remote_control_ok": true,
+          "python_execution_ok": true
+        },
+        "startup_initialize_attempts": 11
+      },
+      "codex_configuration": {
+        "server_name": "unreal-mcp",
+        "cwd": "G:\\GameFactory",
+        "returncode": 0,
+        "enabled": true,
+        "endpoint_matches": true,
+        "configuration_read_verified": true
+      },
+      "current_chat_native_tools": "NOT_AVAILABLE; no hot-mount was performed",
+      "reload_step": "Create a new chat in the Hearthward project, then confirm unreal-mcp tools appear",
+      "availability": "Service was online with the owned normal Editor at final verification; closing that Editor takes this endpoint offline",
+      "private_safe_evidence": ".agent-local/qa/MCP/final-resident-20261007-01/results.json",
+      "private_safe_launch": ".agent-local/qa/MCP/final-resident-20261007-01/launch.json",
+      "private_runtime_log": ".agent-local/qa/MCP/final-resident-20261007-01/editor-runtime.log",
+      "initial_historical_evidence": "connection.json",
+      "privacy": "Only session-header presence is retained; no session ID, credential, environment dump or raw protocol body is copied"
+    },
+    "final_resident_connection": "Actual alive-at-check PID52580/startup49.3768s/initialize/initialized/tools-list3meta-tools/readonlyBootstrap/publicRC+Python/CLIenabled match verified by root",
+    "cook_dependency": "AllToolsets→GameFeaturesToolset→GameFeatures; official empty-directory GameFeatureData AlwaysCook rule; candidate1 failure and candidate2 retry success remain distinct",
+    "eula_warning": "RETAINED; no legal approval or provenance closure inferred"
+  },
+  "native_process_diagnostics": {
+    "source_result": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/result.json",
+    "report_created_on": "2026.10.07-00.32.03",
+    "full_batch_success": 28,
+    "full_batch_failed": 0,
+    "process_errors": 13,
+    "process_warnings": 1,
+    "classification": "Native13 full28=28P0F/0warnings/0test errors; TASK099 subset23=23P0F/0warnings/0test errors. 13 frame0 startup Smoke Condition failed entries and 1 EULA warning remain separate process diagnostics. Historical Native07 full24/subset19 and separate Native08 fresh Save1P remain bound to original reports.",
+    "historical_voice_warning": "Native03 NPCCommittedSuccessUnbound missing fixed voice_state_task_finished.wav retained in original report; fixed recording remains UNPRODUCED, Native06 subset0warnings"
+  },
+  "historical_candidate2": {
+    "candidate_id": "iteration-084-103-20261007-2",
+    "version": "0.2.0-preview.20261007.1",
+    "build": "BUILD_SUCCESS",
+    "build_info": "docs/releases/iteration-084-103-rc/BUILD-INFO.json",
+    "package_result": ".agent-local/qa/TASK-103/package-20261007-2/result.json",
+    "package_evidence": "docs/qa/TASK-103/PACKAGE_BUILD_SUCCESS.json",
+    "actual_embedded_version": "0.2.0-preview.20261007.1",
+    "normal_input": "PARTIAL; unchanged original evidence and Continue erratum retained",
+    "scope": "Historical uncommitted version.1 only; no candidate-4 final-pass credit"
+  },
+  "historical_candidate3": {
+    "candidate_id": "iteration-084-103-20261007-3",
+    "version": "0.2.0-preview.20261007.2",
+    "package_evidence": "docs/qa/TASK-103/CANDIDATE3_PACKAGE_BUILD_SUCCESS.json",
+    "os_source": ".agent-local/qa/TASK-103/os-launchers-candidate3-20261007/results.json",
+    "state": "PARTIAL_NORMAL_INPUT_VERIFIED",
+    "launcher_method": "hidden ComSpec executed existing CPU.cmd; sky OS game inputs",
+    "cpu_launcher": "SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED",
+    "vulkan_launcher": "NOT_RUN",
+    "new_game": "PASS_ACTUAL_TITLE_NEWGAME_TO_BEDROOM",
+    "journal": "PASS_MAIN01_RELIC_0_OF_3",
+    "save": "PASS_F6_ACTUAL_MOUSE_SAVE_TOTAL_1_TO_2",
+    "continue": "NOT_RUN",
+    "chinese_text": "PASS_LITERAL_UNICODE_PASTE_VISIBLE_NOT_IME",
+    "cpu_model": {
+      "actual_process": 60940,
+      "parent_game_pid": 63400,
+      "binary": "F:/HearthwardDemo/iteration-084-103-20261007-3/Windows/Hearthward/Runtime/LocalAI/bin/cpu/llama-server.exe",
+      "effective_gpu_layers": 0,
+      "input": "跟随我",
+      "submitted_at": "2026-10-07T00:53:37.461Z",
+      "pending_observed_seconds": 89.488,
+      "failure_observed_seconds": 144.443,
+      "terminal_ui": "本地推理失败或超时，未执行动作",
+      "status": "FAIL_OBSERVED",
+      "precise_request_latency": "NOT_READ",
+      "raw_reply": "NOT_READ"
+    },
+    "fresh_reset_status": {
+      "observed": "已恢复存档，请重新交流",
+      "status": "RED_CONFIRMED",
+      "screenshot": "cpu-dialogue-before.jpg",
+      "minimal_source_fix": "ResetForSnapshot neutral status text; candidate4 .3 validation pending"
+    },
+    "normal_exit": "PASS_ALT_F4_GAME_BOOTSTRAP_AND_OWNED_MODEL_PIDS_EXITED",
+    "screenshots": [
+      "cpu-dialogue-before.jpg",
+      "cpu-journal-main01.jpg",
+      "cpu-new-game-bedroom.jpg",
+      "cpu-request-final.jpg",
+      "cpu-request-submitted.jpg",
+      "cpu-save-after.jpg",
+      "cpu-save-before.jpg",
+      "cpu-title-version.jpg"
+    ],
+    "scope": "CPU script launch and OS game input only; no Vulkan/Continue/IME/whole route/final-candidate credit"
+  },
+  "historical_candidate_source_freeze": "SECOND_ATTEMPT_FROZEN_UNCOMMITTED_WITH_CONFIG_MICROFIX",
+  "historical_candidate_build": "BUILD_SUCCESS_SECOND_ATTEMPT",
+  "historical_package_result": ".agent-local/qa/TASK-103/package-20261007-2/result.json",
+  "historical_package_success_evidence": "docs/qa/TASK-103/PACKAGE_BUILD_SUCCESS.json",
+  "actual_embedded_version": "0.2.0-preview.20261007.4",
+  "historical_actual_embedded_version": "0.2.0-preview.20261007.1",
+  "historical_shipping_os_evidence": "docs/qa/TASK-103/OS_PARTIAL_NORMAL_INPUT.json",
+  "historical_shipping_os_scope": "Candidate-2/version.1 Windows Run direct exe: title/new-game bedroom/J main01/F6 manual1→2/close/independent startup and retained save-list entries. Return Continue claim withdrawn; separate TASK-101 original-copy profile explicit mouse-click Continue restored camp-preparation and retained7 nodes. No model request or final-candidate claim.",
+  "invalid_return_continue_claim": "docs/qa/TASK-103/OS_CONTINUE_ERRATUM.json",
+  "historical_shipping_original_copy_compatibility_evidence": "docs/qa/TASK-101/OS_ORIGINAL_COPY_COMPATIBILITY.json",
+  "historical_original_copy_compatibility_state": "PARTIAL_ORIGINAL_COPY_COMPATIBILITY_AND_EXPLICIT_CONTINUE_VERIFIED",
+  "current_source_version": "0.2.0-preview.20261007.4",
+  "current_source_shipping": "CANDIDATE5_BUILD_SUCCESS_PARTIAL_OS; externalZIP=INTERNAL_CANDIDATE_ZIP_CREATED",
+  "fixed_ai_contract_revision": "Source.2; Prompt/model/schema/budget unchanged for candidate4",
+  "current_candidate": {
+    "sequence": 5,
+    "proposed_version": "0.2.0-preview.20261007.4",
+    "state": "BUILD_SUCCESS_INTERNAL_CANDIDATE_ZIP_CREATED",
+    "source_change_scope": [
+      "Task091 stair-top handover only within the existing staircase entrance strip",
+      "Task091 side-gate handover only within 50cm of the existing three-dimensional target",
+      "HearthwardVersion::Current version.4; AI Source.2 contract unchanged"
+    ],
+    "reason": "Two existing guidance handover fixes Native RED→GREEN and real four-node API verified; full progression not completed. Exact Shipping5 success plus actual dual suppliedCMD script-launch/OS opening-save-Continue partial; no new model/IME/full-route credit."
+  },
+  "historical_candidate4": {
+    "build": "docs/qa/TASK-103/CANDIDATE4_PACKAGE_BUILD_SUCCESS.json",
+    "os_source": "docs/qa/TASK-103/OS_CANDIDATE4_PARTIAL_NORMAL_INPUT.json",
+    "os": {
+      "schema_version": 1,
+      "task": "TASK-103",
+      "archived_at_utc": "2026-10-07T01:27:19.978879+00:00",
+      "source_report": ".agent-local/qa/TASK-103/os-launchers-candidate4-20261007/results.json",
+      "request_source": ".agent-local/qa/TASK-103/os-launchers-candidate4-20261007/vulkan-request-observation.json",
+      "candidate_id": "iteration-084-103-20261007-4",
+      "current_source_version": "0.2.0-preview.20261007.3",
+      "fixed_ai_contract_revision": "Source.2; Prompt/model/schema/budget unchanged for candidate4",
+      "state": "PARTIAL_NORMAL_INPUT_VERIFIED",
+      "evidence_level": "Shipping script launch and actual OS game input; no Explorer double-click credit",
+      "launcher_state": "SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED",
+      "launcher_execution": "Actual supplied CMDs started by hidden OS process launch; game operated with normal mouse/keyboard",
+      "explorer_double_click_launcher": "NOT_RUN",
+      "fresh_shared_candidate_profile": true,
+      "old_or_qa_saves_copied_to_launcher_profile": false,
+      "cpu": {
+        "game_pid": 49356,
+        "bootstrap_pid": 51964,
+        "title_version_observed": true,
+        "new_game": "PASS",
+        "settings_open": "PASS_READ_ONLY",
+        "manual_save": "PASS_NODE_COUNT_1_TO_2",
+        "new_game_reset_hint": "PASS_NEUTRAL",
+        "model_request": "NOT_REPEATED_AI_CONTRACT_UNCHANGED; candidate3 actual CPU failure retained separately",
+        "normal_exit": "PASS_OWNED_GAME_AND_BOOTSTRAP_GONE"
+      },
+      "vulkan": {
+        "game_pid": 18312,
+        "bootstrap_pid": 68236,
+        "model_pid": 64304,
+        "title_version_observed": true,
+        "explicit_mouse_continue": "PASS_SAME_BEDROOM_PROGRESS",
+        "shared_save": "PASS_NODE_COUNT_STILL_2_AND_ORIGINAL_TIMESTAMPS",
+        "restore_reset_hint": "PASS_NEUTRAL",
+        "actual_gpu_layers": 16,
+        "single_model_request": "PASS_PROPOSAL_THEN_NORMAL_MOUSE_CONFIRM_AND_HUD_FOLLOWING",
+        "request_evidence": "vulkan-request-observation.json",
+        "normal_exit": "PASS_OWNED_GAME_BOOTSTRAP_AND_MODEL_GONE"
+      },
+      "vulkan_request_observation": {
+        "input": "跟随我",
+        "input_method": "literal_unicode_paste",
+        "ime_composition": "NOT_RUN",
+        "submitted_at": "2026-10-07T01:22:03.491Z",
+        "last_pending_observation_seconds": 39.122,
+        "proposal_observation_seconds": 60.985,
+        "precise_http_latency": "NOT_READ",
+        "proposal": "跟随玩家",
+        "confirmed_by_os_mouse": true,
+        "hud_status": "跟随中",
+        "case_scope": "single_shipping_os_request; not full TASK-087 matrix or TASK-102 performance acceptance"
+      },
+      "historical_cpu_failure": {
+        "source_report": ".agent-local/qa/TASK-103/os-launchers-candidate3-20261007/results.json",
+        "scope": "Candidate3 actual CPU failure retained; no repeated candidate4 CPU generation and no exact HTTP latency credit"
+      },
+      "chinese_text": "PASS_LITERAL_UNICODE_PASTE",
+      "ime_composition": "NOT_RUN",
+      "shift_input_attempt": "Inventory screen observed after Shift_L request; actual received FKeyEvent and runtime binding not read; no cause claimed",
+      "movement": "Two short D taps changed pose without proven displacement; no held-key API or full route credit",
+      "full_prologue_escape_camp_rescue": "NOT_RUN",
+      "real_human_acceptance": "NOT_RUN",
+      "second_physical_machine": "NOT_RUN",
+      "full_model_quality": "FAIL_OBSERVED_FIXED_CONTRACT; single Shipping case does not alter original denominators",
+      "joint_performance": "FAIL_OBSERVED_IN_TASK_102; no performance credit from this UI sample",
+      "screenshots": [
+        "cpu-input-mode-attempt-inventory.jpg",
+        "cpu-new-game-bedroom.jpg",
+        "cpu-new-game-reset-green.jpg",
+        "cpu-save-after-2.jpg",
+        "cpu-save-before-1.jpg",
+        "cpu-settings.jpg",
+        "cpu-title-occluded.jpg",
+        "cpu-title-version.jpg",
+        "vulkan-continued-bedroom.jpg",
+        "vulkan-following-hud.jpg",
+        "vulkan-request-confirmed.jpg",
+        "vulkan-request-proposal.jpg",
+        "vulkan-request-submitted.jpg",
+        "vulkan-restore-reset-green.jpg",
+        "vulkan-shared-save-still-2.jpg",
+        "vulkan-title-version.jpg"
+      ],
+      "screenshot_limit": "cpu-title-occluded.jpg is not sole clear-title evidence; separate cpu-title-version.jpg retained. Archive describes root observations, no independent visual review added.",
+      "zip": "NOT_RUN_AT_THIS_OS_ARCHIVE_SNAPSHOT",
+      "published": false,
+      "privacy": "No process command lines, headers, credentials, user profile content or model context included; no new hash"
+    },
+    "zip": "PAUSED_NOT_CREATED"
+  },
+  "historical_candidate5_preparation": {
+    "schema_version": 1,
+    "candidate_id": "iteration-084-103-20261007-5",
+    "target_version": "0.2.0-preview.20261007.4",
+    "state": "PREPARED_NOT_EXECUTED",
+    "root_source_freeze": "NOT_RECORDED_BY_THIS_PREPARATION",
+    "package_runner": ".agent-local/qa/TASK-103/package_candidate5.py",
+    "finalizer": "docs/qa/TASK-103/finalize_candidate5.py",
+    "required_root_build_info": "docs/releases/iteration-084-103-rc/CANDIDATE5_BUILD_INFO.json",
+    "archive": "F:/HearthwardDemo/iteration-084-103-20261007-5",
+    "windows": "F:/HearthwardDemo/iteration-084-103-20261007-5/Windows",
+    "stage": "E:/HearthwardQA/TASK-103/package-20261007-5/Staged",
+    "evidence": ".agent-local/qa/TASK-103/package-20261007-5",
+    "zip": "F:/HearthwardDemo/iteration-084-103-20261007-5.zip",
+    "construction": "Equivalent candidate4 scripts with exact candidate/version/paths; candidate4 originals retained unchanged",
+    "static_validation": {
+      "ast_compile_only": "PASS",
+      "pure_in_memory_path_checks": 8,
+      "source_and_package_parameters_other_than_candidate_paths": "UNCHANGED",
+      "closure_events": 17,
+      "closure_wavs": 12,
+      "required_licence_files": 9,
+      "water_geometry_source_report_binding": "RETAINED",
+      "exact_launcher_state": "SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED",
+      "install_receipt_and_refresh_guard": "RETAINED"
+    },
+    "execution": {
+      "package": "NOT_RUN",
+      "install": "NOT_RUN",
+      "finalize": "NOT_RUN",
+      "zip": "NOT_RUN",
+      "hashes_computed": 0
+    },
+    "limits": "No new source/build/OS/freeze acceptance; no Runtime Windows writes or source release metadata changes. Root alone executes after actual source freeze.",
+    "trigger": "NAV06_GUIDANCE_FIRST_BLOCKER.json; candidate4 ZIP paused, no design change",
+    "stage_revision": {
+      "reason": "Root-selected separate E staging location after disk check; candidate4 stage cleanup rejected by automatic approval and not performed.",
+      "capacity_scope": "Observed snapshot only; no future capacity guarantee or new filesystem validation",
+      "candidate4_stage_and_archive": "RETAINED_UNCHANGED",
+      "candidate4_source_release_documents": ".agent-local/qa/TASK-103/candidate4-source-release-docs-20261007",
+      "execution": "PREPARATION_ONLY_NOT_EXECUTED",
+      "root_observed_free_decimal_gb": {
+        "G": 5.28,
+        "F": 11.03,
+        "E": 61.55
+      }
+    }
+  },
+  "candidate4_finalization": "PAUSED_BY_ROOT; package and OS partial evidence retained as historical candidate; final matrix awaits candidate5 actual evidence",
+  "development_api_progression": {
+    "source_report": "docs/qa/TASK-103/NAV12_GROUNDED_FINAL_FIRST_BLOCKER.json",
+    "safe_summary": {
+      "schema_version": 1,
+      "task": "TASK-084",
+      "release_context": "TASK-103",
+      "private_result_reference": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-12/results.json",
+      "status": "FAILED_FIRST_BLOCKER",
+      "first_error": "Actual NavPath is invalid or partial; no guessed geometry fallback",
+      "evidence_level": "Development standalone -game; public RC movement/actions; NOT_OS_INPUT",
+      "normal_os_input": "NOT_RUN",
+      "source_changes_for_this_qa": false,
+      "method": {
+        "bounded_final_navigation": true,
+        "grounded_final_navigation": true,
+        "candidate_max_step_cm": 2000,
+        "query_extent": {
+          "X": 250.0,
+          "Y": 250.0,
+          "Z": 220
+        },
+        "actual_terrain_required": true,
+        "diagnostic_wide_z_point_used": false,
+        "game_route_nodes_added": false
+      },
+      "owned_editor": {
+        "pid": 62796,
+        "stop_ok": true,
+        "exit_verified": true
+      },
+      "formal_nodes": [
+        {
+          "route_id": "bedroom_door",
+          "route_world": {
+            "X": 92000.0,
+            "Y": 54150.0,
+            "Z": 23376.231064572712
+          },
+          "arrived_position": {
+            "X": 91983.35968598207,
+            "Y": 54114.029344833994,
+            "Z": 23368.381066575428
+          },
+          "distance_at_arrival_cm": 40.40310077511904
+        },
+        {
+          "route_id": "escape_stair_top",
+          "route_world": {
+            "X": 93500.0,
+            "Y": 54550.0,
+            "Z": 23376.231064572712
+          },
+          "arrived_position": {
+            "X": 93461.4471550546,
+            "Y": 54538.91766959246,
+            "Z": 23368.381066575428
+          },
+          "distance_at_arrival_cm": 40.87496017372044
+        },
+        {
+          "route_id": "escape_stair_bottom",
+          "route_world": {
+            "X": 93500.0,
+            "Y": 56300.500162124634,
+            "Z": 22791.238022580525
+          },
+          "arrived_position": {
+            "X": 93499.11098134823,
+            "Y": 56259.87852461132,
+            "Z": 22766.35117277208
+          },
+          "distance_at_arrival_cm": 47.647277800672626
+        },
+        {
+          "route_id": "courtyard_side_gate",
+          "route_world": {
+            "X": 89800.0,
+            "Y": 56300.0,
+            "Z": 22179.66768711376
+          },
+          "arrived_position": {
+            "X": 89837.8840929635,
+            "Y": 56305.6331466685,
+            "Z": 22178.74744166901
+          },
+          "distance_at_arrival_cm": 38.311665230512574
+        }
+      ],
+      "formal_final_world": {
+        "X": 90000.0,
+        "Y": 62000.0,
+        "Z": 22145.612411306938
+      },
+      "first_grounded_segment": {
+        "state": "PROJECTED_POINT_REACHED",
+        "actual_start": {
+          "X": 89837.8840929635,
+          "Y": 56305.6331466685,
+          "Z": 22178.74744166901
+        },
+        "qa_query_candidate": {
+          "X": 89894.79911489188,
+          "Y": 58304.789307529434,
+          "Z": 22167.11452412175
+        },
+        "confirmed_ground": {
+          "X": 89894.79911489188,
+          "Y": 58304.789307529434,
+          "Z": 21871.2258220004
+        },
+        "navigation_query_point": {
+          "X": 89894.79911489188,
+          "Y": 58304.789307529434,
+          "Z": 21971.2258220004
+        },
+        "actual_projected_goal": {
+          "X": 89908.0,
+          "Y": 58304.789307529434,
+          "Z": 21879.741107135033
+        },
+        "actual_arrival": {
+          "X": 89908.00041297036,
+          "Y": 58269.96509515015,
+          "Z": 21967.389453708474
+        },
+        "actual_displacement_cm": 1976.9138831096707,
+        "distance_at_arrival_cm": 94.31308724172885,
+        "surface_evidence": [
+          {
+            "state": "READ",
+            "kind": "first_blocking_collision",
+            "actor_class": "/Script/Hearthward.HearthwardHometownFortress",
+            "component_tags": [
+              "CloisterRoof"
+            ],
+            "impact_point": {
+              "X": 89894.79911489188,
+              "Y": 58304.789307529434,
+              "Z": 22413.10966564693
+            },
+            "surface_classification": "CONFIRMED_FORTRESS_COLLISION"
+          },
+          {
+            "state": "READ",
+            "kind": "same_ray_ignore_confirmed_home",
+            "actor_class": "/Script/Landscape.LandscapeStreamingProxy",
+            "component_tags": [],
+            "impact_point": {
+              "X": 89894.79911489188,
+              "Y": 58304.789307529434,
+              "Z": 21871.2258220004
+            },
+            "surface_classification": "CONFIRMED_GROUND_COLLISION"
+          }
+        ],
+        "actual_complete_paths": {
+          "nav_path": [
+            {
+              "X": 89837.8840929635,
+              "Y": 56305.6331466685,
+              "Z": 22103.165567438904
+            },
+            {
+              "X": 89908.0,
+              "Y": 57076.0,
+              "Z": 22050.0
+            },
+            {
+              "X": 89908.0,
+              "Y": 58292.0,
+              "Z": 21880.0
+            },
+            {
+              "X": 89908.0,
+              "Y": 58304.789307529434,
+              "Z": 21880.0
+            }
+          ],
+          "controller_actual_nav_path": [
+            {
+              "X": 89837.8840929635,
+              "Y": 56305.6331466685,
+              "Z": 22103.165567438904
+            },
+            {
+              "X": 89908.0,
+              "Y": 57076.0,
+              "Z": 22050.0
+            },
+            {
+              "X": 89908.0,
+              "Y": 58292.0,
+              "Z": 21880.0
+            },
+            {
+              "X": 89908.0,
+              "Y": 58304.789307529434,
+              "Z": 21880.0
+            }
+          ]
+        },
+        "movement": "ordinary engine PathFollowing; no QA position/velocity/mode/clock setter"
+      },
+      "second_grounded_segment": {
+        "state": "STOPPED_BEFORE_SIMPLEMOVE_PARTIAL_QUERY",
+        "actual_start": {
+          "X": 89908.00041297036,
+          "Y": 58269.96509515015,
+          "Z": 21967.389453708474
+        },
+        "qa_query_candidate": {
+          "X": 89957.25832992743,
+          "Y": 60267.08003362105,
+          "Z": 22062.812617318974
+        },
+        "confirmed_ground": {
+          "X": 89957.25832992743,
+          "Y": 60267.08003362105,
+          "Z": 21965.25354982453
+        },
+        "navigation_query_point": {
+          "X": 89957.25832992743,
+          "Y": 60267.08003362105,
+          "Z": 22065.25354982453
+        },
+        "actual_projected_goal": {
+          "X": 89957.25832992743,
+          "Y": 60267.08003362105,
+          "Z": 22150.0
+        },
+        "surface_evidence": [
+          {
+            "state": "READ",
+            "kind": "first_blocking_collision",
+            "actor_class": "/Script/Hearthward.HearthwardHometownFortress",
+            "component_tags": [
+              "TowerCornice"
+            ],
+            "impact_point": {
+              "X": 89957.25832992743,
+              "Y": 60267.08003362105,
+              "Z": 23679.372788205525
+            },
+            "surface_classification": "CONFIRMED_FORTRESS_COLLISION"
+          },
+          {
+            "state": "READ",
+            "kind": "same_ray_ignore_confirmed_home",
+            "actor_class": "/Script/Landscape.LandscapeStreamingProxy",
+            "component_tags": [],
+            "impact_point": {
+              "X": 89957.25832992743,
+              "Y": 60267.08003362105,
+              "Z": 21965.25354982453
+            },
+            "surface_classification": "CONFIRMED_GROUND_COLLISION"
+          }
+        ],
+        "actual_find_path_valid": true,
+        "actual_find_path_partial": true,
+        "navigation_building_or_locked": false,
+        "start_projection": {
+          "Point": {
+            "X": 89908.00041297036,
+            "Y": 58269.96509515015,
+            "Z": 21967.389453708474
+          },
+          "ProjectedLocation": {
+            "X": 89908.00041297036,
+            "Y": 58269.96509515015,
+            "Z": 21882.618771338806
+          },
+          "ReturnValue": true
+        },
+        "goal_projection": {
+          "Point": {
+            "X": 89957.25832992743,
+            "Y": 60267.08003362105,
+            "Z": 22150
+          },
+          "ProjectedLocation": {
+            "X": 89957.25832992743,
+            "Y": 60267.08003362105,
+            "Z": 22150
+          },
+          "ReturnValue": true
+        },
+        "partial_path_points": "NOT_READ",
+        "controller_path_for_second_segment": "NOT_REQUESTED",
+        "movement_for_second_segment": "NOT_REQUESTED"
+      },
+      "final_world_stable_in_observations": true,
+      "courtyard_route_reappeared": true,
+      "completion_credit": {
+        "prologue_exit_interaction": "NOT_RUN",
+        "natural_travel_to_camp": "NOT_RUN",
+        "phase_or_exit_complete_fact": "NOT_EARNED",
+        "camp_checkpoint_save": "NOT_RUN",
+        "first_rescue": "NOT_RUN",
+        "full_route": "FAILED_FIRST_BLOCKER",
+        "shipping_route": "NOT_RUN",
+        "OS_route": "NOT_RUN"
+      },
+      "geometry_facts": {
+        "source": "Source/Hearthward/Building/HearthwardHometownFortress.cpp:87-104,183",
+        "northwest_corner_tower_center_local": [
+          -2200,
+          6500
+        ],
+        "tower_width": 800,
+        "foundation_width": 960,
+        "tower_footprint_x": [
+          -2600,
+          -1800
+        ],
+        "tower_footprint_y": [
+          6100,
+          6900
+        ],
+        "foundation_footprint_x": [
+          -2680,
+          -1720
+        ],
+        "foundation_footprint_y": [
+          6020,
+          6980
+        ],
+        "second_candidate_local_xy": [
+          -2042.7416700725735,
+          6767.080033621052
+        ],
+        "candidate_in_both_footprints": true,
+        "observed_second_surface": "actual TowerCornice then LandscapeStreamingProxy after ignoring exact Home",
+        "nav_goal_minus_actual_terrain_z_cm": 184.74645017546936
+      },
+      "inference": {
+        "status": "UNCONFIRMED_NAV_POLYGON_ASSOCIATION",
+        "detail": "Second projected point overlaps the corner tower/base XY and is about 184.746cm above actual terrain; a separate structure-height nav polygon is plausible. Which component/poly produced Z22150 and why its path is partial have not been proven. No general terrain-route or geometry-defect conclusion.",
+        "required_follow_up": "Read actual registered TowerFoundation/Tower bounds and nav-poly association or a bounded normal route around the structure; retain strict rejection. No guessed waypoint, position writes, source fixes or additional UE run in this handoff."
+      },
+      "historical_runs_preserved": [
+        "09 fixed XY100 projection false",
+        "10 fixed XY250 projection false",
+        "11 readonly collision/wide-Z diagnostic only; no movement from diagnostic"
+      ],
+      "privacy": {
+        "no_profile_or_save_contents_copied": true,
+        "no_raw_stdout_or_commands_copied": true
+      }
+    },
+    "state": "FAILED_FIRST_BLOCKER",
+    "owned_exit_verified": true,
+    "source_finding": "Both Source.4 guidance fixes independently Native RED→GREEN and actual four nodes verified. Nav12 grounded first segment ordinary complete query/controller path moved1976.913883cm; second valid=true/partial=true stopped before SimpleMove. No full escape/camp/newSave/OS; map/collision cause unproven.",
+    "historical_projection_runs": {
+      "source": "docs/qa/TASK-103/NAV09_11_PROJECTION_HISTORY.json",
+      "safe_summary": {
+        "schema_version": 1,
+        "task": "TASK-103",
+        "scope": "Historical completed Development/API diagnostics; no package or OS credit",
+        "source_version": "0.2.0-preview.20261007.4",
+        "state": "HISTORICAL_FIRST_BLOCKERS_RETAINED",
+        "runs": [
+          {
+            "run": 9,
+            "source_report": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-09/results.json",
+            "state": "FAILED_FIRST_BLOCKER",
+            "first_error": "Bounded query candidate has no actual generated nav projection; no fallback",
+            "evidence_level": "Development/API; public engine PathFollowing; NOT_OS_INPUT",
+            "source_changed_for_this_query": false,
+            "guidance_nodes": [
+              {
+                "at_monotonic": 289563.2602048,
+                "actual_position": {
+                  "X": 91798.92003126809,
+                  "Y": 53650.26999218296,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 86.28398905164562,
+                  "route_visible": true,
+                  "route_id": "bedroom_door",
+                  "route_label": "先出卧室门，进入回廊",
+                  "route_world": [
+                    92000,
+                    54150,
+                    23376.231064572712
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "bedroom_door",
+                "route_world": {
+                  "X": 92000.0,
+                  "Y": 54150.0,
+                  "Z": 23376.231064572712
+                },
+                "distance_to_node_cm": 538.7252147492253,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 91985.06847309624,
+                  "Y": 54112.89171863614,
+                  "Z": 23368.381066575428
+                },
+                "distance_at_arrival_cm": 40.762697531128616
+              },
+              {
+                "at_monotonic": 289567.4404224,
+                "actual_position": {
+                  "X": 91985.06847309624,
+                  "Y": 54112.89171863614,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 82.24484000175698,
+                  "route_visible": true,
+                  "route_id": "escape_stair_top",
+                  "route_label": "沿回廊到撤离楼梯（下楼）",
+                  "route_world": [
+                    93500,
+                    54550,
+                    23376.231064572712
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "escape_stair_top",
+                "route_world": {
+                  "X": 93500.0,
+                  "Y": 54550.0,
+                  "Z": 23376.231064572712
+                },
+                "distance_to_node_cm": 1576.750710579318,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 93462.61694605561,
+                  "Y": 54539.22692483645,
+                  "Z": 23368.381066575428
+                },
+                "distance_at_arrival_cm": 39.68846607323034
+              },
+              {
+                "at_monotonic": 289572.9051172,
+                "actual_position": {
+                  "X": 93462.61694605561,
+                  "Y": 54539.22692483645,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 83.15528496644338,
+                  "route_visible": true,
+                  "route_id": "escape_stair_bottom",
+                  "route_label": "沿楼梯下到庭院",
+                  "route_world": [
+                    93500,
+                    56300.500162124634,
+                    22791.238022580525
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "escape_stair_bottom",
+                "route_world": {
+                  "X": 93500.0,
+                  "Y": 56300.500162124634,
+                  "Z": 22791.238022580525
+                },
+                "distance_to_node_cm": 1853.8001516726456,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 93499.1613181739,
+                  "Y": 56260.986326334656,
+                  "Z": 22766.210249861244
+                },
+                "distance_at_arrival_cm": 46.78072266789745
+              },
+              {
+                "at_monotonic": 289579.6261452,
+                "actual_position": {
+                  "X": 93499.1613181739,
+                  "Y": 56260.986326334656,
+                  "Z": 22766.210249861244
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 67.50225889134417,
+                  "route_visible": true,
+                  "route_id": "courtyard_side_gate",
+                  "route_label": "从庭院西侧门绕到撤离口",
+                  "route_world": [
+                    89800,
+                    56300,
+                    22179.66768711376
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "courtyard_side_gate",
+                "route_world": {
+                  "X": 89800.0,
+                  "Y": 56300.0,
+                  "Z": 22179.66768711376
+                },
+                "distance_to_node_cm": 3745.577218870447,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 89840.05887651256,
+                  "Y": 56305.95463383806,
+                  "Z": 22179.268502275914
+                },
+                "distance_at_arrival_cm": 40.50099505109081
+              },
+              {
+                "at_monotonic": 289599.709185,
+                "actual_position": {
+                  "X": 89840.05887651256,
+                  "Y": 56305.95463383806,
+                  "Z": 22179.268502275914
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 56.96390657894874,
+                  "route_visible": false,
+                  "route_id": "None",
+                  "route_label": "",
+                  "route_world": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "state": "WALKING_ACTUAL_FINAL_TARGET",
+                "world": {
+                  "X": 90000.0,
+                  "Y": 62000.0,
+                  "Z": 22145.612411306938
+                },
+                "arrival_cm": 210,
+                "source": "current DescribeQuestGuidance.world",
+                "distance_to_target_cm": 5696.390657894874
+              }
+            ],
+            "query_extent": {
+              "X": 100,
+              "Y": 100,
+              "Z": 220
+            },
+            "qa_query_candidate": {
+              "X": 89896.21412747512,
+              "Y": 58305.131203046956,
+              "Z": 22167.45186504359
+            },
+            "projection_response": {
+              "Point": {
+                "X": 89896.21412747512,
+                "Y": 58305.131203046956,
+                "Z": 22167.45186504359
+              },
+              "ProjectedLocation": {
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              },
+              "ReturnValue": false
+            },
+            "final_segment_move_sent": false,
+            "camp_travel_or_new_save": "NOT_REACHED",
+            "owned_editor_exit_verified": true
+          },
+          {
+            "run": 10,
+            "source_report": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-10/results.json",
+            "state": "FAILED_FIRST_BLOCKER",
+            "first_error": "Bounded query candidate has no actual generated nav projection; no fallback",
+            "evidence_level": "Development/API; public engine PathFollowing; NOT_OS_INPUT",
+            "source_changed_for_this_query": false,
+            "guidance_nodes": [
+              {
+                "at_monotonic": 290062.5726014,
+                "actual_position": {
+                  "X": 91775.3459711031,
+                  "Y": 53656.163507224206,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 86.17808533472775,
+                  "route_visible": true,
+                  "route_id": "bedroom_door",
+                  "route_label": "先出卧室门，进入回廊",
+                  "route_world": [
+                    92000,
+                    54150,
+                    23376.231064572712
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "bedroom_door",
+                "route_world": {
+                  "X": 92000.0,
+                  "Y": 54150.0,
+                  "Z": 23376.231064572712
+                },
+                "distance_to_node_cm": 542.5915008229138,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 91983.10577247525,
+                  "Y": 54112.86295816758,
+                  "Z": 23368.381066575428
+                },
+                "distance_at_arrival_cm": 41.547530230792134
+              },
+              {
+                "at_monotonic": 290066.8895277,
+                "actual_position": {
+                  "X": 91983.10577247525,
+                  "Y": 54112.86295816758,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 82.24038083920627,
+                  "route_visible": true,
+                  "route_id": "escape_stair_top",
+                  "route_label": "沿回廊到撤离楼梯（下楼）",
+                  "route_world": [
+                    93500,
+                    54550,
+                    23376.231064572712
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "escape_stair_top",
+                "route_world": {
+                  "X": 93500.0,
+                  "Y": 54550.0,
+                  "Z": 23376.231064572712
+                },
+                "distance_to_node_cm": 1578.644517714003,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 93464.64822883166,
+                  "Y": 54539.812362397046,
+                  "Z": 23368.381066575428
+                },
+                "distance_at_arrival_cm": 37.61858786856599
+              },
+              {
+                "at_monotonic": 290072.0036532,
+                "actual_position": {
+                  "X": 93464.64822883166,
+                  "Y": 54539.812362397046,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 83.15849332575563,
+                  "route_visible": true,
+                  "route_id": "escape_stair_bottom",
+                  "route_label": "沿楼梯下到庭院",
+                  "route_world": [
+                    93500,
+                    56300.500162124634,
+                    22791.238022580525
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "escape_stair_bottom",
+                "route_world": {
+                  "X": 93500.0,
+                  "Y": 56300.500162124634,
+                  "Z": 22791.238022580525
+                },
+                "distance_to_node_cm": 1853.204081871723,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 93499.21194791039,
+                  "Y": 56261.251387484175,
+                  "Z": 22766.186794993133
+                },
+                "distance_at_arrival_cm": 46.568780749647516
+              },
+              {
+                "at_monotonic": 290077.5442259,
+                "actual_position": {
+                  "X": 93499.21194791039,
+                  "Y": 56261.251387484175,
+                  "Z": 22766.186794993133
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 67.50024626602381,
+                  "route_visible": true,
+                  "route_id": "courtyard_side_gate",
+                  "route_label": "从庭院西侧门绕到撤离口",
+                  "route_world": [
+                    89800,
+                    56300,
+                    22179.66768711376
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "courtyard_side_gate",
+                "route_world": {
+                  "X": 89800.0,
+                  "Y": 56300.0,
+                  "Z": 22179.66768711376
+                },
+                "distance_to_node_cm": 3745.620796936399,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 89838.69551201169,
+                  "Y": 56305.71688834143,
+                  "Z": 22179.045510219577
+                },
+                "distance_at_arrival_cm": 39.12048780681182
+              },
+              {
+                "at_monotonic": 290094.9752253,
+                "actual_position": {
+                  "X": 89838.69551201169,
+                  "Y": 56305.71688834143,
+                  "Z": 22179.045510219577
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 56.96665433889208,
+                  "route_visible": false,
+                  "route_id": "None",
+                  "route_label": "",
+                  "route_world": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "state": "WALKING_ACTUAL_FINAL_TARGET",
+                "world": {
+                  "X": 90000.0,
+                  "Y": 62000.0,
+                  "Z": 22145.612411306938
+                },
+                "arrival_cm": 210,
+                "source": "current DescribeQuestGuidance.world",
+                "distance_to_target_cm": 5696.665433889208
+              }
+            ],
+            "query_extent": {
+              "X": 250.0,
+              "Y": 250.0,
+              "Z": 220
+            },
+            "qa_query_candidate": {
+              "X": 89895.3267078789,
+              "Y": 58304.88049650544,
+              "Z": 22167.307731583765
+            },
+            "projection_response": {
+              "Point": {
+                "X": 89895.3267078789,
+                "Y": 58304.88049650544,
+                "Z": 22167.307731583765
+              },
+              "ProjectedLocation": {
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              },
+              "ReturnValue": false
+            },
+            "final_segment_move_sent": false,
+            "camp_travel_or_new_save": "NOT_REACHED",
+            "owned_editor_exit_verified": true
+          },
+          {
+            "run": 11,
+            "source_report": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-11/results.json",
+            "state": "FAILED_FIRST_BLOCKER",
+            "first_error": "Bounded query candidate has no actual generated nav projection; no fallback",
+            "evidence_level": "Development/API; public engine PathFollowing; NOT_OS_INPUT",
+            "source_changed_for_this_query": false,
+            "guidance_nodes": [
+              {
+                "at_monotonic": 290655.4446485,
+                "actual_position": {
+                  "X": 91782.10796791618,
+                  "Y": 53654.47300802098,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 86.20840606777732,
+                  "route_visible": true,
+                  "route_id": "bedroom_door",
+                  "route_label": "先出卧室门，进入回廊",
+                  "route_world": [
+                    92000,
+                    54150,
+                    23376.231064572712
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "bedroom_door",
+                "route_world": {
+                  "X": 92000.0,
+                  "Y": 54150.0,
+                  "Z": 23376.231064572712
+                },
+                "distance_to_node_cm": 541.3737709697,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 91983.01253277059,
+                  "Y": 54111.367341168814,
+                  "Z": 23368.381066575428
+                },
+                "distance_at_arrival_cm": 42.9264352094888
+              },
+              {
+                "at_monotonic": 290660.6815394,
+                "actual_position": {
+                  "X": 91983.01253277059,
+                  "Y": 54111.367341168814,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 82.25449964312611,
+                  "route_visible": true,
+                  "route_id": "escape_stair_top",
+                  "route_label": "沿回廊到撤离楼梯（下楼）",
+                  "route_world": [
+                    93500,
+                    54550,
+                    23376.231064572712
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "escape_stair_top",
+                "route_world": {
+                  "X": 93500.0,
+                  "Y": 54550.0,
+                  "Z": 23376.231064572712
+                },
+                "distance_to_node_cm": 1579.1488870885396,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 93461.21677159633,
+                  "Y": 54538.8235105398,
+                  "Z": 23368.381066575428
+                },
+                "distance_at_arrival_cm": 41.11782083990629
+              },
+              {
+                "at_monotonic": 290665.8253304,
+                "actual_position": {
+                  "X": 93461.21677159633,
+                  "Y": 54538.8235105398,
+                  "Z": 23368.381066575428
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 83.15307530762799,
+                  "route_visible": true,
+                  "route_id": "escape_stair_bottom",
+                  "route_label": "沿楼梯下到庭院",
+                  "route_world": [
+                    93500,
+                    56300.500162124634,
+                    22791.238022580525
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "escape_stair_bottom",
+                "route_world": {
+                  "X": 93500.0,
+                  "Y": 56300.500162124634,
+                  "Z": 22791.238022580525
+                },
+                "distance_to_node_cm": 1854.2121930286926,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 93499.11175857355,
+                  "Y": 56260.15297478675,
+                  "Z": 22766.312452178277
+                },
+                "distance_at_arrival_cm": 47.43383348188349
+              },
+              {
+                "at_monotonic": 290671.8456418,
+                "actual_position": {
+                  "X": 93499.11175857355,
+                  "Y": 56260.15297478675,
+                  "Z": 22766.312452178277
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 67.50918123675824,
+                  "route_visible": true,
+                  "route_id": "courtyard_side_gate",
+                  "route_label": "从庭院西侧门绕到撤离口",
+                  "route_world": [
+                    89800,
+                    56300,
+                    22179.66768711376
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "route_id": "courtyard_side_gate",
+                "route_world": {
+                  "X": 89800.0,
+                  "Y": 56300.0,
+                  "Z": 22179.66768711376
+                },
+                "distance_to_node_cm": 3745.5530523826565,
+                "state": "NODE_REACHED",
+                "arrival_cm": 50,
+                "arrived_position": {
+                  "X": 89838.11389321016,
+                  "Y": 56305.605720204345,
+                  "Z": 22178.77956959241
+                },
+                "distance_at_arrival_cm": 38.53416286072182
+              },
+              {
+                "at_monotonic": 290683.2141849,
+                "actual_position": {
+                  "X": 89838.11389321016,
+                  "Y": 56305.605720204345,
+                  "Z": 22178.77956959241
+                },
+                "guidance": {
+                  "visible": true,
+                  "location": "prologue_exit",
+                  "label": "后巷撤离口",
+                  "distance_m": 56.967914992326854,
+                  "route_visible": false,
+                  "route_id": "None",
+                  "route_label": "",
+                  "route_world": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "world": [
+                    90000,
+                    62000,
+                    22145.612411306938
+                  ]
+                },
+                "state": "WALKING_ACTUAL_FINAL_TARGET",
+                "world": {
+                  "X": 90000.0,
+                  "Y": 62000.0,
+                  "Z": 22145.612411306938
+                },
+                "arrival_cm": 210,
+                "source": "current DescribeQuestGuidance.world",
+                "distance_to_target_cm": 5696.791499232685
+              }
+            ],
+            "query_extent": {
+              "X": 250.0,
+              "Y": 250.0,
+              "Z": 220
+            },
+            "qa_query_candidate": {
+              "X": 89894.9480275862,
+              "Y": 58304.7641168431,
+              "Z": 22167.135415759523
+            },
+            "projection_response": {
+              "Point": {
+                "X": 89894.9480275862,
+                "Y": 58304.7641168431,
+                "Z": 22167.135415759523
+              },
+              "ProjectedLocation": {
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              },
+              "ReturnValue": false
+            },
+            "final_segment_move_sent": false,
+            "camp_travel_or_new_save": "NOT_REACHED",
+            "owned_editor_exit_verified": true,
+            "read_only_surface": {
+              "state": "READ_ONLY_COMPLETE",
+              "candidate": {
+                "X": 89894.9480275862,
+                "Y": 58304.7641168431,
+                "Z": 22167.135415759523
+              },
+              "results_used_for_navigation": false,
+              "traces": [
+                {
+                  "state": "READ",
+                  "kind": "first_blocking_collision",
+                  "surface_classification": "CONFIRMED_FORTRESS_COLLISION",
+                  "impact_point": {
+                    "X": 89894.9480275862,
+                    "Y": 58304.7641168431,
+                    "Z": 22413.10966564693
+                  },
+                  "component": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.HearthwardHometownFortress_0.CloisterRoof_417",
+                  "actor_class": "/Script/Hearthward.HearthwardHometownFortress"
+                },
+                {
+                  "state": "READ",
+                  "kind": "same_ray_ignore_confirmed_home",
+                  "surface_classification": "CONFIRMED_GROUND_COLLISION",
+                  "impact_point": {
+                    "X": 89894.9480275862,
+                    "Y": 58304.7641168431,
+                    "Z": 21871.23670669948
+                  },
+                  "component": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:PersistentLevel.LandscapeStreamingProxy_D7T4VF4LBP34PHV9XOEVM5TIG_1_5_5_0.LandscapeHeightfieldCollisionComponent_2",
+                  "actor_class": "/Script/Landscape.LandscapeStreamingProxy"
+                }
+              ],
+              "wide_z_projection": {
+                "state": "READ",
+                "response": {
+                  "Point": {
+                    "X": 89894.9480275862,
+                    "Y": 58304.7641168431,
+                    "Z": 22167.135415759523
+                  },
+                  "ProjectedLocation": {
+                    "X": 89908,
+                    "Y": 58304.7641168431,
+                    "Z": 22419.483234135907
+                  },
+                  "ReturnValue": true
+                },
+                "actual_nav_point": {
+                  "X": 89908.0,
+                  "Y": 58304.7641168431,
+                  "Z": 22419.483234135907
+                },
+                "delta_z_cm": 252.34781837638366
+              },
+              "movement_from_diagnostic": false
+            }
+          }
+        ],
+        "interpretation": {
+          "09": "Fixed100/100/220 query of first <=2000cm candidate returned false; no final-segment movement.",
+          "10": "Independent run predeclared fixed250/250/220; projection false did not support narrow-XY hypothesis.",
+          "11": "Original250/250/220 remained false. Confirmed terrain hit below interpolated QA candidate; diagnostic wideZ1000 found nav at +252.34781837638366cm near fortress-roof height. Read-only result was not used for movement.",
+          "cause_boundary": "The interpolated QA Z was not terrain-following. This does not establish that normal walking is blocked or diagnose map/collision root cause.",
+          "success_boundary": "All four existing guidance nodes were traversed in these runs; final target/camp/travel/new save/full route/Shipping/OS were not completed. LaterNav12 is independent."
+        },
+        "raw_results_changed": false,
+        "hashes_computed": 0
+      }
+    },
+    "historical_nav07": {
+      "source_report": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-07/results.json",
+      "guidance_nodes": [
+        {
+          "at_monotonic": 288796.239509,
+          "actual_position": {
+            "X": 91760.23244688,
+            "Y": 53659.94188828002,
+            "Z": 23368.381066575428
+          },
+          "guidance": {
+            "visible": true,
+            "location": "prologue_exit",
+            "label": "后巷撤离口",
+            "distance_m": 86.11048179996591,
+            "route_visible": true,
+            "route_id": "bedroom_door",
+            "route_label": "先出卧室门，进入回廊",
+            "route_world": [
+              92000,
+              54150,
+              23376.231064572712
+            ],
+            "world": [
+              90000,
+              62000,
+              22145.612411306938
+            ]
+          },
+          "route_id": "bedroom_door",
+          "route_world": {
+            "X": 92000.0,
+            "Y": 54150.0,
+            "Z": 23376.231064572712
+          },
+          "distance_to_node_cm": 545.6253795969006,
+          "state": "NODE_REACHED",
+          "arrival_cm": 50,
+          "arrived_position": {
+            "X": 91982.39314403247,
+            "Y": 54114.01355197356,
+            "Z": 23368.381066575428
+          },
+          "distance_at_arrival_cm": 40.824603943924075
+        },
+        {
+          "at_monotonic": 288800.4716033,
+          "actual_position": {
+            "X": 91982.39314403247,
+            "Y": 54114.01355197356,
+            "Z": 23368.381066575428
+          },
+          "guidance": {
+            "visible": true,
+            "location": "prologue_exit",
+            "label": "后巷撤离口",
+            "distance_m": 82.22762797276269,
+            "route_visible": true,
+            "route_id": "escape_stair_top",
+            "route_label": "沿回廊到撤离楼梯（下楼）",
+            "route_world": [
+              93500,
+              54550,
+              23376.231064572712
+            ],
+            "world": [
+              90000,
+              62000,
+              22145.612411306938
+            ]
+          },
+          "route_id": "escape_stair_top",
+          "route_world": {
+            "X": 93500.0,
+            "Y": 54550.0,
+            "Z": 23376.231064572712
+          },
+          "distance_to_node_cm": 1579.0112015470086,
+          "state": "NODE_REACHED",
+          "arrival_cm": 50,
+          "arrived_position": {
+            "X": 93461.76272685423,
+            "Y": 54539.014985774804,
+            "Z": 23368.381066575428
+          },
+          "distance_at_arrival_cm": 40.55098104497041
+        },
+        {
+          "at_monotonic": 288805.534377,
+          "actual_position": {
+            "X": 93461.76272685423,
+            "Y": 54539.014985774804,
+            "Z": 23368.381066575428
+          },
+          "guidance": {
+            "visible": true,
+            "location": "prologue_exit",
+            "label": "后巷撤离口",
+            "distance_m": 83.15362995313991,
+            "route_visible": true,
+            "route_id": "escape_stair_bottom",
+            "route_label": "沿楼梯下到庭院",
+            "route_world": [
+              93500,
+              56300.500162124634,
+              22791.238022580525
+            ],
+            "world": [
+              90000,
+              62000,
+              22145.612411306938
+            ]
+          },
+          "route_id": "escape_stair_bottom",
+          "route_world": {
+            "X": 93500.0,
+            "Y": 56300.500162124634,
+            "Z": 22791.238022580525
+          },
+          "distance_to_node_cm": 1854.0189343125703,
+          "state": "NODE_REACHED",
+          "arrival_cm": 50,
+          "arrived_position": {
+            "X": 93499.14801398887,
+            "Y": 56261.25152838109,
+            "Z": 22766.16771384776
+          },
+          "distance_at_arrival_cm": 46.58005486100049
+        },
+        {
+          "at_monotonic": 288811.7003315,
+          "actual_position": {
+            "X": 93499.14801398887,
+            "Y": 56261.25152838109,
+            "Z": 22766.16771384776
+          },
+          "guidance": {
+            "visible": true,
+            "location": "prologue_exit",
+            "label": "后巷撤离口",
+            "distance_m": 67.49989609460309,
+            "route_visible": true,
+            "route_id": "courtyard_side_gate",
+            "route_label": "从庭院西侧门绕到撤离口",
+            "route_world": [
+              89800,
+              56300,
+              22179.66768711376
+            ],
+            "world": [
+              90000,
+              62000,
+              22145.612411306938
+            ]
+          },
+          "route_id": "courtyard_side_gate",
+          "route_world": {
+            "X": 89800.0,
+            "Y": 56300.0,
+            "Z": 22179.66768711376
+          },
+          "distance_to_node_cm": 3745.554665841845,
+          "state": "NODE_REACHED",
+          "arrival_cm": 50,
+          "arrived_position": {
+            "X": 89837.67290882219,
+            "Y": 56305.52572665088,
+            "Z": 22178.6841576746
+          },
+          "distance_at_arrival_cm": 38.08869969299331
+        },
+        {
+          "at_monotonic": 288829.8229131,
+          "actual_position": {
+            "X": 89837.67290882219,
+            "Y": 56305.52572665088,
+            "Z": 22178.6841576746
+          },
+          "guidance": {
+            "visible": true,
+            "location": "prologue_exit",
+            "label": "后巷撤离口",
+            "distance_m": 56.96883452798826,
+            "route_visible": true,
+            "route_id": "courtyard_side_gate",
+            "route_label": "从庭院西侧门绕到撤离口",
+            "route_world": [
+              89800,
+              56300,
+              22179.66768711376
+            ],
+            "world": [
+              90000,
+              62000,
+              22145.612411306938
+            ]
+          },
+          "route_id": "courtyard_side_gate",
+          "route_world": {
+            "X": 89800.0,
+            "Y": 56300.0,
+            "Z": 22179.66768711376
+          },
+          "distance_to_node_cm": 38.08869969299331
+        }
+      ],
+      "owned_exit_verified": true
+    },
+    "historical_nav06": {
+      "source_report": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-06/results.json",
+      "guidance_nodes": [
+        {
+          "at_monotonic": 288112.9492707,
+          "actual_position": {
+            "X": 91781.8337327185,
+            "Y": 53654.541566820386,
+            "Z": 23368.381066575428
+          },
+          "guidance": {
+            "visible": true,
+            "location": "prologue_exit",
+            "label": "后巷撤离口",
+            "distance_m": 86.20717551067857,
+            "route_visible": true,
+            "route_id": "bedroom_door",
+            "route_label": "先出卧室门，进入回廊",
+            "route_world": [
+              92000,
+              54150,
+              23376.231064572712
+            ],
+            "world": [
+              90000,
+              62000,
+              22145.612411306938
+            ]
+          },
+          "route_id": "bedroom_door",
+          "route_world": {
+            "X": 92000.0,
+            "Y": 54150.0,
+            "Z": 23376.231064572712
+          },
+          "distance_to_node_cm": 541.421463978755,
+          "state": "NODE_REACHED",
+          "arrival_cm": 50,
+          "arrived_position": {
+            "X": 91983.77549235449,
+            "Y": 54113.153931919434,
+            "Z": 23368.381066575428
+          },
+          "distance_at_arrival_cm": 41.018164877215085
+        },
+        {
+          "at_monotonic": 288116.2267848,
+          "actual_position": {
+            "X": 91983.77549235449,
+            "Y": 54113.153931919434,
+            "Z": 23368.381066575428
+          },
+          "guidance": {
+            "visible": true,
+            "location": "prologue_exit",
+            "label": "后巷撤离口",
+            "distance_m": 82.2392055469721,
+            "route_visible": true,
+            "route_id": "escape_stair_top",
+            "route_label": "沿回廊到撤离楼梯（下楼）",
+            "route_world": [
+              93500,
+              54550,
+              23376.231064572712
+            ],
+            "world": [
+              90000,
+              62000,
+              22145.612411306938
+            ]
+          },
+          "route_id": "escape_stair_top",
+          "route_world": {
+            "X": 93500.0,
+            "Y": 54550.0,
+            "Z": 23376.231064572712
+          },
+          "distance_to_node_cm": 1577.9204248791798,
+          "state": "NODE_REACHED",
+          "arrival_cm": 50,
+          "arrived_position": {
+            "X": 93462.25627186491,
+            "Y": 54539.12548956478,
+            "Z": 23368.381066575428
+          },
+          "distance_at_arrival_cm": 40.055791832123475
+        },
+        {
+          "at_monotonic": 288121.2705689,
+          "actual_position": {
+            "X": 93462.25627186491,
+            "Y": 54539.12548956478,
+            "Z": 23368.381066575428
+          },
+          "guidance": {
+            "visible": true,
+            "location": "prologue_exit",
+            "label": "后巷撤离口",
+            "distance_m": 83.15469327514654,
+            "route_visible": true,
+            "route_id": "escape_stair_top",
+            "route_label": "沿回廊到撤离楼梯（下楼）",
+            "route_world": [
+              93500,
+              54550,
+              23376.231064572712
+            ],
+            "world": [
+              90000,
+              62000,
+              22145.612411306938
+            ]
+          },
+          "route_id": "escape_stair_top",
+          "route_world": {
+            "X": 93500.0,
+            "Y": 54550.0,
+            "Z": 23376.231064572712
+          },
+          "distance_to_node_cm": 40.055791832123475
+        }
+      ],
+      "owned_exit_verified": true
+    },
+    "historical_nav05": {
+      "source_report": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-05/results.json",
+      "read_only_diagnostic": {
+        "stage": "actual_escape_walk",
+        "state": "READ_COMPLETE",
+        "path": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:NavigationSystemV1_0.NavigationPath_233",
+        "actual_start": {
+          "X": 91780.73054386931,
+          "Y": 53654.817364032686,
+          "Z": 23368.381066575428
+        },
+        "actual_goal": {
+          "X": 90000.0,
+          "Y": 62000.0,
+          "Z": 22145.612411306938
+        },
+        "path_is_valid": false,
+        "path_is_partial": false,
+        "path_points": "NOT_READ",
+        "query_extent": {
+          "X": 100,
+          "Y": 100,
+          "Z": 220
+        },
+        "purpose": "READ_ONLY_NO_FALLBACK",
+        "navigation_system": {
+          "state": "READ",
+          "response": {
+            "ReturnValue": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:NavigationSystemV1_0"
+          }
+        },
+        "building_or_locked": {
+          "state": "READ",
+          "response": {
+            "ReturnValue": false
+          }
+        },
+        "start_projection": {
+          "state": "READ",
+          "response": {
+            "Point": {
+              "X": 91780.73054386931,
+              "Y": 53654.817364032686,
+              "Z": 23368.381066575428
+            },
+            "ProjectedLocation": {
+              "X": 91780.73054386931,
+              "Y": 53654.817364032686,
+              "Z": 23280
+            },
+            "ReturnValue": true
+          },
+          "projected_location_valid": true
+        },
+        "goal_projection": {
+          "state": "READ",
+          "response": {
+            "Point": {
+              "X": 90000,
+              "Y": 62000,
+              "Z": 22145.612411306938
+            },
+            "ProjectedLocation": {
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "ReturnValue": false
+          },
+          "projected_location_valid": false
+        }
+      },
+      "owned_exit_verified": true
+    },
+    "historical_nav04": {
+      "source_report": ".agent-local/qa/TASK-084/fresh-prologue-navigation-api-20261007-04/results.json",
+      "read_only_diagnostic": {
+        "stage": "actual_escape_walk",
+        "state": "READ_COMPLETE",
+        "path": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:NavigationSystemV1_0.NavigationPath_133",
+        "actual_start": {
+          "X": 91759.33209645525,
+          "Y": 53660.1669758862,
+          "Z": 23368.381066575428
+        },
+        "actual_goal": {
+          "X": 90000.0,
+          "Y": 62000.0,
+          "Z": 22145.612411306938
+        },
+        "path_is_valid": false,
+        "path_is_partial": false,
+        "path_points": "NOT_READ",
+        "query_extent": {
+          "X": 100,
+          "Y": 100,
+          "Z": 220
+        },
+        "purpose": "READ_ONLY_NO_FALLBACK",
+        "navigation_system": {
+          "state": "READ",
+          "response": {
+            "ReturnValue": "/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds.L_HearthwardWilds:NavigationSystemV1_0"
+          }
+        },
+        "building_or_locked": {
+          "state": "READ",
+          "response": {
+            "ReturnValue": true
+          }
+        },
+        "start_projection": {
+          "state": "READ",
+          "response": {
+            "Point": {
+              "X": 91759.33209645525,
+              "Y": 53660.1669758862,
+              "Z": 23368.381066575428
+            },
+            "ProjectedLocation": {
+              "X": 91759.33209645525,
+              "Y": 53660.1669758862,
+              "Z": 23280
+            },
+            "ReturnValue": true
+          },
+          "projected_location_valid": true
+        },
+        "goal_projection": {
+          "state": "READ",
+          "response": {
+            "Point": {
+              "X": 90000,
+              "Y": 62000,
+              "Z": 22145.612411306938
+            },
+            "ProjectedLocation": {
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "ReturnValue": false
+          },
+          "projected_location_valid": false
+        }
+      },
+      "owned_exit_verified": true
+    },
+    "shipping": "NOT_RUN",
+    "normal_os_input": "NOT_RUN",
+    "escape_camp_new_save": "NOT_REACHED",
+    "prior_python_attempt": "HTTP400 security refusal; no driver or movement; historical body NOT_RETAINED"
+  },
+  "first_attempt_result": ".agent-local/qa/TASK-103/package-20261007-1/result.json",
+  "first_attempt_cook_failure": "docs/qa/TASK-103/FIRST_COOK_FAIL.json",
+  "historical_retry_state": "BUILD_SUCCESS",
+  "config_microfix": "Config/DefaultGame.ini GameFeatureData AssetManager rule; root-owned, empty scan directories and AlwaysCook",
+  "historical_source_freeze_evidence": [
+    ".agent-local/qa/TASK-103/package-20261007-2/tracked.patch",
+    ".agent-local/qa/TASK-103/package-20261007-2/untracked-files.txt"
+  ],
+  "remote_version_uniqueness": "UNKNOWN: gh 401, unauthenticated API 403 rate limit; cached web page insufficient",
+  "rules": [
+    "每条结果绑定自身原始index和dirty快照，不能迁移为最终候选PASS。",
+    "found=0表示本截点无原生证据，不代表游戏测试成功。",
+    "设计暂缓/工程缺项/真人环境分别登记，不泛化为全单需人工。"
+  ],
+  "tasks": [
+    {
+      "task": "TASK-084",
+      "title": "连续体验基线、断点复现与本轮范围冻结",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "Nav12普通API四节点完成；实际确认地形+Z100/固定XY250/Z220，首段完整query/controller路径普通移动1976.913883cm；第二路径valid=true/partial=true在SimpleMove前停止，自有退出true，无完整撤离/营地/首救/新保存/OS。09—11 QA插值Z与只读诊断保留，不定地图/碰撞根因。",
+      "source_report": "docs/qa/TASK-084/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 0,
+        "success": 0,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [],
+        "status": "NOT_RUN_OR_NO_NATIVE_SCOPE"
+      },
+      "normal_input_evidence": "docs/qa/TASK-103/OS_CANDIDATE5_PARTIAL_NORMAL_INPUT.json",
+      "invalid_return_continue_claim": "docs/qa/TASK-103/OS_CONTINUE_ERRATUM.json",
+      "normal_input": "PARTIAL候选5/.4：双CMD隐藏脚本启动＋正常OS输入、双Title.4、fresh profile无旧QA档复制；CPU新游戏/main01/Tneutral/F6鼠标保存1→2，Vulkan明确鼠标Continue同卧室/main01与原02:26manual/02:25auto仍2/Tneutral，两后端正常退出全自有进程gone，9截图；本轮模型/中文/IME/旧档兼容/全路线NOT_RUN",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-085",
+      "title": "共享显示契约、动作语义与UI增量接入基础",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "只读类型化个人/队伍显示契约和原动作适配已实现。",
+      "source_report": "docs/qa/TASK-085/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 4,
+        "success": 4,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Iteration.Task085.MissingAndInvalidCounts",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Iteration.Task085.PersonalReadOnly",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Iteration.Task085.TimelineAndOperations",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Iteration.Task085.WorldSources",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-086",
+      "title": "弟弟工作状态卡、停工原因和恢复入口",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "个人/队伍状态卡、真实停工原因与恢复入口已接入。",
+      "source_report": "docs/qa/TASK-086/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 3,
+        "success": 3,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Iteration.Task086.PartyStatus",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Iteration.Task086.PersonalStatus",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Iteration.Task086.StatusActionBinding",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-087",
+      "title": "自然语言委托可靠性、取消回退与真实模型全矩阵",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "生命周期3项与真实候选/各档身份投影4项已GREEN；固定AI Source.2原60双后端均已实际完成且语义质量FAIL；历史完整/定位失败独立保留。",
+      "source_report": "docs/qa/TASK-087/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 7,
+        "success": 7,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+            "report_created_on": "2026.10.06-22.17.25",
+            "test": "Hearthward.Iteration.Task087.BusyKeepsRequest",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+            "report_created_on": "2026.10.06-22.17.25",
+            "test": "Hearthward.Iteration.Task087.CancelKeepsManualFallback",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+            "report_created_on": "2026.10.06-22.17.25",
+            "test": "Hearthward.Iteration.Task087.FailureInvalidatesCallback",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+            "report_created_on": "2026.10.06-22.17.25",
+            "test": "Hearthward.Iteration.Task087.Projection.CurrentStateIsNotNewDirective",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+            "report_created_on": "2026.10.06-22.17.25",
+            "test": "Hearthward.Iteration.Task087.Projection.KnownObjectsAndUnknownViews",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+            "report_created_on": "2026.10.06-22.17.25",
+            "test": "Hearthward.Iteration.Task087.Projection.OwnershipEveryTier",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-087-099/native-green-20261007-01/index.json",
+            "report_created_on": "2026.10.06-22.17.25",
+            "test": "Hearthward.Iteration.Task087.Projection.RepairMultiplicity",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "COMPLETE_QUALITY_FAIL：Source.2 CPU原始33/60、受限3/20、明确E2E33/40、执行25/30；Vulkan原始32/60、受限2/20、明确E2E33/40、执行24/30；各边界20/20、白得0。每后端原59暖样本不足，预声明性能辅助1条补足60，CPU组件p95 22.656s≤30s、Vulkan8.672s≤10s；UIpaint/IME/Shipping未验，历史失败单列。",
+      "real_model_evidence": {
+        "cpu": {
+          "source_report": "docs/qa/TASK-087/cpu-final-20261007-01.json",
+          "run_id": "final-cpu-20261007-01",
+          "source_revision": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058-dirty",
+          "backend": "cpu",
+          "diagnostic_subset": false,
+          "original_denominators": {
+            "all": 60,
+            "clear": 40,
+            "guarded": 20,
+            "execution": 30,
+            "boundaries": 20
+          },
+          "summary": {
+            "case_count": 60,
+            "raw_correct": 33,
+            "guarded_count": 20,
+            "guarded_raw_correct": 3,
+            "clear_count": 40,
+            "clear_e2e_correct": 33,
+            "execution_count": 30,
+            "execution_correct": 25,
+            "unearned_item_cases": 0,
+            "boundary_count": 20,
+            "boundary_correct": 20
+          },
+          "quality": "FAIL",
+          "original_warm": {
+            "sample_count": 59,
+            "minimum_sample_count": 60,
+            "incomplete_reply_count": 0,
+            "p95_seconds": null,
+            "p95_method": "nearest rank after at least the full expression dataset of warm samples",
+            "limit_seconds": 30,
+            "status": "INSUFFICIENT_SAMPLES",
+            "clock": "time.monotonic",
+            "endpoint": "UE proposal/status review completed; no Slate paint",
+            "cold_first_cases": [
+              "C01"
+            ],
+            "cold_restart_cases": [],
+            "ui_paint_status": "NOT_RUN",
+            "joint_scenario_status": "NOT_RUN"
+          },
+          "warm_with_predeclared_auxiliary": {
+            "sample_count": 60,
+            "minimum_sample_count": 60,
+            "incomplete_reply_count": 0,
+            "p95_seconds": 22.65600000001723,
+            "p95_method": "nearest rank after at least the full expression dataset of warm samples",
+            "limit_seconds": 30,
+            "status": "PASS",
+            "clock": "time.monotonic",
+            "endpoint": "UE proposal/status review completed; no Slate paint",
+            "cold_first_cases": [
+              "C01"
+            ],
+            "cold_restart_cases": [],
+            "ui_paint_status": "NOT_RUN",
+            "joint_scenario_status": "NOT_RUN",
+            "original_warm_sample_count": 59,
+            "auxiliary_warm_sample_count": 1,
+            "auxiliary_failure_count": 0,
+            "auxiliary_sample_ids": [
+              "WARM-C01-01"
+            ],
+            "population": "Original warm rows plus the one predeclared performance-only C01; no failed rows replaced"
+          }
+        },
+        "vulkan": {
+          "source_report": "docs/qa/TASK-087/vulkan-final-20261007-02.json",
+          "run_id": "final-vulkan-20261007-02",
+          "source_revision": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058-dirty",
+          "backend": "vulkan",
+          "diagnostic_subset": false,
+          "original_denominators": {
+            "all": 60,
+            "clear": 40,
+            "guarded": 20,
+            "execution": 30,
+            "boundaries": 20
+          },
+          "summary": {
+            "case_count": 60,
+            "raw_correct": 32,
+            "guarded_count": 20,
+            "guarded_raw_correct": 2,
+            "clear_count": 40,
+            "clear_e2e_correct": 33,
+            "execution_count": 30,
+            "execution_correct": 24,
+            "unearned_item_cases": 0,
+            "boundary_count": 20,
+            "boundary_correct": 20
+          },
+          "quality": "FAIL",
+          "original_warm": {
+            "sample_count": 59,
+            "minimum_sample_count": 60,
+            "incomplete_reply_count": 0,
+            "p95_seconds": null,
+            "p95_method": "nearest rank after at least the full expression dataset of warm samples",
+            "limit_seconds": 10,
+            "status": "INSUFFICIENT_SAMPLES",
+            "clock": "time.monotonic",
+            "endpoint": "UE proposal/status review completed; no Slate paint",
+            "cold_first_cases": [
+              "C01"
+            ],
+            "cold_restart_cases": [],
+            "ui_paint_status": "NOT_RUN",
+            "joint_scenario_status": "NOT_RUN"
+          },
+          "warm_with_predeclared_auxiliary": {
+            "sample_count": 60,
+            "minimum_sample_count": 60,
+            "incomplete_reply_count": 0,
+            "p95_seconds": 8.672000000020489,
+            "p95_method": "nearest rank after at least the full expression dataset of warm samples",
+            "limit_seconds": 10,
+            "status": "PASS",
+            "clock": "time.monotonic",
+            "endpoint": "UE proposal/status review completed; no Slate paint",
+            "cold_first_cases": [
+              "C01"
+            ],
+            "cold_restart_cases": [],
+            "ui_paint_status": "NOT_RUN",
+            "joint_scenario_status": "NOT_RUN",
+            "original_warm_sample_count": 59,
+            "auxiliary_warm_sample_count": 1,
+            "auxiliary_failure_count": 0,
+            "auxiliary_sample_ids": [
+              "WARM-C01-01"
+            ],
+            "population": "Original warm rows plus the one predeclared performance-only C01; no failed rows replaced"
+          }
+        }
+      },
+      "performance": "WARM_COMPONENT_ONLY_PASS：CPU22.656s≤30s、Vulkan8.672s≤10s，每后端60暖样本含独立辅助1条，非联合/UI绘制PASS",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。",
+      "historical_shipping_single_request": "Candidate4/version.3 single Vulkan16 follow proposal+mouse confirm+HUD Following P; original60 Shipping/IME/UIpaint not run, candidate5 no model request."
+    },
+    {
+      "task": "TASK-088",
+      "title": "制作配方查找、可制作筛选与缺料追踪",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "配方搜索/实际可制作筛选/epoch材料目标；首轮界面夹具断言已核实。",
+      "source_report": "docs/qa/TASK-088/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 2,
+        "success": 2,
+        "failed": 0,
+        "warnings": 1,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.Iteration.Task088.DiscoveryAndSessionTarget",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.Iteration.Task088.ReservedAndOffCampMaterials",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-089",
+      "title": "背包与仓储操作一致性、实例详情和可读性",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "装备实例GUID/真实转移预览/操作卡幂等/距设施与epoch拒绝。",
+      "source_report": "docs/qa/TASK-089/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 3,
+        "success": 3,
+        "failed": 0,
+        "warnings": 3,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Iteration.Task089.AccessAndTimeline",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Iteration.Task089.InstanceSelection",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Iteration.Task089.PreviewAndReplay",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-090",
+      "title": "HUD与日志目标层级、首次准备引导",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "准备视图/日志地点和双方倒地优先提示已接入；最新3项原生GREEN。",
+      "source_report": "docs/qa/TASK-090/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 3,
+        "success": 3,
+        "failed": 0,
+        "warnings": 2,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.Iteration.Task090.AuthoritativeStagesAndReadOnly",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.Iteration.Task090.BrotherDownedSuppressesMaterials",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.Iteration.Task090.PlayerDownedSuppressesMaterials",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "PARTIAL候选2：J main01地点与准备文本；其他HUD/倒地/正常路径未验",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-091",
+      "title": "地图可读性与关键入口转折引导",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "顶/侧门各独立同case Native RED1F0W1E→GREEN1P0W0E，四原件不合分母；Nav08—12实际四节点交接，12末段首段19.77m实际移动，第二partial停止；OS完整路线/渲染/传送未验。",
+      "source_report": "docs/qa/TASK-091/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 1,
+        "success": 1,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-091/native-side-gate-20261007-green/native/index.json",
+            "report_created_on": "2026.10.07-01.45.37",
+            "test": "Hearthward.Iteration.Task091.LoadedFortressSpatialNodes",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-092",
+      "title": "首次救援往返路线与遭遇灰盒打磨",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "明确waiting停止真实AI路径的RED→最小修复→Fixture GREEN；正式路线未验。",
+      "source_report": "docs/qa/TASK-092/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 1,
+        "success": 1,
+        "failed": 0,
+        "warnings": 1,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Iteration.Task092.Fixture.FollowWaitAndPhysicalArrival",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-093",
+      "title": "营地准备、回营成长反馈与岗位可视状态",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "营地准备/本地设施/旧tier卡/会话反馈；先前2条失败修正诊断后2项Success，Receipt本轮Success。",
+      "source_report": "docs/qa/TASK-093/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 3,
+        "success": 3,
+        "failed": 0,
+        "warnings": 2,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-red-20261007/index.json",
+            "report_created_on": "2026.10.06-20.57.42",
+            "test": "Hearthward.Iteration.Task093.LocalFacilitiesAndWork",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Iteration.Task093.ReceiptTimeline",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-red-20261007/index.json",
+            "report_created_on": "2026.10.06-20.57.42",
+            "test": "Hearthward.Iteration.Task093.UpgradePreviewAndReplay",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-094",
+      "title": "关键资产盘点、风格样板与逐包制作清单",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "845行精确/候选/未知来源资产台账与逐包责任。未替换资产。",
+      "source_report": "docs/qa/TASK-094/REPORT.md",
+      "assets": "静态候选/实际Registry来源可定位；candidate5实际Cook SUCCESS，未替换本单Content，逐资产许可闭合及Owner首件NOT_RUN",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 0,
+        "success": 0,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [],
+        "status": "NOT_RUN_OR_NO_NATIVE_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "DEFERRED_DESIGN：070人物/营地/地表样图与衍生首件签收；077石堡方向已有确认。",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-095",
+      "title": "兄弟与敌人辨识、武器持握和关键动作收尾",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "技术绑定调查及既有3条动作回归；未更换角色/武器资产。",
+      "source_report": "docs/qa/TASK-095/REPORT.md",
+      "assets": "静态候选/实际Registry来源可定位；candidate5实际Cook SUCCESS，未替换本单Content，逐资产许可闭合及Owner首件NOT_RUN",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 3,
+        "success": 3,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Equipment055.HeldAxeFollowsCurrentInstanceAndMode",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Equipment055.StoneAxeLightUsesClipPhaseAndPhysicalBlade",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Equipment055.StoneAxeHeavyUsesCurrentMoveAndPhysicalBlade",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "DEFERRED_DESIGN：角色服装/轮廓、武器持握、倒地复活/弓首件审看。",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-096",
+      "title": "石堡开场必经区域、近景材质与夜袭氛围",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "石堡结构/材质生命周期/碰撞职责调查及原077净空回归。未更换资产。",
+      "source_report": "docs/qa/TASK-096/REPORT.md",
+      "assets": "静态候选/实际Registry来源可定位；candidate5实际Cook SUCCESS，未替换本单Content，逐资产许可闭合及Owner首件NOT_RUN",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 1,
+        "success": 1,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Hometown077.BedroomAndEscapeClearance",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "DEFERRED_DESIGN：已有石堡方向下Lit近景/补面/夜袭火烟首件审看。",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-097",
+      "title": "救援路线自然环境、生态外观与远近景收尾",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "14物种303动作与别名/作物状态/来源调查及既有3条行为回归。未更换资产。",
+      "source_report": "docs/qa/TASK-097/REPORT.md",
+      "assets": "静态候选/实际Registry来源可定位；candidate5实际Cook SUCCESS，未替换本单Content，逐资产许可闭合及Owner首件NOT_RUN",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 3,
+        "success": 3,
+        "failed": 0,
+        "warnings": 1,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Animals.FrameBoundaryAndEscape",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Farming062.IndividualGrowthAndProductProgress",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Farming062.CropGeometryConsumesCalendarStage",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "DEFERRED_DESIGN：boar→pig外形衍生、作物成熟辨识、自然环境首件审看。",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-098",
+      "title": "营地核心设施、道具与关键图标统一",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "8设施Kind/碰撞/岗位与187 UI定义文件/UV调查及既有3条行为回归。未更换资产。",
+      "source_report": "docs/qa/TASK-098/REPORT.md",
+      "assets": "静态候选/实际Registry来源可定位；candidate5实际Cook SUCCESS，未替换本单Content，逐资产许可闭合及Owner首件NOT_RUN",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 3,
+        "success": 3,
+        "failed": 0,
+        "warnings": 3,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Camp059.WorkerAssignmentPresentation",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Farming062.CropProgressAndHarvestCapacity",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-085-099/native-first-20261007/index.json",
+            "report_created_on": "2026.10.06-20.35.14",
+            "test": "Hearthward.Farming062.PenProductiveAnimalAndPausePresentation",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "DEFERRED_DESIGN：用途可辨设施与关键武器图标首件审看。",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-099",
+      "title": "动作音效、环境声与事件反馈同步",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "仓储、真实玩家/NPC/Progress/Combat事件、空挥与持续水源PCM绑定已实施；四条Walk/Run精确包实际写入16个脚步Notify。Native13本单23项23P/0warning/0error，包含实际clip派发/ground门禁与loaded水网格关联、连续PCM、暂停/Load/退出；Native06等真实失败历史保留，实际声音听感未验。",
+      "source_report": "docs/qa/TASK-099/REPORT.md",
+      "assets": "当前17个event/12个WAV与CC0来源已登记；candidate5 install核9项许可与water配对；最终有界扫描由外部record独立；路径/存在不是全部Content许可结论；实听/Owner与未知Content许可未验；最终Archive闭合见外部record",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 23,
+        "success": 23,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.CommittedTransferAndIdentity",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.PauseAndLocalAccess",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.TimelineAndShutdown",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.ActualLoadSeedsHistory",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.NPCCommittedSuccessUnbound",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.PlayerCommittedSuccessUnbound",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.ActualLandingAndWaterTransitions",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.Combat.RealDamageReceipts",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.Combat.RealGuardReceipts",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.Combat.RealHitReceipts",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.FootContact.ActualClipDispatch",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.FootContact.GroundGuards",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.BoundPauseAndActualLoad",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.BoundSuccessAndSpatialAttenuation",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.CombatActualLoadNoHistory",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.CombatProducerConsumerUnbound",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.CombatSuppressionAndRebinding",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.ProgressActualLoadAndSuppression",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.ProgressCommittedSuccessUnbound",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.Combat.ActualEmptySwing",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.Environment.ActualLoadPauseAndExit",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.Environment.ContinuousPCM",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Iteration.Task099.Environment.LoadedMeshAssociationAndTransform",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "DEFERRED_DESIGN：实际声音听感；固定录音仍UNPRODUCED，字幕预览交付需Owner决定。",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-100",
+      "title": "四区差异化内容与首版全流程接续",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "127行稳定ID覆盖；未知side/waiting真实RED→091展示修复→3夹具GREEN；7原Campaign回归Success。",
+      "source_report": "docs/qa/TASK-100/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 10,
+        "success": 10,
+        "failed": 0,
+        "warnings": 7,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.Iteration.Task100.Fixture.PrologueActionGoalRemainsVisible",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.Iteration.Task100.Fixture.UnknownSideGoalIsHidden",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.Iteration.Task100.Fixture.WaitingRescueUsesCurrentPersonPosition",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Campaign049.ContentContract",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Campaign049.RegistryAndVictory",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Campaign067.SecondStage.OccupiedGiftsStayOnLegalGroundOrRollback",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Campaign067.SecondStage.PromptUsesWeightedControlProgress",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Campaign067.FailedSurvivalRejectsAutomaticVictory",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Campaign067.FlagUsesActualActiveSeconds",
+            "state": "Success",
+            "warnings": 3,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Campaign067.VictoryActivatesActualSecondCamp",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "DEFERRED_DESIGN：批准095—099资产后既有一区空间/近远景首件；未自批新布局。",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    },
+    {
+      "task": "TASK-101",
+      "title": "存读档、时间线和跨页面集成回归",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "支持schema/真实隔离文件、Load与原时间分区回归；未改Save格式。",
+      "source_report": "docs/qa/TASK-101/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 7,
+        "success": 7,
+        "failed": 0,
+        "warnings": 1,
+        "errors": 0,
+        "tests": [
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-save-isolated-20261007-08/native/index.json",
+            "report_created_on": "2026.10.06-23.53.04",
+            "test": "Hearthward.Save.ActualLoadPointInvalidatesOldCommandTicket",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Save.ActualLoadPointPreservesPartialMaterialSettlementRevision",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Save.CompatibilityPreviewAndConsent",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+            "report_created_on": "2026.10.07-00.32.03",
+            "test": "Hearthward.Save.FileIntegrityAndSnapshot",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Time.DomainPartitionRefreshAndEpoch",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-090-100/native-green-20261007/index.json",
+            "report_created_on": "2026.10.06-21.07.52",
+            "test": "Hearthward.UI069.LoadingRestoresLatestPageInputMode",
+            "state": "Success",
+            "warnings": 1,
+            "errors": 0
+          },
+          {
+            "source_report": ".agent-local/qa/TASK-088-101/native-integration-20261007/index.json",
+            "report_created_on": "2026.10.06-20.46.13",
+            "test": "Hearthward.Camp.PartitionSleepAndRestoration",
+            "state": "Success",
+            "warnings": 0,
+            "errors": 0
+          }
+        ],
+        "status": "RUN_PARTIAL_SCOPE"
+      },
+      "normal_input_evidence": "docs/qa/TASK-101/OS_ORIGINAL_COPY_COMPATIBILITY.json",
+      "invalid_return_continue_claim": "docs/qa/TASK-103/OS_CONTINUE_ERRATUM.json",
+      "normal_input": "PARTIAL候选2/.1：readonly原档copy隔离件列4旧节点/实际Load最新营地，保存5/Return误新游戏6不计Continue/明确重Load营地存7/第三进程鼠标Continue同营地仍7；候选5卧室Continue不补旧档最终兼容或四新阶段；候选4原档隔离copy列4旧节点/最新户外夜景营地准备任务节点Load（营地指引1243m）→手工5→第二进程明确鼠标Continue同可见状态仍5/6图。其余3旧节点仅列出；4新阶段/全字段/候选5旧档兼容NOT_RUN。",
+      "real_model": "NOT_RUN_OR_OUTSIDE_NARROW_NATIVE_SCOPE",
+      "real_model_evidence": null,
+      "performance": "NOT_RUN",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。",
+      "normal_input_evidence_candidate4": "docs/qa/TASK-101/OS_CANDIDATE4_ORIGINAL_COPY_COMPATIBILITY.json"
+    },
+    {
+      "task": "TASK-102",
+      "title": "游戏与本地模型联合性能、内存及运行优化",
+      "status_at_audit": "Active",
+      "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+      "implementation_sha": null,
+      "uncommitted_source": true,
+      "implementation": "CPU/Vulkan单一稳定新游戏固定视角场景已采完整CSV与一条真实模型请求；Development/API层，GPU语义FAIL、CPU HTTP超时，六场景及Shipping/OS联合验收未完成。",
+      "source_report": "docs/qa/TASK-102/REPORT.md",
+      "assets": "无本单Content变更；运行树闭合独立记录，不补本单完整验收",
+      "native": {
+        "layer": "DEVELOPMENT_EDITOR_SELECTED_DIAGNOSTIC_SNAPSHOTS_NOT_SHIPPING_INPUT",
+        "found": 0,
+        "success": 0,
+        "failed": 0,
+        "warnings": 0,
+        "errors": 0,
+        "tests": [],
+        "status": "NOT_RUN_OR_NO_NATIVE_SCOPE"
+      },
+      "normal_input_evidence": null,
+      "invalid_return_continue_claim": null,
+      "normal_input": "NOT_RUN：本单正式正常输入验收未覆盖",
+      "real_model": "CAPTURE_COMPLETE_MODEL_FAILED：单场景Vulkan正常HTTP返回后TARGET_REQUIRED→clarify/无candidate；CPU HTTP120.007s超时→MODEL_UNAVAILABLE/raw空、语义不可评估；各generation1且完整请求在CSV内，无确认/执行",
+      "real_model_evidence": {
+        "cpu": {
+          "source_report": "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/summary.json",
+          "status": "CAPTURE_COMPLETE_MODEL_FAILED",
+          "scene": "normal_new_initial_scene_dialogue_fixed_view",
+          "evidence_level": "Uncooked standalone -game; public API injected UI/model input; stable one-scene diagnostic",
+          "build_source_binding": "NOT_VERIFIED_BY_RUNNER; bind actual build/candidate evidence separately",
+          "csv": "docs/qa/TASK-102/settled-dialogue-cpu-20261007-01/frames.csv",
+          "frames": {
+            "numeric_frames": 11603,
+            "seconds": 129.8656161,
+            "p99_ms": 16.5324,
+            "one_percent_low_fps": 51.34884564253696,
+            "over_50ms": 2,
+            "over_50ms_fraction": 0.00017236921485822633
+          },
+          "frame_gates": {
+            "p99_ms_max": 16.67,
+            "p99_result": "PASS",
+            "one_percent_low_min_fps": 60,
+            "one_percent_low_result": "FAIL",
+            "over_50ms_max_fraction": 0.001,
+            "over_50ms_result": "PASS"
+          },
+          "model": {
+            "actual_generations": 1,
+            "raw_returned": false,
+            "transport_result": "FAIL_HTTP_TIMEOUT",
+            "http_terminal_kind": "HTTP_FAILED",
+            "original_single_semantic_expectation": "FAIL",
+            "semantic_evaluable": false,
+            "semantic_result": "NOT_EVALUABLE_HTTP_TIMEOUT_RAW_EMPTY",
+            "reason": "MODEL_UNAVAILABLE",
+            "applied_intent": "",
+            "has_candidate": false,
+            "input_tokens": 3221,
+            "output_tokens": 0,
+            "context_tier": "required_minimal",
+            "startup_to_ready_log_seconds": 8.496,
+            "generation_to_http_terminal_log_seconds": 120.007,
+            "submission_to_http_terminal_log_seconds": 128.69,
+            "public_getter_submission_to_response_seconds": 0,
+            "public_getter_latency_scope": "0 on failed request; not evidence of zero waiting time",
+            "public_terminal_observed_seconds": 129.7950765999849,
+            "complete_request_inside_capture": true,
+            "generation_overlap_seconds": 120.007,
+            "whole_capture_under_generation": false,
+            "source_wood_before": 16,
+            "source_wood_after": 16,
+            "confirmation_or_execution": "NOT_RUN",
+            "warm_p95": "NOT_RUN",
+            "ttft": "NOT_RUN; non-streaming",
+            "ui_first_paint": "NOT_RUN"
+          },
+          "resources": {
+            "samples": 17,
+            "memory_read_errors": 0,
+            "free_physical_GiB_min": 0.424530029296875,
+            "free_physical_GiB_max": 7.083854675292969,
+            "free_physical_below1GiB_samples": [
+              {
+                "at_monotonic": 279638.3949952,
+                "free_physical_GiB": 0.424530029296875
+              },
+              {
+                "at_monotonic": 279648.85797,
+                "free_physical_GiB": 0.4850883483886719
+              },
+              {
+                "at_monotonic": 279659.3389198,
+                "free_physical_GiB": 0.8036270141601562
+              },
+              {
+                "at_monotonic": 279669.8086146,
+                "free_physical_GiB": 0.8110313415527344
+              },
+              {
+                "at_monotonic": 279680.1793141,
+                "free_physical_GiB": 0.7405967712402344
+              },
+              {
+                "at_monotonic": 279690.5887164,
+                "free_physical_GiB": 0.7685470581054688
+              },
+              {
+                "at_monotonic": 279701.0227508,
+                "free_physical_GiB": 0.6348991394042969
+              },
+              {
+                "at_monotonic": 279711.5126294,
+                "free_physical_GiB": 0.6779518127441406
+              },
+              {
+                "at_monotonic": 279721.9237516,
+                "free_physical_GiB": 0.5786819458007812
+              }
+            ],
+            "process_sample_counts": {
+              "UE": 17,
+              "model": 12
+            },
+            "process_peak_working_set_GiB": {
+              "UE": 4.639442443847656,
+              "model": 4.139625549316406
+            },
+            "whole_gpu_memory_MiB_range": [
+              1505.0,
+              3932.0
+            ],
+            "per_process_vram": "NOT_RUN",
+            "capacity_risk": "OBSERVED_FREE_PHYSICAL_RAM_BELOW_1_GIB",
+            "oom_attribution": "NOT_ESTABLISHED"
+          },
+          "process_exit_verified": true,
+          "six_scene_joint_acceptance": "NOT_RUN",
+          "shipping": "NOT_RUN",
+          "normal_os_input": "NOT_RUN"
+        },
+        "vulkan": {
+          "source_report": "docs/qa/TASK-102/settled-dialogue-vulkan-20261007-01/summary.json",
+          "status": "CAPTURE_COMPLETE_MODEL_FAILED",
+          "scene": "normal_new_initial_scene_dialogue_fixed_view",
+          "evidence_level": "Uncooked standalone -game; public API injected UI/model input; stable one-scene diagnostic",
+          "build_source_binding": "NOT_VERIFIED_BY_RUNNER; bind actual build/candidate evidence separately",
+          "csv": "docs/qa/TASK-102/settled-dialogue-vulkan-20261007-01/frames.csv",
+          "frames": {
+            "numeric_frames": 6183,
+            "seconds": 61.186796799999996,
+            "p99_ms": 16.7755,
+            "one_percent_low_fps": 49.00515911854661,
+            "over_50ms": 0,
+            "over_50ms_fraction": 0.0
+          },
+          "frame_gates": {
+            "p99_ms_max": 16.67,
+            "p99_result": "FAIL",
+            "one_percent_low_min_fps": 60,
+            "one_percent_low_result": "FAIL",
+            "over_50ms_max_fraction": 0.001,
+            "over_50ms_result": "PASS"
+          },
+          "model": {
+            "actual_generations": 1,
+            "raw_returned": true,
+            "http_terminal_kind": "HTTP_RESPONSE_TIMINGS",
+            "semantic_result": "FAIL",
+            "reason": "TARGET_REQUIRED",
+            "applied_intent": "clarify",
+            "has_candidate": false,
+            "input_tokens": 3221,
+            "output_tokens": 59,
+            "context_tier": "required_minimal",
+            "startup_to_ready_log_seconds": 10.617,
+            "generation_to_http_terminal_log_seconds": 13.542,
+            "submission_to_http_terminal_log_seconds": 24.407,
+            "public_getter_submission_to_response_seconds": 24.406834699213505,
+            "public_terminal_observed_seconds": 24.858882899978198,
+            "complete_request_inside_capture": true,
+            "generation_overlap_seconds": 13.542,
+            "whole_capture_under_generation": false,
+            "source_wood_before": 16,
+            "source_wood_after": 16,
+            "confirmation_or_execution": "NOT_RUN",
+            "warm_p95": "NOT_RUN",
+            "ttft": "NOT_RUN; non-streaming",
+            "ui_first_paint": "NOT_RUN"
+          },
+          "resources": {
+            "samples": 12,
+            "memory_read_errors": 0,
+            "free_physical_GiB_min": 0.5588264465332031,
+            "free_physical_GiB_max": 6.1801300048828125,
+            "free_physical_below1GiB_samples": [
+              {
+                "at_monotonic": 279297.6815226,
+                "free_physical_GiB": 0.5588264465332031
+              },
+              {
+                "at_monotonic": 279308.2096832,
+                "free_physical_GiB": 0.7899322509765625
+              },
+              {
+                "at_monotonic": 279319.0126875,
+                "free_physical_GiB": 0.9344902038574219
+              }
+            ],
+            "process_sample_counts": {
+              "UE": 12,
+              "model": 6
+            },
+            "process_peak_working_set_GiB": {
+              "UE": 4.640266418457031,
+              "model": 2.6462860107421875
+            },
+            "whole_gpu_memory_MiB_range": [
+              1496.0,
+              5632.0
+            ],
+            "per_process_vram": "NOT_RUN",
+            "capacity_risk": "OBSERVED_FREE_PHYSICAL_RAM_BELOW_1_GIB",
+            "oom_attribution": "NOT_ESTABLISHED"
+          },
+          "process_exit_verified": true,
+          "six_scene_joint_acceptance": "NOT_RUN",
+          "shipping": "NOT_RUN",
+          "normal_os_input": "NOT_RUN"
+        }
+      },
+      "performance": "SINGLE_SCENE_JOINT_FAIL：Vulkan6183帧/61.1867968s/p99 16.7755ms/1%Low49.0051591fps/>50ms0；CPU11603帧/129.8656161s/p99 16.5324ms/1%Low51.3488456fps/>50ms2。两后端1%Low失败，原六稳定场景NOT_RUN；冷启动/请求重叠/低RAM观察分开，非OOM归因。",
+      "owner": "NOT_RUN：当前实机/视觉签收未验；无新增设计决定待问",
+      "second_machine": "NOT_RUN",
+      "human_samples": "NOT_RUN",
+      "shipping": "BUILD_SUCCESS：iteration-084-103-20261007-5/0.2.0-preview.20261007.4准确冻结/实际BuildCookStageArchive Exit0；OS=PARTIAL_NORMAL_INPUT_VERIFIED（双CMD脚本启动＋OS开局/保存Continue，模型/IME/全路线未验）；ZIP=INTERNAL_CANDIDATE_ZIP_CREATED，外部record独立，包内pre-ZIP元数据不代填；Native13仅自身Development快照。"
+    }
+  ],
+  "historical_candidate4_original_copy_compatibility": {
+    "source": "docs/qa/TASK-101/OS_CANDIDATE4_ORIGINAL_COPY_COMPATIBILITY.json",
+    "safe_summary": {
+      "schema_version": 1,
+      "task": "TASK-101",
+      "evidence_level": "Shipping candidate4 / actual OS input / isolated original-copy compatibility",
+      "source_revision": {
+        "reference_head": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+        "branch": "codex/TASK-084-103-iteration",
+        "working_tree": "uncommitted batch changes; candidate4 .3 freeze owned by root"
+      },
+      "source_result": ".agent-local/qa/TASK-101/os-original-copy-candidate4-20261007/results.json",
+      "archival_policy": "Derived safe summary only; no personal save, raw profile, source original path or launch command copied.",
+      "candidate_id": "iteration-084-103-20261007-4",
+      "actual_embedded_version": "0.2.0-preview.20261007.3",
+      "state": "PARTIAL_ORIGINAL_COPY_OS_COMPATIBILITY_VERIFIED",
+      "same_physical_machine": true,
+      "second_physical_machine": "NOT_RUN",
+      "original_user_save_written": false,
+      "immutable_original_copy_bytes_unchanged": true,
+      "immutable_original_copy_mtime_unchanged": true,
+      "hashes_computed_in_this_check": 0,
+      "owned_profile_has_chinese_and_spaces": true,
+      "launcher_candidate_profile_touched": false,
+      "legacy_nodes_listed": 4,
+      "legacy_node_loaded": "2026-09-27 15:07, latest original automatic node",
+      "normal_menu_load_and_confirmation": "PASS",
+      "actual_loaded_state": {
+        "scene": "outdoor night",
+        "quest": "把营地安顿下来",
+        "hp": "100/100",
+        "food_at_observation": "99/100",
+        "stamina": "100/100",
+        "brother_status": "原地等待",
+        "quick_slot_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "camp_guidance_distance_m": 1243
+      },
+      "normal_manual_save": "PASS_4_TO_5_NODES",
+      "v8_pool_created": true,
+      "v8_pool_bytes_after_manual_save": 394263,
+      "second_independent_launch": "PASS_PUBLIC_API_LAUNCH",
+      "explicit_mouse_continue_after_restart": "PASS_SAME_OUTDOOR_QUEST_HEALTH_QUICK_SLOTS",
+      "nodes_after_continue": 5,
+      "new_auto_node_from_continue": false,
+      "four_new_earned_route_checkpoints": "NOT_RUN",
+      "all_four_legacy_nodes_loaded": "NOT_RUN_ONLY_LATEST_LOADED",
+      "full_field_snapshot_equality": "NOT_RUN",
+      "first_launch_receipt_error": "Public launch succeeded; metadata serialization attempted to_dict on dict and failed. Actual process and OS title recorded; no duplicate launch used for recovery.",
+      "first_exit": "PASS_OWNED_CHILD_AND_BOOTSTRAP_GONE",
+      "second_exit": "PASS_OWNED_CHILD_AND_BOOTSTRAP_GONE",
+      "second_launch_receipt": {
+        "ok": true,
+        "operation": "runtime.launch_packaged",
+        "warnings": [],
+        "errors": []
+      },
+      "actual_image_count": 6,
+      "actual_image_files": [
+        "manual-save-node-5.jpg",
+        "original-four-nodes.jpg",
+        "original-latest-loaded.jpg",
+        "restarted-continue-hud.jpg",
+        "restarted-five-nodes.jpg",
+        "title-version.jpg"
+      ],
+      "other_private_evidence_files": [
+        "copy-plan.json",
+        "actual-process.json",
+        "second-launch.json"
+      ],
+      "limits": [
+        "Latest one of four legacy nodes actually loaded; all four were listed, not all loaded.",
+        "Same physical machine; two independent game processes, not a second physical device.",
+        "Only visible scene/quest/health/quick slots and save-list count checked across restart; no full field equality.",
+        "New four naturally earned route checkpoints NOT_RUN.",
+        "Compatible-v8 directory name and 394263-byte pool do not independently prove serialization schema.",
+        "First launch receipt serialization error retained; actual already-running process and OS evidence used without a duplicate recovery launch."
+      ]
+    }
+  },
+  "acceptance_matrix": "docs/qa/TASK-103/ACCEPTANCE_MATRIX.json",
+  "original_acceptance_denominator": 142
+}

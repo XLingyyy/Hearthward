@@ -4,6 +4,16 @@
 #include "HearthwardSurvivalState.h"
 #include "HearthwardSurvivalComponent.generated.h"
 
+struct FHearthwardCombatFeedbackReceipt
+{
+    FGuid SuccessId;
+    FGuid OperationId;
+    FGuid Epoch;
+    FName Kind;
+    FVector TargetPosition=FVector::ZeroVector;
+};
+DECLARE_MULTICAST_DELEGATE_OneParam(FHearthwardCombatSuccessDelegate,const FHearthwardCombatFeedbackReceipt&);
+
 UCLASS(ClassGroup=(Hearthward),meta=(BlueprintSpawnableComponent))
 class HEARTHWARD_API UHearthwardSurvivalComponent : public UActorComponent
 {
@@ -36,6 +46,7 @@ public:
     void CancelAction(bool Damaged=false);
     UFUNCTION(BlueprintCallable) void CancelCurrentAction() { CancelAction(); }
     bool ReceiveDamage(float Amount,FGuid Event,FGuid Epoch,bool Fatal=false);
+    FHearthwardCombatSuccessDelegate OnDamageSucceeded;
     UFUNCTION(BlueprintCallable) void GiveUp();
     void FatalEnvironment();
     void FallImpact(float Speed);

@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "id": "TASK-087",
+  "title": "自然语言委托可靠性、取消回退与真实模型全矩阵",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-087-local-ai-reliability",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/AI/HearthwardNPCContextProjection.cpp",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "config/local-ai.lock.json",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/qa/TASK-079/REPORT.md"
+  ],
+  "dependencies": [
+    "TASK-086"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-087.md",
+    "docs/tasks/TASK-087.json",
+    "docs/handoffs/TASK-087.md",
+    "docs/qa/TASK-087/",
+    "docs/planning/TASK-084-103/TASK-087/",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.h",
+    "Source/Hearthward/AI/HearthwardLocalAIContext.cpp",
+    "Source/Hearthward/AI/HearthwardNPCContextProjection.cpp",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp",
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp",
+    "Source/Hearthward/UI/HearthwardScreenDialogue.cpp",
+    "Source/Hearthward/UI/HearthwardHUDDialogue.cpp",
+    "Source/Hearthward/UI/HearthwardDialogueWidget.cpp",
+    "Source/Hearthward/Tests/LocalAIReliabilityTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T087-C01：明确指令；理解与实际动作分开统计，目标/数量/来源目的地一致。",
+    "T087-C02：歧义与拒绝；该问则澄清、该拒则拒绝；不把不理解的一律拒绝记正确。",
+    "T087-C03：否定查询；查询不改任务，续接只有确认后执行。",
+    "T087-C04：生命周期；旧结果不显示为新确认卡、不执行、不重复结算。",
+    "T087-C05：模型不可用；界面可退出，既有采集/搬运玩法不被模型故障阻断。",
+    "T087-C06：中文IME；不误发未完成文字，不丢输入，不双重执行。",
+    "T087-C07：真实行为；按批准指标报告，完整交付而非只输出合法JSON。",
+    "T087-C08：最终同版；所有原始记录可重算指标；不拼接不同实现的最佳成绩。"
+  ],
+  "non_goals": [
+    "替换/训练模型、接云端LLM、增加Embedding或多层生成链",
+    "扩展危险自主行为/任意任务队列",
+    "将结构化假输入算作自然语言理解"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-008",
+    "T-010",
+    "T-011",
+    "T-020",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

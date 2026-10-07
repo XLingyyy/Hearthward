@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "id": "TASK-103",
+  "title": "候选包、真人验收与有条件发行交接",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-103-release-acceptance",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/releases/demo-20261006-2/REPORT.md",
+    "docs/tasks/TASK-083.json",
+    "scripts/release/",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "Source/Hearthward/Hearthward.Build.cs",
+    "TestClient/README.md"
+  ],
+  "dependencies": [
+    "TASK-102"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-103.md",
+    "docs/tasks/TASK-103.json",
+    "docs/handoffs/TASK-103.md",
+    "docs/qa/TASK-103/",
+    "docs/planning/TASK-084-103/TASK-103/",
+    "docs/releases/iteration-084-103-rc/",
+    "scripts/release/",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "docs/qa/README.md",
+    "TestClient/README.md",
+    "Source/Hearthward/Update/HearthwardUpdateSubsystem.h"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/",
+    "Content/"
+  ],
+  "acceptance": [
+    "T103-C01：证据完整；能定位每项证据，旧PASS不移植到新包。",
+    "T103-C02：独立运行；游戏/随包模型可用，关键页面和实际委托有效。",
+    "T103-C03：二机离线；硬件与包哈希明确，存档/设置/模型/继续可验证。",
+    "T103-C04：首切片真人；≥4完成且中位30—60分钟；未达到如实记录，不强制截时。",
+    "T103-C05：全流程真人；全员无阻塞且中位8—12小时；未测不宣称完成。",
+    "T103-C06：战斗真人；每阶段15次≥12成功，原始记录完整，非真人不计入。",
+    "T103-C07：视听边界；技术PASS与人工结论分开，未产固定录音保留。",
+    "T103-C08：发布安全；只有实际上传并核对才标PUBLISHED；未授权止于候选交付。"
+  ],
+  "non_goals": [
+    "覆盖旧预览包、擅自发布或伪造真人验收",
+    "更改玩法/存档/模型以赶发版",
+    "把候选构建成功写成首版体验全部完成"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-001",
+    "T-002",
+    "T-020",
+    "T-021",
+    "T-022"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

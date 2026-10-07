@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "id": "TASK-102",
+  "title": "游戏与本地模型联合性能、内存及运行优化",
+  "status": "Backlog",
+  "updated_at": "2026-10-06",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-102-joint-performance",
+  "source_refs": [
+    "XLingyyy/Hearthward main@6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+    "docs/planning/TASK-084-103/README.md",
+    "docs/planning/TASK-084-103/EXECUTION_GUIDE.md",
+    "docs/design/CURRENT.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/planning/TASK-053-074/ACCEPTANCE.md",
+    "docs/qa/TASK-072/normal-new-cpu-vulkan-runtime-review.md",
+    "docs/qa/TASK-072/game-development-runtime-review.md",
+    "config/local-ai.lock.json",
+    "Source/Hearthward/AI/HearthwardLocalAIRuntime.cpp",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp"
+  ],
+  "dependencies": [
+    "TASK-101"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-085-presentation-readmodels.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "docs/tasks/TASK-102.md",
+    "docs/tasks/TASK-102.json",
+    "docs/handoffs/TASK-102.md",
+    "docs/qa/TASK-102/",
+    "docs/planning/TASK-084-103/TASK-102/",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardScreenLayout.cpp",
+    "Source/Hearthward/UI/HearthwardScreenWidget.h",
+    "Source/Hearthward/UI/HearthwardScreenMap.cpp",
+    "Source/Hearthward/UI/HearthwardPresentationReadModels.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAIRuntime.cpp",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "docs/assets/TASK-102/",
+    "Source/Hearthward/Tests/PerformanceLifecycleRegressionTests.cpp"
+  ],
+  "forbidden_paths": [
+    "docs/design/archive/",
+    "Runtime/",
+    "config/local-ai.lock.json",
+    ".github/",
+    "Resources/UI/Fonts/",
+    "Saved/",
+    "Source/Hearthward/Save/"
+  ],
+  "acceptance": [
+    "T102-C01：目标配置；符合批准配置，覆盖项明确，无隐藏降画质/限帧。",
+    "T102-C02：双后端场景；逐场独立报告全部帧时指标，不以最佳一场代表全局。",
+    "T102-C03：端到端延迟；按批准p95/ready/0.2秒门槛，缺失阶段不算成功。",
+    "T102-C04：内存；无持续增长、OOM或崩溃，<1GB风险清楚登记。",
+    "T102-C05：优化正确性；性能改善不改变玩法规则、显示实时性或保存结果。",
+    "T102-C06：视觉回归；无不可接受跳变/遮挡/交互破坏，Owner视觉结论单列。",
+    "T102-C07：最终可重算；第三方可重新计算指标；未测/失败场景未被隐藏。"
+  ],
+  "non_goals": [
+    "改验收阈值/降目标画质/换模型/虚构硬件数据",
+    "泛化全仓性能重构",
+    "用平均FPS、纯Editor或固定空镜宣称全局性能达标"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-020",
+    "T-021",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "read_only",
+    "install_dependencies": "not_granted",
+    "commit": "not_granted",
+    "push": "not_granted",
+    "merge": "not_granted",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
+    "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",
+    "先按EXECUTION_GUIDE登记获准任务快照和准确资产包；--base必须含该快照，不能用尚无本任务的规划参考SHA直接证明范围通过。",
+    "本单详细步骤与局部测试编号见同名MD；required_tests仅引用现有全局测试族，不表示任何已通过结果。",
+    "allowed_paths含拟新增文件；必须先检索同义实现。未列Content包不可编辑；共享根文件按单写者窗口修改。",
+    "依赖产物齐备并由Owner派发后，按本单步骤在任务分支执行；跨范围/新规则另记明确决定。"
+  ]
+}

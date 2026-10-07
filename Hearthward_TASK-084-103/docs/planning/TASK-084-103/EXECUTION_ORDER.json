@@ -1,0 +1,412 @@
+{
+  "schema_version": 1,
+  "planning_base": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "default_order": [
+    "TASK-084",
+    "TASK-085",
+    "TASK-086",
+    "TASK-087",
+    "TASK-088",
+    "TASK-089",
+    "TASK-090",
+    "TASK-091",
+    "TASK-092",
+    "TASK-093",
+    "TASK-094",
+    "TASK-095",
+    "TASK-096",
+    "TASK-097",
+    "TASK-098",
+    "TASK-099",
+    "TASK-100",
+    "TASK-101",
+    "TASK-102",
+    "TASK-103"
+  ],
+  "all_runtime_results": "NOT_RUN",
+  "tasks": [
+    {
+      "id": "TASK-084",
+      "title": "连续体验基线、断点复现与本轮范围冻结",
+      "priority": "P0",
+      "dependencies": [],
+      "branch_proposed": "codex/TASK-084-playable-baseline",
+      "local_case_ids": [
+        "T084-C01",
+        "T084-C02",
+        "T084-C03",
+        "T084-C04",
+        "T084-C05",
+        "T084-C06",
+        "T084-C07"
+      ]
+    },
+    {
+      "id": "TASK-085",
+      "title": "共享显示契约、动作语义与UI增量接入基础",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-084"
+      ],
+      "branch_proposed": "codex/TASK-085-presentation-contract",
+      "local_case_ids": [
+        "T085-C01",
+        "T085-C02",
+        "T085-C03",
+        "T085-C04",
+        "T085-C05",
+        "T085-C06"
+      ]
+    },
+    {
+      "id": "TASK-086",
+      "title": "弟弟工作状态卡、停工原因和恢复入口",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-085"
+      ],
+      "branch_proposed": "codex/TASK-086-companion-status",
+      "local_case_ids": [
+        "T086-C01",
+        "T086-C02",
+        "T086-C03",
+        "T086-C04",
+        "T086-C05",
+        "T086-C06",
+        "T086-C07",
+        "T086-C08"
+      ]
+    },
+    {
+      "id": "TASK-087",
+      "title": "自然语言委托可靠性、取消回退与真实模型全矩阵",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-086"
+      ],
+      "branch_proposed": "codex/TASK-087-local-ai-reliability",
+      "local_case_ids": [
+        "T087-C01",
+        "T087-C02",
+        "T087-C03",
+        "T087-C04",
+        "T087-C05",
+        "T087-C06",
+        "T087-C07",
+        "T087-C08"
+      ]
+    },
+    {
+      "id": "TASK-088",
+      "title": "制作配方查找、可制作筛选与缺料追踪",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-085"
+      ],
+      "branch_proposed": "codex/TASK-088-crafting-tracker",
+      "local_case_ids": [
+        "T088-C01",
+        "T088-C02",
+        "T088-C03",
+        "T088-C04",
+        "T088-C05",
+        "T088-C06",
+        "T088-C07"
+      ]
+    },
+    {
+      "id": "TASK-089",
+      "title": "背包与仓储操作一致性、实例详情和可读性",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-086",
+        "TASK-088"
+      ],
+      "branch_proposed": "codex/TASK-089-inventory-storage-ux",
+      "local_case_ids": [
+        "T089-C01",
+        "T089-C02",
+        "T089-C03",
+        "T089-C04",
+        "T089-C05",
+        "T089-C06",
+        "T089-C07",
+        "T089-C08"
+      ]
+    },
+    {
+      "id": "TASK-090",
+      "title": "HUD与日志目标层级、首次准备引导",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-086",
+        "TASK-088",
+        "TASK-089"
+      ],
+      "branch_proposed": "codex/TASK-090-hud-journal-onboarding",
+      "local_case_ids": [
+        "T090-C01",
+        "T090-C02",
+        "T090-C03",
+        "T090-C04",
+        "T090-C05",
+        "T090-C06",
+        "T090-C07"
+      ]
+    },
+    {
+      "id": "TASK-091",
+      "title": "地图可读性与关键入口转折引导",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-090"
+      ],
+      "branch_proposed": "codex/TASK-091-map-route-guidance",
+      "local_case_ids": [
+        "T091-C01",
+        "T091-C02",
+        "T091-C03",
+        "T091-C04",
+        "T091-C05",
+        "T091-C06",
+        "T091-C07"
+      ]
+    },
+    {
+      "id": "TASK-092",
+      "title": "首次救援往返路线与遭遇灰盒打磨",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-091"
+      ],
+      "branch_proposed": "codex/TASK-092-rescue-route",
+      "local_case_ids": [
+        "T092-C01",
+        "T092-C02",
+        "T092-C03",
+        "T092-C04",
+        "T092-C05",
+        "T092-C06",
+        "T092-C07"
+      ]
+    },
+    {
+      "id": "TASK-093",
+      "title": "营地准备、回营成长反馈与岗位可视状态",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-090",
+        "TASK-092"
+      ],
+      "branch_proposed": "codex/TASK-093-camp-loop-feedback",
+      "local_case_ids": [
+        "T093-C01",
+        "T093-C02",
+        "T093-C03",
+        "T093-C04",
+        "T093-C05",
+        "T093-C06",
+        "T093-C07"
+      ]
+    },
+    {
+      "id": "TASK-094",
+      "title": "关键资产盘点、风格样板与逐包制作清单",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-084"
+      ],
+      "branch_proposed": "codex/TASK-094-asset-baseline",
+      "local_case_ids": [
+        "T094-C01",
+        "T094-C02",
+        "T094-C03",
+        "T094-C04",
+        "T094-C05",
+        "T094-C06"
+      ]
+    },
+    {
+      "id": "TASK-095",
+      "title": "兄弟与敌人辨识、武器持握和关键动作收尾",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-092",
+        "TASK-094"
+      ],
+      "branch_proposed": "codex/TASK-095-character-action-polish",
+      "local_case_ids": [
+        "T095-C01",
+        "T095-C02",
+        "T095-C03",
+        "T095-C04",
+        "T095-C05",
+        "T095-C06",
+        "T095-C07"
+      ]
+    },
+    {
+      "id": "TASK-096",
+      "title": "石堡开场必经区域、近景材质与夜袭氛围",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-091",
+        "TASK-094",
+        "TASK-095"
+      ],
+      "branch_proposed": "codex/TASK-096-stonehold-opening",
+      "local_case_ids": [
+        "T096-C01",
+        "T096-C02",
+        "T096-C03",
+        "T096-C04",
+        "T096-C05",
+        "T096-C06",
+        "T096-C07"
+      ]
+    },
+    {
+      "id": "TASK-097",
+      "title": "救援路线自然环境、生态外观与远近景收尾",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-092",
+        "TASK-094",
+        "TASK-096"
+      ],
+      "branch_proposed": "codex/TASK-097-nature-route-art",
+      "local_case_ids": [
+        "T097-C01",
+        "T097-C02",
+        "T097-C03",
+        "T097-C04",
+        "T097-C05",
+        "T097-C06",
+        "T097-C07"
+      ]
+    },
+    {
+      "id": "TASK-098",
+      "title": "营地核心设施、道具与关键图标统一",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-093",
+        "TASK-094",
+        "TASK-097"
+      ],
+      "branch_proposed": "codex/TASK-098-camp-props-icons",
+      "local_case_ids": [
+        "T098-C01",
+        "T098-C02",
+        "T098-C03",
+        "T098-C04",
+        "T098-C05",
+        "T098-C06"
+      ]
+    },
+    {
+      "id": "TASK-099",
+      "title": "动作音效、环境声与事件反馈同步",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-095",
+        "TASK-096",
+        "TASK-097",
+        "TASK-098"
+      ],
+      "branch_proposed": "codex/TASK-099-audio-feedback",
+      "local_case_ids": [
+        "T099-C01",
+        "T099-C02",
+        "T099-C03",
+        "T099-C04",
+        "T099-C05",
+        "T099-C06",
+        "T099-C07"
+      ]
+    },
+    {
+      "id": "TASK-100",
+      "title": "四区差异化内容与首版全流程接续",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-087",
+        "TASK-090",
+        "TASK-091",
+        "TASK-092",
+        "TASK-093",
+        "TASK-095",
+        "TASK-096",
+        "TASK-097",
+        "TASK-098",
+        "TASK-099"
+      ],
+      "branch_proposed": "codex/TASK-100-campaign-content-completion",
+      "local_case_ids": [
+        "T100-C01",
+        "T100-C02",
+        "T100-C03",
+        "T100-C04",
+        "T100-C05",
+        "T100-C06",
+        "T100-C07"
+      ]
+    },
+    {
+      "id": "TASK-101",
+      "title": "存读档、时间线和跨页面集成回归",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-100"
+      ],
+      "branch_proposed": "codex/TASK-101-save-input-regression",
+      "local_case_ids": [
+        "T101-C01",
+        "T101-C02",
+        "T101-C03",
+        "T101-C04",
+        "T101-C05",
+        "T101-C06",
+        "T101-C07",
+        "T101-C08"
+      ]
+    },
+    {
+      "id": "TASK-102",
+      "title": "游戏与本地模型联合性能、内存及运行优化",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-101"
+      ],
+      "branch_proposed": "codex/TASK-102-joint-performance",
+      "local_case_ids": [
+        "T102-C01",
+        "T102-C02",
+        "T102-C03",
+        "T102-C04",
+        "T102-C05",
+        "T102-C06",
+        "T102-C07"
+      ]
+    },
+    {
+      "id": "TASK-103",
+      "title": "候选包、真人验收与有条件发行交接",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-102"
+      ],
+      "branch_proposed": "codex/TASK-103-release-acceptance",
+      "local_case_ids": [
+        "T103-C01",
+        "T103-C02",
+        "T103-C03",
+        "T103-C04",
+        "T103-C05",
+        "T103-C06",
+        "T103-C07",
+        "T103-C08"
+      ]
+    }
+  ]
+}

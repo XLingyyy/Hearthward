@@ -1,0 +1,216 @@
+{
+  "task": "TASK-099",
+  "status": "Active",
+  "baseline_sha": "6fcf5c22e965f0f7409438f19bc7b09e96ffb058",
+  "revision_binding": "Source version0.2.0-preview.20261007.2, baseline+authorized uncommitted changes; actual13 tracked.patch/untracked-files.txt and Development Editor build. No fabricated final SHA or Shipping/OS credit.",
+  "latest_selected_native": {
+    "selected": 23,
+    "success": 23,
+    "fail": 0,
+    "warnings": 0,
+    "errors": 0,
+    "source": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/native/index.json",
+    "archive": "docs/qa/TASK-099/native-final-audio-20261007-13/task099-subset.json",
+    "families": {
+      "AudioLifecycle": 14,
+      "Combat": 4,
+      "FootContact": 2,
+      "Environment": 3
+    }
+  },
+  "latest_build": {
+    "source": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/build.json",
+    "archive": "docs/qa/TASK-099/native-final-audio-20261007-13/build.json",
+    "ok": true,
+    "configuration": "Development",
+    "target": "HearthwardEditor"
+  },
+  "native07_whole_run": {
+    "selected": 24,
+    "success": 24,
+    "warnings": 0,
+    "errors": 0,
+    "reportCreatedOn": "2026.10.06-23.52.19",
+    "archive": "docs/qa/TASK-099/native-post-contact-20261007-07/index.json",
+    "result_archive": "docs/qa/TASK-099/native-post-contact-20261007-07/result.json"
+  },
+  "native08_isolated_save": {
+    "selected": 1,
+    "success": 1,
+    "warnings": 0,
+    "errors": 0,
+    "test": "Hearthward.Save.ActualLoadPointInvalidatesOldCommandTicket",
+    "reportCreatedOn": "2026.10.06-23.53.04",
+    "source": ".agent-local/qa/TASK-099/native-save-isolated-20261007-08/native/index.json",
+    "archive": "docs/qa/TASK-099/native-save-isolated-20261007-08/index.json",
+    "method": "fresh UUID isolated pool; same compiled07 runtime, no Save production change"
+  },
+  "process_startup_diagnostics": {
+    "native-post-contact-20261007-07": {
+      "condition_failed_count": 13,
+      "source": ".agent-local/qa/TASK-099/native-post-contact-20261007-07/result.json",
+      "credit": "startup frame0 Smoke separate from selected test errors; raw diagnostics retained"
+    },
+    "native-save-isolated-20261007-08": {
+      "condition_failed_count": 13,
+      "source": ".agent-local/qa/TASK-099/native-save-isolated-20261007-08/result.json",
+      "credit": "startup frame0 Smoke separate from selected test errors; raw diagnostics retained"
+    },
+    "native-final-audio-20261007-13": {
+      "condition_failed_count": 13,
+      "other_diagnostics": [
+        {
+          "severity": "warning",
+          "message": "Data transmitted via this plugin to your connected LLM service is Licensed Technology under the UE EULA. You are responsible for ensuring your LLM provider does not use it as training input. See Section 6(e) of the UE EULA for full terms.",
+          "code": "UE_AUTOMATION_PROCESS_LOG",
+          "source": "LogModelContextProtocol"
+        }
+      ],
+      "source": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/result.json",
+      "summary": "docs/qa/TASK-099/native-final-audio-20261007-13/result-summary.json",
+      "credit": "13 frame0 Smoke errors and1MCP startup warning are outside selected test entries; full original process output retained"
+    }
+  },
+  "sound_events": {
+    "event_count": 17,
+    "unique_runtime_wav_paths": 12,
+    "new_event_count": 16,
+    "added_retained_source_files": 11,
+    "added_source_types": {
+      "Kenney_OGG": 10,
+      "RandomMind_MP3": 1
+    },
+    "original_storage_wav": 1,
+    "state": "REAL_PCM16_INTERNAL_CANDIDATES_BOUND_23_NATIVE_P",
+    "generic_footstep": "movement.footstep generic; no material naming contract",
+    "spatial_attenuation": "UE linear sphere0--3000uu with actual source positions; native assertions pass; device audition NOT_RUN",
+    "movement_landed_swim_cues": "UNBOUND; real public callback observation exists, no landing/splash candidate falsely claimed"
+  },
+  "production_receipts": {
+    "storage": "committed OnTransferred + epoch/OperationId",
+    "player": "committed craft/repair/harvest concrete target Events counts; ignore :any",
+    "npc": "real successful LocalAI events/GUID/campaign and communication distance",
+    "combat": "real hit/block/damage committed receipts plus validated active attack-window swing; SuccessId/OperationId/Epoch/Kind/TargetPosition; no inventory/health-difference inference",
+    "progress": "Camp.Rescued, Facility GUID+Level, Gameplay.Claimed; seed actual Load history",
+    "movement": "actual Landed/MovementMode delegates, PostPhysics settlement; no speed/timer footsteps",
+    "foot": "native AnimNotify + actual alive/grounded/moving foot blocking-walkable trace -> Hit.ImpactPoint -> current-frame receipt -> public Presentation consumer; actual saved clip dispatch tested",
+    "water_environment": "actual UE98vertices96triangles immutable geometry, exactmesh+waterTag+registered/begun/currentWorld/visibility; current component transform nearest surface; bounded one source and immutable continuous PCM"
+  },
+  "foot_assets": {
+    "write": "SAVED_4_ASSETS_16_CANDIDATES",
+    "report": "docs/qa/TASK-099/foot_contacts/asset-write-20261007-01/write.json",
+    "run_seam_saved_trigger_seconds": 9.999999747378752e-05,
+    "requested_seam_seconds": 0,
+    "counts": "each of four clips: 2 left,2 right; threshold0.5; follower=false; prior animation invariants preserved",
+    "locks": "root verified four exact LFS locks ours/XLingyyy, original local backups retained; no force unlock or SHA operation",
+    "native07": "GroundGuards and ActualClipDispatch Success,0warnings/errors; per-clip one actual left candidate on grounded player fixture",
+    "actual_brother_source": "PASS_NATIVE09_AND13_REAL_SPAWNED_BROTHER_PUBLIC_BINDING_NO_FAKE_RECEIPT",
+    "actual_run_right_seam_dispatch": "PASS_NATIVE09_AND13_ACTUAL_SAVED_9.999999747378752e-05_POSITIVE_NEAR_START_INTERVAL_NOT_WRAP",
+    "normal_animgraph_blend_and_loop": "NOT_RUN",
+    "owner_audition": "NOT_RUN",
+    "current_frame_ledger": "same-frame distinct SuccessIds accepted; old frame rejected; cleared on frame change; foot excluded from full-epoch PlayedEvents",
+    "native13": "GroundGuards/ActualClipDispatch Success0warnings/errors; original leftclip plus twoRun positive near-start right intervals and actualBrotherSource"
+  },
+  "historical_evidence": {
+    "storage_red_green": [
+      "docs/qa/TASK-099/native-red-20261007.json",
+      "docs/qa/TASK-099/native-green-20261007.json"
+    ],
+    "producer_fixture_red": "docs/qa/TASK-099/producer-fixture-red-20261007-01.json",
+    "movement_fixture_red": "docs/qa/TASK-099/movement-fixture-red-20261007-02.json",
+    "native03": "docs/qa/TASK-099/producer-movement-green-20261007-03.json;7P,6clean1unproduced-voice warning, preserved historical",
+    "progress_combat_red": "docs/qa/TASK-099/progress-combat-red-20261007-04/; real missing commit receipts and Progress observation before implementation",
+    "native05_build_fail": ".agent-local/qa/TASK-099/native-pre-contact-20261007-05/build.json; protected PauserPlayerState fixture compile C2248, Native not run",
+    "native06": "docs/qa/TASK-099/native-pre-contact-20261007-06/;25 selected20P5F,task09919 selected15P4F;raw errors retained",
+    "zero_notify_metadata": "docs/qa/TASK-099/animation-contacts-20261006T225948Z-dcdcc6b1.json; writer-before confirmed four zero-Notify clips",
+    "environment_red09": "docs/qa/TASK-099/water/red-20261007-09; buildP Foot2P Environment3F/12errors only missing source; actualSaveLoad preconditions pass; PCM after source not reached",
+    "swing_red12": "docs/qa/TASK-099/combat/swing-red-20261007-12; buildP ActualEmptySwing1F/5errors only missing producer receipt; added audio assertions have no prepatch RED credit",
+    "environment_build10_compile_fail": ".agent-local/qa/TASK-099/swing-red-20261007-10/build.json; initializer/TObjectPtr mismatch corrected; NativeNOT_RUN",
+    "environment_build11_link_fail": ".agent-local/qa/TASK-099/swing-red-20261007-11/build.json; builtinAudioExtensions direct dependency corrected, nearest point initialized; NativeNOT_RUN"
+  },
+  "native06_fixture_analysis": {
+    "combat_guard": "actual Clock.Tick recovered health; compare immediate HealthBeforeBlock, no gameplay health changes",
+    "progress_restart": "real EndPlay/BeginPlay reloads full cue table; fixture verifies reload and explicitly reapplies unbound isolation; did not loosen final Played0",
+    "foot_downing": "hardcoded100 injury accepted but did not prove Downed; use actual public HealthBefore and require Health0/LifeDowned/positive timer before guard",
+    "clip_dispatch": "four clips0Notify/0audio before formal writer is genuine expectedRED,07 saved clips pass",
+    "old_save": "same UUID pool already contained Audio savepoint; actual fresh independent UUID08 passes without Save changes",
+    "status": "CORRECTED_ACTUAL07_TASK099_19_PASS_AND08_SAVE1_PASS"
+  },
+  "gates": {
+    "committed_success_receipts_native": "PASS_23_SELECTED_NATIVE",
+    "actual_load_epoch_history_and_pause_native": "PASS_SELECTED_NATIVE",
+    "actual_physics_landing_fixture_water_modes": "PASS_SELECTED_NATIVE_NOT_NATURAL_MAP",
+    "foot_real_saved_clip_grounded_dispatch": "PASS_CURRENT23_NATIVE_SAVEDCLIPS_NEAR_START_RIGHT_AND_REAL_BROTHER",
+    "foot_material_mapping": "UNKNOWN_NO_NAMING_CONTRACT_GENERIC_ONLY",
+    "normal_animgraph_seam_actual_brother": "ACTUAL_BROTHER_NATIVE_PASS; NORMAL_ANIMGRAPH_BLEND_AND_CROSS_WRAP_NOT_RUN",
+    "normal_input_audio_track": "NOT_RUN",
+    "owner_audition": "NOT_RUN",
+    "fire_burning_state": "NO_CONFIRMED_CONTRACT",
+    "environment_loop_assets": "BOUND_REAL_CC0_VISTULA_MONO_PCM16",
+    "loop_attenuation_and_seams": "NATIVE_POSITION_ATTENUATION_PASS; DEVICE_NEAR_FAR_AND_AUDIBLE_SEAM_NOT_RUN",
+    "shipping_audio_and_license_validation": "NOT_RUN",
+    "fixed_voice": "UNPRODUCED",
+    "dynamic_tts": "NOT_IMPLEMENTED_PER_DECISION",
+    "candidate_cue_semantics_and_loudness": "OWNER_AUDITION_NOT_RUN",
+    "environment_current_loaded_source_lifecycle_native": "PASS_NATIVE_ACTUAL_STATIC_MESH_COMPONENT_FIXTURE; NATURAL_MAP_STREAMING_OS_NOT_RUN",
+    "loop_continuous_pcm_bounded_native": "PASS_TRUE_IMMUTABLE_PCM_3_PERIODS_AND_SMALL_REQUESTS; NOSOUND_NOT_DEVICE_HEARING",
+    "combat_empty_swing_bound_native": "PASS_REAL_PUBLIC_ATTACK_RECEIPT_AND_REAL_PRESENTATION_AUDIO_COMPONENT",
+    "movement_landed_swim_candidate_assets": "UNBOUND_REAL_CALLBACKS_OBSERVED; NO_LANDING_SPLASH_CUE_CLAIM",
+    "wind_active_region": "NO_CONFIRMED_CONTRACT"
+  },
+  "water_readonly_inspection": {
+    "script": "docs/qa/TASK-099/water/inspect_water_source.py",
+    "static": "PASS",
+    "ue": "SECOND_ACTUAL_READ_98_VERTICES_96_TRIANGLES",
+    "first_failed_report": "docs/qa/TASK-099/water/first-read-water-source-20261006T234707Z-01e8347d.json",
+    "second_report": "docs/qa/TASK-099/water/second-read-water-source-20261006T235439Z-44d9531a.json",
+    "saved_actor_is_live": false,
+    "runtime_association_native13": "PASS_CURRENT_REGISTERED_STATIC_MESH_FIXTURE_NO_SAVED_CACHE_IDENTITY"
+  },
+  "scope_validator": "NOT_RUN_UNCOMMITTED_APPROVED_SCOPE_NOT_OLD_BASELINE_PASS",
+  "limits": [
+    "Selected09923 and whole28 are distinct denominators; compatibility5 separate.",
+    "NoSound/NullRHI Native proves registered components/positions/procedural PCM and guards, not device hearing or normal renderer/AnimGraph.",
+    "13 frame0 Smoke errors and1MCP startup warning retained outside selected entries.",
+    "RealBrotherSource and near-start saved right intervals pass; no normal cross-wrap or actual AnimGraph credit.",
+    "No latestShipping/OS/audible seam/Owner/material category credit inherited.",
+    "Landing/swim callback observations remain without dedicated cues; active fire/wind facts unavailable; fixed voice UNPRODUCED/dynamicTTS absent.",
+    "17 bound event IDs are configuration coverage; individual waveform sources/positions are checked by targeted paths and shared receiver, not17 separate audible playback tests. NPC/landing/swim observation or unbound tests are not claimed as dedicated bound-device checks."
+  ],
+  "asset_permission": {
+    "scope": "root-authorized four exact animation packages; Task099 task metadata records expansion",
+    "lfs_evidence": ".agent-local/qa/TASK-099/foot-locks-20261007/targets.json",
+    "actual_asset_write": "docs/qa/TASK-099/foot_contacts/asset-write-20261007-01/write.json",
+    "backup": "private approved local four originals retained",
+    "scope_validator": "NOT_RUN_UNCOMMITTED_TASK_SNAPSHOT_BASELINE"
+  },
+  "native13_whole_run": {
+    "selected": 28,
+    "success": 28,
+    "warnings": 0,
+    "errors": 0,
+    "reportCreatedOn": "2026.10.07-00.32.03",
+    "archive": "docs/qa/TASK-099/native-final-audio-20261007-13/index.json",
+    "result_summary": "docs/qa/TASK-099/native-final-audio-20261007-13/result-summary.json",
+    "raw_full_result_private": ".agent-local/qa/TASK-099/native-final-audio-20261007-13/result.json",
+    "compatibility": {
+      "selected": 5,
+      "paths": [
+        "Hearthward.Combat.ExecutionActionsAndSnapshot",
+        "Hearthward.Combat.GuardDetectionAndParts",
+        "Hearthward.Save.FileIntegrityAndSnapshot",
+        "Hearthward.Survival.FailureRejectsTransactions",
+        "Hearthward.Survival.MedicineReservationAndDamage"
+      ]
+    }
+  },
+  "historical_native07_08_combined_distinct_selected": {
+    "selected": 25,
+    "success": 25,
+    "warnings": 0,
+    "errors": 0,
+    "scope": "07 24 + independent08 old Save1; verified disjoint test paths; Task099 denominator remains19"
+  },
+  "historical_source_changes_after_native07_stage": "FOOT_FIXTURE_ONLY_ActualClipDispatch: actual twoRun near-start saved-right seam and real spawnedBrother via public QueryInventory binding; new assertions NOT_RUN pending fresh build/Foot-only Native; production/assets unchanged",
+  "source_changes_after_native07": "Authorized Foot existingfixture supplementation, water loop/proven geometry+CC0 candidate, initializer/TObjectPtr/link fixes and validated swing receipt/candidate/consumer+samecase realaudio assertions; actual13 build and23Native allpass; Source/Resources frozen."
+}
