@@ -1,5 +1,11 @@
 # TASK-098｜独立技术工作交接
 
+## 2026-10-08 锻造真实事务与存读档
+
+2026-10-08 锻造实付流程已补验：一阶拒绝且不扣料；原接口升二阶扣48木24石，锻造建造扣160木140石20金属锭；实际制作短刃扣10木15金属锭并仅增加1件。真实SavePoint/LoadPoint后，设施GUID、等级、累计实付、唯一新网格、仓储余额和产物一致。27项检查通过，测试物资与已救援状态为PROTOTYPE_ONLY前置，使用独立存档池。正常鼠标交互、DPI/缺图、第二营地、旧档迁移、实际Cook与Owner视觉仍待验。
+
+受测运行代码：d6bd451a21e06ef9f4abb5845ba06ba2c73cba01。证据：[forge-paid-save-pie.json](../qa/TASK-098/samples/forge-paid-save-pie.json)；可复现脚本位于docs/qa/TASK-098/verify_forge_pie.py，启动器通过公开UEClient管理本次编辑器，已正常关闭。以下旧记录保留其原日期和范围。
+
 ## 2026-10-07 已批准方向后的进展
 
 方向已由DSGN-004批准。三个新设施已取得12个精确包锁、通过UEClient导入并绑定gameplay；UE实测高88/96.75/86cm，底部与原放置占地匹配。真实PIE工作台/仓储入口支付72木和12木4石、生成新网格、登记设施及储物组件均通过，原成本/碰撞/事务规则不变。四类SVG/PNG武器图标已接入，10个刃/矛ID已分流。锻造实付建造、DPI/缺图、存读档/Cook和Owner视觉尚未验。见samples/paid-placement-pie.json、ue-stage.json。
