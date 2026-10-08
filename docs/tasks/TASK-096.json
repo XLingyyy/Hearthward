@@ -3,7 +3,7 @@
   "id": "TASK-096",
   "title": "石堡开场必经区域、近景材质与夜袭氛围",
   "status": "Active",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-08",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -52,7 +52,16 @@
     "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
     "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
     "Resources/Data/quest_guidance.json",
-    "Source/Hearthward/Tests/StoneholdOpeningPolishTests.cpp"
+    "Source/Hearthward/Tests/StoneholdOpeningPolishTests.cpp",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/SM_BedroomDoorframe.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/M_RoughStone.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/M_OldTimber.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/T_RoughStone_D.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/T_RoughStone_N.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/T_OldTimber_D.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/T_OldTimber_N.uasset",
+    "Source/Hearthward/Building/HearthwardHometownFortress.cpp",
+    "Source/Hearthward/Building/HearthwardHometownFortress.h"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -88,8 +97,8 @@
   "permissions": {
     "network": "read_only",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted_by_owner_current_session",
+    "push": "granted_by_owner_current_session",
     "merge": "not_granted",
     "github_release": "not_granted",
     "paid_services": "not_granted"
@@ -107,6 +116,7 @@
     "候选包见docs/assets/TASK-096/PACKAGE_SCOPE.json；selected_for_change=[]，未取得锁，不编辑Content或共享源码。",
     "2026-10-07 复用原生实际1/1 Success、0 warning、0 error；详见docs/qa/TASK-096/NATIVE_REUSE.json。完整Cxx/正式渲染/正常输入/Cook/Owner仍NOT_RUN，不隐去警告。",
     "2026-10-07 Owner明确回复都按推荐去做，批准DSGN-004中1A至6A、7B的制作方向与必要实现范围；首件视觉及实际模型/性能验收另记，不自动Done。",
-    "2026-10-07 方向已由DSGN-004批准。已制作同一门口白天/夜间石材、旧木、铁件与暖灯源场景。当前为Blender源预览，UE近景材质烘焙、有限火烟和路线验证未完成。见samples/source-results.json。"
+    "2026-10-07 方向已由DSGN-004批准。已制作同一门口白天/夜间石材、旧木、铁件与暖灯源场景。当前为Blender源预览，UE近景材质烘焙、有限火烟和路线验证未完成。见samples/source-results.json。",
+    "2026-10-08 沿用DSGN-004近景灰石/旧木方向与用户持续完成授权，准确扩展HometownFortress入口及七个近景资产包；门框按现有净宽280厘米/净高380厘米制作，NoCollision不改变原碰撞与导航。新增原创石木贴图和受光材质，保留原制作样板。用户此前授权任务分支提交推送，不含main合并/发布。"
   ]
 }
