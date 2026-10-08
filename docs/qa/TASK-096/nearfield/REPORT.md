@@ -1,6 +1,6 @@
 # TASK-096 近景材质与门框增量
 
-2026-10-08，UE 5.8.2 / Blender 5.2.0 LTS，RTX 4060 Laptop 8GB。分支codex/TASK-084-103-iteration，准确范围基线71ef41c44f3a02f3481f8192d385179bb8960560。受测实现提交：PENDING_COMMIT。
+2026-10-08，UE 5.8.2 / Blender 5.2.0 LTS，RTX 4060 Laptop 8GB。分支codex/TASK-084-103-iteration，准确范围基线71ef41c44f3a02f3481f8192d385179bb8960560。受测实现提交：5638ddf4723697c0006fadf75bce99016e2595cc。
 
 2026-10-08 近景增量：原创灰石/旧木受光材质、四张1024贴图与2700三角面卧室门框已接入，新增七个准确资产包。门框净宽280厘米、净高380厘米，仅装饰；原碰撞和导航不变。Editor构建及卧室/撤离净空原生1/1通过，正式地图隔离新档的三个游戏视口已检查。夜间卧室入口与回廊地面可辨，梁下和回廊门框背侧仍较暗；没有据离屏截图调亮正式灯光。完整火烟、连续路线、新版Cook与Owner视觉验收未完成，TASK-096保持Active。
 
@@ -27,3 +27,5 @@ SceneCapture离屏夜间明显比实际视口暗。diagnostic/night-bedroom保�
 复现脚本保留在本目录，输出仍写.agent-local/qa/TASK-096。早期Python属性调用和回调重入错误已修正，未计为测试成功。完整TASK-096保持Active。
 
 截图采用Epic官方Shot与SetViewTargetWithBlend路径：https://dev.epicgames.com/documentation/en-us/unreal-engine/taking-screenshots-in-unreal-engine 。
+
+范围检查35条路径、零错误；git diff --check通过。八项LFS锁归XLingyyy，保留至集成。
