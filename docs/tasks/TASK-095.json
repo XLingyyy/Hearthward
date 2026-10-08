@@ -77,7 +77,14 @@
     "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Run.uasset",
     "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Shoot.uasset",
     "Source/Hearthward/Campaign/HearthwardCampaignActor.h",
-    "Config/DefaultGame.ini"
+    "Config/DefaultGame.ini",
+    "Content/Hearthward/Assets/TASK-095/Costumes/M_Hero_CoarseCloth.uasset",
+    "Content/Hearthward/Assets/TASK-095/Costumes/M_Brother_CoarseCloth.uasset",
+    "Content/Hearthward/Assets/TASK-095/Costumes/M_Civilian_CoarseCloth.uasset",
+    "Content/Hearthward/Assets/TASK-095/Costumes/T_Hero_ClothMask.uasset",
+    "Content/Hearthward/Assets/TASK-095/Costumes/T_Brother_ClothMask.uasset",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Camp/HearthwardQuartermaster.cpp"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -138,6 +145,7 @@
     "2026-10-08 射手副本重建手臂、清除刀盾并绑定弓/箭袋/背带，新增准确3个UE包；保持Guard骨架、参考姿态和原始制作源。射手尚未替换Campaign绑定，拉弓动作未完成。提交推送权限按本会话后续明确授权更新，仅当前任务分支。",
     "2026-10-08 定向命中回归复现音效入口忽略World音频禁用开关并读取空GameInstance的崩溃，修复既有允许范围内PresentationComponent；5项命中与7项音效最终通过，旧夹具5条EndPlay清理警告保留。射手/箭显示两项原生通过。",
     "2026-10-08 用户要求持续做到完成，并明确批准射手约0.6秒可见前摇、约2.5秒射击周期、伤害箭速不变及打断取消待发箭。新增专用弓骨骼与四段动画的准确6包，原Guard骨架保持不变。",
-    "2026-10-08 射手专用27骨网格及4动作已替换Campaign运行绑定；Owner批准0.6秒拉弓前摇，3项定向原生通过，隔离PIE连续放箭和材质重载验证通过。其余角色/武器/倒地扶起/Cook/Owner视觉继续实施，保持Active。"
+    "2026-10-08 射手专用27骨网格及4动作已替换Campaign运行绑定；Owner批准0.6秒拉弓前摇，3项定向原生通过，隔离PIE连续放箭和材质重载验证通过。其余角色/武器/倒地扶起/Cook/Owner视觉继续实施，保持Active。",
+    "2026-10-08 按DSGN-004及继续做到完成的授权，接入兄弟与族人衣料区分；准确范围增加五个服装材质/遮罩包和CompanionFixture、Quartermaster两个实际绑定入口，保持网格、骨架和既有贴图。"
   ]
 }
