@@ -49,3 +49,7 @@
 Owner 仅需评审既定石堡方向下的近景材质/补面、火烟舒适度首件实机样板；正式通路和碰撞必须沿084/092已验路线。源资产的再分发授权由094登记，尚未明确条款的来源保留 UNKNOWN。
 
 仍可执行净空夹具、现有材质只读属性查询和重复读档声光/VFX计数。允许共享源当前由092占用，待明确证据再开准确写窗口；本单未修改 CampaignWorld、WorldPresentation、PresentationComponent 或 Content。Owner 审样、完整路线、独立 Cook 均未完成，状态保持 Active。
+
+## 火烟首件更新
+
+2026-10-08 火烟首件已制作并通过隔离PIE可见性与停止消散检查；修复轻量Niagara无材质NormalizedAge输出导致透明度为零的问题。五个包均先锁定再编辑。首件视频已交Owner审样，未接入正式地图，完整任务仍Active。 证据：docs/qa/TASK-096/fire/REPORT.md。

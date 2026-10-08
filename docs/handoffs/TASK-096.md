@@ -35,3 +35,7 @@ Active，2026-10-07。用户授权逐单执行，设计问题可暂缓；主Agen
 本单未新增重复配置的测试。完整T096-Cxx逐项均在QA REPORT登记，运行、真实模型、正常输入、Cook和Owner签收分别标记NOT_RUN；静态子检查仅证明其具体范围。依赖下游可采用技术盘点/准确路径与现有行为入口，资产替换需准确包授权、锁和单写者窗口。正式完工和Owner签收仍由主Agent复核。
 
 实际原生：1/1 Success，0 warning，0 error；完整Cxx、正常输入、渲染、Cook和Owner仍NOT_RUN。证据：[NATIVE_REUSE.json](../qa/TASK-096/NATIVE_REUSE.json)，警告逐条原样保留于REPORT。
+
+## 火烟首件更新
+
+2026-10-08 火烟首件已制作并通过隔离PIE可见性与停止消散检查；修复轻量Niagara无材质NormalizedAge输出导致透明度为零的问题。五个包均先锁定再编辑。首件视频已交Owner审样，未接入正式地图，完整任务仍Active。 证据：docs/qa/TASK-096/fire/REPORT.md。
