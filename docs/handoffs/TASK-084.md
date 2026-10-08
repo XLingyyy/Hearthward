@@ -1,5 +1,7 @@
 # TASK-084｜运行调查交接
 
+2026-10-08 窗口异常的原始入口已补测：真实编辑器菜单启动独立进程，1280×720请求在150%缩放下外框1922×1128且完整在屏幕内；实际拖至1612×954后新游戏、HUD、暂停页可见，正常退出成功。第二次菜单启动因Computer Use两次激活失败未执行。证据见[窗口报告](../qa/TASK-084/WINDOW_PREVIEW_20261008.md)，不计完整路线验收。
+
 ## 2026-10-07 Nav12：正式节点完成，末段首阻塞保留
 
 安全摘要见 [NAV12_GROUNDED_FINAL_FIRST_BLOCKER](../qa/TASK-103/NAV12_GROUNDED_FINAL_FIRST_BLOCKER.json)。绑定独立 Development/API run `fresh-prologue-navigation-api-20261007-12`，由Root公开UEClient启动/停止，owned editor退出确认。四个正式空间节点 bedroom_door、escape_stair_top、escape_stair_bottom、courtyard_side_gate 均通过真实完整查询路径、controller路径和普通PathFollowing到达。该组是API证据，OS连续路线仍NOT_RUN。
