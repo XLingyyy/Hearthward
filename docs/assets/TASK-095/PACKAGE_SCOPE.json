@@ -17,18 +17,25 @@
     "Content/Hearthward/Assets/TASK-095/Archery/Quiver/T_Quiver_BaseColor.uasset",
     "Content/Hearthward/Assets/TASK-095/Archer/SK_Archer_Practical.uasset",
     "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_ShoulderRepairCloth.uasset",
-    "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_Sling.uasset"
+    "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_Sling.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/SK_Archer_Combat.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/SK_Archer_Combat_Skeleton.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Idle.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Walk.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Run.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Shoot.uasset"
   ],
   "lock_state": "ACQUIRED_BEFORE_EDIT",
   "single_writer_required": true,
-  "binary_edits": "Existing archery kit plus 3 new archer preview packages; runtime character binding unchanged",
-  "shared_source_edits": "HearthwardProjectile.cpp/.h: arrow visual only; HearthwardPresentationComponent.cpp: honor World audio playback flag after reproduced collision-test crash",
+  "binary_edits": "Archery kit, repaired preview, and 6 specialized archer runtime mesh/skeleton/animation packages",
+  "shared_source_edits": "CampaignActor and BrotherAnimInstance: approved 0.6-second archer windup and cancellation; DefaultGame Cook directory; projectile visual and audio-world fix retained",
   "design_pending": "NONE: DSGN-004 approved; Owner visual acceptance remains pending",
   "technical_evidence": "docs/qa/TASK-095/TECHNICAL_AUDIT.json",
   "authorization": "Owner explicitly authorized local Blender MCP art production; exact new packages recorded in TASK-095 allowed_paths",
   "source_lock": "art_source/TASK-095/ArcheryKit.blend",
   "source_locks": [
     "art_source/TASK-095/ArcheryKit.blend",
-    "art_source/TASK-095/Archer-Repaired.blend"
+    "art_source/TASK-095/Archer-Repaired.blend",
+    "art_source/TASK-095/Archer-Animated.blend"
   ]
 }
