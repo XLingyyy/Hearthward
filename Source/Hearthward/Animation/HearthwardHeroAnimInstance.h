@@ -20,7 +20,9 @@ public:
     float CombatRate=1;
     bool IsExecution=false;
     bool IsStoneAxe=false;
+    bool IsSpear=false;
     HearthwardCombat::FMove StoneAxeMove;
+    HearthwardCombat::FMove SpearMove;
 
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") float GroundSpeed = 0;
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") FName MotionState = TEXT("Idle");

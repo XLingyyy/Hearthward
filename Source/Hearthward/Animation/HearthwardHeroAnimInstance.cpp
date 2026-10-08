@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Gameplay/HearthwardGameData.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
@@ -79,11 +80,13 @@ struct FHeroAnimProxy : FAnimInstanceProxy
             Players[Index].SetStartPosition(Hero->LifePoseTime);
             Players[Index].SetAccumulatedTime(Hero->LifePoseTime);
         }
-        Players[6].SetPlayRate(Hero->IsStoneAxe ? 0.f : Hero->CombatRate);
-        if (Hero->IsStoneAxe)
+        Players[6].SetSequence(Hero->Clips[Hero->IsSpear?11:6]);
+        Players[6].SetPlayRate(Hero->IsStoneAxe || Hero->IsSpear ? 0.f : Hero->CombatRate);
+        if (Hero->IsStoneAxe || Hero->IsSpear)
         {
             const auto* Combat=Hero->GetOwningActor()->FindComponentByClass<UHearthwardCombatComponent>();
-            const float Position=float(HearthwardCombat::StoneAxeClipTime(Combat->Elapsed,Hero->Clips[6]->GetPlayLength(),Hero->StoneAxeMove));
+            // Both authored clips use normalized preparation/contact/recovery boundaries at .6/.8/1.
+            const float Position=float(HearthwardCombat::StoneAxeClipTime(Combat->Elapsed,Hero->Clips[Hero->IsSpear?11:6]->GetPlayLength(),Hero->IsSpear?Hero->SpearMove:Hero->StoneAxeMove));
             // Child activation initializes from StartPosition after this PreUpdate.
             Players[6].SetStartPosition(Position);
             Players[6].SetAccumulatedTime(Position);
@@ -113,13 +116,15 @@ UHearthwardHeroAnimInstance::UHearthwardHeroAnimInstance()
         const FString Path=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-095/Survival/A_Hero_%s"),Name);
         ConstructorHelpers::FObjectFinder<UAnimSequence> Clip(*Path);Clips.Add(Clip.Object);
     }
+    static ConstructorHelpers::FObjectFinder<UAnimSequence> Spear(TEXT("/Game/Hearthward/Assets/TASK-095/Weapons/Spear/A_Hero_SpearThrust"));
+    Clips.Add(Spear.Object);
 }
 
 void UHearthwardHeroAnimInstance::PlayAttack()
 {
     if (Clips.IsValidIndex(6) && Clips[6])
     {
-        IsStoneAxe=false;
+        IsStoneAxe=IsSpear=false;
         AttackRemaining = Clips[6]->GetPlayLength();
         ++AttackRevision;
     }
@@ -136,7 +141,7 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     const bool Falling = Character->GetCharacterMovement()->IsFalling();
     if (bWasFalling && !Falling) LandRemaining = 0.2f;
     bWasFalling = Falling;
-    if(IsStoneAxe)
+    if(IsStoneAxe || IsSpear)
     {
         const auto* Combat=Character->FindComponentByClass<UHearthwardCombatComponent>();
         AttackRemaining=float(FMath::Max(0.,Combat->Duration-Combat->Elapsed));
@@ -162,7 +167,7 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     {
         AttackRemaining = LandRemaining = 0.f;
         MotionState = TEXT("Idle");
-        if(IsStoneAxe) for(auto& Layer:GetProxyOnGameThread<FHeroAnimProxy>().Layers) Layer.bAlphaBoolEnabled=false;
+        if(IsStoneAxe || IsSpear) for(auto& Layer:GetProxyOnGameThread<FHeroAnimProxy>().Layers) Layer.bAlphaBoolEnabled=false;
         return;
     }
     const auto* Interaction = Character->FindComponentByClass<UHearthwardInteractionComponent>();
@@ -181,7 +186,7 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         ActionState = Character->GetVelocity().Z > 0.f ? 1 : 2;
         MotionState = ActionState == 1 ? TEXT("JumpStart") : TEXT("Fall");
     }
-    if(IsStoneAxe)
+    if(IsStoneAxe || IsSpear)
     {
         auto& Proxy=GetProxyOnGameThread<FHeroAnimProxy>();
         for(int32 Index=0;Index<5;++Index) Proxy.Layers[Index].bAlphaBoolEnabled=ActionState==Index+1;
@@ -195,7 +200,11 @@ void UHearthwardHeroAnimInstance::PlayCombat(float Duration,bool Execution,const
 {
     if(Duration<=0 || !Clips.IsValidIndex(6) || !Clips[6]) return;
     AttackRemaining=Duration; CombatRate=Clips[6]->GetPlayLength()/Duration; IsExecution=Execution; IsStoneAxe=InStoneAxeMove!=nullptr;
+    const auto* Gameplay=GetOwningActor()->FindComponentByClass<UHearthwardGameplayComponent>();
+    const auto Item=HearthwardData::Find(TEXT("items"),Gameplay->Equipment.FindRef(TEXT("weapon")).ToString());
+    IsSpear=!Execution && HearthwardData::Text(Item,TEXT("combatClass"))==TEXT("spear");
+    if(IsSpear)SpearMove=HearthwardCombat::Move(TEXT("spear"),Duration>HearthwardCombat::Move(TEXT("spear"),false).Duration()+.001);
     if(InStoneAxeMove)StoneAxeMove=*InStoneAxeMove;
     ++AttackRevision;
 }
-void UHearthwardHeroAnimInstance::StopCombat() { AttackRemaining=0; CombatRate=1; IsExecution=false; IsStoneAxe=false; }
+void UHearthwardHeroAnimInstance::StopCombat() { AttackRemaining=0; CombatRate=1; IsExecution=false; IsStoneAxe=IsSpear=false; }

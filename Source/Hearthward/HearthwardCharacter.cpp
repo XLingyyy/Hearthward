@@ -19,6 +19,8 @@
 #include "Building/HearthwardBuildingComponent.h"
 #include "Building/HearthwardTask028CampHouse.h"
 #include "Gameplay/HearthwardGameplayComponent.h"
+#include "Gameplay/HearthwardGameData.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Actions/HearthwardTimedActionComponent.h"
 #include "Inventory/HearthwardInventoryComponent.h"
 #include "UI/HearthwardHUD.h"
@@ -104,6 +106,37 @@ AHearthwardCharacter::AHearthwardCharacter(const FObjectInitializer& Initializer
     HeldAxe->SetRelativeScale3D(FVector(.7));
     HeldAxe->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     HeldAxe->SetVisibility(false);
+
+    HeldWeapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldWeapon"));
+    HeldWeapon->SetupAttachment(GetMesh(),TEXT("hand_r"));
+    HeldWeapon->SetAbsolute(false,false,true);
+    HeldWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    HeldWeapon->SetCanEverAffectNavigation(false);
+    HeldWeapon->SetVisibility(false);
+    const TCHAR* Families[]={TEXT("shortblade"),TEXT("longblade"),TEXT("spear"),TEXT("blunt"),TEXT("crossbow")};
+    const TCHAR* Names[]={TEXT("Shortblade"),TEXT("Longblade"),TEXT("Spear"),TEXT("Waraxe"),TEXT("Crossbow")};
+    for(int32 I=0;I<UE_ARRAY_COUNT(Families);++I)
+    {
+        const FString Path=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-095/Weapons/%s/SM_%s_Practical"),Names[I],Names[I]);
+        ConstructorHelpers::FObjectFinder<UStaticMesh> Asset(*Path);WeaponMeshes.Add(Families[I],Asset.Object);
+    }
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> Bow(TEXT("/Game/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical"));
+    WeaponMeshes.Add(TEXT("bow"),Bow.Object);
+    const auto& Ref=HeroMesh.Object->GetRefSkeleton();
+    const auto Bone=[&](FName Name)
+    {
+        int32 Index=Ref.FindBoneIndex(Name);FTransform Result=Ref.GetRefBonePose()[Index];
+        while((Index=Ref.GetParentIndex(Index))!=INDEX_NONE)Result*=Ref.GetRefBonePose()[Index];
+        return Result;
+    };
+    const FVector Grip=(Bone(TEXT("thumb_02_r")).GetLocation()+Bone(TEXT("middle_02_r")).GetLocation())*.5;
+    const FVector Direction=(Bone(TEXT("index_01_r")).GetLocation()-Bone(TEXT("pinky_01_r")).GetLocation()).GetSafeNormal();
+    // Grip coordinates follow the original hand's reference scale; weapon size stays in centimetres.
+    RightWeaponGrip=FTransform(FRotationMatrix::MakeFromZX(Direction,FVector::UpVector).ToQuat(),Grip).GetRelativeTransform(Bone(TEXT("hand_r")));
+    RightWeaponGrip.SetScale3D(FVector::OneVector);
+    const FVector BowGrip=(Bone(TEXT("thumb_02_l")).GetLocation()+Bone(TEXT("middle_02_l")).GetLocation())*.5;
+    LeftBowGrip=FTransform(FRotator(0,90,0),BowGrip).GetRelativeTransform(Bone(TEXT("hand_l")));
+    LeftBowGrip.SetScale3D(FVector::OneVector);
 }
 
 void AHearthwardCharacter::BeginPlay()
@@ -154,6 +187,26 @@ void AHearthwardCharacter::RefreshHeldTool()
     const bool HoldingAxe=Equipped && Equipped->Definition==TEXT("axe") && Equipped->Durability>0
         && !Combat->RangedSelected() && Survival->Alive() && Survival->RescueElapsed()<0;
     HeldAxe->SetVisibility(HoldingAxe);
+    const auto* Selected=Inventory->FindInstance(Inventory->EquippedInstance(Combat->RangedSelected()?TEXT("ranged"):TEXT("weapon")));
+    const bool Visible=Selected && Selected->Definition!=TEXT("axe") && Selected->Durability>0
+        && Survival->Alive() && Survival->RescueElapsed()<0;
+    HeldWeapon->SetVisibility(Visible);
+    if(!Visible)return;
+    if(DisplayedWeapon!=Selected->Definition)
+    {
+        const auto Row=HearthwardData::Find(TEXT("items"),Selected->Definition.ToString());
+        const FName Kind(*HearthwardData::Text(Row,TEXT("combatClass")));
+        HeldWeapon->SetStaticMesh(WeaponMeshes.FindRef(Kind));
+        HeldWeapon->EmptyOverrideMaterials();
+        HeldWeapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform,Kind==TEXT("bow")?TEXT("hand_l"):TEXT("hand_r"));
+        HeldWeapon->SetRelativeTransform(Kind==TEXT("bow")?LeftBowGrip:RightWeaponGrip);
+        if(Kind==TEXT("crossbow"))
+            HeldWeapon->SetRelativeRotation(RightWeaponGrip.GetRotation()*FQuat(FVector::UpVector,-PI*.5));
+        if(Kind!=TEXT("bow"))
+            if(auto* Material=HeldWeapon->CreateDynamicMaterialInstance(0))
+                Material->SetScalarParameterValue(TEXT("MetalFinish"),HearthwardData::Number(Row,TEXT("stage"),1)>1?1.f:0.f);
+        DisplayedWeapon=Selected->Definition;
+    }
 }
 
 void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

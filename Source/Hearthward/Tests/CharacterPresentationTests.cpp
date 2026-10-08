@@ -1,6 +1,11 @@
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Combat/HearthwardProjectile.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
+#include "../Inventory/HearthwardInventoryComponent.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
+#include "../Gameplay/HearthwardGameData.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/WorldSettings.h"
 #include "../Campaign/HearthwardCampaignActor.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Animation/HearthwardBrotherAnimInstance.h"
@@ -24,6 +29,71 @@
 #include "Kismet/GameplayStatics.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FWeaponPresentation095Test,
+    "Hearthward.Iteration.Task095.WeaponInstancePresentation",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FWeaponPresentation095Test::RunTest(const FString&)
+{
+    UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);World->InitializeActorsForPlay(FURL());
+    auto* Hero=World->SpawnActor<AHearthwardCharacter>();
+    auto* Controller=World->SpawnActor<APlayerController>();World->AddController(Controller);Controller->Possess(Hero);
+    Hero->Gameplay->Enabled=true;World->GetWorldSettings()->NotifyBeginPlay();Hero->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+    auto* Bag=Hero->FindComponentByClass<UHearthwardInventoryComponent>();
+    auto* Combat=Hero->FindComponentByClass<UHearthwardCombatComponent>();
+    auto* Clock=World->GetSubsystem<UHearthwardWorldClockSubsystem>();
+    TArray<UStaticMeshComponent*> Components;Hero->GetComponents(Components);
+    auto** Found=Components.FindByPredicate([](const auto* C){return C->GetFName()==TEXT("HeldWeapon");});
+    if(!TestTrue(TEXT("Production hero has a weapon visual"),Found!=nullptr))
+    {World->EndPlay(EEndPlayReason::Quit);GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return false;}
+    auto* Held=*Found;
+    TestFalse(TEXT("Empty inventory has no displayed weapon"),Held->GetVisibleFlag());
+    for(const TCHAR* Id:{TEXT("shortblade"),TEXT("longblade"),TEXT("spear"),TEXT("shortblade_2"),TEXT("longblade_2"),TEXT("spear_2"),TEXT("blunt_2"),TEXT("shortblade_3"),TEXT("longblade_3"),TEXT("spear_3"),TEXT("blunt_3"),TEXT("hearth_blade"),TEXT("bow"),TEXT("bow_2"),TEXT("crossbow_2"),TEXT("bow_3"),TEXT("crossbow_3")})
+    {
+        if(!TestTrue(FString::Printf(TEXT("%s can enter the actual inventory"),Id),Bag->TryAdd(Id,1)==EHearthwardInventoryResult::Success))continue;
+        FGuid Instance=Bag->FirstInstance(Id);
+        TestTrue(TEXT("Production timed equip starts"),Hero->Gameplay->EquipInstance(Instance));
+        Clock->Tick(.5f);Combat->TickComponent(.5f,LEVELTICK_All,nullptr);
+        const auto Row=HearthwardData::Find(TEXT("items"),Id);
+        const FString Kind=HearthwardData::Text(Row,TEXT("combatClass"));
+        const FString Name=Kind==TEXT("blunt")?TEXT("Waraxe"):Kind.Left(1).ToUpper()+Kind.Mid(1);
+        TestTrue(FString::Printf(TEXT("%s is visible after equip"),Id),Held->GetVisibleFlag());
+        const FString Expected=Kind==TEXT("bow")?TEXT("SM_Longbow_Practical"):TEXT("SM_")+Name+TEXT("_Practical");
+        TestEqual(TEXT("Actual family mesh follows equipped GUID"),Held->GetStaticMesh()->GetName(),Expected);
+        TestEqual(TEXT("Bow uses left hand, other weapons right"),Held->GetAttachSocketName(),FName(Kind==TEXT("bow")?TEXT("hand_l"):TEXT("hand_r")));
+        TestTrue(TEXT("World scale cannot inherit the legacy skeleton's 100x root"),Held->GetComponentScale().Equals(FVector::OneVector,.001));
+        TestTrue(TEXT("Weapon is cosmetic; authority retains combat sweeps"),Held->GetCollisionEnabled()==ECollisionEnabled::NoCollision);
+        if(FName(Id)==TEXT("spear_2"))
+        {
+            auto* Anim=CastChecked<UHearthwardHeroAnimInstance>(Hero->GetMesh()->GetAnimInstance());
+            for(bool Heavy:{false,true})
+            {
+                TestTrue(TEXT("Actual spear attack starts"),Combat->Attack(Heavy));
+                TestTrue(TEXT("Spear selects its thrust, without enabling axe physical sampling"),Anim->IsSpear && !Anim->IsStoneAxe);
+                const auto Move=HearthwardCombat::Move(TEXT("spear"),Heavy);
+                TestTrue(TEXT("Light/heavy timing stays authoritative"),FMath::IsNearlyEqual(Combat->Duration,Move.Duration(),.001));
+                const auto Tip=[&](double Time)
+                {
+                    Combat->Elapsed=Time;Anim->NativeUpdateAnimation(0);
+                    Hero->GetMesh()->TickAnimation(.15f,false);Hero->GetMesh()->RefreshBoneTransforms();Held->UpdateComponentToWorld();
+                    return Held->GetComponentLocation()+Held->GetUpVector()*119;
+                };
+                const auto Prepare=Tip(Move.Windup),Contact=Tip(Move.Windup+Move.Active);
+                TestTrue(TEXT("Spear advances forward during its effective interval"),FVector::DotProduct(Contact-Prepare,Hero->GetActorForwardVector())>15);
+                TestTrue(TEXT("Spear points along the actual attack heading"),FVector::DotProduct(Held->GetUpVector(),Hero->GetActorForwardVector())>.95);
+                const FVector RootScale=Hero->GetMesh()->GetSkeletalMeshAsset()->GetRefSkeleton().GetRefBonePose()[0].GetScale3D();
+                TestTrue(TEXT("Thrust preserves legacy root scale"),Hero->GetMesh()->GetSocketTransform(TEXT("root"),RTS_Component).GetScale3D().Equals(RootScale,.02));
+                Combat->Cancel();
+            }
+        }
+        TestTrue(TEXT("Wear uses actual instance"),Bag->WearInstance(Instance,10000));
+        TestFalse(TEXT("Broken current instance disappears"),Held->GetVisibleFlag());
+        TestTrue(TEXT("Remove tested instance"),Bag->RemoveInstance(Instance));
+        TestFalse(TEXT("Removed weapon stays hidden"),Held->GetVisibleFlag());
+    }
+    World->EndPlay(EEndPlayReason::Quit);GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return true;
+}
 #if WITH_EDITOR
 static FAutoConsoleCommandWithWorld FRescuePreview095Command(
     TEXT("Hearthward.Test095.RescuePreview"),TEXT("Prepare a downed brother for isolated rescue animation review."),

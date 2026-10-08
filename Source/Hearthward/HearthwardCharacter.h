@@ -40,6 +40,12 @@ private:
     UPROPERTY(VisibleAnywhere, Category="Hearthward|Equipment")
     TObjectPtr<UStaticMeshComponent> HeldAxe;
 
+    UPROPERTY(VisibleAnywhere, Category="Hearthward|Equipment")
+    TObjectPtr<UStaticMeshComponent> HeldWeapon;
+    UPROPERTY() TMap<FName,TObjectPtr<class UStaticMesh>> WeaponMeshes;
+    FTransform RightWeaponGrip,LeftBowGrip;
+    FName DisplayedWeapon;
+
     UPROPERTY(VisibleAnywhere, Category="Hearthward|Inventory")
     TObjectPtr<UHearthwardInventoryComponent> Inventory;
 
