@@ -7,6 +7,7 @@
 #include "Materials/MaterialInterface.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
+#include "UObject/ConstructorHelpers.h"
 
 AHearthwardHometownFortress::AHearthwardHometownFortress()
 {
@@ -14,6 +15,10 @@ AHearthwardHometownFortress::AHearthwardHometownFortress()
     Tags.Add(TEXT("CampaignHometownFortress"));
     PrimaryActorTick.bCanEverTick=true;
     PrimaryActorTick.TickInterval=1.f;
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> StoneAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/M_RoughStone"));
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> TimberAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/M_OldTimber"));
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> FrameAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/SM_BedroomDoorframe"));
+    Stone=StoneAsset.Object;Timber=TimberAsset.Object;DoorframeMesh=FrameAsset.Object;
 }
 
 float AHearthwardHometownFortress::Terrain(float X, float Y) const
@@ -122,9 +127,6 @@ void AHearthwardHometownFortress::Tick(float DeltaSeconds)
 void AHearthwardHometownFortress::BeginPlay()
 {
     Super::BeginPlay();
-    Stone=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_RockScan.M_RockScan"));
-    auto* Wood=UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(nullptr,TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial")),this);
-    Wood->SetVectorParameterValue(TEXT("Color"),FLinearColor(.16f,.09f,.045f));Timber=Wood;
     for(float X:{-650.f,0.f,1850.f})for(float Y:{-550.f,500.f,1050.f})
         BedroomFloor=FMath::Max(BedroomFloor,Terrain(X,Y)+120);
     const float F=BedroomFloor;
@@ -140,6 +142,11 @@ void AHearthwardHometownFortress::BeginPlay()
     Part(TEXT("WindowLintel"),FVector(-650,0,F+495),FVector(100,560,90));
     for(float X:{-395.f,395.f})Part(TEXT("BedroomDoorPier"),FVector(X,550,F+270),FVector(510,100,540));
     Part(TEXT("BedroomDoorLintel"),FVector(0,550,F+460),FVector(280,100,160));
+    auto* Doorframe=NewObject<UStaticMeshComponent>(this,TEXT("BedroomDoorframe"));
+    AddInstanceComponent(Doorframe);Doorframe->SetupAttachment(GetRootComponent());
+    Doorframe->SetStaticMesh(DoorframeMesh);Doorframe->SetRelativeLocation(FVector(0,550,F));
+    Doorframe->SetCollisionProfileName(TEXT("NoCollision"));Doorframe->SetCanEverAffectNavigation(false);
+    Doorframe->RegisterComponent();
     Part(TEXT("BedroomCeiling"),FVector(0,0,F+555),FVector(1450,1250,70),true,Timber);
     for(float X:{-480.f,0.f,480.f})Part(TEXT("CeilingBeam"),FVector(X,0,F+510),FVector(32,1100,45),false,Timber);
     for(float X:{-340.f,340.f})

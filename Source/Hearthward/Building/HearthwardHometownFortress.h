@@ -24,6 +24,7 @@ private:
     int32 PartIndex = 0;
     UPROPERTY() TObjectPtr<UMaterialInterface> Stone;
     UPROPERTY() TObjectPtr<UMaterialInterface> Timber;
+    UPROPERTY() TObjectPtr<class UStaticMesh> DoorframeMesh;
     UPROPERTY() TObjectPtr<UMaterialInstanceDynamic> FacadeMaterial;
     float Terrain(float X, float Y) const;
     UStaticMeshComponent* Part(FString Label, FVector Center, FVector Size, bool Blocking = true,
