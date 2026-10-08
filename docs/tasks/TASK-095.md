@@ -1,5 +1,8 @@
 # TASK-095｜兄弟与敌人辨识、武器持握和关键动作收尾
 
+2026-10-08 追加实施：Owner批准两米入口、自动靠近约0.8米后施救五秒。六段兄弟倒地/起身/施救动作已由CMU 113_08与原创施救姿态制作、导入原骨架；Editor构建及九项定向原生通过。原骨架根缩放和长帧靠近过冲已修复；最终两项原生回归及正反向PIE、真实障碍、移动输入取消通过，见[救援运行报告](../qa/TASK-095/rescue-runtime/REPORT.md)。完整TASK-095仍未完成。批准记录见[救援靠近](../assets/TASK-095/RESCUE_APPROACH.md)。
+
+
 > 状态：Active（射手运行增量已验证，其余角色与动作继续实施）。优先级：P1。阶段：D 关键资产。日期：2026-10-07。Owner：XLingyyy。Reviewer／Issue：未指派。实际分支：`codex/TASK-084-103-iteration`。
 
 [本批总入口](../planning/TASK-084-103/README.md) · [执行约定](../planning/TASK-084-103/EXECUTION_GUIDE.md) · [元数据](TASK-095.json) · [执行交接](../handoffs/TASK-095.md)

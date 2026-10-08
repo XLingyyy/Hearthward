@@ -150,8 +150,9 @@ void AHearthwardCharacter::RefreshHeldTool()
 {
     const auto* Equipped=Inventory->FindInstance(Inventory->EquippedInstance(TEXT("weapon")));
     const auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
+    const auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
     const bool HoldingAxe=Equipped && Equipped->Definition==TEXT("axe") && Equipped->Durability>0
-        && !Combat->RangedSelected();
+        && !Combat->RangedSelected() && Survival->Alive() && Survival->RescueElapsed()<0;
     HeldAxe->SetVisibility(HoldingAxe);
 }
 

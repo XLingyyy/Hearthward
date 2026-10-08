@@ -26,9 +26,11 @@ public:
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") FName MotionState = TEXT("Idle");
     UPROPERTY(VisibleDefaultsOnly, Category="Animation") TArray<TObjectPtr<class UAnimSequence>> Clips;
     int32 ActionState = 0;
+    float LifePoseTime = 0;
     uint32 AttackRevision = 0;
 private:
     float AttackRemaining = 0;
     float LandRemaining = 0;
     bool bWasFalling = false;
+    float DownElapsed = 0;
 };

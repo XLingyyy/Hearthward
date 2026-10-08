@@ -6,6 +6,7 @@
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -27,6 +28,8 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
     FAnimNode_SequencePlayer_Standalone Players[6];
     FAnimNode_TwoWayBlend Gait, Locomotion;
     FBrotherActionBlend Wait, Work, Attack;
+    FAnimNode_SequencePlayer_Standalone LifePlayers[3];
+    FBrotherActionBlend LifeLayers[3];
     uint32 SeenAttack = 0;
 
     explicit FBrotherAnimProxy(UAnimInstance* Instance) : FAnimInstanceProxy(Instance) {}
@@ -48,13 +51,23 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
         Wait.A.SetLinkNode(&Locomotion); Wait.B.SetLinkNode(&Players[5]);
         Work.A.SetLinkNode(&Wait); Work.B.SetLinkNode(&Players[3]);
         Attack.A.SetLinkNode(&Work); Attack.B.SetLinkNode(&Players[4]);
+        for(int32 I=0;I<3;++I)
+        {
+            LifePlayers[I].SetSequence(Brother->LifeClips[I]);LifePlayers[I].SetLoopAnimation(false);LifePlayers[I].SetPlayRate(0);
+            LifeLayers[I].A.SetLinkNode(I==0?&Attack:&LifeLayers[I-1]);LifeLayers[I].B.SetLinkNode(&LifePlayers[I]);
+        }
         FAnimInstanceProxy::Initialize(Instance);
     }
-    virtual FAnimNode_Base* GetCustomRootNode() override { return &Attack; }
+    virtual FAnimNode_Base* GetCustomRootNode() override { return &LifeLayers[2]; }
     virtual void PreUpdate(UAnimInstance* Instance, float DeltaSeconds) override
     {
         FAnimInstanceProxy::PreUpdate(Instance, DeltaSeconds);
         const auto* Brother = CastChecked<UHearthwardBrotherAnimInstance>(Instance);
+        for(int32 I=0;I<3;++I)
+        {
+            LifeLayers[I].bAlphaBoolEnabled=Brother->LifeState==I+1;
+            LifePlayers[I].SetStartPosition(Brother->LifePoseTime);LifePlayers[I].SetAccumulatedTime(Brother->LifePoseTime);
+        }
         for(int32 I=0;I<6;++I)if(Players[I].GetSequence()!=Brother->Clips[I])Players[I].SetSequence(Brother->Clips[I]);
         Locomotion.Alpha = FMath::Clamp(Brother->GroundSpeed / 40.f, 0.f, 1.f);
         Gait.Alpha = FMath::Clamp((Brother->GroundSpeed - 220.f) / 100.f, 0.f, 1.f);
@@ -79,6 +92,11 @@ UHearthwardBrotherAnimInstance::UHearthwardBrotherAnimInstance()
         const FString Path = FString::Printf(TEXT("/Game/Characters/Brother/Animation/A_Brother_%s"), Name);
         ConstructorHelpers::FObjectFinder<UAnimSequence> Clip(*Path);
         Clips.Add(Clip.Object);
+    }
+    for(const TCHAR* Name:{TEXT("Down"),TEXT("GetUp"),TEXT("Rescue")})
+    {
+        const FString Path=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-095/Survival/A_Brother_%s"),Name);
+        ConstructorHelpers::FObjectFinder<UAnimSequence> Clip(*Path);LifeClips.Add(Clip.Object);
     }
 }
 
@@ -111,6 +129,21 @@ void UHearthwardBrotherAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
             MotionState = TEXT("Dig");
     }
     if (AttackRemaining > 0.f) MotionState = TEXT("Attack");
+    LifeState=0;
+    const auto* Survival=TryGetPawnOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(Survival && Survival->Enabled() && !Survival->Alive())
+    {
+        const double Rise=Survival->AssistedRiseElapsed();
+        DownElapsed=Rise>=0?1.2f:FMath::Min(1.2f,DownElapsed+DeltaSeconds);
+        LifeState=Rise>=0?2:1;LifePoseTime=Rise>=0?float(Rise):DownElapsed;
+        MotionState=Rise>=0?TEXT("GetUp"):TEXT("Down");AttackRemaining=0;GroundSpeed=0;
+    }
+    else
+    {
+        DownElapsed=0;
+        if(Survival && Survival->RescueElapsed()>=0)
+        {LifeState=3;LifePoseTime=float(Survival->RescueElapsed());MotionState=TEXT("Rescue");AttackRemaining=0;}
+    }
 }
 
 FAnimInstanceProxy* UHearthwardBrotherAnimInstance::CreateAnimInstanceProxy() { return new FBrotherAnimProxy(this); }

@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
 #include "../Interaction/HearthwardResourceInteractionComponent.h"
@@ -27,9 +28,9 @@ struct FHeroBlend : FAnimNode_TwoWayBlend
 
 struct FHeroAnimProxy : FAnimInstanceProxy
 {
-    FAnimNode_SequencePlayer_Standalone Players[8];
+    FAnimNode_SequencePlayer_Standalone Players[11];
     FAnimNode_TwoWayBlend Gait, Locomotion;
-    FHeroBlend Layers[5];
+    FHeroBlend Layers[8];
     uint32 SeenAttack = 0;
 
     explicit FHeroAnimProxy(UAnimInstance* Instance) : FAnimInstanceProxy(Instance) {}
@@ -37,7 +38,7 @@ struct FHeroAnimProxy : FAnimInstanceProxy
     virtual void Initialize(UAnimInstance* Instance) override
     {
         const auto* Hero = CastChecked<UHearthwardHeroAnimInstance>(Instance);
-        for (int32 Index = 0; Index < 8; ++Index)
+        for (int32 Index = 0; Index < 11; ++Index)
         {
             Players[Index].SetSequence(Hero->Clips[Index]);
             Players[Index].SetLoopAnimation(Index < 3 || Index == 4 || Index == 7);
@@ -51,7 +52,7 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         Gait.B.SetLinkNode(&Players[2]);
         Locomotion.A.SetLinkNode(&Players[0]);
         Locomotion.B.SetLinkNode(&Gait);
-        for (int32 Index = 0; Index < 5; ++Index)
+        for (int32 Index = 0; Index < 8; ++Index)
         {
             Layers[Index].A.SetLinkNode(Index == 0 ? static_cast<FAnimNode_Base*>(&Locomotion) : &Layers[Index - 1]);
             Layers[Index].B.SetLinkNode(&Players[Index + 3]);
@@ -60,7 +61,7 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         FAnimInstanceProxy::Initialize(Instance);
     }
 
-    virtual FAnimNode_Base* GetCustomRootNode() override { return &Layers[4]; }
+    virtual FAnimNode_Base* GetCustomRootNode() override { return &Layers[7]; }
 
     virtual void PreUpdate(UAnimInstance* Instance, float DeltaSeconds) override
     {
@@ -70,8 +71,14 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         Gait.Alpha = FMath::Clamp((Hero->GroundSpeed - 350.f) / 250.f, 0.f, 1.f);
         Players[1].SetPlayRate(FMath::Clamp(Hero->GroundSpeed / 350.f, 0.2f, 1.6f));
         Players[2].SetPlayRate(FMath::Clamp(Hero->GroundSpeed / 600.f, 0.4f, 1.8f));
-        for (int32 Index = 0; Index < 5; ++Index)
+        for (int32 Index = 0; Index < 8; ++Index)
             Layers[Index].bAlphaBoolEnabled = Hero->ActionState == Index + 1;
+        for(int32 Index=8;Index<11;++Index)
+        {
+            Players[Index].SetPlayRate(0);
+            Players[Index].SetStartPosition(Hero->LifePoseTime);
+            Players[Index].SetAccumulatedTime(Hero->LifePoseTime);
+        }
         Players[6].SetPlayRate(Hero->IsStoneAxe ? 0.f : Hero->CombatRate);
         if (Hero->IsStoneAxe)
         {
@@ -100,6 +107,11 @@ UHearthwardHeroAnimInstance::UHearthwardHeroAnimInstance()
         const FString Path = FString::Printf(TEXT("/Game/Characters/Hero/AnimationV2/A_Hero_%s"), Name);
         ConstructorHelpers::FObjectFinder<UAnimSequence> Clip(*Path);
         Clips.Add(Clip.Object);
+    }
+    for(const TCHAR* Name:{TEXT("Down"),TEXT("GetUp"),TEXT("Rescue")})
+    {
+        const FString Path=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-095/Survival/A_Hero_%s"),Name);
+        ConstructorHelpers::FObjectFinder<UAnimSequence> Clip(*Path);Clips.Add(Clip.Object);
     }
 }
 
@@ -133,6 +145,19 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     LandRemaining = FMath::Max(0.f, LandRemaining - DeltaSeconds);
     ActionState = 0;
     MotionState = GroundSpeed < 5.f ? TEXT("Idle") : GroundSpeed > 400.f ? TEXT("Sprint") : TEXT("Walk");
+    const auto* Survival=Character->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(Survival && Survival->Enabled() && !Survival->Alive())
+    {
+        const double Rise=Survival->AssistedRiseElapsed();
+        DownElapsed=Rise>=0?1.2f:FMath::Min(1.2f,DownElapsed+DeltaSeconds);
+        ActionState=Rise>=0?7:6;LifePoseTime=Rise>=0?float(Rise):DownElapsed;
+        MotionState=Rise>=0?TEXT("GetUp"):TEXT("Down");AttackRemaining=LandRemaining=0;return;
+    }
+    DownElapsed=0;
+    if(Survival && Survival->RescueElapsed()>=0)
+    {
+        ActionState=8;LifePoseTime=float(Survival->RescueElapsed());MotionState=TEXT("Rescue");AttackRemaining=LandRemaining=0;return;
+    }
     if (Dead)
     {
         AttackRemaining = LandRemaining = 0.f;

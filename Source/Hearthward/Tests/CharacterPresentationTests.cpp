@@ -4,6 +4,10 @@
 #include "../Campaign/HearthwardCampaignActor.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Animation/HearthwardBrotherAnimInstance.h"
+#include "../Animation/HearthwardHeroAnimInstance.h"
+#include "../Survival/HearthwardSurvivalComponent.h"
+#include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../HearthwardCharacter.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -21,6 +25,19 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 #if WITH_EDITOR
+static FAutoConsoleCommandWithWorld FRescuePreview095Command(
+    TEXT("Hearthward.Test095.RescuePreview"),TEXT("Prepare a downed brother for isolated rescue animation review."),
+    FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
+    {
+        auto* Player=Cast<ACharacter>(UGameplayStatics::GetPlayerPawn(World,0));if(!Player)return;
+        auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Initialize();Campaign->State.Phase=NAME_None;
+        Player->SetActorLocation(FVector(0,0,90));Player->SetActorRotation(FRotator::ZeroRotator);
+        auto* G=Player->FindComponentByClass<UHearthwardGameplayComponent>();G->Enabled=true;G->Health=G->MaxHealth();
+        FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        auto* Brother=World->SpawnActor<AHearthwardCompanionFixture>(FVector(180,0,80),FRotator(0,180,0),Params);
+        Brother->SetActorTickEnabled(false);Brother->Tags.Add(TEXT("Task095RescuePatient"));
+        Brother->FindComponentByClass<UHearthwardSurvivalComponent>()->ReceiveDamage(10000,FGuid::NewGuid(),World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
+    }));
 static FAutoConsoleCommandWithWorld FCastPreview095Command(
     TEXT("Hearthward.Test095.CastPreview"),TEXT("Arrange production character appearances in an isolated unsaved QA world."),
     FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
@@ -68,6 +85,51 @@ struct FArcherShotTestAccess
     static float Pending(const AHearthwardCampaignActor* Actor){return Actor->BowRemaining;}
     static void Ready(AHearthwardCampaignActor* Actor){Actor->AttackIn=0;Actor->DecisionIn=0;}
 };
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSurvivalMotion095Test,
+    "Hearthward.Iteration.Task095.SurvivalMotionUnitsAndEndpoints",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FSurvivalMotion095Test::RunTest(const FString&)
+{
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    for(const TCHAR* Role:{TEXT("Hero"),TEXT("Brother")})
+    {
+        auto* Owner=World->SpawnActor<AActor>();
+        auto* Mesh=NewObject<USkeletalMeshComponent>(Owner);Owner->AddInstanceComponent(Mesh);Owner->SetRootComponent(Mesh);
+        const FString Path=FString::Printf(TEXT("/Game/Characters/%s/UE5/SK_%s"),Role,Role);
+        auto* Asset=LoadObject<USkeletalMesh>(nullptr,*Path);Mesh->SetSkeletalMesh(Asset);Mesh->RegisterComponent();
+        Mesh->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+        FVector DownHead;
+        for(const TCHAR* Kind:{TEXT("Down"),TEXT("GetUp"),TEXT("Rescue")})
+        {
+            auto* Clip=LoadObject<UAnimSequence>(nullptr,*FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-095/Survival/A_%s_%s"),Role,Kind));
+            if(!TestNotNull(TEXT("Survival clip loads"),Clip))continue;
+            TestTrue(TEXT("Animation retains the character's original skeleton"),Clip->GetSkeleton()==Asset->GetSkeleton());
+            TestTrue(TEXT("Duration matches the authoritative action"),FMath::IsNearlyEqual(Clip->GetPlayLength(),FString(Kind)==TEXT("Down")?1.2f:5.f,.001f));
+            Mesh->SetAnimation(Clip);
+            const auto Sample=[&](float Time)
+            {
+                Mesh->SetPosition(Time,false);Mesh->TickAnimation(0,false);Mesh->RefreshBoneTransforms();
+                const FVector ReferenceScale=Asset->GetRefSkeleton().GetRefBonePose()[0].GetScale3D();
+                TestTrue(TEXT("Legacy root scale is preserved for skinning"),Mesh->GetSocketTransform(TEXT("root"),RTS_Component).GetScale3D().Equals(ReferenceScale,.02));
+                TestTrue(TEXT("Head skinning retains inherited scale"),Mesh->GetSocketTransform(TEXT("head"),RTS_Component).GetScale3D().Equals(ReferenceScale,.02));
+                return Mesh->GetSocketLocation(TEXT("head"));
+            };
+            Sample(Clip->GetPlayLength()*.5f);
+            if(FString(Kind)==TEXT("Down"))
+            {
+                DownHead=Sample(1.2f);TestTrue(TEXT("Downed head is close to ground in source centimetres"),DownHead.Z>=0 && DownHead.Z<35);
+            }
+            else if(FString(Kind)==TEXT("GetUp"))
+            {
+                TestTrue(TEXT("Down and rising endpoints meet"),FVector::Dist(DownHead,Sample(0))<1);
+                const auto End=Sample(5);TestTrue(TEXT("Rising ends at adult source height"),End.Z>70 && End.Z<105);
+            }
+        }
+    }
+    GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return true;
+}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcherShotLifecycle095Test,
     "Hearthward.Iteration.Task095.ArcherWindupReleaseAndInterrupt",

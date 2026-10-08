@@ -34,7 +34,7 @@ public:
     float MaxHealth() const; float MaxStamina() const;
     bool Enabled() const;
     bool Alive() const { return State.Life==EHearthwardLife::Alive; }
-    bool Busy() const { return !State.Medicine.IsNone() || !State.FoodItem.IsNone() || Rescue.IsValid(); }
+    bool Busy() const { return !State.Medicine.IsNone() || !State.FoodItem.IsNone() || Rescue.IsValid() || RescueApproaching; }
     FName ActiveConsumable() const;
     bool SafeToSave() const;
     UFUNCTION(BlueprintCallable) bool BeginMedicine(FName Item,bool Automatic=false);
@@ -56,6 +56,9 @@ public:
     void SetAutoPermission(FName Item,bool Allowed);
     bool Permitted(FName Item) const;
     double RescueRemaining=0;
+    bool IsApproachingRescue() const { return RescueApproaching; }
+    double RescueElapsed() const { return Rescue.IsValid() && !RescueApproaching ? 5-RescueRemaining : -1; }
+    double AssistedRiseElapsed() const;
     bool Settling=false;
     UPROPERTY() float BrotherHealth=100;
     UPROPERTY() float BrotherHunger=100;
@@ -73,6 +76,11 @@ private:
     bool RestValid() const;
     void FinishActions(double Delta);
     TWeakObjectPtr<UHearthwardSurvivalComponent> Rescue;
+    TWeakObjectPtr<UHearthwardSurvivalComponent> Rescuer;
+    bool RescueApproaching=false;
+    double RescueBlockedSeconds=0;
+    FVector RescueProgressPosition=FVector::ZeroVector;
+    void StopRescueMovement();
     TWeakObjectPtr<class UHearthwardFurnitureInteractionComponent> RecoveryFacility;
     FGuid RecoveryEpoch;
     FVector ActionOrigin=FVector::ZeroVector;

@@ -152,6 +152,8 @@ void UHearthwardSurvivalComponent::CancelAction(bool Damaged)
 {
     if(Settling || (!Damaged && !Busy() && !Resting && !Treatment)) return;
     TGuardValue<bool> Guard(Settling,true);
+    StopRescueMovement();
+    if(auto* Target=Rescue.Get();Target && Target->Rescuer.Get()==this) Target->Rescuer.Reset();
     Rescue.Reset(); RescueRemaining=0; Resting=false; Treatment=false;RecoveryFacility.Reset();RecoveryEpoch.Invalidate();
     if(!State.FoodItem.IsNone())
     {
@@ -230,6 +232,7 @@ bool UHearthwardSurvivalComponent::BeginRescue(UHearthwardSurvivalComponent* Tar
 {
     if(!Enabled() || HasFailed(GetWorld())) {Status=TEXT("兄弟已无法继续，请载入保存节点");return false;}
     if(!Target || Target->State.Life!=EHearthwardLife::Downed) return false;
+    if(Target->Rescuer.IsValid()) {Status=TEXT("目标正在接受救援");return false;}
     const FString Reason=RescueBlockReason(Target);if(!Reason.IsEmpty()){Status=Reason;return false;}
     if(Busy() || Settling) {Status=TEXT("当前动作尚未结束");return false;}
     if(const auto* C=GetOwner()->FindComponentByClass<UHearthwardCombatComponent>();C && (C->Busy() || C->Guarding() || C->MovementMultiplier()<1)) {Status=TEXT("请先结束战斗动作再扶起");return false;}
@@ -237,24 +240,64 @@ bool UHearthwardSurvivalComponent::BeginRescue(UHearthwardSurvivalComponent* Tar
     if(auto* T=GetOwner()->FindComponentByClass<UHearthwardTimedActionComponent>()) T->InterruptAction();
     RecoveryFacility.Reset();RecoveryEpoch.Invalidate();Resting=Treatment=false;
     Rescue=Target; RescueRemaining=5; ActionEpoch=Epoch(); ActionOrigin=GetOwner()->GetActorLocation();
+    Target->Rescuer=this;
+    RescueApproaching=FVector::Dist2D(ActionOrigin,Target->GetOwner()->GetActorLocation())>80;
+    RescueProgressPosition=ActionOrigin; RescueBlockedSeconds=0;
     if(Cast<AHearthwardCompanionFixture>(GetOwner()))
         if(auto* P=Target->GetOwner()->FindComponentByClass<UHearthwardPresentationComponent>()) P->PlayFixedCue(TEXT("fixed.rescue.started"),FGuid::NewGuid(),true);
-    SetStatus(TEXT("正在扶起，需持续5秒")); return true;
+    SetStatus(RescueApproaching?TEXT("正在靠近，移动可取消救援"):TEXT("正在扶起，需持续5秒")); return true;
+}
+void UHearthwardSurvivalComponent::StopRescueMovement()
+{
+    if(RescueApproaching)
+        if(auto* C=Cast<ACharacter>(GetOwner()))
+        {
+            C->ConsumeMovementInputVector();
+            C->GetCharacterMovement()->StopMovementImmediately();
+        }
+    RescueApproaching=false; RescueBlockedSeconds=0;
+}
+double UHearthwardSurvivalComponent::AssistedRiseElapsed() const
+{
+    const auto* Helper=Rescuer.Get();
+    return State.Life==EHearthwardLife::Downed && Helper && Helper->Rescue.Get()==this ? Helper->RescueElapsed() : -1;
 }
 void UHearthwardSurvivalComponent::FinishActions(double Delta)
 {
     if(!Busy()) return;
+    if(RescueApproaching && !Rescue.IsValid()) {CancelAction();return;}
     if(HasFailed(GetWorld())) {CancelAction();Status=TEXT("兄弟已无法继续，请载入保存节点");return;}
-    if(!Alive() || ActionEpoch!=Epoch() || (State.FoodItem.IsNone() && (FVector::Dist(ActionOrigin,GetOwner()->GetActorLocation())>5 || GetOwner()->GetVelocity().Size()>5)))
+    if(!Alive() || ActionEpoch!=Epoch() || (!RescueApproaching && State.FoodItem.IsNone() && (FVector::Dist(ActionOrigin,GetOwner()->GetActorLocation())>5 || GetOwner()->GetVelocity().Size()>5)))
     { CancelAction(); return; }
     if(auto* Target=Rescue.Get())
     {
         const FString Reason=RescueBlockReason(Target);
         if(!Reason.IsEmpty()) { CancelAction();Status=Reason;return; }
+        if(RescueApproaching)
+        {
+            auto* C=Cast<ACharacter>(GetOwner());
+            if(!C) {CancelAction();Status=TEXT("无法靠近救援目标");return;}
+            FVector Direction=Target->GetOwner()->GetActorLocation()-C->GetActorLocation();Direction.Z=0;
+            const double Distance=Direction.Size();
+            if(Distance<=82)
+            {
+                StopRescueMovement();ActionOrigin=C->GetActorLocation();
+                C->SetActorRotation(Direction.Rotation());SetStatus(TEXT("正在扶起，需持续5秒"));
+                return;
+            }
+            if(FVector::Dist2D(RescueProgressPosition,C->GetActorLocation())>=1)
+            {RescueBlockedSeconds=0;RescueProgressPosition=C->GetActorLocation();}
+            else RescueBlockedSeconds+=Delta;
+            if(RescueBlockedSeconds>=.5) {CancelAction();Status=TEXT("靠近受阻，救援已取消");return;}
+            if(Delta>0)
+                C->GetCharacterMovement()->RequestDirectMove(Direction/Distance*FMath::Min(150.,(Distance-80)*2),false);
+            return;
+        }
         RescueRemaining=FMath::Max(0.,RescueRemaining-Delta);
         if(RescueRemaining==0)
         {
             Target->State.Life=EHearthwardLife::Alive; Target->State.DownRemaining=0; Target->Health()=Target->MaxHealth()*.1f;
+            Target->Rescuer.Reset();
             Rescue.Reset(); SetStatus(TEXT("已扶起"));
         }
     }
@@ -292,6 +335,9 @@ void UHearthwardSurvivalComponent::FinishActions(double Delta)
 }
 void UHearthwardSurvivalComponent::ResetTransient()
 {
+    StopRescueMovement();
+    if(auto* Target=Rescue.Get();Target && Target->Rescuer.Get()==this) Target->Rescuer.Reset();
+    Rescuer.Reset();
     InventoryNotificationPending=false;SetStatus(FString());
     DamageEvents.Reset(); Rescue.Reset(); RescueRemaining=0; CancelledMedicine=NAME_None;
     Bag()->ReleaseReservation();
@@ -303,7 +349,7 @@ FString UHearthwardSurvivalComponent::Describe() const
 {
     if(State.Life==EHearthwardLife::Dead) return TEXT("已死亡，请载入保存节点");
     if(State.Life==EHearthwardLife::Downed) return FString::Printf(TEXT("倒地：剩余 %.0f 秒"),State.DownRemaining);
-    if(Rescue.IsValid()) return FString::Printf(TEXT("扶起：剩余 %.1f 秒"),RescueRemaining);
+    if(Rescue.IsValid()) return RescueApproaching?TEXT("正在靠近救援目标"):FString::Printf(TEXT("扶起：剩余 %.1f 秒"),RescueRemaining);
     if(!State.Medicine.IsNone()) return FString::Printf(TEXT("用药：剩余 %.1f 秒"),State.MedicineRemaining);
     if(!State.FoodItem.IsNone()) return FString::Printf(TEXT("进食：剩余 %.1f 秒"),State.FoodRemaining);
     if(State.DrowningRemaining>=0) return FString::Printf(TEXT("溺水：剩余 %.1f 秒"),State.DrowningRemaining);
