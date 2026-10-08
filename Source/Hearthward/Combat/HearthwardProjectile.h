@@ -25,4 +25,6 @@ public:
     FGuid Epoch,Event;
     bool Bait=false,Landed=false,HitTarget=false;
     UFUNCTION(BlueprintCallable) bool Recover(AActor* Player);
+private:
+    UPROPERTY() TObjectPtr<class UStaticMesh> ArrowVisual;
 };
