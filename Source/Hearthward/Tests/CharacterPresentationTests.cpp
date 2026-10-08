@@ -4,6 +4,7 @@
 #include "../Campaign/HearthwardCampaignActor.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Animation/HearthwardBrotherAnimInstance.h"
+#include "../Companion/HearthwardCompanionFixture.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -20,6 +21,33 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 #if WITH_EDITOR
+static FAutoConsoleCommandWithWorld FCastPreview095Command(
+    TEXT("Hearthward.Test095.CastPreview"),TEXT("Arrange production character appearances in an isolated unsaved QA world."),
+    FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
+    {
+        auto* Player=Cast<ACharacter>(UGameplayStatics::GetPlayerPawn(World,0));if(!Player)return;
+        auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Initialize();Campaign->State.Phase=NAME_None;
+        const auto Place=[](ACharacter* Actor,FName Role,FVector Location)
+        {
+            Actor->SetActorLocation(Location);Actor->SetActorRotation(FRotator::ZeroRotator);
+            Actor->SetActorTickEnabled(false);Actor->Tags.Add(Role);
+        };
+        Place(Player,TEXT("Task095Cast.Hero"),FVector(0,-500,90));
+        FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        auto* Brother=World->SpawnActor<AHearthwardCompanionFixture>(FVector(0,-300,80),FRotator::ZeroRotator,Params);
+        Place(Brother,TEXT("Task095Cast.Brother"),FVector(0,-300,80));
+        auto* Civilian=World->SpawnActor<AHearthwardCampaignActor>(FVector(0,-100,80),FRotator::ZeroRotator,Params);
+        Civilian->Initialize(TEXT("task095_civilian"),false);Place(Civilian,TEXT("Task095Cast.Civilian"),FVector(0,-100,80));
+        int32 Index=0;
+        for(FName Kind:{FName(TEXT("guard")),FName(TEXT("archer")),FName(TEXT("heavy"))})
+        {
+            auto* Record=Campaign->State.Enemies.FindByPredicate([&](const auto& Entry){return Entry.Kind==Kind;});if(!Record)continue;
+            FVector Location(0,100+200*Index++,80);Record->Home=Location;Record->Combat.Position=Location;Record->Located=true;
+            auto* Enemy=World->SpawnActor<AHearthwardCampaignActor>(Location,FRotator::ZeroRotator,Params);
+            Enemy->Initialize(Record->Id,true);Enemy->Target->SetComponentTickEnabled(false);
+            Place(Enemy,FName(*(TEXT("Task095Cast.")+Kind.ToString())),Location);
+        }
+    }));
 // Isolated PIE visual fixture; never registered in Shipping or saved into a map.
 static FAutoConsoleCommandWithWorld FArcherPreview095Command(
     TEXT("Hearthward.Test095.ArcherPreview"),TEXT("Spawn a production archer for the isolated TASK-095 visual review."),

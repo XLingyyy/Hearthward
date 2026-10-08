@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EngineUtils.h"
 #include "Engine/World.h"
+#include "Materials/MaterialInterface.h"
 void UHearthwardCampSubsystem::RefreshQuartermasters()
 {
     AHearthwardCompanionFixture* Model=nullptr;
@@ -24,6 +25,7 @@ void UHearthwardCampSubsystem::RefreshQuartermasters()
         NPC->GetMesh()->SetSkeletalMeshAsset(Model->GetMesh()->GetSkeletalMeshAsset());
         NPC->GetMesh()->SetRelativeTransform(Model->GetMesh()->GetRelativeTransform());NPC->GetMesh()->SetAnimInstanceClass(Model->GetMesh()->GetAnimClass());
         for(int32 I=0;I<Model->GetMesh()->GetNumMaterials();++I)NPC->GetMesh()->SetMaterial(I,Model->GetMesh()->GetMaterial(I));
+        NPC->GetMesh()->SetMaterial(0,LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Hearthward/Assets/TASK-095/Costumes/M_Civilian_CoarseCloth.M_Civilian_CoarseCloth")));
         auto* Name=NewObject<UTextRenderComponent>(NPC);NPC->AddInstanceComponent(Name);Name->SetupAttachment(NPC->GetRootComponent());
         Name->SetText(FText::FromString(TEXT("Tab")));Name->SetWorldSize(18);Name->SetRelativeLocation(FVector(0,0,120));Name->RegisterComponent();
     }

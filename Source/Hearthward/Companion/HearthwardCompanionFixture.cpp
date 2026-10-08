@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
+#include "Materials/MaterialInterface.h"
 #include "../Animation/HearthwardBrotherAnimInstance.h"
 #include "Engine/World.h"
 #include "UObject/ConstructorHelpers.h"
@@ -97,6 +98,8 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture(const FObjectInitialize
     bUseControllerRotationYaw = false;
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> BrotherMesh(TEXT("/Game/Characters/Brother/UE5/SK_Brother.SK_Brother"));
     GetMesh()->SetSkeletalMesh(BrotherMesh.Object);
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> BrotherCloth(TEXT("/Game/Hearthward/Assets/TASK-095/Costumes/M_Brother_CoarseCloth.M_Brother_CoarseCloth"));
+    GetMesh()->SetMaterial(0,BrotherCloth.Object);
     // The imported mesh is 97.864 cm tall; fit the existing 160 cm companion capsule.
     GetMesh()->SetRelativeScale3D(FVector(160.f / 97.863766f));
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -80.f));

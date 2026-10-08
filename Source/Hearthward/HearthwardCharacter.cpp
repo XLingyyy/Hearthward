@@ -15,6 +15,7 @@
 #include "Animation/HearthwardHeroAnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
+#include "Materials/MaterialInterface.h"
 #include "Building/HearthwardBuildingComponent.h"
 #include "Building/HearthwardTask028CampHouse.h"
 #include "Gameplay/HearthwardGameplayComponent.h"
@@ -81,6 +82,8 @@ AHearthwardCharacter::AHearthwardCharacter(const FObjectInitializer& Initializer
 
     static ConstructorHelpers::FObjectFinder<USkeletalMesh> HeroMesh(TEXT("/Game/Characters/Hero/UE5/SK_Hero.SK_Hero"));
     GetMesh()->SetSkeletalMesh(HeroMesh.Object);
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> HeroCloth(TEXT("/Game/Hearthward/Assets/TASK-095/Costumes/M_Hero_CoarseCloth.M_Hero_CoarseCloth"));
+    GetMesh()->SetMaterial(0,HeroCloth.Object);
     // New Tripo UE skeleton export: display at 180 cm, rotate +Y forward into character +X.
     GetMesh()->SetRelativeScale3D(FVector(180.f / 97.869893f));
     GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -90.f));

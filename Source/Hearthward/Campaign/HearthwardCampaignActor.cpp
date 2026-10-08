@@ -15,6 +15,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Animation/AnimSequence.h"
+#include "Materials/MaterialInterface.h"
 #include "Fonts/CompositeFont.h"
 #include "Misc/Paths.h"
 #include "Widgets/Text/STextBlock.h"
@@ -65,6 +66,7 @@ void AHearthwardCampaignActor::Initialize(FName Id,bool Hostile)
         Target->Heavy=E->Kind==TEXT("heavy");Target->RewardKind=E->Kind;Target->Restore(E->Combat);
         Target->CreateBodyCollision();if(!Target->Alive())Target->SetCorpse();
     }
+    else GetMesh()->SetMaterial(0,LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Hearthward/Assets/TASK-095/Costumes/M_Civilian_CoarseCloth.M_Civilian_CoarseCloth")));
     if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))Nav->RegisterNavigationInvoker(this,3500,4500);
     if(!GetController())SpawnDefaultController();
 }
