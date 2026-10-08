@@ -1,6 +1,6 @@
 # Cooked 火烟加载时序修复
 
-2026-10-08。范围基线 c7d1db75；实现完整SHA在提交后绑定。
+2026-10-08。范围基线 c7d1db75；受测实现完整SHA：38927738f488b9b5f184b85c88d53f374388de1e。
 
 候选6的Shipping构建成功，但实际启动黑屏无响应。通过本机已有Windows SDK的DbgHelp读取自有进程线程栈，确认GameThread进入ReportCrash，异常链为UNiagaraStatelessEmitter::Serialize ← FObjectFinder<UNiagaraSystem> ← 石堡构造函数 ← UClass::CreateDefaultObject ← PreInit。工具仅取线程上下文与栈，逐线程恢复，没有改写进程状态或引擎文件。
 
