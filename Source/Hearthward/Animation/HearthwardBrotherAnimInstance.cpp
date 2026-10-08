@@ -88,6 +88,12 @@ void UHearthwardBrotherAnimInstance::PlayAttack()
     ++AttackRevision;
 }
 
+void UHearthwardBrotherAnimInstance::CancelAttack()
+{
+    AttackRemaining=0;
+    MotionState=GroundSpeed<5.f?TEXT("Idle"):TEXT("Walk");
+}
+
 void UHearthwardBrotherAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
     Super::NativeUpdateAnimation(DeltaSeconds);

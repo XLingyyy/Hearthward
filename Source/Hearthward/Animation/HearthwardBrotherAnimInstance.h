@@ -14,6 +14,7 @@ public:
     virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override;
     virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* Proxy) override;
     void PlayAttack();
+    void CancelAttack();
 
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") float GroundSpeed = 0;
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") FName MotionState = TEXT("Idle");

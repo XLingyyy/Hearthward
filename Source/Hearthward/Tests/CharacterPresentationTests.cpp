@@ -1,15 +1,113 @@
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Combat/HearthwardProjectile.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
+#include "../Campaign/HearthwardCampaignActor.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Animation/HearthwardBrotherAnimInstance.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/AnimSequence.h"
+#include "EngineUtils.h"
+#include "GameFramework/PlayerController.h"
 #include "Engine/Engine.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/World.h"
 #include "Misc/AutomationTest.h"
+#include "HAL/IConsoleManager.h"
+#include "Kismet/GameplayStatics.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+#if WITH_EDITOR
+// Isolated PIE visual fixture; never registered in Shipping or saved into a map.
+static FAutoConsoleCommandWithWorld FArcherPreview095Command(
+    TEXT("Hearthward.Test095.ArcherPreview"),TEXT("Spawn a production archer for the isolated TASK-095 visual review."),
+    FConsoleCommandWithWorldDelegate::CreateLambda([](UWorld* World)
+    {
+        auto* Player=UGameplayStatics::GetPlayerPawn(World,0);if(!Player)return;
+        auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Initialize();Campaign->State.Phase=NAME_None;
+        auto* Record=Campaign->State.Enemies.FindByPredicate([](const auto& Entry){return Entry.Kind==TEXT("archer");});if(!Record)return;
+        Record->Home=Player->GetActorLocation()-FVector(1000,0,0);Record->Combat.Position=Record->Home;Record->Located=true;
+        FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        auto* Archer=World->SpawnActor<AHearthwardCampaignActor>(Record->Home,FRotator::ZeroRotator,Params);
+        Archer->Initialize(Record->Id,true);Archer->Tags.Add(TEXT("Task095ArcherPreview"));Archer->Target->Exposure=1;
+        Archer->Target->Memory.Seen.Add(TEXT("player"));
+    }));
+#endif
+struct FArcherShotTestAccess
+{
+    static float Pending(const AHearthwardCampaignActor* Actor){return Actor->BowRemaining;}
+    static void Ready(AHearthwardCampaignActor* Actor){Actor->AttackIn=0;Actor->DecisionIn=0;}
+};
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcherShotLifecycle095Test,
+    "Hearthward.Iteration.Task095.ArcherWindupReleaseAndInterrupt",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FArcherShotLifecycle095Test::RunTest(const FString&)
+{
+    UWorld::InitializationValues Values;
+    Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    auto* Player=World->SpawnActor<ACharacter>(FVector(1000,0,80),FRotator::ZeroRotator,Params);
+    auto* Controller=World->SpawnActor<APlayerController>();World->AddController(Controller);Controller->Possess(Player);
+    auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Initialize();
+    auto* Record=Campaign->State.Enemies.FindByPredicate([](const auto& Entry){return Entry.Kind==TEXT("archer");});
+    if(!TestNotNull(TEXT("Production campaign includes an archer"),Record))
+    {GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return false;}
+    Record->Home=FVector(0,0,80);Record->Combat.Position=Record->Home;Record->Located=true;
+    auto* Archer=World->SpawnActor<AHearthwardCampaignActor>(Record->Home,FRotator::ZeroRotator,Params);
+    Archer->Initialize(Record->Id,true);Archer->Target->Memory.Seen.Add(TEXT("player"));
+    auto* Mesh=Archer->GetMesh();
+    TestEqual(TEXT("Real campaign selects the specialized archer mesh"),Mesh->GetSkeletalMeshAsset()->GetName(),FString(TEXT("SK_Archer_Combat")));
+    TestTrue(TEXT("Equipment does not change body height"),FMath::IsNearlyEqual(Mesh->GetRelativeScale3D().Z,160./99.74417,.001));
+    auto* Anim=Cast<UHearthwardBrotherAnimInstance>(Mesh->GetAnimInstance());
+    TestTrue(TEXT("Campaign binds the actual shoot clip"),Anim && Anim->Clips[4] && Anim->Clips[4]->GetName()==TEXT("A_Archer_Shoot"));
+    const auto Count=[&]()
+    {int32 N=0;for(TActorIterator<AHearthwardProjectile> It(World);It;++It)if(!It->IsActorBeingDestroyed())++N;return N;};
+    Archer->Tick(.01f);
+    TestTrue(TEXT("Attack starts a visible 0.6-second windup"),FMath::IsNearlyEqual(FArcherShotTestAccess::Pending(Archer),.6f));
+    TestEqual(TEXT("Windup does not spawn an immediate arrow"),Count(),0);
+    Archer->Tick(.3f);TestEqual(TEXT("Half windup still has no arrow"),Count(),0);
+    Archer->Tick(.3f);TestEqual(TEXT("Release spawns exactly one arrow"),Count(),1);
+    float Power=0;
+    for(TActorIterator<AHearthwardProjectile> It(World);It;++It)
+    {
+        TestTrue(TEXT("Arrow keeps calibrated speed"),FMath::IsNearlyEqual(It->Velocity.Size(),3000.,.01));
+        TestEqual(TEXT("Arrow keeps range"),It->RemainingRange,3000.);
+        TestTrue(TEXT("Arrow is emitted by the actual campaign actor"),It->EnemyShooter.Get()==Archer);
+        Power=It->Power;
+    }
+    TestTrue(TEXT("Existing calibrated damage remains positive"),Power>0);
+    Archer->Tick(.1f);TestEqual(TEXT("Subsequent ticks cannot duplicate the release"),Count(),1);
+    FArcherShotTestAccess::Ready(Archer);Archer->Tick(.01f);
+    Archer->Target->Memory.HitRemaining=1;Archer->Tick(.1f);
+    TestEqual(TEXT("Hit interruption cancels the pending arrow"),FArcherShotTestAccess::Pending(Archer),0.f);
+    Archer->Target->Memory.HitRemaining=0;Archer->Tick(.7f);
+    TestEqual(TEXT("Cancelled shot never appears late"),Count(),1);
+    FArcherShotTestAccess::Ready(Archer);Archer->Tick(.01f);
+    World->GetSubsystem<UHearthwardStorageSubsystem>()->AdvanceTimeline();Archer->Tick(.6f);
+    TestEqual(TEXT("A load/timeline change cancels the pending arrow"),Count(),1);
+    auto* PreviewOwner=World->SpawnActor<AActor>();
+    auto* Preview=NewObject<USkeletalMeshComponent>(PreviewOwner);PreviewOwner->AddInstanceComponent(Preview);PreviewOwner->SetRootComponent(Preview);
+    Preview->SetSkeletalMesh(Mesh->GetSkeletalMeshAsset());Preview->SetCollisionEnabled(ECollisionEnabled::NoCollision);Preview->RegisterComponent();
+    Preview->SetAnimationMode(EAnimationMode::AnimationSingleNode);Preview->SetAnimation(Anim->Clips[4]);
+    const auto Sample=[&](float Time)
+    {Preview->SetPosition(Time,false);Preview->TickAnimation(0,false);Preview->RefreshBoneTransforms();};
+    Sample(.59f);
+    const FVector Grip=Preview->GetSocketLocation(TEXT("BowGrip")),Nock=Preview->GetSocketLocation(TEXT("BowNock"));
+    TestTrue(TEXT("Imported drawing pose lifts bow to chest height in centimetres"),Grip.Z>75 && Grip.Z<85 && Grip.X>25 && Grip.X<35);
+    TestTrue(TEXT("Imported string draws back toward the character"),Grip.X-Nock.X>27 && Grip.X-Nock.X<30);
+    TestTrue(TEXT("Nocked arrow is visible immediately before release"),Preview->GetSocketTransform(TEXT("NockedArrow"),RTS_Component).GetScale3D().GetMin()>.5);
+    Sample(.64f);
+    TestTrue(TEXT("Held arrow disappears when the real projectile releases"),Preview->GetSocketTransform(TEXT("NockedArrow"),RTS_Component).GetScale3D().GetMax()<.01);
+    GEngine->DestroyWorldContext(World);World->DestroyWorld(false);
+    return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcherReferencePose095Test,
     "Hearthward.Iteration.Task095.ArcherReferencePose",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

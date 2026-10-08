@@ -1,8 +1,12 @@
 # TASK-095｜兄弟与敌人辨识、武器持握和关键动作收尾
 
-> 状态：Active（独立技术调查已实施；Owner新资产样板暂缓，运行验收未完成）。优先级：P1。阶段：D 关键资产。日期：2026-10-07。Owner：XLingyyy。Reviewer／Issue：未指派。实际分支：`codex/TASK-084-103-iteration`。
+> 状态：Active（射手运行增量已验证，其余角色与动作继续实施）。优先级：P1。阶段：D 关键资产。日期：2026-10-07。Owner：XLingyyy。Reviewer／Issue：未指派。实际分支：`codex/TASK-084-103-iteration`。
 
 [本批总入口](../planning/TASK-084-103/README.md) · [执行约定](../planning/TASK-084-103/EXECUTION_GUIDE.md) · [元数据](TASK-095.json) · [执行交接](../handoffs/TASK-095.md)
+
+## 2026-10-08 当前进展
+
+射手已替换Campaign运行角色，专用27骨骨架与4段动作已导入；0.6秒可见前摇经Owner批准，受击/读档取消与单次出箭原生通过。Editor构建成功，3项定向原生3/3通过、零警告；重开UE后的隔离PIE记录66帧和两箭，材质绑定、骨骼用途与实际颜色已核对。见[射手运行报告](../qa/TASK-095/archer-runtime/REPORT.md)。其他角色服装、其余武器持握、倒地/扶起、完整移动/昼夜验证、实际Cook与Owner视觉未完成，TASK-095保持Active。
 
 ## 2026-10-07 执行进展
 
