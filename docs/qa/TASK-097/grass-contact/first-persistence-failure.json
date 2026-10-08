@@ -1,0 +1,71 @@
+{
+  "passed": false,
+  "method": "PROTOTYPE_ONLY isolated PIE visual inspection. New-game entry, camera positioning and accelerated world time for daylight; no asset saves or production settings changed. Not Shipping or natural route acceptance.",
+  "views": [
+    {
+      "name": "bedroom",
+      "position": "<Struct 'Vector' (0x000002A5E00CA6D0) {x: 91770.000000, y: 53570.000000, z: 23456.231065}>",
+      "target": "<Struct 'Vector' (0x000002A5E00C9230) {x: 92000.000000, y: 54050.000000, z: 23486.231065}>",
+      "minute": 724.2931837141514
+    },
+    {
+      "name": "gallery",
+      "position": "<Struct 'Vector' (0x000002A5E00CA720) {x: 92720.000000, y: 54330.000000, z: 23466.231065}>",
+      "target": "<Struct 'Vector' (0x000002A5E00CA4F0) {x: 92000.000000, y: 54050.000000, z: 23466.231065}>",
+      "minute": 728.6894126161933
+    },
+    {
+      "name": "courtyard-fire",
+      "position": "<Struct 'Vector' (0x000002A5E00CA450) {x: 91200.000000, y: 55050.000000, z: 22479.359544}>",
+      "target": "<Struct 'Vector' (0x000002A5E00C98C0) {x: 90600.000000, y: 55600.000000, z: 22319.359544}>",
+      "minute": 732.6979254111648
+    }
+  ],
+  "initial_minute": 1204.0640731975436,
+  "day_minute": 721.25831451267,
+  "daylight": 1.0,
+  "grass_assets": [
+    {
+      "mesh": "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/GrassCards/StaticMeshes/SM_GrassCards.SM_GrassCards",
+      "class": "GrassInstancedStaticMeshComponent",
+      "materials": [
+        "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_GrassCards.M_GrassCards"
+      ],
+      "cast_shadow": "True",
+      "cast_dynamic_shadow": "False",
+      "affect_distance_field_lighting": "False",
+      "cast_contact_shadow": "True"
+    },
+    {
+      "mesh": "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/SM_S1_GrassCards.SM_S1_GrassCards",
+      "class": "GrassInstancedStaticMeshComponent",
+      "materials": [
+        "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_S1_GrassCards.M_S1_GrassCards"
+      ],
+      "cast_shadow": "True",
+      "cast_dynamic_shadow": "False",
+      "affect_distance_field_lighting": "False",
+      "cast_contact_shadow": "True"
+    },
+    {
+      "mesh": "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/GrassCards/StaticMeshes/SM_GrassCards.SM_GrassCards",
+      "class": "HierarchicalInstancedStaticMeshComponent",
+      "materials": [
+        "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_GrassCards.M_GrassCards"
+      ],
+      "cast_shadow": "False",
+      "cast_dynamic_shadow": "True",
+      "affect_distance_field_lighting": "True",
+      "cast_contact_shadow": "True"
+    }
+  ],
+  "grass_material": {
+    "blend_mode": "<BlendMode.BLEND_MASKED: 1>",
+    "two_sided": "True",
+    "shading_model": "<MaterialShadingModel.MSM_TWO_SIDED_FOLIAGE: 6>",
+    "opacity_mask_clip_value": "0.25",
+    "tangent_space_normal": "False"
+  },
+  "contact_cvar": 1,
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-096/verify_grass_restart.py\", line 78, in tick\n    pending=next(iterator)\n            ^^^^^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-096/verify_grass_restart.py\", line 64, in run\n    assert all(x['cast_contact_shadow']=='False' for x in grass),grass\nAssertionError: [{'mesh': '/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/GrassCards/StaticMeshes/SM_GrassCards.SM_GrassCards', 'class': 'GrassInstancedStaticMeshComponent', 'materials': ['/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_GrassCards.M_GrassCards'], 'cast_shadow': 'True', 'cast_dynamic_shadow': 'False', 'affect_distance_field_lighting': 'False', 'cast_contact_shadow': 'True'}, {'mesh': '/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/SM_S1_GrassCards.SM_S1_GrassCards', 'class': 'GrassInstancedStaticMeshComponent', 'materials': ['/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_S1_GrassCards.M_S1_GrassCards'], 'cast_shadow': 'True', 'cast_dynamic_shadow': 'False', 'affect_distance_field_lighting': 'False', 'cast_contact_shadow': 'True'}]\n"
+}

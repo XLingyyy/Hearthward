@@ -1,5 +1,7 @@
 # TASK-097｜自然路线、生态与LOD技术调查
 
+2026-10-08 两个草种资产的接触阴影修复已通过重新启动后的渲染验证：草片下方矩形黑斑消失，建筑/树阴影保留，全局接触阴影仍开启。修改仅为GT_Meadow与GT_S1_Meadow的CastContactShadow=false。首次保存跳过未标脏资产的失败已保留，显式保存后重启读取/实际组件均为false。见[草簇修复](grass-contact/REPORT.md)。本次为PIE局部画面验证，候选8尚未包含这次修复，完整自然路线/性能/Owner验收仍未完成。
+
 ## 2026-10-07 已批准方向后的进展
 
 方向已由DSGN-004批准。野猪基于既有R3猪源延长吻部、添加同骨骼獠牙/鬃毛并用材质调色；原骨架层级不变。三种作物各有幼株/成熟两形态，共六份FBX制作源。六个作物网格及材料共20包已锁定、导入、显式保存并在重启前确认落盘；NatureActor按现有权威日历选择幼株/成熟网格与缩放，成长时间、产量和采收事务不变。Editor构建成功；CropGeometryConsumesCalendarStage与CropProgressAndHarvestCapacity实际2/2 Success、1 warning、0 error，证据见docs/qa/TASK-097/samples/crop-native-20261007.json。警告为测试LocalPlayer缺少PlayerInput，未隐去。已补充作物目录的AlwaysCook配置，实际Cook仍NOT_RUN。野猪新网格及烘焙毛色、三材质共五包已锁定并导入，复用原50骨R3 Skeleton与PhysicsAsset，原Skeleton未标脏且Git未变化；家猪保持原网格，野猪继续使用原27动作/行为参数，活动范围仍按原网格计算。Editor编译成功；BoarKeepsR3AndPig原生测试通过（0警告/0错误），核对家猪/野猪网格区分、共享物理资产与动作、活动边界，并比较静候/奔跑/顶撞/倒地四个真实动作中间帧的逐骨姿态。首轮夹具重复初始化World失败保留，修正为CreateWorld单次初始化后通过。连续自然路线、完整Cook及Owner视觉仍未验，原Tripo输入权利状态仍PENDING。见samples/boar-source.json及crop-source.json。
