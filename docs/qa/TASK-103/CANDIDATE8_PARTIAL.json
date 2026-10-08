@@ -1,0 +1,606 @@
+{
+  "reference_commit": "c7d1db752a4ff14a2ab92e69926b9d77a967cbfe",
+  "implementation_delta": [
+    "Config/DefaultGame.ini",
+    "Source/Hearthward/Building/HearthwardHometownFortress.cpp",
+    "Source/Hearthward/Building/HearthwardHometownFortress.h"
+  ],
+  "candidate": "iteration-084-103-20261008-8",
+  "embedded_version_observed": "0.2.0-preview.20261008.1",
+  "configuration": "UE5.8.2 Win64 Shipping",
+  "package_ok": true,
+  "build_seconds": 5.78,
+  "cook_seconds": 56.11,
+  "stage_seconds": 29.08,
+  "archive_seconds": 34.28,
+  "build_cook_run_seconds": 126.43,
+  "cook_errors": 0,
+  "cook_warnings": 1,
+  "warning": "MCP UE EULA Licensed Technology notice",
+  "fire_packages_in_container": [
+    "Content/Hearthward/Assets/TASK-096/Fire/M_HearthFlame.uasset",
+    "Content/Hearthward/Assets/TASK-096/Fire/M_HearthSmoke.uasset",
+    "Content/Hearthward/Assets/TASK-096/Fire/NS_HearthFire.uasset",
+    "Content/Hearthward/Assets/TASK-096/Fire/NS_HearthSmoke.uasset",
+    "Content/Hearthward/Assets/TASK-096/Fire/T_SoftSmoke.uasset"
+  ],
+  "normal_input": {
+    "title": true,
+    "new_game": true,
+    "manual_save_1_to_2": true,
+    "load_manual_and_confirm": true,
+    "restored_bedroom_and_active_hud": true,
+    "display_window_1280x720_applied": true,
+    "display_15s_auto_revert": true,
+    "display_confirmation": "NOT_VERIFIED: screenshotId expired during confirmation, automatic revert observed",
+    "drag_resize": "NOT_RUN",
+    "shutdown": "UI Alt+F4 rejected because user input was detected; owned UEClient stop_editor then returned success"
+  },
+  "evidence_local": ".agent-local/qa/TASK-103/os-candidate8",
+  "earlier_failures": {
+    "candidate6": "CDO FindOrLoadObject<UNiagaraSystem> -> UNiagaraStatelessEmitter::Serialize -> ReportCrash; exact stack archived in docs/qa/TASK-103",
+    "candidate7": "Soft references avoided startup load but Cook omitted all five fire packages; IoStore container listing confirms zero Fire entries. Not launched."
+  },
+  "limits": [
+    "Shipping fire closeup not captured",
+    "Shipping normal full escape route not completed",
+    "Joint model/frame performance unchanged/unverified for new candidate",
+    "No final release, ZIP or second-machine acceptance"
+  ],
+  "native_regression": {
+    "report": "cooked-fix-native.json",
+    "filter": "Hearthward.Hometown077.BedroomAndEscapeClearance",
+    "succeeded": 1,
+    "failed": 0,
+    "test_errors": 0,
+    "test_warnings": 0,
+    "process_returncode": 0,
+    "process_diagnostics": [
+      {
+        "severity": "warning",
+        "message": "TSR 16-bit VALU is disabled on NVIDIA due to known compiler bugs in drivers older than 610.00.",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogD3D12RHI"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "error",
+        "message": "Condition failed",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogAutomationTest"
+      },
+      {
+        "severity": "warning",
+        "message": "Data transmitted via this plugin to your connected LLM service is Licensed Technology under the UE EULA. You are responsible for ensuring your LLM provider does not use it as training input. See Section 6(e) of the UE EULA for full terms.",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogModelContextProtocol"
+      },
+      {
+        "severity": "warning",
+        "message": "Screen Space Global Illumination (SSGI) is deprecated (from 5.8) and will be removed in a future release. Please migrate to Lumen Global Illumination.",
+        "code": "UE_AUTOMATION_PROCESS_LOG",
+        "source": "LogRenderer"
+      }
+    ]
+  },
+  "implementation_commit": "38927738f488b9b5f184b85c88d53f374388de1e",
+  "status": "BUILD_SUCCESS_PARTIAL_NORMAL_INPUT",
+  "package_result": {
+    "ok": true,
+    "operation": "build.package",
+    "artifacts": [
+      {
+        "type": "unreal_package",
+        "path": "F:\\HearthwardDemo\\iteration-084-103-20261008-8",
+        "state": "ready"
+      }
+    ],
+    "diagnostics": [],
+    "warnings": [],
+    "errors": [],
+    "payload": {
+      "command": [
+        "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\RunUAT.bat",
+        "BuildCookRun",
+        "-project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+        "-noP4",
+        "-platform=Win64",
+        "-clientconfig=Shipping",
+        "-build",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-iostore",
+        "-archive",
+        "-archivedirectory=F:\\HearthwardDemo\\iteration-084-103-20261008-8",
+        "-prereqs",
+        "-utf8output",
+        "-unattended",
+        "-NoLiveCoding",
+        "-map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds",
+        "-stagingdirectory=E:\\HearthwardQA\\TASK-103\\package-20261008-8\\Staged",
+        "-nodebuginfo"
+      ],
+      "archive_dir": "F:\\HearthwardDemo\\iteration-084-103-20261008-8",
+      "log_path": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-103\\package-20261008-8\\package.log",
+      "dry_run": false,
+      "returncode": 0
+    }
+  },
+  "archive": "F:/HearthwardDemo/iteration-084-103-20261008-8/Windows",
+  "stage": "E:/HearthwardQA/TASK-103/package-20261008-8/Staged",
+  "assets": [
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Idle.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Run.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Shoot.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/A_Archer_Walk.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_ShoulderRepairCloth.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_Sling.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/SK_Archer_Combat.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/SK_Archer_Combat_Skeleton.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archer/SK_Archer_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Costumes/M_Brother_CoarseCloth.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Costumes/M_Civilian_CoarseCloth.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Costumes/M_Hero_CoarseCloth.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Costumes/T_Brother_ClothMask.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Costumes/T_Hero_ClothMask.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/PlayerRanged/A_Hero_BowDraw.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/PlayerRanged/A_Hero_BowRelease.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/PlayerRanged/A_Hero_CrossbowAim.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/PlayerRanged/A_Hero_CrossbowReload.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/PlayerRanged/A_PlayerBow_Draw.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/PlayerRanged/SK_PlayerBow.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/PlayerRanged/SK_PlayerBow_Skeleton.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Survival/A_Brother_Down.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Survival/A_Brother_GetUp.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Survival/A_Brother_Rescue.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Survival/A_Hero_Down.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Survival/A_Hero_GetUp.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Survival/A_Hero_Rescue.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/A_Brother_WeaponCarry.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Crossbow/M_Crossbow_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Crossbow/SM_Crossbow_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Longblade/M_Longblade_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Longblade/SM_Longblade_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Shortblade/M_Shortblade_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Shortblade/SM_Shortblade_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Spear/A_Hero_SpearThrust.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Spear/M_Spear_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Spear/SM_Spear_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Waraxe/M_Waraxe_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Weapons/Waraxe/SM_Waraxe_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Arrow/T_Arrow_BaseColor.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Longbow/T_Longbow_BaseColor.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical.uasset",
+      "in_container": false
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-095/Archery/Quiver/T_Quiver_BaseColor.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Fire/M_HearthFlame.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Fire/M_HearthSmoke.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Fire/NS_HearthFire.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Fire/NS_HearthSmoke.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Fire/T_SoftSmoke.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Nearfield/M_OldTimber.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Nearfield/M_RoughStone.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Nearfield/SM_BedroomDoorframe.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Nearfield/T_OldTimber_D.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Nearfield/T_OldTimber_N.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Nearfield/T_RoughStone_D.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-096/Nearfield/T_RoughStone_N.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Boar/M_Boar_Bristle.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Boar/M_Boar_Coat.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Boar/M_Boar_Tusk.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Boar/SK_Boar_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Boar/T_Boar_Coat.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Grain_Mature/M_Leaf.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Grain_Mature/M_Ripe.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Grain_Mature/M_Stem.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Grain_Mature/SM_Grain_Mature.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Grain_Young/M_Leaf.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Grain_Young/M_Stem.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Grain_Young/SM_Grain_Young.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Greens_Mature/M_Leaf.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Greens_Mature/M_Stem.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Greens_Mature/SM_Greens_Mature.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Greens_Young/M_Leaf.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Greens_Young/M_Stem.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Greens_Young/SM_Greens_Young.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Herb_Mature/M_Leaf.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Herb_Mature/M_Ripe.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Herb_Mature/M_Stem.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Herb_Mature/SM_Herb_Mature.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Herb_Young/M_Leaf.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Herb_Young/M_Stem.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-097/Crops/Herb_Young/SM_Herb_Young.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Forge/M_PracticalEndwood.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Forge/M_PracticalIron.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Forge/M_PracticalWood.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Forge/SM_Forge_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Warehouse/M_PracticalEndwood.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Warehouse/M_PracticalIron.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Warehouse/M_PracticalWood.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Warehouse/SM_Warehouse_Practical.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Workbench/M_PracticalEndwood.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Workbench/M_PracticalIron.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Workbench/M_PracticalWood.uasset",
+      "in_container": true
+    },
+    {
+      "asset": "Content/Hearthward/Assets/TASK-098/Workbench/SM_Workbench_Practical.uasset",
+      "in_container": true
+    }
+  ],
+  "included_asset_count": 96,
+  "excluded_unused_asset": "SM_Quiver_Practical.uasset; archer uses its combined skinned mesh",
+  "formal_acceptance": false,
+  "publication": "NOT_PUBLISHED",
+  "zip": "NOT_CREATED",
+  "screenshots_local": [
+    "title.png",
+    "new-game.png",
+    "saved-two.png",
+    "loaded.png",
+    "display-auto-revert.png"
+  ],
+  "evidence_binding": "Build-time head.txt and tracked.patch preserve c7d1db75 plus the three production files committed as implementation_commit. Later changes are evidence only."
+}

@@ -1,12 +1,18 @@
 # TASK-103｜候选证据审计与交付准备
 
+## 当前候选8
+
+2026-10-08 当前内部候选为8，版本0.2.0-preview.20261008.1，受测实现38927738f488b9b5f184b85c88d53f374388de1e。TASK-096已修复候选6的Niagara启动异常，并修复候选7缺少火烟Cook包的问题。候选8 Shipping Build/Cook/Stage/Archive成功，Cook 0错误/1条MCP许可提示；97个新增资产中96个入包，全部5个火烟包存在，仅无运行引用的独立箭袋网格被剔除。独立UserDir下真实键鼠标题、新游戏、手动保存1→2、选择手动节点并确认恢复卧室通过。1280×720窗口实际应用，15秒未确认自动恢复通过；保留显示设置、拖动缩放及正常UI退出未验证。自有进程经UEClient关闭。完整Shipping路线、随包模型请求、性能、旧档、真人和二机仍未完成；无候选8 ZIP，无发布。详见docs/qa/TASK-103/CANDIDATE8_PARTIAL.json。
+
+## 历史记录（仅适用于对应候选）
+
 ## 2026-10-08 候选6启动回归
 
 2026-10-08 候选6 Shipping Build/Cook/Stage/Archive成功，Cook 0错误/1条MCP许可提示；97个新增资产中96个进入IoStore，未引用的独立箭袋网格正常剔除。实际启动失败：轻量Niagara在石堡CDO构造期间反序列化异常，进入ReportCrash后黑屏无响应；已通过原生线程栈定位，原候选保留并标记不可交付，公开UEClient关闭自有进程。 证据见docs/qa/TASK-103/CANDIDATE6_STARTUP_FAILURE.json及CANDIDATE6_GAME_THREAD.txt。后续修复与重建单独记录，以下历史候选记录不代表当前资产版本。
 
 2026-10-07，Active/partial。共享分支codex/TASK-084-103-iteration，参考HEAD 6fcf5c22e965f0f7409438f19bc7b09e96ffb058加本批未提交差异。root负责Source冻结、UE生命周期、package、OS及finalizer执行；本Agent只处理获准QA/docs。未提交、推送、合并、上传或发布，无伪造实施SHA。
 
-## 当前候选5
+## 历史候选5
 
 候选5/version.4在准确冻结Source上已实际公开Shipping Build/Cook/Stage/Archive成功：UAT0/dry_run=false，总235.52s，Build71.70/Cook63.43/Stage39.73/Archive58.81s，Cook0error/1 MCP EULA warning保留。当前BUILD_SUCCESS_INTERNAL_CANDIDATE_ZIP_CREATED。双CMD脚本启动＋真实OS开局/保存/明确Continue局部验证通过；最终ZIP为F:/HearthwardDemo/iteration-084-103-20261007-5.zip，4,645,167,974 bytes、166运行文件。finalizer运行树/ZIP文件名与大小一致、有界文本扫描BOUNDED_TEXT_CLEAN、17event/12WAV/9许可/water98顶点96三角形配对通过；最终ZIP SHA256恰计算1次，sidecar存在，无重算。正式验收false，NOT_PUBLISHED。
 
