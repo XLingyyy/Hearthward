@@ -23,6 +23,8 @@ public:
     int32 LifeState = 0;
     float LifePoseTime = 0;
     UPROPERTY() TArray<TObjectPtr<class UAnimSequence>> LifeClips;
+    UPROPERTY() TObjectPtr<class UAnimSequence> WeaponCarryClip;
+    float WeaponCarryWeight = 0;
 private:
     float AttackRemaining = 0;
     float DownElapsed = 0;

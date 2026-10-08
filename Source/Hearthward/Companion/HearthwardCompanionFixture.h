@@ -27,6 +27,8 @@ public:
     virtual void Landed(const FHitResult& Hit) override;
     AHearthwardCompanionFixture(const FObjectInitializer& ObjectInitializer);
     virtual void Tick(float DeltaSeconds) override;
+    virtual void BeginPlay() override;
+    UFUNCTION() void RefreshHeldWeapon();
     void InitializeFixture(UHearthwardInventoryComponent* Resource, AActor* CampActor);
     void InitializeCompanion(UHearthwardInventoryComponent* Resource, AActor* CampActor);
 
@@ -87,6 +89,10 @@ public:
     void StopForSurvival();
 
 private:
+    UPROPERTY() TObjectPtr<class UStaticMeshComponent> HeldWeapon;
+    UPROPERTY() TMap<FName,TObjectPtr<class UStaticMesh>> WeaponMeshes;
+    FTransform WeaponGrip;
+    FName DisplayedWeapon;
     friend class UHearthwardSaveSubsystem;
     bool At(const AActor* Target) const;
     bool MoveTowards(const AActor* Target, float DeltaSeconds,float AcceptanceRadius=40);

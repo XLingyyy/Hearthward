@@ -139,6 +139,24 @@ bool FWeaponPresentation095Test::RunTest(const FString&)
         TestTrue(TEXT("Remove tested instance"),Bag->RemoveInstance(Instance));
         TestFalse(TEXT("Removed weapon stays hidden"),Held->GetVisibleFlag());
     }
+    auto* Brother=World->SpawnActor<AHearthwardCompanionFixture>();
+    Components.Reset();Brother->GetComponents(Components);
+    auto** BrotherFound=Components.FindByPredicate([](const auto* C){return C->GetFName()==TEXT("HeldWeapon");});
+    if(TestTrue(TEXT("Production brother has a weapon visual"),BrotherFound!=nullptr))
+    {
+        auto* BrotherHeld=*BrotherFound;
+        for(const TCHAR* Id:{TEXT("axe"),TEXT("shortblade"),TEXT("longblade"),TEXT("spear"),TEXT("shortblade_2"),TEXT("longblade_2"),TEXT("spear_2"),TEXT("blunt_2"),TEXT("shortblade_3"),TEXT("longblade_3"),TEXT("spear_3"),TEXT("blunt_3"),TEXT("hearth_blade")})
+        {
+            TestTrue(TEXT("Brother receives an actual inventory instance"),Brother->Bag->TryAdd(Id,1)==EHearthwardInventoryResult::Success);
+            const FGuid Instance=Brother->Bag->FirstInstance(Id);TestTrue(TEXT("Brother equips that GUID"),Brother->Bag->EquipInstance(Instance));
+            TestTrue(TEXT("Brother's equipped weapon is visible"),BrotherHeld->GetVisibleFlag());
+            TestEqual(TEXT("Brother weapon follows right hand"),BrotherHeld->GetAttachSocketName(),FName(TEXT("hand_r")));
+            TestTrue(TEXT("Brother weapon ignores reference root scaling"),BrotherHeld->GetComponentScale().Equals(FVector(FName(Id)==TEXT("axe")?.7:1),.001));
+            TestTrue(TEXT("Brother weapon adds no collision"),BrotherHeld->GetCollisionEnabled()==ECollisionEnabled::NoCollision);
+            Brother->Bag->WearInstance(Instance,10000);TestFalse(TEXT("Broken brother weapon is hidden"),BrotherHeld->GetVisibleFlag());
+            Brother->Bag->RemoveInstance(Instance);TestFalse(TEXT("Removed brother weapon is hidden"),BrotherHeld->GetVisibleFlag());
+        }
+    }
     World->EndPlay(EEndPlayReason::Quit);GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return true;
 }
 #if WITH_EDITOR

@@ -35,7 +35,9 @@
     "docs/qa/TASK-095/rescue-runtime/REPORT.md",
     "docs/qa/TASK-095/weapons/REPORT.md",
     "docs/assets/TASK-095/PLAYER_RANGED.md",
-    "docs/qa/TASK-095/player-ranged/REPORT.md"
+    "docs/qa/TASK-095/player-ranged/REPORT.md",
+    "docs/assets/TASK-095/BROTHER_WEAPONS.md",
+    "docs/qa/TASK-095/brother-weapons/REPORT.md"
   ],
   "dependencies": [
     "TASK-092",
@@ -193,6 +195,7 @@
     "2026-10-08 继续已批准的玩家拉弓/射击/装填动作，增加四段原Hero骨架动作及独立可弯曲长弓网格/骨架/拉弓动作共七个准确包。按现有Combat状态采样，上下身分层；不修改弹道、蓄力、装填时长或消耗。",
     "2026-10-08 玩家弓弩四段动作与可弯曲长弓已接入，瞄准俯仰/水平朝向错位已修正。4项回归及最终移动腿部/装备呈现定向1项通过，实际PIE29帧和三段视频通过。实际弹道起点仍按旧逻辑，改到箭尖并检查遮挡的方案待Owner答复；弟弟装备、完整接触/Cook/视觉验收继续。",
     "2026-10-08 继续弟弟实际装备呈现，准确增加CompanionFixture.h写范围；复用已导入近战武器，按弟弟自身61骨参考握点挂接，真实装备/耐久/生存状态驱动，不增加弟弟远程攻击能力或修改伤害。",
-    "2026-10-08 实机复现弟弟原待机手位导致长刃/战斧穿肩；在已批准持握修复范围内增加准确A_Brother_WeaponCarry动作包，仅对持武器的右臂分层，不修改移动、攻击判定或敌人动作。"
+    "2026-10-08 实机复现弟弟原待机手位导致长刃/战斧穿肩；在已批准持握修复范围内增加准确A_Brother_WeaponCarry动作包，仅对持武器的右臂分层，不修改移动、攻击判定或敌人动作。",
+    "2026-10-08 弟弟13种近战装备已按实际实例/耐久和生存状态呈现，新增右臂携带姿势修复长刃/战斧待机穿肩。Editor构建、装备回归1/1（零警告）及六件装备/正侧视PIE通过。弟弟攻击接触与长枪专用动作、完整Cook和Owner验收继续，TASK-095保持Active。"
   ]
 }

@@ -1,5 +1,8 @@
 #include "HearthwardCompanionFixture.h"
 #include "../Inventory/HearthwardHarvestTools.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Experience/HearthwardTraversalComponent.h"
 #include "HearthwardCompanionNavigationComponent.h"
@@ -115,6 +118,51 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture(const FObjectInitialize
     Action = CreateDefaultSubobject<UHearthwardTimedActionComponent>(TEXT("FixtureGatherTimer"));
     Navigation = CreateDefaultSubobject<UHearthwardCompanionNavigationComponent>(TEXT("CompanionNavigation"));
     Tags.Add(TEXT("Hearthward.Companion"));
+    HeldWeapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldWeapon"));
+    HeldWeapon->SetupAttachment(GetMesh(),TEXT("hand_r"));HeldWeapon->SetAbsolute(false,false,true);
+    HeldWeapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);HeldWeapon->SetCanEverAffectNavigation(false);HeldWeapon->SetVisibility(false);
+    const TCHAR* Families[]={TEXT("shortblade"),TEXT("longblade"),TEXT("spear"),TEXT("blunt")};
+    const TCHAR* Names[]={TEXT("Shortblade"),TEXT("Longblade"),TEXT("Spear"),TEXT("Waraxe")};
+    for(int32 I=0;I<UE_ARRAY_COUNT(Families);++I)
+    {
+        const FString Path=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-095/Weapons/%s/SM_%s_Practical"),Names[I],Names[I]);
+        ConstructorHelpers::FObjectFinder<UStaticMesh> Asset(*Path);WeaponMeshes.Add(Families[I],Asset.Object);
+    }
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> Axe(TEXT("/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe"));
+    WeaponMeshes.Add(TEXT("axe"),Axe.Object);
+    const auto& Ref=BrotherMesh.Object->GetRefSkeleton();
+    const auto Bone=[&](FName Name)
+    {
+        int32 Index=Ref.FindBoneIndex(Name);FTransform Result=Ref.GetRefBonePose()[Index];
+        while((Index=Ref.GetParentIndex(Index))!=INDEX_NONE)Result*=Ref.GetRefBonePose()[Index];
+        return Result;
+    };
+    const FVector Grip=(Bone(TEXT("thumb_02_r")).GetLocation()+Bone(TEXT("middle_02_r")).GetLocation())*.5;
+    const FVector Direction=(Bone(TEXT("index_01_r")).GetLocation()-Bone(TEXT("pinky_01_r")).GetLocation()).GetSafeNormal();
+    WeaponGrip=FTransform(FRotationMatrix::MakeFromZX(Direction,FVector::UpVector).ToQuat(),Grip).GetRelativeTransform(Bone(TEXT("hand_r")));
+    WeaponGrip.SetScale3D(FVector::OneVector);
+}
+
+void AHearthwardCompanionFixture::BeginPlay()
+{
+    Super::BeginPlay();Bag->OnInventoryChanged.AddDynamic(this,&AHearthwardCompanionFixture::RefreshHeldWeapon);RefreshHeldWeapon();
+}
+
+void AHearthwardCompanionFixture::RefreshHeldWeapon()
+{
+    const auto* Equipped=Bag->FindInstance(Bag->EquippedInstance(TEXT("weapon")));
+    const auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
+    const bool Visible=Equipped && Equipped->Durability>0 && (!Survival->Enabled() || Survival->Alive())
+        && Survival->RescueElapsed()<0 && Action->GetStatus()!=EHearthwardTimedActionStatus::Running;
+    HeldWeapon->SetVisibility(Visible);if(!Visible || DisplayedWeapon==Equipped->Definition)return;
+    const bool Axe=Equipped->Definition==TEXT("axe");
+    const auto Row=HearthwardData::Find(TEXT("items"),Equipped->Definition.ToString());
+    HeldWeapon->SetStaticMesh(WeaponMeshes.FindRef(Axe?FName(TEXT("axe")):FName(*HearthwardData::Text(Row,TEXT("combatClass")))));
+    HeldWeapon->EmptyOverrideMaterials();
+    HeldWeapon->SetRelativeTransform(Axe?FTransform(FRotator(0,0,-90),FVector::ZeroVector,FVector(.7)):WeaponGrip);
+    if(!Axe)if(auto* Material=HeldWeapon->CreateDynamicMaterialInstance(0))
+        Material->SetScalarParameterValue(TEXT("MetalFinish"),HearthwardData::Number(Row,TEXT("stage"),1)>1?1.f:0.f);
+    DisplayedWeapon=Equipped->Definition;
 }
 
 void AHearthwardCompanionFixture::InitializeFixture(UHearthwardInventoryComponent* Resource, AActor* CampActor)
