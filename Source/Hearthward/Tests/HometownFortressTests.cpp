@@ -1,6 +1,11 @@
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
 #include "../Building/HearthwardHometownFortress.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "GameFramework/DefaultPawn.h"
+#include "GameFramework/PlayerController.h"
+#include "Components/PointLightComponent.h"
+#include "NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/Engine.h"
@@ -35,6 +40,34 @@ bool FHometownFortressClearanceTest::RunTest(const FString&)
         if(Part->ComponentHasTag(TEXT("EscapeStair")))++Steps;
     }
     TestEqual(TEXT("Both brothers have beds"),Beds,2);TestTrue(TEXT("Stairs are present"),Steps>0);
+    auto* Controller=World->SpawnActor<APlayerController>();
+    World->AddController(Controller);
+    auto* Player=World->SpawnActor<ADefaultPawn>(Home->BedroomLanding(),FRotator::ZeroRotator);Controller->Possess(Player);
+    TestEqual(TEXT("Fixture has registered player controller"),World->GetFirstPlayerController(),Controller);
+    TestEqual(TEXT("Fixture player is possessed"),Controller->GetPawn().Get(),static_cast<APawn*>(Player));
+    auto* Campaign=World->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Phase=TEXT("prologue");
+    const auto CountEffects=[Home]()
+    {
+        TArray<UNiagaraComponent*> Effects;Home->GetComponents(Effects);return Effects.Num();
+    };
+    Home->Tick(0);TestEqual(TEXT("Three raid pockets each have flame and smoke"),CountEffects(),6);
+    Home->Tick(0);Home->Tick(0);TestEqual(TEXT("Repeated update does not duplicate effects"),CountEffects(),6);
+    TArray<UNiagaraComponent*> Effects;Home->GetComponents(Effects);
+    for(auto* Effect:Effects)
+    {
+        TestNotNull(TEXT("Raid system is bound"),Effect->GetAsset());
+        TestFalse(TEXT("Raid particles do not affect navigation"),Effect->CanEverAffectNavigation());
+    }
+    Campaign->State.Phase=TEXT("occupied");Home->Tick(0);
+    TestEqual(TEXT("Leaving prologue removes raid effects"),CountEffects(),0);
+    TArray<UPointLightComponent*> Lights;Home->GetComponents(Lights);
+    TestFalse(TEXT("Leaving prologue removes raid lighting"),Lights.ContainsByPredicate([](auto* Light){return Light->ComponentHasTag(TEXT("HearthwardRaidLight"));}));
+    Campaign->State.Phase=TEXT("prologue");Home->Tick(0);TestEqual(TEXT("Returning to prologue recreates one set"),CountEffects(),6);
+    Player->SetActorLocation(FVector(25000,0,200));Home->Tick(0);TestEqual(TEXT("Leaving the fortress removes effects"),CountEffects(),0);
+    Player->SetActorLocation(Home->BedroomLanding());Home->Tick(0);TestEqual(TEXT("Returning to fortress recreates one set"),CountEffects(),6);
+    Home->EndPlay(EEndPlayReason::RemovedFromWorld);
+    TestEqual(TEXT("EndPlay removes owned effects"),CountEffects(),0);
+    Home->Destroy();
     World->DestroyWorld(false);GEngine->DestroyWorldContext(World);
     return true;
 }

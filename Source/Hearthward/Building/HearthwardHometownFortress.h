@@ -16,6 +16,7 @@ class HEARTHWARD_API AHearthwardHometownFortress : public AActor
 public:
     AHearthwardHometownFortress();
     virtual void BeginPlay() override;
+    virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     virtual void Tick(float DeltaSeconds) override;
     FVector BedroomLanding() const;
     FVector RelicPosition() const;
@@ -26,6 +27,11 @@ private:
     UPROPERTY() TObjectPtr<UMaterialInterface> Timber;
     UPROPERTY() TObjectPtr<class UStaticMesh> DoorframeMesh;
     UPROPERTY() TObjectPtr<UMaterialInstanceDynamic> FacadeMaterial;
+    UPROPERTY() TObjectPtr<class UNiagaraSystem> RaidFlame;
+    UPROPERTY() TObjectPtr<class UNiagaraSystem> RaidSmoke;
+    UPROPERTY() TArray<TObjectPtr<class USceneComponent>> RaidEffects;
+    void UpdateRaidFire();
+    void ClearRaidFire();
     float Terrain(float X, float Y) const;
     UStaticMeshComponent* Part(FString Label, FVector Center, FVector Size, bool Blocking = true,
                                UMaterialInterface* Material = nullptr);

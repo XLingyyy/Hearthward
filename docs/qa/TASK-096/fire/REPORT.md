@@ -2,7 +2,7 @@
 
 资产与制作实现版本：065b480a6f2d91a6e6f0a7eeb8ff565038da8177。
 
-状态：候选；Owner 外观审样待回复。未接入正式地图，未计作完整 TASK-096 验收。
+状态：Owner 已于 2026-10-08 当前会话批准首件外观，继续石堡场景适配。本报告记录隔离首件，场景验证另记。
 
 ## 资产与复现
 
@@ -21,4 +21,6 @@
 
 当前 Codex 原生 `unreal_mcp` 在 UE 在线时成功调用工具列表、Niagara 查询、属性读取/修改与资产编辑器截图。直连与默认代理环境下的 HTTP 诊断均返回 200；不能把此前离线时的 502 归因于代理配置。
 
-外观审样已发起，批准前不冻结为视觉基线。外观许可不替代后续石堡实景、救援可读性及独立包验证。
+Owner 已批准并保留原视频及配置作为首件回归基线；外观许可不替代后续石堡实景、救援可读性及独立包验证。
+
+技术参考：[Epic Lightweight Emitters Quick Start](https://dev.epicgames.com/documentation/unreal-engine/lightweight-emitters-quick-start-for-niagara-in-unreal-engine?lang=en-US)。具体输出属性以本机 UE 5.8.2 Niagara 源码和上述隔离试验为依据。

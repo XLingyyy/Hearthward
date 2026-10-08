@@ -7,6 +7,11 @@
 #include "Materials/MaterialInterface.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Pawn.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 #include "UObject/ConstructorHelpers.h"
 
 AHearthwardHometownFortress::AHearthwardHometownFortress()
@@ -19,6 +24,9 @@ AHearthwardHometownFortress::AHearthwardHometownFortress()
     static ConstructorHelpers::FObjectFinder<UMaterialInterface> TimberAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/M_OldTimber"));
     static ConstructorHelpers::FObjectFinder<UStaticMesh> FrameAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/SM_BedroomDoorframe"));
     Stone=StoneAsset.Object;Timber=TimberAsset.Object;DoorframeMesh=FrameAsset.Object;
+    static ConstructorHelpers::FObjectFinder<UNiagaraSystem> FlameAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Fire/NS_HearthFire"));
+    static ConstructorHelpers::FObjectFinder<UNiagaraSystem> SmokeAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Fire/NS_HearthSmoke"));
+    RaidFlame=FlameAsset.Object;RaidSmoke=SmokeAsset.Object;
 }
 
 float AHearthwardHometownFortress::Terrain(float X, float Y) const
@@ -116,11 +124,61 @@ FVector AHearthwardHometownFortress::RelicPosition() const {return GetActorLocat
 void AHearthwardHometownFortress::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    UpdateRaidFire();
     if(FacadeMaterial)
     {
         const double Day=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().Daylight;
         // Marble exports baked color. Tint follows the same clock as the native stonework.
         FacadeMaterial->SetVectorParameterValue(TEXT("Tint"),FMath::Lerp(FLinearColor(.10f,.14f,.22f),FLinearColor(.85f,.85f,.85f),Day));
+    }
+}
+
+void AHearthwardHometownFortress::ClearRaidFire()
+{
+    for(USceneComponent* Component:RaidEffects)if(IsValid(Component))Component->DestroyComponent();
+    RaidEffects.Reset();
+}
+
+void AHearthwardHometownFortress::EndPlay(const EEndPlayReason::Type Reason)
+{
+    ClearRaidFire();
+    Super::EndPlay(Reason);
+}
+
+void AHearthwardHometownFortress::UpdateRaidFire()
+{
+    const auto* Controller=GetWorld()->GetFirstPlayerController();
+    const APawn* Player=Controller?Controller->GetPawn():nullptr;
+    const bool Visible=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->State.Phase==TEXT("prologue")
+        && Player && FVector::DistSquared2D(Player->GetActorLocation(),GetActorLocation())<FMath::Square(20000.f);
+    if(!Visible){ClearRaidFire();return;}
+    if(!RaidEffects.IsEmpty())return;
+    // Three small pockets stay outside the bedroom, stairs, postern and main court path.
+    for(const FVector2D Point:{FVector2D(-1400,2100),FVector2D(2800,2700),FVector2D(2850,4700)})
+    {
+        const FVector Base(Point,Terrain(Point.X,Point.Y));
+        for(int32 I=0;I<3;++I)
+        {
+            auto* Wood=Part(TEXT("RaidBurningWood"),Base+FVector(0,(I-1)*24,12+I*5),FVector(110,16,16),false,Timber);
+            Wood->SetRelativeRotation(FRotator(0,(I-1)*28,0));RaidEffects.Add(Wood);
+        }
+        for(int32 I=0;I<2;++I)
+        {
+            auto* Effect=NewObject<UNiagaraComponent>(this);
+            AddInstanceComponent(Effect);Effect->SetupAttachment(GetRootComponent());
+            Effect->SetAutoActivate(false);Effect->SetAutoDestroy(false);
+            Effect->SetRelativeLocation(Base+FVector(0,0,I?100:70));
+            Effect->SetAsset(I?RaidSmoke:RaidFlame);
+            Effect->SetCanEverAffectNavigation(false);Effect->SetCastShadow(false);
+            Effect->ComponentTags.Add(TEXT("HearthwardRaidVFX"));
+            Effect->RegisterComponent();Effect->Activate(true);RaidEffects.Add(Effect);
+        }
+        auto* Light=NewObject<UPointLightComponent>(this);
+        AddInstanceComponent(Light);Light->SetupAttachment(GetRootComponent());
+        Light->SetRelativeLocation(Base+FVector(0,0,90));Light->SetIntensity(3000);
+        Light->SetLightColor(FLinearColor(1,.35f,.06f));Light->SetAttenuationRadius(550);
+        Light->SetCastShadows(false);Light->ComponentTags.Add(TEXT("HearthwardRaidLight"));
+        Light->RegisterComponent();RaidEffects.Add(Light);
     }
 }
 
