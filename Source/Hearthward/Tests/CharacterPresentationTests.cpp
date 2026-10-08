@@ -87,6 +87,53 @@ bool FWeaponPresentation095Test::RunTest(const FString&)
                 Combat->Cancel();
             }
         }
+        if(FName(Id)==TEXT("bow_2") || FName(Id)==TEXT("crossbow_2"))
+        {
+            auto* Anim=CastChecked<UHearthwardHeroAnimInstance>(Hero->GetMesh()->GetAnimInstance());
+            const auto Pose=[&]() { Anim->NativeUpdateAnimation(.2f);Hero->GetMesh()->TickAnimation(.2f,false);Hero->GetMesh()->RefreshBoneTransforms(); };
+            Bag->TryAdd(TEXT("arrow"),5);Combat->SelectRanged(true);Combat->Aim(true);
+            if(Kind==TEXT("bow"))
+            {
+                TArray<USkeletalMeshComponent*> Skeletal;Hero->GetComponents(Skeletal);
+                auto** Bow=Skeletal.FindByPredicate([](const auto* C){return C->GetFName()==TEXT("HeldBow");});
+                TestTrue(TEXT("Animated bow exists"),Bow!=nullptr);
+                TestTrue(TEXT("Production draw starts"),Combat->Shoot(false));
+                Pose();(*Bow)->TickAnimation(0,false);(*Bow)->RefreshBoneTransforms();
+                const auto Rest=(*Bow)->GetSocketTransform(TEXT("BowNock"),RTS_Component).GetLocation();
+                Clock->Tick(1.f);Combat->TickComponent(1.f,LEVELTICK_All,nullptr);Pose();
+                (*Bow)->TickAnimation(0,false);(*Bow)->RefreshBoneTransforms();
+                const auto Drawn=(*Bow)->GetSocketTransform(TEXT("BowNock"),RTS_Component).GetLocation();
+                TestEqual(TEXT("Draw follows authority elapsed"),Anim->BowDrawTime,1.f);
+                TestTrue(TEXT("Bow string draws 35 centimetres"),FMath::IsNearlyEqual(FVector::Dist(Rest,Drawn),35.,.2));
+                TestTrue(TEXT("Animated bow replaces static idle bow"),(*Bow)->GetVisibleFlag() && !Held->GetVisibleFlag());
+                TestTrue(TEXT("Animated bow retains centimetre world scale"),(*Bow)->GetComponentScale().Equals(FVector::OneVector,.001));
+                Controller->SetControlRotation(FRotator(20,45,0));Pose();(*Bow)->UpdateComponentToWorld();
+                TestTrue(TEXT("Visible bow follows actual yaw/pitch aim"),FVector::DotProduct((*Bow)->GetForwardVector(),Controller->GetControlRotation().Vector())>.99);
+                Hero->GetCharacterMovement()->Velocity=FVector(200,0,0);Pose();
+                const auto FootA=Hero->GetMesh()->GetSocketLocation(TEXT("foot_l"));Pose();
+                TestTrue(TEXT("Upper-body aim retains moving leg animation"),FVector::Dist(FootA,Hero->GetMesh()->GetSocketLocation(TEXT("foot_l")))>2);
+                Hero->GetCharacterMovement()->Velocity=FVector::ZeroVector;
+                Controller->SetControlRotation(FRotator::ZeroRotator);
+                const int32 Arrows=Bag->Available(TEXT("arrow"));
+                TestTrue(TEXT("Production release starts recoil"),Combat->Shoot(true));Pose();
+                TestEqual(TEXT("Release selects its follow-through"),Anim->RangedClip,13);
+                TestEqual(TEXT("Only authority consumes one arrow"),Bag->Available(TEXT("arrow")),Arrows-1);
+                Combat->Cancel();Combat->Aim(false);Pose();
+                TestEqual(TEXT("Cancellation clears draw deformation"),Anim->BowDrawTime,0.f);
+                TestFalse(TEXT("Cancelled bow returns to static carry"),(*Bow)->GetVisibleFlag());
+            }
+            else
+            {
+                TestTrue(TEXT("Production crossbow reload starts"),Combat->Reload());Pose();
+                TestEqual(TEXT("Reload selects authored animation"),Anim->RangedClip,15);
+                TestTrue(TEXT("Reload retains 1.8 second authority duration"),FMath::IsNearlyEqual(Combat->Duration,1.8,.001));
+                Clock->Tick(1.81f);Combat->TickComponent(1.81f,LEVELTICK_All,nullptr);
+                TestTrue(TEXT("Reload completion still loads crossbow"),Combat->CrossbowLoaded);
+                TestTrue(TEXT("Production crossbow fire starts"),Combat->Shoot(false));Pose();
+                TestEqual(TEXT("Crossbow selects aim/fire pose"),Anim->RangedClip,14);
+                Combat->Cancel();Combat->Aim(false);Pose();
+            }
+        }
         TestTrue(TEXT("Wear uses actual instance"),Bag->WearInstance(Instance,10000));
         TestFalse(TEXT("Broken current instance disappears"),Held->GetVisibleFlag());
         TestTrue(TEXT("Remove tested instance"),Bag->RemoveInstance(Instance));

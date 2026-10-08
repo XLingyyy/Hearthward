@@ -3,10 +3,14 @@
 #include "Animation/AnimNode_SequencePlayer.h"
 #include "Animation/AnimSequence.h"
 #include "AnimNodes/AnimNode_TwoWayBlend.h"
+#include "AnimNodes/AnimNode_LayeredBoneBlend.h"
+#include "Animation/AnimNodeSpaceConversions.h"
+#include "BoneControllers/AnimNode_ModifyBone.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
+#include "../HearthwardCharacter.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Interaction/HearthwardInteractionComponent.h"
@@ -32,6 +36,11 @@ struct FHeroAnimProxy : FAnimInstanceProxy
     FAnimNode_SequencePlayer_Standalone Players[11];
     FAnimNode_TwoWayBlend Gait, Locomotion;
     FHeroBlend Layers[8];
+    FAnimNode_SequencePlayer_Standalone RangedPlayer;
+    FAnimNode_LayeredBoneBlend RangedLayer;
+    FAnimNode_ConvertLocalToComponentSpace RangedToComponent;
+    FAnimNode_ModifyBone AimRotation;
+    FAnimNode_ConvertComponentToLocalSpace RangedToLocal;
     uint32 SeenAttack = 0;
 
     explicit FHeroAnimProxy(UAnimInstance* Instance) : FAnimInstanceProxy(Instance) {}
@@ -53,9 +62,24 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         Gait.B.SetLinkNode(&Players[2]);
         Locomotion.A.SetLinkNode(&Players[0]);
         Locomotion.B.SetLinkNode(&Gait);
+        RangedPlayer.SetSequence(Hero->Clips[12]);
+        RangedPlayer.SetLoopAnimation(false);
+        RangedPlayer.SetPlayRate(0);
+        RangedToComponent.LocalPose.SetLinkNode(&RangedPlayer);
+        AimRotation.ComponentPose.SetLinkNode(&RangedToComponent);
+        AimRotation.BoneToModify.BoneName=TEXT("spine_01");
+        AimRotation.RotationMode=BMM_Additive;AimRotation.RotationSpace=BCS_ComponentSpace;
+        RangedToLocal.ComponentPose.SetLinkNode(&AimRotation);
+        RangedLayer.BasePose.SetLinkNode(&Layers[2]);
+        RangedLayer.AddPose();
+        RangedLayer.BlendPoses[0].SetLinkNode(&RangedToLocal);
+        FBranchFilter UpperBody;UpperBody.BoneName=TEXT("spine_01");UpperBody.BlendDepth=1;
+        RangedLayer.LayerSetup[0].BranchFilters.Add(UpperBody);
+        RangedLayer.bMeshSpaceRotationBlend=true;
+        RangedLayer.BlendWeights[0]=0;
         for (int32 Index = 0; Index < 8; ++Index)
         {
-            Layers[Index].A.SetLinkNode(Index == 0 ? static_cast<FAnimNode_Base*>(&Locomotion) : &Layers[Index - 1]);
+            Layers[Index].A.SetLinkNode(Index==0?static_cast<FAnimNode_Base*>(&Locomotion):Index==3?static_cast<FAnimNode_Base*>(&RangedLayer):&Layers[Index-1]);
             Layers[Index].B.SetLinkNode(&Players[Index + 3]);
             Layers[Index].bAlphaBoolEnabled = false;
         }
@@ -68,6 +92,11 @@ struct FHeroAnimProxy : FAnimInstanceProxy
     {
         FAnimInstanceProxy::PreUpdate(Instance, DeltaSeconds);
         const auto* Hero = CastChecked<UHearthwardHeroAnimInstance>(Instance);
+        RangedLayer.BlendWeights[0]=Hero->RangedWeight;
+        AimRotation.Rotation=Hero->RangedAimRotation;
+        RangedPlayer.SetSequence(Hero->Clips[Hero->RangedClip]);
+        RangedPlayer.SetStartPosition(Hero->RangedPoseTime);
+        RangedPlayer.SetAccumulatedTime(Hero->RangedPoseTime);
         Locomotion.Alpha = FMath::Clamp(Hero->GroundSpeed / 80.f, 0.f, 1.f);
         Gait.Alpha = FMath::Clamp((Hero->GroundSpeed - 350.f) / 250.f, 0.f, 1.f);
         Players[1].SetPlayRate(FMath::Clamp(Hero->GroundSpeed / 350.f, 0.2f, 1.6f));
@@ -118,6 +147,11 @@ UHearthwardHeroAnimInstance::UHearthwardHeroAnimInstance()
     }
     static ConstructorHelpers::FObjectFinder<UAnimSequence> Spear(TEXT("/Game/Hearthward/Assets/TASK-095/Weapons/Spear/A_Hero_SpearThrust"));
     Clips.Add(Spear.Object);
+    for(const TCHAR* Name:{TEXT("BowDraw"),TEXT("BowRelease"),TEXT("CrossbowAim"),TEXT("CrossbowReload")})
+    {
+        const FString Path=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-095/PlayerRanged/A_Hero_%s"),Name);
+        ConstructorHelpers::FObjectFinder<UAnimSequence> Clip(*Path);Clips.Add(Clip.Object);
+    }
 }
 
 void UHearthwardHeroAnimInstance::PlayAttack()
@@ -137,6 +171,35 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     if (!Character) return;
     const auto* Gameplay = Character->FindComponentByClass<UHearthwardGameplayComponent>();
     const bool Dead = Gameplay && Gameplay->Enabled && Gameplay->Health <= 0;
+    const auto* RangedCombat=Character->FindComponentByClass<UHearthwardCombatComponent>();
+    const bool RangedAction=RangedCombat && (RangedCombat->Action==TEXT("draw") || RangedCombat->Action==TEXT("recoil") || RangedCombat->Action==TEXT("crossbow") || RangedCombat->Action==TEXT("reload"));
+    const bool RangedActive=!Dead && RangedCombat && RangedCombat->RangedSelected() && RangedCombat->SupportsAmmo(TEXT("arrow"))
+        && ((RangedCombat->Aiming && !RangedCombat->Busy()) || RangedAction);
+    RangedWeight=FMath::FInterpConstantTo(RangedWeight,RangedActive?1.f:0.f,DeltaSeconds,8.f);
+    if(RangedActive)
+    {
+        const auto& MeshWorld=Character->GetMesh()->GetComponentTransform();
+        RangedAimRotation=FQuat::FindBetweenNormals(MeshWorld.InverseTransformVectorNoScale(Character->GetActorForwardVector()),
+            MeshWorld.InverseTransformVectorNoScale(Character->GetControlRotation().Vector())).Rotator();
+        const auto Item=HearthwardData::Find(TEXT("items"),Gameplay->Equipment.FindRef(TEXT("ranged")).ToString());
+        const bool Bow=HearthwardData::Text(Item,TEXT("combatClass"))==TEXT("bow");
+        RangedClip=Bow?12:14;RangedPoseTime=BowDrawTime=0;
+        if(Bow && RangedCombat->Action==TEXT("draw"))
+        {
+            RangedPoseTime=BowDrawTime=FMath::Clamp(float(RangedCombat->Elapsed),0.f,1.f);
+            ReleasedDrawTime=BowDrawTime;
+        }
+        else if(Bow && RangedCombat->Action==TEXT("recoil"))
+        {
+            RangedClip=13;RangedPoseTime=(1-ReleasedDrawTime)*.35f+float(RangedCombat->Elapsed)*ReleasedDrawTime;
+            BowDrawTime=ReleasedDrawTime*FMath::Max(0.f,1-float(RangedCombat->Elapsed)/.08f);
+        }
+        else if(!Bow && RangedCombat->Action==TEXT("reload"))
+        { RangedClip=15;RangedPoseTime=float(RangedCombat->Elapsed); }
+        else if(!Bow && RangedCombat->Action==TEXT("crossbow"))RangedPoseTime=float(RangedCombat->Elapsed);
+    }
+    else BowDrawTime=0;
+    if(auto* Hero=Cast<AHearthwardCharacter>(TryGetPawnOwner()))Hero->UpdateRangedVisual(BowDrawTime,RangedWeight);
     GroundSpeed = Dead ? 0.f : Character->GetVelocity().Size2D();
     const bool Falling = Character->GetCharacterMovement()->IsFalling();
     if (bWasFalling && !Falling) LandRemaining = 0.2f;

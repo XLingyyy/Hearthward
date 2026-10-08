@@ -13,6 +13,7 @@
 #include "Survival/HearthwardSurvivalComponent.h"
 #include "Companion/HearthwardCompanionFixture.h"
 #include "Animation/HearthwardHeroAnimInstance.h"
+#include "Animation/AnimSequence.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Materials/MaterialInterface.h"
@@ -137,11 +138,24 @@ AHearthwardCharacter::AHearthwardCharacter(const FObjectInitializer& Initializer
     const FVector BowGrip=(Bone(TEXT("thumb_02_l")).GetLocation()+Bone(TEXT("middle_02_l")).GetLocation())*.5;
     LeftBowGrip=FTransform(FRotator(0,90,0),BowGrip).GetRelativeTransform(Bone(TEXT("hand_l")));
     LeftBowGrip.SetScale3D(FVector::OneVector);
+    HeldBow=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HeldBow"));
+    HeldBow->SetupAttachment(GetMesh(),TEXT("hand_l"));HeldBow->SetRelativeTransform(LeftBowGrip);
+    HeldBow->SetAbsolute(false,false,true);HeldBow->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    HeldBow->SetCanEverAffectNavigation(false);HeldBow->SetVisibility(false);
+    static ConstructorHelpers::FObjectFinder<USkeletalMesh> BowMesh(TEXT("/Game/Hearthward/Assets/TASK-095/PlayerRanged/SK_PlayerBow"));
+    static ConstructorHelpers::FObjectFinder<UAnimSequence> BowDraw(TEXT("/Game/Hearthward/Assets/TASK-095/PlayerRanged/A_PlayerBow_Draw"));
+    HeldBow->SetSkeletalMesh(BowMesh.Object);BowDrawClip=BowDraw.Object;
+    NockedArrow=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("NockedArrow"));
+    NockedArrow->SetupAttachment(HeldBow,TEXT("BowNock"));NockedArrow->SetRelativeLocation(FVector(79,0,0));
+    NockedArrow->SetCollisionEnabled(ECollisionEnabled::NoCollision);NockedArrow->SetCanEverAffectNavigation(false);NockedArrow->SetVisibility(false);
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> ArrowMesh(TEXT("/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical"));
+    NockedArrow->SetStaticMesh(ArrowMesh.Object);
 }
 
 void AHearthwardCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    HeldBow->PlayAnimation(BowDrawClip,false);HeldBow->SetPlayRate(0);HeldBow->AddTickPrerequisiteComponent(GetMesh());
     FCoreDelegates::ApplicationWillDeactivateDelegate.AddUObject(this,&AHearthwardCharacter::ResetHeldInput);
     GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this,&AHearthwardCharacter::ResetHeldInput);
     int32 Sensitivity=5;
@@ -190,7 +204,11 @@ void AHearthwardCharacter::RefreshHeldTool()
     const auto* Selected=Inventory->FindInstance(Inventory->EquippedInstance(Combat->RangedSelected()?TEXT("ranged"):TEXT("weapon")));
     const bool Visible=Selected && Selected->Definition!=TEXT("axe") && Selected->Durability>0
         && Survival->Alive() && Survival->RescueElapsed()<0;
+    bUseControllerRotationYaw=Visible && Combat->RangedSelected() && Combat->Aiming;
+    GetCharacterMovement()->bOrientRotationToMovement=!bUseControllerRotationYaw;
     HeldWeapon->SetVisibility(Visible);
+    BowEquipped=Visible && WeaponMeshes.FindRef(TEXT("bow"))==HeldWeapon->GetStaticMesh();
+    HeldBow->SetVisibility(false);NockedArrow->SetVisibility(false);
     if(!Visible)return;
     if(DisplayedWeapon!=Selected->Definition)
     {
@@ -202,11 +220,30 @@ void AHearthwardCharacter::RefreshHeldTool()
         HeldWeapon->SetRelativeTransform(Kind==TEXT("bow")?LeftBowGrip:RightWeaponGrip);
         if(Kind==TEXT("crossbow"))
             HeldWeapon->SetRelativeRotation(RightWeaponGrip.GetRotation()*FQuat(FVector::UpVector,-PI*.5));
+        if(Kind==TEXT("bow") || Kind==TEXT("crossbow"))
+        {
+            const bool IsBow=Kind==TEXT("bow");
+            NockedArrow->AttachToComponent(IsBow?static_cast<USceneComponent*>(HeldBow):HeldWeapon,FAttachmentTransformRules::KeepRelativeTransform,IsBow?FName(TEXT("BowNock")):NAME_None);
+            NockedArrow->SetRelativeTransform(IsBow?FTransform(FVector(79,0,0)):FTransform(FRotator(90,0,0),FVector(0,4.6,45),FVector(.55,1,1)));
+        }
         if(Kind!=TEXT("bow"))
             if(auto* Material=HeldWeapon->CreateDynamicMaterialInstance(0))
                 Material->SetScalarParameterValue(TEXT("MetalFinish"),HearthwardData::Number(Row,TEXT("stage"),1)>1?1.f:0.f);
         DisplayedWeapon=Selected->Definition;
     }
+    BowEquipped=WeaponMeshes.FindRef(TEXT("bow"))==HeldWeapon->GetStaticMesh();
+    if(const auto* Anim=Cast<UHearthwardHeroAnimInstance>(GetMesh()->GetAnimInstance()))UpdateRangedVisual(Anim->BowDrawTime,Anim->RangedWeight);
+}
+
+void AHearthwardCharacter::UpdateRangedVisual(float DrawTime,float PoseWeight)
+{
+    const bool Active=BowEquipped && PoseWeight>.01f;
+    HeldBow->SetVisibility(Active);
+    if(BowEquipped)HeldWeapon->SetVisibility(!Active);
+    HeldBow->SetPosition(DrawTime,false);
+    const auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
+    const bool LoadedCrossbow=HeldWeapon->GetVisibleFlag() && HeldWeapon->GetStaticMesh()==WeaponMeshes.FindRef(TEXT("crossbow")) && Combat->CrossbowLoaded;
+    NockedArrow->SetVisibility(Inventory->Available(TEXT("arrow"))>0 && (LoadedCrossbow || (Active && (Combat->Action==TEXT("draw") || (Combat->Aiming && !Combat->Busy())))));
 }
 
 void AHearthwardCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

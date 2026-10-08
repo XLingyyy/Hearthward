@@ -30,6 +30,7 @@ public:
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     void SetLookSettings(int32 Sensitivity,bool InvertY);
+    void UpdateRangedVisual(float DrawTime,float PoseWeight);
 
 private:
     UFUNCTION()
@@ -42,6 +43,10 @@ private:
 
     UPROPERTY(VisibleAnywhere, Category="Hearthward|Equipment")
     TObjectPtr<UStaticMeshComponent> HeldWeapon;
+    UPROPERTY() TObjectPtr<class USkeletalMeshComponent> HeldBow;
+    UPROPERTY() TObjectPtr<UStaticMeshComponent> NockedArrow;
+    UPROPERTY() TObjectPtr<class UAnimSequence> BowDrawClip;
+    bool BowEquipped=false;
     UPROPERTY() TMap<FName,TObjectPtr<class UStaticMesh>> WeaponMeshes;
     FTransform RightWeaponGrip,LeftBowGrip;
     FName DisplayedWeapon;
