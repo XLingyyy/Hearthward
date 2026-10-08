@@ -1,5 +1,9 @@
 # TASK-103｜内部候选交接
 
+## 2026-10-08 候选6启动回归
+
+2026-10-08 候选6 Shipping Build/Cook/Stage/Archive成功，Cook 0错误/1条MCP许可提示；97个新增资产中96个进入IoStore，未引用的独立箭袋网格正常剔除。实际启动失败：轻量Niagara在石堡CDO构造期间反序列化异常，进入ReportCrash后黑屏无响应；已通过原生线程栈定位，原候选保留并标记不可交付，公开UEClient关闭自有进程。 证据见docs/qa/TASK-103/CANDIDATE6_STARTUP_FAILURE.json及CANDIDATE6_GAME_THREAD.txt。后续修复与重建单独记录，以下历史候选记录不代表当前资产版本。
+
 [任务](../tasks/TASK-103.md) · [元数据](../tasks/TASK-103.json) · [报告](../qa/TASK-103/REPORT.md) · [准确元数据](../releases/iteration-084-103-rc/CANDIDATE5_BUILD_INFO.json)
 
 2026-10-07，Active/partial；参考HEAD 6fcf5c22e965f0f7409438f19bc7b09e96ffb058加共享分支codex/TASK-084-103-iteration本地dirty差异，未提交/推送/合并/发布。root负责Source/UE/实际package/OS/finalizer，本Agent只写获准QA/docs，Reviewer未指定。
