@@ -15,12 +15,19 @@ AHearthwardProjectile::AHearthwardProjectile()
     auto* Mesh=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile")); SetRootComponent(Mesh);
     Mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Sphere.Sphere")));
     Mesh->SetRelativeScale3D(FVector(.06)); Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    ArrowVisual=LoadObject<UStaticMesh>(nullptr,TEXT("/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.SM_Arrow_Practical"));
 }
 void AHearthwardProjectile::Tick(float Delta)
 {
     Super::Tick(Delta);
     if(Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()) { Destroy(); return; }
     if(GetActorLocation().Z<GetWorld()->GetWorldSettings()->KillZ) { Destroy(); return; }
+    auto* Mesh=CastChecked<UStaticMeshComponent>(GetRootComponent());
+    if((Item==TEXT("arrow") || EnemyShooter.IsValid()) && Mesh->GetStaticMesh()!=ArrowVisual)
+    {
+        Mesh->SetStaticMesh(ArrowVisual);
+        Mesh->SetRelativeScale3D(FVector::OneVector);
+    }
     if(Landed || GetWorld()->IsPaused() || (!Shooter.IsValid() && !EnemyShooter.IsValid())) return;
     Delta=FMath::Min(double(Delta),Lifetime); Lifetime-=Delta;
     if(Delta<=0){Destroy();return;}
@@ -59,6 +66,8 @@ void AHearthwardProjectile::Tick(float Delta)
             if(Nearest) { Nearest->Memory.Investigation=GetActorLocation(); Nearest->Memory.InvestigationRemaining=8; }
         }
     }
+    // The authored +X arrow tip is the trace origin, including after impact.
+    if(Mesh->GetStaticMesh()==ArrowVisual && !Velocity.IsNearlyZero())SetActorRotation(Velocity.Rotation());
 }
 bool AHearthwardProjectile::Recover(AActor* Player)
 {

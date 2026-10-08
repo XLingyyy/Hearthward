@@ -1,3 +1,14 @@
 [mcp_servers.unreal-mcp]
 url = "http://127.0.0.1:8000/mcp"
 enabled = true
+
+[mcp_servers.blender]
+command = "E:/Tools/Hearthward-BlenderMCP/venv/Scripts/mcp-for-blender.exe"
+startup_timeout_sec = 60
+tool_timeout_sec = 180
+enabled = true
+[mcp_servers.blender.env]
+BLENDER_HOST = "127.0.0.1"
+BLENDER_PORT = "9876"
+BLENDER_MCP_DISABLE_TELEMETRY = "1"
+BLENDERMCP_ADDONS_DIR = "E:/Tools/Blender-5.2.0-LTS/portable/scripts/addons"

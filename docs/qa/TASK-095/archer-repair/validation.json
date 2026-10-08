@@ -1,0 +1,62 @@
+{
+  "base_commit": "eefa9a2d828fe0454eeb4c4136c4c4ca1824b605",
+  "environment": "UE 5.8.2, Win64 Development Editor, NullRHI automation",
+  "build": {
+    "ok": true,
+    "operation": "build.project",
+    "diagnostics": [],
+    "warnings": [],
+    "errors": [],
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ]
+  },
+  "runs": [
+    {
+      "name": "archer",
+      "reportCreatedOn": "2026.10.08-05.58.45",
+      "succeeded": 2,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "notRun": 0
+    },
+    {
+      "name": "projectile-fixed",
+      "reportCreatedOn": "2026.10.08-06.01.32",
+      "succeeded": 0,
+      "succeededWithWarnings": 5,
+      "failed": 0,
+      "notRun": 0
+    },
+    {
+      "name": "audio",
+      "reportCreatedOn": "2026.10.08-06.01.55",
+      "succeeded": 6,
+      "succeededWithWarnings": 0,
+      "failed": 1,
+      "notRun": 0
+    },
+    {
+      "name": "audio-load",
+      "reportCreatedOn": "2026.10.08-06.02.49",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "notRun": 0
+    }
+  ],
+  "initial_projectile_failure": {
+    "ok": false,
+    "cause": "PlaySoundEvent ignored AllowAudioPlayback(false), then dereferenced a null GameInstance while handling the real damage receipt.",
+    "log_excerpt": [
+      "[2026.10.08-05.59.07:839][302]LogWindows: Error: Unhandled Exception: EXCEPTION_ACCESS_VIOLATION reading address 0x0000000000000158",
+      "[2026.10.08-05.59.07:839][302]LogWindows: Error: [Callstack] 0x000001d21e9d7602 UnrealEditor-Hearthward.dll!UHearthwardPresentationComponent::PlaySoundEvent() [G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Experience\\HearthwardPresentationComponent.cpp:391]"
+    ]
+  },
+  "audio_initial_failure": "CombatActualLoadNoHistory initially omitted its required isolated UUID save-pool argument; rerun with a fresh UUID is recorded separately. Other six tests passed."
+}

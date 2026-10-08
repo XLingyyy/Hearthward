@@ -368,6 +368,7 @@ void UHearthwardPresentationComponent::StorageTransferred(FGuid Operation,bool T
 }
 bool UHearthwardPresentationComponent::PlaySoundEvent(FName Event,FGuid Operation,const FVector* Position,bool Remember)
 {
+    if(!GetWorld()->AllowAudioPlayback())return false;
     const auto* Cue=SoundCues.Find(Event);
     if(!Cue || !Operation.IsValid() || (Remember && PlayedEvents.Contains(Operation)) || GetWorld()->IsPaused()
         || !GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->Alive())return false;

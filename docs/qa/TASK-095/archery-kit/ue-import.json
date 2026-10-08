@@ -1,0 +1,499 @@
+[
+  {
+    "tool": "remove_collisions",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical.SM_Longbow_Practical"
+      }
+    },
+    "result": true
+  },
+  {
+    "tool": "get_bounds",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical.SM_Longbow_Practical"
+      }
+    },
+    "result": {
+      "min": {
+        "x": -15.476766586303711,
+        "y": -1.7204302549362183,
+        "z": -75.15064239501953
+      },
+      "max": {
+        "x": 1.707988977432251,
+        "y": 1.7204302549362183,
+        "z": 75.15064239501953
+      },
+      "isValid": true
+    }
+  },
+  {
+    "tool": "get_triangle_count",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical.SM_Longbow_Practical"
+      }
+    },
+    "result": 3776
+  },
+  {
+    "tool": "get_material_slots",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical.SM_Longbow_Practical"
+      }
+    },
+    "result": [
+      "M_Longbow_Practical"
+    ]
+  },
+  {
+    "tool": "get_property_input",
+    "arguments": {
+      "material": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical"
+      },
+      "material_property": "MP_BaseColor"
+    },
+    "result": {
+      "output_name": "RGB",
+      "expression": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical:MaterialExpressionTextureSample_0"
+      },
+      "input_name": ""
+    }
+  },
+  {
+    "tool": "get_property_input",
+    "arguments": {
+      "material": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical"
+      },
+      "material_property": "MP_Roughness"
+    },
+    "result": {
+      "output_name": "",
+      "expression": "None",
+      "input_name": ""
+    }
+  },
+  {
+    "tool": "add_expression",
+    "arguments": {
+      "material_or_function": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical"
+      },
+      "expression_class": {
+        "refPath": "/Script/Engine.MaterialExpressionConstant"
+      },
+      "x": -240,
+      "y": 240
+    },
+    "result": {
+      "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical:MaterialExpressionConstant_0"
+    }
+  },
+  {
+    "tool": "list_properties",
+    "arguments": {
+      "instance": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical:MaterialExpressionConstant_0"
+      }
+    },
+    "result": "{\"r\":{\"type\":\"number\"},\"materialExpressionEditorX\":{\"type\":\"integer\"},\"materialExpressionEditorY\":{\"type\":\"integer\"},\"desc\":{\"type\":\"string\",\"description\":\"关卡设计者可添加的描述（显示在材质编辑器UI中）。\"}}"
+  },
+  {
+    "tool": "set_properties",
+    "arguments": {
+      "instance": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical:MaterialExpressionConstant_0"
+      },
+      "values": "{\"R\": 0.82}"
+    },
+    "result": true
+  },
+  {
+    "tool": "connect_to_output",
+    "arguments": {
+      "expression": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical:MaterialExpressionConstant_0"
+      },
+      "output_name": "",
+      "material_property": "MP_Roughness"
+    },
+    "result": null
+  },
+  {
+    "tool": "recompile",
+    "arguments": {
+      "material_or_function": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.M_Longbow_Practical"
+      }
+    },
+    "result": null
+  },
+  {
+    "tool": "save_assets",
+    "arguments": {
+      "asset_paths": [
+        "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical",
+        "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical",
+        "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/T_Longbow_BaseColor"
+      ]
+    },
+    "result": true
+  },
+  {
+    "tool": "CaptureAssetImage",
+    "arguments": {
+      "assetPath": "/Game/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical"
+    },
+    "result": {
+      "saved_image": "SM_Longbow_Practical-ue.png"
+    }
+  },
+  {
+    "tool": "import_file",
+    "arguments": {
+      "folder_path": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow",
+      "asset_name": "SM_Arrow_Practical",
+      "source_file": "G:\\GameFactory\\test_data\\outputs\\Hearthward\\blender-20261008\\assets\\3d_object\\TASK-095-arrow\\SM_Arrow_Practical.fbx",
+      "import_materials": true,
+      "import_textures": true,
+      "combine_meshes": true
+    },
+    "result": [
+      {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.SM_Arrow_Practical"
+      }
+    ]
+  },
+  {
+    "tool": "remove_collisions",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.SM_Arrow_Practical"
+      }
+    },
+    "result": true
+  },
+  {
+    "tool": "get_bounds",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.SM_Arrow_Practical"
+      }
+    },
+    "result": {
+      "min": {
+        "x": -79.5999984741211,
+        "y": -1.8386532068252563,
+        "z": -1.0846445560455322
+      },
+      "max": {
+        "x": 0,
+        "y": 1.8386534452438354,
+        "z": 2.099996566772461
+      },
+      "isValid": true
+    }
+  },
+  {
+    "tool": "get_triangle_count",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.SM_Arrow_Practical"
+      }
+    },
+    "result": 1504
+  },
+  {
+    "tool": "get_material_slots",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.SM_Arrow_Practical"
+      }
+    },
+    "result": [
+      "M_Arrow_Practical"
+    ]
+  },
+  {
+    "tool": "get_property_input",
+    "arguments": {
+      "material": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical"
+      },
+      "material_property": "MP_BaseColor"
+    },
+    "result": {
+      "output_name": "RGB",
+      "expression": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical:MaterialExpressionTextureSample_0"
+      },
+      "input_name": ""
+    }
+  },
+  {
+    "tool": "get_property_input",
+    "arguments": {
+      "material": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical"
+      },
+      "material_property": "MP_Roughness"
+    },
+    "result": {
+      "output_name": "",
+      "expression": "None",
+      "input_name": ""
+    }
+  },
+  {
+    "tool": "add_expression",
+    "arguments": {
+      "material_or_function": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical"
+      },
+      "expression_class": {
+        "refPath": "/Script/Engine.MaterialExpressionConstant"
+      },
+      "x": -240,
+      "y": 240
+    },
+    "result": {
+      "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical:MaterialExpressionConstant_0"
+    }
+  },
+  {
+    "tool": "list_properties",
+    "arguments": {
+      "instance": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical:MaterialExpressionConstant_0"
+      }
+    },
+    "result": "{\"r\":{\"type\":\"number\"},\"materialExpressionEditorX\":{\"type\":\"integer\"},\"materialExpressionEditorY\":{\"type\":\"integer\"},\"desc\":{\"type\":\"string\",\"description\":\"关卡设计者可添加的描述（显示在材质编辑器UI中）。\"}}"
+  },
+  {
+    "tool": "set_properties",
+    "arguments": {
+      "instance": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical:MaterialExpressionConstant_0"
+      },
+      "values": "{\"R\": 0.82}"
+    },
+    "result": true
+  },
+  {
+    "tool": "connect_to_output",
+    "arguments": {
+      "expression": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical:MaterialExpressionConstant_0"
+      },
+      "output_name": "",
+      "material_property": "MP_Roughness"
+    },
+    "result": null
+  },
+  {
+    "tool": "recompile",
+    "arguments": {
+      "material_or_function": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.M_Arrow_Practical"
+      }
+    },
+    "result": null
+  },
+  {
+    "tool": "save_assets",
+    "arguments": {
+      "asset_paths": [
+        "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical",
+        "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical",
+        "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/T_Arrow_BaseColor"
+      ]
+    },
+    "result": true
+  },
+  {
+    "tool": "CaptureAssetImage",
+    "arguments": {
+      "assetPath": "/Game/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical"
+    },
+    "result": {
+      "saved_image": "SM_Arrow_Practical-ue.png"
+    }
+  },
+  {
+    "tool": "import_file",
+    "arguments": {
+      "folder_path": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver",
+      "asset_name": "SM_Quiver_Practical",
+      "source_file": "G:\\GameFactory\\test_data\\outputs\\Hearthward\\blender-20261008\\assets\\3d_object\\TASK-095-quiver\\SM_Quiver_Practical.fbx",
+      "import_materials": true,
+      "import_textures": true,
+      "combine_meshes": true
+    },
+    "result": [
+      {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical.SM_Quiver_Practical"
+      }
+    ]
+  },
+  {
+    "tool": "remove_collisions",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical.SM_Quiver_Practical"
+      }
+    },
+    "result": true
+  },
+  {
+    "tool": "get_bounds",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical.SM_Quiver_Practical"
+      }
+    },
+    "result": {
+      "min": {
+        "x": -8.778398513793945,
+        "y": -7.403117656707764,
+        "z": -7.005589282016444e-07
+      },
+      "max": {
+        "x": 5.840218544006348,
+        "y": 7.403100490570068,
+        "z": 78.4000015258789
+      },
+      "isValid": true
+    }
+  },
+  {
+    "tool": "get_triangle_count",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical.SM_Quiver_Practical"
+      }
+    },
+    "result": 10764
+  },
+  {
+    "tool": "get_material_slots",
+    "arguments": {
+      "mesh": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical.SM_Quiver_Practical"
+      }
+    },
+    "result": [
+      "M_Quiver_Practical"
+    ]
+  },
+  {
+    "tool": "get_property_input",
+    "arguments": {
+      "material": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical"
+      },
+      "material_property": "MP_BaseColor"
+    },
+    "result": {
+      "output_name": "RGB",
+      "expression": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical:MaterialExpressionTextureSample_0"
+      },
+      "input_name": ""
+    }
+  },
+  {
+    "tool": "get_property_input",
+    "arguments": {
+      "material": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical"
+      },
+      "material_property": "MP_Roughness"
+    },
+    "result": {
+      "output_name": "",
+      "expression": "None",
+      "input_name": ""
+    }
+  },
+  {
+    "tool": "add_expression",
+    "arguments": {
+      "material_or_function": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical"
+      },
+      "expression_class": {
+        "refPath": "/Script/Engine.MaterialExpressionConstant"
+      },
+      "x": -240,
+      "y": 240
+    },
+    "result": {
+      "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical:MaterialExpressionConstant_0"
+    }
+  },
+  {
+    "tool": "list_properties",
+    "arguments": {
+      "instance": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical:MaterialExpressionConstant_0"
+      }
+    },
+    "result": "{\"r\":{\"type\":\"number\"},\"materialExpressionEditorX\":{\"type\":\"integer\"},\"materialExpressionEditorY\":{\"type\":\"integer\"},\"desc\":{\"type\":\"string\",\"description\":\"关卡设计者可添加的描述（显示在材质编辑器UI中）。\"}}"
+  },
+  {
+    "tool": "set_properties",
+    "arguments": {
+      "instance": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical:MaterialExpressionConstant_0"
+      },
+      "values": "{\"R\": 0.82}"
+    },
+    "result": true
+  },
+  {
+    "tool": "connect_to_output",
+    "arguments": {
+      "expression": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical:MaterialExpressionConstant_0"
+      },
+      "output_name": "",
+      "material_property": "MP_Roughness"
+    },
+    "result": null
+  },
+  {
+    "tool": "recompile",
+    "arguments": {
+      "material_or_function": {
+        "refPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.M_Quiver_Practical"
+      }
+    },
+    "result": null
+  },
+  {
+    "tool": "save_assets",
+    "arguments": {
+      "asset_paths": [
+        "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical",
+        "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical",
+        "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/T_Quiver_BaseColor"
+      ]
+    },
+    "result": true
+  },
+  {
+    "tool": "CaptureAssetImage",
+    "arguments": {
+      "assetPath": "/Game/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical"
+    },
+    "result": {
+      "saved_image": "SM_Quiver_Practical-ue.png"
+    }
+  }
+]

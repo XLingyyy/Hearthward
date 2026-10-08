@@ -3,7 +3,7 @@
   "id": "TASK-095",
   "title": "兄弟与敌人辨识、武器持握和关键动作收尾",
   "status": "Active",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-08",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -53,7 +53,21 @@
     "Source/Hearthward/Tests/CharacterPresentationTests.cpp",
     "Source/Hearthward/HearthwardCharacter.cpp",
     "Source/Hearthward/HearthwardCharacter.h",
-    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp"
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Content/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Longbow/T_Longbow_BaseColor.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Arrow/T_Arrow_BaseColor.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Quiver/T_Quiver_BaseColor.uasset",
+    "Source/Hearthward/Combat/HearthwardProjectile.cpp",
+    "Source/Hearthward/Combat/HearthwardProjectile.h",
+    "Content/Hearthward/Assets/TASK-095/Archer/SK_Archer_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_ShoulderRepairCloth.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_Sling.uasset"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -88,8 +102,8 @@
   "permissions": {
     "network": "read_only",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted_by_owner_current_session",
+    "push": "granted_by_owner_current_session",
     "merge": "not_granted",
     "github_release": "not_granted",
     "paid_services": "not_granted"
@@ -107,6 +121,11 @@
     "候选包见docs/assets/TASK-095/PACKAGE_SCOPE.json；selected_for_change=[]，未取得锁，不编辑Content或共享源码。",
     "2026-10-07 复用原生实际3/3 Success、0 warning、0 error；详见docs/qa/TASK-095/NATIVE_REUSE.json。完整Cxx/正式渲染/正常输入/Cook/Owner仍NOT_RUN，不隐去警告。",
     "2026-10-07 Owner明确回复都按推荐去做，批准DSGN-004中1A至6A、7B的制作方向与必要实现范围；首件视觉及实际模型/性能验收另记，不自动Done。",
-    "2026-10-07 方向已由DSGN-004批准。已制作兄弟、守卫、射手、重兵五份可编辑源样板并渲染；骨架头尾和层级保持。射手仍带原网格连体短刀/盾，须继续清理，持握/拉弓/倒地/扶起和UE替换未完成。见samples/source-results.json。"
+    "2026-10-07 方向已由DSGN-004批准。已制作兄弟、守卫、射手、重兵五份可编辑源样板并渲染；骨架头尾和层级保持。射手仍带原网格连体短刀/盾，须继续清理，持握/拉弓/倒地/扶起和UE替换未完成。见samples/source-results.json。",
+    "2026-10-08 Owner授权使用本地Blender并接入MCP制作美术；新增原创长弓、箭、箭袋的准确9个Content包范围，不替换角色或战斗绑定。",
+    "2026-10-08 本轮三件原创道具9包已实际导入UE，尺寸/面数/贴图/资产渲染/保存通过；尚未角色挂接或Cook。用户此前明确要求先提交推送成果，本轮沿用当前任务分支提交推送授权，不包含main合并或发布。",
+    "2026-10-08 Owner明确要求继续制作。扩展到投射物显示的准确两个源码文件，接入已导入的箭模型；不修改飞行轨迹、命中、伤害或保存结构。",
+    "2026-10-08 射手副本重建手臂、清除刀盾并绑定弓/箭袋/背带，新增准确3个UE包；保持Guard骨架、参考姿态和原始制作源。射手尚未替换Campaign绑定，拉弓动作未完成。提交推送权限按本会话后续明确授权更新，仅当前任务分支。",
+    "2026-10-08 定向命中回归复现音效入口忽略World音频禁用开关并读取空GameInstance的崩溃，修复既有允许范围内PresentationComponent；5项命中与7项音效最终通过，旧夹具5条EndPlay清理警告保留。射手/箭显示两项原生通过。"
   ]
 }

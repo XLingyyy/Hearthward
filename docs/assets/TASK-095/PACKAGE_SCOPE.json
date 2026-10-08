@@ -1,16 +1,34 @@
 {
   "schema_version": 1,
   "task": "TASK-095",
-  "date": "2026-10-07",
+  "date": "2026-10-08",
   "source_candidate_manifest": "docs/assets/TASK-094/TASK-095-PACKAGES.json",
   "content_candidate_count": 127,
   "resource_candidate_count": 0,
-  "selected_for_change": [],
-  "lock_state": "NOT_ACQUIRED",
+  "selected_for_change": [
+    "Content/Hearthward/Assets/TASK-095/Archery/Longbow/SM_Longbow_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Longbow/M_Longbow_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Longbow/T_Longbow_BaseColor.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Arrow/SM_Arrow_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Arrow/M_Arrow_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Arrow/T_Arrow_BaseColor.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Quiver/SM_Quiver_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Quiver/M_Quiver_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archery/Quiver/T_Quiver_BaseColor.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/SK_Archer_Practical.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_ShoulderRepairCloth.uasset",
+    "Content/Hearthward/Assets/TASK-095/Archer/M_Archer_Sling.uasset"
+  ],
+  "lock_state": "ACQUIRED_BEFORE_EDIT",
   "single_writer_required": true,
-  "binary_edits": "NONE",
-  "shared_source_edits": "NONE",
-  "design_pending": "角色服装/身份轮廓、专用射手/族人、首线武器和倒地/扶起/拉弓动作首件样板待Owner确认；不自行更改既有比例或风格。",
+  "binary_edits": "Existing archery kit plus 3 new archer preview packages; runtime character binding unchanged",
+  "shared_source_edits": "HearthwardProjectile.cpp/.h: arrow visual only; HearthwardPresentationComponent.cpp: honor World audio playback flag after reproduced collision-test crash",
+  "design_pending": "NONE: DSGN-004 approved; Owner visual acceptance remains pending",
   "technical_evidence": "docs/qa/TASK-095/TECHNICAL_AUDIT.json",
-  "authorization": "Only independent technical audit dispatched; candidate references are not Content write authorization"
+  "authorization": "Owner explicitly authorized local Blender MCP art production; exact new packages recorded in TASK-095 allowed_paths",
+  "source_lock": "art_source/TASK-095/ArcheryKit.blend",
+  "source_locks": [
+    "art_source/TASK-095/ArcheryKit.blend",
+    "art_source/TASK-095/Archer-Repaired.blend"
+  ]
 }
