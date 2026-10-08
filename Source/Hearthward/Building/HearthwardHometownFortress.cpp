@@ -24,9 +24,9 @@ AHearthwardHometownFortress::AHearthwardHometownFortress()
     static ConstructorHelpers::FObjectFinder<UMaterialInterface> TimberAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/M_OldTimber"));
     static ConstructorHelpers::FObjectFinder<UStaticMesh> FrameAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/SM_BedroomDoorframe"));
     Stone=StoneAsset.Object;Timber=TimberAsset.Object;DoorframeMesh=FrameAsset.Object;
-    static ConstructorHelpers::FObjectFinder<UNiagaraSystem> FlameAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Fire/NS_HearthFire"));
-    static ConstructorHelpers::FObjectFinder<UNiagaraSystem> SmokeAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Fire/NS_HearthSmoke"));
-    RaidFlame=FlameAsset.Object;RaidSmoke=SmokeAsset.Object;
+    // Cooked stateless emitters require Niagara's initialized template module lists.
+    RaidFlame=FSoftObjectPath(TEXT("/Game/Hearthward/Assets/TASK-096/Fire/NS_HearthFire.NS_HearthFire"));
+    RaidSmoke=FSoftObjectPath(TEXT("/Game/Hearthward/Assets/TASK-096/Fire/NS_HearthSmoke.NS_HearthSmoke"));
 }
 
 float AHearthwardHometownFortress::Terrain(float X, float Y) const
@@ -153,6 +153,8 @@ void AHearthwardHometownFortress::UpdateRaidFire()
         && Player && FVector::DistSquared2D(Player->GetActorLocation(),GetActorLocation())<FMath::Square(20000.f);
     if(!Visible){ClearRaidFire();return;}
     if(!RaidEffects.IsEmpty())return;
+    UNiagaraSystem* Flame=RaidFlame.LoadSynchronous();
+    UNiagaraSystem* Smoke=RaidSmoke.LoadSynchronous();
     // Three small pockets stay outside the bedroom, stairs, postern and main court path.
     for(const FVector2D Point:{FVector2D(-1400,2100),FVector2D(2800,2700),FVector2D(2850,4700)})
     {
@@ -168,7 +170,7 @@ void AHearthwardHometownFortress::UpdateRaidFire()
             AddInstanceComponent(Effect);Effect->SetupAttachment(GetRootComponent());
             Effect->SetAutoActivate(false);Effect->SetAutoDestroy(false);
             Effect->SetRelativeLocation(Base+FVector(0,0,I?100:70));
-            Effect->SetAsset(I?RaidSmoke:RaidFlame);
+            Effect->SetAsset(I?Smoke:Flame);
             Effect->SetCanEverAffectNavigation(false);Effect->SetCastShadow(false);
             Effect->ComponentTags.Add(TEXT("HearthwardRaidVFX"));
             Effect->RegisterComponent();Effect->Activate(true);RaidEffects.Add(Effect);

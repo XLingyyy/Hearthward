@@ -1,5 +1,7 @@
 # TASK-096｜独立技术工作交接
 
+2026-10-08 已修复Cooked轻量Niagara在石堡CDO中提前加载导致Shipping启动异常：改用软引用/首次显示加载并显式Cook精确Fire目录。候选8包含全部5个火烟包，实际Shipping鼠标新游戏、保存1→2、手动读档恢复通过；0 Cook错误/1 MCP许可提示，旧失败候选6/7保留。详见docs/qa/TASK-096/fire/COOK_LOADING_FIX.md。
+
 ## 当前火烟接入状态
 
 2026-10-08 火烟首件已获Owner批准并接入序章石堡三个通路外火点。Editor构建及扩展后的卧室/撤离净空原生1/1通过；正式地图两次真实LoadPoint后全世界保持6个Niagara和3个火光，远离后0/0，返回6/3。庭院及后门方向实际夜间视口已检查。完整自然撤离、实战/救援舒适度、Cook与新版性能仍待验，任务保持Active。 证据：`docs/qa/TASK-096/fire/SCENE_INTEGRATION.md`。

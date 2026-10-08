@@ -27,8 +27,8 @@ private:
     UPROPERTY() TObjectPtr<UMaterialInterface> Timber;
     UPROPERTY() TObjectPtr<class UStaticMesh> DoorframeMesh;
     UPROPERTY() TObjectPtr<UMaterialInstanceDynamic> FacadeMaterial;
-    UPROPERTY() TObjectPtr<class UNiagaraSystem> RaidFlame;
-    UPROPERTY() TObjectPtr<class UNiagaraSystem> RaidSmoke;
+    UPROPERTY() TSoftObjectPtr<class UNiagaraSystem> RaidFlame;
+    UPROPERTY() TSoftObjectPtr<class UNiagaraSystem> RaidSmoke;
     UPROPERTY() TArray<TObjectPtr<class USceneComponent>> RaidEffects;
     void UpdateRaidFire();
     void ClearRaidFire();
