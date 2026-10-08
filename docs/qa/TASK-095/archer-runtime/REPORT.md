@@ -35,6 +35,8 @@ PIE为未保存的灰盒诊断夹具，使用真实CampaignActor与伤害代码�
 
 启动期在Engine初始化之前仍记录13条 `LogAutomationTest: Error: Condition failed`，原文保留于[startup-errors.txt](startup-errors.txt)。其来源尚未定位，不能将整份编辑器日志标为零错误；本次具名原生用例报告为3/3 PASS，PIE脚本完成且材料用途警告已消失。
 
+仓库范围检查PASS（36个变更路径、0错误）；工具自测33/33通过；git diff --check通过。以上检查只证明对应范围，不代替Cook、真人与完整游戏验收。
+
 ## 复现与边界
 
 - 可编辑源：`art_source/TASK-095/Archer-Animated.blend`。
