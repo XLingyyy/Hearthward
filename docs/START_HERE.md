@@ -1,17 +1,14 @@
 # 最短阅读路径
 
-2026-10-07 最新Owner决定：[七项推荐方向已批准](design/DSGN-004-iteration-art-local-ai.md)，按1A—6A、7B继续制作与本地模型对照。以下候选5与测试记录保留其原版本范围；新首件尚未视觉签收，新模型尚未选定。
+2026-10-08 当前工作分支为 `codex/TASK-084-103-iteration`，成果已提交推送，尚未合并main或发布。当前源码、操作和限制以[README](../README.md)及[本批候选报告](qa/TASK-103/REPORT.md)为准。
 
+当前内部候选8 `0.2.0-preview.20261008.1` 位于 `F:/HearthwardDemo/iteration-084-103-20261008-8/Windows`。Shipping Build/Cook/Stage/Archive通过，已修复Niagara启动崩溃；新增运行资产96个及全部5个火烟包已进入容器。真实键鼠新游戏、手动保存、读档、明确继续、窗口设置确认、拖动缩放和重启保留通过，见[候选记录](qa/TASK-103/CANDIDATE8_PARTIAL.json)及[窗口续测](qa/TASK-103/CANDIDATE8_WINDOW_FOLLOWUP.json)。候选8尚未生成ZIP，旧候选5 ZIP仅适用于旧源码。
 
-2026-10-07 当前工作区入口：[TASK-084—103执行记录](planning/TASK-084-103/EXECUTION_STATUS.md) → 对应任务REPORT/handoff → [独立候选报告](qa/TASK-103/REPORT.md)。分支 `codex/TASK-084-103-iteration`，基线 `6fcf5c22e965f0f7409438f19bc7b09e96ffb058`，存在未提交变更。声音工程联合原生28/28、[099子集23/23](qa/TASK-099/REPORT.md)与后续空间节点回归分开登记；[087 Source.2完整质量](qa/TASK-087/REPORT.md)和[102帧门槛](qa/TASK-102/REPORT.md)仍FAIL。
+石堡火烟首件已获Owner批准并接入，角色、武器、救援动作、设施与作物的最新实现见各任务交接。锻造27项付费建造/制作/存读档检查通过；完整动作、资源场景和Owner视听验收仍有缺口。不得以旧首件待批准记录覆盖本轮批准。
 
-当前内部候选5 `0.2.0-preview.20261007.4` 已完成 Shipping Build/Cook/Stage/Archive，运行树 `F:/HearthwardDemo/iteration-084-103-20261007-5/Windows`；ZIP已生成：`F:/HearthwardDemo/iteration-084-103-20261007-5.zip`，4,645,167,974字节，166个运行时文件，文件名/大小清单匹配，旁有 `.zip.sha256`。17个声音事件/12个独立WAV及9份必要许可文件存在，完整资产来源/许可验收仍见094。局部OS检查通过：CPU新档卧室、F6保存1→2；Vulkan显式鼠标继续恢复同卧室/Main01和原手动/自动共2节点，F6仍2；两路径中性交流提示及正常退出通过。该轮没有模型请求、Unicode/IME、原档兼容或完整路线信用；Explorer双击未验。ZIP内BUILDINFO为ZIP创建前的实际快照，最终状态以[候选报告](qa/TASK-103/REPORT.md)和[最终整理记录](qa/TASK-103/CANDIDATE5_FINALIZATION.json)为准。该候选仅本地内部交付，未发布，整批未取得正式验收。
+撤离导航的Development/API验证已推进到[Nav15自然到营检查点](qa/TASK-084/NAV15_EARNED_CAMP_CHECKPOINT.json)。完整Shipping键鼠路线与首次救援尚未通过；Nav12失败仅保留为历史。当前Computer Use可执行点击、短按键与拖动，缺少持续按键接口。
 
-两处正式空间节点结束逻辑修复分别完成定向原生回归；[Nav12](qa/TASK-103/NAV12_GROUNDED_FINAL_FIRST_BLOCKER.json)实际到达卧室门、楼梯顶、楼梯底、院门四节点，并通过一段1976.913883cm的grounded普通PathFollowing。第二段NavPath `valid=true/partial=true`，严格停止在移动前；正式目标稳定，院门route再次显示已记录。完整撤离、自然营地checkpoint、首次救援及OS连续路线未通过。候选位于角塔/底座XY覆盖，但Nav层归属及partial原因仍UNKNOWN，未自动改游戏几何或玩法。
-
-[UE MCP最终配置与检查](qa/MCP/20261007/SETUP.md)已完成：正常Editor检查时HTTP在线、三个元工具握手、Bootstrap只读查询及RC/Python/CLI启用状态通过。服务依赖该Editor进程。当前Codex聊天的原生工具目录未热挂载；需要在Hearthward项目中新建聊天加载配置，实际新聊天挂载仍未验。
-
-候选4/候选2的启动、模型单例或原档兼容结果保留各自历史绑定，不迁移到候选5。087 Source.2完整语言质量矩阵及102帧门槛仍FAIL；7项已批准方向与后续技术项见[本批执行记录](planning/TASK-084-103/EXECUTION_STATUS.md)，真人和二机验收未完成。
+[087模型质量](qa/TASK-087/REPORT.md)与[102联合性能](qa/TASK-102/REPORT.md)仍未过门槛；替代模型对照未选出合格版本。真人样本与第二台实体机器验收未执行，整批不标记Done。UE服务生命周期继续使用UEClient；MCP是否在线取决于实际Editor进程，不把历史驻留状态当作当前连接状态。
 
 2026-10-06 已公开主干历史入口：受测集成基线为 `main@af08e1ab`（PR #61），含 TASK-078—081 弟弟／对话／任务指引及 TASK-082 地图／传送／仓储界面。该版 Windows Demo 见[发行报告](releases/demo-20261006-2/REPORT.md)，当前源码和已知限制见[项目状态](PROJECT_STATE.md)。
 
