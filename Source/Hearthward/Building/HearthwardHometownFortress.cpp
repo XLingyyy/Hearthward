@@ -7,6 +7,12 @@
 #include "Materials/MaterialInterface.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Pawn.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "UObject/ConstructorHelpers.h"
 
 AHearthwardHometownFortress::AHearthwardHometownFortress()
 {
@@ -14,6 +20,13 @@ AHearthwardHometownFortress::AHearthwardHometownFortress()
     Tags.Add(TEXT("CampaignHometownFortress"));
     PrimaryActorTick.bCanEverTick=true;
     PrimaryActorTick.TickInterval=1.f;
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> StoneAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/M_RoughStone"));
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> TimberAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/M_OldTimber"));
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> FrameAsset(TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/SM_BedroomDoorframe"));
+    Stone=StoneAsset.Object;Timber=TimberAsset.Object;DoorframeMesh=FrameAsset.Object;
+    // Cooked stateless emitters require Niagara's initialized template module lists.
+    RaidFlame=FSoftObjectPath(TEXT("/Game/Hearthward/Assets/TASK-096/Fire/NS_HearthFire.NS_HearthFire"));
+    RaidSmoke=FSoftObjectPath(TEXT("/Game/Hearthward/Assets/TASK-096/Fire/NS_HearthSmoke.NS_HearthSmoke"));
 }
 
 float AHearthwardHometownFortress::Terrain(float X, float Y) const
@@ -111,6 +124,7 @@ FVector AHearthwardHometownFortress::RelicPosition() const {return GetActorLocat
 void AHearthwardHometownFortress::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+    UpdateRaidFire();
     if(FacadeMaterial)
     {
         const double Day=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().Daylight;
@@ -119,12 +133,60 @@ void AHearthwardHometownFortress::Tick(float DeltaSeconds)
     }
 }
 
+void AHearthwardHometownFortress::ClearRaidFire()
+{
+    for(USceneComponent* Component:RaidEffects)if(IsValid(Component))Component->DestroyComponent();
+    RaidEffects.Reset();
+}
+
+void AHearthwardHometownFortress::EndPlay(const EEndPlayReason::Type Reason)
+{
+    ClearRaidFire();
+    Super::EndPlay(Reason);
+}
+
+void AHearthwardHometownFortress::UpdateRaidFire()
+{
+    const auto* Controller=GetWorld()->GetFirstPlayerController();
+    const APawn* Player=Controller?Controller->GetPawn():nullptr;
+    const bool Visible=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->State.Phase==TEXT("prologue")
+        && Player && FVector::DistSquared2D(Player->GetActorLocation(),GetActorLocation())<FMath::Square(20000.f);
+    if(!Visible){ClearRaidFire();return;}
+    if(!RaidEffects.IsEmpty())return;
+    UNiagaraSystem* Flame=RaidFlame.LoadSynchronous();
+    UNiagaraSystem* Smoke=RaidSmoke.LoadSynchronous();
+    // Three small pockets stay outside the bedroom, stairs, postern and main court path.
+    for(const FVector2D Point:{FVector2D(-1400,2100),FVector2D(2800,2700),FVector2D(2850,4700)})
+    {
+        const FVector Base(Point,Terrain(Point.X,Point.Y));
+        for(int32 I=0;I<3;++I)
+        {
+            auto* Wood=Part(TEXT("RaidBurningWood"),Base+FVector(0,(I-1)*24,12+I*5),FVector(110,16,16),false,Timber);
+            Wood->SetRelativeRotation(FRotator(0,(I-1)*28,0));RaidEffects.Add(Wood);
+        }
+        for(int32 I=0;I<2;++I)
+        {
+            auto* Effect=NewObject<UNiagaraComponent>(this);
+            AddInstanceComponent(Effect);Effect->SetupAttachment(GetRootComponent());
+            Effect->SetAutoActivate(false);Effect->SetAutoDestroy(false);
+            Effect->SetRelativeLocation(Base+FVector(0,0,I?100:70));
+            Effect->SetAsset(I?Smoke:Flame);
+            Effect->SetCanEverAffectNavigation(false);Effect->SetCastShadow(false);
+            Effect->ComponentTags.Add(TEXT("HearthwardRaidVFX"));
+            Effect->RegisterComponent();Effect->Activate(true);RaidEffects.Add(Effect);
+        }
+        auto* Light=NewObject<UPointLightComponent>(this);
+        AddInstanceComponent(Light);Light->SetupAttachment(GetRootComponent());
+        Light->SetRelativeLocation(Base+FVector(0,0,90));Light->SetIntensity(3000);
+        Light->SetLightColor(FLinearColor(1,.35f,.06f));Light->SetAttenuationRadius(550);
+        Light->SetCastShadows(false);Light->ComponentTags.Add(TEXT("HearthwardRaidLight"));
+        Light->RegisterComponent();RaidEffects.Add(Light);
+    }
+}
+
 void AHearthwardHometownFortress::BeginPlay()
 {
     Super::BeginPlay();
-    Stone=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_RockScan.M_RockScan"));
-    auto* Wood=UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(nullptr,TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial")),this);
-    Wood->SetVectorParameterValue(TEXT("Color"),FLinearColor(.16f,.09f,.045f));Timber=Wood;
     for(float X:{-650.f,0.f,1850.f})for(float Y:{-550.f,500.f,1050.f})
         BedroomFloor=FMath::Max(BedroomFloor,Terrain(X,Y)+120);
     const float F=BedroomFloor;
@@ -140,6 +202,11 @@ void AHearthwardHometownFortress::BeginPlay()
     Part(TEXT("WindowLintel"),FVector(-650,0,F+495),FVector(100,560,90));
     for(float X:{-395.f,395.f})Part(TEXT("BedroomDoorPier"),FVector(X,550,F+270),FVector(510,100,540));
     Part(TEXT("BedroomDoorLintel"),FVector(0,550,F+460),FVector(280,100,160));
+    auto* Doorframe=NewObject<UStaticMeshComponent>(this,TEXT("BedroomDoorframe"));
+    AddInstanceComponent(Doorframe);Doorframe->SetupAttachment(GetRootComponent());
+    Doorframe->SetStaticMesh(DoorframeMesh);Doorframe->SetRelativeLocation(FVector(0,550,F));
+    Doorframe->SetCollisionProfileName(TEXT("NoCollision"));Doorframe->SetCanEverAffectNavigation(false);
+    Doorframe->RegisterComponent();
     Part(TEXT("BedroomCeiling"),FVector(0,0,F+555),FVector(1450,1250,70),true,Timber);
     for(float X:{-480.f,0.f,480.f})Part(TEXT("CeilingBeam"),FVector(X,0,F+510),FVector(32,1100,45),false,Timber);
     for(float X:{-340.f,340.f})

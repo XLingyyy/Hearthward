@@ -18,6 +18,12 @@ public:
     virtual void Tick(float Delta) override;
     bool WalkTo(FVector Goal,float Acceptance=100);
 private:
+    void CancelBowShot();
+    void UpdateBowShot(float Delta);
+    TWeakObjectPtr<AActor> BowTarget;
+    FGuid BowEpoch;
+    float BowRemaining=0,BowPower=0;
+    friend struct FArcherShotTestAccess;
     float DecisionIn=0,AttackIn=0,Pause=0,OffNavigation=0;
     bool Enemy=false;
     bool LaborPresented=false,LaborWorking=false;

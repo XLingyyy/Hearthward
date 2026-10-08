@@ -1,5 +1,11 @@
 # TASK-098｜营地核心设施、道具与关键图标统一
 
+## 2026-10-08 锻造真实事务与存读档
+
+2026-10-08 锻造实付流程已补验：一阶拒绝且不扣料；原接口升二阶扣48木24石，锻造建造扣160木140石20金属锭；实际制作短刃扣10木15金属锭并仅增加1件。真实SavePoint/LoadPoint后，设施GUID、等级、累计实付、唯一新网格、仓储余额和产物一致。27项检查通过，测试物资与已救援状态为PROTOTYPE_ONLY前置，使用独立存档池。正常鼠标交互、DPI/缺图、第二营地、旧档迁移、实际Cook与Owner视觉仍待验。
+
+受测运行代码：d6bd451a21e06ef9f4abb5845ba06ba2c73cba01。证据：[forge-paid-save-pie.json](../qa/TASK-098/samples/forge-paid-save-pie.json)；可复现脚本位于docs/qa/TASK-098/verify_forge_pie.py，启动器通过公开UEClient管理本次编辑器，已正常关闭。以下旧记录保留其原日期和范围。
+
 > 状态：Active（独立技术调查已实施；Owner新资产样板暂缓，运行验收未完成）。优先级：P1。阶段：D 关键资产。日期：2026-10-07。Owner：XLingyyy。Reviewer／Issue：未指派。实际分支：`codex/TASK-084-103-iteration`。
 
 [本批总入口](../planning/TASK-084-103/README.md) · [执行约定](../planning/TASK-084-103/EXECUTION_GUIDE.md) · [元数据](TASK-098.json) · [执行交接](../handoffs/TASK-098.md)

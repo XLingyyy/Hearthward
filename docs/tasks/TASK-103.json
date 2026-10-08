@@ -3,7 +3,7 @@
   "id": "TASK-103",
   "title": "候选包、真人验收与有条件发行交接",
   "status": "Active",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-08",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -129,8 +129,8 @@
   "permissions": {
     "network": "read_only",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted_by_owner_current_session",
+    "push": "granted_by_owner_current_session",
     "merge": "not_granted",
     "github_release": "not_granted",
     "paid_services": "not_granted"
@@ -160,6 +160,8 @@
     "历史截点（已被后续证据更新）：2026-10-07 新侧门同case独立RED→GREEN：native-side-gate-red/native/index.json report01.44.03实际1Fail/0W/1E，唯一arrivalVisible期待false；生产.4侧门≤50cm三维到达圆内结束节点后public Editor Win64 Development build实际成功，native-side-gate-green/native/index.json report01.45.37同LoadedFortressSpatialNodes1Success/0W/0E，100cm内侧保留节点。旧top红绿两份与本次两份独立，不合两条分母或一次全套；程序位置解析夹具不代OS/Shipping。Nav08实际运行尚无结果，候选5未package/finalSourceFreeze，release准备/最终矩阵待。",
     "历史截点（已被后续证据更新）：2026-10-07 Nav08普通API四NODE_REACHED真实door40.9494642/top39.92651791/bottom46.73882102/gate40.73301652cm，侧门后route_visible=false、world仍90000/62000/22145.612411，dist5696.434311756cm。两Source指引fix实际通过；随后final FindPath IsValid=false/IsPartial=false/Navbusyfalse/start projectiontrue z22103.4032/goal projectionfalse零向量无位置信用，FAILED_FIRST_BLOCKER，自有退出true，未开始final路径/未到终点、无camp/newsave/OS，普通步行或障碍根因未定。Nav09仅QA opt-in滚动≤2000候选→真实GeneratedNav投影→完整path/controller→普通实际移动准备，无Source节点/Invoker/猜点写入；Shipping5/finalfreeze/package/OS/ZIP待root实际，release仍准备。",
     "历史截点（已被后续证据更新）：2026-10-07当前：候选5/version.4在准确冻结Source上已实际公开Shipping Build/Cook/Stage/Archive成功：UAT0/dry_run=false，总235.52s，Build71.70/Cook63.43/Stage39.73/Archive58.81s，Cook0error/1 MCP EULA warning保留。当前BUILD_SUCCESS_OS_VALIDATION_PENDING，OS、最终运行树闭合、ZIP/hash尚未验证，NOT_PUBLISHED。 Nav12的四个既有指引节点实际通过；只用实际确认地形+Z100、固定XY250/Z220作QA查询，首段完整query/controller路径普通PathFollowing移动1976.913883cm。第二段双端投影true、FindPath valid=true/partial=true，严格停在SimpleMove前，自有Editor退出true。完整撤离/营地/首救/新保存和正常OS路线未完成，地图/碰撞根因未定。 历史1—4、四次091单case Native红绿及固定AI质量/102性能FAIL保持独立。运行树资料pre-ZIP，最终ZIP/hash仅外部record/sidecar；当前未生成最终矩阵。",
-    "2026-10-07最终当前：当前BUILD_SUCCESS_INTERNAL_CANDIDATE_ZIP_CREATED。双CMD脚本启动＋真实OS开局/保存/明确Continue局部验证通过；最终ZIP为F:/HearthwardDemo/iteration-084-103-20261007-5.zip，4,645,167,974 bytes、166运行文件。finalizer运行树/ZIP文件名与大小一致、有界文本扫描BOUNDED_TEXT_CLEAN、17event/12WAV/9许可/water98顶点96三角形配对通过；最终ZIP SHA256恰计算1次，sidecar存在，无重算。正式验收false，NOT_PUBLISHED。 候选5两CMD实际SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED，Title.4双见，共9张真实截图；fresh profile且未复制旧/QA档。CPU新游戏卧室/main01、Tneutral、F6自动1→鼠标手动保存2；Vulkan明确鼠标Continue恢复同卧室/main01，F6仍02:26manual/02:25auto共2、Tneutral。正常退出后全自有bootstrap/game进程gone且无候选模型残留。本轮无模型请求/中文输入/IME/完整路线/5旧档兼容信用。 Nav12四节点+首段19.77m实际，第二path partial停止，完整撤离/营地/首救/新保存未P。142原用例/19任务矩阵formal false/Done0，model与102FAIL/真人0/二机NOT_RUN/设计7task暂缓。MCP最后驻留实际P，当前chat无热挂载；包内文本与BUILDINFO pre-ZIP快照保留，外部record携带最终ZIP/hash，未重复hash/改Runtime。"
+    "2026-10-07最终当前：当前BUILD_SUCCESS_INTERNAL_CANDIDATE_ZIP_CREATED。双CMD脚本启动＋真实OS开局/保存/明确Continue局部验证通过；最终ZIP为F:/HearthwardDemo/iteration-084-103-20261007-5.zip，4,645,167,974 bytes、166运行文件。finalizer运行树/ZIP文件名与大小一致、有界文本扫描BOUNDED_TEXT_CLEAN、17event/12WAV/9许可/water98顶点96三角形配对通过；最终ZIP SHA256恰计算1次，sidecar存在，无重算。正式验收false，NOT_PUBLISHED。 候选5两CMD实际SCRIPT_LAUNCH_AND_OS_GAME_INPUT_VERIFIED，Title.4双见，共9张真实截图；fresh profile且未复制旧/QA档。CPU新游戏卧室/main01、Tneutral、F6自动1→鼠标手动保存2；Vulkan明确鼠标Continue恢复同卧室/main01，F6仍02:26manual/02:25auto共2、Tneutral。正常退出后全自有bootstrap/game进程gone且无候选模型残留。本轮无模型请求/中文输入/IME/完整路线/5旧档兼容信用。 Nav12四节点+首段19.77m实际，第二path partial停止，完整撤离/营地/首救/新保存未P。142原用例/19任务矩阵formal false/Done0，model与102FAIL/真人0/二机NOT_RUN/设计7task暂缓。MCP最后驻留实际P，当前chat无热挂载；包内文本与BUILDINFO pre-ZIP快照保留，外部record携带最终ZIP/hash，未重复hash/改Runtime。",
+    "2026-10-08 延续Owner继续完成及任务分支提交推送授权，为已提交角色/武器/设施/作物/近景/火烟增量构建独立候选6（0.2.0-preview.20261008.1），公开UEClient Shipping Build/Cook/Stage/Archive；保留旧候选、正式存档，暂不发布或合并。仅使用现有allowed_paths。",
+    "2026-10-08 当前内部候选为8，版本0.2.0-preview.20261008.1，受测实现38927738f488b9b5f184b85c88d53f374388de1e。TASK-096已修复候选6的Niagara启动异常，并修复候选7缺少火烟Cook包的问题。候选8 Shipping Build/Cook/Stage/Archive成功，Cook 0错误/1条MCP许可提示；97个新增资产中96个入包，全部5个火烟包存在，仅无运行引用的独立箭袋网格被剔除。独立UserDir下真实键鼠标题、新游戏、手动保存1→2、选择手动节点并确认恢复卧室通过。1280×720窗口实际应用，15秒未确认自动恢复通过；保留显示设置、拖动缩放及正常UI退出未验证。自有进程经UEClient关闭。完整Shipping路线、随包模型请求、性能、旧档、真人和二机仍未完成；无候选8 ZIP，无发布。详见docs/qa/TASK-103/CANDIDATE8_PARTIAL.json。"
   ]
 }

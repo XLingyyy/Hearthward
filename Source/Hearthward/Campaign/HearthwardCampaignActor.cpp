@@ -15,6 +15,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Animation/AnimSequence.h"
+#include "Materials/MaterialInterface.h"
 #include "Fonts/CompositeFont.h"
 #include "Misc/Paths.h"
 #include "Widgets/Text/STextBlock.h"
@@ -48,21 +49,24 @@ void AHearthwardCampaignActor::Initialize(FName Id,bool Hostile)
     GetMesh()->SetAnimInstanceClass(UHearthwardBrotherAnimInstance::StaticClass());
     if(E)
     {
-        const FString Kind=E->Kind==TEXT("heavy")?TEXT("Heavy"):TEXT("Guard");
-        const FString Path=TEXT("/Game/Hearthward/Campaign/")+Kind+TEXT("/");
-        auto* EnemyMesh=LoadObject<USkeletalMesh>(nullptr,*(Path+TEXT("SK_")+Kind+TEXT("_Runtime")));
+        const bool Archer=E->Kind==TEXT("archer");
+        const FString Kind=Archer?TEXT("Archer"):E->Kind==TEXT("heavy")?TEXT("Heavy"):TEXT("Guard");
+        const FString Path=Archer?TEXT("/Game/Hearthward/Assets/TASK-095/Archer/"):TEXT("/Game/Hearthward/Campaign/")+Kind+TEXT("/");
+        auto* EnemyMesh=LoadObject<USkeletalMesh>(nullptr,*(Path+TEXT("SK_")+Kind+(Archer?TEXT("_Combat"):TEXT("_Runtime"))));
         checkf(EnemyMesh,TEXT("Campaign enemy mesh missing: %s"),*Path);
-        GetMesh()->SetSkeletalMesh(EnemyMesh);GetMesh()->SetRelativeScale3D(FVector(160./(EnemyMesh->GetBounds().BoxExtent.Z*2)));GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
+        GetMesh()->SetSkeletalMesh(EnemyMesh);GetMesh()->SetRelativeScale3D(FVector(160./(Archer?99.74417:EnemyMesh->GetBounds().BoxExtent.Z*2)));GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
+        if(Archer)GetMesh()->VisibilityBasedAnimTickOption=EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
         GetMesh()->SetAnimInstanceClass(UHearthwardBrotherAnimInstance::StaticClass());
         if(auto* Anim=Cast<UHearthwardBrotherAnimInstance>(GetMesh()->GetAnimInstance()))
         {
             int32 I=0;for(const TCHAR* Name:{TEXT("Idle"),TEXT("Walk"),TEXT("Run"),TEXT("Idle"),TEXT("Attack"),TEXT("Idle")})
-                Anim->Clips[I++]=LoadObject<UAnimSequence>(nullptr,*(Path+TEXT("A_")+Kind+TEXT("_")+Name));
+                Anim->Clips[I++]=LoadObject<UAnimSequence>(nullptr,*(Path+TEXT("A_")+Kind+TEXT("_")+(Archer && FString(Name)==TEXT("Attack")?TEXT("Shoot"):Name)));
         }
         Target->Region=E->Zone;Target->MaximumHealth=HearthwardCampaign::Health(E->Kind,E->Stage);
         Target->Heavy=E->Kind==TEXT("heavy");Target->RewardKind=E->Kind;Target->Restore(E->Combat);
         Target->CreateBodyCollision();if(!Target->Alive())Target->SetCorpse();
     }
+    else GetMesh()->SetMaterial(0,LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Hearthward/Assets/TASK-095/Costumes/M_Civilian_CoarseCloth.M_Civilian_CoarseCloth")));
     if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))Nav->RegisterNavigationInvoker(this,3500,4500);
     if(!GetController())SpawnDefaultController();
 }
@@ -93,7 +97,10 @@ bool AHearthwardCampaignActor::WalkTo(FVector Goal,float Acceptance)
 }
 void AHearthwardCampaignActor::Tick(float Delta)
 {
-    Super::Tick(Delta);if(!Enemy || !Target->CanAct() || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->IsTraveling())return;
+    Super::Tick(Delta);
+    if(!Enemy || !Target->CanAct() || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->IsTraveling())
+    {CancelBowShot();return;}
+    UpdateBowShot(Delta);
     AttackIn-=Delta;if((DecisionIn-=Delta)>0)return;DecisionIn=.4f;
     auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();auto* E=C->Enemy(Identity);if(!E)return;
     if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
@@ -127,10 +134,11 @@ void AHearthwardCampaignActor::Tick(float Delta)
                 const float Power=Number(Calibration,TEXT("guard_attack"))*Multiplier;
                 if(E->Kind==TEXT("archer"))
                 {
-                    const FVector Start=GetActorLocation()+FVector(0,0,40);
-                    auto* Arrow=GetWorld()->SpawnActor<AHearthwardProjectile>(Start,FRotator::ZeroRotator);
-                    Arrow->EnemyShooter=this;Arrow->Power=Power;Arrow->Event=FGuid::NewGuid();Arrow->Epoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
-                    Arrow->Velocity=(Threat->GetActorLocation()-Start).GetSafeNormal()*3000;Arrow->RemainingRange=3000;Arrow->Lifetime=3;
+                    if(auto* AI=Cast<AAIController>(GetController()))AI->StopMovement();
+                    GetCharacterMovement()->StopMovementImmediately();
+                    SetActorRotation(FRotator(0,(Threat->GetActorLocation()-GetActorLocation()).Rotation().Yaw,0));
+                    BowTarget=Threat;BowRemaining=.6f;BowPower=Power;
+                    BowEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
                 }
                 else if(auto* Combat=Threat->FindComponentByClass<UHearthwardCombatComponent>())Combat->Damage(Power,TEXT("body"),GetActorLocation(),Target->Heavy,false,FGuid::NewGuid());
                 else if(auto* S=Threat->FindComponentByClass<UHearthwardSurvivalComponent>())S->ReceiveDamage(Power,FGuid::NewGuid(),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
@@ -175,4 +183,31 @@ void AHearthwardCampaignActor::Tick(float Delta)
         }
     }
     FVector Floor;if(C->Ground(Goal,Floor))WalkTo(Floor+FVector(0,0,80));
+}
+
+void AHearthwardCampaignActor::CancelBowShot()
+{
+    if(BowRemaining<=0)return;
+    BowRemaining=0;BowTarget.Reset();
+    if(auto* Anim=Cast<UHearthwardBrotherAnimInstance>(GetMesh()->GetAnimInstance()))Anim->CancelAttack();
+}
+
+void AHearthwardCampaignActor::UpdateBowShot(float Delta)
+{
+    if(BowRemaining<=0)return;
+    if(!BowTarget.IsValid() || BowEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
+    {CancelBowShot();return;}
+    BowRemaining=FMath::Max(0.f,BowRemaining-Delta);
+    if(BowRemaining>UE_KINDA_SMALL_NUMBER)return;
+    BowRemaining=0;
+    const FVector Start=GetMesh()->GetSocketLocation(TEXT("NockedArrow"));
+    const FVector Destination=BowTarget->GetActorLocation();
+    FCollisionQueryParams Query(SCENE_QUERY_STAT(CampaignBowRelease),false,this);Query.AddIgnoredActor(BowTarget.Get());
+    const bool Blocked=GetWorld()->LineTraceTestByChannel(GetActorLocation()+FVector(0,0,40),Start,ECC_Visibility,Query)
+        || GetWorld()->LineTraceTestByChannel(Start,Destination,ECC_Visibility,Query);
+    BowTarget.Reset();
+    if(Blocked)return;
+    auto* Arrow=GetWorld()->SpawnActor<AHearthwardProjectile>(Start,(Destination-Start).Rotation());
+    Arrow->EnemyShooter=this;Arrow->Power=BowPower;Arrow->Event=FGuid::NewGuid();Arrow->Epoch=BowEpoch;
+    Arrow->Velocity=(Destination-Start).GetSafeNormal()*3000;Arrow->RemainingRange=3000;Arrow->Lifetime=3;
 }

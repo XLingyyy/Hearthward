@@ -3,7 +3,7 @@
   "id": "TASK-098",
   "title": "营地核心设施、道具与关键图标统一",
   "status": "Active",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-08",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -101,8 +101,8 @@
   "permissions": {
     "network": "read_only",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted_by_owner_current_session",
+    "push": "granted_by_owner_current_session",
     "merge": "not_granted",
     "github_release": "not_granted",
     "paid_services": "not_granted"
@@ -121,6 +121,8 @@
     "2026-10-07 复用原生实际3/3 Success、3 warning、0 error；详见docs/qa/TASK-098/NATIVE_REUSE.json。完整Cxx/正式渲染/正常输入/Cook/Owner仍NOT_RUN，不隐去警告。",
     "2026-10-07 Owner明确回复都按推荐去做，批准DSGN-004中1A至6A、7B的制作方向与必要实现范围；首件视觉及实际模型/性能验收另记，不自动Done。",
     "2026-10-07 方向已由DSGN-004批准。三个新设施已取得12个精确包锁、通过UEClient导入并绑定gameplay；UE实测高88/96.75/86cm，底部与原放置占地匹配。真实PIE工作台/仓储入口支付72木和12木4石、生成新网格、登记设施及储物组件均通过，原成本/碰撞/事务规则不变。四类SVG/PNG武器图标已接入，10个刃/矛ID已分流。锻造实付建造、DPI/缺图、存读档/Cook和Owner视觉尚未验。见samples/paid-placement-pie.json、ue-stage.json。",
-    "DSGN-004已批准资产落地所必需的打包配置：主Agent单写者添加本任务精确资产目录至DirectoriesToAlwaysCook，防止字符串加载引用在Cook中被遗漏；不改变玩法或发行授权。"
+    "DSGN-004已批准资产落地所必需的打包配置：主Agent单写者添加本任务精确资产目录至DirectoriesToAlwaysCook，防止字符串加载引用在Cook中被遗漏；不改变玩法或发行授权。",
+    "2026-10-08 延续用户继续完成和任务分支提交推送授权，补齐锻造设施一阶拒绝、二阶实付建造、实际制作与存读档验证；测试前置物资和已救援状态仅在明确PROTOTYPE_ONLY隔离夹具设置，不改玩法条件、成本或正式存档。",
+    "2026-10-08 锻造实付流程已补验：一阶拒绝且不扣料；原接口升二阶扣48木24石，锻造建造扣160木140石20金属锭；实际制作短刃扣10木15金属锭并仅增加1件。真实SavePoint/LoadPoint后，设施GUID、等级、累计实付、唯一新网格、仓储余额和产物一致。27项检查通过，测试物资与已救援状态为PROTOTYPE_ONLY前置，使用独立存档池。正常鼠标交互、DPI/缺图、第二营地、旧档迁移、实际Cook与Owner视觉仍待验。"
   ]
 }

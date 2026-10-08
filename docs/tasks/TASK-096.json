@@ -3,7 +3,7 @@
   "id": "TASK-096",
   "title": "石堡开场必经区域、近景材质与夜袭氛围",
   "status": "Active",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-08",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -52,7 +52,24 @@
     "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
     "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
     "Resources/Data/quest_guidance.json",
-    "Source/Hearthward/Tests/StoneholdOpeningPolishTests.cpp"
+    "Source/Hearthward/Tests/StoneholdOpeningPolishTests.cpp",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/SM_BedroomDoorframe.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/M_RoughStone.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/M_OldTimber.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/T_RoughStone_D.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/T_RoughStone_N.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/T_OldTimber_D.uasset",
+    "Content/Hearthward/Assets/TASK-096/Nearfield/T_OldTimber_N.uasset",
+    "Source/Hearthward/Building/HearthwardHometownFortress.cpp",
+    "Source/Hearthward/Building/HearthwardHometownFortress.h",
+    "Content/Hearthward/Assets/TASK-096/Fire/NS_HearthFire.uasset",
+    "Content/Hearthward/Assets/TASK-096/Fire/NS_HearthSmoke.uasset",
+    "Content/Hearthward/Assets/TASK-096/Fire/M_HearthFlame.uasset",
+    "Content/Hearthward/Assets/TASK-096/Fire/M_HearthSmoke.uasset",
+    "Content/Hearthward/Assets/TASK-096/Fire/T_SoftSmoke.uasset",
+    "Source/Hearthward/Hearthward.Build.cs",
+    "Source/Hearthward/Tests/HometownFortressTests.cpp",
+    "Config/DefaultGame.ini"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -88,8 +105,8 @@
   "permissions": {
     "network": "read_only",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted_by_owner_current_session",
+    "push": "granted_by_owner_current_session",
     "merge": "not_granted",
     "github_release": "not_granted",
     "paid_services": "not_granted"
@@ -107,6 +124,14 @@
     "候选包见docs/assets/TASK-096/PACKAGE_SCOPE.json；selected_for_change=[]，未取得锁，不编辑Content或共享源码。",
     "2026-10-07 复用原生实际1/1 Success、0 warning、0 error；详见docs/qa/TASK-096/NATIVE_REUSE.json。完整Cxx/正式渲染/正常输入/Cook/Owner仍NOT_RUN，不隐去警告。",
     "2026-10-07 Owner明确回复都按推荐去做，批准DSGN-004中1A至6A、7B的制作方向与必要实现范围；首件视觉及实际模型/性能验收另记，不自动Done。",
-    "2026-10-07 方向已由DSGN-004批准。已制作同一门口白天/夜间石材、旧木、铁件与暖灯源场景。当前为Blender源预览，UE近景材质烘焙、有限火烟和路线验证未完成。见samples/source-results.json。"
+    "2026-10-07 方向已由DSGN-004批准。已制作同一门口白天/夜间石材、旧木、铁件与暖灯源场景。当前为Blender源预览，UE近景材质烘焙、有限火烟和路线验证未完成。见samples/source-results.json。",
+    "2026-10-08 沿用DSGN-004近景灰石/旧木方向与用户持续完成授权，准确扩展HometownFortress入口及七个近景资产包；门框按现有净宽280厘米/净高380厘米制作，NoCollision不改变原碰撞与导航。新增原创石木贴图和受光材质，保留原制作样板。用户此前授权任务分支提交推送，不含main合并/发布。",
+    "2026-10-08 近景增量：原创灰石/旧木受光材质、四张1024贴图与2700三角面卧室门框已接入，新增七个准确资产包。门框净宽280厘米、净高380厘米，仅装饰；原碰撞和导航不变。Editor构建及卧室/撤离净空原生1/1通过，正式地图隔离新档的三个游戏视口已检查。夜间卧室入口与回廊地面可辨，梁下和回廊门框背侧仍较暗；没有据离屏截图调亮正式灯光。完整火烟、连续路线、新版Cook与Owner视觉验收未完成，TASK-096保持Active。",
+    "2026-10-08 沿用有限火烟制作授权，准确新增五个效果包供隔离首件预览。复用UE内置FountainLightweight作为发射器起点和T_soft_smoke纹理，原创火焰材质；不修改引擎模板。首件连续视频与Owner审样通过前不把效果标为正式基线，不改危害/奖励规则。",
+    "2026-10-08 火烟首件已制作并通过隔离PIE可见性与停止消散检查；修复轻量Niagara无材质NormalizedAge输出导致透明度为零的问题。五个包均先锁定再编辑。首件视频已交Owner审样，未接入正式地图，完整任务仍Active。",
+    "2026-10-08 Owner已批准火烟首件，继续场景适配。扩展Niagara模块依赖和既有石堡测试的准确源码范围；由石堡Actor拥有有限火烟组件，只在序章近场显示，沿原Actor重建/销毁生命周期清理，不加入伤害、碰撞或奖励。",
+    "2026-10-08 火烟首件已获Owner批准并接入序章石堡三个通路外火点。Editor构建及扩展后的卧室/撤离净空原生1/1通过；正式地图两次真实LoadPoint后全世界保持6个Niagara和3个火光，远离后0/0，返回6/3。庭院及后门方向实际夜间视口已检查。完整自然撤离、实战/救援舒适度、Cook与新版性能仍待验，任务保持Active。",
+    "2026-10-08 候选6真实Shipping启动回归已由原生栈定位到石堡CDO同步加载轻量Niagara资源：改为软引用并在实际显示火点时加载，保持已批准视觉和生命周期。范围沿用本单Fortress cpp/h与Tests；若Cook软引用遗漏，允许Config/DefaultGame.ini仅补精确Fire目录。必要局部修复沿用当前Owner继续完成授权。",
+    "2026-10-08 已修复Cooked轻量Niagara在石堡CDO中提前加载导致Shipping启动异常：改用软引用/首次显示加载并显式Cook精确Fire目录。候选8包含全部5个火烟包，实际Shipping鼠标新游戏、保存1→2、手动读档恢复通过；0 Cook错误/1 MCP许可提示，旧失败候选6/7保留。详见docs/qa/TASK-096/fire/COOK_LOADING_FIX.md。"
   ]
 }

@@ -1,0 +1,152 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "07DF41B0498B942EB3146B980D4CB69D",
+			"instanceName": "LAPTOP-R8NPOP05-2104",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.08-10.14.03",
+	"succeeded": 3,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.66826260089874268,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "HeldAxeFollowsCurrentInstanceAndMode",
+			"fullTestPath": "Hearthward.Equipment055.HeldAxeFollowsCurrentInstanceAndMode",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"07DF41B0498B942EB3146B980D4CB69D"
+			],
+			"duration": 0.21492850780487061,
+			"dateTime": "2026.10.08-10.14.02",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "HeldAxe055 component configuration only: flag=1 contextualVisible=1 hiddenInGame=0 collectionVisible=1",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-10.14.03"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "StoneAxeHeavyUsesCurrentMoveAndPhysicalBlade",
+			"fullTestPath": "Hearthward.Equipment055.StoneAxeHeavyUsesCurrentMoveAndPhysicalBlade",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"07DF41B0498B942EB3146B980D4CB69D"
+			],
+			"duration": 0.10231079906225204,
+			"dateTime": "2026.10.08-10.14.03",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "StoneAxeLightUsesClipPhaseAndPhysicalBlade",
+			"fullTestPath": "Hearthward.Equipment055.StoneAxeLightUsesClipPhaseAndPhysicalBlade",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"07DF41B0498B942EB3146B980D4CB69D"
+			],
+			"duration": 0.10222139954566956,
+			"dateTime": "2026.10.08-10.14.03",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "StoneAxe055 actual one-frame movement: previousMesh=0.000000,0.000000,0.000000|-0.000000,-135.000000,-0.000000|1.839176,1.839176,1.839176 currentMesh=0.000000,120.000000,0.000000|-0.000000,-45.000000,-0.000000|1.839176,1.839176,1.839176 fixedTarget=X=72.000 Y=30.000 Z=150.000",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.08-10.14.03"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "WeaponInstancePresentation",
+			"fullTestPath": "Hearthward.Iteration.Task095.WeaponInstancePresentation",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"07DF41B0498B942EB3146B980D4CB69D"
+			],
+			"duration": 0.24880190193653107,
+			"dateTime": "2026.10.08-10.14.03",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Reload completion still loads crossbow' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CharacterPresentationTests.cpp",
+					"lineNumber": 125,
+					"timestamp": "2026.10.08-10.14.03"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Production crossbow fire starts' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CharacterPresentationTests.cpp",
+					"lineNumber": 125,
+					"timestamp": "2026.10.08-10.14.03"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Crossbow selects aim/fire pose' to be 14, but it was 15.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CharacterPresentationTests.cpp",
+					"lineNumber": 127,
+					"timestamp": "2026.10.08-10.14.03"
+				}
+			],
+			"warnings": 0,
+			"errors": 3,
+			"artifacts": []
+		}
+	]
+}

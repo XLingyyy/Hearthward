@@ -14,11 +14,18 @@ public:
     virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override;
     virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* Proxy) override;
     void PlayAttack();
+    void CancelAttack();
 
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") float GroundSpeed = 0;
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") FName MotionState = TEXT("Idle");
     UPROPERTY(VisibleDefaultsOnly, Category="Animation") TArray<TObjectPtr<class UAnimSequence>> Clips;
     uint32 AttackRevision = 0;
+    int32 LifeState = 0;
+    float LifePoseTime = 0;
+    UPROPERTY() TArray<TObjectPtr<class UAnimSequence>> LifeClips;
+    UPROPERTY() TObjectPtr<class UAnimSequence> WeaponCarryClip;
+    float WeaponCarryWeight = 0;
 private:
     float AttackRemaining = 0;
+    float DownElapsed = 0;
 };

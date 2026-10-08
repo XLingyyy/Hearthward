@@ -9,8 +9,54 @@
 #include "Engine/World.h"
 #include "Engine/Engine.h"
 #include "Misc/AutomationTest.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRescueApproachTest,"Hearthward.Survival.RescueApproach",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FRescueApproachTest::RunTest(const FString&)
+{
+    UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).EnableTraceCollision(true);
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    auto* Floor=World->SpawnActor<AActor>();
+    auto* Box=NewObject<UBoxComponent>(Floor);Floor->AddInstanceComponent(Box);Floor->SetRootComponent(Box);
+    Box->SetBoxExtent(FVector(1000,1000,50));Box->SetCollisionProfileName(TEXT("BlockAll"));Box->RegisterComponent();Floor->SetActorLocation(FVector(0,0,-50));
+    FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    auto* Rescuer=World->SpawnActor<ACharacter>(FVector(0,0,90),FRotator::ZeroRotator,Params);
+    Rescuer->GetCapsuleComponent()->SetCapsuleSize(34,90);
+    Rescuer->GetCharacterMovement()->bRunPhysicsWithNoController=true;
+    Rescuer->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+    auto* G=NewObject<UHearthwardGameplayComponent>(Rescuer);Rescuer->AddInstanceComponent(G);G->RegisterComponent();G->Enabled=true;
+    auto* S=NewObject<UHearthwardSurvivalComponent>(Rescuer);Rescuer->AddInstanceComponent(S);S->RegisterComponent();
+    auto* Patient=World->SpawnActor<AActor>();
+    auto* Root=NewObject<USceneComponent>(Patient);Patient->AddInstanceComponent(Root);Patient->SetRootComponent(Root);Root->RegisterComponent();Patient->SetActorLocation(FVector(180,0,90));
+    auto* Target=NewObject<UHearthwardSurvivalComponent>(Patient);Patient->AddInstanceComponent(Target);Target->RegisterComponent();Target->State.Life=EHearthwardLife::Downed;Target->State.DownRemaining=120;Target->Health()=0;
+    TestTrue(TEXT("Two metre entry starts approach"),S->BeginRescue(Target) && S->IsApproachingRescue());
+    for(int32 I=0;I<240 && S->IsApproachingRescue();++I)
+    {
+        S->CompleteBoundary(1./60);
+        Rescuer->GetCharacterMovement()->TickComponent(1.f/60,LEVELTICK_All,nullptr);
+        TestEqual(TEXT("Approach does not spend rescue time"),S->RescueRemaining,5.);
+    }
+    const double Distance=FVector::Dist2D(Rescuer->GetActorLocation(),Patient->GetActorLocation());
+    TestTrue(TEXT("CharacterMovement reaches without overshooting patient"),Distance>=78 && Distance<=82 && S->Busy() && !S->IsApproachingRescue());
+    S->CompleteBoundary(4.9);TestFalse(TEXT("Patient stays down before five seconds"),Target->Alive());
+    S->CompleteBoundary(.11);TestTrue(TEXT("Five seconds restores ten percent"),Target->Alive() && Target->Health()==Target->MaxHealth()*.1f);
+    Target->State.Life=EHearthwardLife::Downed;Target->State.DownRemaining=120;Target->Health()=0;
+    Rescuer->SetActorLocation(FVector(0,0,90));
+    TestTrue(TEXT("Approach can restart"),S->BeginRescue(Target));
+    S->CompleteBoundary(.1);S->CancelCurrentAction();
+    TestTrue(TEXT("Manual cancellation clears approach and velocity"),!S->Busy() && !S->IsApproachingRescue() && Rescuer->GetVelocity().IsNearlyZero());
+    TestTrue(TEXT("Blocked approach starts"),S->BeginRescue(Target));
+    for(int32 I=0;I<6;++I)S->CompleteBoundary(.1);
+    TestTrue(TEXT("No physical progress cancels without reviving"),!S->Busy() && !Target->Alive());
+    GEngine->DestroyWorldContext(World);World->DestroyWorld(false);
+    return true;
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSurvivalBoundaryTest,"Hearthward.Survival.CalendarAndDeadlines",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FSurvivalBoundaryTest::RunTest(const FString&)

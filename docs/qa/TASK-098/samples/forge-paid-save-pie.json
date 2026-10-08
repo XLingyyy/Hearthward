@@ -1,0 +1,178 @@
+{
+  "ok": true,
+  "checks": {
+    "prototype enabled": true,
+    "new progress": true,
+    "tier one rejects forge": true,
+    "rejected selection consumes nothing": true,
+    "workbench selected": true,
+    "workbench paid placement starts": true,
+    "workbench exact debit": true,
+    "workbench actual new mesh": true,
+    "workbench bottom offset cm": true,
+    "fixture rescue precondition": true,
+    "actual camp upgrade": true,
+    "camp tier two exact debit": true,
+    "forge selected": true,
+    "forge paid placement starts": true,
+    "forge exact debit": true,
+    "forge actual new mesh": true,
+    "forge bottom offset cm": true,
+    "actual forge recipe": true,
+    "craft shortblade two exact debit": true,
+    "craft output added once": true,
+    "manual save": true,
+    "actual load": true,
+    "forge registry including paid materials restored": true,
+    "shared materials restored exactly": true,
+    "crafted output restored once": true,
+    "one forge restored with approved mesh": true,
+    "both paid buildings restored": true
+  },
+  "method": "PROTOTYPE_ONLY isolated flat-ground fixture; fixture supplies and recorded rescue precondition; real tier gate, paid camp upgrade, workbench/forge placement, crafting and SavePoint/LoadPoint; no gameplay balance or formal save changes",
+  "supplied": {
+    "wood": 290,
+    "stone": 164,
+    "metal_ingot": 35
+  },
+  "transactions": [
+    {
+      "step": "workbench",
+      "before": {
+        "wood": 290,
+        "stone": 164,
+        "metal_ingot": 35
+      },
+      "after": {
+        "wood": 218,
+        "stone": 164,
+        "metal_ingot": 35
+      },
+      "cost": {
+        "wood": 72
+      }
+    },
+    {
+      "step": "camp tier two",
+      "before": {
+        "wood": 218,
+        "stone": 164,
+        "metal_ingot": 35
+      },
+      "after": {
+        "wood": 170,
+        "stone": 140,
+        "metal_ingot": 35
+      },
+      "cost": {
+        "wood": 48,
+        "stone": 24
+      }
+    },
+    {
+      "step": "forge",
+      "before": {
+        "wood": 170,
+        "stone": 140,
+        "metal_ingot": 35
+      },
+      "after": {
+        "wood": 10,
+        "stone": 0,
+        "metal_ingot": 15
+      },
+      "cost": {
+        "wood": 160,
+        "stone": 140,
+        "metal_ingot": 20
+      }
+    },
+    {
+      "step": "craft shortblade two",
+      "before": {
+        "wood": 10,
+        "stone": 0,
+        "metal_ingot": 15
+      },
+      "after": {
+        "wood": 0,
+        "stone": 0,
+        "metal_ingot": 0
+      },
+      "cost": {
+        "wood": 10,
+        "metal_ingot": 15
+      }
+    }
+  ],
+  "craft_status": "",
+  "forge_before_load": {
+    "id": "98129CAA4002AFBDA4B1EF82DCB52766",
+    "kind": "forge",
+    "camp": "camp",
+    "level": 1,
+    "paid": {
+      "wood": 160,
+      "stone": 140,
+      "metal_ingot": 20
+    },
+    "paused": false
+  },
+  "materials_before_load": {
+    "wood": 0,
+    "stone": 0,
+    "metal_ingot": 0
+  },
+  "forge_after_load": {
+    "id": "98129CAA4002AFBDA4B1EF82DCB52766",
+    "kind": "forge",
+    "camp": "camp",
+    "level": 1,
+    "paid": {
+      "wood": 160,
+      "stone": 140,
+      "metal_ingot": 20
+    },
+    "paused": false
+  },
+  "remaining": [
+    "DPI/inventory icon visual review",
+    "Owner visual acceptance",
+    "Cook and older saved-world migration"
+  ],
+  "phase": "<HearthwardCompanionPhase.IDLE: 0>",
+  "reason": "自由活动 · patrol",
+  "facilities": [
+    {
+      "id": "69F20AE348490B9DF06AFE85CE33B2D6",
+      "kind": "workbench",
+      "camp": "camp",
+      "level": 1,
+      "paid": {
+        "wood": 72
+      },
+      "paused": false
+    },
+    {
+      "id": "98129CAA4002AFBDA4B1EF82DCB52766",
+      "kind": "forge",
+      "camp": "camp",
+      "level": 1,
+      "paid": {
+        "wood": 160,
+        "stone": 140,
+        "metal_ingot": 20
+      },
+      "paused": false
+    }
+  ],
+  "camp_roast": 0,
+  "tested_runtime_commit": "d6bd451a21e06ef9f4abb5845ba06ba2c73cba01",
+  "environment": {
+    "engine": "UE 5.8.2",
+    "configuration": "Development Editor",
+    "map": "/Game/Hearthward/Tests/Graybox/L_GrayboxValidation",
+    "save_pool": "unique -HearthwardSaveTestPool UUID; formal saves untouched"
+  },
+  "command": ".venv/Scripts/python.exe -X utf8 Hearthward/docs/qa/TASK-098/run_forge_pie.py (from GameFactory)"
+}
