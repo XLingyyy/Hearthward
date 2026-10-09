@@ -2,6 +2,7 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "GameFramework/Character.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EngineUtils.h"
@@ -24,6 +25,8 @@ void UHearthwardCampSubsystem::RefreshQuartermasters()
         NPC->Tags.Add(TEXT("Hearthward.Quartermaster"));NPC->Tags.Add(Camp.Id);
         NPC->GetMesh()->SetSkeletalMeshAsset(Model->GetMesh()->GetSkeletalMeshAsset());
         NPC->GetMesh()->SetRelativeTransform(Model->GetMesh()->GetRelativeTransform());NPC->GetMesh()->SetAnimInstanceClass(Model->GetMesh()->GetAnimClass());
+        // The generic NPC capsule is taller than the companion capsule whose mesh is reused.
+        NPC->GetMesh()->AddLocalOffset(FVector(0,0,Model->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()-NPC->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
         for(int32 I=0;I<Model->GetMesh()->GetNumMaterials();++I)NPC->GetMesh()->SetMaterial(I,Model->GetMesh()->GetMaterial(I));
         NPC->GetMesh()->SetMaterial(0,LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Hearthward/Assets/TASK-095/Costumes/M_Civilian_CoarseCloth.M_Civilian_CoarseCloth")));
         auto* Name=NewObject<UTextRenderComponent>(NPC);NPC->AddInstanceComponent(Name);Name->SetupAttachment(NPC->GetRootComponent());

@@ -1,0 +1,14 @@
+{
+  "passed": false,
+  "method": "PROTOTYPE_ONLY isolated Graybox with a flat floor and victory prerequisite; actual ReclaimHometown transaction and SavePoint/LoadPoint. Real Slate UI rendered at two sizes and two text scales, not OS DPI acceptance.",
+  "checks": {
+    "prototype isolated progress": true,
+    "inventory shortblade": true,
+    "inventory longblade": true,
+    "inventory spear": true,
+    "inventory bow": true,
+    "second camp actual transaction": false
+  },
+  "ui": [],
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-098/closure/capture02.py\", line 59, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-098/closure/capture02.py\", line 33, in run\n    check('second camp actual transaction',camp.reclaim_hometown('PROTOTYPE_ONLY_Task098Victory',unreal.Vector(20000,20000,0)))\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-098/closure/capture02.py\", line 13, in check\n    if not v:raise AssertionError(k)\n             ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: second camp actual transaction\n"
+}

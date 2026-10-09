@@ -1,0 +1,159 @@
+{
+  "checks": {
+    "prototype isolated progress": true,
+    "inventory shortblade": true,
+    "inventory longblade": true,
+    "inventory spear": true,
+    "inventory bow": true,
+    "t098-closure-inventory-100-1280": true,
+    "t098-closure-inventory-100-3440": true,
+    "t098-closure-building-100-1280": true,
+    "t098-closure-building-100-3440": true,
+    "t098-closure-camp-100-1280": true,
+    "t098-closure-camp-100-3440": true,
+    "t098-closure-map-100-1280": true,
+    "t098-closure-map-100-3440": true,
+    "select 150 percent text": true,
+    "apply isolated text setting": true,
+    "t098-closure-inventory-150-1280": true,
+    "t098-closure-inventory-150-3440": true,
+    "t098-closure-building-150-1280": true,
+    "t098-closure-building-150-3440": true,
+    "t098-closure-camp-150-1280": true,
+    "t098-closure-camp-150-3440": true,
+    "t098-closure-map-150-1280": true,
+    "t098-closure-map-150-3440": true
+  },
+  "captures": [
+    {
+      "page": "inventory",
+      "text_scale": 100,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "page": "inventory",
+      "text_scale": 100,
+      "size": [
+        3440,
+        1440
+      ]
+    },
+    {
+      "page": "building",
+      "text_scale": 100,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "page": "building",
+      "text_scale": 100,
+      "size": [
+        3440,
+        1440
+      ]
+    },
+    {
+      "page": "camp",
+      "text_scale": 100,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "page": "camp",
+      "text_scale": 100,
+      "size": [
+        3440,
+        1440
+      ]
+    },
+    {
+      "page": "map",
+      "text_scale": 100,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "page": "map",
+      "text_scale": 100,
+      "size": [
+        3440,
+        1440
+      ]
+    },
+    {
+      "page": "inventory",
+      "text_scale": 150,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "page": "inventory",
+      "text_scale": 150,
+      "size": [
+        3440,
+        1440
+      ]
+    },
+    {
+      "page": "building",
+      "text_scale": 150,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "page": "building",
+      "text_scale": 150,
+      "size": [
+        3440,
+        1440
+      ]
+    },
+    {
+      "page": "camp",
+      "text_scale": 150,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "page": "camp",
+      "text_scale": 150,
+      "size": [
+        3440,
+        1440
+      ]
+    },
+    {
+      "page": "map",
+      "text_scale": 150,
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "page": "map",
+      "text_scale": 150,
+      "size": [
+        3440,
+        1440
+      ]
+    }
+  ],
+  "scope": "Real Slate CaptureUI, no operating-system DPI claim",
+  "later_failure": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-098/closure/capture.py\", line 71, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-098/closure/capture.py\", line 45, in run\n    check('second camp actual transaction',camp.reclaim_hometown(unreal.GuidLibrary.new_guid(),unreal.Vector(20000,20000,0)))\n                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: HearthwardCampSubsystem: Failed to convert parameter 'victory' when calling function 'HearthwardCampSubsystem.ReclaimHometown' on 'HearthwardCampSubsystem_0'\n  TypeError: NativizeProperty: Cannot nativize 'Guid' as 'Victory' (NameProperty)\n    TypeError: Nativize: Cannot nativize 'Guid' as 'Name'\n"
+}

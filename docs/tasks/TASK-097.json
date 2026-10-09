@@ -3,7 +3,7 @@
   "id": "TASK-097",
   "title": "救援路线自然环境、生态外观与远近景收尾",
   "status": "Active",
-  "updated_at": "2026-10-09",
+  "updated_at": "2026-10-10",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -26,7 +26,8 @@
     "docs/assets/TASK-094/DOWNSTREAM_DECISIONS.md",
     "docs/planning/TASK-084-103/ROUTE_MANIFEST.json",
     "docs/qa/TASK-097/NATIVE_REUSE.json",
-    "docs/design/DSGN-004-iteration-art-local-ai.md"
+    "docs/design/DSGN-004-iteration-art-local-ai.md",
+    "docs/qa/TASK-097/walking/REPORT.md"
   ],
   "dependencies": [
     "TASK-092",
@@ -151,6 +152,7 @@
     "2026-10-08 Owner持续授权完成本批实现、修复、提交和推送；新增两个准确LandscapeGrassType包用于已复现的草片矩形接触阴影修复。仅调整草种CastContactShadow，不修改全局光照、草密度、碰撞或主地图。现有LFS锁51998986/52010301均属XLingyyy，保留到整合。运行对照及重启后真实渲染分别记录，不据此宣布自然路线全部通过。",
     "2026-10-08 两个草种资产的接触阴影修复已通过重新启动后的渲染验证：草片下方矩形黑斑消失，建筑/树阴影保留，全局接触阴影仍开启。修改仅为GT_Meadow与GT_S1_Meadow的CastContactShadow=false。首次保存跳过未标脏资产的失败已保留，显式保存后重启读取/实际组件均为false。见[草簇修复](../qa/TASK-097/grass-contact/REPORT.md)。本次为PIE局部画面验证，候选8尚未包含这次修复，完整自然路线/性能/Owner验收仍未完成。",
     "2026-10-09 按继续完成路线美术授权，原创岔路指示木桩、河岸石堆与瞭望石标替换路线节点通用木箱；保留原位置、交互、地形投射和通行，不增加资源。",
-    "2026-10-09 九处路线节点原创地标已接入，正式地形9/9核对唯一节点、网格、无碰撞与地面高度。18张近远景记录；岔路远景相机被树冠遮挡，未冒充全路线视觉通过。见docs/qa/TASK-097/route/REPORT.md。"
+    "2026-10-09 九处路线节点原创地标已接入，正式地形9/9核对唯一节点、网格、无碰撞与地面高度。18张近远景记录；岔路远景相机被树冠遮挡，未冒充全路线视觉通过。见docs/qa/TASK-097/route/REPORT.md。",
+    "2026-10-10 九节点昼夜共18段、72次真实贴地移动采样通过，36图已留档，昼夜接近视角已检查；原误设镜头的失败画面保留。局部限帧A/B/A数据已记录，不替代102完整性能门槛；全路线实玩与Owner视觉后置。"
   ]
 }

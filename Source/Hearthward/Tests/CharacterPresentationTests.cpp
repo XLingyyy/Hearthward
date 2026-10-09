@@ -8,6 +8,7 @@
 #include "GameFramework/WorldSettings.h"
 #include "../Campaign/HearthwardCampaignActor.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Animation/HearthwardBrotherAnimInstance.h"
 #include "../Animation/HearthwardHeroAnimInstance.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
@@ -32,6 +33,31 @@
 #include "Kismet/GameplayStatics.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FQuartermasterGround095Test,
+    "Hearthward.Iteration.Task095.QuartermasterGroundContact",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FQuartermasterGround095Test::RunTest(const FString&)
+{
+    UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    auto* Ground=World->SpawnActor<AActor>();auto* Floor=NewObject<UBoxComponent>(Ground);
+    Ground->AddInstanceComponent(Floor);Ground->SetRootComponent(Floor);Floor->SetBoxExtent(FVector(2000,2000,10));
+    Floor->SetCollisionProfileName(TEXT("BlockAll"));Floor->RegisterComponent();Ground->SetActorLocation(FVector(0,0,-10));
+    World->SpawnActor<AHearthwardCompanionFixture>();
+    auto* Camp=World->GetSubsystem<UHearthwardCampSubsystem>();Camp->State.AddCamp(TEXT("camp"),FVector::ZeroVector);
+    Camp->RefreshQuartermasters();int32 Count=0;
+    for(TActorIterator<ACharacter> It(World);It;++It)if(It->ActorHasTag(TEXT("Hearthward.Quartermaster")))
+    {
+        ++Count;auto* Mesh=It->GetMesh();Mesh->TickAnimation(.1f,false);Mesh->RefreshBoneTransforms();
+        TestTrue(TEXT("Standing civilian mesh root is within three centimetres of the real floor"),FMath::Abs(Mesh->GetComponentLocation().Z)<3);
+        TestTrue(TEXT("Idle ankles no longer float twenty centimetres above the floor"),FMath::Min(Mesh->GetSocketLocation(TEXT("foot_l")).Z,Mesh->GetSocketLocation(TEXT("foot_r")).Z)<16);
+        TestEqual(TEXT("Presentation fix preserves the existing NPC capsule"),It->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(),88.f);
+    }
+    TestEqual(TEXT("One actual quartermaster is produced"),Count,1);
+    GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLocomotionContact095Test,
     "Hearthward.Iteration.Task095.LocomotionContact",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
