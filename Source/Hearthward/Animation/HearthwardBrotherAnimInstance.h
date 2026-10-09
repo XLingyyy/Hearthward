@@ -24,8 +24,13 @@ public:
     float LifePoseTime = 0;
     UPROPERTY() TArray<TObjectPtr<class UAnimSequence>> LifeClips;
     UPROPERTY() TObjectPtr<class UAnimSequence> WeaponCarryClip;
+    UPROPERTY() TObjectPtr<class UAnimSequence> SpearAttackClip;
+    UPROPERTY() TObjectPtr<class UAnimSequence> DefaultAttackClip;
     float WeaponCarryWeight = 0;
+    bool bCompanionAttack = false;
+    float AttackPoseTime = 0;
 private:
     float AttackRemaining = 0;
+    float AttackDuration = 0;
     float DownElapsed = 0;
 };

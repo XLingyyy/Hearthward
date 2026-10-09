@@ -90,6 +90,8 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
             Players[4].SetAccumulatedTime(0.f);
             SeenAttack = Brother->AttackRevision;
         }
+        Players[4].SetPlayRate(Brother->bCompanionAttack?0.f:1.f);
+        if(Brother->bCompanionAttack)Players[4].SetAccumulatedTime(Brother->AttackPoseTime);
     }
 };
 }
@@ -98,12 +100,15 @@ UHearthwardBrotherAnimInstance::UHearthwardBrotherAnimInstance()
 {
     static ConstructorHelpers::FObjectFinder<UAnimSequence> Carry(TEXT("/Game/Hearthward/Assets/TASK-095/Weapons/A_Brother_WeaponCarry"));
     WeaponCarryClip=Carry.Object;
+    static ConstructorHelpers::FObjectFinder<UAnimSequence> Spear(TEXT("/Game/Hearthward/Assets/TASK-095/Weapons/A_Brother_SpearThrust"));
+    SpearAttackClip=Spear.Object;
     for (const TCHAR* Name : {TEXT("Idle"), TEXT("Walk"), TEXT("Run"), TEXT("Dig"), TEXT("Attack"), TEXT("Wait")})
     {
         const FString Path = FString::Printf(TEXT("/Game/Characters/Brother/Animation/A_Brother_%s"), Name);
         ConstructorHelpers::FObjectFinder<UAnimSequence> Clip(*Path);
         Clips.Add(Clip.Object);
     }
+    DefaultAttackClip=Clips[4];
     for(const TCHAR* Name:{TEXT("Down"),TEXT("GetUp"),TEXT("Rescue")})
     {
         const FString Path=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-095/Survival/A_Brother_%s"),Name);
@@ -113,7 +118,16 @@ UHearthwardBrotherAnimInstance::UHearthwardBrotherAnimInstance()
 
 void UHearthwardBrotherAnimInstance::PlayAttack()
 {
-    AttackRemaining = Clips[4]->GetPlayLength();
+    bCompanionAttack=false;
+    if(auto* Brother=Cast<AHearthwardCompanionFixture>(TryGetPawnOwner()))
+    {
+        bCompanionAttack=true;
+        const auto* Weapon=Brother->Bag->FindInstance(Brother->Bag->EquippedInstance(TEXT("weapon")));
+        const bool Spear=Weapon && Weapon->Definition.ToString().StartsWith(TEXT("spear"));
+        Clips[4]=Spear?SpearAttackClip:DefaultAttackClip;
+    }
+    AttackDuration=bCompanionAttack && Clips[4]!=SpearAttackClip?.7f:Clips[4]->GetPlayLength();
+    AttackRemaining=AttackDuration;AttackPoseTime=0;
     ++AttackRevision;
 }
 
@@ -130,6 +144,15 @@ void UHearthwardBrotherAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     if (!TryGetPawnOwner()) return;
     GroundSpeed = TryGetPawnOwner()->GetVelocity().Size2D();
     AttackRemaining = FMath::Max(0.f, AttackRemaining - DeltaSeconds);
+    const float AttackElapsed=AttackDuration-AttackRemaining;
+    if(bCompanionAttack)
+    {
+        // The existing chop reaches contact at 80% of its clip. Match the approved 0.25 s hit.
+        const float Phase=AttackElapsed<=.15f?AttackElapsed/.15f*.6f
+            :AttackElapsed<=.25f?.6f+(AttackElapsed-.15f)/.1f*.2f
+            :.8f+FMath::Clamp((AttackElapsed-.25f)/.45f,0.f,1.f)*.2f;
+        AttackPoseTime=Clips[4]==SpearAttackClip?AttackElapsed:Clips[4]->GetPlayLength()*Phase;
+    }
     MotionState = GroundSpeed < 5.f ? TEXT("Idle") : GroundSpeed > 270.f ? TEXT("Run") : TEXT("Walk");
     if (Brother && GroundSpeed < 5.f)
     {

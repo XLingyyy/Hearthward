@@ -16,6 +16,7 @@ class HEARTHWARD_API AHearthwardProjectile : public AActor
 public:
     AHearthwardProjectile();
     virtual void Tick(float Delta) override;
+    void Impact(const FHitResult& Hit);
     TWeakObjectPtr<class UHearthwardCombatComponent> Shooter;
     TWeakObjectPtr<AActor> EnemyShooter;
     FVector Velocity;

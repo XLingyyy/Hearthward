@@ -235,6 +235,11 @@ void AHearthwardCharacter::RefreshHeldTool()
     if(const auto* Anim=Cast<UHearthwardHeroAnimInstance>(GetMesh()->GetAnimInstance()))UpdateRangedVisual(Anim->BowDrawTime,Anim->RangedWeight);
 }
 
+FVector AHearthwardCharacter::RangedArrowTip() const
+{
+    return NockedArrow->GetComponentLocation();
+}
+
 void AHearthwardCharacter::UpdateRangedVisual(float DrawTime,float PoseWeight)
 {
     const bool Active=BowEquipped && PoseWeight>.01f;

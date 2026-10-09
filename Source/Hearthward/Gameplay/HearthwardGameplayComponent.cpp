@@ -581,7 +581,6 @@ bool UHearthwardGameplayComponent::OrderCompanion(FName Order)
 
 void UHearthwardGameplayComponent::TickCompanion(float Delta)
 {
-    CompanionAttackDelay=FMath::Max(0.f,CompanionAttackDelay-Delta);
     CompanionTacticalIntent=TEXT("hold");
     CompanionCombatTarget=NAME_None;
     CompanionCombatReason=TEXT("COMPANION_UNAVAILABLE");
@@ -591,7 +590,7 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Companion=*It;break;}
     if(!Companion)return;
     auto* Survival=Companion->FindComponentByClass<UHearthwardSurvivalComponent>();
-    if(!Survival->Alive() || Survival->Busy() || Health<=0) return;
+    if(!Survival->Alive() || Survival->Busy() || Health<=0) {Companion->CancelMeleeAttack();return;}
 
     FHearthwardCompanionBehaviorContext Context;
     Context.Player=GetOwner();
@@ -601,7 +600,7 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     Context.bPlayerInCombat=InCombat();
     Context.bPlayerDown=Health<=0;
     const auto* Weapon=Companion->Bag->FindInstance(Companion->Bag->EquippedInstance(TEXT("weapon")));
-    Context.bCanAttack=CompanionAttackDelay<=0 && Weapon && Weapon->Durability>0;
+    Context.bCanAttack=Companion->MeleeAttackReady() && Weapon && Weapon->Durability>0;
     Context.PlayerHealthRatio=MaxHealth()>0?Health/MaxHealth():0;
     Context.GameSeconds=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ActivePlaySeconds;
     for(const auto& Enemy:OpponentActors)
@@ -630,16 +629,9 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
     if(Result.bAttackCommitted)
     {
         const auto* Threat=Context.Threats.FindByPredicate([&](const auto& T){return T.Id==Result.DamageTarget;});
-        FVector Facing = Threat->Actor->GetActorLocation() - Companion->GetActorLocation();
-        Facing.Z = 0.f;
-        if (!Facing.IsNearlyZero()) Companion->SetActorRotation(Facing.Rotation());
-        if (auto* Animation = Cast<UHearthwardBrotherAnimInstance>(Companion->GetMesh()->GetAnimInstance()))
-            Animation->PlayAttack();
-        DamageOpponent(Result.DamageTarget,Number(Find(TEXT("items"),Weapon->Definition.ToString()),TEXT("attack"))*(Survival->State.Severe()?.75f:1.f),Companion);
-        Companion->Bag->WearInstance(Weapon->Id,1);
-        CompanionAttackDelay=Tune(TEXT("companionAttackCooldown"));
-        CombatRemaining=3;
+        if(Companion->AdvanceMeleeAttack(Threat->Actor.Get(),GetOwner()))CombatRemaining=3;
     }
+    else if(!Companion->HuntingWindup())Companion->CancelMeleeAttack();
 }
 void UHearthwardGameplayComponent::SetWaypoint(FVector Position)
 {
@@ -867,7 +859,7 @@ void UHearthwardGameplayComponent::Restore(const FString& Json)
     Skills.Reset(); RewardFacts.Reset(); KnownRecipes.Reset(); Equipment.Reset(); Discovered.Reset(); Activated.Reset(); Claimed.Reset(); Events.Reset(); Explored.Reset(); Opponents.Reset(); Durability.Reset();
     QuickItems={TEXT("medicine"),TEXT("roast"),TEXT("arrow"),TEXT("firepot")};
     InventoryPositions.Reset();
-    Sprinting=false; RecoveryDelay=0; ExploreDelay=0; AttackDelay=EnemyAttackDelay=CombatRemaining=CompanionAttackDelay=0; SetFeedback(FString());
+    Sprinting=false; RecoveryDelay=0; ExploreDelay=0; AttackDelay=EnemyAttackDelay=CombatRemaining=0; SetFeedback(FString());
     CompanionOrder=TEXT("wait"); CompanionRoutineEnabled=false; CompanionRoutineActivity=NAME_None;
     CompanionTacticalIntent=TEXT("hold"); CompanionCombatTarget=NAME_None; CompanionCombatReason=TEXT("EXPLICIT_HOLD");
     HasWaypoint=false; Waypoint=FVector::ZeroVector;

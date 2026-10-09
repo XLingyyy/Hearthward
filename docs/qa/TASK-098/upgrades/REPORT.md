@@ -12,4 +12,4 @@
 
 制作源：art_source/TASK-098/author_facility_upgrades.py、FacilityUpgrades.blend、facility-upgrades.json。原创新增几何，不含外部下载素材；沿用石木材质的来源仍按 TASK-096 登记。
 
-完整流程实玩按用户要求后置。正常鼠标/DPI、第二营地、最终 Shipping 容器和 Owner 视觉签收不由本报告替代。
+完整流程实玩按用户要求后置。候选12已完成Shipping构建、实际容器34包核对和正常输入新游戏进入卧室。见 package-result.json、cook-assets.json 与 candidate12/observation.json。真实显示版本仍为20261009.3，文档已按屏幕更正，未据此更改可执行文件。启动脚本未做OS执行验收。正常鼠标/DPI、第二营地和 Owner 视觉签收不由本报告替代。

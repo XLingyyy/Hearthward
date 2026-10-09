@@ -630,7 +630,8 @@ void UHearthwardCombatComponent::LaunchProjectile(FName Item,float Scale,bool Th
 {
     const auto R=Find(TEXT("items"),Item.ToString()); const auto* C=Cast<APawn>(GetOwner());
     const FVector Dir=C?C->GetControlRotation().Vector():GetOwner()->GetActorForwardVector();
-    const FVector Origin=GetOwner()->GetActorLocation()+FVector(0,0,30)+Dir*45;
+    const auto* Hero=Cast<AHearthwardCharacter>(GetOwner());
+    const FVector Origin=!Thrown && Hero?Hero->RangedArrowTip():GetOwner()->GetActorLocation()+FVector(0,0,30)+Dir*45;
     auto* P=GetWorld()->SpawnActor<AHearthwardProjectile>(Origin,Dir.Rotation());
     P->Shooter=this; P->Epoch=Epoch(); P->Event=FGuid::NewGuid(); P->Velocity=Dir*Number(R,TEXT("projectileSpeed"));
     P->Lifetime=Number(R,TEXT("projectileLifetime"),3);
@@ -638,6 +639,13 @@ void UHearthwardCombatComponent::LaunchProjectile(FName Item,float Scale,bool Th
     P->Gravity=Number(R,TEXT("projectileGravity"))*FMath::Abs(GetWorld()->GetGravityZ()); P->Item=Thrown?NAME_None:FName(TEXT("arrow"));
     P->Power=(Thrown?Number(R,TEXT("throwDamage")):Number(R,TEXT("attack")))*Scale*(1+G()->Effect(TEXT("attack")))*(GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->State.Severe()?.75f:1.f);
     P->Bait=Number(R,TEXT("bait"))>0; P->RemainingRange=Thrown?1500:Number(R,TEXT("range"),MAX_flt);
+    if(!Thrown && Hero)
+    {
+        // Include the arm/arrow span: a tip already beyond a wall must not bypass it.
+        FHitResult Hit;FCollisionQueryParams Query(SCENE_QUERY_STAT(RangedMuzzle),false,GetOwner());Query.AddIgnoredActor(P);
+        if(GetWorld()->LineTraceSingleByChannel(Hit,GetOwner()->GetActorLocation()+FVector(0,0,30),Origin+Dir*5,ECC_Visibility,Query))
+            P->Impact(Hit);
+    }
 }
 FString UHearthwardCombatComponent::Snapshot() const
 {
