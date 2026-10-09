@@ -68,7 +68,8 @@
     "Content/Hearthward/Assets/TASK-100/Zones/M_ZoneStone.uasset",
     "Content/Hearthward/Assets/TASK-100/Zones/M_ZoneTimber.uasset",
     "Content/Hearthward/Assets/TASK-100/Zones/M_ZoneIron.uasset",
-    "Config/DefaultGame.ini"
+    "Config/DefaultGame.ini",
+    "Source/Hearthward/Tests/CampaignEndStateTests.cpp"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -127,6 +128,7 @@
     "DSGN-004批准作坊区首件：新增art_source/TASK-100/制作源范围，复用098设施，仅源场景样板，主地图与巡逻数据尚未改动。",
     "2026-10-07 方向已由DSGN-004批准。已复用098三个设施建立作坊入口到旗点的可编辑源场景，图见samples/Workshop-entry.png和Workshop-inside.png。尚未布入正式四区地图；入口、退路、巡逻和战斗净空的实机验证未完成。",
     "2026-10-09 Owner明确先执行TASK-100，资产直接使用已连接Blender MCP；承接此前成果提交推送授权。批准必要四区资产制作与CampaignWorld接入，精确新增包见PACKAGE_SCOPE。保留原始巡逻、入口、旗点、玩法及存档字段。历史not_granted和source-only记录仅描述当时状态。",
-    "2026-10-09 四区模型由运行时代码按路径加载，新增Config/DefaultGame.ini精确范围，仅登记TASK-100目录到AlwaysCook，防止Editor正常而打包遗漏。"
+    "2026-10-09 四区模型由运行时代码按路径加载，新增Config/DefaultGame.ini精确范围，仅登记TASK-100目录到AlwaysCook，防止Editor正常而打包遗漏。",
+    "2026-10-09 原067进度测试在已占领旗点读取Prompt，与Owner确认的完成后隐藏交互冲突；将同一42.5%与1/4断言移至未占领旗点，并增加占领后隐藏断言，不修改游戏规则。"
   ]
 }
