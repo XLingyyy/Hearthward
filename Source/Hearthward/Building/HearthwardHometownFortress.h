@@ -35,7 +35,7 @@ private:
     float Terrain(float X, float Y) const;
     UStaticMeshComponent* Part(FString Label, FVector Center, FVector Size, bool Blocking = true,
                                UMaterialInterface* Material = nullptr);
-    void Furniture(const TCHAR* Label, const TCHAR* Path, FVector Position, float Scale);
+    void Furniture(const TCHAR* Label, const TCHAR* Path, FVector Position, float Scale, float Yaw=0);
     void Wall(FVector2D A, FVector2D B, float Height, float Width = 110);
     void Tower(FVector2D Center, float Width, float Height);
     void Lamp(FVector Position);
