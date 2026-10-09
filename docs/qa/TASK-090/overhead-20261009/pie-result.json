@@ -1,0 +1,1207 @@
+{
+  "passed": true,
+  "method": "Isolated PIE, production new game and HUD. Teleported only for near/far inspection; no user save or asset writes.",
+  "relic": {
+    "x": 91720,
+    "y": 53670,
+    "z": 23356.231064572712
+  },
+  "near": {
+    "page": "hud",
+    "components": [
+      {
+        "id": "hud.quest",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          40,
+          295,
+          690,
+          340
+        ]
+      },
+      {
+        "id": "hud.companion",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          40,
+          155,
+          650,
+          180
+        ]
+      },
+      {
+        "id": "hud.vitals",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          40,
+          24,
+          720,
+          180
+        ]
+      },
+      {
+        "id": "hud.quickslots",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          40,
+          625,
+          360,
+          316
+        ]
+      },
+      {
+        "id": "hud.minimap",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          1375,
+          20,
+          297,
+          290
+        ]
+      },
+      {
+        "id": "hud.feedback",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          560,
+          20,
+          1070,
+          835
+        ]
+      },
+      {
+        "id": "hud.vitals.0.label",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          48,
+          28,
+          84,
+          30
+        ],
+        "action": "",
+        "text": "生命",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.0.bar",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          138,
+          31,
+          260,
+          24
+        ],
+        "action": "",
+        "text": "",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.0.value",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          412,
+          28,
+          180,
+          30
+        ],
+        "action": "",
+        "text": "102 / 102",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.1.label",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          48,
+          58,
+          84,
+          30
+        ],
+        "action": "",
+        "text": "饱食",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.1.bar",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          138,
+          61,
+          260,
+          24
+        ],
+        "action": "",
+        "text": "",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.1.value",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          412,
+          58,
+          180,
+          30
+        ],
+        "action": "",
+        "text": "100 / 100",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.2.label",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          48,
+          88,
+          84,
+          30
+        ],
+        "action": "",
+        "text": "体力",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.2.bar",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          138,
+          91,
+          260,
+          24
+        ],
+        "action": "",
+        "text": "",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.2.value",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          412,
+          88,
+          180,
+          30
+        ],
+        "action": "",
+        "text": "101 / 101",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quest.heading",
+        "parent": "hud.quest",
+        "visible": true,
+        "rect": [
+          48,
+          267,
+          650,
+          42
+        ],
+        "action": "",
+        "text": "◇  带火离开",
+        "asset": "",
+        "font": 24,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quest.objective",
+        "parent": "hud.quest",
+        "visible": true,
+        "rect": [
+          72,
+          312,
+          650,
+          96
+        ],
+        "action": "",
+        "text": "靠近家中的遗物包，按交互键取回遗物。",
+        "asset": "",
+        "font": 16,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quest.next",
+        "parent": "hud.quest",
+        "visible": true,
+        "rect": [
+          72,
+          408,
+          270,
+          42
+        ],
+        "action": "preparation.journal:main_01",
+        "text": "查看任务详情",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.companion.portrait",
+        "parent": "hud.companion",
+        "visible": true,
+        "rect": [
+          48,
+          129,
+          89,
+          87
+        ],
+        "action": "",
+        "text": "",
+        "asset": "portrait",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.companion.name",
+        "parent": "hud.companion",
+        "visible": true,
+        "rect": [
+          154,
+          133,
+          370,
+          32
+        ],
+        "action": "",
+        "text": "弟弟",
+        "asset": "",
+        "font": 22,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.companion.progress",
+        "parent": "hud.companion",
+        "visible": true,
+        "rect": [
+          154,
+          166,
+          450,
+          30
+        ],
+        "action": "",
+        "text": "暂无委托",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.companion.order",
+        "parent": "hud.companion",
+        "visible": true,
+        "rect": [
+          154,
+          210,
+          390,
+          32
+        ],
+        "action": "",
+        "text": "原地等待",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.medicine",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          158,
+          784,
+          104,
+          112
+        ],
+        "action": "",
+        "text": "3",
+        "asset": "medicineQuick",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.medicine.key",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          164,
+          787,
+          50,
+          28
+        ],
+        "action": "",
+        "text": "1",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.name",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          72,
+          902,
+          276,
+          39
+        ],
+        "action": "",
+        "text": "药草膏",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.roast",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          57,
+          707,
+          80,
+          88
+        ],
+        "action": "",
+        "text": "4",
+        "asset": "roastQuick",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.roast.key",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          63,
+          710,
+          50,
+          28
+        ],
+        "action": "",
+        "text": "2",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.arrow",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          170,
+          633,
+          80,
+          88
+        ],
+        "action": "",
+        "text": "24",
+        "asset": "arrowQuick",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.arrow.key",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          176,
+          636,
+          50,
+          28
+        ],
+        "action": "",
+        "text": "3",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.firepot",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          283,
+          707,
+          80,
+          88
+        ],
+        "action": "",
+        "text": "0",
+        "asset": "firepotQuick",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.firepot.key",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          289,
+          710,
+          50,
+          28
+        ],
+        "action": "",
+        "text": "4",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.clock",
+        "parent": "hud.feedback",
+        "visible": true,
+        "rect": [
+          1260,
+          31,
+          364,
+          50
+        ],
+        "action": "",
+        "text": "第 1 天  20:07  夜",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.interaction.surface",
+        "parent": "hud.interaction",
+        "visible": true,
+        "rect": [
+          -118,
+          -56,
+          236,
+          56
+        ],
+        "action": "",
+        "text": "",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": true,
+        "world_position": {
+          "x": 91720,
+          "y": 53670,
+          "z": 23396.231064572712
+        }
+      },
+      {
+        "id": "hud.interaction.prompt",
+        "parent": "hud.interaction",
+        "visible": true,
+        "rect": [
+          -100,
+          -44,
+          200,
+          32
+        ],
+        "action": "",
+        "text": "E 家中的遗物包",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": true,
+        "world_position": {
+          "x": 91720,
+          "y": 53670,
+          "z": 23396.231064572712
+        }
+      }
+    ]
+  },
+  "far": {
+    "page": "hud",
+    "components": [
+      {
+        "id": "hud.quest",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          40,
+          295,
+          690,
+          340
+        ]
+      },
+      {
+        "id": "hud.companion",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          40,
+          155,
+          650,
+          180
+        ]
+      },
+      {
+        "id": "hud.vitals",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          40,
+          24,
+          720,
+          180
+        ]
+      },
+      {
+        "id": "hud.quickslots",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          40,
+          625,
+          360,
+          316
+        ]
+      },
+      {
+        "id": "hud.minimap",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          1375,
+          20,
+          297,
+          290
+        ]
+      },
+      {
+        "id": "hud.feedback",
+        "parent": "",
+        "visible": true,
+        "rect": [
+          560,
+          20,
+          1070,
+          835
+        ]
+      },
+      {
+        "id": "hud.vitals.0.label",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          48,
+          28,
+          84,
+          30
+        ],
+        "action": "",
+        "text": "生命",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.0.bar",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          138,
+          31,
+          260,
+          24
+        ],
+        "action": "",
+        "text": "",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.0.value",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          412,
+          28,
+          180,
+          30
+        ],
+        "action": "",
+        "text": "102 / 102",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.1.label",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          48,
+          58,
+          84,
+          30
+        ],
+        "action": "",
+        "text": "饱食",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.1.bar",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          138,
+          61,
+          260,
+          24
+        ],
+        "action": "",
+        "text": "",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.1.value",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          412,
+          58,
+          180,
+          30
+        ],
+        "action": "",
+        "text": "100 / 100",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.2.label",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          48,
+          88,
+          84,
+          30
+        ],
+        "action": "",
+        "text": "体力",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.2.bar",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          138,
+          91,
+          260,
+          24
+        ],
+        "action": "",
+        "text": "",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.vitals.2.value",
+        "parent": "hud.vitals",
+        "visible": true,
+        "rect": [
+          412,
+          88,
+          180,
+          30
+        ],
+        "action": "",
+        "text": "101 / 101",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quest.heading",
+        "parent": "hud.quest",
+        "visible": true,
+        "rect": [
+          48,
+          267,
+          650,
+          42
+        ],
+        "action": "",
+        "text": "◇  带火离开",
+        "asset": "",
+        "font": 24,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quest.objective",
+        "parent": "hud.quest",
+        "visible": true,
+        "rect": [
+          72,
+          312,
+          650,
+          96
+        ],
+        "action": "",
+        "text": "靠近弟弟，打开交流并确认跟随，然后沿西侧通道撤离。",
+        "asset": "",
+        "font": 16,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quest.next",
+        "parent": "hud.quest",
+        "visible": true,
+        "rect": [
+          72,
+          408,
+          270,
+          42
+        ],
+        "action": "page:dialogue",
+        "text": "查看交流与工作",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.companion.portrait",
+        "parent": "hud.companion",
+        "visible": true,
+        "rect": [
+          48,
+          129,
+          89,
+          87
+        ],
+        "action": "",
+        "text": "",
+        "asset": "portrait",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.companion.name",
+        "parent": "hud.companion",
+        "visible": true,
+        "rect": [
+          154,
+          133,
+          370,
+          32
+        ],
+        "action": "",
+        "text": "弟弟",
+        "asset": "",
+        "font": 22,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.companion.progress",
+        "parent": "hud.companion",
+        "visible": true,
+        "rect": [
+          154,
+          166,
+          450,
+          30
+        ],
+        "action": "",
+        "text": "暂无委托",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.companion.order",
+        "parent": "hud.companion",
+        "visible": true,
+        "rect": [
+          154,
+          210,
+          390,
+          32
+        ],
+        "action": "",
+        "text": "原地等待",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.medicine",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          158,
+          784,
+          104,
+          112
+        ],
+        "action": "",
+        "text": "3",
+        "asset": "medicineQuick",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.medicine.key",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          164,
+          787,
+          50,
+          28
+        ],
+        "action": "",
+        "text": "1",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.name",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          72,
+          902,
+          276,
+          39
+        ],
+        "action": "",
+        "text": "药草膏",
+        "asset": "",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.roast",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          57,
+          707,
+          80,
+          88
+        ],
+        "action": "",
+        "text": "4",
+        "asset": "roastQuick",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.roast.key",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          63,
+          710,
+          50,
+          28
+        ],
+        "action": "",
+        "text": "2",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.arrow",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          170,
+          633,
+          80,
+          88
+        ],
+        "action": "",
+        "text": "24",
+        "asset": "arrowQuick",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.arrow.key",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          176,
+          636,
+          50,
+          28
+        ],
+        "action": "",
+        "text": "3",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.firepot",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          283,
+          707,
+          80,
+          88
+        ],
+        "action": "",
+        "text": "0",
+        "asset": "firepotQuick",
+        "font": 20,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.quick.firepot.key",
+        "parent": "hud.quickslots",
+        "visible": true,
+        "rect": [
+          289,
+          710,
+          50,
+          28
+        ],
+        "action": "",
+        "text": "4",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.clock",
+        "parent": "hud.feedback",
+        "visible": true,
+        "rect": [
+          1260,
+          31,
+          364,
+          50
+        ],
+        "action": "",
+        "text": "第 1 天  20:09  夜",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      },
+      {
+        "id": "hud.gameplay.feedback",
+        "parent": "hud.feedback",
+        "visible": true,
+        "rect": [
+          1120,
+          388,
+          504,
+          90
+        ],
+        "action": "",
+        "text": "母亲留下的护符还在。叫上弟弟，沿后巷走。护符已放入行装。",
+        "asset": "",
+        "font": 18,
+        "tracking": 120,
+        "fontRole": "body",
+        "bind": "",
+        "world_anchored": false
+      }
+    ]
+  },
+  "return_after_claim_hidden": true
+}

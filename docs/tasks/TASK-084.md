@@ -1,5 +1,7 @@
 # TASK-084｜连续体验基线、断点复现与本轮范围冻结
 
+2026-10-08 窗口异常的原始入口已补测：真实编辑器菜单启动独立进程，1280×720请求在150%缩放下外框1922×1128且完整在屏幕内；实际拖至1612×954后新游戏、HUD、暂停页可见，正常退出成功。第二次菜单启动因Computer Use两次激活失败未执行。证据见[窗口报告](../qa/TASK-084/WINDOW_PREVIEW_20261008.md)，不计完整路线验收。
+
 > 状态：Active（路线/隔离档基线与真实操作部分完成，整条切片未实走）。优先级：P0。阶段：A 基线。日期：2026-10-07。Owner：XLingyyy。Reviewer／Issue：未指派。实际分支：`codex/TASK-084-103-iteration`。
 
 [本批总入口](../planning/TASK-084-103/README.md) · [执行约定](../planning/TASK-084-103/EXECUTION_GUIDE.md) · [元数据](TASK-084.json) · [交接模板](../handoffs/TASK-084.md)

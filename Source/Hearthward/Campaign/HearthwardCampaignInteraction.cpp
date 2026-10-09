@@ -11,6 +11,19 @@
 #include "AIController.h"
 #include "EngineUtils.h"
 using namespace HearthwardData;
+bool UHearthwardCampaignSubsystem::InteractionComplete(FName Id) const
+{
+    if(Id==TEXT("prologue_relic") || Id==TEXT("camp_relic"))return State.Facts.Contains(TEXT("relic"));
+    if(Id.ToString().StartsWith(TEXT("loc_")))return State.Flags.Contains(FName(*Id.ToString().RightChop(4)));
+    if(Id==TEXT("route_ford") || Id==TEXT("camp") || Id==TEXT("hometown"))return Gameplay()->Activated.Contains(Id);
+    static const TMap<FName,FName> Facts={
+        {TEXT("route_watch"),TEXT("watch_survey")},{TEXT("route_ridge"),TEXT("ridge_survey")},
+        {TEXT("loot_river_gate"),TEXT("old_carving")},{TEXT("loot_workshops"),TEXT("workshop_cache")},
+        {TEXT("loot_dwellings"),TEXT("family_letter")},{TEXT("loot_assembly"),TEXT("watch_record")},
+        {TEXT("camp_memorial"),TEXT("placed_carving")},{TEXT("civilian_initial_01"),TEXT("delivered_letter")},
+        {TEXT("camp_records"),TEXT("copied_record")},{TEXT("camp_hunter"),TEXT("hunter_confirmed")}};
+    const auto* Fact=Facts.Find(Id);return Fact && State.Facts.Contains(*Fact);
+}
 FName UHearthwardCampaignSubsystem::Nearest() const
 {
     if(!Active() || !Player())return NAME_None;
@@ -26,9 +39,33 @@ FName UHearthwardCampaignSubsystem::Nearest() const
         const bool Prologue=Id==TEXT("prologue_relic") || Id==TEXT("prologue_exit");
         if((State.Phase==TEXT("prologue"))!=Prologue)continue;
         if(Id==TEXT("hometown") && !State.Victory)continue;
+        if(InteractionComplete(Id))continue;
         if(State.Positions.Contains(Id))Consider(Id,Position(Id));
     }
     return Result;
+}
+FString UHearthwardCampaignSubsystem::InteractionPrompt() const
+{
+    if(Busy() || !Safe())return {};
+    const FName Id=Nearest();if(Id.IsNone())return {};
+    if(Id.ToString().StartsWith(TEXT("loc_")))
+    {
+        const FName Zone(*Id.ToString().RightChop(4));
+        if(!State.ZoneClear(Zone) || ZoneOccupied(Zone))return {};
+    }
+    if((Id==TEXT("camp_memorial") && !State.Facts.Contains(TEXT("old_carving")))
+        || (Id==TEXT("civilian_initial_01") && !State.Facts.Contains(TEXT("family_letter")))
+        || (Id==TEXT("camp_records") && !State.Facts.Contains(TEXT("watch_record")))
+        || (Id==TEXT("camp_hunter") && !State.Facts.Contains(TEXT("hunter_record"))))return {};
+    if(Id==TEXT("prologue_exit"))
+    {
+        bool Brother=false;
+        for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
+            Brother=It->FindComponentByClass<UHearthwardSurvivalComponent>()->Alive() && FVector::Dist2D(It->GetActorLocation(),Player()->GetActorLocation())<1000;
+        if(!State.Facts.Contains(TEXT("relic")) || !State.Facts.Contains(TEXT("prologue_order")) || !Brother)return {};
+    }
+    if(Id.ToString().StartsWith(TEXT("rescued_")))return TEXT("E 与族人交谈：跟随 / 原地等待");
+    return TEXT("E ")+Text(HearthwardCampaign::Find(TEXT("locations"),Id),TEXT("name"));
 }
 FString UHearthwardCampaignSubsystem::Prompt() const
 {

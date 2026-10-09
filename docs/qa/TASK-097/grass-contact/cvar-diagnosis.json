@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "method": "PROTOTYPE_ONLY isolated PIE visual inspection. New-game entry, camera positioning and accelerated world time for daylight; no asset saves or production settings changed. Not Shipping or natural route acceptance.",
+  "views": [
+    {
+      "name": "bedroom",
+      "position": "<Struct 'Vector' (0x000001FA2FDE5410) {x: 91770.000000, y: 53570.000000, z: 23456.231065}>",
+      "target": "<Struct 'Vector' (0x000001FA2FDE6860) {x: 92000.000000, y: 54050.000000, z: 23486.231065}>",
+      "minute": 724.2853770628572
+    },
+    {
+      "name": "gallery",
+      "position": "<Struct 'Vector' (0x000001FA2FDE6630) {x: 92720.000000, y: 54330.000000, z: 23466.231065}>",
+      "target": "<Struct 'Vector' (0x000001FA2FDE6590) {x: 92000.000000, y: 54050.000000, z: 23466.231065}>",
+      "minute": 728.674792882055
+    },
+    {
+      "name": "courtyard-fire",
+      "position": "<Struct 'Vector' (0x000001FA2FDE5910) {x: 91200.000000, y: 55050.000000, z: 22479.359544}>",
+      "target": "<Struct 'Vector' (0x000001FA2FDE4D80) {x: 90600.000000, y: 55600.000000, z: 22319.359544}>",
+      "minute": 732.673381485045
+    }
+  ],
+  "initial_minute": 1204.0130616016686,
+  "day_minute": 721.2673098631203,
+  "daylight": 1.0,
+  "grass_assets": [
+    {
+      "mesh": "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/GrassCards/StaticMeshes/SM_GrassCards.SM_GrassCards",
+      "class": "GrassInstancedStaticMeshComponent",
+      "materials": [
+        "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_GrassCards.M_GrassCards"
+      ],
+      "cast_shadow": "True",
+      "cast_dynamic_shadow": "False",
+      "affect_distance_field_lighting": "False",
+      "cast_contact_shadow": "True"
+    },
+    {
+      "mesh": "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/SM_S1_GrassCards.SM_S1_GrassCards",
+      "class": "GrassInstancedStaticMeshComponent",
+      "materials": [
+        "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_S1_GrassCards.M_S1_GrassCards"
+      ],
+      "cast_shadow": "True",
+      "cast_dynamic_shadow": "False",
+      "affect_distance_field_lighting": "False",
+      "cast_contact_shadow": "True"
+    },
+    {
+      "mesh": "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Meshes/GrassCards/StaticMeshes/SM_GrassCards.SM_GrassCards",
+      "class": "HierarchicalInstancedStaticMeshComponent",
+      "materials": [
+        "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_GrassCards.M_GrassCards"
+      ],
+      "cast_shadow": "False",
+      "cast_dynamic_shadow": "True",
+      "affect_distance_field_lighting": "True",
+      "cast_contact_shadow": "True"
+    }
+  ],
+  "grass_material": {
+    "blend_mode": "<BlendMode.BLEND_MASKED: 1>",
+    "two_sided": "True",
+    "shading_model": "<MaterialShadingModel.MSM_TWO_SIDED_FOLIAGE: 6>",
+    "opacity_mask_clip_value": "0.25",
+    "tangent_space_normal": "False"
+  },
+  "cvars": {
+    "r.ContactShadows": 1,
+    "r.DistanceFieldShadowing": 1,
+    "r.DistanceFieldAO": 1,
+    "r.ShadowQuality": 5
+  }
+}

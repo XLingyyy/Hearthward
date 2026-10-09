@@ -3,7 +3,7 @@
   "id": "TASK-084",
   "title": "连续体验基线、断点复现与本轮范围冻结",
   "status": "Active",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-08",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -77,6 +77,7 @@
     "paid_services": "not_granted"
   },
   "notes": [
+    "2026-10-08 窗口异常的原始入口已补测：真实编辑器菜单启动独立进程，1280×720请求在150%缩放下外框1922×1128且完整在屏幕内；实际拖至1612×954后新游戏、HUD、暂停页可见，正常退出成功。第二次菜单启动因Computer Use两次激活失败未执行。证据见[窗口报告](../qa/TASK-084/WINDOW_PREVIEW_20261008.md)，不计完整路线验收。",
     "2026-10-07 当前Nav12安全摘要 docs/qa/TASK-103/NAV12_GROUNDED_FINAL_FIRST_BLOCKER.json：4正式空间节点+1grounded普通PathFollowing段实际通过；第2段valid=true/partial=true严格停止、无该段移动。无完整撤离/travel/camp-save/首次救援/OS路线信用，保持Active。角塔/底座附近不同高度Nav层为推断待核，未修Source/Invoker/位置或继续运行；09/10/11原证据保持。",
     "本次仅编写并交付任务单；实施尚未派发，状态Backlog，未运行任何本单游戏测试。",
     "Owner沿项目记录；Reviewer和Issue未指派，branch仅为建议名，未创建。旧任务授权不自动继承。",

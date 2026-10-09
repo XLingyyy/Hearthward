@@ -3,7 +3,7 @@
   "id": "TASK-097",
   "title": "救援路线自然环境、生态外观与远近景收尾",
   "status": "Active",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-08",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -78,7 +78,9 @@
     "Content/Hearthward/Assets/TASK-097/Boar/M_Boar_Bristle.uasset",
     "Content/Hearthward/Assets/TASK-097/Boar/T_Boar_Coat.uasset",
     "Content/Hearthward/Animals/MotionR3/pig/SK_pig_Skeleton.uasset",
-    "Source/Hearthward/Animals/HearthwardAnimalMotionComponent.cpp"
+    "Source/Hearthward/Animals/HearthwardAnimalMotionComponent.cpp",
+    "Content/Hearthward/Assets/NaturalWorld/Rebuild/Foliage/GT_Meadow.uasset",
+    "Content/Hearthward/Assets/NaturalWorld/Rebuild/Foliage/GT_S1_Meadow.uasset"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -138,6 +140,8 @@
     "2026-10-07 作物20包已显式保存落盘；Editor重启后六网格通过UE实际渲染及cm边界检查。构建成功，两项Crop原生测试Success，1 warning/0 error；新Cook配置已添加，完整Cook/自然路线/Owner视觉仍未验。",
     "DSGN-004野猪样板落地范围：新网格、三材料和烘焙贴图五个精确包；复用既有R3猪Skeleton，导入前锁定其精确包，以防导入器更新骨树元数据。骨骼层级/参考姿势和现有动作不改，先检查导入兼容性及真实动作后再配置引用。",
     "DSGN-004野猪可视网格接入：AnimalMotionComponent仅为InSpecies=boar选择新网格，继续共享pig的原动作/参数，并用原网格计算活动范围，避免外形扩展改变既有碰撞/移动边界。新增定向测试验证家猪保持原网格及野猪R3配对与逐骨姿态。",
-    "2026-10-07 野猪新网格及烘焙毛色、三材质共五包已锁定并导入，复用原50骨R3 Skeleton与PhysicsAsset，原Skeleton未标脏且Git未变化；家猪保持原网格，野猪继续使用原27动作/行为参数，活动范围仍按原网格计算。Editor编译成功；BoarKeepsR3AndPig原生测试通过（0警告/0错误），核对家猪/野猪网格区分、共享物理资产与动作、活动边界，并比较静候/奔跑/顶撞/倒地四个真实动作中间帧的逐骨姿态。首轮夹具重复初始化World失败保留，修正为CreateWorld单次初始化后通过。连续自然路线、完整Cook及Owner视觉仍未验，原Tripo输入权利状态仍PENDING。"
+    "2026-10-07 野猪新网格及烘焙毛色、三材质共五包已锁定并导入，复用原50骨R3 Skeleton与PhysicsAsset，原Skeleton未标脏且Git未变化；家猪保持原网格，野猪继续使用原27动作/行为参数，活动范围仍按原网格计算。Editor编译成功；BoarKeepsR3AndPig原生测试通过（0警告/0错误），核对家猪/野猪网格区分、共享物理资产与动作、活动边界，并比较静候/奔跑/顶撞/倒地四个真实动作中间帧的逐骨姿态。首轮夹具重复初始化World失败保留，修正为CreateWorld单次初始化后通过。连续自然路线、完整Cook及Owner视觉仍未验，原Tripo输入权利状态仍PENDING。",
+    "2026-10-08 Owner持续授权完成本批实现、修复、提交和推送；新增两个准确LandscapeGrassType包用于已复现的草片矩形接触阴影修复。仅调整草种CastContactShadow，不修改全局光照、草密度、碰撞或主地图。现有LFS锁51998986/52010301均属XLingyyy，保留到整合。运行对照及重启后真实渲染分别记录，不据此宣布自然路线全部通过。",
+    "2026-10-08 两个草种资产的接触阴影修复已通过重新启动后的渲染验证：草片下方矩形黑斑消失，建筑/树阴影保留，全局接触阴影仍开启。修改仅为GT_Meadow与GT_S1_Meadow的CastContactShadow=false。首次保存跳过未标脏资产的失败已保留，显式保存后重启读取/实际组件均为false。见[草簇修复](../qa/TASK-097/grass-contact/REPORT.md)。本次为PIE局部画面验证，候选8尚未包含这次修复，完整自然路线/性能/Owner验收仍未完成。"
   ]
 }

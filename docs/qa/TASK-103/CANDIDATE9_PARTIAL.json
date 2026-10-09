@@ -1,0 +1,89 @@
+{
+  "candidate_id": "iteration-084-103-20261009-9",
+  "source_commit": "2d55f0c9bb6d3cc305d6aa2f3bcdfa281f834a2f",
+  "version_in_source": "0.2.0-preview.20261009.1",
+  "version_observed_in_game": "0.2.0-preview.20261009.1",
+  "status": "BUILD_SUCCESS_PARTIAL_NORMAL_INPUT",
+  "package_result": {
+    "ok": true,
+    "operation": "build.package",
+    "artifacts": [
+      {
+        "type": "unreal_package",
+        "path": "F:\\HearthwardDemo\\iteration-084-103-20261009-9",
+        "state": "ready"
+      }
+    ],
+    "diagnostics": [],
+    "warnings": [],
+    "errors": [],
+    "payload": {
+      "command": [
+        "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\RunUAT.bat",
+        "BuildCookRun",
+        "-project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+        "-noP4",
+        "-platform=Win64",
+        "-clientconfig=Shipping",
+        "-build",
+        "-cook",
+        "-stage",
+        "-pak",
+        "-iostore",
+        "-archive",
+        "-archivedirectory=F:\\HearthwardDemo\\iteration-084-103-20261009-9",
+        "-prereqs",
+        "-utf8output",
+        "-unattended",
+        "-NoLiveCoding",
+        "-map=/Game/Hearthward/Bootstrap/L_Bootstrap+/Game/Hearthward/World/Natural/Rebuild/L_HearthwardWilds",
+        "-stagingdirectory=E:\\HearthwardQA\\TASK-103\\package-20261009-9\\Staged",
+        "-nodebuginfo"
+      ],
+      "archive_dir": "F:\\HearthwardDemo\\iteration-084-103-20261009-9",
+      "log_path": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-103\\package-20261009-9\\package.log",
+      "dry_run": false,
+      "returncode": 0
+    }
+  },
+  "timings_seconds": {
+    "build": 110.5,
+    "cook": 99.95,
+    "stage": 37.31,
+    "archive": 40.23,
+    "build_cook_run": 289.83
+  },
+  "cook_errors": 0,
+  "cook_warnings": 1,
+  "warning": "MCP UE EULA Licensed Technology notice",
+  "archive": "F:/HearthwardDemo/iteration-084-103-20261009-9/Windows",
+  "source_freeze": ".agent-local\\qa\\TASK-103\\package-20261009-9",
+  "delivery_documents": "INSTALLED_FOR_OS_VALIDATION",
+  "launcher_attempt": {
+    "backend": "CPU",
+    "actual_cmd_executed": true,
+    "profile_existed_before_launch": false,
+    "bootstrap_pid": 19376,
+    "game_pid": 4600,
+    "game_window_returned": true,
+    "computer_use_capture": "FAILED_TWICE",
+    "exact_error": "FrameArrived timed out: timed out waiting on channel",
+    "recovery": "Refreshed list_windows, uniquely selected returned game, rehydrated and activated once; capture failed again. Stopped app input.",
+    "game_crash": "NOT_ESTABLISHED; process Responding=true does not prove playable rendering",
+    "normal_input": "NOT_RUN",
+    "shutdown": "User closed prior bootstrap/game; zero Hearthward processes confirmed before resumed tests."
+  },
+  "zip": "NOT_CREATED; finalizer retains actual OS launcher/input gates",
+  "formal_acceptance": false,
+  "published": false,
+  "followup_evidence": "docs/qa/TASK-103/candidate9-resume/result.json",
+  "normal_input_followup": {
+    "new_game": true,
+    "continue_automatic_save": true,
+    "save_list_opened": true,
+    "manual_save_result": "UNVERIFIED",
+    "remaining_pages": "UNVERIFIED",
+    "actual_dual_launcher_input": "UNVERIFIED",
+    "shutdown": "All owned processes stopped via UEClient; zero Hearthward processes remain"
+  }
+}

@@ -1,5 +1,7 @@
 # TASK-097｜救援路线自然环境、生态外观与远近景收尾
 
+2026-10-08 两个草种资产的接触阴影修复已通过重新启动后的渲染验证：草片下方矩形黑斑消失，建筑/树阴影保留，全局接触阴影仍开启。修改仅为GT_Meadow与GT_S1_Meadow的CastContactShadow=false。首次保存跳过未标脏资产的失败已保留，显式保存后重启读取/实际组件均为false。见[草簇修复](../qa/TASK-097/grass-contact/REPORT.md)。本次为PIE局部画面验证，候选8尚未包含这次修复，完整自然路线/性能/Owner验收仍未完成。
+
 > 状态：Active（独立技术调查已实施；Owner新资产样板暂缓，运行验收未完成）。优先级：P1。阶段：D 关键资产。日期：2026-10-07。Owner：XLingyyy。Reviewer／Issue：未指派。实际分支：`codex/TASK-084-103-iteration`。
 
 [本批总入口](../planning/TASK-084-103/README.md) · [执行约定](../planning/TASK-084-103/EXECUTION_GUIDE.md) · [元数据](TASK-097.json) · [执行交接](../handoffs/TASK-097.md)

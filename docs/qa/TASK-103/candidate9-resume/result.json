@@ -1,0 +1,72 @@
+{
+  "source_commit": "2d55f0c9bb6d3cc305d6aa2f3bcdfa281f834a2f",
+  "candidate_id": "iteration-084-103-20261009-9",
+  "date": "2026-10-09",
+  "prior_processes": "User closed previous game; process query confirmed no Hearthward processes before restart",
+  "runs": [
+    {
+      "id": "os-candidate9-direct-cpu",
+      "pid": 27148,
+      "arguments": "CPU, layers16 argument (CPU effective0), same candidate UserDir; no window override",
+      "capture": "FAILED initial and one fresh-window retry",
+      "game_thread": "FEngineLoop::Tick -> FFrameEndSync::Sync -> FRenderCommandFence::Wait",
+      "stop": "UEClient stop_editor success"
+    },
+    {
+      "id": "os-candidate9-windowed-cpu",
+      "pid": 20264,
+      "arguments": "same plus -windowed -ResX=1280 -ResY=720",
+      "observed": [
+        "title 0.2.0-preview.20261009.1",
+        "mouse New Game",
+        "bedroom, brother, relic target, HUD"
+      ],
+      "tab": "key dispatched, capture and one fresh-window retry failed; inventory rendering not verified",
+      "game_thread_after_tab": "UHearthwardScreenWidget::NativePaint -> FSlateFontMeasure::Measure -> FSlateFontKey -> GetTypeHash",
+      "stop": "UEClient stop_editor success"
+    },
+    {
+      "id": "os-candidate9-capture30-cpu",
+      "pid": 12448,
+      "arguments": "same window arguments plus diagnostic -ExecCmds=t.MaxFPS 30; effective frame rate NOT_MEASURED",
+      "observed": [
+        "mouse Continue",
+        "same bedroom, brother and relic objective",
+        "F6 save list: one locked automatic node, 2026-10-09 04:38"
+      ],
+      "manual_save": "clicked Save Current Progress; following capture and one fresh-window retry failed. Before/after pool bytes169969/339508 are only persistence evidence; node count and manual contents unverified",
+      "stop": "UEClient stop_editor success"
+    }
+  ],
+  "capture_error": "FrameArrived timed out: timed out waiting on channel",
+  "conclusions": [
+    "Candidate9 starts and enters normal game through mouse input in window mode.",
+    "Explicit mouse Continue restores the previously created automatic bedroom save.",
+    "Window mode and temporary frame-cap request do not resolve recurring capture failures.",
+    "Two sampled game-thread stacks did not contain ReportCrash; this does not prove every thread is healthy or establish the capture failure root cause.",
+    "No production rendering, performance threshold, gameplay or save code changed."
+  ],
+  "ownership": "All three processes launched and stopped with public UEClient API; final process enumeration found zero Hearthward processes",
+  "limits": [
+    "manual save result unverified",
+    "Vulkan and actual two-launcher OS input unverified",
+    "remaining pages/route/model/performance unverified",
+    "No ZIP or publication"
+  ],
+  "method_reference": "https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadcontext",
+  "screenshots": [
+    "title.png",
+    "new-game.png",
+    "continued.png",
+    "save-list-before.png"
+  ],
+  "repository_check": {
+    "base": "b11177e2e04e10e8e716008de8c3e4a8617632f9",
+    "task": "TASK-103",
+    "inspected_paths": 19,
+    "task_snapshots": 104,
+    "errors": 0,
+    "diff_check_exit_code": 0,
+    "scope": "repository only; no added gameplay/model acceptance"
+  }
+}

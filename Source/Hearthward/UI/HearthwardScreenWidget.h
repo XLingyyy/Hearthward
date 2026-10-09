@@ -17,6 +17,8 @@ struct FHearthwardUIElement
     int32 InventoryPosition=INDEX_NONE,QuickSlot=INDEX_NONE;
     FString Shortcut;
     FVector2D Position=FVector2D::ZeroVector, Size=FVector2D::ZeroVector;
+    FVector WorldAnchor=FVector::ZeroVector;
+    bool WorldAnchored=false;
     FLinearColor Color=FLinearColor::White;
     float Font=18, Value=1, TextInset=18;
     double FeedbackUntil=0;

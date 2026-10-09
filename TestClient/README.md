@@ -1,6 +1,6 @@
 # 归火项目测试端
 
-双击仓库根目录[启动测试版游戏.cmd](../启动测试版游戏.cmd)，从标题页新建或继续游戏。当前入口使用 TASK-076 整合版本的 Development Editor 编译结果；代码变化后需重新构建。整合报告见 [TASK-076](../docs/qa/TASK-076/REPORT.md)。这份源码入口需要 UE 5.8.2、Python、GameFactory 和本地模型环境，独立发行包尚未更新。
+双击仓库根目录[启动测试版游戏.cmd](../启动测试版游戏.cmd)，从标题页新建或继续游戏。当前入口使用本工作分支的 Development Editor 编译结果；代码变化后需重新构建。整合报告见 [TASK-076](../docs/qa/TASK-076/REPORT.md)。这份源码入口需要 UE 5.8.2、Python、GameFactory 和本地模型环境，最新内部候选9已构建，正常输入验收未完成；详见[候选报告](../docs/qa/TASK-103/REPORT.md)。
 
 本机路径从被忽略的 `.agent-local/environment.json` 读取；`HEARTHWARD_PYTHON`、`HEARTHWARD_FACTORY_ROOT` 和 `HEARTHWARD_UE_ROOT` 可覆盖对应路径。克隆后先取回 Git LFS 资源。运行 `python -X utf8 scripts/ui/verify_input_client.py --build --label first_build` 编译。
 

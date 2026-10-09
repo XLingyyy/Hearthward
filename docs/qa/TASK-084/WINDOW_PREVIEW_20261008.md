@@ -15,7 +15,8 @@
 - 重启后通过官方MCP读取实际LevelEditorPlaySettings默认对象，四项值正确。
 - 通过公开UEClient在独立测试UserDir启动同等窗口参数的Development游戏，实际外框1922×1128、原点(319,177)，完整可见，标题栏与关闭按钮可见；系统缩放后的客户区为1920×1080。
 - 独立测试通过其UEClient正常关闭；重开的编辑器保留运行。
-- 修正后的启动由UEClient执行；编辑器菜单再次启动及鼠标拖动缩放因Computer Use激活窗口失败及拖动超时未完成，不能登记通过。原菜单路径的异常已实际复现。
+- 后续实际Computer Use从编辑器播放菜单选择独立进程游戏，确认真实子进程参数为-windowed -ResX=1280 -ResY=720，外框1922×1128、原点(319,177)，完整位于2560×1600屏幕内。实际鼠标拖动右下角缩至1612×954，进入新游戏后HUD和暂停菜单完整可见；Alt+F4正常退出后窗口消失。见[菜单实测](window-menu-20261008/result.json)。
+- 退出后的第二次菜单启动未完成：工具报failed to activate captured window，重新选择窗口并重试一次仍失败，按Computer Use恢复规则停止UI操作。本项不影响已完成的首轮菜单启动/缩放证据，重开信用仍未取得。
 - 配置改动无需C++重编译；完整游戏流程未在此窗口测试中重复执行。
 
 私有原始记录：.agent-local/qa/TASK-084/window-20261008/，编辑器所有者记录.agent-local/qa/MCP/window-bug-editor-20261008-02/。

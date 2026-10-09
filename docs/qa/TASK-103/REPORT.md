@@ -1,6 +1,14 @@
 # TASK-103｜候选证据审计与交付准备
 
-## 当前候选8
+## 当前候选9
+
+2026-10-09 候选9 `0.2.0-preview.20261009.1` 已完成Shipping Build/Cook/Stage/Archive，源码 `2d55f0c9bb6d3cc305d6aa2f3bcdfa281f834a2f`，总289.83秒，Cook 0错误/1条MCP许可提示。目录 `F:/HearthwardDemo/iteration-084-103-20261009-9/Windows`，包含两草种接触阴影修复。恢复测试已实际看到标题版本、鼠标新游戏进入卧室、重开后明确鼠标继续恢复自动档，以及F6自动节点列表。窗口模式1280×720和临时限帧对照均未解决持续捕获故障：打开背包、点击手动保存后的捕获与一次重新绑定重试仍超时。手动保存结果、其余页面、双启动器实机、Vulkan及完整路线尚未验证。三个自有进程均通过UEClient关闭，最后确认无Hearthward进程残留。没有修改正式画质、性能门槛或玩法；无ZIP，未发布，整批未完成。
+
+证据：`docs/qa/TASK-103/CANDIDATE9_PARTIAL.json`、`docs/qa/TASK-103/candidate9-resume/result.json`。
+
+## 候选8历史实测
+
+2026-10-08 Computer Use恢复后，候选8真实鼠标确认保留1280×720窗口，边缘拖动缩小后设置页完整可见；Alt+F4正常退出，再次启动保留窗口与拖动后的尺寸，明确点击继续恢复卧室与HUD。隔离UserDir内最终引擎配置为1113×626、FullscreenMode=2且确认值相同（Windows DPI缩放后的窗口截图约1672×987，包含标题栏）。完整撤离仍未验证；当前Computer Use只提供短按键，没有持续按住移动键接口，未用程序位移补算实机路线。 证据：docs/qa/TASK-103/CANDIDATE8_WINDOW_FOLLOWUP.json。
 
 2026-10-08 当前内部候选为8，版本0.2.0-preview.20261008.1，受测实现38927738f488b9b5f184b85c88d53f374388de1e。TASK-096已修复候选6的Niagara启动异常，并修复候选7缺少火烟Cook包的问题。候选8 Shipping Build/Cook/Stage/Archive成功，Cook 0错误/1条MCP许可提示；97个新增资产中96个入包，全部5个火烟包存在，仅无运行引用的独立箭袋网格被剔除。独立UserDir下真实键鼠标题、新游戏、手动保存1→2、选择手动节点并确认恢复卧室通过。1280×720窗口实际应用，15秒未确认自动恢复通过；保留显示设置、拖动缩放及正常UI退出未验证。自有进程经UEClient关闭。完整Shipping路线、随包模型请求、性能、旧档、真人和二机仍未完成；无候选8 ZIP，无发布。详见docs/qa/TASK-103/CANDIDATE8_PARTIAL.json。
 

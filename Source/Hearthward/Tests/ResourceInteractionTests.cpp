@@ -46,7 +46,7 @@ bool FResourceTransferTest::RunTest(const FString& Parameters)
     TestTrue(TEXT("Gather result"), Gather->CompleteInteraction(Player).Contains(TEXT("已放入背包")));
     TestEqual(TEXT("Source actually debited"), Source->GetItemCount(TEXT("wood")), 0);
     TestEqual(TEXT("Bag actually credited"), Bag->GetItemCount(TEXT("wood")), 2);
-    TestTrue(TEXT("Weight visible before collection"), Gather->GetInteractionPrompt(Player).Contains(TEXT("94.80")));
+    TestTrue(TEXT("Exhausted source hides interaction after collection"), Gather->GetInteractionPrompt(Player).IsEmpty());
     TestTrue(TEXT("Deposit result"), Camp->CompleteInteraction(Player).Contains(TEXT("已入库")));
     TestEqual(TEXT("Bag debited on deposit"), Bag->GetItemCount(TEXT("wood")), 0);
     TestEqual(TEXT("Shared storage credited"), Storage->GetItemCount(TEXT("wood")), 2);

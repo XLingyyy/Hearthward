@@ -1,0 +1,213 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "53D5356349F8CC79FAA97D9FB0777844",
+			"instanceName": "LAPTOP-R8NPOP05-31812",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.09-06.13.28",
+	"succeeded": 0,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 1.2781380414962769,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "NearbyInteractionPrompt",
+			"fullTestPath": "Hearthward.Iteration.Task090.NearbyInteractionPrompt",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"53D5356349F8CC79FAA97D9FB0777844"
+			],
+			"duration": 1.2781380414962769,
+			"dateTime": "2026.10.09-06.13.26",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Synchronously lazy loading font file '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' with subface index 0 in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.27"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Took 0.027836 seconds to synchronously load lazily loaded font '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' (24977K) on Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.27"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Freetype font face in memory successfully created with synchronously loaded raw font file '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' subface 0 in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.27"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Font face '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' subface index 0 successfully added to font face map in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.27"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, DoNotLock -> LockOnCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.27"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, NoCapture -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.27"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'actual HUD displays nearby relic interaction' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\InteractionPromptPresentationTests.cpp",
+					"lineNumber": 51,
+					"timestamp": "2026.10.09-06.13.28"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'prompt follows rebound key at enlarged text scale' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\InteractionPromptPresentationTests.cpp",
+					"lineNumber": 55,
+					"timestamp": "2026.10.09-06.13.28"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'nearby prompt survives repeated HUD refresh' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\InteractionPromptPresentationTests.cpp",
+					"lineNumber": 57,
+					"timestamp": "2026.10.09-06.13.28"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'generic target prompt and rebound key reach HUD' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\InteractionPromptPresentationTests.cpp",
+					"lineNumber": 67,
+					"timestamp": "2026.10.09-06.13.28"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "LogPlayerController: InputMode:UIOnly - Attempting to focus Non-Focusable widget SObjectWidget [Widget.cpp(981)]!",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.28"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, LockOnCapture -> DoNotLock",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.28"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently -> NoCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.28"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "PIE: 控件HearthwardScreenWidget_0不支持聚焦。如这是一个UserWidget，则应该将bIsFocusable设为true。",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.13.28"
+				}
+			],
+			"warnings": 1,
+			"errors": 5,
+			"artifacts": []
+		}
+	]
+}

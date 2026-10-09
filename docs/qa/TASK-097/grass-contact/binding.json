@@ -1,0 +1,26 @@
+{
+  "base_commit": "60a685837efebfc556939896335d5bd81993a37e",
+  "implementation": "base plus only GT_Meadow/GT_S1_Meadow CastContactShadow=false and author script",
+  "environment": "Windows; UE 5.8.2; RTX 4060 Laptop 8GB; rendered PIE",
+  "acceptance": "PASS scoped grass contact-shadow correction; no full-route, Shipping, performance or Owner acceptance",
+  "locks": [
+    {
+      "id": "51998986",
+      "owner": "XLingyyy",
+      "asset": "GT_Meadow"
+    },
+    {
+      "id": "52010301",
+      "owner": "XLingyyy",
+      "asset": "GT_S1_Meadow"
+    }
+  ],
+  "command": ".venv/Scripts/python.exe -X utf8 Hearthward/.agent-local/qa/TASK-096/run_grass_restart.py",
+  "persistence_failure": "First save returned success but skipped unmarked package. New editor still read true. Fixed explicit modify and save only_if_is_dirty=False; restart2 reads both false.",
+  "visual_review": "Before: opaque rectangular patches below alpha grass. After restart: patches gone, building/tree shadows and fire remain. Global r.ContactShadows=1.",
+  "limits": [
+    "Accelerated world time/camera fixture, no natural route credit",
+    "Native startup and time-dilation movement warnings are outside scoped pass",
+    "Candidate8 predates this asset correction; not rebuilt here"
+  ]
+}

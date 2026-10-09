@@ -1,0 +1,23 @@
+{
+  "source_commit": "8b0d18f5d7da386cfca708d18ac8858e68c3ee81",
+  "environment": "UE5.8.2 rendered PIE, Windows, RTX4060 Laptop8GB",
+  "method": "PROTOTYPE_ONLY isolated save pool; actual new-game API action; temporary camera; advance clock then restore time dilation1. No persisted production changes.",
+  "commands": [
+    ".venv/Scripts/python.exe -X utf8 Hearthward/.agent-local/qa/TASK-096/run_day_scene.py",
+    ".venv/Scripts/python.exe -X utf8 Hearthward/.agent-local/qa/TASK-096/run_noon_scene.py"
+  ],
+  "result": "PARTIAL_VISUAL_REVIEW",
+  "observations": [
+    "Stone/wood textures and doorframe load at morning and noon",
+    "Courtyard orange/yellow flame remains visible by daylight",
+    "Noon shaded gallery remains dark; full route visibility and owner lighting review outstanding",
+    "Rectangular grass shadow defect found; fixed separately by TASK097 c2ab621227db7ece8c39d73e4a75c95863f55af0"
+  ],
+  "script_passed_meaning": "Capture completed only, not whole scene acceptance",
+  "not_run": [
+    "Continuous normal-input route in both lighting conditions",
+    "Shipping daylight scene",
+    "Whole-scene performance",
+    "Owner visual acceptance"
+  ]
+}

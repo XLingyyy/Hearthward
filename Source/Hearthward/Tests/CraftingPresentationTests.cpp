@@ -398,12 +398,10 @@ bool FHarvestToolPresentation057Test::RunTest(const FString&)
     Target->RegisterComponent();
     auto* Harvest=World->GetSubsystem<UHearthwardHarvestSubsystem>();
 
-    TestTrue(TEXT("Missing wood tool is explained before starting an interaction"),
-        Target->GetInteractionPrompt(Player).Contains(TEXT("需要耐久大于零的斧头")));
+    TestTrue(TEXT("Missing wood tool hides unusable interaction"),Target->GetInteractionPrompt(Player).IsEmpty());
     TestFalse(TEXT("A missing tool does not advertise a zero-yield harvest"),Target->GetInteractionPrompt(Player).Contains(TEXT("×0")));
     Bag->TryAdd(TEXT("pickaxe"),1);
-    TestTrue(TEXT("A wrong tool still explains the required wood tool"),
-        Target->GetInteractionPrompt(Player).Contains(TEXT("需要耐久大于零的斧头")));
+    TestTrue(TEXT("A wrong tool hides unusable interaction"),Target->GetInteractionPrompt(Player).IsEmpty());
     Bag->TryAdd(TEXT("axe"),1);
     const FGuid StoneAxe=Bag->FirstInstance(TEXT("axe"));Bag->WearInstance(StoneAxe,10);
     FString Prompt=Target->GetInteractionPrompt(Player);
@@ -423,15 +421,14 @@ bool FHarvestToolPresentation057Test::RunTest(const FString&)
     TestTrue(TEXT("The next prompt shows the actual depleted source"),Target->GetInteractionPrompt(Player).Contains(TEXT("剩余 9")));
 
     Bag->WearInstance(StoneAxe,70);Bag->WearInstance(MetalAxe,59);
-    TestTrue(TEXT("Broken matching tools have the same explicit requirement"),
-        Target->GetInteractionPrompt(Player).Contains(TEXT("需要耐久大于零的斧头")));
+    TestTrue(TEXT("Broken matching tools hide unusable interaction"),Target->GetInteractionPrompt(Player).IsEmpty());
     TestFalse(TEXT("Broken tools do not advertise a zero-yield harvest"),Target->GetInteractionPrompt(Player).Contains(TEXT("×0")));
     Target->Item=TEXT("herb");Target->ResourceKey=TEXT("herb-presentation");Target->Capacity=4;
     Prompt=Target->GetInteractionPrompt(Player);
     TestTrue(TEXT("Herbs retain their approved tool-free harvest"),Prompt.Contains(TEXT("徒手")) && Prompt.Contains(TEXT("×2")));
     Target->Item=TEXT("wood");Target->ResourceKey=TEXT("harvest-presentation");Target->Capacity=12;
     Harvest->Restore({{Target->ResourceKey,12}});
-    TestTrue(TEXT("An exhausted source retains the existing recovery explanation"),Target->GetInteractionPrompt(Player).Contains(TEXT("两个游戏日后恢复")));
+    TestTrue(TEXT("An exhausted source hides interaction"),Target->GetInteractionPrompt(Player).IsEmpty());
 
     Instance->Shutdown();GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return true;
 }

@@ -180,7 +180,9 @@ FString UHearthwardScreenWidget::DescribeLayout() const
         R->SetStringField(TEXT("parent"),B.Parent); R->SetBoolField(TEXT("visible"),!B.Hidden); WriteRect(R,B.Position,B.Size);
         if(const auto* E=Elements.FindByPredicate([&](const auto& Row){return Row.LayoutId==Id;}))
         { R->SetStringField(TEXT("action"),E->Action); R->SetStringField(TEXT("text"),E->Text); R->SetStringField(TEXT("asset"),E->Asset);
-          R->SetNumberField(TEXT("font"),E->Font); R->SetNumberField(TEXT("tracking"),E->Tracking); R->SetStringField(TEXT("fontRole"),E->FontRole); R->SetStringField(TEXT("bind"),E->Bind); }
+          R->SetNumberField(TEXT("font"),E->Font); R->SetNumberField(TEXT("tracking"),E->Tracking); R->SetStringField(TEXT("fontRole"),E->FontRole); R->SetStringField(TEXT("bind"),E->Bind);
+          R->SetBoolField(TEXT("world_anchored"),E->WorldAnchored);
+          if(E->WorldAnchored){auto P=MakeShared<FJsonObject>();P->SetNumberField(TEXT("x"),E->WorldAnchor.X);P->SetNumberField(TEXT("y"),E->WorldAnchor.Y);P->SetNumberField(TEXT("z"),E->WorldAnchor.Z);R->SetObjectField(TEXT("world_position"),P);} }
         Rows.Add(MakeShared<FJsonValueObject>(R));
     }
     Result->SetArrayField(TEXT("components"),Rows);
