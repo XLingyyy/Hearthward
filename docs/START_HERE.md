@@ -1,8 +1,8 @@
 # 最短阅读路径
 
-2026-10-08 当前工作分支为 `codex/TASK-084-103-iteration`，成果已提交推送，尚未合并main或发布。当前源码、操作和限制以[README](../README.md)及[本批候选报告](qa/TASK-103/REPORT.md)为准。
+2026-10-09 当前工作分支为 `codex/TASK-084-103-iteration`，尚未合并main或发布。当前实现及完整剩余项见[本批执行状态](planning/TASK-084-103/EXECUTION_STATUS.md)，候选结果见[103报告](qa/TASK-103/REPORT.md)。
 
-当前内部候选8 `0.2.0-preview.20261008.1` 位于 `F:/HearthwardDemo/iteration-084-103-20261008-8/Windows`。Shipping Build/Cook/Stage/Archive通过，已修复Niagara启动崩溃；新增运行资产96个及全部5个火烟包已进入容器。真实键鼠新游戏、手动保存、读档、明确继续、窗口设置确认、拖动缩放和重启保留通过，见[候选记录](qa/TASK-103/CANDIDATE8_PARTIAL.json)及[窗口续测](qa/TASK-103/CANDIDATE8_WINDOW_FOLLOWUP.json)。候选8尚未生成ZIP，旧候选5 ZIP仅适用于旧源码。
+2026-10-09 候选9 `0.2.0-preview.20261009.1` 已完成Shipping Build/Cook/Stage/Archive，受测源码 `2d55f0c9bb6d3cc305d6aa2f3bcdfa281f834a2f`，总289.83秒，Cook 0错误/1条MCP许可提示。目录 `F:/HearthwardDemo/iteration-084-103-20261009-9/Windows`，包含候选8之后的两草种接触阴影修复。五份随包资料已安装，CPU CMD实际拉起游戏进程及窗口；Computer Use首次捕获和重新绑定后重试均返回 `FrameArrived timed out: timed out waiting on channel`。本包标题版本、新游戏、保存/继续和Vulkan入口均未验证，此错误尚不能归因为游戏崩溃。未生成ZIP，未发布，整批验收仍未完成。 [候选9证据](qa/TASK-103/CANDIDATE9_PARTIAL.json)。最近正常输入验证为[候选8窗口/继续](qa/TASK-103/CANDIDATE8_WINDOW_FOLLOWUP.json)；历史候选5 ZIP只适用于旧源码。
 
 石堡火烟首件已获Owner批准并接入，角色、武器、救援动作、设施与作物的最新实现见各任务交接。锻造27项付费建造/制作/存读档检查通过；完整动作、资源场景和Owner视听验收仍有缺口。不得以旧首件待批准记录覆盖本轮批准。
 
