@@ -185,7 +185,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampaignWeightedPrompt067Test,"Hearthward.Camp
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FCampaignWeightedPrompt067Test::RunTest(const FString&)
 {
-    FScopedCampaignEndStateWorld Fixture(TEXT("loc_river_gate"));if(!Fixture.Ready(*this))return false;
+    FScopedCampaignEndStateWorld Fixture(TEXT("loc_workshops"));if(!Fixture.Ready(*this))return false;
     int32 Cleared=0;
     for(auto& Enemy:Fixture.Campaign->State.Enemies)if(Enemy.Group==TEXT("base"))
     {
@@ -203,6 +203,8 @@ bool FCampaignWeightedPrompt067Test::RunTest(const FString&)
     const FString Prompt=Fixture.Campaign->Prompt();AddInfo(TEXT("Campaign067 actual weighted prompt: ")+Prompt);
     TestTrue(TEXT("The actual player-facing prompt displays 70 percent of 40/80 plus 30 percent of 1/4 as 42.5 percent"),Prompt.Contains(TEXT("42.5%")));
     TestTrue(TEXT("The same actual prompt retains its one-of-four flag count"),Prompt.Contains(TEXT("1/4")));
+    Fixture.Campaign->State.Flags.Add(TEXT("workshops"));
+    TestTrue(TEXT("A captured flag no longer advertises an interaction"),Fixture.Campaign->InteractionPrompt().IsEmpty());
     return true;
 }
 
