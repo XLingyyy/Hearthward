@@ -2,9 +2,9 @@
 
 ## 当前候选9
 
-2026-10-09 候选9 `0.2.0-preview.20261009.1` 已完成Shipping Build/Cook/Stage/Archive，受测源码 `2d55f0c9bb6d3cc305d6aa2f3bcdfa281f834a2f`，总289.83秒，Cook 0错误/1条MCP许可提示。目录 `F:/HearthwardDemo/iteration-084-103-20261009-9/Windows`，包含候选8之后的两草种接触阴影修复。五份随包资料已安装，CPU CMD实际拉起游戏进程及窗口；Computer Use首次捕获和重新绑定后重试均返回 `FrameArrived timed out: timed out waiting on channel`。本包标题版本、新游戏、保存/继续和Vulkan入口均未验证，此错误尚不能归因为游戏崩溃。未生成ZIP，未发布，整批验收仍未完成。
+2026-10-09 候选9 `0.2.0-preview.20261009.1` 已完成Shipping Build/Cook/Stage/Archive，源码 `2d55f0c9bb6d3cc305d6aa2f3bcdfa281f834a2f`，总289.83秒，Cook 0错误/1条MCP许可提示。目录 `F:/HearthwardDemo/iteration-084-103-20261009-9/Windows`，包含两草种接触阴影修复。恢复测试已实际看到标题版本、鼠标新游戏进入卧室、重开后明确鼠标继续恢复自动档，以及F6自动节点列表。窗口模式1280×720和临时限帧对照均未解决持续捕获故障：打开背包、点击手动保存后的捕获与一次重新绑定重试仍超时。手动保存结果、其余页面、双启动器实机、Vulkan及完整路线尚未验证。三个自有进程均通过UEClient关闭，最后确认无Hearthward进程残留。没有修改正式画质、性能门槛或玩法；无ZIP，未发布，整批未完成。
 
-证据：`docs/qa/TASK-103/CANDIDATE9_PARTIAL.json`。
+证据：`docs/qa/TASK-103/CANDIDATE9_PARTIAL.json`、`docs/qa/TASK-103/candidate9-resume/result.json`。
 
 ## 候选8历史实测
 

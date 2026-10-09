@@ -2,8 +2,8 @@
   "candidate_id": "iteration-084-103-20261009-9",
   "source_commit": "2d55f0c9bb6d3cc305d6aa2f3bcdfa281f834a2f",
   "version_in_source": "0.2.0-preview.20261009.1",
-  "version_observed_in_game": null,
-  "status": "BUILD_SUCCESS_NORMAL_INPUT_UNVERIFIED",
+  "version_observed_in_game": "0.2.0-preview.20261009.1",
+  "status": "BUILD_SUCCESS_PARTIAL_NORMAL_INPUT",
   "package_result": {
     "ok": true,
     "operation": "build.package",
@@ -71,9 +71,19 @@
     "recovery": "Refreshed list_windows, uniquely selected returned game, rehydrated and activated once; capture failed again. Stopped app input.",
     "game_crash": "NOT_ESTABLISHED; process Responding=true does not prove playable rendering",
     "normal_input": "NOT_RUN",
-    "shutdown": "UEClient stop_editor(5084) returned success for exited CMD and wrapper ended; bootstrap19376/game4600 remain alive. Explicit one-time system shutdown exception requested, unanswered."
+    "shutdown": "User closed prior bootstrap/game; zero Hearthward processes confirmed before resumed tests."
   },
   "zip": "NOT_CREATED; finalizer retains actual OS launcher/input gates",
   "formal_acceptance": false,
-  "published": false
+  "published": false,
+  "followup_evidence": "docs/qa/TASK-103/candidate9-resume/result.json",
+  "normal_input_followup": {
+    "new_game": true,
+    "continue_automatic_save": true,
+    "save_list_opened": true,
+    "manual_save_result": "UNVERIFIED",
+    "remaining_pages": "UNVERIFIED",
+    "actual_dual_launcher_input": "UNVERIFIED",
+    "shutdown": "All owned processes stopped via UEClient; zero Hearthward processes remain"
+  }
 }

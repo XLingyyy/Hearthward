@@ -1,0 +1,46 @@
+THREAD 19244 GameThread
+7fffc2961b84 ZwWaitForSingleObject + 14
+7fffc2961b84 ZwWaitForSingleObject + 14
+7fffbffcd26f WaitForSingleObjectEx + af
+7ff66890f515 FEventWin::Wait + 45
+7ff66a793ebe FRenderCommandFence::Wait + 3ee
+7ff66a791b7f FFrameEndSync::Sync + 5ff
+7ff66bb165b3 FEngineLoop::Tick + 1093
+7ff66bb0de0c GuardedMain + 2cc
+7ff66bb0de7a GuardedMainWrapper + 1a
+7ff66bb0f2d3 LaunchWindowsStartup + 143
+7ff66bb16a54 WinMain + 14
+7ff66ecb9572 __scrt_common_main_seh + 106
+7fffc0e9e8d7 BaseThreadInitThunk + 17
+7fffc283c34c RtlUserThreadStart + 2c
+THREAD 29064 CrashReportingThread
+7fffc2962654 NtWaitForMultipleObjects + 14
+7fffc2962654 NtWaitForMultipleObjects + 14
+7fffbffce5f3 WaitForMultipleObjectsEx + 123
+7fffbffce4c1 WaitForMultipleObjects + 11
+7ff66890c5c4 FCrashReportingThread::Run + 54
+7fffc0e9e8d7 BaseThreadInitThunk + 17
+7fffc283c34c RtlUserThreadStart + 2c
+THREAD 20072 RHIThread
+7fffc2965754 NtWaitForAlertByThreadId + 14
+7fffc2965754 NtWaitForAlertByThreadId + 14
+7fffc283a303 RtlWaitOnAddress + 213
+7fffc00651f8 WaitOnAddress + 38
+7ff668841cbc UE::HAL::Private::FMicrosoftManualResetEvent::WaitForSlow + 8c
+7ff668733faf FTaskThreadBase::Tick + 13f
+7ff668736625 UE::ParkingLot::Private::WaitFor + 35
+7ff6688f6794 UE::Tasks::Private::FTaskBase::WaitImpl + 1b4
+7ff6688f6a76 UE::Tasks::Private::FTaskBase::WaitWithNamedThreadsSupport + 86
+7ff66a5b3922 FBaseGraphTask::Wait + 122
+7ff66b92d122 FD3D12Viewport::WaitForFrameEventCompletion + 42
+7ff66b9179ab CD3DX12_STATE_OBJECT_DESC::operator D3D12_STATE_OBJECT_DESC const & __ptr64 + 13ab
+7ff66a7eb81f FGraphicsPipelineStateInitializer::operator== + 66f
+7ff66a7f3f39 FRHICommandListExecutor::FTaskPipe::Execute + 1a9
+7ff66a7f45db TGraphTask<TFunctionGraphTaskImpl<void __cdecl(enum ENamedThreads::Type,TRefCountPtr<FBaseGraphTask> const & __ptr64),0> >::ExecuteTask + 5b
+7ff66873508f UE::Tasks::Private::FTaskBase::TryExecuteTask + 6f
+7ff66872f031 FNamedTaskThread::ProcessTasksUntilQuit + 101
+7ff66a78b0b0 FRHIThread::Run + 50
+7ff668911ac7 FRunnableThreadWin::Run + 37
+7ff66891131f FRunnableThreadWin::GuardedRun + 7f
+7fffc0e9e8d7 BaseThreadInitThunk + 17
+7fffc283c34c RtlUserThreadStart + 2c
