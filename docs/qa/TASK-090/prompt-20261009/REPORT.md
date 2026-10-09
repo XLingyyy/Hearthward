@@ -17,3 +17,5 @@
 
 范围检查：scripts/validate_repo.py --task TASK-090 --base 104842d0 实际 PASS（0 errors），该基线是本次已提交的范围快照。
 复跑：公开 UEClient.build.project(target=HearthwardEditor, configuration=Development)；testing.run_automation_tests 的筛选为 Hearthward.Iteration.Task090.，RHI 截图参数为 -HearthwardPromptCapture，附独立 -UserDir 和 -HearthwardSaveTestPool。最终报告 green-final-render-index.json，测试进程退出码 0。
+
+候选10实际 Shipping Build/Cook/Stage/Archive 成功，源码 0e430f5fa740dff35bd1ba8924e031115edb9cae，版本 0.2.0-preview.20261009.2。运行目录 F:/HearthwardDemo/iteration-084-103-20261009-10/Windows；两个启动器、模型/运行库/资源/许可文件已安装并检查存在。package-result.json 保存公开 UEClient 实际成功结果。源码已推送至 codex/TASK-084-103-iteration；本包正常键鼠操作仍未验，不沿用候选9信用。

@@ -31,7 +31,7 @@
 
 ## 交付和工具
 
-候选9版本 `0.2.0-preview.20261009.1`，目标目录 `F:/HearthwardDemo/iteration-084-103-20261009-9/Windows`，准确结果以[103报告](../../qa/TASK-103/REPORT.md)为准。旧候选5 ZIP、候选8运行树及失败候选各保留自身证据。
+当前候选10 `0.2.0-preview.20261009.2`，目录 `F:/HearthwardDemo/iteration-084-103-20261009-10/Windows`，交互提示热修复已构建交付，源码 `0e430f5fa740dff35bd1ba8924e031115edb9cae`；Task090 原生与 PIE 证据见[热修复报告](../../qa/TASK-090/prompt-20261009/REPORT.md)。本包 Shipping 正常输入待用户继续验证。候选9此前局部正常输入记录仍只适用于候选9。旧候选5 ZIP、候选8运行树及失败候选各保留自身证据。
 
 UE MCP配置已接通并实际握手，服务是否在线依赖Editor进程；生命周期使用UEClient。Blender MCP曾实际用于建模/烘焙/导出。Computer Use可观察、点击、短按和拖动；候选9窗口模式曾成功捕获标题/开局/继续/存档列表，后续输入后的捕获及一次重试仍超时；临时限帧也未解决。自有UEClient进程均已退出，未将未验证结果记为通过。
 
