@@ -19,6 +19,7 @@ public:
     void AdvanceBoundary(double Calendar);
     UFUNCTION(BlueprintPure) FString Describe() const { return State.Snapshot(); }
     UFUNCTION(BlueprintPure) FString Prompt() const;
+    UFUNCTION(BlueprintPure) FString InteractionPrompt() const;
     UFUNCTION(BlueprintCallable) bool Interact();
     bool AssignEscort(FName Person,class AHearthwardCompanionFixture* Brother,FGuid Epoch);
     UFUNCTION(BlueprintCallable) bool Claim(FName Quest,FGuid Epoch);

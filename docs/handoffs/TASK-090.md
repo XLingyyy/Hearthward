@@ -2,7 +2,11 @@
 
 [任务单](../tasks/TASK-090.md) · [元数据](../tasks/TASK-090.json) · [本批指南](../planning/TASK-084-103/EXECUTION_GUIDE.md)
 
-## 当前状态
+## 2026-10-09 交互提示热修复
+
+2026-10-09 已修复靠近交互点不显示提示：新版 HUD 重新接入遗物/路标/工作台/通用交互目标，提示跟随实际距离和键位，衬板适配多行与 150% 字号。Task090 最终原生 4/4 通过，实际 PIE 遗物靠近显示/离开隐藏已验证。版本 `0.2.0-preview.20261009.2`，候选10待打包；当前可用旧候选9不包含此修复。整批尚未完成，原有模型/性能/完整路线/真人与二机缺口保留。 新增 read-only Campaign API，保留旧接口行为；源码范围已由 104842d0 快照记录。证据：[prompt-20261009](../qa/TASK-090/prompt-20261009/REPORT.md)。新增用例与原三项同次运行通过，不合并旧分母。
+
+## 2026-10-07 历史状态
 
 2026-10-07，任务Active，根目录`G:/GameFactory/Hearthward`，实际分支`codex/TASK-084-103-iteration`。完整HEAD `6fcf5c22e965f0f7409438f19bc7b09e96ffb058` 加root协调的本轮未提交工作区。用户本会话授权逐单本地实施和验证；root拥有生产源码与公开UEClient生命周期，mcp_setup补急救回归及证据文档。Owner XLingyyy；正式Reviewer与人工签收未指派。
 

@@ -30,6 +30,13 @@ FName UHearthwardCampaignSubsystem::Nearest() const
     }
     return Result;
 }
+FString UHearthwardCampaignSubsystem::InteractionPrompt() const
+{
+    if(Busy())return {};
+    const FName Id=Nearest();if(Id.IsNone())return {};
+    if(Id.ToString().StartsWith(TEXT("rescued_")))return TEXT("E 与族人交谈：跟随 / 原地等待");
+    return TEXT("E ")+Text(HearthwardCampaign::Find(TEXT("locations"),Id),TEXT("name"));
+}
 FString UHearthwardCampaignSubsystem::Prompt() const
 {
     if(!Active())return {};

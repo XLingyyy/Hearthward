@@ -558,6 +558,53 @@ void UHearthwardScreenWidget::ComposeHUD()
     if(const auto* Traversal=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardTraversalComponent>()) Feedback(Traversal->GetStatus(),TEXT("hud.traversal.state"),Traversal->GetFeedbackRevision(),!Traversal->IsVaulting());
     if(const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>())
         Feedback(Interaction->GetCompletionFeedback(),TEXT("hud.interaction.feedback"),Interaction->GetFeedbackRevision());
+    const auto* Workshop=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
+    const auto* Action=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardTimedActionComponent>();
+    if(!Downed && (!PlayerSurvival || PlayerSurvival->Alive()) && (!Combat || !Combat->Busy())
+        && (!Workshop || !Workshop->IsPlacing()) && !Campaign->Busy() && !N->Busy()
+        && (!Action || Action->GetStatus()!=EHearthwardTimedActionStatus::Running))
+    {
+        // Match Character::Interact's target priority and the existing distance queries.
+        FString Prompt;
+        if(Workshop && Workshop->NearbyWorkbench().IsValid())Prompt=TEXT("E 使用工作台 · 制作 / 维修");
+        else Prompt=Campaign->InteractionPrompt();
+        if(Prompt.IsEmpty())
+        {
+            const FName Station=G->NearbyTravelStation();
+            if(G->Enabled && !Station.IsNone() && !G->Activated.Contains(Station)
+                && (!Campaign->Active() || (Campaign->State.Phase!=TEXT("prologue") && (Station!=TEXT("hometown") || Campaign->State.Victory))))
+                Prompt=TEXT("E 激活路标");
+            else if(const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>())
+                if(const auto* Target=Interaction->GetNearestTarget())Prompt=Target->GetInteractionPrompt(GetOwningPlayerPawn());
+        }
+        if(!Prompt.IsEmpty())
+        {
+            const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
+            Prompt.ReplaceInline(TEXT("E "),TEXT("{interact} "));
+            Prompt.ReplaceInline(TEXT("R "),TEXT("{storage} "));
+            Prompt.ReplaceInline(TEXT("{interact}"),*HearthwardInput::Label(Bindings,TEXT("interact")));
+            Prompt.ReplaceInline(TEXT("{storage}"),*HearthwardInput::Label(Bindings,TEXT("storage.open")));
+            const float Font=20*TextScale,Width=544;
+            FSlateFontInfo Info(Typeface,FMath::RoundToInt(Font*.75f));
+            Info.LetterSpacing=Number(Theme->GetObjectField(TEXT("typography")),TEXT("tracking"));
+            const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
+            TArray<FString> Lines;Prompt.ParseIntoArrayLines(Lines,false);int32 LineCount=0;
+            for(FString Line:Lines)
+            {
+                while(Line.Len()>1 && Measure->Measure(Line,Info).X>Width)
+                {
+                    Line=Line.Mid(FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Info,Width)+1,1,Line.Len()));
+                    ++LineCount;
+                }
+                ++LineCount;
+            }
+            const float Height=LineCount*Font*1.6f,Y=900-Height-24;
+            HUD(TEXT("menuSurface"),TEXT(""),{520,Y},{580,Height+24},20,TEXT("hud.interaction.surface"),TEXT("hud.interaction"));
+            auto& Hint=HUD(TEXT("text"),TEXT(""),{538,Y+12},{Width,Height},20,TEXT("hud.interaction.prompt"),TEXT("hud.interaction"));
+            // Semantic keys are already resolved; Element's legacy prefix remap must not remap them again.
+            Hint.Text=Prompt;Hint.Color=Color(TEXT("gold"));
+        }
+    }
     if(N->Busy())
     {
         HUD(TEXT("text"),N->FishingStatus(),{560,670},{1000,80*TextScale},20,TEXT("hud.fishing.state"),TEXT("hud.feedback"));
