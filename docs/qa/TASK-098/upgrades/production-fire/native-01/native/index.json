@@ -1,0 +1,93 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "790C9D8C4FF8EC41E0CDD69776A38F6E",
+			"instanceName": "LAPTOP-R8NPOP05-35564",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.09-15.03.17",
+	"succeeded": 0,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.17952319979667664,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "ProductionFire",
+			"fullTestPath": "Hearthward.Camp098.ProductionFire",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"790C9D8C4FF8EC41E0CDD69776A38F6E"
+			],
+			"duration": 0.17952319979667664,
+			"dateTime": "2026.10.09-15.03.17",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogStreaming: FlushAsyncLoading(398): 1 QueuedPackages, 0 AsyncPackages",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-15.03.17"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Working batch lights flame and smoke' to be 2, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampPropsPresentationTests.cpp",
+					"lineNumber": 32,
+					"timestamp": "2026.10.09-15.03.17"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Resume relights existing effects' to be 2, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampPropsPresentationTests.cpp",
+					"lineNumber": 38,
+					"timestamp": "2026.10.09-15.03.17"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Restore rebuilds presentation from real state' to be 2, but it was 0.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampPropsPresentationTests.cpp",
+					"lineNumber": 41,
+					"timestamp": "2026.10.09-15.03.17"
+				}
+			],
+			"warnings": 0,
+			"errors": 3,
+			"artifacts": []
+		}
+	]
+}

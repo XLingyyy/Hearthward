@@ -66,6 +66,8 @@ private:
     TMap<FName,int32> Materials() const;
     AActor* SpawnBuilding(FName Id, FVector Position, float Rotation, bool PreviewOnly);
     void ClearPreview();
+    void UpdatePresentation();
+    float PresentationElapsed=0;
     struct FBuilt { FGuid Id; FName Recipe; FVector Position; float Rotation; TWeakObjectPtr<AActor> Actor; };
     TArray<FBuilt> Built;
     TWeakObjectPtr<AActor> Preview;

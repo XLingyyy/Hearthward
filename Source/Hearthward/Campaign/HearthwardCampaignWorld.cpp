@@ -278,9 +278,20 @@ void UHearthwardCampaignSubsystem::RefreshActors()
         auto* A=GetWorld()->SpawnActor<AActor>();A->Tags.Add(Tag);
         auto* Mesh=NewObject<UStaticMeshComponent>(A);A->AddInstanceComponent(Mesh);A->SetRootComponent(Mesh);
         const bool Flag=Id.ToString().StartsWith(TEXT("loc_"));
-        Mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,Flag?TEXT("/Engine/BasicShapes/Cylinder.Cylinder"):TEXT("/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/SM_wood_chest.SM_wood_chest")));
+        const bool Route=Id.ToString().StartsWith(TEXT("route_"));
+        const bool Lookout=Id==TEXT("route_ridge") || Id==TEXT("route_watch");
+        const bool Cairn=Id==TEXT("route_ford") || Id==TEXT("route_west_bank") || Id==TEXT("route_east_bank") || Id==TEXT("route_terrace");
+        const TCHAR* RouteMesh=Lookout?TEXT("/Game/Hearthward/Assets/TASK-097/Route/SM_RouteLookout.SM_RouteLookout"):
+            Cairn?TEXT("/Game/Hearthward/Assets/TASK-097/Route/SM_RouteCairn.SM_RouteCairn"):
+            TEXT("/Game/Hearthward/Assets/TASK-097/Route/SM_RouteSign.SM_RouteSign");
+        Mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,Flag?TEXT("/Engine/BasicShapes/Cylinder.Cylinder"):Route?RouteMesh:TEXT("/Game/Hearthward/Assets/TASK-028/furniture/wood_chest/SM_wood_chest.SM_wood_chest")));
         Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);Mesh->RegisterComponent();
         A->SetActorLocation(Position(Id)+(Flag?FVector(0,0,100):FVector(0,0,-80)));A->SetActorScale3D(Flag?FVector(.08,.08,3.6):FVector(1));Scenery.Add(A);
+        if(Route && !Lookout && !Cairn)
+        {
+            const FName Next=Id==TEXT("route_fork")?TEXT("slice_rescue"):Id==TEXT("route_south_pass")?TEXT("route_west_bank"):TEXT("home_entry");
+            A->SetActorRotation(FRotator(0,(Position(Next)-Position(Id)).Rotation().Yaw,0));
+        }
         if(Flag)
         {
             auto* Cloth=NewObject<UStaticMeshComponent>(A);A->AddInstanceComponent(Cloth);Cloth->SetupAttachment(Mesh);
