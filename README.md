@@ -1,10 +1,10 @@
 # Hearthward（归火）
 
-2026-10-09 美术优先：八类营地设施外形已区分；新增四类设施二、三级附件和真实生产启停火烟，[升级与火烟验证](docs/qa/TASK-098/upgrades/REPORT.md)含原生测试、12张逐级渲染及篝火付费/存读档18项检查。石堡卧室木窗、墙脚板、横梁、挂物架和绳床已接入，[构建及净空测试](docs/qa/TASK-096/interior/REPORT.md)通过。路线节点改用原创木路标、河岸石堆与瞭望石标，[九处正式地形验证](docs/qa/TASK-097/route/REPORT.md)通过；岔路远景树冠遮挡等画面限制已记录。上述美术已进入候选12，实际Cook容器核对34包齐全，正常输入新游戏并进入卧室通过；完整实玩按用户要求后置。弟弟0.25秒前摇与箭尖发射/近墙阻挡已实现，最终2项定向原生与实际PIE通过，见[前摇与出箭报告](docs/qa/TASK-095/windup/REPORT.md)；候选12尚不包含该增量。
+2026-10-09 美术优先：八类营地设施外形已区分；新增四类设施二、三级附件和真实生产启停火烟，[升级与火烟验证](docs/qa/TASK-098/upgrades/REPORT.md)含原生测试、12张逐级渲染及篝火付费/存读档18项检查。石堡卧室木窗、墙脚板、横梁、挂物架和绳床已接入，[构建及净空测试](docs/qa/TASK-096/interior/REPORT.md)通过。路线节点改用原创木路标、河岸石堆与瞭望石标，[九处正式地形验证](docs/qa/TASK-097/route/REPORT.md)通过；岔路远景树冠遮挡等画面限制已记录。上述美术已进入候选12，实际Cook容器核对34包齐全，正常输入新游戏并进入卧室通过；完整实玩按用户要求后置。弟弟0.25秒前摇与箭尖发射/近墙阻挡已实现，最终2项定向原生与实际PIE通过，见[前摇与出箭报告](docs/qa/TASK-095/windup/REPORT.md)；该增量已包含在候选13。
 
-2026-10-09：四类 Blender MCP 建筑已接入正式四区，共16处；地形调整后16/16局部穿行、12/12相关原生测试及Editor构建通过。TASK-100保持Active，完整区域路线、连续主线、15支线、第二营地保存继续、Owner视觉与新Shipping包尚未验收。 [本轮实现与证据](docs/qa/TASK-100/ZONE_INTEGRATION_20261009.md)。新增场景可在当前Editor工程及候选12查看。
+2026-10-09：四类 Blender MCP 建筑已接入正式四区，共16处；地形调整后16/16局部穿行、12/12相关原生测试及Editor构建通过。TASK-100保持Active，完整区域路线、连续主线、15支线、第二营地保存继续、Owner视觉与新Shipping包尚未验收。 [本轮实现与证据](docs/qa/TASK-100/ZONE_INTEGRATION_20261009.md)。新增场景可在当前Editor工程及候选13查看。
 
-当前内部美术包为候选12：`F:/HearthwardDemo/iteration-084-103-20261009-12/Windows`，源码 `c3d6e1ed573f8ca6c38496483aeed05ab4498567`。实际版本显示仍为 `0.2.0-preview.20261009.3`，以 CandidateID 区分候选；[构建信息](docs/releases/iteration-084-103-rc/candidate12/CANDIDATE12_BUILD_INFO.json)及[开局实机证据](docs/qa/TASK-098/upgrades/candidate12/observation.json)保留具体范围。未发布。
+当前内部美术包为候选13：`F:/HearthwardDemo/iteration-084-103-20261009-13/Windows`，源码 `6bfe7ed9a020da7c40c65ed3a136d5634de0eb64`。包含上述角色场景美术与前摇/箭尖增量，Shipping构建成功；131个运行所需美术包进入实际Cook容器（另1个独立箭袋源网格已合入射手骨骼网格）。正常键盘新游戏进入卧室通过，自有进程正常关闭。实际版本显示 `0.2.0-preview.20261009.3`，以CandidateID区分；[构建信息](docs/releases/iteration-084-103-rc/candidate13/CANDIDATE13_BUILD_INFO.json)及[开局证据](docs/qa/TASK-095/windup/candidate13/observation.json)。完整实玩、完整坡地/昼夜与视觉验收仍未完成，未发布。
 
 2026-10-09 交互提示已改为物体上方随镜头移动；领取遗物及已完成/不可用目标隐藏提示，重复设施保留有效操作。Task090 4/4、相关采集/资源 3/3 与正式地图 PIE 领取前后检查通过。候选11 `0.2.0-preview.20261009.3` Shipping 构建成功，源码 `a72fdffe2d3f4f27652c9d05abfe50c91d832ede`，目录 `F:/HearthwardDemo/iteration-084-103-20261009-11/Windows`。用户已确认交互提示修复验证通过；该确认仅覆盖本次交互修复。整批尚未完成，原有模型/性能/完整路线/真人与二机缺口保留。
 

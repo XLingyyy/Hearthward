@@ -22,3 +22,5 @@
 保留失败记录：native-01 因存档恢复仍引用原 NextHuntAttackAt 字段而编译失败，保留旧字段连接原恢复入口后修正；native-02 的测试大步推进被 WorldSettings 单帧上限裁剪，改为正常小步推进真实世界时钟，远程夹具补上生产攻击需要的落地状态。native-03 两项通过，随后只为已观察到的刀斧相位缺陷重排动画并执行 native-04。rejected-lighting.png 保留首次诊断场景过亮/他人遮挡；最终只移动诊断角色及调低诊断补光，正式地图未改。
 
 UE 生命周期、构建与原生执行使用公开 UEClient；新 uasset 的 LFS 锁保留。人物底模来源权利仍沿原登记，原创动作不替代底模授权。完整实玩按用户要求后置，完整TASK-095与Owner视觉签收继续单列。
+
+2026-10-10 候选13收尾：源码 `6bfe7ed9a020da7c40c65ed3a136d5634de0eb64` 在干净工作树冻结后完成 Shipping Build/Cook/Stage/Archive。095—098的132个源资产包中131个进入实际容器；独立箭袋静态源网格已合并进运行时射手骨骼网格，不单独Cook，见 [cook-assets.json](cook-assets.json)。正常键盘输入新游戏进入石堡卧室、当前屏幕窗口未越界，自有进程通过原UEClient正常关闭，见 [开局记录](candidate13/observation.json)及[截图](candidate13/opening.png)。该检查仅覆盖开局，完整实玩仍后置。
