@@ -3,7 +3,7 @@
   "id": "TASK-095",
   "title": "兄弟与敌人辨识、武器持握和关键动作收尾",
   "status": "Active",
-  "updated_at": "2026-10-08",
+  "updated_at": "2026-10-09",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -121,7 +121,13 @@
     "Content/Hearthward/Assets/TASK-095/PlayerRanged/SK_PlayerBow_Skeleton.uasset",
     "Content/Hearthward/Assets/TASK-095/PlayerRanged/A_PlayerBow_Draw.uasset",
     "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
-    "Content/Hearthward/Assets/TASK-095/Weapons/A_Brother_WeaponCarry.uasset"
+    "Content/Hearthward/Assets/TASK-095/Weapons/A_Brother_WeaponCarry.uasset",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/Tests/BrotherWindupTests.cpp",
+    "Source/Hearthward/Tests/RangedMuzzleTests.cpp",
+    "Content/Hearthward/Assets/TASK-095/Weapons/A_Brother_SpearThrust.uasset"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -196,6 +202,7 @@
     "2026-10-08 玩家弓弩四段动作与可弯曲长弓已接入，瞄准俯仰/水平朝向错位已修正。4项回归及最终移动腿部/装备呈现定向1项通过，实际PIE29帧和三段视频通过。实际弹道起点仍按旧逻辑，改到箭尖并检查遮挡的方案待Owner答复；弟弟装备、完整接触/Cook/视觉验收继续。",
     "2026-10-08 继续弟弟实际装备呈现，准确增加CompanionFixture.h写范围；复用已导入近战武器，按弟弟自身61骨参考握点挂接，真实装备/耐久/生存状态驱动，不增加弟弟远程攻击能力或修改伤害。",
     "2026-10-08 实机复现弟弟原待机手位导致长刃/战斧穿肩；在已批准持握修复范围内增加准确A_Brother_WeaponCarry动作包，仅对持武器的右臂分层，不修改移动、攻击判定或敌人动作。",
-    "2026-10-08 弟弟13种近战装备已按实际实例/耐久和生存状态呈现，新增右臂携带姿势修复长刃/战斧待机穿肩。Editor构建、装备回归1/1（零警告）及六件装备/正侧视PIE通过。弟弟攻击接触与长枪专用动作、完整Cook和Owner验收继续，TASK-095保持Active。"
+    "2026-10-08 弟弟13种近战装备已按实际实例/耐久和生存状态呈现，新增右臂携带姿势修复长刃/战斧待机穿肩。Editor构建、装备回归1/1（零警告）及六件装备/正侧视PIE通过。弟弟攻击接触与长枪专用动作、完整Cook和Owner验收继续，TASK-095保持Active。",
+    "2026-10-09 Owner明确批准弟弟0.25秒可中断近战前摇，保持1.2秒攻击周期和伤害；批准玩家弓弩从实际可见箭尖发射并检测近墙阻挡。覆盖跟随战斗和狩猎，新增长枪动作与定向验证，保存格式不变。"
   ]
 }
