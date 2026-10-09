@@ -9,6 +9,9 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/StaticMesh.h"
+#include "PhysicsEngine/BodySetup.h"
 
 namespace
 {
@@ -131,6 +134,33 @@ bool FWaitingRescueGoal100Test::RunTest(const FString&)
     TestEqual(TEXT("Following retains the original camp location"),Following.Location,FName(TEXT("camp")));
     TestFalse(TEXT("Following does not reuse the outbound fork route"),Following.HasRoute);
     AddInfo(TEXT("Layer: isolated real Game world/controller/player, actual campaign refresh and live person actor; fixture movement is diagnostic, not normal rescue completion."));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FZoneArchitecture100Test,"Hearthward.Iteration.Task100.Fixture.ZoneArchitecturePassages",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FZoneArchitecture100Test::RunTest(const FString&)
+{
+    FQuestKnowledgeWorld100 F(TEXT("occupied"));if(!F.Ready(*this))return false;
+    const TCHAR* Names[]={TEXT("SM_RiverGate"),TEXT("SM_WorkshopShelter"),TEXT("SM_DwellingPorch"),TEXT("SM_AssemblyColonnade")};
+    const float SideY[]={270,280,240,320};
+    for(int32 I=0;I<4;++I)
+    {
+        const FString Path=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-100/Zones/%s.%s"),Names[I],Names[I]);
+        auto* Mesh=LoadObject<UStaticMesh>(nullptr,*Path);
+        if(!TestNotNull(Names[I],Mesh))continue;
+        const FVector Size=Mesh->GetBoundingBox().GetSize();
+        AddInfo(FString::Printf(TEXT("%s dimensions cm=%s convex=%d"),Names[I],*Size.ToString(),Mesh->GetBodySetup()?Mesh->GetBodySetup()->AggGeom.ConvexElems.Num():0));
+        TestTrue(TEXT("Building is imported in centimetres"),Size.X>=190 && Size.X<=730 && Size.Y>=550 && Size.Y<=740 && Size.Z>=450 && Size.Z<=550);
+        TestTrue(TEXT("Separate authored convex collision preserves openings"),Mesh->GetBodySetup() && Mesh->GetBodySetup()->AggGeom.ConvexElems.Num()>=20);
+        auto* Actor=F.World->SpawnActor<AActor>();
+        auto* Part=NewObject<UStaticMeshComponent>(Actor);Actor->AddInstanceComponent(Part);Actor->SetRootComponent(Part);
+        Part->SetStaticMesh(Mesh);Part->SetCollisionProfileName(TEXT("BlockAll"));Part->RegisterComponent();
+        const FVector Origin(I*2000,0,0);Actor->SetActorLocation(Origin);
+        FHitResult Hit;
+        TestFalse(TEXT("Player capsule can pass through the centre in both directions"),F.World->SweepSingleByChannel(Hit,Origin+FVector(-450,0,100),Origin+FVector(450,0,100),FQuat::Identity,ECC_Pawn,FCollisionShape::MakeCapsule(42,90)));
+        TestTrue(TEXT("Side masonry really blocks the capsule"),F.World->SweepSingleByChannel(Hit,Origin+FVector(-450,SideY[I],100),Origin+FVector(450,SideY[I],100),FQuat::Identity,ECC_Pawn,FCollisionShape::MakeCapsule(42,90)));
+    }
+    AddInfo(TEXT("Isolated asset collision fixture; does not certify terrain or a completed campaign."));
     return true;
 }
 #endif

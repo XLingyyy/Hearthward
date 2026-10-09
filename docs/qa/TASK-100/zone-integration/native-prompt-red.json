@@ -1,0 +1,542 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "D07E915C4DB03A4F6E882B92048E9F18",
+			"instanceName": "LAPTOP-R8NPOP05-20008",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.09-09.24.36",
+	"succeeded": 7,
+	"succeededWithWarnings": 4,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.68914651870727539,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "ContentContract",
+			"fullTestPath": "Hearthward.Campaign049.ContentContract",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.015295896679162979,
+			"dateTime": "2026.10.09-09.24.34",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "RegistryAndVictory",
+			"fullTestPath": "Hearthward.Campaign049.RegistryAndVictory",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.048032999038696289,
+			"dateTime": "2026.10.09-09.24.34",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "Schema7Migration",
+			"fullTestPath": "Hearthward.Campaign049.Schema7Migration",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.099021703004837036,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "OccupiedGiftsStayOnLegalGroundOrRollback",
+			"fullTestPath": "Hearthward.Campaign067.SecondStage.OccupiedGiftsStayOnLegalGroundOrRollback",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.084775201976299286,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 fixture: pos=X=109000.000 Y=45000.000 Z=90.150 walking=1 ground=X=109000.000 Y=45000.000 Z=0.000 paused=0 A=0.000000 N=80 K=80",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 occupied gift: victory=1 hometown=1 facilities=5 buildings=5 feedback=",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogWorld: UWorld::CleanupWorld called on a world that has begun play, missing call to EndPlay (Untitled)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 1,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "PromptUsesWeightedControlProgress",
+			"fullTestPath": "Hearthward.Campaign067.SecondStage.PromptUsesWeightedControlProgress",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.19593620300292969,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 fixture: pos=X=100000.000 Y=41000.000 Z=90.150 walking=1 ground=X=100000.000 Y=41000.000 Z=0.000 paused=0 A=0.000000 N=80 K=80",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 actual weighted prompt: ",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'The actual player-facing prompt displays 70 percent of 40/80 plus 30 percent of 1/4 as 42.5 percent' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampaignEndStateTests.cpp",
+					"lineNumber": 205,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'The same actual prompt retains its one-of-four flag count' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\CampaignEndStateTests.cpp",
+					"lineNumber": 206,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogWorld: UWorld::CleanupWorld called on a world that has begun play, missing call to EndPlay (Untitled)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 1,
+			"errors": 2,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "FailedSurvivalRejectsAutomaticVictory",
+			"fullTestPath": "Hearthward.Campaign067.FailedSurvivalRejectsAutomaticVictory",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.023726601153612137,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 fixture: pos=X=109000.000 Y=45000.000 Z=90.150 walking=1 ground=X=109000.000 Y=45000.000 Z=0.000 paused=0 A=0.000000 N=80 K=80",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogWorld: UWorld::CleanupWorld called on a world that has begun play, missing call to EndPlay (Untitled)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 1,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "FlagUsesActualActiveSeconds",
+			"fullTestPath": "Hearthward.Campaign067.FlagUsesActualActiveSeconds",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.044025998562574387,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 fixture: pos=X=100000.000 Y=41000.000 Z=90.150 walking=1 ground=X=100000.000 Y=41000.000 Z=0.000 paused=0 A=0.000000 N=80 K=80",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogWorld: UWorld::CleanupWorld called on a world that has begun play, missing call to EndPlay (Untitled)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 fixture: pos=X=100000.000 Y=41000.000 Z=90.150 walking=1 ground=X=100000.000 Y=41000.000 Z=0.000 paused=0 A=0.000000 N=80 K=80",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogWorld: UWorld::CleanupWorld called on a world that has begun play, missing call to EndPlay (Untitled)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 fixture: pos=X=100000.000 Y=41000.000 Z=90.150 walking=1 ground=X=100000.000 Y=41000.000 Z=0.000 paused=0 A=0.000000 N=80 K=80",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogWorld: UWorld::CleanupWorld called on a world that has begun play, missing call to EndPlay (Untitled)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 3,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "VictoryActivatesActualSecondCamp",
+			"fullTestPath": "Hearthward.Campaign067.VictoryActivatesActualSecondCamp",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.02537199854850769,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Campaign067 fixture: pos=X=109000.000 Y=45000.000 Z=90.150 walking=1 ground=X=109000.000 Y=45000.000 Z=0.000 paused=0 A=0.000000 N=80 K=80",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogWorld: UWorld::CleanupWorld called on a world that has begun play, missing call to EndPlay (Untitled)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 1,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "PrologueActionGoalRemainsVisible",
+			"fullTestPath": "Hearthward.Iteration.Task100.Fixture.PrologueActionGoalRemainsVisible",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.026454798877239227,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Layer: isolated real-world/controller resolver fixture; no normal-input, rendering or campaign-completion claim.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "UnknownSideGoalIsHidden",
+			"fullTestPath": "Hearthward.Iteration.Task100.Fixture.UnknownSideGoalIsHidden",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.018966298550367355,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Task100 actual HUD resolver: side_05 available=1 location=loc_dwellings visible=0 world=X=0.000 Y=0.000 Z=0.000",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "WaitingRescueUsesCurrentPersonPosition",
+			"fullTestPath": "Hearthward.Iteration.Task100.Fixture.WaitingRescueUsesCurrentPersonPosition",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.044965598732233047,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Task100 waiting rescue fallback: world=X=-81000.000 Y=-80000.000 Z=100.000 person=X=-81000.000 Y=-80000.000 Z=100.000 route=0 route_id=None",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Layer: isolated real Game world/controller/player, actual campaign refresh and live person actor; fixture movement is diagnostic, not normal rescue completion.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "ZoneArchitecturePassages",
+			"fullTestPath": "Hearthward.Iteration.Task100.Fixture.ZoneArchitecturePassages",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D07E915C4DB03A4F6E882B92048E9F18"
+			],
+			"duration": 0.062573201954364777,
+			"dateTime": "2026.10.09-09.24.35",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "SM_RiverGate dimensions cm=X=200.000 Y=707.000 Z=520.000 convex=39",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "SM_WorkshopShelter dimensions cm=X=615.982 Y=650.000 Z=467.000 convex=43",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "SM_DwellingPorch dimensions cm=X=576.921 Y=570.000 Z=472.000 convex=55",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "SM_AssemblyColonnade dimensions cm=X=720.000 Y=725.000 Z=534.000 convex=24",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Isolated asset collision fixture; does not certify terrain or a completed campaign.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-09.24.35"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

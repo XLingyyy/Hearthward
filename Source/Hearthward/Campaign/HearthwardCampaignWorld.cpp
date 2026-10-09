@@ -20,6 +20,8 @@
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SceneComponent.h"
+#include "Materials/MaterialInterface.h"
 #include "Components/DirectionalLightComponent.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/StaticMesh.h"
@@ -373,15 +375,57 @@ void UHearthwardCampaignSubsystem::RefreshActors()
     {
         const auto Z=V->AsObject();const FVector Center=HearthwardCampaign::XY(Z,TEXT("center"));
         if(FVector::Dist2D(Center,PlayerPosition)>60000)continue;
+        const FString ZoneId=Text(Z,TEXT("id"));
+        // Measured level sites avoid the natural-map slopes without moving gameplay anchors or patrols.
+        const TMap<FString,TArray<FVector2D>> SiteOffsets={
+            {TEXT("river_gate"),{{1500,0},{0,0},{0,0},{0,0}}},
+            {TEXT("workshops"),{{-1000,2500},{-1500,1000},{0,0},{0,0}}},
+            {TEXT("dwellings"),{{3500,0},{0,0},{0,0},{-4500,2000}}},
+            {TEXT("assembly"),{{0,0},{0,0},{2000,-5500},{-4000,-5500}}}};
         for(int32 I=0;I<4;++I)
         {
             const FName Tag(*FString::Printf(TEXT("CampaignHouse:%s:%d"),*Text(Z,TEXT("id")),I));
             if(Scenery.ContainsByPredicate([&](const auto& A){return A.IsValid() && A->ActorHasTag(Tag);}))continue;
             const auto& At=Z->GetArrayField(TEXT("houses"))[I]->AsArray();
-            FVector Floor;if(!Ground(FVector(At[0]->AsNumber()*100,At[1]->AsNumber()*100,0),Floor))continue;
-            const FRotator Rotation(0,I*90,0);FVector DoorFloor;
-            if(!Ground(Floor+Rotation.RotateVector(FVector(270,-136,0)),DoorFloor))continue;Floor.Z=DoorFloor.Z;
-            auto* House=GetWorld()->SpawnActor<AHearthwardTask028CampHouse>(Floor,Rotation);House->Tags.Add(Tag);Scenery.Add(House);
+            const FVector2D Offset=SiteOffsets[ZoneId][I];
+            FVector Floor;if(!Ground(FVector(At[0]->AsNumber()*100+Offset.X,At[1]->AsNumber()*100+Offset.Y,0),Floor))continue;
+            const FRotator Rotation(0,I*90,0);
+            const TCHAR* MeshName=ZoneId==TEXT("river_gate")?TEXT("SM_RiverGate"):
+                ZoneId==TEXT("workshops")?TEXT("SM_WorkshopShelter"):
+                ZoneId==TEXT("dwellings")?TEXT("SM_DwellingPorch"):TEXT("SM_AssemblyColonnade");
+            const FString MeshPath=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-100/Zones/%s.%s"),MeshName,MeshName);
+            UStaticMesh* Mesh=LoadObject<UStaticMesh>(nullptr,*MeshPath);if(!Mesh)continue;
+            const FBox Bounds=Mesh->GetBoundingBox();
+            for(double X:{Bounds.Min.X,Bounds.Max.X})for(double Y:{Bounds.Min.Y,Bounds.Max.Y})
+            {
+                FVector Support;
+                if(Ground(Floor+Rotation.RotateVector(FVector(X,Y,0)),Support))Floor.Z=FMath::Min(Floor.Z,Support.Z);
+            }
+            auto* House=GetWorld()->SpawnActor<AActor>(Floor,Rotation);
+            auto* Root=NewObject<USceneComponent>(House);House->SetRootComponent(Root);Root->RegisterComponent();
+            House->SetActorLocationAndRotation(Floor,Rotation);
+            auto AddMesh=[&](UStaticMesh* Asset,const FVector& Local)
+            {
+                auto* Part=NewObject<UStaticMeshComponent>(House);House->AddInstanceComponent(Part);
+                Part->SetupAttachment(Root);Part->SetStaticMesh(Asset);Part->SetRelativeLocation(Local);
+                Part->SetCollisionProfileName(TEXT("BlockAll"));Part->RegisterComponent();return Part;
+            };
+            auto* Architecture=AddMesh(Mesh,FVector::ZeroVector);
+            for(int32 Slot=0;Slot<Mesh->GetStaticMaterials().Num();++Slot)
+            {
+                const FString Name=Mesh->GetStaticMaterials()[Slot].MaterialSlotName.ToString();
+                const TCHAR* MaterialPath=Name.Contains(TEXT("Stone"))?
+                    TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/M_RoughStone.M_RoughStone"):
+                    Name.Contains(TEXT("Timber"))?TEXT("/Game/Hearthward/Assets/TASK-096/Nearfield/M_OldTimber.M_OldTimber"):nullptr;
+                if(MaterialPath)Architecture->SetMaterial(Slot,LoadObject<UMaterialInterface>(nullptr,MaterialPath));
+            }
+            if(ZoneId==TEXT("workshops"))
+            {
+                const TCHAR* FacilityName=I%3==0?TEXT("Workbench"):I%3==1?TEXT("Forge"):TEXT("Warehouse");
+                const FString FacilityPath=FString::Printf(TEXT("/Game/Hearthward/Assets/TASK-098/%s/SM_%s_Practical.SM_%s_Practical"),FacilityName,FacilityName,FacilityName);
+                if(auto* Facility=LoadObject<UStaticMesh>(nullptr,*FacilityPath))AddMesh(Facility,FVector(0,-195,0));
+            }
+            House->Tags.Add(Tag);House->Tags.Add(TEXT("Hearthward.ZoneArchitecture"));Scenery.Add(House);
         }
     }
     if(State.Positions.Contains(TEXT("route_mine")))
