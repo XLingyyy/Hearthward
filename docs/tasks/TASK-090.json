@@ -57,7 +57,13 @@
     "docs/releases/iteration-084-103-rc/candidate10/",
     "docs/PROJECT_STATE.md",
     "docs/START_HERE.md",
-    "docs/planning/TASK-084-103/EXECUTION_STATUS.md"
+    "docs/planning/TASK-084-103/EXECUTION_STATUS.md",
+    "Source/Hearthward/Interaction/HearthwardHarvestSubsystem.cpp",
+    "Source/Hearthward/Interaction/HearthwardResourceInteractionComponent.cpp",
+    "Source/Hearthward/Interaction/HearthwardFurnitureInteractionComponent.cpp",
+    "Source/Hearthward/Nature/HearthwardNatureActor.cpp",
+    "Source/Hearthward/Inventory/HearthwardDroppedEquipment.cpp",
+    "docs/releases/iteration-084-103-rc/candidate11/"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -112,6 +118,7 @@
     "2026-10-07 本轮：只读PreparationView与HUD/日志已经接入；开场地点、waiting实际位置及任一人物倒地的普通目标抑制均已修。原生3项实际Success，含新增journal/map同步段及两项150%真实伤害Widget回归；合计2 warnings/0 errors。未将原生语义作为最终渲染/正常OS验收。",
     "2026-10-07 当前用户已授权本批本地执行；为已复现的倒地提示重叠/等待获救者HUD与地图不同步，最小扩展上述专用测试与地图目标消费者，不扩展Content/Save或远端权限。",
     "2026-10-07最新原生子集docs/qa/TASK-090/native-green-20261007.json，原始.agent-local/qa/TASK-090-100/native-green-20261007/index.json；本单3/3 Success、2 warnings/0 errors。两项真实Downed RED原日志保留于native-urgent-red-20261007.json。构建build-green-repair-20261007/result.json ok=true；Source已释放并冻结，README/PROJECT_STATE归root。正常输入/IME、最终渲染、兼容档/独立Load、Owner/真人、二机、性能与发行分层未验。",
-    "2026-10-09 用户报告靠近所有交互点没有视觉提示并明确要求先修复。授权恢复当前HUD附近目标提示、只读Campaign查询、定向RED/GREEN与实际渲染验证、候选10构建交付及提交推送；不改距离/奖励/存档/场景或设计规则。"
+    "2026-10-09 用户报告靠近所有交互点没有视觉提示并明确要求先修复。授权恢复当前HUD附近目标提示、只读Campaign查询、定向RED/GREEN与实际渲染验证、候选10构建交付及提交推送；不改距离/奖励/存档/场景或设计规则。",
+    "用户明确要求物体头顶提示，仅仍可交互时可见，已领取/耗尽/不可用时隐藏。允许提示锚点、只读可用性判定及已完成目标筛选、定向回归/PIE/candidate11；不改资源成本、奖励数量和存档格式。"
   ]
 }
