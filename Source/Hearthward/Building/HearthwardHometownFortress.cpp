@@ -219,6 +219,7 @@ void AHearthwardHometownFortress::BeginPlay()
     }
     Lamp(FVector(480,320,F+270));
     Lamp(FVector(0,-470,F+230));
+    Lamp(FVector(480,640,F+270));
     Part(TEXT("GalleryFloor"),FVector(550,800,F-30),FVector(2500,600,60),true,Timber);
     Part(TEXT("GalleryRoof"),FVector(550,850,F+555),FVector(2700,700,60),true,Timber);
     for(float X:{-600.f,200.f,900.f,1800.f})

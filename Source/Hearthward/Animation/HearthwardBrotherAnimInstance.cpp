@@ -35,6 +35,7 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
     FAnimNode_SequencePlayer_Standalone LifePlayers[3];
     FBrotherActionBlend LifeLayers[3];
     uint32 SeenAttack = 0;
+    float LocomotionPhase = 0;
 
     explicit FBrotherAnimProxy(UAnimInstance* Instance) : FAnimInstanceProxy(Instance) {}
     virtual void Initialize(UAnimInstance* Instance) override
@@ -79,9 +80,32 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
         }
         for(int32 I=0;I<6;++I)if(Players[I].GetSequence()!=Brother->Clips[I])Players[I].SetSequence(Brother->Clips[I]);
         Locomotion.Alpha = FMath::Clamp(Brother->GroundSpeed / 40.f, 0.f, 1.f);
-        Gait.Alpha = FMath::Clamp((Brother->GroundSpeed - 220.f) / 100.f, 0.f, 1.f);
-        Players[1].SetPlayRate(FMath::Clamp(Brother->GroundSpeed / 180.f, 0.25f, 1.6f));
-        Players[2].SetPlayRate(FMath::Clamp(Brother->GroundSpeed / 360.f, 0.4f, 1.6f));
+        const bool Companion = Cast<AHearthwardCompanionFixture>(Brother->TryGetPawnOwner()) != nullptr;
+        Gait.Alpha = FMath::Clamp((Brother->GroundSpeed - (Companion ? 140.f : 220.f)) / (Companion ? 140.f : 100.f), 0.f, 1.f);
+        if (Companion)
+        {
+            const float WalkLength = Brother->Clips[1]->GetPlayLength();
+            const float RunLength = Brother->Clips[2]->GetPlayLength();
+            const float CycleDistance = FMath::Lerp(100.f * WalkLength, 350.f * RunLength, Gait.Alpha);
+            const float CycleRate = Brother->GroundSpeed / CycleDistance;
+            for (int32 Index : {1, 2})
+            {
+                Players[Index].SetGroupName(NAME_None);
+                Players[Index].SetGroupMethod(EAnimSyncMethod::DoNotSync);
+                Players[Index].SetPlayRate(CycleRate * Brother->Clips[Index]->GetPlayLength());
+            }
+            Players[1].SetStartPosition(LocomotionPhase * WalkLength);
+            Players[1].SetAccumulatedTime(LocomotionPhase * WalkLength);
+            const float RunTime = FMath::Fmod(LocomotionPhase + .81f, 1.f) * RunLength;
+            Players[2].SetStartPosition(RunTime);
+            Players[2].SetAccumulatedTime(RunTime);
+            LocomotionPhase = FMath::Fmod(LocomotionPhase + CycleRate * DeltaSeconds, 1.f);
+        }
+        else
+        {
+            Players[1].SetPlayRate(FMath::Clamp(Brother->GroundSpeed / 180.f, 0.25f, 1.6f));
+            Players[2].SetPlayRate(FMath::Clamp(Brother->GroundSpeed / 360.f, 0.4f, 1.6f));
+        }
         Wait.bAlphaBoolEnabled = Brother->MotionState == TEXT("Wait");
         Work.bAlphaBoolEnabled = Brother->MotionState == TEXT("Dig");
         Attack.bAlphaBoolEnabled = Brother->MotionState == TEXT("Attack");
