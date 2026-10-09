@@ -22,6 +22,10 @@ bool AHearthwardDroppedEquipment::PickUp(AActor* Player)
 FString UHearthwardEquipmentPickup::GetInteractionPrompt(AActor* Player) const
 {
     const auto* Bundle=Cast<AHearthwardDroppedEquipment>(GetOwner());
+    const auto* Bag=Player?Player->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
+    if(!Bundle || !Bag)return {};
+    FHearthwardInventoryState Prospective;Prospective.Restore(Bag->Snapshot());
+    if(Prospective.InsertInstance(Bundle->Item)!=EHearthwardInventoryResult::Success)return {};
     return Bundle?TEXT("E 拾取 ")+HearthwardData::Text(HearthwardData::Find(TEXT("items"),Bundle->Item.Definition.ToString()),TEXT("name")):FString();
 }
 FString UHearthwardEquipmentPickup::CompleteInteraction(AActor* Player)

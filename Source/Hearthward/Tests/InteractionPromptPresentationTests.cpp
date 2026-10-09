@@ -5,6 +5,7 @@
 #include "../Interaction/HearthwardInteractionComponent.h"
 #include "../Interaction/HearthwardFurnitureInteractionComponent.h"
 #include "../Interaction/HearthwardResourceInteractionComponent.h"
+#include "../Interaction/HearthwardHarvestSubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Actions/HearthwardTimedActionComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
@@ -68,15 +69,29 @@ bool FInteractionPrompt090Test::RunTest(const FString&)
     for(int32 I=0;I<25;++I)UI->Refresh();
     TestTrue(TEXT("nearby prompt survives repeated HUD refresh"),Prompt().Contains(TEXT("家中的遗物包")));
     TestEqual(TEXT("view cannot award relic or mutate campaign"),Campaign->State.Snapshot(),Before);
+    TSharedPtr<FJsonObject> AnchoredLayout;FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(UI->DescribeLayout()),AnchoredLayout);
+    bool Anchored=false;
+    for(const auto& Value:AnchoredLayout->GetArrayField(TEXT("components")))
+        if(Value->AsObject()->GetStringField(TEXT("id"))==TEXT("hud.interaction.prompt"))Value->AsObject()->TryGetBoolField(TEXT("world_anchored"),Anchored);
+    TestTrue(TEXT("interaction hint follows the target in world space"),Anchored);
+    TestTrue(TEXT("real relic interaction succeeds"),Campaign->Interact());UI->Refresh();
+    TestTrue(TEXT("claimed relic no longer advertises interaction"),Prompt().IsEmpty());
+    TestTrue(TEXT("claimed relic is absent from the campaign prompt"),Campaign->InteractionPrompt().IsEmpty());
+    TestFalse(TEXT("claimed relic no longer consumes interaction input"),Campaign->Interact());
     Player->SetActorLocation(Relic+FVector(400,0,0));Campaign->Feedback=TEXT("previous interaction result");UI->Refresh();
     TestTrue(TEXT("out-of-range target and stale completion are not proximity prompts"),Prompt().IsEmpty());
     Campaign->State.Phase=NAME_None;
+    auto* Harvest=NewObject<UHearthwardHarvestTargetComponent>(Player);
+    Harvest->Item=TEXT("herb");Harvest->ResourceKey=TEXT("prompt-depleted-fixture");Harvest->Capacity=0;
+    TestTrue(TEXT("exhausted resource does not advertise interaction"),Harvest->GetInteractionPrompt(Player).IsEmpty());
     auto* Furniture=World->SpawnActor<AActor>();
     auto* Target=NewObject<UHearthwardFurnitureInteractionComponent>(Furniture);Furniture->AddInstanceComponent(Target);Furniture->SetRootComponent(Target);
     Target->Kind=TEXT("bed");Target->MaxDistance=150;Target->RegisterComponent();Furniture->SetActorLocation(Relic);
     Player->SetActorLocation(Relic+FVector(100,0,0));
     TestTrue(TEXT("generic interaction resolver detects actual furniture"),Interaction->GetNearestTarget()==Target);
     UI->Refresh();TestTrue(TEXT("generic target prompt and rebound key reach HUD"),Prompt().Contains(TEXT("F 就座休息")));
+    Target->Kind=TEXT("campfire");UI->Refresh();TestTrue(TEXT("unusable cooking facility has no hint"),Prompt().IsEmpty());
+    Target->Kind=TEXT("bed");UI->Refresh();TestTrue(TEXT("reusable bed remains available"),Prompt().Contains(TEXT("F 就座休息")));
     if(FParse::Param(FCommandLine::Get(),TEXT("HearthwardPromptCapture")))TestTrue(TEXT("render actual multiline enlarged HUD"),UI->CaptureUI(TEXT("task090-bed-150"),1280,720));
     Player->SetActorLocation(Relic+FVector(200,0,0));UI->Refresh();
     TestTrue(TEXT("generic prompt uses target's actual distance"),Prompt().IsEmpty());
@@ -89,6 +104,8 @@ bool FInteractionPrompt090Test::RunTest(const FString&)
     Player->SetActorLocation(Relic+FVector(1100,0,0));
     TestTrue(TEXT("actual resource resolver selects storage"),Interaction->GetNearestTarget()==StorageTarget);
     Settings->Bindings.FindChecked(TEXT("storage.open"))[0].Key=EKeys::E;UI->OpenPage(TEXT("hud"));
+    TestTrue(TEXT("empty inventory keeps storage management but hides deposit"),Prompt().Contains(TEXT("E 管理仓储")) && !Prompt().Contains(TEXT("五秒存入")));
+    Bag->TryAdd(TEXT("wood"),1);UI->Refresh();
     TestTrue(FString::Printf(TEXT("storage and interact remaps remain distinct: %s"),*Prompt()),Prompt().Contains(TEXT("E 管理仓储 · F 五秒存入木材")));
     StorageActor->Destroy();
     auto* Timer=NewObject<UHearthwardTimedActionComponent>(Player);Player->AddInstanceComponent(Timer);Timer->RegisterComponent();

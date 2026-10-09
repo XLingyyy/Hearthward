@@ -20,6 +20,7 @@ public:
     UFUNCTION(BlueprintPure) FString Describe() const { return State.Snapshot(); }
     UFUNCTION(BlueprintPure) FString Prompt() const;
     UFUNCTION(BlueprintPure) FString InteractionPrompt() const;
+    FName InteractionTarget() const { return Nearest(); }
     UFUNCTION(BlueprintCallable) bool Interact();
     bool AssignEscort(FName Person,class AHearthwardCompanionFixture* Brother,FGuid Epoch);
     UFUNCTION(BlueprintCallable) bool Claim(FName Quest,FGuid Epoch);
@@ -54,6 +55,7 @@ private:
     void ResetActors();
     bool ZoneOccupied(FName Zone) const;
     FName Nearest() const;
+    bool InteractionComplete(FName Id) const;
     bool Use(FName Id);
     TArray<bool> Conditions(FName Quest) const;
     TMap<FName,TWeakObjectPtr<AHearthwardCampaignActor>> Actors;

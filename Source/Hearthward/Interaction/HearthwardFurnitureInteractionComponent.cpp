@@ -7,8 +7,12 @@
 FString UHearthwardFurnitureInteractionComponent::GetInteractionPrompt(AActor* Interactor) const
 {
     if(Kind==TEXT("medical_area"))return TEXT("E 进入治疗区 · 每秒恢复3%最大生命，移动离开");
-    return Kind==TEXT("bed")?TEXT("E 就座休息 · 就座后每秒恢复2%最大生命\n普通饱食消耗 · 移动离开")
-        :TEXT("E 烤肉5秒 · 鲜肉1 + 木材1 → 烤肉1\n移动可中断，完成时消耗材料");
+    if(Kind==TEXT("bed"))return TEXT("E 就座休息 · 就座后每秒恢复2%最大生命\n普通饱食消耗 · 移动离开");
+    const auto* Bag=Interactor?Interactor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
+    if(Kind!=TEXT("campfire") || !Bag)return {};
+    FHearthwardInventoryState Prospective;Prospective.Restore(Bag->Snapshot());
+    if(Prospective.Exchange({{TEXT("meat"),1},{TEXT("wood"),1}},{{TEXT("roast"),1}},1)!=EHearthwardInventoryResult::Success)return {};
+    return TEXT("E 烤肉5秒 · 鲜肉1 + 木材1 → 烤肉1\n移动可中断，完成时消耗材料");
 }
 FString UHearthwardFurnitureInteractionComponent::CompleteInteraction(AActor* Interactor)
 {

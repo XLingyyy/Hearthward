@@ -75,17 +75,13 @@ FString UHearthwardHarvestTargetComponent::GetInteractionPrompt(AActor* Interact
 {
     const int32 Count=GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Remaining(ResourceKey,Capacity);
     const FString Label=HearthwardData::Text(HearthwardData::Find(TEXT("items"),Item.ToString()),TEXT("name"));
-    if(Count<=0)return Label+TEXT("已采尽 · 两个游戏日后恢复，建筑遮挡时延后");
+    if(Count<=0)return {};
+    if(const auto* Source=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->Source(ResourceKey);Source && Source->Blocked)return {};
     const auto* Bag=Interactor?Interactor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
     FGuid Tool;const int32 ToolYield=Bag?HearthwardHarvestTools::Yield(Bag,Item,Tool):0;
-    if(ToolYield<=0)
-    {
-        const TCHAR* Required=Item==TEXT("wood")?TEXT("斧头")
-            :Item==TEXT("refined_ore")?TEXT("Ⅱ级或更高等级的镐")
-            :(Item==TEXT("stone") || Item==TEXT("ore"))?TEXT("镐")
-            :Item==TEXT("fish")?TEXT("钓竿"):TEXT("采集工具");
-        return FString::Printf(TEXT("采集%s不可用 · 剩余 %d\n需要耐久大于零的%s"),*Label,Count,Required);
-    }
+    if(ToolYield<=0)return {};
+    FHearthwardInventoryState Prospective;Prospective.Restore(Bag->Snapshot());
+    if(Prospective.Add(Item,FMath::Min(ToolYield,Count))!=EHearthwardInventoryResult::Success)return {};
     FString ToolStatus=TEXT("徒手");
     if(const auto* Instance=Bag->FindInstance(Tool))
     {

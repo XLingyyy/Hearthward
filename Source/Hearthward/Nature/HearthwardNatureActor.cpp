@@ -9,6 +9,7 @@
 #include "../Combat/HearthwardCombatRules.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
+#include "../Inventory/HearthwardHarvestTools.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../UI/HearthwardHUD.h"
@@ -150,14 +151,12 @@ void AHearthwardNatureActor::Refresh()
     }
     InteractionText=Name;
     // The world-space engine font has no CJK glyphs; the existing HUD renders the localized prompt.
-    Label->SetText(FText::FromString(TEXT("E")));
+    Label->SetVisibility(false);
 }
 void AHearthwardNatureActor::Tick(float Delta)
 {
     Super::Tick(Delta);if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Suspended())return;
     Combat->Memory.HitRemaining=FMath::Max(0.,Combat->Memory.HitRemaining-Delta);
-    auto* PC=UGameplayStatics::GetPlayerController(this,0);
-    if(PC){Label->SetWorldRotation((PC->PlayerCameraManager->GetCameraLocation()-Label->GetComponentLocation()).Rotation());Label->SetVisibility(PC->GetPawn() && FVector::Dist2D(PC->GetPawn()->GetActorLocation(),GetActorLocation())<300);}
     if(Kind==TEXT("animal"))MoveAnimal(Delta);
 }
 void AHearthwardNatureActor::MoveAnimal(float Delta)
@@ -287,7 +286,36 @@ void AHearthwardNatureActor::MoveAnimal(float Delta)
     SetActorRotation(Direction.Rotation());SetActorLocation(Next,true);A->Position=GetActorLocation();
 }
 FString UHearthwardNatureInteraction::GetInteractionPrompt(AActor* Interactor) const
-{const auto* A=Cast<AHearthwardNatureActor>(GetOwner());return A?A->InteractionText+(A->Kind==TEXT("fish")?TEXT(" · E 开始钓鱼"):TEXT(" · E 操作")):FString();}
+{
+    const auto* A=Cast<AHearthwardNatureActor>(GetOwner());
+    const auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
+    const auto* Bag=Interactor?Interactor->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
+    if(!A || !Bag || N->Busy())return {};
+    const auto* Point=N->State.Points.FindByPredicate([&](const auto& P){return P.Id==A->Id;});
+    if(A->Kind==TEXT("resource"))
+    {
+        if(!Point)return {};
+        const auto D=HearthwardNature::Definition(TEXT("resources"),Point->Definition);const FName Item(Text(D,TEXT("item")));FGuid Tool;
+        const int32 Yield=Text(D,TEXT("tool"))==TEXT("hand")?2:HearthwardHarvestTools::Yield(Bag,Item,Tool);
+        const auto* Source=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->Source(Point->Key.ToString());
+        if(!Source || Source->Blocked || Source->Remaining<=0 || Yield<=0)return {};
+        FHearthwardInventoryState Prospective;Prospective.Restore(Bag->Snapshot());
+        if(Prospective.Add(Item,FMath::Min(Yield,Source->Remaining))!=EHearthwardInventoryResult::Success)return {};
+    }
+    if(A->Kind==TEXT("fish"))
+    {
+        const auto* Rod=Bag->FindInstance(Bag->EquippedInstance(TEXT("tool")));
+        if(!Point || Point->Remaining<=0 || Bag->Available(TEXT("bait"))<1 || !Rod || Rod->Durability<=0
+            || Text(Find(TEXT("items"),Rod->Definition.ToString()),TEXT("toolKind"))!=TEXT("fishing_rod"))return {};
+    }
+    if(A->Kind==TEXT("treasure") && (!Point || !N->State.Maps.Contains(Point->Definition) || N->State.Opened.Contains(Point->Definition)))return {};
+    if(A->Kind==TEXT("animal"))
+    {
+        const auto* Animal=N->State.Animals.FindByPredicate([&](const auto& V){return V.Id==A->Id;});
+        if(!Animal || (Animal->Health<=0 && Animal->Loot.IsEmpty()))return {};
+    }
+    return A->InteractionText+(A->Kind==TEXT("fish")?TEXT(" · E 开始钓鱼"):TEXT(" · E 操作"));
+}
 FString UHearthwardNatureInteraction::CompleteInteraction(AActor* Interactor)
 {
     auto* A=Cast<AHearthwardNatureActor>(GetOwner());auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();

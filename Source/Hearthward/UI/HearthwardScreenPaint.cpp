@@ -9,6 +9,7 @@
 #include "../Experience/HearthwardPresentationComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "Engine/GameInstance.h"
+#include "GameFramework/PlayerController.h"
 
 int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometry& G,const FSlateRect& Clip,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool ParentEnabled) const
 {
@@ -70,9 +71,18 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     }
     for(int32 I=0;I<Elements.Num();++I)
     {
-        const auto& E=Elements[I]; const bool Focus=IsHighlighted(I);
+        auto E=Elements[I]; const bool Focus=IsHighlighted(I);
         const float Opacity=E.Opacity();
         if(E.Hidden || E.TextScrollClipped || Opacity<=0) continue;
+        if(E.WorldAnchored)
+        {
+            auto* PC=GetOwningPlayer();FVector2D Screen;int32 Width=0,Height=0;
+            if(!PC || !PC->ProjectWorldLocationToScreen(E.WorldAnchor,Screen,false))continue;
+            PC->GetViewportSize(Width,Height);
+            if(Width<=0 || Height<=0 || Screen.X<0 || Screen.Y<0 || Screen.X>Width || Screen.Y>Height)continue;
+            Screen*=G.GetLocalSize()/FVector2D(Width,Height);
+            E.Position+=(Screen-Offset)/Scale;
+        }
         const bool MapSidebar=ReadableLayout() && Page==TEXT("map") && E.Component==TEXT("map.sidebar");
         const bool TextClip=MapSidebar || (ReadableLayout() && Page!=TEXT("map") && E.LayoutId!=TEXT("simple.backdrop") && E.LayoutId!=TEXT("simple.readable.surface") && !(E.Type==TEXT("image") && E.Size.X>=1600));
         if(TextClip)

@@ -5,7 +5,7 @@
 
 namespace HearthwardVersion
 {
-    inline const TCHAR* Current=TEXT("0.2.0-preview.20261009.2");
+    inline const TCHAR* Current=TEXT("0.2.0-preview.20261009.3");
     inline const TCHAR* Releases=TEXT("https://github.com/XLingyyy/Hearthward/releases");
     bool IsNewer(const FString& Candidate,const FString& Installed);
 }

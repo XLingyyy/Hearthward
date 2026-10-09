@@ -1,0 +1,213 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "B92953AC41EE9E316948ABA21155A50B",
+			"instanceName": "LAPTOP-R8NPOP05-27512",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.09-06.54.04",
+	"succeeded": 0,
+	"succeededWithWarnings": 0,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 1.3511302471160889,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "NearbyInteractionPrompt",
+			"fullTestPath": "Hearthward.Iteration.Task090.NearbyInteractionPrompt",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"B92953AC41EE9E316948ABA21155A50B"
+			],
+			"duration": 1.3511302471160889,
+			"dateTime": "2026.10.09-06.54.03",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Synchronously lazy loading font file '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' with subface index 0 in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Took 0.024840 seconds to synchronously load lazily loaded font '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' (24977K) on Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Freetype font face in memory successfully created with synchronously loaded raw font file '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' subface 0 in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogSlate: Font face '../../../../../GameFactory/Hearthward/Resources/UI/Fonts/LXGWWenKai-Regular.ttf' subface index 0 successfully added to font face map in Game thread.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, DoNotLock -> LockOnCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, NoCapture -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'interaction hint follows the target in world space' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\InteractionPromptPresentationTests.cpp",
+					"lineNumber": 76,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'claimed relic no longer advertises interaction' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\InteractionPromptPresentationTests.cpp",
+					"lineNumber": 77,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'claimed relic is absent from the campaign prompt' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\InteractionPromptPresentationTests.cpp",
+					"lineNumber": 78,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, LockOnCapture -> DoNotLock",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, CapturePermanently -> NoCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseLockMode Changed, DoNotLock -> LockOnCapture",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogViewport: Viewport MouseCaptureMode Changed, NoCapture -> CapturePermanently",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogStreaming: FlushAsyncLoading(398): 1 QueuedPackages, 0 AsyncPackages",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.09-06.54.04"
+				}
+			],
+			"warnings": 0,
+			"errors": 3,
+			"artifacts": []
+		}
+	]
+}

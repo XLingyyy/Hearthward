@@ -33,11 +33,15 @@ FString UHearthwardResourceInteractionComponent::GetInteractionPrompt(AActor* In
     if (bDeposit)
     {
         const auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
-        return FString::Printf(TEXT("R 管理仓储 · E 五秒存入木材\n随身木材 %d   仓储木材 %d"),
+        const FString Actions=Bag->GetItemCount(TEXT("wood"))>0?TEXT("R 管理仓储 · E 五秒存入木材"):TEXT("R 管理仓储");
+        return Actions+FString::Printf(TEXT("\n随身木材 %d   仓储木材 %d"),
             Bag->GetItemCount(TEXT("wood")), Storage->GetItemCount(TEXT("wood")));
     }
     const auto* Source = GetOwner()->FindComponentByClass<UHearthwardInventoryComponent>();
     FGuid Tool;const int32 Yield=HearthwardHarvestTools::Yield(Bag,TEXT("wood"),Tool);
+    if(!Source || Source->GetItemCount(TEXT("wood"))<=0 || Yield<=0)return {};
+    FHearthwardInventoryState Prospective;Prospective.Restore(Bag->Snapshot());
+    if(Prospective.Add(TEXT("wood"),FMath::Min(Yield,Source->GetItemCount(TEXT("wood"))))!=EHearthwardInventoryResult::Success)return {};
     return FString::Printf(TEXT("E 采集木材 ×%d · 5秒\n剩余 %d   单重 1   背包余量 %.2f"),Yield,
         Source ? Source->GetItemCount(TEXT("wood")) : 0, Bag->GetCapacity() - Bag->GetWeight());
 }

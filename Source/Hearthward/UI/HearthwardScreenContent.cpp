@@ -1,5 +1,6 @@
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Campaign/HearthwardCampaignActor.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
@@ -560,22 +561,33 @@ void UHearthwardScreenWidget::ComposeHUD()
         Feedback(Interaction->GetCompletionFeedback(),TEXT("hud.interaction.feedback"),Interaction->GetFeedbackRevision());
     const auto* Workshop=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>();
     const auto* Action=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardTimedActionComponent>();
-    if(!Downed && (!PlayerSurvival || PlayerSurvival->Alive()) && (!Combat || !Combat->Busy())
+    if(!Downed && G->CanChangeSkills() && (!PlayerSurvival || PlayerSurvival->Alive()) && (!Combat || !Combat->Busy())
         && (!Workshop || !Workshop->IsPlacing()) && !Campaign->Busy() && !N->Busy()
         && (!Action || Action->GetStatus()!=EHearthwardTimedActionStatus::Running))
     {
         // Match Character::Interact's target priority and the existing distance queries.
-        FString Prompt;
-        if(Workshop && Workshop->NearbyWorkbench().IsValid())Prompt=TEXT("E 使用工作台 · 制作 / 维修");
-        else Prompt=Campaign->InteractionPrompt();
-        if(Prompt.IsEmpty())
+        FString Prompt;FVector Anchor=FVector::ZeroVector;
+        const FGuid NearbyBench=Workshop?Workshop->NearbyWorkbench():FGuid();
+        const FName CampaignTarget=Campaign->InteractionTarget();
+        auto AboveActor=[](const AActor* Actor)
+        {FVector Center,Extent;Actor->GetActorBounds(false,Center,Extent);return Center+FVector(0,0,Extent.Z+24);};
+        if(NearbyBench.IsValid())
+        {Prompt=TEXT("E 使用工作台 · 制作 / 维修");Anchor=AboveActor(Workshop->ResolveWorkbench(NearbyBench));}
+        else if(!CampaignTarget.IsNone())
+        {
+            Prompt=Campaign->InteractionPrompt();
+            const auto* Actor=Campaign->Actor(CampaignTarget);
+            Anchor=Actor?AboveActor(Actor):Campaign->Position(CampaignTarget)+FVector(0,0,40);
+        }
+        else
         {
             const FName Station=G->NearbyTravelStation();
             if(G->Enabled && !Station.IsNone() && !G->Activated.Contains(Station)
                 && (!Campaign->Active() || (Campaign->State.Phase!=TEXT("prologue") && (Station!=TEXT("hometown") || Campaign->State.Victory))))
-                Prompt=TEXT("E 激活路标");
+                {Prompt=TEXT("E 激活路标");Anchor=G->LocationPosition(Station)+FVector(0,0,120);}
             else if(const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>())
-                if(const auto* Target=Interaction->GetNearestTarget())Prompt=Target->GetInteractionPrompt(GetOwningPlayerPawn());
+                if(const auto* Target=Interaction->GetNearestTarget())
+                {Prompt=Target->GetInteractionPrompt(GetOwningPlayerPawn());Anchor=Target->GetComponentLocation()+FVector(0,0,80);}
         }
         if(!Prompt.IsEmpty())
         {
@@ -584,11 +596,13 @@ void UHearthwardScreenWidget::ComposeHUD()
             Prompt.ReplaceInline(TEXT("R "),TEXT("{storage} "));
             Prompt.ReplaceInline(TEXT("{interact}"),*HearthwardInput::Label(Bindings,TEXT("interact")));
             Prompt.ReplaceInline(TEXT("{storage}"),*HearthwardInput::Label(Bindings,TEXT("storage.open")));
-            const float Font=20*TextScale,Width=544;
+            const float Font=20*TextScale;
             FSlateFontInfo Info(Typeface,FMath::RoundToInt(Font*.75f));
             Info.LetterSpacing=Number(Theme->GetObjectField(TEXT("typography")),TEXT("tracking"));
             const auto Measure=FSlateApplication::Get().GetRenderer()->GetFontMeasureService();
             TArray<FString> Lines;Prompt.ParseIntoArrayLines(Lines,false);int32 LineCount=0;
+            float Width=200;
+            for(const FString& Line:Lines)Width=FMath::Max(Width,FMath::Min(544.f,float(Measure->Measure(Line,Info).X)+2));
             for(FString Line:Lines)
             {
                 while(Line.Len()>1 && Measure->Measure(Line,Info).X>Width)
@@ -598,11 +612,13 @@ void UHearthwardScreenWidget::ComposeHUD()
                 }
                 ++LineCount;
             }
-            const float Height=LineCount*Font*1.6f,Y=900-Height-24;
-            HUD(TEXT("menuSurface"),TEXT(""),{520,Y},{580,Height+24},20,TEXT("hud.interaction.surface"),TEXT("hud.interaction"));
-            auto& Hint=HUD(TEXT("text"),TEXT(""),{538,Y+12},{Width,Height},20,TEXT("hud.interaction.prompt"),TEXT("hud.interaction"));
+            const float Height=LineCount*Font*1.6f,Y=-Height-24;
+            auto& Surface=HUD(TEXT("menuSurface"),TEXT(""),{-(Width+36)/2,Y},{Width+36,Height+24},20,TEXT("hud.interaction.surface"),TEXT("hud.interaction"));
+            Surface.WorldAnchored=true;Surface.WorldAnchor=Anchor;
+            auto& Hint=HUD(TEXT("text"),TEXT(""),{-Width/2,Y+12},{Width,Height},20,TEXT("hud.interaction.prompt"),TEXT("hud.interaction"));
+            Hint.WorldAnchored=true;Hint.WorldAnchor=Anchor;
             // Semantic keys are already resolved; Element's legacy prefix remap must not remap them again.
-            Hint.Text=Prompt;Hint.Color=Color(TEXT("gold"));
+            Hint.Text=Prompt;Hint.Color=Color(TEXT("gold"));Hint.Align=TEXT("center");
         }
     }
     if(N->Busy())
