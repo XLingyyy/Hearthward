@@ -24,6 +24,26 @@ bool FHometownFortressClearanceTest::RunTest(const FString&)
     Box->SetBoxExtent(FVector(20000,20000,50));Box->SetRelativeLocation(FVector(0,0,-50));
     Box->SetCollisionProfileName(TEXT("BlockAll"));Box->RegisterComponent();
     auto* Home=World->SpawnActor<AHearthwardHometownFortress>();Home->DispatchBeginPlay();
+    TArray<UStaticMeshComponent*> VisualParts;Home->GetComponents(VisualParts);
+    int32 VisualBeds=0,Joinery=0;
+    for(auto* Part:VisualParts)
+    {
+        if(Part->GetName()==TEXT("BedroomJoinery"))
+        {
+            ++Joinery;
+            TestNotNull(TEXT("Bedroom joinery asset resolves"),Part->GetStaticMesh().Get());
+            TestEqual(TEXT("Joinery stays decorative"),Part->GetCollisionEnabled(),ECollisionEnabled::NoCollision);
+        }
+        if(Part->GetName()==TEXT("PlayerBed") || Part->GetName()==TEXT("BrotherBed"))
+        {
+            ++VisualBeds;
+            TestNotNull(TEXT("Bed mesh resolves"),Part->GetStaticMesh().Get());
+            const FVector Half=Part->Bounds.BoxExtent;
+            TestTrue(TEXT("Authored bed fits existing collision footprint"),Half.X<=75 && Half.Y<=115);
+        }
+    }
+    TestEqual(TEXT("One joinery assembly"),Joinery,1);
+    TestEqual(TEXT("Two correctly oriented bedroom beds"),VisualBeds,2);
     TestFalse(TEXT("Player starts clear of bed, wall and ceiling"),World->OverlapBlockingTestByChannel(Home->BedroomLanding(),FQuat::Identity,ECC_Pawn,FCollisionShape::MakeCapsule(42,96)));
     TestFalse(TEXT("Brother has separate clear bedroom landing"),World->OverlapBlockingTestByChannel(Home->BedroomLanding()+FVector(160,100,0),FQuat::Identity,ECC_Pawn,FCollisionShape::MakeCapsule(42,96)));
     FHitResult Hit;

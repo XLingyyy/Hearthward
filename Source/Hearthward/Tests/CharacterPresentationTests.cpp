@@ -8,13 +8,17 @@
 #include "GameFramework/WorldSettings.h"
 #include "../Campaign/HearthwardCampaignActor.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Animation/HearthwardBrotherAnimInstance.h"
 #include "../Animation/HearthwardHeroAnimInstance.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
+#include "../Experience/HearthwardPresentationComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../HearthwardCharacter.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "Components/SceneComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimSequence.h"
@@ -29,6 +33,89 @@
 #include "Kismet/GameplayStatics.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FQuartermasterGround095Test,
+    "Hearthward.Iteration.Task095.QuartermasterGroundContact",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FQuartermasterGround095Test::RunTest(const FString&)
+{
+    UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    auto* Ground=World->SpawnActor<AActor>();auto* Floor=NewObject<UBoxComponent>(Ground);
+    Ground->AddInstanceComponent(Floor);Ground->SetRootComponent(Floor);Floor->SetBoxExtent(FVector(2000,2000,10));
+    Floor->SetCollisionProfileName(TEXT("BlockAll"));Floor->RegisterComponent();Ground->SetActorLocation(FVector(0,0,-10));
+    World->SpawnActor<AHearthwardCompanionFixture>();
+    auto* Camp=World->GetSubsystem<UHearthwardCampSubsystem>();Camp->State.AddCamp(TEXT("camp"),FVector::ZeroVector);
+    Camp->RefreshQuartermasters();int32 Count=0;
+    for(TActorIterator<ACharacter> It(World);It;++It)if(It->ActorHasTag(TEXT("Hearthward.Quartermaster")))
+    {
+        ++Count;auto* Mesh=It->GetMesh();Mesh->TickAnimation(.1f,false);Mesh->RefreshBoneTransforms();
+        TestTrue(TEXT("Standing civilian mesh root is within three centimetres of the real floor"),FMath::Abs(Mesh->GetComponentLocation().Z)<3);
+        TestTrue(TEXT("Idle ankles no longer float twenty centimetres above the floor"),FMath::Min(Mesh->GetSocketLocation(TEXT("foot_l")).Z,Mesh->GetSocketLocation(TEXT("foot_r")).Z)<16);
+        TestEqual(TEXT("Presentation fix preserves the existing NPC capsule"),It->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight(),88.f);
+    }
+    TestEqual(TEXT("One actual quartermaster is produced"),Count,1);
+    GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLocomotionContact095Test,
+    "Hearthward.Iteration.Task095.LocomotionContact",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FLocomotionContact095Test::RunTest(const FString&)
+{
+    // PROTOTYPE_ONLY isolated floor; production movement and animation, no saved state.
+    UWorld::InitializationValues Values;Values.AllowAudioPlayback(false).RequiresHitProxies(false).EnableTraceCollision(true);
+    auto* World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Values);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    auto* Ground=World->SpawnActor<AActor>();auto* Floor=NewObject<UBoxComponent>(Ground);
+    Ground->AddInstanceComponent(Floor);Ground->SetRootComponent(Floor);Floor->SetBoxExtent(FVector(10000,2000,10));
+    Floor->SetCollisionProfileName(TEXT("BlockAll"));Floor->RegisterComponent();Ground->SetActorLocation(FVector(0,0,-10));
+    World->InitializeActorsForPlay(FURL());World->GetWorldSettings()->NotifyBeginPlay();
+    for (bool IsBrother : {false,true})
+    {
+        ACharacter* Actor=IsBrother?static_cast<ACharacter*>(World->SpawnActor<AHearthwardCompanionFixture>()):World->SpawnActor<AHearthwardCharacter>();
+        Actor->SetActorTickEnabled(false);
+        if(auto* Gameplay=Actor->FindComponentByClass<UHearthwardGameplayComponent>())Gameplay->SetComponentTickEnabled(false);
+        if(auto* Presentation=Actor->FindComponentByClass<UHearthwardPresentationComponent>())Presentation->SetComponentTickEnabled(false);
+        auto* Movement=Actor->GetCharacterMovement();Movement->bRunPhysicsWithNoController=true;
+        auto* Mesh=Actor->GetMesh();Mesh->VisibilityBasedAnimTickOption=EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+        struct FSample { FVector Position,Feet[2]; };
+        for (float Speed : {90.f,180.f,250.f,350.f,600.f})
+        {
+            Actor->SetActorLocation(FVector(-3000,0,Actor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()+3));
+            Movement->SetMovementMode(MOVE_Walking);Movement->MaxWalkSpeed=Speed;
+            TArray<FSample> Samples;float Lowest=MAX_flt;
+            for(int32 I=0;I<180;++I)
+            {
+                Actor->AddMovementInput(FVector::ForwardVector,1,true);
+                Movement->TickComponent(.02f,LEVELTICK_All,nullptr);
+                Mesh->TickAnimation(.02f,false);Mesh->RefreshBoneTransforms();
+                if(I<30)continue;
+                FSample S;S.Position=Actor->GetActorLocation();
+                S.Feet[0]=Mesh->GetSocketLocation(TEXT("foot_l"));S.Feet[1]=Mesh->GetSocketLocation(TEXT("foot_r"));
+                Lowest=FMath::Min3(Lowest,float(S.Feet[0].Z),float(S.Feet[1].Z));Samples.Add(S);
+            }
+            TestTrue(*FString::Printf(TEXT("Requested %.0f cm/s, actual %.2f cm/s"),Speed,Actor->GetVelocity().Size2D()),FMath::IsNearlyEqual(float(Actor->GetVelocity().Size2D()),Speed,1.f));
+            TArray<float> Sliding;
+            for(int32 I=1;I<Samples.Num();++I)for(int32 Foot=0;Foot<2;++Foot)
+            {
+                const auto& A=Samples[I-1];const auto& B=Samples[I];
+                const float RelativeTravel=(B.Feet[Foot].X-B.Position.X)-(A.Feet[Foot].X-A.Position.X);
+                if(FMath::Max(A.Feet[Foot].Z,B.Feet[Foot].Z)<Lowest+3 && RelativeTravel<0)
+                    Sliding.Add(FMath::Abs(float(B.Feet[Foot].X-A.Feet[Foot].X)/.02f));
+            }
+            const FString Label=FString::Printf(TEXT("%s %.0f cm/s"),IsBrother?TEXT("Brother"):TEXT("Hero"),Speed);
+            if(TestTrue(*Label,Sliding.Num()>10))
+            {
+                Sliding.Sort();const float Median=Sliding[Sliding.Num()/2];
+                TestTrue(*FString::Printf(TEXT("%s planted foot median slip %.2f cm/s"),*Label,Median),Median<FMath::Max(20.f,Speed*.12f));
+            }
+        }
+        Actor->Destroy();World->Tick(LEVELTICK_All,.02f);
+    }
+    World->EndPlay(EEndPlayReason::Quit);GEngine->DestroyWorldContext(World);World->DestroyWorld(false);return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FWeaponPresentation095Test,
     "Hearthward.Iteration.Task095.WeaponInstancePresentation",
     EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)

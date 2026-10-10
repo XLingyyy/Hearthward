@@ -1,0 +1,6 @@
+{
+  "passed": false,
+  "method": "Production natural map, diagnostic repositioning and cameras; existing night lighting; not full campaign playthrough.",
+  "nodes": [],
+  "error": "Traceback (most recent call last):\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-097/route/capture.py\", line 59, in tick\n    pending=next(flow)\n            ^^^^^^^^^^\n  File \"G:/GameFactory/Hearthward/.agent-local/qa/TASK-097/route/capture.py\", line 44, in run\n    c=unreal.GameplayStatics.get_all_actors_with_tag(w,r['id']+suffix)[0];eye=floor+offset;c.set_actor_location(eye,False,True);c.set_actor_rotation(unreal.MathLibrary.find_look_at_rotation(eye,floor+unreal.Vector(0,0,80)),False);pc.set_view_target_with_blend(c,0);yield delay(2)\n      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^\nIndexError: Array: Index 0 is out-of-bounds (len: 0) for property 'TransientPythonProperty' (ArrayProperty)\n"
+}

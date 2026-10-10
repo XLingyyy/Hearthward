@@ -254,7 +254,7 @@ EHearthwardProposalResult AHearthwardCompanionFixture::AcceptGoal(AActor* Speake
         StopNavigation();
         Action->InterruptAction();
         BlockReason.Reset();
-        Spent.Reset();AppliedOperations.Reset();Receipts.Reset();NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();NextHuntAttackAt=0;CampBatchBaseline=-1;
+        Spent.Reset();AppliedOperations.Reset();Receipts.Reset();NavigationFailures=0;LastProgressAt=GetWorld()->GetTimeSeconds();LastProgressPosition=GetActorLocation();CancelMeleeAttack();NextHuntAttackAt=0;CampBatchBaseline=-1;
         Command.Goal=Goal;
         if(Goal.Intent==TEXT("collect") || Goal.Intent==TEXT("give") || (Goal.Intent==TEXT("store") && Goal.SourceRef==TEXT("bag")))
         {
@@ -289,6 +289,7 @@ EHearthwardProposalResult AHearthwardCompanionFixture::AcceptGoal(AActor* Speake
 bool AHearthwardCompanionFixture::Cancel(AActor* Speaker,bool bAllowPaused)
 {
     if (bSettling || !CanCommunicate(Speaker) || (GetWorld()->IsPaused() && !bAllowPaused)) return false;
+    CancelMeleeAttack();
     if(Command.IsCurrent(GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())) Event(TEXT("cancelled"),Command.GetItem(),Command.GetDelivered());
     StopCampBatch();
     Command.Cancel();
@@ -600,6 +601,7 @@ void AHearthwardCompanionFixture::ReturnBlocked(const FString& Reason)
 
 void AHearthwardCompanionFixture::HandleExecutionFailure(const FString& Reason)
 {
+    CancelMeleeAttack();
     if(Command.Goal.Intent==TEXT("camp_batch"))
     {
         StopCampBatch();StopNavigation();Action->InterruptAction();
@@ -853,11 +855,62 @@ void AHearthwardCompanionFixture::Handoff()
     AdvanceExecution();
 }
 
+bool AHearthwardCompanionFixture::MeleeAttackReady() const
+{
+    return MeleeHitAt>0 || GetWorld()->GetTimeSeconds()>=NextHuntAttackAt;
+}
+
+void AHearthwardCompanionFixture::CancelMeleeAttack()
+{
+    if(MeleeHitAt>0)
+        if(auto* Animation=Cast<UHearthwardBrotherAnimInstance>(GetMesh()->GetAnimInstance()))Animation->CancelAttack();
+    MeleeHitAt=0;MeleeTarget.Reset();MeleeWeapon.Invalidate();
+}
+
+bool AHearthwardCompanionFixture::AdvanceMeleeAttack(AActor* Target,AActor* Player,bool Hunting)
+{
+    const auto Epoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    const auto* Weapon=Bag->FindInstance(Bag->EquippedInstance(TEXT("weapon")));
+    const auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
+    auto* Combat=IsValid(Target)?Target->FindComponentByClass<UHearthwardCombatTargetComponent>():nullptr;
+    const float Range=HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("tuning")),TEXT("attackRange"))*.8f;
+    if(!Player || !Combat || !Combat->CanAct() || !Weapon || Weapon->Durability<=0 || !Survival->Alive() || Survival->Busy()
+        || FVector::Dist2D(GetActorLocation(),Target->GetActorLocation())>Range)
+    {CancelMeleeAttack();return false;}
+    if(MeleeHitAt>0 && (MeleeTarget!=Target || MeleeWeapon!=Weapon->Id || MeleeEpoch!=Epoch || bMeleeHunting!=Hunting))
+    {CancelMeleeAttack();return false;}
+    FHitResult Hit;FCollisionQueryParams Query(SCENE_QUERY_STAT(CompanionMelee),false,this);Query.AddIgnoredActor(Player);
+    if(GetWorld()->LineTraceSingleByChannel(Hit,GetActorLocation()+FVector(0,0,50),Target->GetActorLocation()+FVector(0,0,50),ECC_Visibility,Query)
+        && Hit.GetActor()!=Target)
+    {CancelMeleeAttack();return false;}
+    const double Now=GetWorld()->GetTimeSeconds();
+    if(MeleeHitAt<=0)
+    {
+        if(Now<NextHuntAttackAt)return false;
+        MeleeTarget=Target;MeleeWeapon=Weapon->Id;MeleeEpoch=Epoch;bMeleeHunting=Hunting;
+        MeleeHitAt=Now+.25;
+        NextHuntAttackAt=Now+HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("tuning")),TEXT("companionAttackCooldown"));
+        FVector Facing=Target->GetActorLocation()-GetActorLocation();Facing.Z=0;SetActorRotation(Facing.Rotation());
+        if(auto* Animation=Cast<UHearthwardBrotherAnimInstance>(GetMesh()->GetAnimInstance()))Animation->PlayAttack();
+        return false;
+    }
+    if(Now<MeleeHitAt)return false;
+    const float Attack=HearthwardData::Number(HearthwardData::Find(TEXT("items"),Weapon->Definition.ToString()),TEXT("attack"))
+        *(Survival->State.Severe()?.75f:1.f);
+    const FGuid Instance=Weapon->Id;
+    MeleeHitAt=0;MeleeTarget.Reset();MeleeWeapon.Invalidate();
+    Player->FindComponentByClass<UHearthwardGameplayComponent>()->DamageOpponent(Combat->Id,Attack,this);
+    Bag->WearInstance(Instance,1);
+    return true;
+}
+
 void AHearthwardCompanionFixture::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
     using P = EHearthwardCompanionPhase;
     if (!bFixtureEnabled || GetWorld()->IsPaused() || bSettling) return;
+    if(MeleeHitAt>0 && (MeleeEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()
+        || (bMeleeHunting && (!Execution.Current() || Execution.Current()->Type!=EHearthwardAgentActionType::Hunt))))CancelMeleeAttack();
     if(FindComponentByClass<UHearthwardSurvivalComponent>()->AutomaticBehavior(DeltaSeconds)) return;
     if (Phase == P::Idle || Phase == P::Cancelled || Phase == P::Completed || Phase == P::WaitingAtCamp || Phase==P::HoldingSafely) return;
 
@@ -1055,24 +1108,18 @@ void AHearthwardCompanionFixture::TickExecution(float DeltaSeconds)
         const float Range=HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("tuning")),TEXT("attackRange"));
         if(FVector::Dist2D(GetActorLocation(),Target->GetActorLocation())>Range*.8f)
         {
+            CancelMeleeAttack();
             if(!MoveTowards(Target,DeltaSeconds,Range*.8f))HandleExecutionFailure(TEXT("HUNT_PATH_BLOCKED"));
             return;
         }
         StopNavigation();
-        if(GetWorld()->GetTimeSeconds()<NextHuntAttackAt)return;
+        if(!MeleeAttackReady())return;
         FHitResult Hit;FCollisionQueryParams Query(SCENE_QUERY_STAT(CompanionHunt),false,this);Query.AddIgnoredActor(Player);
         if(GetWorld()->LineTraceSingleByChannel(Hit,GetActorLocation()+FVector(0,0,50),Target->GetActorLocation()+FVector(0,0,50),ECC_Visibility,Query)
             && Hit.GetActor()!=Target)
         {HandleExecutionFailure(TEXT("HUNT_LINE_BLOCKED"));return;}
         const float Before=Animal->Health;
-        const auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
-        const float Attack=HearthwardData::Number(HearthwardData::Find(TEXT("items"),Weapon->Definition.ToString()),TEXT("attack"))
-            *(Survival && Survival->State.Severe()?.75f:1.f);
-        FVector Facing=Target->GetActorLocation()-GetActorLocation();Facing.Z=0;SetActorRotation(Facing.Rotation());
-        if(auto* Animation=Cast<UHearthwardBrotherAnimInstance>(GetMesh()->GetAnimInstance()))Animation->PlayAttack();
-        Player->FindComponentByClass<UHearthwardGameplayComponent>()->DamageOpponent(Target->Combat->Id,Attack,this);
-        Bag->WearInstance(Weapon->Id,1);
-        NextHuntAttackAt=GetWorld()->GetTimeSeconds()+HearthwardData::Number(HearthwardData::Catalog()->GetObjectField(TEXT("tuning")),TEXT("companionAttackCooldown"));
+        if(!AdvanceMeleeAttack(Target,Player,true))return;
         if(Before>0 && Animal->Health<=0)
         {
             const auto Ticket=Command.GetActive();
@@ -1686,6 +1733,7 @@ void AHearthwardCompanionFixture::WorkshopTick()
 
 void AHearthwardCompanionFixture::StopForSurvival()
 {
+    CancelMeleeAttack();
     if(bSettling) return;
     StopCampBatch();
     StopNavigation();Action->InterruptAction();

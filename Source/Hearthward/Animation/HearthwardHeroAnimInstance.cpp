@@ -42,6 +42,7 @@ struct FHeroAnimProxy : FAnimInstanceProxy
     FAnimNode_ModifyBone AimRotation;
     FAnimNode_ConvertComponentToLocalSpace RangedToLocal;
     uint32 SeenAttack = 0;
+    float LocomotionPhase = 0;
 
     explicit FHeroAnimProxy(UAnimInstance* Instance) : FAnimInstanceProxy(Instance) {}
 
@@ -55,8 +56,7 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         }
         for (int32 Index : {1, 2})
         {
-            Players[Index].SetGroupName(TEXT("Locomotion"));
-            Players[Index].SetGroupMethod(EAnimSyncMethod::SyncGroup);
+            Players[Index].SetPlayRate(0);
         }
         Gait.A.SetLinkNode(&Players[1]);
         Gait.B.SetLinkNode(&Players[2]);
@@ -98,9 +98,21 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         RangedPlayer.SetStartPosition(Hero->RangedPoseTime);
         RangedPlayer.SetAccumulatedTime(Hero->RangedPoseTime);
         Locomotion.Alpha = FMath::Clamp(Hero->GroundSpeed / 80.f, 0.f, 1.f);
-        Gait.Alpha = FMath::Clamp((Hero->GroundSpeed - 350.f) / 250.f, 0.f, 1.f);
-        Players[1].SetPlayRate(FMath::Clamp(Hero->GroundSpeed / 350.f, 0.2f, 1.6f));
-        Players[2].SetPlayRate(FMath::Clamp(Hero->GroundSpeed / 600.f, 0.4f, 1.8f));
+        Gait.Alpha = FMath::Clamp((Hero->GroundSpeed - 150.f) / 150.f, 0.f, 1.f);
+        // The two-cycle source clips put left-foot contact 0.19 cycles apart.
+        // A shared distance phase preserves contact through the walk/run blend.
+        const float WalkLength = Hero->Clips[1]->GetPlayLength();
+        const float RunLength = Hero->Clips[2]->GetPlayLength();
+        const float CycleDistance = FMath::Lerp(110.f * WalkLength, 390.f * RunLength, Gait.Alpha);
+        const float CycleRate = Hero->GroundSpeed / CycleDistance;
+        Players[1].SetPlayRate(CycleRate * WalkLength);
+        Players[2].SetPlayRate(CycleRate * RunLength);
+        Players[1].SetStartPosition(LocomotionPhase * WalkLength);
+        Players[1].SetAccumulatedTime(LocomotionPhase * WalkLength);
+        const float RunTime = FMath::Fmod(LocomotionPhase + .81f, 1.f) * RunLength;
+        Players[2].SetStartPosition(RunTime);
+        Players[2].SetAccumulatedTime(RunTime);
+        LocomotionPhase = FMath::Fmod(LocomotionPhase + CycleRate * DeltaSeconds, 1.f);
         for (int32 Index = 0; Index < 8; ++Index)
             Layers[Index].bAlphaBoolEnabled = Hero->ActionState == Index + 1;
         for(int32 Index=8;Index<11;++Index)

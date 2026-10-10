@@ -180,6 +180,7 @@ bool UHearthwardSurvivalComponent::ReceiveDamage(float Amount,FGuid Event,FGuid 
     if(!Enabled() || Settling || Timeline!=Epoch() || !Event.IsValid() || DamageEvents.Contains(Event)
         || Amount<=0 || !FMath::IsFinite(Amount) || State.Life==EHearthwardLife::Dead) return false;
     DamageEvents.Add(Event);
+    if(auto* C=Cast<AHearthwardCompanionFixture>(GetOwner()))C->CancelMeleeAttack();
     if(auto* T=GetOwner()->FindComponentByClass<UHearthwardTraversalComponent>()) T->CancelVault();
     CancelAction(true);
     TGuardValue<bool> Guard(Settling,true);

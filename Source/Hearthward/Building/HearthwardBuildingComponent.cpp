@@ -156,6 +156,11 @@ bool UHearthwardBuildingComponent::CheckGeometry(const TSharedPtr<FJsonObject>& 
 void UHearthwardBuildingComponent::TickComponent(float Delta,ELevelTick Type,FActorComponentTickFunction* Function)
 {
     Super::TickComponent(Delta,Type,Function);
+    if(!GetWorld()->IsPaused())
+    {
+        PresentationElapsed+=Delta;
+        if(PresentationElapsed>=.25f){PresentationElapsed=0;UpdatePresentation();}
+    }
     if(!IsPlacing() || GetWorld()->IsPaused()) return;
     if(Pending)
     {

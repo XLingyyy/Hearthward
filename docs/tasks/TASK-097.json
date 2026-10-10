@@ -3,7 +3,7 @@
   "id": "TASK-097",
   "title": "救援路线自然环境、生态外观与远近景收尾",
   "status": "Active",
-  "updated_at": "2026-10-08",
+  "updated_at": "2026-10-10",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -26,7 +26,8 @@
     "docs/assets/TASK-094/DOWNSTREAM_DECISIONS.md",
     "docs/planning/TASK-084-103/ROUTE_MANIFEST.json",
     "docs/qa/TASK-097/NATIVE_REUSE.json",
-    "docs/design/DSGN-004-iteration-art-local-ai.md"
+    "docs/design/DSGN-004-iteration-art-local-ai.md",
+    "docs/qa/TASK-097/walking/REPORT.md"
   ],
   "dependencies": [
     "TASK-092",
@@ -80,7 +81,14 @@
     "Content/Hearthward/Animals/MotionR3/pig/SK_pig_Skeleton.uasset",
     "Source/Hearthward/Animals/HearthwardAnimalMotionComponent.cpp",
     "Content/Hearthward/Assets/NaturalWorld/Rebuild/Foliage/GT_Meadow.uasset",
-    "Content/Hearthward/Assets/NaturalWorld/Rebuild/Foliage/GT_S1_Meadow.uasset"
+    "Content/Hearthward/Assets/NaturalWorld/Rebuild/Foliage/GT_S1_Meadow.uasset",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Content/Hearthward/Assets/TASK-097/Route/SM_RouteCairn.uasset",
+    "Content/Hearthward/Assets/TASK-097/Route/SM_RouteSign.uasset",
+    "Content/Hearthward/Assets/TASK-097/Route/SM_RouteLookout.uasset",
+    "Content/Hearthward/Assets/TASK-097/Route/M_RouteStone.uasset",
+    "Content/Hearthward/Assets/TASK-097/Route/M_RouteWood.uasset",
+    "Content/Hearthward/Assets/TASK-097/Route/M_RouteIron.uasset"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -115,8 +123,8 @@
   "permissions": {
     "network": "read_only",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
+    "commit": "granted_by_owner_current_session",
+    "push": "granted_by_owner_current_session",
     "merge": "not_granted",
     "github_release": "not_granted",
     "paid_services": "not_granted"
@@ -142,6 +150,9 @@
     "DSGN-004野猪可视网格接入：AnimalMotionComponent仅为InSpecies=boar选择新网格，继续共享pig的原动作/参数，并用原网格计算活动范围，避免外形扩展改变既有碰撞/移动边界。新增定向测试验证家猪保持原网格及野猪R3配对与逐骨姿态。",
     "2026-10-07 野猪新网格及烘焙毛色、三材质共五包已锁定并导入，复用原50骨R3 Skeleton与PhysicsAsset，原Skeleton未标脏且Git未变化；家猪保持原网格，野猪继续使用原27动作/行为参数，活动范围仍按原网格计算。Editor编译成功；BoarKeepsR3AndPig原生测试通过（0警告/0错误），核对家猪/野猪网格区分、共享物理资产与动作、活动边界，并比较静候/奔跑/顶撞/倒地四个真实动作中间帧的逐骨姿态。首轮夹具重复初始化World失败保留，修正为CreateWorld单次初始化后通过。连续自然路线、完整Cook及Owner视觉仍未验，原Tripo输入权利状态仍PENDING。",
     "2026-10-08 Owner持续授权完成本批实现、修复、提交和推送；新增两个准确LandscapeGrassType包用于已复现的草片矩形接触阴影修复。仅调整草种CastContactShadow，不修改全局光照、草密度、碰撞或主地图。现有LFS锁51998986/52010301均属XLingyyy，保留到整合。运行对照及重启后真实渲染分别记录，不据此宣布自然路线全部通过。",
-    "2026-10-08 两个草种资产的接触阴影修复已通过重新启动后的渲染验证：草片下方矩形黑斑消失，建筑/树阴影保留，全局接触阴影仍开启。修改仅为GT_Meadow与GT_S1_Meadow的CastContactShadow=false。首次保存跳过未标脏资产的失败已保留，显式保存后重启读取/实际组件均为false。见[草簇修复](../qa/TASK-097/grass-contact/REPORT.md)。本次为PIE局部画面验证，候选8尚未包含这次修复，完整自然路线/性能/Owner验收仍未完成。"
+    "2026-10-08 两个草种资产的接触阴影修复已通过重新启动后的渲染验证：草片下方矩形黑斑消失，建筑/树阴影保留，全局接触阴影仍开启。修改仅为GT_Meadow与GT_S1_Meadow的CastContactShadow=false。首次保存跳过未标脏资产的失败已保留，显式保存后重启读取/实际组件均为false。见[草簇修复](../qa/TASK-097/grass-contact/REPORT.md)。本次为PIE局部画面验证，候选8尚未包含这次修复，完整自然路线/性能/Owner验收仍未完成。",
+    "2026-10-09 按继续完成路线美术授权，原创岔路指示木桩、河岸石堆与瞭望石标替换路线节点通用木箱；保留原位置、交互、地形投射和通行，不增加资源。",
+    "2026-10-09 九处路线节点原创地标已接入，正式地形9/9核对唯一节点、网格、无碰撞与地面高度。18张近远景记录；岔路远景相机被树冠遮挡，未冒充全路线视觉通过。见docs/qa/TASK-097/route/REPORT.md。",
+    "2026-10-10 九节点昼夜共18段、72次真实贴地移动采样通过，36图已留档，昼夜接近视角已检查；原误设镜头的失败画面保留。局部限帧A/B/A数据已记录，不替代102完整性能门槛；全路线实玩与Owner视觉后置。"
   ]
 }

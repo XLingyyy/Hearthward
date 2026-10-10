@@ -1,0 +1,352 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "83874C564B2740B24F9836BA8A041428",
+			"instanceName": "LAPTOP-R8NPOP05-22572",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.09-15.45.10",
+	"succeeded": 5,
+	"succeededWithWarnings": 0,
+	"failed": 2,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.71736991405487061,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "ArcherReferencePose",
+			"fullTestPath": "Hearthward.Iteration.Task095.ArcherReferencePose",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"83874C564B2740B24F9836BA8A041428"
+			],
+			"duration": 0.20205970108509064,
+			"dateTime": "2026.10.09-15.45.09",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "ArcherWindupReleaseAndInterrupt",
+			"fullTestPath": "Hearthward.Iteration.Task095.ArcherWindupReleaseAndInterrupt",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"83874C564B2740B24F9836BA8A041428"
+			],
+			"duration": 0.20936930179595947,
+			"dateTime": "2026.10.09-15.45.09",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "ArrowPresentationKeepsTrajectory",
+			"fullTestPath": "Hearthward.Iteration.Task095.ArrowPresentationKeepsTrajectory",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"83874C564B2740B24F9836BA8A041428"
+			],
+			"duration": 0.023631401360034943,
+			"dateTime": "2026.10.09-15.45.10",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "BrotherWindup",
+			"fullTestPath": "Hearthward.Iteration.Task095.BrotherWindup",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"83874C564B2740B24F9836BA8A041428"
+			],
+			"duration": 0.20688299834728241,
+			"dateTime": "2026.10.09-15.45.10",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Next windup is ready at 1.2 seconds from start' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\BrotherWindupTests.cpp",
+					"lineNumber": 93,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'One hit after the approved windup' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\BrotherWindupTests.cpp",
+					"lineNumber": 87,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Original weapon damage retained' to be 9954.000000, but it was 9977.000000 and outside tolerance 0.000100.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\BrotherWindupTests.cpp",
+					"lineNumber": 88,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Exactly one durability charged' to be 98.000000, but it was 99.000000 and outside tolerance 0.000100.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\BrotherWindupTests.cpp",
+					"lineNumber": 89,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Cycle remains blocked before 1.2 seconds' to be false.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\BrotherWindupTests.cpp",
+					"lineNumber": 92,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Interrupted hit causes no target damage' to be 9954.000000, but it was 9977.000000 and outside tolerance 0.000100.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\BrotherWindupTests.cpp",
+					"lineNumber": 98,
+					"timestamp": "2026.10.09-15.45.10"
+				}
+			],
+			"warnings": 0,
+			"errors": 6,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "RangedMuzzle",
+			"fullTestPath": "Hearthward.Iteration.Task095.RangedMuzzle",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"83874C564B2740B24F9836BA8A041428"
+			],
+			"duration": 0.02534480020403862,
+			"dateTime": "2026.10.09-15.45.10",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Bow draw begins' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 50,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Authority accepts the shot' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 62,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Exactly one production projectile was created' to be not null.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 65,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Bow draw begins' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 50,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Authority accepts the shot' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 62,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Exactly one production projectile was created' to be not null.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 65,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Crossbow reload begins' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 49,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Authority accepts the shot' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 62,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Exactly one production projectile was created' to be not null.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 65,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Crossbow reload begins' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 49,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Authority accepts the shot' to be true.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 62,
+					"timestamp": "2026.10.09-15.45.10"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'Exactly one production projectile was created' to be not null.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\RangedMuzzleTests.cpp",
+					"lineNumber": 65,
+					"timestamp": "2026.10.09-15.45.10"
+				}
+			],
+			"warnings": 0,
+			"errors": 12,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "SurvivalMotionUnitsAndEndpoints",
+			"fullTestPath": "Hearthward.Iteration.Task095.SurvivalMotionUnitsAndEndpoints",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"83874C564B2740B24F9836BA8A041428"
+			],
+			"duration": 0.019362602382898331,
+			"dateTime": "2026.10.09-15.45.10",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "WeaponInstancePresentation",
+			"fullTestPath": "Hearthward.Iteration.Task095.WeaponInstancePresentation",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"83874C564B2740B24F9836BA8A041428"
+			],
+			"duration": 0.030719097703695297,
+			"dateTime": "2026.10.09-15.45.10",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

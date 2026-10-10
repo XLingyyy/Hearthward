@@ -1,0 +1,58 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "message": "“FAutomationTestBase::TestNotNull”: 未找到匹配的重载函数",
+      "code": "C2672",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(34,13)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“FAutomationTestBase::TestNotNull”: 未找到匹配的重载函数",
+      "code": "C2672",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(40,13)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“Beds”: 重定义；多次初始化",
+      "code": "C2374",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(55,11)",
+      "source": "unreal_build_tool"
+    },
+    {
+      "severity": "error",
+      "message": "“int32 Beds”: 重定义",
+      "code": "C2086",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(55,11)",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "G:\\GameFactory\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\n  Requested 1.5 GB memory per action, 15.63 GB available: limiting max parallel actions to 10\nUsing 'git status' to determine working set for adaptive non-unity build (G:\\GameFactory\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nInvalidating makefile for HearthwardEditor (DefaultGame.ini modified)\nUHT compiled-in object format Default\nUHT processed HearthwardEditor in 7.1943969 seconds (0 generated files written)\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (G:\\UnrealEngine\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35228 toolchain (E:\\VSC++\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.22621.0 SDK (C:\\Program Files (x86)\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardHometownFortress.cpp, HometownFortressTests.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 10 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 15.63 GB physical, 25.3 GB/31.26 GB committed\n  UBA Storage capacity 40 GB\n[1/10] Compile [x64] HearthwardHometownFortress.cpp\n[2/10] Compile [x64] HometownFortressTests.cpp\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(34,13): error C2672: “FAutomationTestBase::TestNotNull”: 未找到匹配的重载函数\n            TestNotNull(TEXT(\"Bedroom joinery asset resolves\"),Part->GetStaticMesh());\n            ^\nG:\\UnrealEngine\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Misc\\AutomationTest.h(2459,36): note: 可能是“bool FAutomationTestBase::TestNotNull(const FString &,const ValueType *)”\n\ttemplate<typename ValueType> bool TestNotNull(const FString& What, const ValueType* Pointer)\n\t                                  ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(34,13): note: “bool FAutomationTestBase::TestNotNull(const FString &,const ValueType *)”: 无法从“TObjectPtr<UStaticMesh>”推导出“const ValueType *”的 模板 参数\n            TestNotNull(TEXT(\"Bedroom joinery asset resolves\"),Part->GetStaticMesh());\n            ^\nG:\\UnrealEngine\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Misc\\AutomationTest.h(2449,14): note: 或    “bool FAutomationTestBase::TestNotNull(const TCHAR *,const ValueType *)”\n\tinline bool TestNotNull(const TCHAR* What, const ValueType* Pointer)\n\t            ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(34,13): note: “bool FAutomationTestBase::TestNotNull(const TCHAR *,const ValueType *)”: 无法从“TObjectPtr<UStaticMesh>”推导出“const ValueType *”的 模板 参数\n            TestNotNull(TEXT(\"Bedroom joinery asset resolves\"),Part->GetStaticMesh());\n            ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(40,13): error C2672: “FAutomationTestBase::TestNotNull”: 未找到匹配的重载函数\n            TestNotNull(TEXT(\"Bed mesh resolves\"),Part->GetStaticMesh());\n            ^\nG:\\UnrealEngine\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Misc\\AutomationTest.h(2459,36): note: 可能是“bool FAutomationTestBase::TestNotNull(const FString &,const ValueType *)”\n\ttemplate<typename ValueType> bool TestNotNull(const FString& What, const ValueType* Pointer)\n\t                                  ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(40,13): note: “bool FAutomationTestBase::TestNotNull(const FString &,const ValueType *)”: 无法从“TObjectPtr<UStaticMesh>”推导出“const ValueType *”的 模板 参数\n            TestNotNull(TEXT(\"Bed mesh resolves\"),Part->GetStaticMesh());\n            ^\nG:\\UnrealEngine\\UE_5.8\\Engine\\Source\\Runtime\\Core\\Public\\Misc\\AutomationTest.h(2449,14): note: 或    “bool FAutomationTestBase::TestNotNull(const TCHAR *,const ValueType *)”\n\tinline bool TestNotNull(const TCHAR* What, const ValueType* Pointer)\n\t            ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(40,13): note: “bool FAutomationTestBase::TestNotNull(const TCHAR *,const ValueType *)”: 无法从“TObjectPtr<UStaticMesh>”推导出“const ValueType *”的 模板 参数\n            TestNotNull(TEXT(\"Bed mesh resolves\"),Part->GetStaticMesh());\n            ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(55,11): error C2374: “Beds”: 重定义；多次初始化\n    int32 Beds=0,Steps=0;\n          ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(28,11): note: 参见“Beds”的声明\n    int32 Beds=0,Joinery=0;\n          ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(55,11): error C2086: “int32 Beds”: 重定义\n    int32 Beds=0,Steps=0;\n          ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\HometownFortressTests.cpp(28,11): note: 参见“Beds”的声明\n    int32 Beds=0,Joinery=0;\n          ^\n[3/10] Compile [x64] Module.Hearthward.1.cpp\n[4/10] Compile [x64] Module.Hearthward.2.cpp\n[5/10] Compile [x64] Module.Hearthward.4.cpp\n[6/10] Compile [x64] Module.Hearthward.5.cpp\n[7/10] Compile [x64] Module.Hearthward.6.cpp\nTotal time in Unreal Build Accelerator local executor: 91.92 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 103.22 seconds\nTrace written to file C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 20.3kb\n",
+    "stderr": ""
+  }
+}

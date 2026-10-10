@@ -31,6 +31,7 @@ public:
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     void SetLookSettings(int32 Sensitivity,bool InvertY);
     void UpdateRangedVisual(float DrawTime,float PoseWeight);
+    FVector RangedArrowTip() const;
 
 private:
     UFUNCTION()

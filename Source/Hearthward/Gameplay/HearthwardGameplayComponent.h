@@ -131,7 +131,7 @@ private:
     void CreateLandmarks();
     TArray<TWeakObjectPtr<AActor>> LandmarkActors;
     TMap<FName,TWeakObjectPtr<AActor>> OpponentActors;
-    float AttackDelay=0,EnemyAttackDelay=0,CombatRemaining=0,CompanionAttackDelay=0;
+    float AttackDelay=0,EnemyAttackDelay=0,CombatRemaining=0;
     FName CompanionTacticalIntent = TEXT("hold");
     FName CompanionCombatTarget;
     FString CompanionCombatReason = TEXT("EXPLICIT_HOLD");

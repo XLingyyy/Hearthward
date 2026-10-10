@@ -60,12 +60,13 @@ UStaticMeshComponent* AHearthwardHometownFortress::Part(FString Label,FVector Ce
     return Mesh;
 }
 
-void AHearthwardHometownFortress::Furniture(const TCHAR* Label,const TCHAR* Path,FVector Position,float Scale)
+void AHearthwardHometownFortress::Furniture(const TCHAR* Label,const TCHAR* Path,FVector Position,float Scale,float Yaw)
 {
     auto* Mesh=NewObject<UStaticMeshComponent>(this,FName(Label));
     AddInstanceComponent(Mesh);Mesh->SetupAttachment(GetRootComponent());
     Mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,Path));
     Mesh->SetRelativeLocation(Position);Mesh->SetRelativeScale3D(FVector(Scale));
+    Mesh->SetRelativeRotation(FRotator(0,Yaw,0));
     Mesh->SetCollisionProfileName(TEXT("NoCollision"));Mesh->SetCanEverAffectNavigation(false);
     Mesh->RegisterComponent();
 }
@@ -207,15 +208,18 @@ void AHearthwardHometownFortress::BeginPlay()
     Doorframe->SetStaticMesh(DoorframeMesh);Doorframe->SetRelativeLocation(FVector(0,550,F));
     Doorframe->SetCollisionProfileName(TEXT("NoCollision"));Doorframe->SetCanEverAffectNavigation(false);
     Doorframe->RegisterComponent();
+    Furniture(TEXT("BedroomJoinery"),TEXT("/Game/Hearthward/Assets/TASK-096/Interior/SM_BedroomJoinery.SM_BedroomJoinery"),FVector(0,0,F),1.f);
     Part(TEXT("BedroomCeiling"),FVector(0,0,F+555),FVector(1450,1250,70),true,Timber);
     for(float X:{-480.f,0.f,480.f})Part(TEXT("CeilingBeam"),FVector(X,0,F+510),FVector(32,1100,45),false,Timber);
     for(float X:{-340.f,340.f})
     {
-        Furniture(X<0?TEXT("PlayerBed"):TEXT("BrotherBed"),TEXT("/Game/Hearthward/Assets/TASK-028/furniture/rope_wood_bed/SM_rope_wood_bed.SM_rope_wood_bed"),FVector(X,-240,F+15),1.5f);
+        Furniture(X<0?TEXT("PlayerBed"):TEXT("BrotherBed"),TEXT("/Game/Hearthward/Assets/TASK-098/CampSet/SM_RopeBed.SM_RopeBed"),FVector(X,-240,F),1.f,90.f);
         auto* BedCollision=Part(TEXT("BedCollision"),FVector(X,-240,F+40),FVector(150,230,80));
         BedCollision->SetVisibility(false);BedCollision->SetCastShadow(false);
     }
     Lamp(FVector(480,320,F+270));
+    Lamp(FVector(0,-470,F+230));
+    Lamp(FVector(480,640,F+270));
     Part(TEXT("GalleryFloor"),FVector(550,800,F-30),FVector(2500,600,60),true,Timber);
     Part(TEXT("GalleryRoof"),FVector(550,850,F+555),FVector(2700,700,60),true,Timber);
     for(float X:{-600.f,200.f,900.f,1800.f})

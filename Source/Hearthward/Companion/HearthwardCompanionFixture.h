@@ -29,6 +29,10 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual void BeginPlay() override;
     UFUNCTION() void RefreshHeldWeapon();
+    bool AdvanceMeleeAttack(AActor* Target,AActor* Player,bool Hunting=false);
+    void CancelMeleeAttack();
+    bool MeleeAttackReady() const;
+    bool HuntingWindup() const { return MeleeHitAt>0 && bMeleeHunting; }
     void InitializeFixture(UHearthwardInventoryComponent* Resource, AActor* CampActor);
     void InitializeCompanion(UHearthwardInventoryComponent* Resource, AActor* CampActor);
 
@@ -131,7 +135,10 @@ private:
     double LastProgressAt = 0;
     FGuid LastNatureSafetyTarget;
     double NextNatureSafetyAt = 0;
-    double NextHuntAttackAt = 0;
+    double MeleeHitAt = 0,NextHuntAttackAt = 0;
+    TWeakObjectPtr<AActor> MeleeTarget;
+    FGuid MeleeWeapon,MeleeEpoch;
+    bool bMeleeHunting = false;
     int32 CampBatchBaseline = -1;
     TSet<FGuid> AppliedOperations;
     TArray<FHearthwardAgentReceipt> Receipts;

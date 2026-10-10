@@ -3,7 +3,7 @@
   "id": "TASK-095",
   "title": "兄弟与敌人辨识、武器持握和关键动作收尾",
   "status": "Active",
-  "updated_at": "2026-10-08",
+  "updated_at": "2026-10-10",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -37,7 +37,11 @@
     "docs/assets/TASK-095/PLAYER_RANGED.md",
     "docs/qa/TASK-095/player-ranged/REPORT.md",
     "docs/assets/TASK-095/BROTHER_WEAPONS.md",
-    "docs/qa/TASK-095/brother-weapons/REPORT.md"
+    "docs/qa/TASK-095/brother-weapons/REPORT.md",
+    "docs/assets/TASK-095/MELEE_AND_MUZZLE.md",
+    "docs/qa/TASK-095/windup/REPORT.md",
+    "docs/qa/TASK-095/locomotion/REPORT.md",
+    "docs/qa/TASK-095/grounding/REPORT.md"
   ],
   "dependencies": [
     "TASK-092",
@@ -121,7 +125,15 @@
     "Content/Hearthward/Assets/TASK-095/PlayerRanged/SK_PlayerBow_Skeleton.uasset",
     "Content/Hearthward/Assets/TASK-095/PlayerRanged/A_PlayerBow_Draw.uasset",
     "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
-    "Content/Hearthward/Assets/TASK-095/Weapons/A_Brother_WeaponCarry.uasset"
+    "Content/Hearthward/Assets/TASK-095/Weapons/A_Brother_WeaponCarry.uasset",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.h",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/Tests/BrotherWindupTests.cpp",
+    "Source/Hearthward/Tests/RangedMuzzleTests.cpp",
+    "Content/Hearthward/Assets/TASK-095/Weapons/A_Brother_SpearThrust.uasset",
+    "docs/releases/iteration-084-103-rc/candidate13/",
+    "docs/releases/iteration-084-103-rc/candidate14/"
   ],
   "forbidden_paths": [
     "docs/design/archive/",
@@ -196,6 +208,12 @@
     "2026-10-08 玩家弓弩四段动作与可弯曲长弓已接入，瞄准俯仰/水平朝向错位已修正。4项回归及最终移动腿部/装备呈现定向1项通过，实际PIE29帧和三段视频通过。实际弹道起点仍按旧逻辑，改到箭尖并检查遮挡的方案待Owner答复；弟弟装备、完整接触/Cook/视觉验收继续。",
     "2026-10-08 继续弟弟实际装备呈现，准确增加CompanionFixture.h写范围；复用已导入近战武器，按弟弟自身61骨参考握点挂接，真实装备/耐久/生存状态驱动，不增加弟弟远程攻击能力或修改伤害。",
     "2026-10-08 实机复现弟弟原待机手位导致长刃/战斧穿肩；在已批准持握修复范围内增加准确A_Brother_WeaponCarry动作包，仅对持武器的右臂分层，不修改移动、攻击判定或敌人动作。",
-    "2026-10-08 弟弟13种近战装备已按实际实例/耐久和生存状态呈现，新增右臂携带姿势修复长刃/战斧待机穿肩。Editor构建、装备回归1/1（零警告）及六件装备/正侧视PIE通过。弟弟攻击接触与长枪专用动作、完整Cook和Owner验收继续，TASK-095保持Active。"
+    "2026-10-08 弟弟13种近战装备已按实际实例/耐久和生存状态呈现，新增右臂携带姿势修复长刃/战斧待机穿肩。Editor构建、装备回归1/1（零警告）及六件装备/正侧视PIE通过。弟弟攻击接触与长枪专用动作、完整Cook和Owner验收继续，TASK-095保持Active。",
+    "2026-10-09 Owner明确批准弟弟0.25秒可中断近战前摇，保持1.2秒攻击周期和伤害；批准玩家弓弩从实际可见箭尖发射并检测近墙阻挡。覆盖跟随战斗和狩猎，新增长枪动作与定向验证，保存格式不变。",
+    "2026-10-09 预留候选13内部打包说明目录，合并此前角色/场景美术与本次已批准近战/弓弩增量；非公开发布，不代填真人验收。",
+    "2026-10-09 两项Owner批准的增量已实现：弟弟0.25秒可中断前摇、原1.2秒周期，原创双手长枪动作及刀斧相位修正；玩家弓弩箭尖发射与近墙阻挡。最终Editor构建和2项定向原生零警告通过，三种近战108帧连续PIE及两种远程贴墙检查通过。见docs/qa/TASK-095/windup/REPORT.md。完整实玩按用户要求后置，完整坡地/昼夜、Owner视觉及来源权利验收保持未闭合。",
+    "2026-10-10 主角与弟弟走跑按实际源片段位移和左右脚相位重新校准，保持游戏速度。原生4/4（零警告/错误）及576次PIE骨骼采样通过，350cm/s主角脚滑中位数约238→18cm/s。平地接触缺陷已修复；坡地连续观感、完整剧情与Owner主观验收单列。",
+    "2026-10-10 第二营地复核发现军需员复用弟弟模型偏移与自身胶囊半高相差8cm，造成悬空；已按实际高度差修正模型位置，保留NPC胶囊。新增原生1/1零警告/错误及存读档后实际画面通过。",
+    "2026-10-10 候选14已从干净源码b975b919完成Shipping Build/Cook/Stage/Archive，包含步态校准、石堡走廊补光与军需员落地修复；CPU正常键盘新游戏进入卧室通过，自有进程由原UEClient正常关闭。完整实玩、连续场景/坡地、旧档与重启、OS DPI、性能、二机和Owner/来源验收保留，整单Active。"
   ]
 }

@@ -1,0 +1,37 @@
+{
+  "ok": false,
+  "operation": "build.project",
+  "artifacts": [],
+  "diagnostics": [
+    {
+      "severity": "error",
+      "message": "\"NextHuntAttackAt\": 不是 \"AHearthwardCompanionFixture\" 的成员",
+      "code": "C2039",
+      "file": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Save\\HearthwardSaveSubsystem.cpp(381,169)",
+      "source": "unreal_build_tool"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Unreal build failed with exit code 6"
+  ],
+  "payload": {
+    "command": [
+      "G:\\UnrealEngine\\UE_5.8\\Engine\\Build\\BatchFiles\\Build.bat",
+      "HearthwardEditor",
+      "Win64",
+      "Development",
+      "-Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject",
+      "-WaitMutex"
+    ],
+    "cwd": "G:\\GameFactory\\Hearthward",
+    "target": "HearthwardEditor",
+    "platform": "Win64",
+    "configuration": "Development",
+    "clean": false,
+    "dry_run": false,
+    "returncode": 6,
+    "stdout": "Using bundled DotNet SDK version: 10.0 win-x64\nRunning UnrealBuildTool: dotnet \"..\\..\\Engine\\Binaries\\DotNET\\UnrealBuildTool\\UnrealBuildTool.dll\" HearthwardEditor Win64 Development -Project=G:\\GameFactory\\Hearthward\\Hearthward.uproject -WaitMutex\nLog file: C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Log.txt\nDetermining max actions to execute in parallel (14 physical cores, 20 logical cores)\n  Executing up to 14 processes, one per physical core\n  Requested 1.5 GB memory per action, 15.63 GB available: limiting max parallel actions to 10\nUsing 'git status' to determine working set for adaptive non-unity build (G:\\GameFactory\\Hearthward).\nUbaServer - Listening on 0.0.0.0:1345\nInvalidating makefile for HearthwardEditor (source file added)\nUHT compiled-in object format Default\nUHT processed HearthwardEditor in 7.7641755 seconds (2 generated files written)\nBuilding HearthwardEditor...\n===== Toolchain Information =====\nUsing ISPC compiler (G:\\UnrealEngine\\UE_5.8\\Engine\\Source\\ThirdParty\\Intel\\ISPC\\bin\\Windows\\ispc.exe)\n  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2) \nUsing Visual Studio 14.44.35228 toolchain (E:\\VSC++\\VC\\Tools\\MSVC\\14.44.35207) and Windows 10.0.22621.0 SDK (C:\\Program Files (x86)\\Windows Kits\\10).\n[Adaptive Build] Excluded from Hearthward unity file: HearthwardCharacter.cpp, HearthwardBrotherAnimInstance.cpp, HearthwardCombatComponent.cpp, HearthwardProjectile.cpp, HearthwardCompanionDebug.cpp, HearthwardCompanionFixture.cpp, HearthwardEquipment.cpp, HearthwardGameplayComponent.cpp, HearthwardSurvivalComponent.cpp, BrotherWindupTests.cpp, EquipmentPresentationTests.cpp, GameplayTests.cpp, ProjectileBodyProtectionTests.cpp, SaveTests.cpp, TraversalTests.cpp\n=================================\nUsing Unreal Build Accelerator local executor to run 26 action(s)\n  CPU 14 physical cores, 20 logical cores\n  Memory 15.63 GB physical, 26.25 GB/31.26 GB committed\n  UBA Storage capacity 40 GB\n[1/26] Compile [x64] BrotherWindupTests.cpp\n[2/26] Compile [x64] EquipmentPresentationTests.cpp\n[3/26] Compile [x64] GameplayTests.cpp\n[4/26] Compile [x64] HearthwardBrotherAnimInstance.cpp\n[5/26] Compile [x64] HearthwardCharacter.cpp\n[6/26] Compile [x64] HearthwardCombatComponent.cpp\n[7/26] Compile [x64] HearthwardCompanionDebug.cpp\n[8/26] Compile [x64] HearthwardCompanionFixture.cpp\n[9/26] Compile [x64] HearthwardEquipment.cpp\n[10/26] Compile [x64] HearthwardGameplayComponent.cpp\n[11/26] Compile [x64] HearthwardProjectile.cpp\n[12/26] Compile [x64] HearthwardSurvivalComponent.cpp\n[13/26] Compile [x64] Module.Hearthward.1.cpp\n[14/26] Compile [x64] Module.Hearthward.2.cpp\n[15/26] Compile [x64] Module.Hearthward.3.cpp\n[16/26] Compile [x64] Module.Hearthward.4.cpp\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Save\\HearthwardSaveSubsystem.cpp(381,169): error C2039: \"NextHuntAttackAt\": 不是 \"AHearthwardCompanionFixture\" 的成员\n        Companion->NavigationFailures=0;Companion->LastProgressAt=GetWorld()->GetTimeSeconds();Companion->LastProgressPosition=Companion->GetActorLocation();Companion->NextHuntAttackAt=0;\n                                                                                                                                                                        ^\nG:\\GameFactory\\Hearthward\\Source\\Hearthward\\Companion\\HearthwardCompanionFixture.h(22,22): note: 参见“AHearthwardCompanionFixture”的声明\nclass HEARTHWARD_API AHearthwardCompanionFixture : public ACharacter\n                     ^\n[17/26] Compile [x64] Module.Hearthward.5.cpp\n[18/26] Compile [x64] Module.Hearthward.6.cpp\n[19/26] Compile [x64] Module.Hearthward.7.cpp\n[20/26] Compile [x64] Module.Hearthward.8.cpp\n[21/26] Compile [x64] ProjectileBodyProtectionTests.cpp\n[22/26] Compile [x64] SaveTests.cpp\n[23/26] Compile [x64] TraversalTests.cpp\nTotal time in Unreal Build Accelerator local executor: 194.02 seconds\n\nResult: Failed (OtherCompilationError)\nTotal execution time: 205.97 seconds\nTrace written to file C:\\Users\\admin\\AppData\\Local\\UnrealBuildTool\\Trace.uba with size 31.3kb\n",
+    "stderr": ""
+  }
+}
