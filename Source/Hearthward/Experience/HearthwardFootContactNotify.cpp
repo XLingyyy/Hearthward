@@ -1,5 +1,6 @@
 #include "HearthwardFootContactNotify.h"
 #include "HearthwardPresentationComponent.h"
+#include "HearthwardFootstepSurface.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Save/HearthwardSaveSubsystem.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
@@ -21,7 +22,7 @@ bool UHearthwardFootContactNotify::ReadGroundContact(USkeletalMeshComponent* Mes
         || Character->GetVelocity().SizeSquared2D()<=KINDA_SMALL_NUMBER || !MeshComp->DoesSocketExist(FootBone))return false;
     const FVector Foot=MeshComp->GetSocketLocation(FootBone);
     FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardFootContact),false,Character);
-    Query.bReturnPhysicalMaterial=true;
+    Query.bReturnPhysicalMaterial=true;Query.bReturnFaceIndex=true;
     FHitResult Hit;
     // Actual sampled ankle contacts are 10.52--14.97 cm above the capsule bottom.
     // Search the nearby floor; timing still comes exclusively from the asset Notify.
@@ -29,6 +30,7 @@ bool UHearthwardFootContactNotify::ReadGroundContact(USkeletalMeshComponent* Mes
         || !Hit.bBlockingHit || Hit.bStartPenetrating || !Movement->IsWalkable(Hit) || Cast<ACharacter>(Hit.GetActor()))return false;
     Receipt.SuccessId=FGuid::NewGuid();Receipt.Epoch=World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     Receipt.Source=Character;Receipt.FootBone=FootBone;Receipt.Position=Hit.ImpactPoint;Receipt.Material=Hit.PhysMaterial;
+    Receipt.Surface=HearthwardFootstepSurface::Resolve(Hit);
     return true;
 }
 

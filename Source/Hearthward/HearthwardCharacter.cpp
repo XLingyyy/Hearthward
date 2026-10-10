@@ -1,4 +1,5 @@
 #include "HearthwardCharacter.h"
+#include "Equipment/HearthwardAxeGrip.h"
 #include "Experience/HearthwardPlayerSettings.h"
 #include "Experience/HearthwardPresentationComponent.h"
 #include "Experience/HearthwardTraversalComponent.h"
@@ -102,9 +103,11 @@ AHearthwardCharacter::AHearthwardCharacter(const FObjectInitializer& Initializer
     HeldAxe=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldAxe"));
     HeldAxe->SetupAttachment(GetMesh(),TEXT("hand_r"));
     HeldAxe->SetStaticMesh(Axe.Object);
-    HeldAxe->SetRelativeRotation(FRotator(0,0,-90));
     HeldAxe->SetAbsolute(false,false,true);
-    HeldAxe->SetRelativeScale3D(FVector(.7));
+    FTransform AxeGrip;
+    if (ensureMsgf(HearthwardAxeGrip::Build(HeroMesh.Object, GetMesh()->GetRelativeScale3D(), Axe.Object, AxeGrip),
+        TEXT("Stone axe requires measured grip sockets and the right-hand reference bones")))
+        HeldAxe->SetRelativeTransform(AxeGrip);
     HeldAxe->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     HeldAxe->SetVisibility(false);
 

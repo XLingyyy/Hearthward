@@ -9,7 +9,7 @@ import subprocess
 import re
 project=Path(__file__).resolve().parents[2]
 parser=argparse.ArgumentParser(description=__doc__)
-parser.add_argument("output",type=Path,nargs="?",default=Path("F:/HearthwardDemo/20261006-2"))
+parser.add_argument("output",type=Path,nargs="?",default=Path("F:/HearthwardDemo/v0.3.0"))
 args=parser.parse_args()
 configured=os.environ.get("HEARTHWARD_FACTORY_ROOT")
 candidates=[Path(configured)] if configured else []
@@ -27,7 +27,7 @@ metadata={"version":version,"configuration":"Win64 Shipping","engine":"5.8.2",
     "base_commit":subprocess.check_output(["git","rev-parse","HEAD"],cwd=project,text=True).strip(),
     "branch":subprocess.check_output(["git","branch","--show-current"],cwd=project,text=True).strip(),
     "workspace_changes":subprocess.check_output(["git","status","--short"],cwd=project,text=True,encoding="utf-8"),
-    "scope":"TASK-078 through TASK-082 integrated main: companion work, dialogue, clan teams, quest guidance, map and storage UI; playable preview"}
+    "scope":"v0.3.0: current integrated game, character and world art, movement and environment audio, axe grip and surface footsteps; partial gameplay validation"}
 (output/"build-info.json").write_text(json.dumps(metadata,ensure_ascii=False,indent=2),encoding="utf-8")
 ue=UEClient(project_path=project/"Hearthward.uproject",ue_root="G:/UnrealEngine/UE_5.8")
 result=ue.build.package(archive_dir=output,log_path=output/"package.log",

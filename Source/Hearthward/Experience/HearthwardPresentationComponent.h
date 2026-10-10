@@ -23,6 +23,7 @@ public:
     bool FootContactSucceeded(const FHearthwardFootContactReceipt& Receipt);
 private:
     friend struct FAudioFeedbackLifecycleAccess;
+    friend struct FSurfaceFootstepAccess;
     UFUNCTION() void Restored();
     UFUNCTION() void StorageTransferred(FGuid Operation,bool ToCamp,FName Item,int32 Count);
     UFUNCTION() void GameplayChanged();
@@ -37,6 +38,12 @@ private:
     bool PlaySoundEvent(FName Event,FGuid Operation,const FVector* Position=nullptr,bool Remember=true);
     void StopEffects();
     void InitializeEnvironment();
+    void InitializeAmbientProfiles(const TSharedPtr<class FJsonObject>& Root);
+    void UpdateAmbient();
+    void StopAmbient();
+    void RemoveFireSource(int32 Index);
+    class UAudioComponent* CreateAmbientSource(FName Event,const FVector& Position,float Radius);
+    void ApplyAmbientMix();
     bool PrepareEnvironmentWave();
     void CacheEnvironmentActor(class AActor* Actor);
     void EnvironmentActorSpawned(class AActor* Actor);
@@ -50,6 +57,26 @@ private:
     UPROPERTY() TArray<TObjectPtr<class UAudioComponent>> Effects;
     UPROPERTY() TObjectPtr<class UAudioComponent> EnvironmentSource;
     UPROPERTY() TObjectPtr<class UHearthwardEnvironmentLoopWave> EnvironmentWave;
+    // Each simultaneous source owns a separate procedural cursor via its AudioComponent.
+    UPROPERTY() TArray<TObjectPtr<class UAudioComponent>> FireSources;
+    UPROPERTY() TObjectPtr<class UAudioComponent> WindSource;
+    TArray<TWeakObjectPtr<class UNiagaraComponent>> FireEmitters;
+    TArray<TWeakObjectPtr<class AActor>> AmbientActors;
+    TWeakObjectPtr<class AActor> WindAnchor;
+    struct FAmbientProfile
+    {
+        FName Event;
+        FString System;
+        TArray<FName> Tags;
+        float Radius=0,InnerRadius=0,Gain=0,RoofTrace=0;
+        int32 MaxSources=0;
+        bool Enabled=false;
+    };
+    FAmbientProfile FireProfile,WindProfile;
+    TMap<FName,TArray<uint8>> AmbientPCM;
+    TMap<FName,int32> AmbientRates;
+    TSet<FName> AmbientAttempted;
+    float WindWeight=0;
     TArray<FVector> EnvironmentVertices;
     TArray<FIntVector> EnvironmentTriangles;
     FString EnvironmentMesh;
@@ -61,7 +88,7 @@ private:
     FDelegateHandle EnvironmentSpawnHandle,EnvironmentRegisterHandle;
     TArray<float> EffectRemaining;
     struct FCue {FString Speaker,Text,Group,ProductionStatus;};
-    struct FSoundCue {FString File;FName Channel;};
+    struct FSoundCue {FString File;FName Channel;TArray<FString> Variants;int32 LastVariant=INDEX_NONE;};
     TMap<FName,FCue> Cues;
     TMap<FName,FSoundCue> SoundCues;
     TSet<FGuid> ObservedTransfers;
@@ -76,6 +103,7 @@ private:
     EMovementMode ObservedMovementMode=MOVE_None;
     bool AwaitingLanding=false;
     FGuid PendingLanding;
+    FVector PendingLandingPosition=FVector::ZeroVector;
     TSet<FGuid> PlayedEvents;
     FName CurrentCue;
     FGuid Epoch;

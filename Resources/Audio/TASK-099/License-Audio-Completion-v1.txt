@@ -1,0 +1,57 @@
+Hearthward TASK-099: audio-completion-v1
+Prepared 2026-10-10; updated for revision 3. This notice applies to these five new files only:
+  movement-land.wav
+  movement-water-enter.wav
+  movement-water-exit.wav
+  environment-fire-loop.wav
+  environment-wind-loop.wav
+
+SOURCE RECORDINGS AND PERMISSIONS
+
+1. Kenney Vleugels / Kenney.nl, RPG Audio
+   Work: https://kenney.nl/assets/rpg-audio
+   License: Creative Commons Zero 1.0 Universal (CC0)
+   https://creativecommons.org/publicdomain/zero/1.0/
+   The author's original notice is retained in License-Kenney-RPG-Audio.txt.
+   Source archive members used in movement-land.wav:
+   Audio/footstep03.ogg, Audio/footstep07.ogg, Audio/dropLeather.ogg,
+   Audio/cloth2.ogg. They are edited/layered with procedural body and grit.
+   The original license permits personal and commercial use. Attribution is
+   appreciated by the author but not required. No voice recording is used.
+
+2. Peludo / RNAn, Water Splash and sand footsteps (revision 2)
+   Work: https://opengameart.org/content/water-splash-and-sand-footsteps
+   Creator credit: https://rnan.itch.io/
+   License: Creative Commons Zero 1.0 Universal (CC0)
+   https://creativecommons.org/publicdomain/zero/1.0/
+   Full source/edit notice: License-Peludo-Water-Splash.txt.
+   movement-water-enter.wav uses splash1_0.wav; movement-water-exit.wav uses
+   splash2_0.wav. These are edited actual bucket-water experiment recordings.
+   No synthesized bubble tones/noise, reversal or pitch change is added.
+   These files are not claimed as a human entering/exiting a natural lake.
+   The creator asks game users to reference their itch.io page; it is credited.
+   Earlier revision 1 used RandomMind river texture plus procedural water. Those
+   layers are absent from revision 2. Existing independent Vistula environment
+   audio and its original licensing notice remain unchanged.
+
+PROJECT-CREATED COMPONENTS
+
+The fire and wind loops are original deterministic procedural sound designs
+created for this Hearthward task. They contain no third-party audio recordings.
+The added landing body/grit layers are likewise procedural. Revision 2 water
+cues contain only edited identified CC0 water recordings; no procedural layers.
+The editable generator, parameters, exact source hashes, per-cue seeds and
+technical measurements are retained in art_source/TASK-099/audio-completion-v1/.
+No paid library, restricted stock source, TTS, spoken voice, music composition,
+or cloned performance was used. There are no additional third-party sample
+license conditions for these procedural components. This notice does not impose
+a new open-source license on the game or claim exclusive copyright in AI-assisted
+material. Existing project ownership and distribution arrangements are unchanged.
+
+TECHNICAL AND ACCEPTANCE BOUNDARIES
+
+All five files: single-channel 48000 Hz, 16-bit little-endian PCM WAV.
+Fire/wind use circular synthesis, including wrapped transient tails, and retain
+headroom for the runtime mix. Format, clipping, boundary and deterministic-render
+checks do not establish subjective quality or in-engine/device listening approval.
+Fixed dialogue remains unproduced. No silent substitute voice file was created.

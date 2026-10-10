@@ -1,5 +1,7 @@
 #include "HearthwardHeroAnimInstance.h"
 #include "Animation/AnimInstanceProxy.h"
+#include "../Equipment/HearthwardAxeHandPose.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimNode_SequencePlayer.h"
 #include "Animation/AnimSequence.h"
 #include "AnimNodes/AnimNode_TwoWayBlend.h"
@@ -41,6 +43,7 @@ struct FHeroAnimProxy : FAnimInstanceProxy
     FAnimNode_ConvertLocalToComponentSpace RangedToComponent;
     FAnimNode_ModifyBone AimRotation;
     FAnimNode_ConvertComponentToLocalSpace RangedToLocal;
+    FHearthwardAxeFingerPoseNode AxeFingers;
     uint32 SeenAttack = 0;
     float LocomotionPhase = 0;
 
@@ -83,14 +86,18 @@ struct FHeroAnimProxy : FAnimInstanceProxy
             Layers[Index].B.SetLinkNode(&Players[Index + 3]);
             Layers[Index].bAlphaBoolEnabled = false;
         }
+        AxeFingers.Source.SetLinkNode(&Layers[7]);
+        FVector Palm;
+        HearthwardAxeHandPose::Profile(Instance->GetSkelMeshComponent()->GetSkeletalMeshAsset(), Palm, AxeFingers.Rotations);
         FAnimInstanceProxy::Initialize(Instance);
     }
 
-    virtual FAnimNode_Base* GetCustomRootNode() override { return &Layers[7]; }
+    virtual FAnimNode_Base* GetCustomRootNode() override { return &AxeFingers; }
 
     virtual void PreUpdate(UAnimInstance* Instance, float DeltaSeconds) override
     {
         FAnimInstanceProxy::PreUpdate(Instance, DeltaSeconds);
+        AxeFingers.Enabled = HearthwardAxeHandPose::ShouldApply(Instance->GetOwningActor());
         const auto* Hero = CastChecked<UHearthwardHeroAnimInstance>(Instance);
         RangedLayer.BlendWeights[0]=Hero->RangedWeight;
         AimRotation.Rotation=Hero->RangedAimRotation;

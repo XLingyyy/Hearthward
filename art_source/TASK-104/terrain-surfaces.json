@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "source_material": "/Game/Hearthward/Assets/NaturalWorld/Rebuild/Materials/M_Landscape.M_Landscape",
+  "sources": [
+    {
+      "path": "art_source/TASK-026/Rebuild/biome_weights.png",
+      "sha256": "8ba4571e40f42da0265caca266806ff45b5db0d7378b9d92200a5eb9a96b3e16"
+    },
+    {
+      "path": "art_source/TASK-026/Rebuild/ReworkV2/S1_Blend.png",
+      "sha256": "4c0b77785e36c44227f4b317b2cee8ad64ca43148999801e80ae44f2e32dd5c8"
+    },
+    {
+      "path": "art_source/TASK-026/Rebuild/ReworkV2/S1_Surface_Detail.png",
+      "sha256": "4fef0411d52e15f4f653aae733cf1d5ac19fea9db965e2707ad544fc28233cce"
+    }
+  ],
+  "authoring": [
+    "scripts/world/TASK-026/rebuild_terrain.py",
+    "scripts/world/TASK-026/rework_s1_surface.py",
+    "scripts/world/TASK-026/rework_s1_detail_assets.py"
+  ],
+  "world_uv": "(ImpactPoint.XY + 201600cm) / 403200cm; no Y inversion",
+  "size": 2017,
+  "sampling": "nearest texel dominant blend (~2m); visual texture bilinear/mips can soften boundaries",
+  "formula": "base=((1-G)*(1-B),G*(1-B),B); A=S1_Blend.R*S1_Surface_Detail.R; final=(base.grass*(1-A),base.dirt*(1-A)+A,base.stone*(1-A)); argmax grass,dirt,stone",
+  "surface_ids": {
+    "1": "grass",
+    "2": "dirt",
+    "3": "stone"
+  },
+  "cell_counts": {
+    "grass": 3372001,
+    "dirt": 71188,
+    "stone": 625100
+  },
+  "output": "Resources/Audio/TASK-104/terrain-surfaces.rle",
+  "output_sha256": "543dc3d4d8ea7359815173a4659e08ef5883d934a3d6e826c31df272350ee99c",
+  "output_bytes": 182042,
+  "license": "Derived solely from existing project procedural biome/mask data; no external audio or imagery copied into this lookup.",
+  "rebuild": "python scripts/audio/prepare_footstep_terrain.py; regenerate if the landscape material masks/UV change"
+}

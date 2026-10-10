@@ -1,5 +1,7 @@
 #include "HearthwardBrotherAnimInstance.h"
 #include "Animation/AnimInstanceProxy.h"
+#include "../Equipment/HearthwardAxeHandPose.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimNode_SequencePlayer.h"
 #include "Animation/AnimSequence.h"
 #include "AnimNodes/AnimNode_TwoWayBlend.h"
@@ -34,6 +36,7 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
     FAnimNode_LayeredBoneBlend CarryLayer;
     FAnimNode_SequencePlayer_Standalone LifePlayers[3];
     FBrotherActionBlend LifeLayers[3];
+    FHearthwardAxeFingerPoseNode AxeFingers;
     uint32 SeenAttack = 0;
     float LocomotionPhase = 0;
 
@@ -65,12 +68,16 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
             LifePlayers[I].SetSequence(Brother->LifeClips[I]);LifePlayers[I].SetLoopAnimation(false);LifePlayers[I].SetPlayRate(0);
             LifeLayers[I].A.SetLinkNode(I==0?&Attack:&LifeLayers[I-1]);LifeLayers[I].B.SetLinkNode(&LifePlayers[I]);
         }
+        AxeFingers.Source.SetLinkNode(&LifeLayers[2]);
+        FVector Palm;
+        HearthwardAxeHandPose::Profile(Instance->GetSkelMeshComponent()->GetSkeletalMeshAsset(), Palm, AxeFingers.Rotations);
         FAnimInstanceProxy::Initialize(Instance);
     }
-    virtual FAnimNode_Base* GetCustomRootNode() override { return &LifeLayers[2]; }
+    virtual FAnimNode_Base* GetCustomRootNode() override { return &AxeFingers; }
     virtual void PreUpdate(UAnimInstance* Instance, float DeltaSeconds) override
     {
         FAnimInstanceProxy::PreUpdate(Instance, DeltaSeconds);
+        AxeFingers.Enabled = HearthwardAxeHandPose::ShouldApply(Instance->GetOwningActor());
         const auto* Brother = CastChecked<UHearthwardBrotherAnimInstance>(Instance);
         CarryLayer.BlendWeights[0]=Brother->WeaponCarryWeight;
         for(int32 I=0;I<3;++I)

@@ -54,3 +54,24 @@ art_source/TASK-004/Tripo/武器/outputs/8dd7cafa-fdd7-40cd-9724-a0fa113e72e9/8d
 art_source/TASK-004/Tripo/武器/outputs/b39bb9c5-8ee6-484e-8ab1-e6c1ff5046e6/b39bb9c5-8ee6-484e-8ab1-e6c1ff5046e6_rendered.webp filter=lfs diff=lfs merge=lfs -text
 art_source/TASK-004/Tripo/武器/outputs/c31fb95d-d93d-467b-bfa6-5e1e9a4bb2e3/c31fb95d-d93d-467b-bfa6-5e1e9a4bb2e3_rendered.webp filter=lfs diff=lfs merge=lfs -text
 art_source/TASK-004/Tripo/武器/outputs/c49a60bf-f3bf-4ee9-a854-145882c4ebdd/c49a60bf-f3bf-4ee9-a854-145882c4ebdd_rendered.webp filter=lfs diff=lfs merge=lfs -text
+
+# TASK-104: tiny original procedural PCM clips are ordinary Git assets (~350 KB total).
+# Keep all existing audio/art LFS rules unchanged; a clean clone can play these directly.
+Resources/Audio/TASK-104/footstep-grass-01.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-grass-02.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-grass-03.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-dirt-01.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-dirt-02.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-dirt-03.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-stone-01.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-stone-02.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-stone-03.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-wood-01.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-wood-02.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-wood-03.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-unknown-01.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-unknown-02.wav -filter -diff -merge -text -lockable
+Resources/Audio/TASK-104/footstep-unknown-03.wav -filter -diff -merge -text -lockable
+
+# Audition-only concatenation of the same clips; not a runtime dependency.
+art_source/TASK-104/footstep-review.wav -filter -diff -merge -text -lockable

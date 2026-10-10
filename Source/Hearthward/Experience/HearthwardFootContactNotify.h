@@ -15,6 +15,7 @@ struct FHearthwardFootContactReceipt
     FName FootBone;
     FVector Position=FVector::ZeroVector;
     TWeakObjectPtr<UPhysicalMaterial> Material;
+    FName Surface=NAME_None; // Classified from this exact grounded hit, never the actor location.
 };
 
 UCLASS(meta=(DisplayName="Hearthward Foot Contact"))
