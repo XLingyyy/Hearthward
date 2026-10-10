@@ -145,9 +145,9 @@ Root在实际candidate3 `preview.20261007.2` Shipping CPU launcher的独立fresh
 
 Root授权后仅将 `Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp` 中 `ResetForSnapshot` 的一条Status赋值改为“请输入委托，或选择任务卡”。原有取消请求、清理上下文、旧epoch保护和所有控制流保留；没有改Save、测试、Prompt、模型、Schema、预算或ReleaseInfo。该cpp在087允许范围内。局部 `git diff --check`通过，Source窗口已关闭。
 
-Root随后实际完成candidate4 `0.2.0-preview.20261007.3` 的Shipping Build/Cook/Stage/Archive，并通过本候选CPU.cmd在独立profile中正常开始新游戏、F6保存1→2及正常退出。新游戏交流页已实际显示中性提示“请输入委托，或选择任务卡”，见[新游戏OS GREEN截图](../../../.agent-local/qa/TASK-103/os-launchers-candidate4-20261007/cpu-new-game-reset-green.jpg)。
+Root随后实际完成candidate4 `0.2.0-preview.20261007.3` 的Shipping Build/Cook/Stage/Archive，并通过本候选CPU.cmd在独立profile中正常开始新游戏、F6保存1→2及正常退出。新游戏交流页已实际显示中性提示“请输入委托，或选择任务卡”，见新游戏OS GREEN截图（仅本机留存，未随仓库公开；路径：../../../.agent-local/qa/TASK-103/os-launchers-candidate4-20261007/cpu-new-game-reset-green.jpg）。
 
-随后Root实际执行Vulkan.cmd，标题可见同版`.3`，显式鼠标点击“继续游戏”恢复同一卧室及共享profile中的两条保存节点；F6仍为01:19手动、01:10自动共2条，没有以Return默认新游戏代替Continue。Esc返回后按T，交流页再次实际显示中性提示，见[继续游戏提示GREEN截图](../../../.agent-local/qa/TASK-103/os-launchers-candidate4-20261007/vulkan-restore-reset-green.jpg)，恢复画面及节点图为同目录`vulkan-continued-bedroom.jpg`、`vulkan-shared-save-still-2.jpg`。本次关闭正常NewGame与显式Continue两条输入路径的误导恢复文案缺口；候选3原RED仍保留。两cmd经隐藏命令进程实际执行，Explorer双击入口未验；真实IME、完整路线和Owner体验未验。
+随后Root实际执行Vulkan.cmd，标题可见同版`.3`，显式鼠标点击“继续游戏”恢复同一卧室及共享profile中的两条保存节点；F6仍为01:19手动、01:10自动共2条，没有以Return默认新游戏代替Continue。Esc返回后按T，交流页再次实际显示中性提示，见继续游戏提示GREEN截图（仅本机留存，未随仓库公开；路径：../../../.agent-local/qa/TASK-103/os-launchers-candidate4-20261007/vulkan-restore-reset-green.jpg），恢复画面及节点图为同目录`vulkan-continued-bedroom.jpg`、`vulkan-shared-save-still-2.jpg`。本次关闭正常NewGame与显式Continue两条输入路径的误导恢复文案缺口；候选3原RED仍保留。两cmd经隐藏命令进程实际执行，Explorer双击入口未验；真实IME、完整路线和Owner体验未验。
 
 提示GREEN截图可见默认对话、空输入与新提示，本身不提供模型提交或理解成功信用。Root随后真实Unicode输入“跟随我”并提交，随包Vulkan模型实际16层；39.122秒观测仍pending，60.985秒首次观测确认卡，随后实际鼠标确认，界面回复“好，我跟着你”，Esc回HUD显示“跟随中”。该单条Shipping CASE取得真实请求→候选→确认→跟随状态成功，原图为同目录`vulkan-request-proposal.jpg`、`vulkan-request-confirmed.jpg`、`vulkan-following-hud.jpg`。上述秒数是OS阶段观察值，精确HTTP请求及UE Paint时延NOT_READ，不能充当性能分布或暖p95；没有本轮CPU4请求信用。候选3同AI Source.2 CPU单条失败保留，完整原60质量FAIL不变。
 
