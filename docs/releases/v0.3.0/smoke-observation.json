@@ -1,0 +1,29 @@
+{
+  "source_commit": "5f389a82ad6bd3f58b3a26a450a198ed91fe2f16",
+  "game_version": "0.3.0",
+  "package": "F:/HearthwardDemo/v0.3.0/Windows",
+  "profile": "F:/HearthwardQA/v0.3.0/profile",
+  "input": "Computer Use sky keyboard and mouse, no injected gameplay commands",
+  "cpu": [
+    "title shows 0.3.0",
+    "Return on New Game loads stonehold bedroom with hero, brother and HUD",
+    "Tab opens equipment inventory",
+    "M opens actual map",
+    "F6 opens save manager; clicking Save creates manual node, count 1 to 2"
+  ],
+  "vulkan": [
+    "new independent process with same isolated profile",
+    "click Continue restores bedroom/progress",
+    "F6 shows the same manual and automatic save nodes, count 2"
+  ],
+  "process_shutdown": "both stopped through owning UEClient, ok=true",
+  "not_tested": [
+    "full walkthrough",
+    "combat/harvesting visual matrix",
+    "device audio listening",
+    "actual local AI inference request",
+    "second machine",
+    "full old save compatibility"
+  ],
+  "passed": true
+}
