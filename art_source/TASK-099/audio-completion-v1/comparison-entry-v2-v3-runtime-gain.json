@@ -1,0 +1,36 @@
+{
+  "task": "TASK-099",
+  "revision": 3,
+  "path": "art_source/TASK-099/audio-completion-v1/comparison-entry-v2-v3-runtime-gain.wav",
+  "sha256": "c8660caa77723f19313dbb88ec8a803231eea40eb408e6e7da4f2bcb5b74ac90",
+  "duration_seconds": 3.8,
+  "chapters": [
+    {
+      "revision": "v2",
+      "start_seconds": 0.4,
+      "end_seconds": 1.48,
+      "runtime_gain": 1.0,
+      "source_sha256": "00adf5b48c744c86797e1f7c60e553324df7755918334b93730ffec575bab2c1",
+      "sample_peak": 0.443206787109375,
+      "rms_dbfs": -34.02535268650363,
+      "crest_db": 26.957480734520317,
+      "first_300ms_max_20ms_rms": 0.09292896839235826,
+      "first_300ms_peak": 0.443206787109375
+    },
+    {
+      "revision": "v3",
+      "start_seconds": 2.13,
+      "end_seconds": 3.21,
+      "runtime_gain": 1.0,
+      "source_sha256": "045787014fabe08a434399c0b2776a66396f6feacd04311f05c240d4ef09368c",
+      "sample_peak": 0.15704345703125,
+      "rms_dbfs": -29.769670836165915,
+      "crest_db": 13.690067774458113,
+      "first_300ms_max_20ms_rms": 0.0684563942284179,
+      "first_300ms_peak": 0.15704345703125
+    }
+  ],
+  "normalization": "NONE: both use actual runtime gain 1.0; same PCM source bytes as the corresponding runtime file.",
+  "changes": "Entry only: warm and smooth internal first-quarter-second source splat crests, preserve recorded water tail; new source true-peak ceiling -16dBTP prevents peak normalization from restoring the old attack. No new sound layers.",
+  "listening_status": "Prepared for user review; no subjective listening claim."
+}

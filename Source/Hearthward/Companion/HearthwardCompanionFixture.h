@@ -95,7 +95,7 @@ public:
 private:
     UPROPERTY() TObjectPtr<class UStaticMeshComponent> HeldWeapon;
     UPROPERTY() TMap<FName,TObjectPtr<class UStaticMesh>> WeaponMeshes;
-    FTransform WeaponGrip;
+    FTransform WeaponGrip, AxeGrip;
     FName DisplayedWeapon;
     friend class UHearthwardSaveSubsystem;
     bool At(const AActor* Target) const;

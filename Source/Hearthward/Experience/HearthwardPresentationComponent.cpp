@@ -1,8 +1,12 @@
 #include "HearthwardPresentationComponent.h"
 #include "HearthwardPlayerSettings.h"
 #include "HearthwardFootContactNotify.h"
+#include "HearthwardFootstepSurface.h"
 #include "HearthwardEnvironmentLoopWave.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Building/HearthwardHometownFortress.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Companion/HearthwardCompanionFixture.h"
@@ -53,8 +57,18 @@ void UHearthwardPresentationComponent::BeginPlay()
         {const auto Row=Value->AsObject();Cues.Add(FName(*Row->GetStringField(TEXT("cue_id"))),{Row->GetStringField(TEXT("speaker")),Row->GetStringField(TEXT("text")),Row->GetStringField(TEXT("audio_group")),Row->GetStringField(TEXT("voice_status"))});}
         const TArray<TSharedPtr<FJsonValue>>* Sounds;
         if(Root->TryGetArrayField(TEXT("sound_events"),Sounds))for(const auto& Value:*Sounds)
-        {const auto Row=Value->AsObject();SoundCues.Add(FName(*Row->GetStringField(TEXT("event_id"))),{Row->GetStringField(TEXT("file")),FName(*Row->GetStringField(TEXT("channel")))});}
+        {
+            const auto Row=Value->AsObject();
+            FSoundCue Cue{Row->GetStringField(TEXT("file")),FName(*Row->GetStringField(TEXT("channel")))};
+            const TArray<TSharedPtr<FJsonValue>>* Variants=nullptr;
+            if(Row->TryGetArrayField(TEXT("variants"),Variants))for(const auto& Variant:*Variants)
+            {
+                FString File;if(Variant->TryGetString(File) && !File.IsEmpty())Cue.Variants.AddUnique(File);
+            }
+            SoundCues.Add(FName(*Row->GetStringField(TEXT("event_id"))),MoveTemp(Cue));
+        }
     }
+    InitializeAmbientProfiles(Root);
     InitializeEnvironment();
     GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.AddDynamic(this,&UHearthwardPresentationComponent::Restored);
     GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->OnTransferred.AddDynamic(this,&UHearthwardPresentationComponent::StorageTransferred);
@@ -82,7 +96,8 @@ void UHearthwardPresentationComponent::EndPlay(const EEndPlayReason::Type Reason
 }
 void UHearthwardPresentationComponent::Restored()
 {
-    StopFixedCue();StopEffects();StopEnvironment();ObservedTransfers.Reset();ObservedCombatEvents.Reset();ObservedFootContacts.Reset();PlayedEvents.Reset();ObservedBrother.Reset();
+    StopFixedCue();StopEffects();StopEnvironment();StopAmbient();ObservedTransfers.Reset();ObservedCombatEvents.Reset();ObservedFootContacts.Reset();PlayedEvents.Reset();ObservedBrother.Reset();
+    for(auto& Pair:SoundCues)Pair.Value.LastVariant=INDEX_NONE;
     PreviousInitiative=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetInitiativeKind();
     Epoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
     PreviousHealth=GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>()->Health;ShakeRemaining=0;SeedSuccessEvents();
@@ -136,7 +151,7 @@ void UHearthwardPresentationComponent::CharacterLanded(const FHitResult& Hit)
     AwaitingLanding=false;++ObservedMovementEvents.FindOrAdd(TEXT("movement.landed"));
     // Hero/Brother apply fall damage after Super::Landed; settle audio in PostPhysics after that result.
     if(SoundCues.Contains(TEXT("movement.landed")) && !GetWorld()->IsPaused()
-        && GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->Alive())PendingLanding=FGuid::NewGuid();
+        && GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->Alive()){PendingLanding=FGuid::NewGuid();PendingLandingPosition=Hit.ImpactPoint;}
 }
 void UHearthwardPresentationComponent::CharacterMovementChanged(ACharacter* Character,EMovementMode PreviousMode,uint8 PreviousCustomMode)
 {
@@ -147,7 +162,8 @@ void UHearthwardPresentationComponent::CharacterMovementChanged(ACharacter* Char
     const EMovementMode Before=ObservedMovementMode;ObservedMovementMode=Mode;AwaitingLanding=Mode==MOVE_Falling;
     const FName Event=Mode==MOVE_Swimming?FName(TEXT("movement.swim.enter")):Before==MOVE_Swimming?FName(TEXT("movement.swim.exit")):NAME_None;
     if(Event.IsNone())return;
-    ++ObservedMovementEvents.FindOrAdd(Event);PlaySoundEvent(Event,FGuid::NewGuid());
+    const FVector Position=Character->GetActorLocation();
+    ++ObservedMovementEvents.FindOrAdd(Event);PlaySoundEvent(Event,FGuid::NewGuid(),&Position,false);
 }
 void UHearthwardPresentationComponent::ObserveNPCSuccess(AHearthwardCompanionFixture* Brother)
 {
@@ -179,6 +195,11 @@ void UHearthwardPresentationComponent::StopEffects()
 void UHearthwardPresentationComponent::InitializeEnvironment()
 {
     if(!GetWorld()->IsGameWorld())return;
+    EnvironmentSpawnHandle=GetWorld()->AddOnActorSpawnedHandler(FOnActorSpawned::FDelegate::CreateUObject(this,&UHearthwardPresentationComponent::EnvironmentActorSpawned));
+    EnvironmentRegisterHandle=GetWorld()->AddOnPostRegisterAllActorComponentsHandler(FOnPostRegisterAllActorComponents::FDelegate::CreateUObject(this,&UHearthwardPresentationComponent::CacheEnvironmentActor));
+    FWorldDelegates::LevelAddedToWorld.AddUObject(this,&UHearthwardPresentationComponent::EnvironmentLevelAdded);
+    FWorldDelegates::LevelRemovedFromWorld.AddUObject(this,&UHearthwardPresentationComponent::EnvironmentLevelRemoved);
+    for(TActorIterator<AActor> It(GetWorld());It;++It)CacheEnvironmentActor(*It);
     FString Text;TSharedPtr<FJsonObject> Geometry;
     if(!FFileHelper::LoadFileToString(Text,*(FPaths::ProjectDir()/TEXT("Resources/Data/TASK-099-water-audio.json")))
         || !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Text),Geometry))return;
@@ -205,10 +226,6 @@ void UHearthwardPresentationComponent::InitializeEnvironment()
     if(EnvironmentVertices.IsEmpty() || EnvironmentTriangles.IsEmpty())return;
     EnvironmentTag=FName(*Geometry->GetStringField(TEXT("required_actor_tag")));
     EnvironmentEvent=FName(*Geometry->GetStringField(TEXT("event_id")));
-    EnvironmentSpawnHandle=GetWorld()->AddOnActorSpawnedHandler(FOnActorSpawned::FDelegate::CreateUObject(this,&UHearthwardPresentationComponent::EnvironmentActorSpawned));
-    EnvironmentRegisterHandle=GetWorld()->AddOnPostRegisterAllActorComponentsHandler(FOnPostRegisterAllActorComponents::FDelegate::CreateUObject(this,&UHearthwardPresentationComponent::CacheEnvironmentActor));
-    FWorldDelegates::LevelAddedToWorld.AddUObject(this,&UHearthwardPresentationComponent::EnvironmentLevelAdded);
-    FWorldDelegates::LevelRemovedFromWorld.AddUObject(this,&UHearthwardPresentationComponent::EnvironmentLevelRemoved);
     for(TActorIterator<AStaticMeshActor> It(GetWorld());It;++It)CacheEnvironmentActor(*It);
 }
 bool UHearthwardPresentationComponent::PrepareEnvironmentWave()
@@ -227,14 +244,17 @@ bool UHearthwardPresentationComponent::PrepareEnvironmentWave()
 }
 void UHearthwardPresentationComponent::CacheEnvironmentActor(AActor* Actor)
 {
-    auto* Static=Cast<AStaticMeshActor>(Actor);if(!Static || Static->GetWorld()!=GetWorld() || Static->IsActorBeingDestroyed())return;
+    if(!IsValid(Actor) || Actor->GetWorld()!=GetWorld() || Actor->IsActorBeingDestroyed())return;
+    const bool Wind=WindProfile.Tags.ContainsByPredicate([Actor](FName Tag){return Actor->ActorHasTag(Tag);});
+    if(Wind || Actor->ActorHasTag(TEXT("Hearthward.Building.Completed")) || Cast<AHearthwardHometownFortress>(Actor))AmbientActors.AddUnique(Actor);
+    auto* Static=Cast<AStaticMeshActor>(Actor);if(!Static)return;
     auto* Component=Static->GetStaticMeshComponent();const UStaticMesh* Mesh=Component?Component->GetStaticMesh().Get():nullptr;
     if(Mesh && Mesh->GetPathName()==EnvironmentMesh)EnvironmentCandidates.AddUnique(Component);
 }
 void UHearthwardPresentationComponent::EnvironmentActorSpawned(AActor* Actor)
 {
-    // Spawn returns before callers can assign mesh/tag; consider this static actor once in PostPhysics.
-    if(Cast<AStaticMeshActor>(Actor))PendingEnvironmentActors.AddUnique(Actor);
+    // Spawn returns before callers assign mesh/tags; inspect once in PostPhysics, also after registration.
+    PendingEnvironmentActors.AddUnique(Actor);
 }
 void UHearthwardPresentationComponent::EnvironmentLevelAdded(ULevel* Level,UWorld* World)
 {
@@ -243,6 +263,11 @@ void UHearthwardPresentationComponent::EnvironmentLevelAdded(ULevel* Level,UWorl
 void UHearthwardPresentationComponent::EnvironmentLevelRemoved(ULevel* Level,UWorld* World)
 {
     if(World!=GetWorld())return;
+    for(int32 I=FireEmitters.Num()-1;I>=0;--I)
+        if(!Level || !FireEmitters[I].IsValid() || FireEmitters[I]->GetOwner()->GetLevel()==Level)RemoveFireSource(I);
+    if(!Level || (WindAnchor.IsValid() && WindAnchor->GetLevel()==Level))
+    {if(IsValid(WindSource)){WindSource->Stop();WindSource->DestroyComponent();}WindSource=nullptr;WindAnchor.Reset();WindWeight=0;}
+    AmbientActors.RemoveAll([Level](const auto& Weak){const auto* A=Weak.Get();return !A || !Level || A->GetLevel()==Level;});
     if(!Level || (EnvironmentSurface.IsValid() && EnvironmentSurface->GetOwner()->GetLevel()==Level))StopEnvironment();
     EnvironmentCandidates.RemoveAll([Level](const auto& Weak){const auto* C=Weak.Get();return !C || !Level || C->GetOwner()->GetLevel()==Level;});
     PendingEnvironmentActors.RemoveAll([Level](const auto& Weak){const auto* A=Weak.Get();return !A || !Level || A->GetLevel()==Level;});
@@ -254,7 +279,7 @@ void UHearthwardPresentationComponent::StopEnvironment()
 }
 void UHearthwardPresentationComponent::ReleaseEnvironment()
 {
-    StopEnvironment();
+    StopEnvironment();StopAmbient();AmbientActors.Reset();AmbientPCM.Reset();AmbientRates.Reset();AmbientAttempted.Reset();
     GetWorld()->RemoveOnActorSpawnedHandler(EnvironmentSpawnHandle);
     GetWorld()->RemoveOnPostRegisterAllActorComponentsHandler(EnvironmentRegisterHandle);
     FWorldDelegates::LevelAddedToWorld.RemoveAll(this);FWorldDelegates::LevelRemovedFromWorld.RemoveAll(this);
@@ -302,6 +327,175 @@ void UHearthwardPresentationComponent::UpdateEnvironment()
     }
     EnvironmentSurface=Best;EnvironmentSource->SetWorldLocation(Nearest);
 }
+void UHearthwardPresentationComponent::InitializeAmbientProfiles(const TSharedPtr<FJsonObject>& Root)
+{
+    FireProfile=FAmbientProfile();WindProfile=FAmbientProfile();
+    const TArray<TSharedPtr<FJsonValue>>* Events;
+    if(!Root.IsValid() || !Root->TryGetArrayField(TEXT("sound_events"),Events))return;
+    for(const auto& Value:*Events)
+    {
+        const auto Row=Value->AsObject();const TSharedPtr<FJsonObject>* Source;
+        if(!Row.IsValid() || !Row->TryGetObjectField(TEXT("source"),Source) || !Source->IsValid())continue;
+        FString Kind;(*Source)->TryGetStringField(TEXT("kind"),Kind);
+        if(Kind!=TEXT("active_flame") && Kind!=TEXT("landmark_wind"))continue;
+        FAmbientProfile Profile;Profile.Event=FName(*Row->GetStringField(TEXT("event_id")));
+        double Radius=0,Inner=0,Gain=0,Roof=0,Count=1;
+        const TArray<TSharedPtr<FJsonValue>>* Tags;
+        if(!(*Source)->TryGetBoolField(TEXT("enabled"),Profile.Enabled)
+            || !(*Source)->TryGetNumberField(TEXT("radius_cm"),Radius) || !FMath::IsFinite(Radius) || Radius<=0 || Radius>20000
+            || !(*Source)->TryGetNumberField(TEXT("gain"),Gain) || !FMath::IsFinite(Gain) || Gain<0 || Gain>1
+            || !(*Source)->TryGetArrayField(TEXT("tags"),Tags) || Tags->IsEmpty()
+            || !(*Source)->TryGetStringField(TEXT("asset"),Profile.System) || Profile.System.IsEmpty())continue;
+        Profile.Radius=Radius;Profile.Gain=Gain;
+        for(const auto& Tag:*Tags){FString Name;if(Tag->TryGetString(Name) && !Name.IsEmpty())Profile.Tags.AddUnique(FName(*Name));}
+        if(Profile.Tags.IsEmpty())continue;
+        if(Kind==TEXT("active_flame"))
+        {
+            if(!(*Source)->TryGetNumberField(TEXT("max_sources"),Count) || !FMath::IsFinite(Count) || Count<1 || Count>4 || Count!=int32(Count))continue;
+            Profile.MaxSources=int32(Count);FireProfile=Profile;
+        }
+        else
+        {
+            if(!(*Source)->TryGetNumberField(TEXT("inner_radius_cm"),Inner) || !FMath::IsFinite(Inner) || Inner<0 || Inner>=Radius
+                || !(*Source)->TryGetNumberField(TEXT("roof_trace_cm"),Roof) || !FMath::IsFinite(Roof) || Roof<=0 || Roof>10000)continue;
+            Profile.InnerRadius=Inner;Profile.RoofTrace=Roof;WindProfile=Profile;
+        }
+    }
+}
+UAudioComponent* UHearthwardPresentationComponent::CreateAmbientSource(FName Event,const FVector& Position,float Radius)
+{
+    if(!GetWorld()->AllowAudioPlayback())return nullptr;
+    const auto* Cue=SoundCues.Find(Event);if(!Cue || Cue->Channel!=TEXT("environment"))return nullptr;
+    if(!AmbientAttempted.Contains(Event))
+    {
+        AmbientAttempted.Add(Event);TArray<uint8> Data;FWaveModInfo Info;
+        const FString File=FPaths::ProjectDir()/TEXT("Resources/Audio")/Cue->File;
+        if(!FFileHelper::LoadFileToArray(Data,*File) || !Info.ReadWaveInfo(Data.GetData(),Data.Num())
+            || *Info.pFormatTag!=1 || *Info.pBitsPerSample!=16 || *Info.pChannels!=1
+            || *Info.pSamplesPerSec==0 || Info.SampleDataSize==0 || Info.SampleDataSize%2!=0)
+        {UE_LOG(LogTemp,Warning,TEXT("Invalid mono PCM16 ambient sound: %s"),*File);return nullptr;}
+        AmbientPCM.FindOrAdd(Event).Append(Info.SampleDataStart,Info.SampleDataSize);
+        AmbientRates.Add(Event,*Info.pSamplesPerSec);
+    }
+    const auto* PCM=AmbientPCM.Find(Event);if(!PCM || PCM->IsEmpty())return nullptr;
+    auto* Sound=NewObject<UHearthwardEnvironmentLoopWave>(this);
+    if(!Sound->InitializePCM(PCM->GetData(),PCM->Num(),AmbientRates.FindRef(Event)))return nullptr;
+    // Keep the bounded live loops eligible to resume after category mute or mixer virtualization.
+    Sound->VirtualizationMode=EVirtualizationMode::PlayWhenSilent;
+    auto* Source=NewObject<UAudioComponent>(GetOwner());Source->bAutoActivate=false;Source->bAutoDestroy=false;
+    Source->bIsUISound=false;Source->bStopWhenOwnerDestroyed=true;Source->bAllowSpatialization=Radius>0;
+    if(Radius>0)
+    {
+        FSoundAttenuationSettings Attenuation;Attenuation.bAttenuate=true;Attenuation.bSpatialize=true;
+        Attenuation.DistanceAlgorithm=EAttenuationDistanceModel::Linear;Attenuation.AttenuationShape=EAttenuationShape::Sphere;
+        Attenuation.AttenuationShapeExtents=FVector::ZeroVector;Attenuation.FalloffDistance=Radius;
+        Source->bOverrideAttenuation=true;Source->SetAttenuationOverrides(Attenuation);
+    }
+    Source->ComponentTags.Add(TEXT("Hearthward.Audio.environment"));Source->ComponentTags.Add(Event);
+    Source->RegisterComponent();Source->SetWorldLocation(Position);Source->SetSound(Sound);
+    Source->SetVolumeMultiplier(0);return Source;
+}
+void UHearthwardPresentationComponent::RemoveFireSource(int32 Index)
+{
+    if(IsValid(FireSources[Index])){FireSources[Index]->Stop();FireSources[Index]->DestroyComponent();}
+    FireSources.RemoveAtSwap(Index);FireEmitters.RemoveAtSwap(Index);
+}
+void UHearthwardPresentationComponent::StopAmbient()
+{
+    for(int32 I=FireSources.Num()-1;I>=0;--I)RemoveFireSource(I);
+    if(IsValid(WindSource)){WindSource->Stop();WindSource->DestroyComponent();}
+    WindSource=nullptr;WindAnchor.Reset();WindWeight=0;
+}
+void UHearthwardPresentationComponent::ApplyAmbientMix()
+{
+    const float Category=GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Volume(TEXT("environment"));
+    for(UAudioComponent* Source:FireSources)if(IsValid(Source))Source->SetVolumeMultiplier(Category*FireProfile.Gain);
+    if(IsValid(WindSource))WindSource->SetVolumeMultiplier(Category*WindProfile.Gain*WindWeight);
+}
+void UHearthwardPresentationComponent::UpdateAmbient()
+{
+    AmbientActors.RemoveAll([](const auto& Weak){return !Weak.IsValid() || Weak->IsActorBeingDestroyed();});
+    if(!GetWorld()->IsGameWorld() || GetWorld()->IsPaused() || !GetWorld()->AllowAudioPlayback()
+        || GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring()
+        || !GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->Alive())
+    {StopAmbient();return;}
+    const FVector Listener=GetOwner()->GetActorLocation();
+    TArray<UNiagaraComponent*> Flames;
+    AActor* BestWind=nullptr;float BestWeight=0;
+    const auto* Character=Cast<ACharacter>(GetOwner());
+    const bool CanHearWind=WindProfile.Enabled && Character && !Character->GetCharacterMovement()->IsSwimming();
+    for(const auto& Weak:AmbientActors)
+    {
+        auto* Actor=Weak.Get();
+        if(Actor->GetWorld()!=GetWorld() || !Actor->HasActorBegunPlay() || Actor->IsHidden())continue;
+        // These owners gain/remove effects after spawn. Read their current components, never saved identities.
+        if(FireProfile.Enabled && (!Cast<AHearthwardHometownFortress>(Actor)
+            || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->State.Phase==TEXT("prologue")))
+        {
+            TInlineComponentArray<UNiagaraComponent*> Components;Actor->GetComponents(Components);
+            for(auto* Flame:Components)
+                if(IsValid(Flame) && Flame->GetWorld()==GetWorld() && Flame->IsRegistered() && Flame->IsActive()
+                    && Flame->IsVisible() && !Flame->bHiddenInGame && Flame->GetAsset()
+                    && Flame->GetAsset()->GetPathName()==FireProfile.System
+                    && FireProfile.Tags.ContainsByPredicate([Flame](FName Tag){return Flame->ComponentHasTag(Tag);})
+                    && FVector::DistSquared(Listener,Flame->GetComponentLocation())<FMath::Square(FireProfile.Radius))Flames.AddUnique(Flame);
+        }
+        if(CanHearWind && WindProfile.Tags.ContainsByPredicate([Actor](FName Tag){return Actor->ActorHasTag(Tag);}))
+        {
+            // Live authored lookout mesh is the zone anchor. No fallback at a remembered coordinate.
+            const auto* Root=Cast<UStaticMeshComponent>(Actor->GetRootComponent());
+            if(!Root || !Root->IsRegistered() || !Root->IsVisible() || Root->bHiddenInGame
+                || !Root->GetStaticMesh() || Root->GetStaticMesh()->GetPathName()!=WindProfile.System)continue;
+            const float Distance=FVector::Dist(Listener,Root->GetComponentLocation());
+            const float Edge=FMath::Clamp((WindProfile.Radius-Distance)/(WindProfile.Radius-WindProfile.InnerRadius),0.f,1.f);
+            const float Weight=Edge*Edge*(3.f-2.f*Edge);
+            if(Weight>BestWeight){BestWeight=Weight;BestWind=Actor;}
+        }
+    }
+    Flames.Sort([Listener](const UNiagaraComponent& A,const UNiagaraComponent& B)
+        {return FVector::DistSquared(Listener,A.GetComponentLocation())<FVector::DistSquared(Listener,B.GetComponentLocation());});
+    if(Flames.Num()>FireProfile.MaxSources)Flames.SetNum(FireProfile.MaxSources);
+    for(int32 I=FireEmitters.Num()-1;I>=0;--I)
+        if(!FireEmitters[I].IsValid() || !Flames.Contains(FireEmitters[I].Get()) || !IsValid(FireSources[I]))RemoveFireSource(I);
+    for(auto* Flame:Flames)
+    {
+        int32 Index=FireEmitters.IndexOfByPredicate([Flame](const auto& Weak){return Weak.Get()==Flame;});
+        if(Index==INDEX_NONE)
+        {
+            auto* Source=CreateAmbientSource(FireProfile.Event,Flame->GetComponentLocation(),FireProfile.Radius);
+            if(!Source)continue;
+            Index=FireSources.Add(Source);FireEmitters.Add(Flame);
+            Source->SetVolumeMultiplier(GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Volume(TEXT("environment"))*FireProfile.Gain);
+            Source->FadeIn(.15f,1.f);
+        }
+        FireSources[Index]->SetWorldLocation(Flame->GetComponentLocation());
+    }
+    if(BestWind)
+    {
+        FHitResult Roof;FCollisionQueryParams Query(SCENE_QUERY_STAT(HearthwardWindShelter),true,GetOwner());
+        // A current solid ceiling/canopy blocks the local outdoor bed; this is not a saved indoor flag.
+        const FVector Head=Character->GetPawnViewLocation();
+        if(GetWorld()->LineTraceSingleByChannel(Roof,Head,Head+FVector(0,0,WindProfile.RoofTrace),ECC_Visibility,Query))BestWind=nullptr;
+    }
+    if(!BestWind)
+    {
+        if(IsValid(WindSource)){WindSource->Stop();WindSource->DestroyComponent();}
+        WindSource=nullptr;WindAnchor.Reset();WindWeight=0;
+    }
+    else
+    {
+        WindAnchor=BestWind;WindWeight=BestWeight;
+        if(!IsValid(WindSource))
+        {
+            // One diffuse local bed across overlapping zones, never one global or duplicate loop per anchor.
+            WindSource=CreateAmbientSource(WindProfile.Event,Listener,0);
+            ApplyAmbientMix();if(WindSource)WindSource->FadeIn(.4f,1.f);
+        }
+        if(WindSource)WindSource->SetWorldLocation(Listener);
+    }
+    ApplyAmbientMix();
+}
+
 void UHearthwardPresentationComponent::UnbindCombatSources()
 {
     // A replaced source can already be pending kill while its native delegate still exists.
@@ -355,7 +549,10 @@ bool UHearthwardPresentationComponent::FootContactSucceeded(const FHearthwardFoo
     ObservedFootContacts.Add(Receipt.SuccessId,Receipt.Position);
     if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring()
         || FVector::DistSquared(GetOwner()->GetActorLocation(),Receipt.Position)>FMath::Square(3000.f))return false;
-    return PlaySoundEvent(TEXT("movement.footstep"),Receipt.SuccessId,&Receipt.Position,false);
+    const FName Event=HearthwardFootstepSurface::EventFor(Receipt.Surface);
+    if(PlaySoundEvent(Event,Receipt.SuccessId,&Receipt.Position,false))return true;
+    // Missing/invalid specialized media keeps an audible neutral fallback, never a false surface.
+    return Event!=TEXT("movement.footstep") && PlaySoundEvent(TEXT("movement.footstep"),Receipt.SuccessId,&Receipt.Position,false);
 }
 void UHearthwardPresentationComponent::StorageTransferred(FGuid Operation,bool ToCamp,FName Item,int32 Count)
 {
@@ -369,10 +566,15 @@ void UHearthwardPresentationComponent::StorageTransferred(FGuid Operation,bool T
 bool UHearthwardPresentationComponent::PlaySoundEvent(FName Event,FGuid Operation,const FVector* Position,bool Remember)
 {
     if(!GetWorld()->AllowAudioPlayback())return false;
-    const auto* Cue=SoundCues.Find(Event);
+    auto* Cue=SoundCues.Find(Event);
     if(!Cue || !Operation.IsValid() || (Remember && PlayedEvents.Contains(Operation)) || GetWorld()->IsPaused()
         || !GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>()->Alive())return false;
-    TArray<uint8> Data;FWaveModInfo Info;const FString File=FPaths::ProjectDir()/TEXT("Resources/Audio")/Cue->File;
+    const int32 Count=Cue->Variants.Num();
+    const bool HasPrevious=Cue->LastVariant>=0 && Cue->LastVariant<Count;
+    const int32 Variant=HearthwardFootstepSurface::SelectVariant(Count,Cue->LastVariant,
+        Count>1?FMath::RandRange(0,Count-(HasPrevious?2:1)):0);
+    const FString RelativeFile=Variant==INDEX_NONE?Cue->File:Cue->Variants[Variant];
+    TArray<uint8> Data;FWaveModInfo Info;const FString File=FPaths::ProjectDir()/TEXT("Resources/Audio")/RelativeFile;
     if(!FFileHelper::LoadFileToArray(Data,*File) || !Info.ReadWaveInfo(Data.GetData(),Data.Num()) || *Info.pFormatTag!=1 || *Info.pBitsPerSample!=16)
     {UE_LOG(LogTemp,Warning,TEXT("Invalid PCM16 event sound: %s"),*File);return false;}
     auto* Sound=NewObject<USoundWaveProcedural>(this);Sound->NumChannels=*Info.pChannels;Sound->SetSampleRate(*Info.pSamplesPerSec);
@@ -390,7 +592,7 @@ bool UHearthwardPresentationComponent::PlaySoundEvent(FName Event,FGuid Operatio
     Effect->ComponentTags.Add(FName(*(FString(TEXT("Hearthward.Audio."))+Cue->Channel.ToString())));Effect->RegisterComponent();
     if(Position)Effect->SetWorldLocation(*Position);
     Effect->SetSound(Sound);Effect->SetVolumeMultiplier(GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Volume(Cue->Channel));
-    Effects.Add(Effect);EffectRemaining.Add(Sound->Duration);if(Remember)PlayedEvents.Add(Operation);Effect->Play();return true;
+    Effects.Add(Effect);EffectRemaining.Add(Sound->Duration);if(Remember)PlayedEvents.Add(Operation);Cue->LastVariant=Variant;Effect->Play();return true;
 }
 void UHearthwardPresentationComponent::StopFixedCue()
 {if(Voice) Voice->Stop();CurrentCue=NAME_None;Remaining=0;}
@@ -441,8 +643,9 @@ void UHearthwardPresentationComponent::TickComponent(float Delta,ELevelTick Type
     ObserveProgressSuccess(false);
     ObserveNPCSuccess(Brother);
     if(PendingLanding.IsValid())
-    {const FGuid Landing=PendingLanding;PendingLanding.Invalidate();PlaySoundEvent(TEXT("movement.landed"),Landing);}
+    {const FGuid Landing=PendingLanding;PendingLanding.Invalidate();PlaySoundEvent(TEXT("movement.landed"),Landing,&PendingLandingPosition,false);}
     UpdateEnvironment();
+    UpdateAmbient();
     if(GetWorld()->IsPaused()) return;
     auto* Settings=GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>();
     const auto* G=GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>();
@@ -486,4 +689,5 @@ void UHearthwardPresentationComponent::TickComponent(float Delta,ELevelTick Type
         FName Channel=TEXT("effects");for(const TCHAR* C:{TEXT("music"),TEXT("voice"),TEXT("environment")}) if(It->ComponentTags.Contains(FName(*(FString(TEXT("Hearthward.Audio."))+C)))) Channel=FName(C);
         It->SetVolumeMultiplier(Settings->Volume(Channel));
     }
+    ApplyAmbientMix();
 }

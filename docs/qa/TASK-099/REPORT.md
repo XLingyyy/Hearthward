@@ -1,3 +1,7 @@
+> 2026-10-10 后续本地声音补丁见 [audio-completion-v1/REPORT.md](audio-completion-v1/REPORT.md)。下方历史构建及23/23仅绑定2026-10-07受测快照，未作为新补丁通过证据。
+
+> 2026-10-10本机整合更新：099声音与104斧柄/分地面脚步已接入；实际斧头资产已保存并重开核验。Editor构建通过，099原生30项、104原生9项均已有通过结果。当前26事件／31个引用WAV。设备实听、完整动作/路线及新Shipping仍未验收。见[当前整合报告](../TASK-104/integration-20261010/REPORT.md)。以下保留原交付及历史验证记录，其中NOT_RUN、云端403、旧事件数量仅适用于各段原始快照。
+
 # TASK-099 当前技术记录
 
 状态Active。最新实际Development Editor build SUCCESS，**本单23/23 Native Success、0测试warnings/0测试errors**；同次完整报告**28/28 Success**，其他5条Combat/Survival/Save兼容用例单列。本单23＝AudioLifecycle14＋Combat4（含真实empty swing声源）＋FootContact2＋Environment3。没有将历史07/08或启动Smoke加到当前分母。

@@ -1,0 +1,73 @@
+{
+  "sample_rate_hz": 48000,
+  "notes": "All parameters are offline sound-design choices, not gameplay rules. Edit render_audio.py for layer balance or event envelopes. Ambient files are circular by construction. Final material/timbre acceptance requires listening.",
+  "cues": [
+    {
+      "kind": "landing",
+      "event_id": "movement.landed",
+      "filename": "movement-land.wav",
+      "duration_seconds": 0.78,
+      "target_true_peak_db": -4.5,
+      "loop": false,
+      "seed": 9901001,
+      "description": "Two close but distinct foot contacts, low body weight and quiet cloth/grit settle; generic grounded landing, not a claim of material-specific surface detection.",
+      "source_kind": "CC0 Kenney foley composite plus original procedural body/grit",
+      "audition_runtime_gain": 1.0
+    },
+    {
+      "kind": "water_enter",
+      "event_id": "movement.swim.enter",
+      "filename": "movement-water-enter.wav",
+      "duration_seconds": 1.08,
+      "target_true_peak_db": -16.0,
+      "loop": false,
+      "seed": 9901002,
+      "description": "Gentler actual recorded water displacement: first-quarter-second internal splash crests dynamically softened and spectrally warmed, with original natural irregular draining tail retained; no synthesized bubbles/noise.",
+      "source_kind": "CC0 Peludo actual water experiment recording, edited without pitch shifting or reversal",
+      "audition_runtime_gain": 1.0,
+      "revision_note": "Revision 3 responds to explosive entry: edit internal transients, not only the first few milliseconds. Lower true-peak ceiling prevents source normalization from restoring the old splat intensity.",
+      "owner_audition_status": "ACCEPTED_EXACT_REVISION_3_ENTRY_PREVIEW_2026-10-10",
+      "owner_audition_scope": "User replied 可以 to the entry-only comparison question about its softened second half. This accepts the delivered revision-3 entry only, not all audio or UE/Shipping validation."
+    },
+    {
+      "kind": "water_exit",
+      "event_id": "movement.swim.exit",
+      "filename": "movement-water-exit.wav",
+      "duration_seconds": 0.88,
+      "target_true_peak_db": -11.0,
+      "loop": false,
+      "seed": 9901003,
+      "description": "Smaller recorded wet-motion onset and quiet draining water; separate natural source, no oscillator drops or reversed entry.",
+      "source_kind": "CC0 Peludo actual water experiment recording, edited without pitch shifting or reversal",
+      "audition_runtime_gain": 1.0,
+      "owner_audition_status": "REVISED_AS_REQUESTED_NOT_INDIVIDUALLY_EXPLICITLY_ACCEPTED"
+    },
+    {
+      "kind": "fire",
+      "event_id": "environment.fire.active",
+      "filename": "environment-fire-loop.wav",
+      "duration_seconds": 16.0,
+      "target_true_peak_db": -7.0,
+      "loop": true,
+      "seed": 9901004,
+      "description": "Quiet warm combustion bed, clustered fine crackle, separated inharmonic wood pops and occasional paired snaps.",
+      "source_kind": "Original procedural sound design; no field recording or third-party audio",
+      "audition_runtime_gain": 0.35
+    },
+    {
+      "kind": "wind",
+      "event_id": "environment.wind.lookouts",
+      "filename": "environment-wind-loop.wav",
+      "duration_seconds": 16.0,
+      "target_true_peak_db": -16.0,
+      "loop": true,
+      "seed": 9901005,
+      "description": "Low open-air movement, several independent turbulent bands, broad breath resonance and sparse foliage-like eddies; no fixed pure-tone whistle.",
+      "source_kind": "Original procedural sound design; no field recording or third-party audio",
+      "audition_runtime_gain": 0.24,
+      "revision_note": "Same original wind design, reduced by 6 dB at the source; runtime gain remains 0.24.",
+      "owner_audition_status": "REVISED_AS_REQUESTED_NOT_INDIVIDUALLY_EXPLICITLY_ACCEPTED"
+    }
+  ],
+  "revision": 3
+}

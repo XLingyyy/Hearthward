@@ -31,6 +31,10 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
 #include "GameFramework/WorldSettings.h"
+#include "Audio.h"
+#include "Sound/SoundWaveProcedural.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 #include "Misc/AutomationTest.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
@@ -49,6 +53,12 @@ struct FAudioFeedbackLifecycleAccess
     static FVector CombatPosition(const UHearthwardPresentationComponent* P,FGuid Id){return P->ObservedCombatEvents.FindRef(Id);}
     static UAudioComponent* LatestSource(const UHearthwardPresentationComponent* P){return P->Effects.IsEmpty()?nullptr:P->Effects.Last().Get();}
     static bool CueBound(const UHearthwardPresentationComponent* P,FName Event){return P->SoundCues.Contains(Event);}
+    static FString CueFile(const UHearthwardPresentationComponent* P,FName Event)
+    {const auto* Cue=P->SoundCues.Find(Event);return Cue?Cue->File:FString();}
+    static FName CueChannel(const UHearthwardPresentationComponent* P,FName Event)
+    {const auto* Cue=P->SoundCues.Find(Event);return Cue?Cue->Channel:NAME_None;}
+    static float LongestEffectRemaining(const UHearthwardPresentationComponent* P)
+    {float Result=0;for(const float Remaining:P->EffectRemaining)Result=FMath::Max(Result,Remaining);return Result;}
     static void KeepStorageCueOnly(UHearthwardPresentationComponent* P)
     {for(auto It=P->SoundCues.CreateIterator();It;++It)if(It.Key()!=TEXT("storage.transfer"))It.RemoveCurrent();}
     static int32 Sources(AActor* Actor)
@@ -134,6 +144,12 @@ struct FAudioProducerWorld : FAudioFeedbackWorld
         Ready=Built && Station.IsValid() && Building->CanUseWorkbench(Station) && Brother->IsAtCamp() && Brother->CanCommunicate(Player)
             && Player->IsLocallyControlled() && Player->GetCharacterMovement()->IsMovingOnGround() && Brother->GetCharacterMovement()->IsMovingOnGround();
         Failure=FString::Printf(TEXT("Player mode=%d local=%d; Brother mode=%d"),int32(Player->GetCharacterMovement()->MovementMode),Player->IsLocallyControlled(),int32(Brother->GetCharacterMovement()->MovementMode));
+        if(BoundCues)
+        {
+            // Setup really lands the player. Settle and expire that legitimate cue before testing a new operation.
+            Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+            Presentation->TickComponent(FAudioFeedbackLifecycleAccess::LongestEffectRemaining(Presentation)+.001f,LEVELTICK_All,nullptr);
+        }
     }
     bool Execute(FHearthwardAgentGoal Goal,FGuid& Command)
     {
@@ -194,6 +210,25 @@ struct FAudioCombatWorld : FAudioProducerWorld
         Target->Id=Id;Target->Health=Target->MaximumHealth=100;Gameplay->Opponents.Add(Id,100);return Target;
     }
 };
+
+bool ReadMovementCueDuration(const TCHAR* File,float& Duration)
+{
+    TArray<uint8> Data;FWaveModInfo Info;
+    if(!FFileHelper::LoadFileToArray(Data,*(FPaths::ProjectDir()/TEXT("Resources/Audio")/File))
+        || !Info.ReadWaveInfo(Data.GetData(),Data.Num()) || *Info.pFormatTag!=1 || *Info.pBitsPerSample!=16
+        || *Info.pChannels!=1 || *Info.pSamplesPerSec==0 || Info.SampleDataSize==0)return false;
+    Duration=Info.SampleDataSize/float(*Info.pSamplesPerSec*2);return true;
+}
+bool LaunchAndLand(FAudioProducerWorld& Fixture)
+{
+    auto* Movement=Fixture.Player->GetCharacterMovement();Fixture.Player->LaunchCharacter(FVector(0,0,240),false,true);bool Fell=false;
+    for(int32 I=0;I<80;++I)
+    {
+        Movement->TickComponent(.025f,LEVELTICK_All,nullptr);Fell|=Movement->IsFalling();
+        if(Fell && Movement->IsMovingOnGround())return true;
+    }
+    return false;
+}
 
 UHearthwardCampaignSubsystem* PrepareProgressQuest(FAudioProducerWorld& Fixture)
 {
@@ -479,6 +514,161 @@ bool FAudioMovement099Test::RunTest(const FString&)
     TestEqual(TEXT("BeginPlay seeds the current swimming mode without replaying entry"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.enter")),0);
     F.Player->SetActorLocation(FVector(0,0,700));Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
     TestEqual(TEXT("A fresh production exit remains observable after BeginPlay"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.exit")),1);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FAudioBoundLanding099Test,"Hearthward.Iteration.Task099.BoundActualLandingAndLifecycle",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FAudioBoundLanding099Test::RunTest(const FString&)
+{
+    FAudioProducerWorld F(true);if(!TestTrue(*(TEXT("Bound landing starts with actual grounded participants: ")+F.Failure),F.Ready))return false;
+    TestEqual(TEXT("Landing uses its dedicated production WAV"),FAudioFeedbackLifecycleAccess::CueFile(F.Presentation,TEXT("movement.landed")),FString(TEXT("TASK-099/movement-land.wav")));
+    TestEqual(TEXT("Landing uses the effects volume channel"),FAudioFeedbackLifecycleAccess::CueChannel(F.Presentation,TEXT("movement.landed")),FName(TEXT("effects")));
+    float Duration=0;if(!TestTrue(TEXT("Dedicated landing file contains a nonempty mono PCM16 wave"),ReadMovementCueDuration(TEXT("TASK-099/movement-land.wav"),Duration)))return false;
+    const int32 PlayedBefore=FAudioFeedbackLifecycleAccess::Events(F.Presentation);
+    const int32 LandedBefore=FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.landed"));
+    auto* Movement=F.Player->GetCharacterMovement();
+    TestEqual(TEXT("The real bootstrap landing has settled and expired"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    TestTrue(TEXT("Landing settlement is scheduled after character physics"),F.Presentation->PrimaryComponentTick.TickGroup==TG_PostPhysics);
+    if(!TestTrue(TEXT("Actual launch falls back onto the blocking fixture floor"),LaunchAndLand(F)))return false;
+    TestEqual(TEXT("The real collision publishes exactly one new landing"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.landed")),LandedBefore+1);
+    TestEqual(TEXT("Landed callback waits for PostPhysics before creating audio"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    if(!TestTrue(TEXT("Actual landing has a walkable blocking floor contact"),Movement->CurrentFloor.IsWalkableFloor() && Movement->CurrentFloor.HitResult.IsValidBlockingHit()))return false;
+    const FVector Impact=Movement->CurrentFloor.HitResult.ImpactPoint;
+    // Moving before the deferred consumer must not move the already committed impact sound.
+    F.Player->SetActorLocation(F.Player->GetActorLocation()+FVector(120,80,0));
+    F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("PostPhysics creates exactly one mapped landing source"),FAudioFeedbackLifecycleAccess::Sources(F.Player),1);
+    auto* First=FAudioFeedbackLifecycleAccess::LatestSource(F.Presentation);
+    if(!TestNotNull(TEXT("The real landing has an effects component"),First))return false;
+    auto* Wave=Cast<USoundWaveProcedural>(First->GetSound());
+    if(!TestNotNull(TEXT("The landing source owns an actual procedural PCM wave"),Wave))return false;
+    TestTrue(TEXT("Landing PCM duration matches its own mapped WAV"),FMath::IsNearlyEqual(Wave->Duration,Duration,.00001f) && !Wave->bLooping && Wave->NumChannels==1);
+    TestTrue(TEXT("Deferred sound stays at the real floor impact, not the moved capsule"),First->GetComponentLocation().Equals(Impact,.1)
+        && !First->GetComponentLocation().Equals(F.Player->GetActorLocation(),.1));
+    TestTrue(TEXT("Actual landing sound is spatial with applied attenuation"),First->bAllowSpatialization && First->bOverrideAttenuation && First->GetAttenuationSettingsToApply()!=nullptr);
+    TestEqual(TEXT("Landing source obeys the current effects volume"),First->VolumeMultiplier,F.Instance->GetSubsystem<UHearthwardPlayerSettings>()->Volume(TEXT("effects")));
+    for(int32 I=0;I<4;++I)Movement->TickComponent(.025f,LEVELTICK_All,nullptr);
+    F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Remaining grounded cannot duplicate the landing source"),FAudioFeedbackLifecycleAccess::Sources(F.Player),1);
+    TestEqual(TEXT("Remaining grounded cannot duplicate the landing event"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.landed")),LandedBefore+1);
+    if(!TestTrue(TEXT("A second actual launch independently lands"),LaunchAndLand(F)))return false;
+    F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Separate rapid landings each retain their own sound"),FAudioFeedbackLifecycleAccess::Sources(F.Player),2);
+    auto* Second=FAudioFeedbackLifecycleAccess::LatestSource(F.Presentation);
+    TestTrue(TEXT("Separate landings allocate distinct source and wave objects"),Second && Second!=First && Second->GetSound()!=Wave);
+    TestEqual(TEXT("Movement sounds do not grow the transactional played-GUID ledger"),FAudioFeedbackLifecycleAccess::Events(F.Presentation),PlayedBefore);
+    F.Presentation->TickComponent(Duration+.01f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Both procedural landing sources expire after their real WAV duration"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+
+    if(!TestTrue(TEXT("Another real landing reaches the pre-PostPhysics pause boundary"),LaunchAndLand(F)))return false;
+    auto* Pauser=F.World->SpawnActor<APlayerState>();F.World->GetWorldSettings()->SetPauserPlayerState(Pauser);
+    TestTrue(TEXT("The landing settlement boundary is actually paused"),F.World->IsPaused());
+    F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Paused settlement consumes the landing without creating a source"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    F.World->GetWorldSettings()->SetPauserPlayerState(nullptr);F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Resume never replays a landing discarded while paused"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+
+    if(!TestTrue(TEXT("Another actual collision supplies pending audio before EndPlay"),LaunchAndLand(F)))return false;
+    const int32 BeforeEnd=FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.landed"));
+    F.Presentation->EndPlay(EEndPlayReason::Destroyed);
+    if(!TestTrue(TEXT("Real capsule physics can still land after presentation EndPlay"),LaunchAndLand(F)))return false;
+    TestEqual(TEXT("EndPlay unsubscribes the actual landing producer"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.landed")),BeforeEnd);
+    TestEqual(TEXT("EndPlay leaves no movement effects"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    F.Presentation->BeginPlay();F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("BeginPlay cannot replay the pending or intervening historical landings"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    if(!TestTrue(TEXT("A fresh real landing works after restarting presentation"),LaunchAndLand(F)))return false;
+    F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Only the fresh post-BeginPlay landing is audible"),FAudioFeedbackLifecycleAccess::Sources(F.Player),1);
+    TestEqual(TEXT("Restarted movement still keeps the played-GUID ledger empty"),FAudioFeedbackLifecycleAccess::Events(F.Presentation),0);
+    F.Presentation->EndPlay(EEndPlayReason::Destroyed);
+    TestEqual(TEXT("EndPlay also destroys an actively playing landing source"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FAudioBoundWater099Test,"Hearthward.Iteration.Task099.BoundActualWaterTransitionsAndLifecycle",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FAudioBoundWater099Test::RunTest(const FString&)
+{
+    FAudioProducerWorld F(true);if(!TestTrue(*(TEXT("Bound water starts with real grounded participants: ")+F.Failure),F.Ready))return false;
+    TestEqual(TEXT("Water entry uses its dedicated production WAV"),FAudioFeedbackLifecycleAccess::CueFile(F.Presentation,TEXT("movement.swim.enter")),FString(TEXT("TASK-099/movement-water-enter.wav")));
+    TestEqual(TEXT("Water exit uses a separate dedicated production WAV"),FAudioFeedbackLifecycleAccess::CueFile(F.Presentation,TEXT("movement.swim.exit")),FString(TEXT("TASK-099/movement-water-exit.wav")));
+    for(const TCHAR* Event:{TEXT("movement.swim.enter"),TEXT("movement.swim.exit")})
+        TestEqual(TEXT("Each water transition uses the effects volume channel"),FAudioFeedbackLifecycleAccess::CueChannel(F.Presentation,FName(Event)),FName(TEXT("effects")));
+    float EntryDuration=0,ExitDuration=0;
+    if(!TestTrue(TEXT("Dedicated water entry file contains real mono PCM16"),ReadMovementCueDuration(TEXT("TASK-099/movement-water-enter.wav"),EntryDuration))
+        || !TestTrue(TEXT("Dedicated water exit file contains real mono PCM16"),ReadMovementCueDuration(TEXT("TASK-099/movement-water-exit.wav"),ExitDuration)))return false;
+    const int32 PlayedBefore=FAudioFeedbackLifecycleAccess::Events(F.Presentation);auto* Movement=F.Player->GetCharacterMovement();
+    TestEqual(TEXT("Bootstrap physics leaves no live effects in the water fixture"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    auto* Volume=F.World->GetDefaultPhysicsVolume();Volume->bWaterVolume=true;
+    auto* Bounds=NewObject<UBoxComponent>(Volume);Volume->AddInstanceComponent(Bounds);Bounds->SetupAttachment(Volume->GetRootComponent());
+    Bounds->SetBoxExtent(FVector(1000,1000,100));Bounds->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    Bounds->RegisterComponent();Bounds->SetWorldLocation(FVector(0,0,500));
+    auto* Traversal=NewObject<UHearthwardTraversalComponent>(F.Player);F.Player->AddInstanceComponent(Traversal);Traversal->RegisterComponent();
+    if(!Traversal->HasBegunPlay())Traversal->BeginPlay();
+    const FVector EntryPosition(0,0,300),ExitPosition(125,-70,700);F.Player->SetActorLocation(EntryPosition);float Surface=0;
+    if(!TestTrue(TEXT("Real Traversal WaterSurface resolves the fixture physics volume"),F.Player->GetPhysicsVolume()==Volume && Traversal->WaterSurface(EntryPosition,Surface) && Surface>300))return false;
+    Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
+    if(!TestTrue(TEXT("Real traversal enters Swimming below the water surface"),Movement->IsSwimming()))return false;
+    TestEqual(TEXT("One actual water entry creates one source"),FAudioFeedbackLifecycleAccess::Sources(F.Player),1);
+    TestEqual(TEXT("One actual water entry is observed once"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.enter")),1);
+    auto* Entry=FAudioFeedbackLifecycleAccess::LatestSource(F.Presentation);
+    if(!TestNotNull(TEXT("Water entry creates an actual audio component"),Entry))return false;
+    auto* EntryWave=Cast<USoundWaveProcedural>(Entry->GetSound());
+    if(!TestNotNull(TEXT("Water entry source has actual PCM"),EntryWave))return false;
+    TestTrue(TEXT("Entry PCM uses its own mapped duration"),FMath::IsNearlyEqual(EntryWave->Duration,EntryDuration,.00001f) && EntryWave->NumChannels==1 && !EntryWave->bLooping);
+    TestTrue(TEXT("Entry sound is positioned at the character's real water transition"),Entry->GetComponentLocation().Equals(EntryPosition,.1) && Entry->bAllowSpatialization && Entry->bOverrideAttenuation);
+    for(int32 I=0;I<4;++I)Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Repeated real Traversal ticks in Swimming never duplicate entry audio"),FAudioFeedbackLifecycleAccess::Sources(F.Player),1);
+    TestEqual(TEXT("Remaining in Swimming does not increment the entry observation"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.enter")),1);
+    F.Player->SetActorLocation(ExitPosition);Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
+    if(!TestTrue(TEXT("Real traversal leaves water for Falling above the surface"),Movement->IsFalling()))return false;
+    TestEqual(TEXT("Entry and exit each retain their own sound"),FAudioFeedbackLifecycleAccess::Sources(F.Player),2);
+    TestEqual(TEXT("The actual water exit is observed once"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.exit")),1);
+    auto* Exit=FAudioFeedbackLifecycleAccess::LatestSource(F.Presentation);
+    if(!TestNotNull(TEXT("Water exit creates an actual audio component"),Exit))return false;
+    auto* ExitWave=Cast<USoundWaveProcedural>(Exit->GetSound());
+    if(!TestNotNull(TEXT("Water exit source has actual PCM"),ExitWave))return false;
+    TestTrue(TEXT("Exit PCM uses its own mapped duration"),FMath::IsNearlyEqual(ExitWave->Duration,ExitDuration,.00001f) && ExitWave->NumChannels==1 && !ExitWave->bLooping);
+    TestTrue(TEXT("Entry and exit own independent source and PCM objects"),Exit!=Entry && ExitWave!=EntryWave);
+    TestTrue(TEXT("Exit is spatial at its own transition position and leaves the entry source fixed"),Exit->GetComponentLocation().Equals(ExitPosition,.1)
+        && Exit->bAllowSpatialization && Exit->bOverrideAttenuation && Entry->GetComponentLocation().Equals(EntryPosition,.1));
+    for(const auto* Source:{Entry,Exit})TestEqual(TEXT("Each water transition respects effects volume"),Source->VolumeMultiplier,F.Instance->GetSubsystem<UHearthwardPlayerSettings>()->Volume(TEXT("effects")));
+    for(int32 I=0;I<4;++I)Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Repeated dry Traversal ticks never duplicate exit audio"),FAudioFeedbackLifecycleAccess::Sources(F.Player),2);
+    TestEqual(TEXT("Remaining out of water does not increment exit observation"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.exit")),1);
+    TestEqual(TEXT("Water transitions do not retain per-event GUIDs indefinitely"),FAudioFeedbackLifecycleAccess::Events(F.Presentation),PlayedBefore);
+    F.Presentation->TickComponent(FMath::Min(EntryDuration,ExitDuration)*.5f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Both water sources survive until their own duration elapses"),FAudioFeedbackLifecycleAccess::Sources(F.Player),2);
+    F.Presentation->TickComponent(FMath::Max(EntryDuration,ExitDuration)+.01f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Both finite water sources are destroyed after PCM playback"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+
+    auto* Pauser=F.World->SpawnActor<APlayerState>();F.World->GetWorldSettings()->SetPauserPlayerState(Pauser);
+    TestTrue(TEXT("Water fixture is genuinely paused"),F.World->IsPaused());
+    F.Player->SetActorLocation(EntryPosition);Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestTrue(TEXT("Actual paused Traversal does not commit a Swimming transition"),Movement->IsFalling());
+    TestEqual(TEXT("Paused traversal produces no entry sound"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    F.Player->SetActorLocation(ExitPosition);F.World->GetWorldSettings()->SetPauserPlayerState(nullptr);
+    Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Resume outside the water has no queued transition to replay"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    TestEqual(TEXT("Paused movement never fabricated a second entry receipt"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.enter")),1);
+    F.Player->SetActorLocation(EntryPosition);Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("A fresh real entry after resume still sounds exactly once"),FAudioFeedbackLifecycleAccess::Sources(F.Player),1);
+    F.Presentation->EndPlay(EEndPlayReason::Destroyed);
+    TestEqual(TEXT("EndPlay destroys the current water entry source"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    F.Player->SetActorLocation(ExitPosition);Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
+    TestTrue(TEXT("Real traversal still leaves water after presentation EndPlay"),Movement->IsFalling());
+    TestEqual(TEXT("Ended presentation no longer observes actual water exits"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.exit")),1);
+    F.Player->SetActorLocation(EntryPosition);Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
+    if(!TestTrue(TEXT("Real traversal re-enters water while presentation is stopped"),Movement->IsSwimming()))return false;
+    F.Presentation->BeginPlay();F.Presentation->TickComponent(.001f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("BeginPlay seeds current Swimming without replaying history"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
+    TestEqual(TEXT("BeginPlay does not invent a historical entry receipt"),FAudioFeedbackLifecycleAccess::MovementCount(F.Presentation,TEXT("movement.swim.enter")),0);
+    F.Player->SetActorLocation(ExitPosition);Traversal->TickComponent(.025f,LEVELTICK_All,nullptr);
+    TestEqual(TEXT("Only a fresh actual water exit sounds after restart"),FAudioFeedbackLifecycleAccess::Sources(F.Player),1);
+    TestEqual(TEXT("Restarted water audio still does not grow played-GUID history"),FAudioFeedbackLifecycleAccess::Events(F.Presentation),0);
+    F.Presentation->EndPlay(EEndPlayReason::Destroyed);
+    TestEqual(TEXT("EndPlay clears the fresh exit source as well"),FAudioFeedbackLifecycleAccess::Sources(F.Player),0);
     return true;
 }
 

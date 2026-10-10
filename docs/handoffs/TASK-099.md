@@ -1,5 +1,28 @@
 # TASK-099 当前技术交接
 
+> 2026-10-10后续授权：用户已要求提交推送、PR合并main并发布v0.3.0；当前发行进度见[发行记录](../releases/v0.3.0/REPORT.md)。以下未提交/未推送/未发布描述保留其历史时点。
+
+> 2026-10-10本机整合更新：099声音与104斧柄/分地面脚步已接入；实际斧头资产已保存并重开核验。Editor构建通过，099原生30项、104原生9项均已有通过结果。当前26事件／31个引用WAV。设备实听、完整动作/路线及新Shipping仍未验收。见[当前整合报告](../qa/TASK-104/integration-20261010/REPORT.md)。以下保留原交付及历史验证记录，其中NOT_RUN、云端403、旧事件数量仅适用于各段原始快照。
+
+> 2026-10-10 最终声音修订：Owner已接受第三版入水的爆点软化试听，交付保持该段精确WAV；风采用降低6dB版本、出水采用Peludo CC0录音第二版，二者按先前反馈修订，未冒称逐项明确验收。落地／火源及场景触发不变。104项素材检查、6项配置检查和33项工具测试通过；UE编译／Native／引擎实听／Cook仍NOT_RUN。
+
+> 2026-10-10 声音第二版候选：按Owner反馈降低风源6dB，并用Peludo CC0真实录音重做1.08秒入水／0.88秒出水；落地、火源和场景触发不变。20.30秒新旧A/B已供试听，Owner接受仍待确认。当前素材技术96项通过，UE与设备听感仍未运行。下面首轮43.07秒／合成水声制作描述属于首版历史，最新来源与结果见本轮报告。
+
+## 2026-10-10：落地／进出水、真实火源与局部风声补齐（本地补丁）
+
+本轮基于已核验 `main@1bdc01b642dcf6e322ddca6cd4d7ad1a3fcc6351`，工作分支 `task099-audio-completion`，只交付本地补丁，未提交、未推送、未发布。Owner 本轮要求补 TASK-099 截图中的落地、入水、出水、火与风声音缺口；并明确同意山脊与瞭望点附近轻风、进出区域渐变、室内／入水停声、不增加天气或玩法影响。
+
+- 3 个独立单次 WAV 已绑定 `movement.landed`、`movement.swim.enter`、`movement.swim.exit`，仍由真实 Landed／MovementModeChanged 回调触发；落地在 PostPhysics 等待跌落伤害结算后播放，使用实际 Hit.ImpactPoint。位置化移动声不积累永久 GUID 播放账本。
+- 2 个 16 秒环境循环已绑定。火声只读取当前世界、已注册／可见／活跃的已知 Niagara 火焰资产与标签，排除烟；晚创建组件也能被读取，最多四个独立声源与独立 PCM 游标，距离衰减到 18 米。
+- 风使用实际 `CampaignNode:route_ridge`／`CampaignNode:route_watch` 路标网格锚点；18 米内稳定、18—60 米平滑衰减，重叠区域只有一个环境底声。头顶 25 米内的真实 Visibility 遮挡、游泳、离区／失去锚点、暂停、死亡、Load／epoch、EndPlay 会清理声源。自然行走跨区使用空间渐变；传送或生命周期失效立即停止，不拖留旧区域尾声。
+- 现有西湖映射、几何、固定对白和其它 sound_events 均保留；新环境初始化不再依赖水几何文件成功读取。新声音共 5 个，现配置合计 22 个事件／17 个独立运行 WAV。无固定人声或 TTS，未改地图、动画二进制或存档。
+- 素材源／许可、可重制参数、43.07 秒试听拼接见 [音频制作说明](../assets/TASK-099/AUDIO_COMPLETION_20261010.md)。火／风是原创程序化声音设计；落地与进出水是 CC0 录音纹理和原创合成的组合，不冒称真实人物动作录音。
+- 当前新版本的 UE 编译、Native、渲染 PIE、实机／Owner 试听、Cook／Shipping 全部 **NOT_RUN**。当前云环境无 UE 5.8.2 与 GPU；不能沿用下方 2026-10-07 的 23/23。
+
+当前检查和后续验收入口见 [本轮报告](../qa/TASK-099/audio-completion-v1/REPORT.md)。本单保持 Active。
+
+# 2026-10-07 技术交接（历史受测快照）
+
 当前Active。Root实际13轮Development Editor build SUCCESS；本单23/23 Native、同次28/28（兼容5单列），选中用例0warning/0error。原始[build/index与23子集](../qa/TASK-099/native-final-audio-20261007-13/)及[REPORT](../qa/TASK-099/REPORT.md)/[NativeSummary](../qa/TASK-099/NATIVE_SUMMARY.json)绑定版本0.2.0-preview.20261007.2与未提交13冻结patch/list，不伪造最终SHA。
 
 当前17events/12独立WAV，新增源10KenneyOGG+1VistulaMP3；仓储/玩家/NPC/Progress/命中格挡受伤/validated空挥与真实声源、保存Notify脚步、实际注册湖mesh96三角最近点和连续PCM均技术通过。脚步实际Brother派发及两Run右近起点已P，保存trigger为9.999999747378752e-05s，无跨wrap/正式AnimGraph信用。Environment3真实Save/Load/暂停/死亡/卸载/隐藏/远距/End及3period+小块PCM通过；[water](../qa/TASK-099/water/README.md)/[combat](../qa/TASK-099/combat/IMPLEMENTATION.md)保留09/12真实RED与新增断言信用边界。

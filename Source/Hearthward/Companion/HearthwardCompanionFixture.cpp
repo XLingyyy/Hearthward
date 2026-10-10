@@ -1,4 +1,5 @@
 #include "HearthwardCompanionFixture.h"
+#include "../Equipment/HearthwardAxeGrip.h"
 #include "../Inventory/HearthwardHarvestTools.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
@@ -130,6 +131,8 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture(const FObjectInitialize
     }
     static ConstructorHelpers::FObjectFinder<UStaticMesh> Axe(TEXT("/Game/Hearthward/Assets/TASK-028/props/stone_bone_axe/SM_stone_bone_axe"));
     WeaponMeshes.Add(TEXT("axe"),Axe.Object);
+    ensureMsgf(HearthwardAxeGrip::Build(BrotherMesh.Object, GetMesh()->GetRelativeScale3D(), Axe.Object, AxeGrip),
+        TEXT("Stone axe requires measured grip sockets and the right-hand reference bones"));
     const auto& Ref=BrotherMesh.Object->GetRefSkeleton();
     const auto Bone=[&](FName Name)
     {
@@ -159,7 +162,7 @@ void AHearthwardCompanionFixture::RefreshHeldWeapon()
     const auto Row=HearthwardData::Find(TEXT("items"),Equipped->Definition.ToString());
     HeldWeapon->SetStaticMesh(WeaponMeshes.FindRef(Axe?FName(TEXT("axe")):FName(*HearthwardData::Text(Row,TEXT("combatClass")))));
     HeldWeapon->EmptyOverrideMaterials();
-    HeldWeapon->SetRelativeTransform(Axe?FTransform(FRotator(0,0,-90),FVector::ZeroVector,FVector(.7)):WeaponGrip);
+    HeldWeapon->SetRelativeTransform(Axe?AxeGrip:WeaponGrip);
     if(!Axe)if(auto* Material=HeldWeapon->CreateDynamicMaterialInstance(0))
         Material->SetScalarParameterValue(TEXT("MetalFinish"),HearthwardData::Number(Row,TEXT("stage"),1)>1?1.f:0.f);
     DisplayedWeapon=Equipped->Definition;

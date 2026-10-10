@@ -1,0 +1,89 @@
+{
+  "task": "TASK-099",
+  "revision": 2,
+  "path": "art_source/TASK-099/audio-completion-v1/comparison-v1-v2-runtime-gain.wav",
+  "sha256": "bd92084e1bd235dbf607167fe3c6ddee11242d5757a34bf50dead434d6ec52be",
+  "duration_seconds": 20.3,
+  "channels": 1,
+  "sample_rate_hz": 48000,
+  "encoding": "PCM_S16LE",
+  "chapters": [
+    {
+      "kind": "wind",
+      "revision": "old",
+      "start_seconds": 0.5,
+      "end_seconds": 6.5,
+      "runtime_gain": 0.24,
+      "source_window_start_seconds": 0.0,
+      "source_window_duration_seconds": 6.0,
+      "source_file": "environment-wind-loop.wav",
+      "source_sha256": "e80d78d96f4278bc595dbe3da34df01350aaad7b3c476a9e70492c7e5ff78b66",
+      "rms_dbfs_at_runtime_gain": -36.8526649468219
+    },
+    {
+      "kind": "wind",
+      "revision": "new",
+      "start_seconds": 7.0,
+      "end_seconds": 13.0,
+      "runtime_gain": 0.24,
+      "source_window_start_seconds": 0.0,
+      "source_window_duration_seconds": 6.0,
+      "source_file": "environment-wind-loop.wav",
+      "source_sha256": "0f5176009a9dc2c44dab69827b6375954efbbeb6f10b42a0f00b780c416cadaf",
+      "rms_dbfs_at_runtime_gain": -42.85263635431679
+    },
+    {
+      "kind": "water_enter",
+      "revision": "old",
+      "start_seconds": 13.65,
+      "end_seconds": 15.03,
+      "runtime_gain": 1.0,
+      "source_window_start_seconds": 0.0,
+      "source_window_duration_seconds": 1.38,
+      "source_file": "movement-water-enter.wav",
+      "source_sha256": "5639cb6408f2f36d12c987de9e2a7b66c7bf00a0d657e0182ff7778835240504",
+      "rms_dbfs_at_runtime_gain": -25.157771431335327
+    },
+    {
+      "kind": "water_enter",
+      "revision": "new",
+      "start_seconds": 15.53,
+      "end_seconds": 16.61,
+      "runtime_gain": 1.0,
+      "source_window_start_seconds": 0.0,
+      "source_window_duration_seconds": 1.08,
+      "source_file": "movement-water-enter.wav",
+      "source_sha256": "00adf5b48c744c86797e1f7c60e553324df7755918334b93730ffec575bab2c1",
+      "rms_dbfs_at_runtime_gain": -34.02535268650363
+    },
+    {
+      "kind": "water_exit",
+      "revision": "old",
+      "start_seconds": 17.26,
+      "end_seconds": 18.42,
+      "runtime_gain": 1.0,
+      "source_window_start_seconds": 0.0,
+      "source_window_duration_seconds": 1.16,
+      "source_file": "movement-water-exit.wav",
+      "source_sha256": "d845ae29ff2182eabed3107ba6ac30062f6f2282824518509562950990cd2ec0",
+      "rms_dbfs_at_runtime_gain": -25.269977588216896
+    },
+    {
+      "kind": "water_exit",
+      "revision": "new",
+      "start_seconds": 18.92,
+      "end_seconds": 19.8,
+      "runtime_gain": 1.0,
+      "source_window_start_seconds": 0.0,
+      "source_window_duration_seconds": 0.88,
+      "source_file": "movement-water-exit.wav",
+      "source_sha256": "07a1ffbdc0d75333d92e7d7d769f78466e383739e118bb665943396a3fd9cba7",
+      "rms_dbfs_at_runtime_gain": -36.34498141072409
+    }
+  ],
+  "normalization": "NONE; both revisions use the identical runtime gain for the compared cue. Wind source is 6 dB lower in revision 2.",
+  "master_and_category_gain": "1.0 for comparison; actual user settings can scale the game mix further.",
+  "wind_windows": "Same 0-6s source timeline. Equal 5ms montage-only fades prevent excerpt clicks.",
+  "voice_labels": "None; use the supplied timestamp labels.",
+  "listening_status": "Prepared for user A/B; no author device or subjective listening claim."
+}

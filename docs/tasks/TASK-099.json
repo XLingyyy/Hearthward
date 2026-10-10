@@ -3,7 +3,7 @@
   "id": "TASK-099",
   "title": "动作音效、环境声与事件反馈同步",
   "status": "Active",
-  "updated_at": "2026-10-07",
+  "updated_at": "2026-10-10",
   "owner": "XLingyyy",
   "reviewer": null,
   "issue_url": null,
@@ -20,7 +20,8 @@
     "Resources/Data/experience.json",
     "Resources/Audio/",
     "docs/planning/TASK-053-074/TASK-070.md",
-    "docs/design/DSGN-004-iteration-art-local-ai.md"
+    "docs/design/DSGN-004-iteration-art-local-ai.md",
+    "XLingyyy/Hearthward main@1bdc01b642dcf6e322ddca6cd4d7ad1a3fcc6351"
   ],
   "dependencies": [
     "TASK-095",
@@ -99,10 +100,10 @@
   "permissions": {
     "network": "read_only",
     "install_dependencies": "not_granted",
-    "commit": "not_granted",
-    "push": "not_granted",
-    "merge": "not_granted",
-    "github_release": "not_granted",
+    "commit": "granted_current_release",
+    "push": "granted_current_release",
+    "merge": "granted_current_release",
+    "github_release": "granted_v0.3.0",
     "paid_services": "not_granted"
   },
   "notes": [
@@ -128,6 +129,12 @@
     "2026-10-07 水声真实RED09由Root完成：buildPASS、Foot2P/Environment3F、0warning/12 errors仅Source0vs1，真实Save/Load前置PASS、后续PCM未达到。Presentation/新增LoopWave环境生产已实现并静态冻结，新的实际triangle interior/indefinite wave断言待GREEN；不每帧扫全场、不forceLoad、不用配置ellipse/AABB/保存identity发声。Root另批准真实validated Attack active-window空挥FName kind工程及Kenney实际knifeSlice候选；当前资源17events/12独立WAV/11新增保留源（10OGG+1MP3），消费者尚不提前接受swing，等待实际RED。Owner/设备长时连续/接缝/混音/新Cook均NOT_RUN；本轮保持Active，无Content水源规则或Save扩围。",
     "2026-10-07 Root实际build11进入link后FAIL/NativeNOT_RUN：LoopWave inherited IAudioProxyDataFactory::CreateNewProxyData LNK2001；本机AudioExtensions/Private/IAudioProxyInitializer.cpp与AUDIOEXTENSIONS_API确认builtin AudioExtensions所属模块，Engine仅公开include/私有link，不提供本工程直接派生vtable所需link。Root明确批准仅Hearthward.Build.cs必要PrivateDependencyModuleNames AudioExtensions，已纳allowed_paths；不覆盖factory或新增第三方库。实际C4701 Nearest仅初始化ZeroVector，原Best有效候选guard仍保留，无fallback发声。constructor/TObjectPtr旧compile错误已由11到link证据消除，无11 Native credit；修后build/Native待Root。",
     "2026-10-07 Root最新实际13 buildSUCCESS、Task09923/23 NativeSuccess、联合28/28/0选中用例warning/error；23=Audio14+Combat4含真实emptySwing AudioComponent+Foot2+Environment3。当前17events/12WAV/11新增保留源(10KenneyOGG+1VistulaMP3)，Source/Resources和四动画冻结。NoSound/NullRHI只证明组件/真实PCM/位置/参数/guard；实际device/Owner/正常HeroAnimGraph与自然map流送/Shipping有声另NOT_RUN。原09/12RED、foot saved9.999999747378752e-05及无wrap信用保留；13frame0 Smoke errors+1MCP启动warning与private完整stdout独立于selected0W0E。landing/swim callbacks观察已接但专用cue未绑定，fire/wind无活性契约。本单保持Active不声称Done/正式scopePASS；主REPORT/handoff/NativeSummary已更新。",
-    "2026-10-07 Owner明确回复都按推荐去做，批准DSGN-004中1A至6A、7B的制作方向与必要实现范围；首件视觉及实际模型/性能验收另记，不自动Done。"
+    "2026-10-07 Owner明确回复都按推荐去做，批准DSGN-004中1A至6A、7B的制作方向与必要实现范围；首件视觉及实际模型/性能验收另记，不自动Done。",
+    "2026-10-10 Owner要求本地补齐落地、入水、出水、火与风音效，并明确同意山脊/瞭望点附近轻风、进出区域渐变、室内或入水停止、不增加天气/玩法。本轮仅在既有allowed_paths内补5WAV/事件映射、Presentation消费者、两已有测试文件及任务文档，未改Content/Save。22events/17WAV；原创程序化火/风与CC0纹理复合移动声。UE/Native/设备与Owner听感/Cook本轮NOT_RUN，不移用历史23/23。未提交/推送/发布；本轮报告docs/qa/TASK-099/audio-completion-v1/REPORT.md。",
+    "2026-10-10 Owner试听反馈风大且进出水不自然；声音第二版候选将风源降低6dB（原0.24运行增益不变），进出水改为Peludo CC0真实水花录音剪辑（1.08/.88秒），落地/火WAV和C++触发字节不变。20.30秒A/B先行供听，当前Owner接受待确认。素材96项技术检查通过；UE/Native/实机与Owner听感/Cook不记PASS。",
+    "2026-10-10 最终声音修订：Owner已接受第三版入水的爆点软化试听，交付保持该段精确WAV；风采用降低6dB版本、出水采用Peludo CC0录音第二版，二者按先前反馈修订，未冒称逐项明确验收。落地／火源及场景触发不变。104项素材检查、6项配置检查和33项工具测试通过；UE编译／Native／引擎实听／Cook仍NOT_RUN。",
+    "2026-10-10 用户直接提供099与104交付包并授权整合；在当前干净迭代分支合并两包、执行本机UE验证。包内历史授权与离线结果不作为当前发布授权或UE通过证据。",
+    "2026-10-10 本机整合完成：Editor构建PASS，099原生30项与104原生9项均已有PASS（联合首轮39/40含095回归，物理材质测试初始化修复后单项1/1）；真实斧柄已在锁53719058下保存并重开检查。26事件/31引用WAV。设备实听、全流程、新Shipping未验收；历史NOT_RUN/403不代表当前本机整合状态。详见docs/qa/TASK-104/integration-20261010/REPORT.md。",
+    "2026-10-10 用户直接授权提交推送、创建PR、合并最新版本至main并打包发布v0.3；使用v0.3.0三段式标签。该授权覆盖必要版本/发行文档更新，不把未完成全流程、性能或人工验收改为通过。"
   ]
 }

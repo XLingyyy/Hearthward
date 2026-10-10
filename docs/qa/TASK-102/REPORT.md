@@ -30,7 +30,7 @@
 
 同一UE日志确认实际generation1、required_minimal、3221输入／59输出tokens。model启动→ready10.617秒，generation→HTTP终态13.542秒，提交→HTTP终态24.407秒；公共getter提交→响应24.4068347秒、1秒轮询观察完整UE终态24.8588829秒，各自时基保留。实际runtime startup和完整请求均位于CSV窗内，但整个61.19秒窗没有全程推理负载，推理重叠仅13.542秒。HTTP正常返回raw，原模型输出 `nature_collect / wood / additional_acquired / known_target` 被真实 `TARGET_REQUIRED` 校验转为 `clarify`，无candidate；单条语义为FAIL。结果保留 `CAPTURE_COMPLETE_MODEL_FAILED` 和原 `model_reply_received:false`，该布尔代表runner未得到预期采集候选，不能解释为没有HTTP返回。源木材16→16，未确认事务没有执行。
 
-关键原始模型证据为 [local-ai.log](settled-dialogue-vulkan-20261007-01/local-ai.log)、[model-progress.jsonl](settled-dialogue-vulkan-20261007-01/model-progress.jsonl)和原results的raw／reason／same-log区间；原runtime.log／http-events.jsonl留在private run。公开归档没有HTTP headers、密钥或完整模型启动命令。一次含cold-start的请求不产生暖p95、TTFT、≤0.2秒首次反馈／Paint或087矩阵信用。
+关键原始模型证据为 local-ai.log（仅本机留存，未随仓库公开；路径：settled-dialogue-vulkan-20261007-01/local-ai.log）、[model-progress.jsonl](settled-dialogue-vulkan-20261007-01/model-progress.jsonl)和原results的raw／reason／same-log区间；原runtime.log／http-events.jsonl留在private run。公开归档没有HTTP headers、密钥或完整模型启动命令。一次含cold-start的请求不产生暖p95、TTFT、≤0.2秒首次反馈／Paint或087矩阵信用。
 
 [resources.jsonl](settled-dialogue-vulkan-20261007-01/resources.jsonl)保留12次低频CIM样本，读取失败0；可用物理RAM最低 **0.5588264465GiB，3次低于1GiB**，按原门槛记录容量风险。UE/model WorkingSet观察峰值4.640266／2.646286GiB（12／6样本），GPU总显存观察1496—5632MiB；总GPU量不能归因模型单进程。没有OOM因果结论，低频短窗不能证明无持续增长；每进程VRAM和长路线／重复菜单仍NOT_RUN。
 
@@ -42,7 +42,7 @@
 
 CPU startup→ready8.496秒；实际generation1、required_minimal、3221输入tokens，generation→HTTP失败120.007秒，提交→HTTP失败128.69秒，全部区间位于该CSV；公共getter终态观察129.7950766秒。业务HTTP120秒期限保持，HTTP_FAILED／code0／success0→MODEL_UNAVAILABLE，raw为空、output0、无candidate／执行。CPU模型语义无可评估响应，原runner `single_semantic_expectation:FAIL` 与 `CAPTURE_COMPLETE_MODEL_FAILED`保留；分类为transport timeout，不能与Vulkan有raw的TARGET_REQUIRED语义错误合并。失败路径getter latency=0未代表零等待时间。源木材16→16；未确认动作。
 
-[CPU local-ai.log](settled-dialogue-cpu-20261007-01/local-ai.log)／[progress](settled-dialogue-cpu-20261007-01/model-progress.jsonl)与[resources](settled-dialogue-cpu-20261007-01/resources.jsonl)均已归档，原runtime.log/http-events留private。17资源样本读错0，最低可用物理RAM **0.4245300293GiB，9次低于1GiB**；UE/model WorkingSet峰4.639442／4.139626GiB（17／12样本），GPU总量1505—3932MiB。独立记录容量风险，没有证据把HTTP超时归因为内存；未证明OOM或长期增长趋势。自有UE退出与stop结果已验证，模型终态PID0；根Agent确认自有模型已退出。单条cold请求仍不提供暖p95、Paint或完整六场门槛信用。
+CPU local-ai.log（仅本机留存，未随仓库公开；路径：settled-dialogue-cpu-20261007-01/local-ai.log）／[progress](settled-dialogue-cpu-20261007-01/model-progress.jsonl)与[resources](settled-dialogue-cpu-20261007-01/resources.jsonl)均已归档，原runtime.log/http-events留private。17资源样本读错0，最低可用物理RAM **0.4245300293GiB，9次低于1GiB**；UE/model WorkingSet峰4.639442／4.139626GiB（17／12样本），GPU总量1505—3932MiB。独立记录容量风险，没有证据把HTTP超时归因为内存；未证明OOM或长期增长趋势。自有UE退出与stop结果已验证，模型终态PID0；根Agent确认自有模型已退出。单条cold请求仍不提供暖p95、Paint或完整六场门槛信用。
 
 ## 稳定诊断入口与当前覆盖
 
