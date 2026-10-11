@@ -1,5 +1,7 @@
 # Hearthward 项目状态
 
+2026-10-11：当前开发任务 TASK-107 / M2，分支 codex/TASK-107-m2-content，基线 main@8784d4f1bdeea03189a090ca494d302d7a923b8b（M1 / PR #71）。六兴趣点、两新支线、三旧支线与 E05–08 已接入；工程定向检查及局部实机操作结果见 [TASK-107 报告](qa/TASK-107/REPORT.md)和[交接](handoffs/TASK-107.md)。本轮已获用户提交、推送及合并授权，整合状态以 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72) 为准；完整路线和体验验收尚未完成，任务保持 Active。正式发布仍为 v0.3.0。以下是历史快照。
+
 2026-10-11 M1：TASK-106 在 `codex/TASK-106-m1-content` 开发，六兴趣点、两新支线、三旧支线改造、分工指引和 E01–04 表现已接入。用户已授权提交、推送并通过 [PR #71](https://github.com/XLingyyy/Hearthward/pull/71) 整合，合并状态以该 PR 为准；完整空间／真人退出标准未闭合，详见 [TASK-106 报告](qa/TASK-106/REPORT.md)。
 
 2026-10-11：按用户确认先推进 M0。TASK-105 本地工程候选完成目录索引/战役计数整合及 UE 5.8.2 兼容修复；Editor、相关原生回归、Shipping 打包和正常窗口保存重启冒烟通过。来源分支为 `codex/TASK-105-engineering-optimization`，用户已授权提交、推送并通过 PR 合入 main，合并状态见 [PR #70](https://github.com/XLingyyy/Hearthward/pull/70)，正式发布版继续为 v0.3.0。完整路线/性能/真人与二机门槛仍未闭合，见 [TASK-105 报告](qa/TASK-105/REPORT.md)。

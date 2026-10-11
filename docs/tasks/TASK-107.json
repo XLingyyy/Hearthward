@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "TASK-107",
+  "title": "M2 四区差异化：六兴趣点、支线与营地事件",
+  "status": "Active",
+  "updated_at": "2026-10-11",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-107-m2-content",
+  "source_refs": [
+    "main@8784d4f1bdeea03189a090ca494d302d7a923b8b",
+    "2026-10-11 用户明确要求：继续M2。",
+    "docs/planning/TASK-105/CONTENT_ROADMAP.md 的 M2 范围",
+    "2026-10-11 用户明确要求：提交推送并合并。",
+    "https://github.com/XLingyyy/Hearthward/pull/72"
+  ],
+  "dependencies": [
+    "TASK-106"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-107-m2-content.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Tests/M1ContentTests.cpp",
+    "Source/Hearthward/Tests/M2ContentTests.cpp",
+    "Source/Hearthward/Tests/CampaignTests.cpp",
+    "docs/tasks/TASK-107.json",
+    "docs/tasks/TASK-107.md",
+    "docs/contracts/CT-TASK-107-m2-content.md",
+    "docs/handoffs/TASK-107.md",
+    "docs/qa/TASK-107/",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "Config/",
+    "config/",
+    ".github/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "P07–P12 六兴趣点、QN03–04 两新支线、side_11/13/14 表达和场景反馈。",
+    "E05–08 从真实工作、交付、主线和第二营地状态触发，四区路线和局部观察可辨识。",
+    "唯一物资和奖励、未知地点过滤、保存恢复，不增加人口、驻军或新存档字段。",
+    "定向原生回归、Editor 构建、真实渲染与交互检查；完整路线与人工退出条件如实记录。"
+  ],
+  "non_goals": [
+    "不开展 M3 两条支线、新设施功能、人口或战斗规则。",
+    "不发布、不代填人工验收或绕过保护。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_current_request_writes",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-11",
+    "push": "granted_by_user_2026-10-11",
+    "merge": "granted_by_user_2026-10-11",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "用户明确继续 M2；M1 保留验收项继续记录，不推定已验收。",
+    "新增支线沿用 side_quest 600 XP，展示不发额外装备。",
+    "原有旧 GDD 本地删除保持，不纳入任务。"
+  ]
+}

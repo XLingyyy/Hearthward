@@ -23,7 +23,7 @@ void UHearthwardCampaignSubsystem::Record(FName Fact)
 bool UHearthwardCampaignSubsystem::Available(FName Id) const
 {
     const auto R=HearthwardCampaign::Find(TEXT("quests"),Id);if(!Active() || !R || !Gameplay())return false;
-    if(R->HasField(TEXT("m1_taken")) && !Gameplay()->Discovered.Contains(FName(*Text(R,TEXT("location")))))return false;
+    if(R->HasField(TEXT("exploration_taken")) && !Gameplay()->Discovered.Contains(FName(*Text(R,TEXT("location")))))return false;
     if(Id==TEXT("main_01") && State.Legacy)return false;
     for(const auto& V:R->GetArrayField(TEXT("requires")))
         if(!(State.Legacy && V->AsString()==TEXT("main_01")) && !Gameplay()->Claimed.Contains(FName(*V->AsString())))return false;
@@ -37,7 +37,7 @@ TArray<bool> UHearthwardCampaignSubsystem::Conditions(FName Id) const
     auto Facility=[&](FName Kind){return C.Facilities.ContainsByPredicate([&](const auto& F){return F.Kind==Kind;});};
     auto Arrived=[&](int32 I){return C.Rescued.Contains(FName(*FString::Printf(TEXT("rescued_%02d"),I)));};
     const auto R=HearthwardCampaign::Find(TEXT("quests"),Id);if(!R)return {};
-    if(R->HasField(TEXT("m1_taken")))return {State.Facts.Contains(FName(*Text(R,TEXT("m1_taken")))),State.Facts.Contains(FName(*Text(R,TEXT("m1_delivered"))))};
+    if(R->HasField(TEXT("exploration_taken")))return {State.Facts.Contains(FName(*Text(R,TEXT("exploration_taken")))),State.Facts.Contains(FName(*Text(R,TEXT("exploration_delivered"))))};
     if(Id==TEXT("main_01"))return {Fact(TEXT("relic")),Fact(TEXT("prologue_order")),Fact(TEXT("prologue_complete"))};
     if(Id==TEXT("main_02"))return {G->Events.FindRef(TEXT("harvest:wood"))>0 && G->Events.FindRef(TEXT("harvest:stone"))>0,Facility(TEXT("workbench")) && Fact(TEXT("worker_assigned")),Fact(TEXT("camp_order"))};
     if(Id==TEXT("main_03"))return {G->Discovered.Contains(TEXT("slice_rescue")),State.People.ContainsByPredicate([](const auto& P){return P.Id==TEXT("rescued_01") && P.Stage!=TEXT("uncontacted");}),Arrived(1)};
@@ -85,7 +85,7 @@ FName UHearthwardCampaignSubsystem::QuestLocation(FName Id) const
         return State.Facts.Contains(TEXT("watch_survey"))?FName(TEXT("home_entry")):FName(TEXT("route_watch"));
     }
     const auto Row=HearthwardCampaign::Find(TEXT("quests"),Id);
-    if(Row && Row->HasField(TEXT("m1_taken")) && State.Facts.Contains(FName(*Text(Row,TEXT("m1_taken")))))return TEXT("camp");
+    if(Row && Row->HasField(TEXT("exploration_taken")) && State.Facts.Contains(FName(*Text(Row,TEXT("exploration_taken")))))return TEXT("camp");
     return Row?FName(*Text(Row,TEXT("location"))):NAME_None;
 }
 bool UHearthwardCampaignSubsystem::Claim(FName Id,FGuid Epoch)
@@ -118,7 +118,7 @@ bool UHearthwardCampaignSubsystem::Claim(FName Id,FGuid Epoch)
     for(const auto& V:HearthwardCampaign::Rows(TEXT("quests")))
     {const FName Next(*Text(V->AsObject(),TEXT("id")));if(Text(V->AsObject(),TEXT("category"))==TEXT("main") && Available(Next) && !G->Claimed.Contains(Next)){G->TrackedQuest=Next;break;}}
     Feedback=TEXT("任务完成，奖励已登记到共享仓储");
-    if(Id==TEXT("side_06") || Id==TEXT("side_08") || Id==TEXT("side_09"))
+    if(Id==TEXT("side_06") || Id==TEXT("side_08") || Id==TEXT("side_09") || Id==TEXT("side_11") || Id==TEXT("side_13") || Id==TEXT("side_14"))
         Feedback=R->GetArrayField(TEXT("dialogue")).Last()->AsString();
     G->SetFeedback(Feedback);G->OnChanged.Broadcast();return true;
 }

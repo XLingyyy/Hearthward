@@ -36,7 +36,7 @@ v0.3.0 Shipping Build/Cook/Stage/Archive通过；已实际验证CPU新游戏、�
 
 本地候选入口：`E:/HearthwardQA/TASK-105/m0-candidate-20261011/Windows/启动M0候选.cmd`。版本字符串仍为 0.3.0，用 BUILD-INFO 区分本地工作树候选；没有替换正式发布包。本轮源码按用户授权通过 [PR #70](https://github.com/XLingyyy/Hearthward/pull/70) 提交并整合；合并状态以该 PR 为准。
 
-[验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1 已在独立分支开发，M2–M3 保留提案。
+[验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1 已经 PR #71 整合；M2 源码通过 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72) 整合，合并状态以该 PR 为准，M3 保留提案。
 
 ## TASK-106 M1 源码整合（未发行）
 
@@ -47,6 +47,14 @@ v0.3.0 Shipping Build/Cook/Stage/Archive通过；已实际验证CPU新游戏、�
 营地「出发与分工」路牌按 E 翻页，提供准备、外出、救援与返程、回营核对四种场景指引，复用手动任务卡和 X／Z 跟随等待。真实入库、救援到营、工具交付和合法用餐分别触发有限陈列；火边停留只使用空闲族人。新档与旧档均使用既有 Facts 和资源记录，不新增存档字段。
 
 本轮已提交并推送，通过 [PR #71](https://github.com/XLingyyy/Hearthward/pull/71) 整合，合并状态以该 PR 为准。编译、定向测试与实机检查范围见 [TASK-106 报告](docs/qa/TASK-106/REPORT.md)。整片区域连续路线、弟弟／救援人物通行、昼夜近景与真人体验退出标准仍需验收；本分支不等于 v0.4 已发行。
+
+## TASK-107 M2 源码整合（未发行）
+
+本轮按用户授权通过任务分支提交并整合，最终提交与合并状态见 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72)。`codex/TASK-107-m2-content` 新增旧井院、粮窖、屋后小径、旧号台、残留营帐和归乡石阶，以及「井边的记号」「旧号台的回声」两条支线。粮窖提供受背包容量约束的有限食物；小径只揭示邻近地点；营帐观察读取当时近处可见敌人。补充种植、家信与守望记录三条旧支线的现场指引、返营回应和陈列。
+
+工作受阻、旧物主人、出发前与归乡后的事件使用真实岗位、交付、主线和第二营地状态。四区补充各自路线物件与掩体；保留 80 基础驻军、10 救援人口和原奖励规则，不新增存档字段。共用探索逻辑沿用 M1 的一次性事实与事务。
+
+Editor 编译、85 项工具测试、12 表 ID 检查通过；22 项相关原生测试均有通过结果（首轮 20 项，修复后定向复测 2 项）。实机已完成井院取物与返营交付、号台观察，并修正营帐坡地横梁。连续路线、完整四区战斗、归乡昼夜、Shipping 和真人验收仍待完成。详见 [TASK-107 验证报告](docs/qa/TASK-107/REPORT.md)及[交接](docs/handoffs/TASK-107.md)。
 
 ## 本地开发
 

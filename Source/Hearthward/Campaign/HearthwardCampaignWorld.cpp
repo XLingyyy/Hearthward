@@ -269,7 +269,7 @@ void UHearthwardCampaignSubsystem::RefreshActors()
     for(const auto& V:HearthwardCampaign::Rows(TEXT("locations")))
     {
         const auto R=V->AsObject();const FName Id(*Text(R,TEXT("id")));
-        if(R->HasField(TEXT("m1_action")))continue;
+        if(R->HasField(TEXT("exploration_action")))continue;
         if(FVector::Dist2D(Position(Id),PlayerPosition)>60000)continue;
         FVector Floor;if(!State.Positions.Contains(Id)){if(!Ground(Position(Id),Floor))continue;State.Positions.Add(Id,Floor+FVector(0,0,80));}
         if(Id==TEXT("camp") || Id==TEXT("hometown") || Id==TEXT("slice_rescue") || Id==TEXT("route_mine"))continue;
@@ -359,6 +359,16 @@ void UHearthwardCampaignSubsystem::RefreshActors()
             Seat=Workplace+FVector(0,Worker==0?-140:140,0);
             HasWorkplace=true;Status=TEXT("火边歇息");
         }
+        if(!Region && CampId==TEXT("camp") && Worker==2 && (State.Facts.Contains(TEXT("m1:river_delivered")) || State.Facts.Contains(TEXT("m2:well_delivered"))))
+        {
+            Workplace=Position(TEXT("m2_camp_well"));Seat=Workplace+FVector(230,150,0);
+            HasWorkplace=true;Status=TEXT("整理家中旧物");
+        }
+        if(!Region && CampId==TEXT("camp") && Worker==3 && M2EventAvailable(TEXT("departure")))
+        {
+            Workplace=Position(TEXT("m2_event_departure"));Seat=Workplace+FVector(230,0,0);
+            HasWorkplace=true;Status=TEXT("出发前等候");
+        }
         if(FVector::Dist2D(PlayerPosition,Seat)>40000)
         {
             if(A){A->Destroy();Actors.Remove(Id);}continue;
@@ -384,6 +394,21 @@ void UHearthwardCampaignSubsystem::RefreshActors()
     {
         const bool ProtectedEnemy=I>20;
         const FName Id(*FString::Printf(TEXT("%s%02d"),ProtectedEnemy?TEXT("protected_"):TEXT("civilian_initial_"),ProtectedEnemy?I-20:I));
+        if(I==24 && M2HomeReady())
+        {
+            const FVector Destination=Position(TEXT("poi_home_steps_01"))+FVector(500,650,0);
+            FVector Floor;
+            if(FVector::Dist2D(PlayerPosition,Destination)<40000 && Ground(Destination,Floor))
+            {
+                auto* Resident=Actor(Id);if(!Resident)Resident=Spawn(Id,Floor+FVector(0,0,80),false);
+                if(Resident)
+                {
+                    Resident->TeleportTo(Floor+FVector(0,0,80),FRotator(0,180,0));
+                    Resident->PresentLabor(NAME_None,TEXT("归乡族人 · 照看石阶灯火"),false);
+                }
+            }
+            continue;
+        }
         FVector At=Position(ProtectedEnemy?TEXT("hometown"):State.Phase==TEXT("prologue")?TEXT("prologue_exit"):TEXT("camp"));
         At+=FVector((I%5-2)*240,(I/5)*260+800,0);
         if(FVector::Dist2D(PlayerPosition,At)>40000 || Actor(Id))continue;
@@ -559,7 +584,7 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
             if(Now>=FlagCompleteAt){State.Flags.Add(PendingFlag);Cancel();Feedback=TEXT("此区已控制");}
         }
     }
-    if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();RefreshM1();
+    if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();RefreshExploration();
     auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
     State.ResolveUntriggered();
     if(auto* Combat=Player()->FindComponentByClass<UHearthwardCombatComponent>())for(const auto& Alarm:Combat->State.Alarms)

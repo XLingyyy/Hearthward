@@ -45,7 +45,7 @@ bool FCampaignRegistryTest::RunTest(const FString&)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampaignContentTest,"Hearthward.Campaign049.ContentContract",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FCampaignContentTest::RunTest(const FString&)
 {
-    TestEqual(TEXT("25 formal quests including M1"),HearthwardCampaign::Rows(TEXT("quests")).Num(),25);
+    TestEqual(TEXT("27 formal quests including M1 and M2"),HearthwardCampaign::Rows(TEXT("quests")).Num(),27);
     int32 Main=0,Side=0;TSet<FName> Rescues;
     for(const auto& V:HearthwardCampaign::Rows(TEXT("quests")))
     {
@@ -57,7 +57,7 @@ bool FCampaignContentTest::RunTest(const FString&)
         for(const auto& P:R->GetArrayField(TEXT("rescued_people")))Rescues.Add(FName(*P->AsString()));
         for(const auto& I:R->GetObjectField(TEXT("reward"))->GetObjectField(TEXT("items"))->Values)TestTrue(TEXT("Reward item exists"),bool(HearthwardData::Find(TEXT("items"),FString(*I.Key))));
     }
-    TestEqual(TEXT("8 main"),Main,8);TestEqual(TEXT("17 side including two M1 additions"),Side,17);TestEqual(TEXT("10 stable people"),Rescues.Num(),10);
+    TestEqual(TEXT("8 main"),Main,8);TestEqual(TEXT("19 side including four expansion additions"),Side,19);TestEqual(TEXT("10 stable people"),Rescues.Num(),10);
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampaignMigrationTest,"Hearthward.Campaign049.Schema7Migration",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
