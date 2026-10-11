@@ -37,10 +37,11 @@ void UHearthwardScreenWidget::ComposeRepair()
     Element(TEXT("text"),Before<=0?TEXT("已损坏"):Before>=Maximum?TEXT("完好"):TEXT("需要维护"),FVector2D(800,328),FVector2D(560,40),22); Identify(TEXT("repairing.condition"));
     Element(TEXT("bar"),TEXT(""),FVector2D(800,385),FVector2D(510,12)); Identify(TEXT("repairing.durabilityBar")); Elements.Last().Value=Before/Maximum; Elements.Last().Color=Color(TEXT("gold"));
     Element(TEXT("text"),FString::Printf(TEXT("当前耐久 %.0f / %.0f\n修复后耐久 %.0f / %.0f"),Before,Maximum,Maximum,Maximum),FVector2D(800,415),FVector2D(560,85),23); Identify(TEXT("repairing.durability"));
-    FString Cost=TEXT("整件修复材料   持有 / 消耗\n");
+    Element(TEXT("text"),TEXT("整件修复材料   持有 / 消耗"),{800,510},{560,30},20);Identify(TEXT("repairing.materials"));
+    int32 MaterialIndex=0;
     for(const auto& M:Find(TEXT("repairRecipes"),SelectedRepair.ToString())->GetObjectField(TEXT("materials"))->Values)
-        Cost+=Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name"))+FString::Printf(TEXT("   %d / %.0f\n"),Inventory()->GetItemCount(FName(*M.Key)),M.Value->AsNumber());
-    Element(TEXT("text"),Cost,FVector2D(800,522),FVector2D(560,110),20); Identify(TEXT("repairing.materials"));
+        ItemLine(FName(*M.Key),Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name"))+FString::Printf(TEXT("   %d / %.0f"),Inventory()->GetItemCount(FName(*M.Key)),M.Value->AsNumber()),
+            {800,545.+MaterialIndex++*38},560,TEXT("repairing.materials.")+FString(*M.Key),TEXT("repairing.details"));
     const FString Reason=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>()->RepairStatus(Workbench,SelectedRepair,CraftingEpoch);
     Element(TEXT("button"),TEXT("F 修复装备"),FVector2D(800,675),FVector2D(530,55),25,TEXT("repairEquipment")); Identify(TEXT("repairing.submit"),TEXT("repairing.actions")); Elements.Last().Enabled=Reason.IsEmpty();
     Element(TEXT("text"),Reason.IsEmpty()?TEXT("立即修复至满耐久 · 消耗背包中的材料"):Reason,FVector2D(800,750),FVector2D(570,50),18); Identify(TEXT("repairing.status"),TEXT("repairing.actions"));

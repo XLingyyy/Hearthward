@@ -165,6 +165,7 @@ private:
     void ComposeCamp();
     bool ExecuteCampAction(const FString& Action);
     void ComposeCrafting();
+    void ItemLine(FName Item,const FString& Label,FVector2D Position,float Width,const FString& LayoutId,const FString& Component,float Font=18,float IconSize=36);
     void ComposeRepair();
     void ComposeSave();
     void ComposeMenuChrome(const FString& Heading,const FString& Subtitle);

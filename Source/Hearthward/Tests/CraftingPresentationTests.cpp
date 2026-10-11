@@ -99,15 +99,16 @@ bool FCraftingWarehousePresentation057Test::RunTest(const FString&)
     {
         TSharedPtr<FJsonObject> Layout;
         if(!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Screen->DescribeLayout()),Layout))return FString();
+        FString Result;
         for(const auto& Value:Layout->GetArrayField(TEXT("components")))
         {
             const auto Row=Value->AsObject();
-            if(Row->GetStringField(TEXT("id"))==Id)
+            if(Row->GetStringField(TEXT("id"))==Id || Row->GetStringField(TEXT("id")).StartsWith(FString(Id)+TEXT(".")))
             {
-                FString Text;Row->TryGetStringField(TEXT("text"),Text);return Text;
+                FString Text;Row->TryGetStringField(TEXT("text"),Text);if(!Text.IsEmpty()){if(!Result.IsEmpty())Result+=TEXT("\n");Result+=Text;}
             }
         }
-        return FString();
+        return Result;
     };
 
     Screen->OpenPage(TEXT("crafting"));
