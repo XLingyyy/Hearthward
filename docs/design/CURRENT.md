@@ -1,7 +1,7 @@
 # 当前游戏设计入口
 
 **有效基线：GDD v0.3 + DSGN-001本地推理架构修订 + DSGN-003首版范围与切片方向 + DSGN-R01已批准子范围，2026-09-26。** 以下只提供检索摘要，不替代原文。
-当前原件：[归火 Hearthward 游戏设计文档 v0.3](../归火Hearthward游戏设计文档_v0.3.docx)。
+设计正文：[GDD v0.3 保留归档](archive/gdd-v0.3.docx)。正文入口统一指向保留归档，便于查阅玩法条款。
 启动包历史归档：[gdd-v0.3.docx](archive/gdd-v0.3.docx)；[历史版完整机械提取](archive/gdd-v0.3-source.md)；
 [启动包来源校验](archive/MANIFEST.json)；[未定项](OPEN_QUESTIONS.md)。
 

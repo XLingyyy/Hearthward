@@ -1,6 +1,6 @@
 # 最短阅读路径
 
-2026-10-09 当前工作分支为 `codex/TASK-084-103-iteration`，尚未合并main或发布。当前实现及完整剩余项见[本批执行状态](planning/TASK-084-103/EXECUTION_STATUS.md)，候选结果见[103报告](qa/TASK-103/REPORT.md)。
+2026-10-11：正式发布版为 v0.3.0；本轮工程增量为 TASK-105，来源分支 `codex/TASK-105-engineering-optimization`，按用户确认先推进 M0。请从 [TASK-105 交接](handoffs/TASK-105.md)及[本轮验证](qa/TASK-105/REPORT.md)接手。下方 TASK-084—103 记录为历史快照，路径和结果不代表当前候选。
 
 2026-10-09 交互提示已改为物体上方随镜头移动；领取遗物及已完成/不可用目标隐藏提示，重复设施保留有效操作。Task090 4/4、相关采集/资源 3/3 与正式地图 PIE 领取前后检查通过。候选11 `0.2.0-preview.20261009.3` Shipping 构建成功，源码 `a72fdffe2d3f4f27652c9d05abfe50c91d832ede`，目录 `F:/HearthwardDemo/iteration-084-103-20261009-11/Windows`。本包正常键鼠验证待用户完成。整批尚未完成，原有模型/性能/完整路线/真人与二机缺口保留。
 

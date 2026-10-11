@@ -1,4 +1,5 @@
 #include "HearthwardGameData.h"
+#include "HearthwardCatalogIndex.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Serialization/JsonSerializer.h"
@@ -24,6 +25,9 @@ const TArray<TSharedPtr<FJsonValue>>& HearthwardData::Rows(const FString& Table)
 }
 TSharedPtr<FJsonObject> HearthwardData::Find(const FString& Table, const FString& Id)
 {
+    static const FHearthwardCatalogIndex Index(Catalog());
+    TSharedPtr<FJsonObject> Indexed;
+    if (Index.TryFind(Table, Id, Indexed)) return Indexed;
     for (const auto& Value : Rows(Table))
         if (Value->AsObject()->GetStringField(TEXT("id")) == Id) return Value->AsObject();
     return nullptr;
