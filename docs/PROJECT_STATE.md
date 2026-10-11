@@ -1,5 +1,7 @@
 # Hearthward 项目状态
 
+2026-10-11：按用户确认先推进 M0。TASK-105 本地工程候选完成目录索引/战役计数整合及 UE 5.8.2 兼容修复；Editor、相关原生回归、Shipping 打包和正常窗口保存重启冒烟通过。来源分支为 `codex/TASK-105-engineering-optimization`，用户已授权提交、推送并通过 PR 合入 main，合并状态见 [PR #70](https://github.com/XLingyyy/Hearthward/pull/70)，正式发布版继续为 v0.3.0。完整路线/性能/真人与二机门槛仍未闭合，见 [TASK-105 报告](qa/TASK-105/REPORT.md)。
+
 2026-10-10：最新实现已通过PR #68合并main。v0.3.0从干净main `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16` 完成Shipping构建，独立包新游戏/背包/地图/手动保存/重启继续通过。运行目录 `F:/HearthwardDemo/v0.3.0/Windows`；[发行记录](releases/v0.3.0/REPORT.md)与[发布页](https://github.com/XLingyyy/Hearthward/releases/tag/v0.3.0)记录本版交付。099声音与104斧柄/分地面脚步已集成，原模型质量、性能、全流程与人工验收限制保留。以下日期记录为历史快照。
 
 2026-10-09 交互提示已改为物体上方随镜头移动；领取遗物及已完成/不可用目标隐藏提示，重复设施保留有效操作。Task090 4/4、相关采集/资源 3/3 与正式地图 PIE 领取前后检查通过。候选11 `0.2.0-preview.20261009.3` Shipping 构建成功，源码 `a72fdffe2d3f4f27652c9d05abfe50c91d832ede`，目录 `F:/HearthwardDemo/iteration-084-103-20261009-11/Windows`。本包正常键鼠验证待用户完成。整批尚未完成，原有模型/性能/完整路线/真人与二机缺口保留。

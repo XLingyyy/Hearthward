@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "id": "TASK-105",
+  "title": "目录查找与战役计数优化及内容扩充规划",
+  "status": "Active",
+  "updated_at": "2026-10-11",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-105-engineering-optimization",
+  "source_refs": [
+    "XLingyyy/Hearthward main@ff5f6f985b326011b9dc968ebe9ace55f4582088",
+    "2026-10-11 当前用户请求：基于 docs 中的工程优化规划和 TASK-105 补丁继续完善游戏。",
+    "2026-10-11 用户明确授权：提交推送并合并到main。"
+  ],
+  "dependencies": [],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "README.md",
+    "Source/Hearthward/Campaign/HearthwardCampaignState.cpp",
+    "Source/Hearthward/Gameplay/HearthwardCatalogIndex.h",
+    "Source/Hearthward/Gameplay/HearthwardGameData.cpp",
+    "Source/Hearthward/Tests/CatalogOptimizationTests.cpp",
+    "docs/handoffs/TASK-105.md",
+    "docs/planning/TASK-105/CONTENT_ROADMAP.md",
+    "docs/planning/TASK-105/ENGINEERING_PLAN.md",
+    "docs/tasks/TASK-105.json",
+    "docs/tasks/TASK-105.md",
+    "scripts/qa/validate_catalog_ids.py",
+    "scripts/tests/test_catalog_ids.py",
+    ".gitattributes",
+    "art_source/TASK-104/grip/stone_bone_axe_handle_fit.obj",
+    "docs/design/CURRENT.md",
+    "docs/tasks/TASK-003.md",
+    "docs/tasks/TASK-004.md",
+    "docs/tasks/TASK-005.md",
+    "Source/Hearthward/Tests/SaveTests.cpp",
+    "docs/qa/TASK-105/",
+    "docs/START_HERE.md",
+    "docs/PROJECT_STATE.md",
+    "docs/Hearthward_TASK-105_工程优化补丁包.zip",
+    "docs/Hearthward_工程优化与内容扩充规划.docx"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "Source/Hearthward/Save/",
+    "Config/",
+    "config/",
+    ".github/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "目录查找保持原对象/首次匹配/错误路径，不改世界与存档。",
+    "战役计数保留原组、生命和胜利规则，不复制敌人数组。",
+    "内容提案与生产实现分开，实际测试范围如实列明。",
+    "完整UE构建和新增/既有回归通过后才进入合并审查。"
+  ],
+  "non_goals": [
+    "不实现未批准的新剧情/地图/奖励规则。",
+    "不发行、强推、修改权限或代填真人验收。",
+    "不更改模型、安全边界、保存格式或画质。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_current_request_writes",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-11",
+    "push": "granted_by_user_2026-10-11",
+    "merge": "granted_by_user_2026-10-11",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "新增内部索引无导出API，不改变现有公开函数或持久契约。",
+    "用户提供的规划原件和补丁随本轮提交保留来源；旧 GDD 已有本地删除不纳入提交。包内远端失败和测试结果属于上游准备记录。",
+    "M0 回归复现 OBJ CRLF 导致原始字节校验失败；固定该单一制作源为 LF，几何和原始摘要不变。",
+    "用户删除根 docs 的旧 GDD 后，4 处断链改指仍保留的 v0.3 归档；不恢复已删除原件，不修改设计条款。",
+    "原生回归复现旧版本测试把已发布 0.3.0 当未来版本；修订测试夹具，更新生产逻辑不变。",
+    "用户明确选择本轮先完成 M0，M1–M3 内容扩充保留规划。",
+    "本轮按用户明确授权提交、推送并通过 PR 合入 main；不绕过远端保护，不代填人工验收。",
+    "UE 5.8.2 编译修复 JSON 字段键到 FString 的显式转换。新增 7 项及相关回归共 37 项已通过（旧版本夹具失败后定向复测）；5 项带测试世界清理警告。"
+  ]
+}

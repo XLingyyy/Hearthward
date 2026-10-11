@@ -1333,13 +1333,16 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FReleaseVersionTest, "Hearthward.Save.ReleaseVe
 bool FReleaseVersionTest::RunTest(const FString& Parameters)
 {
     TestTrue(TEXT("Higher patch"),HearthwardVersion::IsNewer(TEXT("v0.2.1"),TEXT("0.2.0")));
-    TestTrue(TEXT("Stable replaces preview"),HearthwardVersion::IsNewer(TEXT("v0.2.0"),HearthwardVersion::Current));
+    TestTrue(TEXT("Stable replaces preview"),HearthwardVersion::IsNewer(TEXT("v0.2.0"),TEXT("0.2.0-preview.1")));
     TestFalse(TEXT("Old demo is not an update"),HearthwardVersion::IsNewer(TEXT("v0.1.0-demo.20260924"),HearthwardVersion::Current));
     TestFalse(TEXT("Same version is not update"),HearthwardVersion::IsNewer(HearthwardVersion::Current,HearthwardVersion::Current));
     TestTrue(TEXT("Numeric prerelease order"),HearthwardVersion::IsNewer(TEXT("0.2.0-preview.10"),TEXT("0.2.0-preview.9")));
     TestFalse(TEXT("Unknown tag is not falsely newer"),HearthwardVersion::IsNewer(TEXT("main"),HearthwardVersion::Current));
     auto* Update=NewObject<UHearthwardUpdateSubsystem>(NewObject<UGameInstance>());
-    Update->CompleteCheck(200,TEXT("{\"tag_name\":\"v0.3.0\"}"),true);
+    Update->CompleteCheck(200,FString::Printf(TEXT("{\"tag_name\":\"v%s\"}"),HearthwardVersion::Current),true);
+    TestFalse(TEXT("Current official version does not prompt an update"),Update->HasUpdate());
+    const FString NewerRelease=FString::Printf(TEXT("{\"tag_name\":\"v%d.0.0\"}"),FCString::Atoi(HearthwardVersion::Current)+1);
+    Update->CompleteCheck(200,NewerRelease,true);
     TestTrue(TEXT("Official newer version produces update prompt"),Update->HasUpdate() && Update->GetNotice().Contains(TEXT("存在新版本，请同步更新")));
     Update->CompleteCheck(0,TEXT(""),false);
     TestTrue(TEXT("Offline recheck retains known newer release"),Update->HasUpdate());

@@ -1,5 +1,6 @@
 #include "HearthwardCampaignState.h"
 #include "../Gameplay/HearthwardGameData.h"
+#include "../Gameplay/HearthwardCatalogIndex.h"
 #include "JsonObjectConverter.h"
 #include "Serialization/JsonSerializer.h"
 using namespace HearthwardData;
@@ -7,7 +8,11 @@ const TArray<TSharedPtr<FJsonValue>>& HearthwardCampaign::Rows(const FString& Na
 { return Catalog()->GetObjectField(TEXT("campaign"))->GetArrayField(Name); }
 TSharedPtr<FJsonObject> HearthwardCampaign::Find(const FString& Table,FName Id)
 {
-    for(const auto& V:Rows(Table))if(Text(V->AsObject(),TEXT("id"))==Id.ToString())return V->AsObject();
+    static const FHearthwardCatalogIndex Index(Catalog()->GetObjectField(TEXT("campaign")));
+    const FString IdString = Id.ToString();
+    TSharedPtr<FJsonObject> Indexed;
+    if (Index.TryFind(Table, IdString, Indexed)) return Indexed;
+    for(const auto& V:Rows(Table))if(Text(V->AsObject(),TEXT("id"))==IdString)return V->AsObject();
     return nullptr;
 }
 FVector HearthwardCampaign::XY(const TSharedPtr<FJsonObject>& R,const FString& Key)
@@ -29,9 +34,19 @@ FHearthwardCampaignEnemy Enemy(const TSharedPtr<FJsonObject>& R,FName Group,FNam
 }
 }
 int32 FHearthwardCampaignState::Total() const
-{ return Enemies.FilterByPredicate([](const auto& E){return E.Group==TEXT("base") || E.Group==TEXT("reinforcement");}).Num(); }
+{
+    int32 Count = 0;
+    for (const auto& E : Enemies)
+        if (E.Group==TEXT("base") || E.Group==TEXT("reinforcement")) ++Count;
+    return Count;
+}
 int32 FHearthwardCampaignState::Cleared() const
-{ return Enemies.FilterByPredicate([](const auto& E){return (E.Group==TEXT("base") || E.Group==TEXT("reinforcement")) && E.Combat.Health<=0;}).Num(); }
+{
+    int32 Count = 0;
+    for (const auto& E : Enemies)
+        if ((E.Group==TEXT("base") || E.Group==TEXT("reinforcement")) && E.Combat.Health<=0) ++Count;
+    return Count;
+}
 bool FHearthwardCampaignState::ZoneClear(FName Zone,bool BaseOnly) const
 {
     int32 Count=0;
