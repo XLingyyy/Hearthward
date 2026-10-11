@@ -36,7 +36,7 @@ v0.3.0 Shipping Build/Cook/Stage/Archive通过；已实际验证CPU新游戏、�
 
 本地候选入口：`E:/HearthwardQA/TASK-105/m0-candidate-20261011/Windows/启动M0候选.cmd`。版本字符串仍为 0.3.0，用 BUILD-INFO 区分本地工作树候选；没有替换正式发布包。本轮源码按用户授权通过 [PR #70](https://github.com/XLingyyy/Hearthward/pull/70) 提交并整合；合并状态以该 PR 为准。
 
-[验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1 已经 PR #71 整合；M2 已在独立分支实现，M3 保留提案。
+[验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1 已经 PR #71 整合；M2 源码通过 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72) 整合，合并状态以该 PR 为准，M3 保留提案。
 
 ## TASK-106 M1 源码整合（未发行）
 
@@ -50,7 +50,7 @@ v0.3.0 Shipping Build/Cook/Stage/Archive通过；已实际验证CPU新游戏、�
 
 ## TASK-107 M2 源码整合（未发行）
 
-本轮按用户授权通过任务分支提交并整合，最终提交与合并状态见 TASK-107 PR。`codex/TASK-107-m2-content` 新增旧井院、粮窖、屋后小径、旧号台、残留营帐和归乡石阶，以及「井边的记号」「旧号台的回声」两条支线。粮窖提供受背包容量约束的有限食物；小径只揭示邻近地点；营帐观察读取当时近处可见敌人。补充种植、家信与守望记录三条旧支线的现场指引、返营回应和陈列。
+本轮按用户授权通过任务分支提交并整合，最终提交与合并状态见 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72)。`codex/TASK-107-m2-content` 新增旧井院、粮窖、屋后小径、旧号台、残留营帐和归乡石阶，以及「井边的记号」「旧号台的回声」两条支线。粮窖提供受背包容量约束的有限食物；小径只揭示邻近地点；营帐观察读取当时近处可见敌人。补充种植、家信与守望记录三条旧支线的现场指引、返营回应和陈列。
 
 工作受阻、旧物主人、出发前与归乡后的事件使用真实岗位、交付、主线和第二营地状态。四区补充各自路线物件与掩体；保留 80 基础驻军、10 救援人口和原奖励规则，不新增存档字段。共用探索逻辑沿用 M1 的一次性事实与事务。
 

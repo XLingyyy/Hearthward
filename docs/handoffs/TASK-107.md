@@ -1,6 +1,6 @@
 # TASK-107 · M2 交接
 
-2026-10-11，Owner XLingyyy；用户要求继续 M2。当前分支 `codex/TASK-107-m2-content`，基线 `8784d4f1bdeea03189a090ca494d302d7a923b8b`。本轮已获用户提交、推送及合并授权，整合状态以 TASK-107 PR 为准；任务保持 Active，尚未完成整个里程碑的体验退出条件。
+2026-10-11，Owner XLingyyy；用户要求继续 M2。当前分支 `codex/TASK-107-m2-content`，基线 `8784d4f1bdeea03189a090ca494d302d7a923b8b`。本轮已获用户提交、推送及合并授权，整合状态以 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72) 为准；任务保持 Active，尚未完成整个里程碑的体验退出条件。
 
 六个新增兴趣点、两条新支线、三条旧支线表达与陈列、E05–08 事件和四区路线物件已经接入。入口及约束见[契约](../contracts/CT-TASK-107-m2-content.md)；实现集中在 CampaignExploration / CampaignM2、交互/任务/世界接线和 gameplay.json。继续工作时须同时维护正式战役任务行和顶层日志任务行，首轮已在此处发现并修复遗漏。
 
