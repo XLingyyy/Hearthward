@@ -1,5 +1,17 @@
 {
-  "time": {"version": 1, "initial_day": 1, "initial_minute": 1200, "sunrise_minute": 360, "sunset_minute": 1080, "light_transition_minutes": 30, "campfire_wait_minutes": [60, 240, 480]},
+  "time": {
+    "version": 1,
+    "initial_day": 1,
+    "initial_minute": 1200,
+    "sunrise_minute": 360,
+    "sunset_minute": 1080,
+    "light_transition_minutes": 30,
+    "campfire_wait_minutes": [
+      60,
+      240,
+      480
+    ]
+  },
   "version": 1,
   "tuning": {
     "hungerSeconds": 2880,
@@ -2342,6 +2354,72 @@
         20000
       ],
       "radius": 1800
+    },
+    {
+      "id": "poi_river_01",
+      "name": "旧渡口",
+      "kind": "landmark",
+      "position": [
+        48000,
+        -110000,
+        20000
+      ],
+      "radius": 1800
+    },
+    {
+      "id": "poi_cart_01",
+      "name": "倾倒的运输车",
+      "kind": "landmark",
+      "position": [
+        32000,
+        -111000,
+        20000
+      ],
+      "radius": 1800
+    },
+    {
+      "id": "poi_ridge_01",
+      "name": "风口路标",
+      "kind": "landmark",
+      "position": [
+        98500,
+        -60000,
+        20000
+      ],
+      "radius": 1800
+    },
+    {
+      "id": "poi_workshop_01",
+      "name": "废弃炭棚",
+      "kind": "landmark",
+      "position": [
+        115000,
+        29000,
+        20000
+      ],
+      "radius": 1800
+    },
+    {
+      "id": "poi_herb_01",
+      "name": "崖下药圃",
+      "kind": "landmark",
+      "position": [
+        -86500,
+        -79200,
+        20000
+      ],
+      "radius": 1800
+    },
+    {
+      "id": "poi_tracks_01",
+      "name": "林间猎迹",
+      "kind": "landmark",
+      "position": [
+        -83500,
+        -74800,
+        20000
+      ],
+      "radius": 1800
     }
   ],
   "quests": [
@@ -2745,7 +2823,7 @@
     {
       "id": "side_06",
       "name": "矿脉的走向",
-      "description": "找到旧路上的矿脉。",
+      "description": "观察旧路矿点，选择自己采集或安排弟弟搬运。",
       "event": "campaign",
       "target": "side_06",
       "required": 2,
@@ -2754,7 +2832,7 @@
       "kind": "side",
       "category": "side",
       "location": "route_mine",
-      "objective": "找到旧路上的矿脉。\n回到营地，从共享仓库交付6份矿石。",
+      "objective": "观察旧路矿点，选择自己采集或安排弟弟搬运。\n把六份真实矿石存入共享仓储，回营在日志确认交付。",
       "reward": "600经验 · 绳索×4",
       "companion": "可用 X 让弟弟跟随，用 Z 让他等待。危险时先确认他的状态。",
       "failure": "进度会随存档保留。遇到危险可先撤退，准备后再回来。"
@@ -2778,8 +2856,8 @@
     },
     {
       "id": "side_08",
-      "name": "山路回声",
-      "description": "沿山路抵达山脊观景处。",
+      "name": "风口的归路",
+      "description": "沿台地步道抵达山脊，比较直达与遮挡路线。",
       "event": "campaign",
       "target": "side_08",
       "required": 2,
@@ -2788,7 +2866,7 @@
       "kind": "side",
       "category": "side",
       "location": "route_ridge",
-      "objective": "沿山路抵达山脊观景处。\n按 E 记下故乡的方向。",
+      "objective": "沿台地步道抵达山脊，比较直达与遮挡路线。\n调查原山脊标记；风口路标还能辨认远处炭棚。",
       "reward": "600经验 · 草药×4",
       "companion": "可用 X 让弟弟跟随，用 Z 让他等待。危险时先确认他的状态。",
       "failure": "进度会随存档保留。遇到危险可先撤退，准备后再回来。"
@@ -2796,7 +2874,7 @@
     {
       "id": "side_09",
       "name": "药草留给归人",
-      "description": "从野外采集药草。",
+      "description": "在崖下药圃或已有草药源实际采集。",
       "event": "campaign",
       "target": "side_09",
       "required": 2,
@@ -2805,7 +2883,7 @@
       "kind": "side",
       "category": "side",
       "location": "camp",
-      "objective": "从野外采集药草。\n回到营地，从共享仓库交付6份药草。",
+      "objective": "在崖下药圃或已有草药源实际采集。\n把六份草药存入共享仓储，回营确认交付，药草留在救护处。",
       "reward": "600经验 · 药草膏×2",
       "companion": "可用 X 让弟弟跟随，用 Z 让他等待。危险时先确认他的状态。",
       "failure": "进度会随存档保留。遇到危险可先撤退，准备后再回来。"
@@ -2911,6 +2989,40 @@
       "reward": "600经验 · 熟食×2",
       "companion": "可用 X 让弟弟跟随，用 Z 让他等待。危险时先确认他的状态。",
       "failure": "进度会随存档保留。遇到危险可先撤退，准备后再回来。"
+    },
+    {
+      "id": "side_exp_river_01",
+      "name": "渡口留下的东西",
+      "description": "观察地点，选择接近路线，取回受保护任务物。",
+      "event": "campaign",
+      "target": "side_exp_river_01",
+      "required": 2,
+      "xp": 600,
+      "requires": "",
+      "kind": "side",
+      "category": "side",
+      "location": "poi_river_01",
+      "objective": "观察地点，选择接近路线，取回受保护任务物。\n回到隐蔽营地交还物件，查看陈列与人物回应。",
+      "reward": "600经验 · 营地陈列与回应",
+      "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
+      "failure": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。"
+    },
+    {
+      "id": "side_exp_workshop_01",
+      "name": "没有带走的工具",
+      "description": "观察地点，选择接近路线，取回受保护任务物。",
+      "event": "campaign",
+      "target": "side_exp_workshop_01",
+      "required": 2,
+      "xp": 600,
+      "requires": "",
+      "kind": "side",
+      "category": "side",
+      "location": "poi_workshop_01",
+      "objective": "观察地点，选择接近路线，取回受保护任务物。\n回到隐蔽营地交还物件，查看陈列与人物回应。",
+      "reward": "600经验 · 营地陈列与回应",
+      "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
+      "failure": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。"
     }
   ],
   "loadout": {
@@ -9892,8 +10004,8 @@
         "location": "route_mine",
         "trigger": "勘察旧路矿点或营地工匠提示",
         "steps": [
-          "发现实际矿源",
-          "显式从共享仓储交付ore 6"
+          "观察旧路矿点，选择自己采集或安排弟弟搬运。",
+          "把六份真实矿石存入共享仓储，回营在日志确认交付。"
         ],
         "success": "delivery:side_06提交6矿",
         "failure_or_branch": "不足6矿不扣取；其他来源矿也可交，矿源必须实际发现",
@@ -9910,8 +10022,8 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "这件事还没有做完。",
-          "已经办妥，东西都登记过了。"
+          "工匠：矿脉沿着旧路露出来，别从陡坡硬爬。",
+          "工匠：矿石已经入库，绳索给你，下一趟可以带得更稳。"
         ],
         "saved_fields": [
           "quest_id",
@@ -9964,14 +10076,14 @@
       },
       {
         "id": "side_08",
-        "name": "山路回声",
+        "name": "风口的归路",
         "category": "side",
         "requires": [],
         "location": "route_ridge",
         "trigger": "在岔路读取山脊标记",
         "steps": [
-          "沿步行侧路抵达route_ridge",
-          "交互记录故乡入口方向"
+          "沿台地步道抵达山脊，比较直达与遮挡路线。",
+          "调查原山脊标记；风口路标还能辨认远处炭棚。"
         ],
         "success": "survey:side_08事实",
         "failure_or_branch": "不用攀爬或坠落捷径；受阻回主路重试",
@@ -9988,8 +10100,8 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "这件事还没有做完。",
-          "已经办妥，东西都登记过了。"
+          "弟弟：从这里先把路看清，别急着下坡。",
+          "弟弟：回来的方向也记住了。"
         ],
         "saved_fields": [
           "quest_id",
@@ -10009,8 +10121,8 @@
         "location": "camp",
         "trigger": "营地救护职责NPC请求",
         "steps": [
-          "从实际自然源采集herb",
-          "显式从共享仓储交付herb 6"
+          "在崖下药圃或已有草药源实际采集。",
+          "把六份草药存入共享仓储，回营确认交付，药草留在救护处。"
         ],
         "success": "delivery:side_09提交6草药",
         "failure_or_branch": "不足不扣、取消不耗；无需未批准的治疗技能",
@@ -10027,8 +10139,8 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "这件事还没有做完。",
-          "已经办妥，东西都登记过了。"
+          "照料者：石沿背阴处有药草，认清叶缘，再带回来。",
+          "照料者：药草收好了。把药膏带上，路上能用。"
         ],
         "saved_fields": [
           "quest_id",
@@ -10274,6 +10386,78 @@
           "timeline_epoch"
         ],
         "completion_policy": "conditions use persistent world facts; a reward claim never substitutes for the real action"
+      },
+      {
+        "id": "side_exp_river_01",
+        "name": "渡口留下的东西",
+        "category": "side",
+        "requires": [],
+        "location": "poi_river_01",
+        "trigger": "实际发现地点后记录",
+        "steps": [
+          "观察地点，选择接近路线，取回受保护任务物。",
+          "回到隐蔽营地交还物件，查看陈列与人物回应。"
+        ],
+        "success": "m1:river_delivered",
+        "failure_or_branch": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。",
+        "safe_phase": "占领前后均可完成。",
+        "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
+        "reward": {
+          "id": "reward:side_exp_river_01",
+          "xp": 600,
+          "items": {},
+          "knowledge": [],
+          "destination": "shared_storage"
+        },
+        "rescued_people": [],
+        "dialogue": [
+          "先看清退路，再去取物。",
+          "东西带回来了，营地也多了一点家的样子。"
+        ],
+        "saved_fields": [
+          "facts",
+          "reward_claimed",
+          "timeline_epoch"
+        ],
+        "completion_policy": "persistent taken/delivered facts and existing reward transaction",
+        "m1_taken": "m1:river_taken",
+        "m1_delivered": "m1:river_delivered"
+      },
+      {
+        "id": "side_exp_workshop_01",
+        "name": "没有带走的工具",
+        "category": "side",
+        "requires": [],
+        "location": "poi_workshop_01",
+        "trigger": "实际发现地点后记录",
+        "steps": [
+          "观察地点，选择接近路线，取回受保护任务物。",
+          "回到隐蔽营地交还物件，查看陈列与人物回应。"
+        ],
+        "success": "m1:tools_delivered",
+        "failure_or_branch": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。",
+        "safe_phase": "占领前后均可完成。",
+        "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
+        "reward": {
+          "id": "reward:side_exp_workshop_01",
+          "xp": 600,
+          "items": {},
+          "knowledge": [],
+          "destination": "shared_storage"
+        },
+        "rescued_people": [],
+        "dialogue": [
+          "先看清退路，再去取物。",
+          "东西带回来了，营地也多了一点家的样子。"
+        ],
+        "saved_fields": [
+          "facts",
+          "reward_claimed",
+          "timeline_epoch"
+        ],
+        "completion_policy": "persistent taken/delivered facts and existing reward transaction",
+        "m1_taken": "m1:tools_taken",
+        "m1_delivered": "m1:tools_delivered"
       }
     ],
     "locations": [
@@ -10536,6 +10720,185 @@
         "xy": [
           -972,
           -758
+        ]
+      },
+      {
+        "id": "poi_river_01",
+        "name": "旧渡口 · 观察水线",
+        "xy": [
+          480,
+          -1100
+        ],
+        "kind": "m1_content",
+        "m1_action": "observe",
+        "m1_text": "旧水线低于路面。南侧浅滩直接，北侧高岸较长且有遮挡。旧箱留在东岸；弟弟可以同行，也可以先回营搬运。"
+      },
+      {
+        "id": "poi_river_relic",
+        "name": "旧渡口 · 打开遗物箱",
+        "xy": [
+          560,
+          -1110
+        ],
+        "kind": "m1_content",
+        "m1_action": "token",
+        "m1_text": "一块刻着家纹的木牌。已妥善收好，回营交给守火的族人。",
+        "fact": "m1:river_taken",
+        "quest": "side_exp_river_01"
+      },
+      {
+        "id": "poi_cart_01",
+        "name": "倾倒的运输车 · 检查货痕",
+        "xy": [
+          320,
+          -1110
+        ],
+        "kind": "m1_content",
+        "m1_action": "observe",
+        "m1_text": "车旁三个扎好的货包仍可带走；散落车板只是残骸。按背包余量选择，带不走的留在原地。"
+      },
+      {
+        "id": "poi_cart_wood",
+        "name": "运输车 · 木材包（4）",
+        "xy": [
+          324,
+          -1110
+        ],
+        "kind": "m1_content",
+        "m1_action": "bundle",
+        "m1_text": "木材已放进行装。",
+        "item": "wood",
+        "count": 4,
+        "fact": "m1:cart_wood"
+      },
+      {
+        "id": "poi_cart_rope",
+        "name": "运输车 · 绳索包（2）",
+        "xy": [
+          320,
+          -1114
+        ],
+        "kind": "m1_content",
+        "m1_action": "bundle",
+        "m1_text": "绳索已放进行装。",
+        "item": "rope",
+        "count": 2,
+        "fact": "m1:cart_rope"
+      },
+      {
+        "id": "poi_cart_food",
+        "name": "运输车 · 熟食包（2）",
+        "xy": [
+          316,
+          -1110
+        ],
+        "kind": "m1_content",
+        "m1_action": "bundle",
+        "m1_text": "熟食已放进行装。",
+        "item": "cooked_food",
+        "count": 2,
+        "fact": "m1:cart_food"
+      },
+      {
+        "id": "poi_ridge_01",
+        "name": "风口路标 · 辨认炭棚",
+        "xy": [
+          985,
+          -600
+        ],
+        "kind": "m1_content",
+        "m1_action": "survey",
+        "m1_text": "东侧作坊下方有一座塌顶炭棚。沿台地下路绕行可避开开阔地；只记下眼前地点，守军位置仍需现场观察。",
+        "reveal": "poi_workshop_01"
+      },
+      {
+        "id": "poi_workshop_01",
+        "name": "废弃炭棚 · 查看烟痕",
+        "xy": [
+          1150,
+          290
+        ],
+        "kind": "m1_content",
+        "m1_action": "observe",
+        "m1_text": "正门通向开阔作坊，侧面围栏已断开。工具箱在棚后；可让弟弟等待，确认退路后再进去。"
+      },
+      {
+        "id": "poi_workshop_tools",
+        "name": "废弃炭棚 · 取回工具箱",
+        "xy": [
+          1152,
+          298
+        ],
+        "kind": "m1_content",
+        "m1_action": "token",
+        "m1_text": "旧锉与木柄仍能用。已经收好，回营放到工作区。",
+        "fact": "m1:tools_taken",
+        "quest": "side_exp_workshop_01"
+      },
+      {
+        "id": "poi_herb_01",
+        "name": "崖下药圃 · 读叶形",
+        "xy": [
+          -865,
+          -792
+        ],
+        "kind": "m1_content",
+        "m1_action": "herb",
+        "m1_text": "石沿背阴处的药草叶缘有细齿。旁边植株可按原有采集规则取得；先留出负重，再把六份草药存入营地交付。"
+      },
+      {
+        "id": "poi_tracks_01",
+        "name": "林间猎迹 · 查看啃痕",
+        "xy": [
+          -835,
+          -748
+        ],
+        "kind": "m1_content",
+        "m1_action": "tracks",
+        "m1_text": "低枝上还有新鲜啃痕。"
+      },
+      {
+        "id": "m1_camp_relic",
+        "name": "营地 · 交还渡口木牌",
+        "xy": [
+          -965,
+          -763
+        ],
+        "kind": "m1_content",
+        "m1_action": "deliver",
+        "m1_text": "守火的族人：这是旧渡口的记号。放在火边吧，回来的人会认得。木牌已陈列，按 J 登记支线完成。",
+        "requires_fact": "m1:river_taken",
+        "fact": "m1:river_delivered"
+      },
+      {
+        "id": "m1_camp_tools",
+        "name": "营地 · 工具归位",
+        "xy": [
+          -993,
+          -760
+        ],
+        "kind": "m1_content",
+        "m1_action": "deliver",
+        "m1_text": "营地工匠：这把锉还能修木柄。我把它们收在工作台旁，出门前来看看。工具已归位，按 J 登记支线完成。",
+        "requires_fact": "m1:tools_taken",
+        "fact": "m1:tools_delivered"
+      },
+      {
+        "id": "m1_camp_board",
+        "name": "营地 · 出发与分工",
+        "xy": [
+          -978,
+          -764
+        ],
+        "kind": "m1_content",
+        "m1_action": "briefing",
+        "m1_text": "再按 E 查看路线与分工。",
+        "m1_pages": [
+          "东侧石沿有药草，东边林缘可找猎迹。沿谷口岔路去南浅滩西岸，车痕通向渡口。",
+          "出发前：打开伙伴任务卡，选择物资来源、数量与营地目的地，再确认委托。",
+          "外出时：弟弟可继续安全采集。任务受阻时，已取得和已入库的数量会保留。",
+          "救援与返程：X 让弟弟跟随，Z 原地等待。先清理危险，再继续同行或护送。",
+          "回营后：打开伙伴任务卡核对工作回执，恢复剩余目标或取消。也可选择兄弟同行探索。"
         ]
       }
     ],

@@ -13,6 +13,7 @@
 using namespace HearthwardData;
 bool UHearthwardCampaignSubsystem::InteractionComplete(FName Id) const
 {
+    if(M1Complete(Id))return true;
     if(Id==TEXT("prologue_relic") || Id==TEXT("camp_relic"))return State.Facts.Contains(TEXT("relic"));
     if(Id.ToString().StartsWith(TEXT("loc_")))return State.Flags.Contains(FName(*Id.ToString().RightChop(4)));
     if(Id==TEXT("route_ford") || Id==TEXT("camp") || Id==TEXT("hometown"))return Gameplay()->Activated.Contains(Id);
@@ -96,6 +97,8 @@ bool UHearthwardCampaignSubsystem::Use(FName Id)
 {
     auto* G=Gameplay();auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     const FGuid Epoch=Store->GetTimelineEpoch();
+    const auto Location=HearthwardCampaign::Find(TEXT("locations"),Id);
+    if(Location && Location->HasField(TEXT("m1_action")))return UseM1(Id);
     if(auto* P=State.People.FindByPredicate([&](const auto& V){return V.Id==Id;}))
     {
         if(P->Stage==TEXT("arrived"))return false;

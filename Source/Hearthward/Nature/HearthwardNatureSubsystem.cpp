@@ -11,6 +11,7 @@
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
 #include "../Companion/HearthwardCompanionFixture.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
@@ -175,6 +176,23 @@ void UHearthwardNatureSubsystem::EnsureWorld()
             }
         }
         if(Complete)State.Camps.Add(Site.Id);
+    }
+    auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+    if(Campaign->Active() && Campaign->State.Phase!=TEXT("prologue"))
+    {
+        const FVector Garden=Campaign->Position(TEXT("poi_herb_01"));
+        if(FVector::Dist2D(Player()->GetActorLocation(),Garden)<35000)
+        {
+            const auto Definition=HearthwardNature::Definition(TEXT("resources"),TEXT("herb_patch"));
+            for(int32 I=0;I<3;++I)
+            {
+                const FName Key(*(TEXT("m1_herb_patch_")+FString::FromInt(I)));
+                if(State.Points.ContainsByPredicate([&](const auto& P){return P.Key==Key;}))continue;
+                FVector At;if(!Ground(Garden+FVector(-200+I*200,100,0),At))continue;
+                FHearthwardNaturePoint P;P.Id=FGuid::NewGuid();P.Key=Key;P.Kind=TEXT("resource");P.Definition=TEXT("herb_patch");
+                P.Position=At;P.Remaining=Number(Definition,TEXT("capacity"));State.Points.Add(P);Added=true;
+            }
+        }
     }
     for(const auto& P:State.Points)if(P.Kind==TEXT("resource"))
     {

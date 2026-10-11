@@ -57,6 +57,10 @@ private:
     FName Nearest() const;
     bool InteractionComplete(FName Id) const;
     bool Use(FName Id);
+    bool M1Complete(FName Id) const;
+    bool UseM1(FName Id);
+    void RefreshM1();
+    int32 M1BriefingPage=0;
     TArray<bool> Conditions(FName Quest) const;
     TMap<FName,TWeakObjectPtr<AHearthwardCampaignActor>> Actors;
     TArray<TWeakObjectPtr<AActor>> Scenery;

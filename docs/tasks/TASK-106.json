@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "TASK-106",
+  "title": "M1 第一片区域：六兴趣点、支线与营地反馈",
+  "status": "Active",
+  "updated_at": "2026-10-11",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-106-m1-content",
+  "source_refs": [
+    "main@1db8955c9f05996d02af7b36e62f3b2c508f9664",
+    "2026-10-11 用户明确要求：然后去做M1。",
+    "docs/planning/TASK-105/CONTENT_ROADMAP.md 的 M1 范围",
+    "2026-10-11 用户明确要求：提交推送并合并。"
+  ],
+  "dependencies": [
+    "TASK-105"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/contracts/CT-TASK-106-m1-content.md"
+  ],
+  "allowed_paths": [
+    "README.md",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Nature/HearthwardNatureSubsystem.cpp",
+    "Source/Hearthward/Inventory/HearthwardStorageSubsystem.cpp",
+    "Source/Hearthward/Tests/CampaignTests.cpp",
+    "Source/Hearthward/Tests/M1ContentTests.cpp",
+    "docs/tasks/TASK-106.json",
+    "docs/tasks/TASK-106.md",
+    "docs/contracts/CT-TASK-106-m1-content.md",
+    "docs/handoffs/TASK-106.md",
+    "docs/qa/TASK-106/",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "Config/",
+    "config/",
+    ".github/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "六兴趣点真实交互、选择及保存恢复，两条新支线、三条旧支线表达与场景改造。",
+    "复用真实库存、唯一奖励、既有资源/动物与 Facts；不改变人口、胜利分母及存档字段。",
+    "四个分工场景与 E01–E04 营地表现；无模型也能操作。",
+    "执行定向原生回归、实际 UE 构建和运行；人工和二机验收如实保留。"
+  ],
+  "non_goals": [
+    "不扩展 M2/M3 地点，不新增战斗、生存或人口规则。",
+    "不发布，不代填人工评审，不强推或绕过保护。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_current_request_writes",
+    "install_dependencies": "not_granted",
+    "commit": "explicit_user_request_2026-10-11",
+    "push": "explicit_user_request_2026-10-11",
+    "merge": "explicit_user_request_2026-10-11",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "本轮 M1 开发由用户直接授权；具体落点依据现有地形与导航调整。",
+    "沿用任务物事实保护；新支线经验复用既有 side_quest 档，实物陈列不产生可领取装备。",
+    "原有旧 GDD 本地删除保持，不纳入本任务。"
+  ]
+}
