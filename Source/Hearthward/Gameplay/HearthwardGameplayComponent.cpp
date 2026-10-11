@@ -704,6 +704,8 @@ void UHearthwardGameplayComponent::TickComponent(float Delta,ELevelTick TickType
     if (!Explored.ContainsByPredicate([XY](const FVector2D& E){ return FVector2D::Distance(E,XY)<1000; })) Explored.Add(XY);
     for (const auto& L : Rows(TEXT("locations")))
     {
+        // Homecoming anchors are discovered by their gated interaction, without exploration XP.
+        if(L->AsObject()->HasField(TEXT("homecoming")))continue;
         const FName Id(*Text(L->AsObject(),TEXT("id")));
         if (UGameplayStatics::GetCurrentLevelName(GetWorld(),true)==TEXT("L_HearthwardWilds") && Id!=TEXT("camp"))
         {const auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();if(!C->Active() || !C->HasLocation(Id))continue;}

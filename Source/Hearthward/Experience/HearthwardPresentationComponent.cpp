@@ -130,6 +130,7 @@ void UHearthwardPresentationComponent::ObserveProgressSuccess(bool Seed)
             Facility.Level>1?FName(TEXT("facility.upgrade")):NAME_None);
     for(const FName Quest:GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>()->Claimed)
         Observe(FName(*(TEXT("quest_claimed:")+Quest.ToString())),1,TEXT("quest.claimed"));
+    Observe(TEXT("m3:lamp_repaired"),GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->State.Facts.Contains(TEXT("m3:lamp_repaired"))?1:0,TEXT("player.repair"));
 }
 void UHearthwardPresentationComponent::GameplayChanged()
 {

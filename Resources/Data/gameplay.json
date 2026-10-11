@@ -2486,6 +2486,30 @@
         20000
       ],
       "radius": 1400
+    },
+    {
+      "id": "m3_home_lamp",
+      "name": "故乡灯架",
+      "kind": "landmark",
+      "position": [
+        107700,
+        44600,
+        20000
+      ],
+      "radius": 500,
+      "homecoming": true
+    },
+    {
+      "id": "m3_home_table",
+      "name": "故乡餐桌",
+      "kind": "landmark",
+      "position": [
+        107700,
+        45400,
+        20000
+      ],
+      "radius": 500,
+      "homecoming": true
     }
   ],
   "quests": [
@@ -3123,6 +3147,40 @@
       "reward": "600经验 · 营地陈列与回应",
       "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
       "failure": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。"
+    },
+    {
+      "id": "side_home_light_01",
+      "name": "故乡的第一盏灯",
+      "description": "查看第二营地的旧灯架。",
+      "event": "campaign",
+      "target": "side_home_light_01",
+      "required": 2,
+      "xp": 600,
+      "requires": "",
+      "kind": "side",
+      "category": "side",
+      "location": "m3_home_lamp",
+      "objective": "查看第二营地的旧灯架。\n从共享仓储支付木材 2、绳索 2，修好生活区灯架。",
+      "reward": "600经验 · 归乡生活区变化",
+      "companion": "弟弟可以同行。归乡族人在生活区等候，完成后可听到他们的回应。",
+      "failure": "可稍后返回；材料不足不扣除，满饱食不能用餐；进度与一次性奖励随存档保存。"
+    },
+    {
+      "id": "side_home_meal_01",
+      "name": "同一张餐桌",
+      "description": "在第二营地摆好旧餐桌。",
+      "event": "campaign",
+      "target": "side_home_meal_01",
+      "required": 2,
+      "xp": 600,
+      "requires": "",
+      "kind": "side",
+      "category": "side",
+      "location": "m3_home_table",
+      "objective": "在第二营地摆好旧餐桌。\n饱食未满时，在第二营地消耗公共口粮 5 点用餐。",
+      "reward": "600经验 · 归乡生活区变化",
+      "companion": "弟弟可以同行。归乡族人在生活区等候，完成后可听到他们的回应。",
+      "failure": "可稍后返回；材料不足不扣除，满饱食不能用餐；进度与一次性奖励随存档保存。"
     }
   ],
   "loadout": {
@@ -10630,6 +10688,78 @@
         "completion_policy": "persistent taken/delivered facts and existing reward transaction",
         "exploration_taken": "m2:signal_taken",
         "exploration_delivered": "m2:signal_delivered"
+      },
+      {
+        "id": "side_home_light_01",
+        "name": "故乡的第一盏灯",
+        "category": "side",
+        "requires": [],
+        "location": "m3_home_lamp",
+        "trigger": "夺回故乡且第二营地可用后，在生活区交互",
+        "steps": [
+          "查看第二营地的旧灯架。",
+          "从共享仓储支付木材 2、绳索 2，修好生活区灯架。"
+        ],
+        "success": "m3:lamp_repaired",
+        "failure_or_branch": "可稍后返回；材料不足不扣除，满饱食不能用餐；进度与一次性奖励随存档保存。",
+        "safe_phase": "夺回故乡并建立第二营地后。",
+        "companion": "弟弟可以同行。归乡族人在生活区等候，完成后可听到他们的回应。",
+        "reward": {
+          "id": "reward:side_home_light_01",
+          "xp": 600,
+          "items": {},
+          "knowledge": [],
+          "destination": "shared_storage"
+        },
+        "rescued_people": [],
+        "dialogue": [
+          "族人：这盏灯从前总是最后才灭。修好以后，晚归的人也能认得路。"
+        ],
+        "saved_fields": [
+          "facts",
+          "reward_claimed",
+          "timeline_epoch"
+        ],
+        "completion_policy": "persistent taken/delivered facts and existing reward transaction",
+        "exploration_taken": "m3:lamp_seen",
+        "exploration_delivered": "m3:lamp_repaired",
+        "homecoming": true
+      },
+      {
+        "id": "side_home_meal_01",
+        "name": "同一张餐桌",
+        "category": "side",
+        "requires": [],
+        "location": "m3_home_table",
+        "trigger": "夺回故乡且第二营地可用后，在生活区交互",
+        "steps": [
+          "在第二营地摆好旧餐桌。",
+          "饱食未满时，在第二营地消耗公共口粮 5 点用餐。"
+        ],
+        "success": "m3:home_meal",
+        "failure_or_branch": "可稍后返回；材料不足不扣除，满饱食不能用餐；进度与一次性奖励随存档保存。",
+        "safe_phase": "夺回故乡并建立第二营地后。",
+        "companion": "弟弟可以同行。归乡族人在生活区等候，完成后可听到他们的回应。",
+        "reward": {
+          "id": "reward:side_home_meal_01",
+          "xp": 600,
+          "items": {},
+          "knowledge": [],
+          "destination": "shared_storage"
+        },
+        "rescued_people": [],
+        "dialogue": [
+          "族人：先把碗放好。等你饿了，就在这里吃一顿。"
+        ],
+        "saved_fields": [
+          "facts",
+          "reward_claimed",
+          "timeline_epoch"
+        ],
+        "completion_policy": "persistent taken/delivered facts and existing reward transaction",
+        "exploration_taken": "m3:table_ready",
+        "exploration_delivered": "m3:home_meal",
+        "homecoming": true
       }
     ],
     "locations": [
@@ -11284,6 +11414,68 @@
         "exploration_action": "observe",
         "exploration_text": "木料把正面通道分成两段。侧边可绕过料堆；先看清守军位置，取物后从南边退出。",
         "route_zone": "workshops"
+      },
+      {
+        "id": "m3_home_lamp",
+        "name": "故乡的第一盏灯 · 查看旧灯架",
+        "xy": [
+          1077,
+          446
+        ],
+        "kind": "exploration_content",
+        "homecoming": true,
+        "exploration_action": "home_prepare",
+        "exploration_text": "族人：这盏灯从前总是最后才灭。修好以后，晚归的人也能认得路。",
+        "fact": "m3:lamp_seen",
+        "quest": "side_home_light_01"
+      },
+      {
+        "id": "m3_home_lamp_repair",
+        "name": "修好灯架 · 木材 2 / 绳索 2",
+        "xy": [
+          1077,
+          446
+        ],
+        "kind": "exploration_content",
+        "homecoming": true,
+        "exploration_action": "home_repair",
+        "exploration_text": "族人：有了灯，天黑也找得到回家的路了。\n夜里灯火会亮起。按 J 领取支线奖励。",
+        "requires_fact": "m3:lamp_seen",
+        "fact": "m3:lamp_repaired",
+        "quest": "side_home_light_01",
+        "materials": {
+          "wood": 2,
+          "rope": 2
+        }
+      },
+      {
+        "id": "m3_home_table",
+        "name": "同一张餐桌 · 摆好餐桌",
+        "xy": [
+          1077,
+          454
+        ],
+        "kind": "exploration_content",
+        "homecoming": true,
+        "exploration_action": "home_prepare",
+        "exploration_text": "族人：先把碗放好。等你饿了，就在这里吃一顿。",
+        "fact": "m3:table_ready",
+        "quest": "side_home_meal_01"
+      },
+      {
+        "id": "m3_home_meal",
+        "name": "同桌用餐 · 口粮 5 / 饱食未满",
+        "xy": [
+          1077,
+          454
+        ],
+        "kind": "exploration_content",
+        "homecoming": true,
+        "exploration_action": "home_meal",
+        "exploration_text": "",
+        "requires_fact": "m3:table_ready",
+        "fact": "m3:home_meal",
+        "quest": "side_home_meal_01"
       }
     ],
     "travel_stations": [

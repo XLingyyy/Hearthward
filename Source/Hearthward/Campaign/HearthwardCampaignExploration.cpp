@@ -18,6 +18,7 @@ bool UHearthwardCampaignSubsystem::ExplorationComplete(FName Id) const
 {
     const auto R=HearthwardCampaign::Find(TEXT("locations"),Id);
     if(!R || !R->HasField(TEXT("exploration_action")))return false;
+    if(R->HasField(TEXT("homecoming")) && !M2HomeReady())return true;
     if(Text(R,TEXT("exploration_action"))==TEXT("camp_event"))return !M2EventAvailable(FName(*Text(R,TEXT("event"))));
     const FString Fact=Text(R,TEXT("fact"));
     if(!Fact.IsEmpty() && State.Facts.Contains(FName(*Fact)))return true;
@@ -30,6 +31,7 @@ bool UHearthwardCampaignSubsystem::UseExploration(FName Id)
     const auto R=HearthwardCampaign::Find(TEXT("locations"),Id);
     if(!R || ExplorationComplete(Id))return false;
     const FString Action=Text(R,TEXT("exploration_action"));
+    if(R->HasField(TEXT("homecoming")))return UseHomecoming(Id);
     auto* G=Gameplay();
     if(Action==TEXT("bundle"))
     {
@@ -117,6 +119,7 @@ void UHearthwardCampaignSubsystem::RefreshExploration()
     for(const auto& V:HearthwardCampaign::Rows(TEXT("locations")))
     {
         const auto R=V->AsObject();if(!R->HasField(TEXT("exploration_action")))continue;
+        if(R->HasField(TEXT("homecoming")))continue;
         const FName Id(*Text(R,TEXT("id")));const FString Action=Text(R,TEXT("exploration_action"));
         const FName Tag(*(TEXT("M1Node:")+Id.ToString()));
         auto* Existing=Scenery.FindByPredicate([&](const auto& A){return A.IsValid() && A->ActorHasTag(Tag);});
