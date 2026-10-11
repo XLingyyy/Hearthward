@@ -34,7 +34,7 @@ v0.3.0 Shipping Build/Cook/Stage/Archive通过；已实际验证CPU新游戏、�
 
 12 表生产检查、新增工具 20 项、相关原生 37 项（含失败项修复复测）、Editor 编译及 Shipping 打包通过。正常窗口已检查新游戏、背包、地图、手动保存与重启继续，可见装备实例、耐久、负重和保存节点保持。5 项原生测试清理警告保留。完整首救路线、六场景性能、真人/二机尚未完成，不宣称帧率提升。
 
-本地候选入口：`E:/HearthwardQA/TASK-105/m0-candidate-20261011/Windows/启动M0候选.cmd`。版本字符串仍为 0.3.0，用 BUILD-INFO 区分本地工作树候选；没有替换正式发布包。本轮源码按用户授权通过 TASK-105 PR 提交并整合；合并状态以对应 PR 为准。
+本地候选入口：`E:/HearthwardQA/TASK-105/m0-candidate-20261011/Windows/启动M0候选.cmd`。版本字符串仍为 0.3.0，用 BUILD-INFO 区分本地工作树候选；没有替换正式发布包。本轮源码按用户授权通过 [PR #70](https://github.com/XLingyyy/Hearthward/pull/70) 提交并整合；合并状态以该 PR 为准。
 
 [验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1–M3 保留提案。
 

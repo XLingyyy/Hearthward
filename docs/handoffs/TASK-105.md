@@ -1,6 +1,6 @@
 # TASK-105 M0 工程整合交接
 
-2026-10-11。Owner XLingyyy。用户明确本轮先做 M0 工程优化。基线 `ff5f6f985b326011b9dc968ebe9ace55f4582088`，本地分支 `codex/TASK-105-engineering-optimization`，用户已授权提交、推送并通过 PR 合入 main；合并状态见对应 PR。本轮未发布。
+2026-10-11。Owner XLingyyy。用户明确本轮先做 M0 工程优化。基线 `ff5f6f985b326011b9dc968ebe9ace55f4582088`，本地分支 `codex/TASK-105-engineering-optimization`，用户已授权提交、推送并通过 PR 合入 main；合并状态见 [PR #70](https://github.com/XLingyyy/Hearthward/pull/70)。本轮未发布。
 
 已整合用户补丁：一般/战役目录只读索引和无临时数组的战役计数；修复 UE 5.8.2 JSON 键显式转换、单个 OBJ 源文件 LF 检出、过时版本测试夹具和旧 GDD 删除后的四处引用。不改游戏数据、存档格式、模型配置、Content 或运行画质。包内最初的 403 属于上游准备记录，本轮没有远端写入失败。
 
