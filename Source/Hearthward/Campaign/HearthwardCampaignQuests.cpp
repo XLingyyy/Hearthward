@@ -23,6 +23,7 @@ void UHearthwardCampaignSubsystem::Record(FName Fact)
 bool UHearthwardCampaignSubsystem::Available(FName Id) const
 {
     const auto R=HearthwardCampaign::Find(TEXT("quests"),Id);if(!Active() || !R || !Gameplay())return false;
+    if(R->HasField(TEXT("homecoming")) && !M2HomeReady())return false;
     if(R->HasField(TEXT("exploration_taken")) && !Gameplay()->Discovered.Contains(FName(*Text(R,TEXT("location")))))return false;
     if(Id==TEXT("main_01") && State.Legacy)return false;
     for(const auto& V:R->GetArrayField(TEXT("requires")))
@@ -85,6 +86,7 @@ FName UHearthwardCampaignSubsystem::QuestLocation(FName Id) const
         return State.Facts.Contains(TEXT("watch_survey"))?FName(TEXT("home_entry")):FName(TEXT("route_watch"));
     }
     const auto Row=HearthwardCampaign::Find(TEXT("quests"),Id);
+    if(Row && Row->HasField(TEXT("homecoming")))return FName(*Text(Row,TEXT("location")));
     if(Row && Row->HasField(TEXT("exploration_taken")) && State.Facts.Contains(FName(*Text(Row,TEXT("exploration_taken")))))return TEXT("camp");
     return Row?FName(*Text(Row,TEXT("location"))):NAME_None;
 }

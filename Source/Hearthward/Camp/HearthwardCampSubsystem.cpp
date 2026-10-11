@@ -110,7 +110,11 @@ bool UHearthwardCampSubsystem::EatMeal(bool Brother,FGuid Epoch)
     if(!CanManage(Epoch) || !S || !S->Alive() || S->Busy() || State.CampAt(A->GetActorLocation()).IsNone()
         || FVector::Dist2D(A->GetActorLocation(),CampPlayer(GetWorld())->GetActorLocation())>3000 || !State.Eat(S->Hunger()))
     {Feedback=TEXT("需要角色在营地、非满饱食，且口粮至少5点");return false;}
-    S->State.Food(S->Hunger());GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("public_meal"));Feedback=TEXT("用餐完成：口粮−5，饱食最多＋40");return true;
+    S->State.Food(S->Hunger());
+    auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->Record(TEXT("public_meal"));
+    if(!Brother && Campaign->State.Victory && State.Hometown && State.CampAt(A->GetActorLocation())==TEXT("hometown")
+        && Campaign->State.Facts.Contains(TEXT("m3:table_ready")))Campaign->Record(TEXT("m3:home_meal"));
+    Feedback=TEXT("用餐完成：口粮−5，饱食最多＋40");return true;
 }
 bool UHearthwardCampSubsystem::Craft(FGuid Facility,FName Recipe,int32 Batches,FGuid Epoch)
 {

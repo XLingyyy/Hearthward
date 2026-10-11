@@ -66,6 +66,8 @@ private:
     FString M2WorkInterruption() const;
     FString M2PatrolObservation(FName Location) const;
     FString UseM2Event(FName Event);
+    bool UseHomecoming(FName Location);
+    void RefreshCampLife();
     TArray<bool> Conditions(FName Quest) const;
     TMap<FName,TWeakObjectPtr<AHearthwardCampaignActor>> Actors;
     TArray<TWeakObjectPtr<AActor>> Scenery;

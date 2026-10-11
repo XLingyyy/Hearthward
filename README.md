@@ -36,7 +36,7 @@ v0.3.0 Shipping Build/Cook/Stage/Archive通过；已实际验证CPU新游戏、�
 
 本地候选入口：`E:/HearthwardQA/TASK-105/m0-candidate-20261011/Windows/启动M0候选.cmd`。版本字符串仍为 0.3.0，用 BUILD-INFO 区分本地工作树候选；没有替换正式发布包。本轮源码按用户授权通过 [PR #70](https://github.com/XLingyyy/Hearthward/pull/70) 提交并整合；合并状态以该 PR 为准。
 
-[验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1 已经 PR #71 整合；M2 源码通过 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72) 整合，合并状态以该 PR 为准，M3 保留提案。
+[验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1 已经 PR #71 整合；M2 源码通过 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72) 整合，合并状态以该 PR 为准，M3 源码通过 [PR #73](https://github.com/XLingyyy/Hearthward/pull/73) 整合，验证与限制见下文。
 
 ## TASK-106 M1 源码整合（未发行）
 
@@ -55,6 +55,14 @@ v0.3.0 Shipping Build/Cook/Stage/Archive通过；已实际验证CPU新游戏、�
 工作受阻、旧物主人、出发前与归乡后的事件使用真实岗位、交付、主线和第二营地状态。四区补充各自路线物件与掩体；保留 80 基础驻军、10 救援人口和原奖励规则，不新增存档字段。共用探索逻辑沿用 M1 的一次性事实与事务。
 
 Editor 编译、85 项工具测试、12 表 ID 检查通过；22 项相关原生测试均有通过结果（首轮 20 项，修复后定向复测 2 项）。实机已完成井院取物与返营交付、号台观察，并修正营帐坡地横梁。连续路线、完整四区战斗、归乡昼夜、Shipping 和真人验收仍待完成。详见 [TASK-107 验证报告](docs/qa/TASK-107/REPORT.md)及[交接](docs/handoffs/TASK-107.md)。
+
+## TASK-108 M3 源码整合（未发行）
+
+第二营地新增「故乡的第一盏灯」「同一张餐桌」。夺回故乡并建立第二营地后，在生活区按 E 检查灯架，支付共享仓储木材 2、绳索 2 修好照明；整理餐桌后实际用餐，消耗原有口粮 5 点。两条支线从 J 领取各 600 XP，修灯、用餐事实与奖励保持唯一，不补发旧档完成状态。
+
+营地生活区随共享等级呈现三档外观：1–3 阶的遮蔽和器具、4–6 阶的分区储物和实际工作区、7–8 阶的路径照明。床与工作表现取决于该营地真实设施，故乡照明取决于修灯事实。复用既有人物、资产和声音，不新增人口、数值加成或存档字段。
+
+Editor 编译、13/13 M1–M3 最终定向复测、正常窗口保存及新进程继续通过，修复了 M3 地点登记缺失引起的拒绝保存。实现与验证范围见 [TASK-108 报告](docs/qa/TASK-108/REPORT.md)及[交接](docs/handoffs/TASK-108.md)。本轮已获用户提交、推送及合并授权，源码已提交推送，通过 [PR #73](https://github.com/XLingyyy/Hearthward/pull/73) 整合，合并状态以该 PR 为准；完整连续流程、Shipping、设备混音、真人及二机验收仍未完成，不代表 v0.6 已发行。
 
 ## 本地开发
 

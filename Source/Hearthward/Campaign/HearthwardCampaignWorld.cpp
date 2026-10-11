@@ -394,6 +394,21 @@ void UHearthwardCampaignSubsystem::RefreshActors()
     {
         const bool ProtectedEnemy=I>20;
         const FName Id(*FString::Printf(TEXT("%s%02d"),ProtectedEnemy?TEXT("protected_"):TEXT("civilian_initial_"),ProtectedEnemy?I-20:I));
+        if(I==23 && M2HomeReady() && State.Facts.Contains(TEXT("m3:table_ready")))
+        {
+            const FVector Destination=Position(TEXT("m3_home_table"))+FVector(350,230,0);
+            FVector Floor;
+            if(FVector::Dist2D(PlayerPosition,Destination)<40000 && Ground(Destination,Floor))
+            {
+                auto* Resident=Actor(Id);if(!Resident)Resident=Spawn(Id,Floor+FVector(0,0,80),false);
+                if(Resident)
+                {
+                    Resident->TeleportTo(Floor+FVector(0,0,80),FRotator(0,180,0));
+                    Resident->PresentLabor(NAME_None,State.Facts.Contains(TEXT("m3:home_meal"))?TEXT("归乡族人 · 今晚不用再赶路"):TEXT("归乡族人 · 餐桌旁等候"),false);
+                }
+            }
+            continue;
+        }
         if(I==24 && M2HomeReady())
         {
             const FVector Destination=Position(TEXT("poi_home_steps_01"))+FVector(500,650,0);
@@ -584,7 +599,7 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
             if(Now>=FlagCompleteAt){State.Flags.Add(PendingFlag);Cancel();Feedback=TEXT("此区已控制");}
         }
     }
-    if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();RefreshExploration();
+    if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();RefreshExploration();RefreshCampLife();
     auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
     State.ResolveUntriggered();
     if(auto* Combat=Player()->FindComponentByClass<UHearthwardCombatComponent>())for(const auto& Alarm:Combat->State.Alarms)

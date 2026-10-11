@@ -1,5 +1,7 @@
 # 最短阅读路径
 
+2026-10-11：当前开发任务 TASK-108 / M3，分支 `codex/TASK-108-m3-homecoming`，基线 main@695240e6f00a84337ac0d694a3f2bc3d91fbe5a5（M2 / PR #72）。两条第二营地支线与三档生活区已接入；本轮已获用户提交、推送及合并授权，源码已提交推送，通过 [PR #73](https://github.com/XLingyyy/Hearthward/pull/73) 整合，合并状态以该 PR 为准，验证结果见 [TASK-108 报告](qa/TASK-108/REPORT.md)及[交接](handoffs/TASK-108.md)。完整体验退出条件未闭合，任务保持 Active，正式发行仍为 v0.3.0。以下为历史快照。
+
 2026-10-11：当前开发任务 TASK-107 / M2，分支 codex/TASK-107-m2-content，基线 main@8784d4f1bdeea03189a090ca494d302d7a923b8b（M1 / PR #71）。六兴趣点、两新支线、三旧支线与 E05–08 已接入；工程定向检查及局部实机操作结果见 [TASK-107 报告](qa/TASK-107/REPORT.md)和[交接](handoffs/TASK-107.md)。本轮已获用户提交、推送及合并授权，整合状态以 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72) 为准；完整路线和体验验收尚未完成，任务保持 Active。正式发布仍为 v0.3.0。以下是历史快照。
 
 2026-10-11：M0 已经 PR #70 合入 main；按用户要求继续 M1，当前任务为 TASK-106，分支 `codex/TASK-106-m1-content`，基线 `1db8955c9f05996d02af7b36e62f3b2c508f9664`。从 [TASK-106 交接](handoffs/TASK-106.md)及[验证报告](qa/TASK-106/REPORT.md)接手。本轮实现已提交并推送，通过 [PR #71](https://github.com/XLingyyy/Hearthward/pull/71) 整合，合并状态以该 PR 为准；正式发布版仍为 v0.3.0。下方记录为历史快照。
