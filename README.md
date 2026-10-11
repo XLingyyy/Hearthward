@@ -1,6 +1,6 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险。当前游戏版本为 **0.3.0**；M0 工程优化已通过[PR #70](https://github.com/XLingyyy/Hearthward/pull/70)合入 main，发行构建提交为 `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16`。
+UE 5.8.2 单人第三人称生存冒险。当前发行版本为 **0.3.0**；M0–M3 源码已通过 PR #70–73 合入 main。当前工作分支 `codex/TASK-109-roadmap-completion` 正在补全原规划的工程、语言与视听要求，已提交并推送，用户授权通过 [PR #74](https://github.com/XLingyyy/Hearthward/pull/74) 整合；正式发行版本保持不变。发行构建提交仍为 `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16`。
 
 [下载 v0.3.0](https://github.com/XLingyyy/Hearthward/releases/tag/v0.3.0) · [发行与验证记录](docs/releases/v0.3.0/REPORT.md) · [项目状态](docs/PROJECT_STATE.md) · [开发入口](docs/START_HERE.md)
 
@@ -65,6 +65,8 @@ Editor 编译、85 项工具测试、12 表 ID 检查通过；22 项相关原生
 Editor 编译、13/13 M1–M3 最终定向复测、正常窗口保存及新进程继续通过，修复了 M3 地点登记缺失引起的拒绝保存。实现与验证范围见 [TASK-108 报告](docs/qa/TASK-108/REPORT.md)及[交接](docs/handoffs/TASK-108.md)。本轮已获用户提交、推送及合并授权，源码已提交推送，通过 [PR #73](https://github.com/XLingyyy/Hearthward/pull/73) 整合，合并状态以该 PR 为准；完整连续流程、Shipping、设备混音、真人及二机验收仍未完成，不代表 v0.6 已发行。
 
 ## 本地开发
+
+TASK-109 当前分支包含 UI 刷新与预生成高亮、语言目录投影、逐事件音量、营地坐姿和固定情境字幕、共用 UE 构建回归入口。Editor 编译、88 项工具测试、38项整合原生及两处语言误拒修复后的24项Agent回归已通过。最终Shipping打包通过；旧QA档继续、任务页、保存重启已有实机记录，最终候选亦已启动并读档。语言选用V2，原60题45/60、独立30题20/30，均未达标；已修复“砍木材”和背包所有者同义词误拒，多轮条件与模型误解仍待改善。完整状态见 [补全清单](docs/planning/TASK-109/COMPLETION.md)和[交接](docs/handoffs/TASK-109.md)。真人对白已明确保留文字，59条录音列为待补素材；远端 UE runner、整段正常玩法及二机/真人验收尚未完成，不能将本分支等同规划已全部验收。
 
 工程为 `Hearthward.uproject`，入口地图 `/Game/Hearthward/Bootstrap/L_Bootstrap`，目标UE 5.8.2。首次克隆运行 `git lfs pull` 取得二进制资产；本地AI准备方式见 `scripts/local_ai/prepare_bundle.py`。
 

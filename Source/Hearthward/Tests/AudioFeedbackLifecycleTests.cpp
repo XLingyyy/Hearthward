@@ -42,6 +42,7 @@
 #if WITH_DEV_AUTOMATION_TESTS
 struct FAudioFeedbackLifecycleAccess
 {
+    static void StoryTick(UHearthwardPresentationComponent* P,float Delta){P->ObserveStoryCues(Delta);}
     static int32 Events(const UHearthwardPresentationComponent* P){return P->PlayedEvents.Num();}
     static bool Observed(const UHearthwardPresentationComponent* P,FGuid Id){return P->ObservedNPCEvents.Contains(Id);}
     static bool Played(const UHearthwardPresentationComponent* P,FGuid Id){return P->PlayedEvents.Contains(Id);}
@@ -304,8 +305,43 @@ bool FAudioPause099Test::RunTest(const FString&)
     F.Deposit(FGuid::NewGuid());
     TestEqual(TEXT("Fresh nearby transaction remains audible in the new context"),FAudioFeedbackLifecycleAccess::Events(F.Presentation),1);
     const auto* Settings=F.Instance->GetSubsystem<UHearthwardPlayerSettings>();TArray<UAudioComponent*> Components;F.Player->GetComponents(Components);
-    for(const auto* C:Components)if(C->ComponentTags.Contains(TEXT("Hearthward.Audio.effects")))
+    for(auto* C:Components)if(C->ComponentTags.Contains(TEXT("Hearthward.Audio.effects")))
+    {
         TestEqual(TEXT("Source uses the actual effects volume setting"),C->VolumeMultiplier,Settings->Volume(TEXT("effects")));
+        const auto* Sound=Cast<USoundWaveProcedural>(C->GetSound());
+        if(TestNotNull(TEXT("Event owns a procedural wave"),Sound))
+        {
+            TestEqual(TEXT("Storage event preserves its authored mix gain"),Sound->Volume,1.4f);
+            F.Presentation->TickComponent(.01f,LEVELTICK_All,nullptr);
+            TestEqual(TEXT("Live category refresh does not flatten the event mix"),Sound->Volume,1.4f);
+        }
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FStoryPersistence109Test,"Hearthward.Engineering.Task109.StoryCuePersistence",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FStoryPersistence109Test::RunTest(const FString&)
+{
+    FAudioProducerWorld F(true);
+    if(!TestTrue(TEXT("Real companion can communicate in the isolated presentation fixture"),F.Ready))return false;
+    auto* Campaign=F.World->GetSubsystem<UHearthwardCampaignSubsystem>();
+    auto* Camp=F.World->GetSubsystem<UHearthwardCampSubsystem>();
+    Campaign->State.Initialize();Campaign->State.Phase=TEXT("occupied");Camp->State.Rescued.Add(TEXT("rescued_01"));
+    FAudioFeedbackLifecycleAccess::StoryTick(F.Presentation,21.f);
+    TestEqual(TEXT("Arrived rescue has its fixed response"),F.Presentation->GetCue(),FName(TEXT("fixed.story.rescue")));
+    TestTrue(TEXT("Played line writes an existing campaign fact"),Campaign->State.Facts.Contains(TEXT("cue:fixed.story.rescue")));
+    Camp->State.Tier=2;F.Presentation->StopFixedCue();
+    FAudioFeedbackLifecycleAccess::StoryTick(F.Presentation,1.f);
+    TestTrue(TEXT("Next milestone does not pile up immediately"),F.Presentation->GetCue().IsNone());
+    FAudioFeedbackLifecycleAccess::StoryTick(F.Presentation,20.f);
+    TestEqual(TEXT("Later milestone is delivered after the interval"),F.Presentation->GetCue(),FName(TEXT("fixed.story.tier")));
+    FHearthwardCampaignState Restored;
+    if(!TestTrue(TEXT("Existing campaign format round trips the cue ledger"),FHearthwardCampaignState::Parse(Campaign->State.Snapshot(),Restored)))return false;
+    Campaign->State=MoveTemp(Restored);
+    F.World->GetSubsystem<UHearthwardSaveSubsystem>()->OnSnapshotRestored.Broadcast();
+    FAudioFeedbackLifecycleAccess::StoryTick(F.Presentation,21.f);
+    TestTrue(TEXT("Snapshot restore does not replay previously heard milestones"),F.Presentation->GetCue().IsNone());
     return true;
 }
 

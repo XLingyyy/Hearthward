@@ -12,9 +12,10 @@ public:
     UPROPERTY(BlueprintReadOnly) FName Identity;
     UPROPERTY(BlueprintReadOnly) FName LaborRegion;
     UPROPERTY(BlueprintReadOnly) FString LaborStatus;
+    UPROPERTY(BlueprintReadOnly) FName CampLifePose;
     UPROPERTY() TObjectPtr<class UHearthwardCombatTargetComponent> Target;
     void Initialize(FName Id,bool Hostile);
-    void PresentLabor(FName Region,const FString& Status,bool Working);
+    void PresentLabor(FName Region,const FString& Status,bool Working,FName LifePose=NAME_None);
     virtual void Tick(float Delta) override;
     bool WalkTo(FVector Goal,float Acceptance=100);
 private:

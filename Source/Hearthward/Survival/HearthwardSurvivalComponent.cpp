@@ -2,6 +2,7 @@
 #include "../Experience/HearthwardPresentationComponent.h"
 #include "../Gameplay/HearthwardProgression.h"
 #include "../Camp/HearthwardCampSubsystem.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Combat/HearthwardCombatComponent.h"
 #include "GameFramework/PainCausingVolume.h"
 #include "NavigationSystem.h"
@@ -139,6 +140,9 @@ bool UHearthwardSurvivalComponent::BeginRest(UHearthwardFurnitureInteractionComp
         || FVector::Dist(GetOwner()->GetActorLocation(),Facility->GetComponentLocation())>Facility->MaxDistance) return false;
     CancelAction();RecoveryFacility=Facility;RecoveryEpoch=Epoch();Resting=true;Treatment=Facility->Kind==TEXT("medical_area");
     Status=Treatment?TEXT("正在治疗，每秒恢复3%最大生命；离开或交战停止"):TEXT("正在休息，每秒恢复2%最大生命；移动离开");
+    if(!Treatment && GetOwner()==UGameplayStatics::GetPlayerPawn(GetWorld(),0)
+        && GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(GetOwner()->GetActorLocation())==TEXT("hometown"))
+        GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("story:home_rested"));
     return true;
 }
 bool UHearthwardSurvivalComponent::RestValid() const

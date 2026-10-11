@@ -60,6 +60,7 @@ void UHearthwardPresentationComponent::BeginPlay()
         {
             const auto Row=Value->AsObject();
             FSoundCue Cue{Row->GetStringField(TEXT("file")),FName(*Row->GetStringField(TEXT("channel")))};
+            Row->TryGetNumberField(TEXT("gain"),Cue.Gain);
             const TArray<TSharedPtr<FJsonValue>>* Variants=nullptr;
             if(Row->TryGetArrayField(TEXT("variants"),Variants))for(const auto& Variant:*Variants)
             {
@@ -96,6 +97,7 @@ void UHearthwardPresentationComponent::EndPlay(const EEndPlayReason::Type Reason
 }
 void UHearthwardPresentationComponent::Restored()
 {
+    StoryCooldown=20.f;
     StopFixedCue();StopEffects();StopEnvironment();StopAmbient();ObservedTransfers.Reset();ObservedCombatEvents.Reset();ObservedFootContacts.Reset();PlayedEvents.Reset();ObservedBrother.Reset();
     for(auto& Pair:SoundCues)Pair.Value.LastVariant=INDEX_NONE;
     PreviousInitiative=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetInitiativeKind();
@@ -579,6 +581,8 @@ bool UHearthwardPresentationComponent::PlaySoundEvent(FName Event,FGuid Operatio
     if(!FFileHelper::LoadFileToArray(Data,*File) || !Info.ReadWaveInfo(Data.GetData(),Data.Num()) || *Info.pFormatTag!=1 || *Info.pBitsPerSample!=16)
     {UE_LOG(LogTemp,Warning,TEXT("Invalid PCM16 event sound: %s"),*File);return false;}
     auto* Sound=NewObject<USoundWaveProcedural>(this);Sound->NumChannels=*Info.pChannels;Sound->SetSampleRate(*Info.pSamplesPerSec);
+    // Keep the event mix separate from the player's live category volume.
+    Sound->Volume=Cue->Gain;
     Sound->Duration=Info.SampleDataSize/float(*Info.pSamplesPerSec*Sound->NumChannels*2);Sound->bLooping=false;
     Sound->QueueAudio(Info.SampleDataStart,Info.SampleDataSize);
     auto* Effect=NewObject<UAudioComponent>(GetOwner());Effect->bAutoActivate=false;Effect->bAutoDestroy=false;
@@ -679,6 +683,7 @@ void UHearthwardPresentationComponent::TickComponent(float Delta,ELevelTick Type
     const FName Initiative=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetInitiativeKind();
     if(Initiative==TEXT("conversation_reminder") && PreviousInitiative!=Initiative) PlayFixedCue(TEXT("fixed.camp.three_days"),FGuid::NewGuid(),true);
     PreviousInitiative=Initiative;
+    if(WorldView)ObserveStoryCues(Delta);
     if(auto* Camera=GetOwner()->FindComponentByClass<UCameraComponent>())
     {
         const float Amount=WorldView?Settings->Comfort.Shake/100.f:0;

@@ -1,6 +1,7 @@
 #include "../AI/HearthwardLocalAISubsystem.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
+#include "../Inventory/HearthwardInventoryComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Misc/AutomationTest.h"
@@ -18,6 +19,8 @@ struct FLocalAIReliabilityAccess
     static uint64 Serial(const UHearthwardLocalAISubsystem* AI){return AI->Serial;}
     static FHearthwardCommandTicket Ticket(const UHearthwardLocalAISubsystem* AI){return AI->Ticket;}
     static void Fail(UHearthwardLocalAISubsystem* AI){AI->Fail(TEXT("诊断模型失败"));}
+    static void Stage(UHearthwardLocalAISubsystem* AI,const FString& Input,const FHearthwardAgentGoal& Goal)
+    {AI->Memory.WorkingGoal={};AI->Input=Input;AI->StageCandidate(Goal);}
 };
 namespace
 {
@@ -93,6 +96,28 @@ bool FLocalAICancellationIsolationTest::RunTest(const FString&)
     TestEqual(TEXT("cancel does not advance save timeline"),F.World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(),Epoch);
     TestTrue(TEXT("manual query works without model"),F.AI->QueryInventory(F.Speaker,F.Brother,TEXT("wood")));
     TestEqual(TEXT("manual query is labelled deterministic"),F.AI->GetReasonCode(),FString(TEXT("deterministic_fallback")));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FLocalAIBackpackOwnershipTest,"Hearthward.Iteration.Task109.BackpackOwnership",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FLocalAIBackpackOwnershipTest::RunTest(const FString&)
+{
+    FLocalAIReliabilityWorld F;FLocalAIReliabilityAccess::Seed(F.AI,F.Speaker,F.Brother);
+    FHearthwardAgentGoal Goal;Goal.Intent=TEXT("fetch");Goal.Item=TEXT("wood");Goal.Quantity=4;
+    Goal.QuantityMode=TEXT("camp_to_bag");Goal.SourceRef=TEXT("camp");
+    for(const FString Owner:{TEXT("弟弟背包"),TEXT("你背包"),TEXT("你的背包"),TEXT("你自己的背包")})
+    {
+        FLocalAIReliabilityAccess::Stage(F.AI,TEXT("从营地仓库搬四份木材到")+Owner,Goal);
+        TestTrue(TEXT("Explicit brother ownership clears the linguistic gate"),F.AI->GetMemorySnapshot().WorkingGoal.Unresolved.IsEmpty());
+        TestTrue(TEXT("The original contract remains valid after staging"),HearthwardAgent::Validate(F.AI->GetMemorySnapshot().WorkingGoal).IsEmpty());
+    }
+    for(const FString Original:{TEXT("从营地仓库搬四份木材到我的背包"),TEXT("从营地仓库搬四份木材到背包"),TEXT("搬四份木材到你的背包")})
+    {
+        FLocalAIReliabilityAccess::Stage(F.AI,Original,Goal);
+        TestEqual(TEXT("Wrong or missing owner/source still cannot authorize fetch"),F.AI->GetReasonCode(),FString(TEXT("UNRESOLVED_CONSTRAINT")));
+        TestFalse(TEXT("Unclear transfer leaves no confirmable card"),F.AI->HasCandidate());
+    }
+    TestEqual(TEXT("Staging never creates cargo"),F.Brother->Bag->GetItemCount(TEXT("wood")),0);
     return true;
 }
 #endif

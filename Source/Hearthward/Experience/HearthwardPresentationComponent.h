@@ -32,6 +32,7 @@ private:
     void SeedSuccessEvents();
     void ObserveProgressSuccess(bool Seed);
     void ObserveNPCSuccess(class AHearthwardCompanionFixture* Brother);
+    void ObserveStoryCues(float Delta);
     void BindCombatSources(class AHearthwardCompanionFixture* Brother);
     void UnbindCombatSources();
     void CombatSucceeded(const FHearthwardCombatFeedbackReceipt& Receipt);
@@ -88,7 +89,7 @@ private:
     FDelegateHandle EnvironmentSpawnHandle,EnvironmentRegisterHandle;
     TArray<float> EffectRemaining;
     struct FCue {FString Speaker,Text,Group,ProductionStatus;};
-    struct FSoundCue {FString File;FName Channel;TArray<FString> Variants;int32 LastVariant=INDEX_NONE;};
+    struct FSoundCue {FString File;FName Channel;TArray<FString> Variants;int32 LastVariant=INDEX_NONE;float Gain=1.f;};
     TMap<FName,FCue> Cues;
     TMap<FName,FSoundCue> SoundCues;
     TSet<FGuid> ObservedTransfers;
@@ -108,6 +109,7 @@ private:
     FName CurrentCue;
     FGuid Epoch;
     float Remaining=0,ShakeRemaining=0,PreviousHealth=100;
+    float StoryCooldown=0;
     FString VoiceStatus;
     TWeakObjectPtr<class AHearthwardCompanionFixture> ObservedBrother;
     FGuid PreviousCommand;

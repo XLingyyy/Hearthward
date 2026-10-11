@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "id": "TASK-109",
+  "title": "规划补全：工程性能、语言可靠性、视听制作与自动化",
+  "status": "Active",
+  "updated_at": "2026-10-11",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-109-roadmap-completion",
+  "source_refs": [
+    "main@2d5c3bbdadf48e37866e40bb826b875a6f1d2235",
+    "docs/Hearthward_工程优化与内容扩充规划.docx",
+    "2026-10-11 用户明确要求：那先继续做完那份文档的内容"
+  ],
+  "dependencies": [
+    "TASK-108"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Source/Hearthward/",
+    "Resources/",
+    "Content/Hearthward/",
+    "art_source/",
+    "scripts/",
+    ".github/workflows/",
+    "config/",
+    "Config/",
+    "README.md",
+    "docs/tasks/TASK-109.json",
+    "docs/tasks/TASK-109.md",
+    "docs/handoffs/TASK-109.md",
+    "docs/qa/TASK-109/",
+    "docs/qa/TASK-087/verify_model_matrix_pie.py",
+    "docs/planning/TASK-109/",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "逐项对照原规划，区分实现、制作、验证和外部输入，保留未完成项。",
+    "先实测UI和模型成本，再实施有证据的优化，保留现有状态与安全校验。",
+    "补全可独立完成的视听内容、资源优化和UE自动化，实际构建与窗口验证。"
+  ],
+  "non_goals": [
+    "不扩大游戏地图、人口、敌人数或生存系统；不代填真人与二机验收。",
+    "不付费调用、不替代真人录音为生成声音、不发布。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_read_write_and_asset_locks",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-11",
+    "push": "granted_by_user_2026-10-11",
+    "merge": "granted_by_user_2026-10-11",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "保留用户原有旧GDD本地删除。",
+    "用户授权补齐规划，包含相关代码、配置、资产和自动化实现；按依赖推进，不能仅用文档关闭缺口。",
+    "2026-10-11 用户明确：保留文字对白，真人录音列为待补素材。",
+    "2026-10-11 用户明确授权：提交推送并合并到main。仅整合当前已验证成果，任务保持Active，剩余规划验收未关闭。"
+  ]
+}

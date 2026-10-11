@@ -221,20 +221,20 @@ void UHearthwardLocalAISubsystem::StageCandidate(FHearthwardAgentGoal Goal)
             || (!Goal.Original.Contains(TEXT("交给我")) && !Goal.Original.Contains(TEXT("给我"))
                 && !Goal.Original.Contains(TEXT("玩家背包")))))
             Goal.Unresolved.AddUnique(TEXT("必须明确从营地仓库取货并交给玩家"));
-        if(Goal.Intent==TEXT("give") && (!Goal.Original.Contains(TEXT("弟弟背包"))
-            && !Goal.Original.Contains(TEXT("你背包")) && !Goal.Original.Contains(TEXT("你包里"))))
+        FRegexMatcher BrotherBag(FRegexPattern(TEXT("(?:弟弟|你)(?:的|自己的)?背包")),Goal.Original);
+        const bool NamesBrotherBag=BrotherBag.FindNext();
+        if(Goal.Intent==TEXT("give") && !NamesBrotherBag && !Goal.Original.Contains(TEXT("你包里")))
             Goal.Unresolved.AddUnique(TEXT("必须明确从弟弟背包取货"));
         if(Goal.Intent==TEXT("give") && !Goal.Original.Contains(TEXT("交给我"))
             && !Goal.Original.Contains(TEXT("给我")) && !Goal.Original.Contains(TEXT("玩家背包")))
             Goal.Unresolved.AddUnique(TEXT("必须明确交给玩家"));
         if(Goal.Intent==TEXT("fetch") && (!Goal.Original.Contains(TEXT("仓库"))
-            || (!Goal.Original.Contains(TEXT("弟弟背包")) && !Goal.Original.Contains(TEXT("你背包")))))
+            || !NamesBrotherBag))
             Goal.Unresolved.AddUnique(TEXT("必须明确从营地仓库取货并留在弟弟背包"));
         if(Goal.Intent==TEXT("receive") && (!Goal.Original.Contains(TEXT("玩家背包"))
             && !Goal.Original.Contains(TEXT("我背包"))))
             Goal.Unresolved.AddUnique(TEXT("必须明确从玩家背包取货"));
-        if(Goal.Intent==TEXT("receive") && !Goal.Original.Contains(TEXT("弟弟背包"))
-            && !Goal.Original.Contains(TEXT("你背包")))
+        if(Goal.Intent==TEXT("receive") && !NamesBrotherBag)
             Goal.Unresolved.AddUnique(TEXT("必须明确留在弟弟背包"));
         if(Input.Contains(TEXT("再来")) || Input.Contains(TEXT("补到")) || Input.Contains(TEXT("凑够")))
             Goal.Unresolved.AddUnique(TEXT("请明确新取得数量；追加量和最终总量不能混用"));

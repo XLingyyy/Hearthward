@@ -43,6 +43,7 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Rendering/SlateRenderer.h"
 #include "Fonts/FontMeasure.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
 
 using namespace HearthwardData;
 TSharedRef<SWidget> UHearthwardScreenWidget::RebuildWidget()
@@ -116,6 +117,7 @@ UHearthwardInventoryComponent* UHearthwardScreenWidget::Inventory() const
 { return GetOwningPlayerPawn() ? GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInventoryComponent>() : nullptr; }
 void UHearthwardScreenWidget::LoadTheme()
 {
+    TRACE_CPUPROFILER_EVENT_SCOPE(Hearthward_UI_LoadTheme);
     FString Json; const FString Root=FPaths::ProjectDir()/TEXT("Resources/UI");
     if (!FFileHelper::LoadFileToString(Json,*(Root/TEXT("interface.json"))) ||
         !FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Theme) || !Theme)
@@ -124,7 +126,6 @@ void UHearthwardScreenWidget::LoadTheme()
     Typeface=MakeShared<FCompositeFont>(NAME_None,Root/Text(Typography,TEXT("body")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
     DisplayTypeface=MakeShared<FCompositeFont>(NAME_None,Root/Text(Typography,TEXT("display")),EFontHinting::Default,EFontLoadingPolicy::LazyLoad);
     TMap<FString,UTexture2D*> Loaded;
-    FImage JournalGlyphs;
     for(const auto& Entry:Theme->GetObjectField(TEXT("assets"))->Values)
     {
         const auto R=Entry.Value->AsObject(); const FString File=Text(R,TEXT("file"));
@@ -134,6 +135,12 @@ void UHearthwardScreenWidget::LoadTheme()
             Texture=FImageUtils::ImportFileAsTexture2D(Root/File);
             checkf(Texture,TEXT("Missing UI art %s"),*File);
             Textures.Add(Texture); Loaded.Add(File,Texture);
+        }
+        if(FString(Entry.Key).EndsWith(TEXT("Highlight")))
+        {
+            Texture->Filter=TF_Bilinear;
+            Texture->AddressX=TA_Clamp;Texture->AddressY=TA_Clamp;
+            Texture->UpdateResource();
         }
         FSlateBrush B; B.SetResourceObject(Texture); B.DrawAs=ESlateBrushDrawType::Image; B.ImageSize=FVector2D(Texture->GetSizeX(),Texture->GetSizeY());
         B.SetUVRegion(FBox2f(FVector2f(0,0),FVector2f(1,1)));
@@ -152,41 +159,7 @@ void UHearthwardScreenWidget::LoadTheme()
             B.SetUVRegion(FBox2f(FVector2f(P),FVector2f(P+S)));
         }
         const FString Glyph(*Entry.Key);Brushes.Add(Glyph,B);
-        if(Glyph.StartsWith(TEXT("journalCategory")) && Glyph!=TEXT("journalCategorymain"))
-        {
-            // The five legacy inactive glyphs are much darker than the main glyph.
-            // Cache a warm-white coverage mask for selection without changing the atlas.
-            if(JournalGlyphs.RawData.IsEmpty())
-            {
-                const bool GlyphsLoaded=FImageUtils::LoadImage(*(Root/File),JournalGlyphs);
-                if(!GlyphsLoaded || JournalGlyphs.Format!=ERawImageFormat::BGRA8)
-                    UE_LOG(LogTemp,Fatal,TEXT("Cannot read journal glyph atlas %s"),*File);
-            }
-            const auto& Crop=R->GetArrayField(TEXT("uv"));
-            const int32 Left=Crop[0]->AsNumber(),Top=Crop[1]->AsNumber(),Width=Crop[2]->AsNumber(),Height=Crop[3]->AsNumber();
-            const auto* Source=reinterpret_cast<const FColor*>(JournalGlyphs.RawData.GetData());
-            int32 Peak=21;
-            for(int32 Y=0;Y<Height;++Y) for(int32 X=0;X<Width;++X)
-            {
-                const auto& Pixel=Source[(Top+Y)*JournalGlyphs.SizeX+Left+X];
-                Peak=FMath::Max(Peak,FMath::Max3(int32(Pixel.R),int32(Pixel.G),int32(Pixel.B)));
-            }
-            TArray<FColor> Pixels;Pixels.SetNumUninitialized(Width*Height);
-            for(int32 Y=0;Y<Height;++Y) for(int32 X=0;X<Width;++X)
-            {
-                const auto& Pixel=Source[(Top+Y)*JournalGlyphs.SizeX+Left+X];
-                const float Luma=FMath::Max3(int32(Pixel.R),int32(Pixel.G),int32(Pixel.B));
-                const float Coverage=FMath::Pow(FMath::Clamp((Luma-20.f)/(Peak-20.f),0.f,1.f),.7f);
-                Pixels[Y*Width+X]=FColor(255,242,207,FMath::RoundToInt(Pixel.A*Coverage));
-            }
-            auto* Highlight=UTexture2D::CreateTransient(Width,Height,PF_B8G8R8A8,NAME_None,
-                TConstArrayView64<uint8>(reinterpret_cast<const uint8*>(Pixels.GetData()),Pixels.Num()*sizeof(FColor)));
-            check(Highlight);Highlight->SRGB=true;Highlight->Filter=TF_Bilinear;
-            Highlight->AddressX=TA_Clamp;Highlight->AddressY=TA_Clamp;Highlight->UpdateResource();Textures.Add(Highlight);
-            FSlateBrush Selected=B;Selected.SetResourceObject(Highlight);Selected.ImageSize=FVector2D(Width,Height);
-            Selected.SetUVRegion(FBox2f(FVector2f(0,0),FVector2f(1,1)));
-            Brushes.Add(Glyph+TEXT("Highlight"),Selected);
-        }
+
     }
     if(!ReloadLayout()) UE_LOG(LogTemp,Fatal,TEXT("Cannot load Hearthward UI layout"));
 }
@@ -319,15 +292,10 @@ void UHearthwardScreenWidget::ApplyInputMode()
 }
 void UHearthwardScreenWidget::Element(FString Type,FString TextValue,FVector2D P,FVector2D Size,float Font,FString Action,FString Asset,bool Selected)
 {
-    const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
-    for(const auto& D:HearthwardInput::Definitions()) if(D.Contexts.Contains(Page) && D.Primary.Key.IsValid())
+    for(const auto& Label:PageBindingLabels)
     {
-        const FString Old=D.Primary.Key.GetDisplayName().ToString(),Current=HearthwardInput::Label(Bindings,D.Id);
-        if(Current!=Old)
-        {
-            if(TextValue.StartsWith(Old+TEXT(" "))) TextValue=Current+TextValue.Mid(Old.Len());
-            TextValue.ReplaceInline(*(TEXT("[")+Old+TEXT("]")),*(TEXT("[")+Current+TEXT("]")));
-        }
+        if(TextValue.StartsWith(Label.Key+TEXT(" "))) TextValue=Label.Value+TextValue.Mid(Label.Key.Len());
+        TextValue.ReplaceInline(*(TEXT("[")+Label.Key+TEXT("]")),*(TEXT("[")+Label.Value+TEXT("]")));
     }
     FHearthwardUIElement E; E.Type=Type; E.Text=TextValue; E.Position=P; E.Size=Size; E.Font=Font; E.Action=Action; E.Asset=Asset; E.Selected=Selected;
     const float TextScale=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale/100.f;
@@ -368,7 +336,16 @@ void UHearthwardScreenWidget::LoadElements(const TArray<TSharedPtr<FJsonValue>>&
 }
 void UHearthwardScreenWidget::Refresh()
 {
+    TRACE_CPUPROFILER_EVENT_SCOPE(Hearthward_UI_Refresh);
     if(!Theme || !LayoutConfig || !Gameplay()) return;
+    // Rebuild once per page refresh so rebinding and loading settings remain immediate.
+    PageBindingLabels.Reset();
+    const auto& Bindings=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings;
+    for(const auto& D:HearthwardInput::Definitions()) if(D.Contexts.Contains(Page) && D.Primary.Key.IsValid())
+    {
+        const FString Original=D.Primary.Key.GetDisplayName().ToString(),Current=HearthwardInput::Label(Bindings,D.Id);
+        if(Current!=Original)PageBindingLabels.Emplace(Original,Current);
+    }
     UpdateHUDQuestNotice();
     const FString FocusedAction=Elements.IsValidIndex(KeyboardFocus) && Elements[KeyboardFocus].Enabled &&
         !Elements[KeyboardFocus].Hidden ? Elements[KeyboardFocus].Action : FString();

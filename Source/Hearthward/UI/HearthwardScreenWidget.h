@@ -237,6 +237,7 @@ private:
     TSharedPtr<const FCompositeFont> DisplayTypeface;
     TMap<FString,FSlateBrush> Brushes;
     TArray<FHearthwardUIElement> Elements;
+    TArray<TPair<FString,FString>> PageBindingLabels;
     FName Page=TEXT("title");
     TArray<FName> ReturnPages;
     TArray<FString> ReturnCategories;

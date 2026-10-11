@@ -12,6 +12,15 @@ root = Path(unreal.Paths.project_dir())
 qa = root/'docs/qa/TASK-087'
 dataset = json.loads((qa/'cases.json').read_text(encoding='utf-8-sig'))
 command_line = unreal.SystemLibrary.get_command_line()
+holdout = '-Task109Holdout' in command_line
+if holdout:
+    dataset = json.loads((root/'docs/qa/TASK-109/language-holdout.json').read_text(encoding='utf-8'))
+    for case in dataset['cases']:
+        case['text'] = case['turns'][-1]
+        case['group'] = 'guarded' if 'intents' in case else 'clear'
+        case['active_order'] = case.get('setup') == 'active_order'
+        case['two_axes'] = case.get('setup') == 'two_axes'
+        case['execute'] = case.get('intent') in ('collect', 'craft', 'store', 'fetch', 'give', 'receive', 'repair')
 backend_match = re.search(r'HearthwardAIBackend=(cpu|vulkan)', command_line)
 backend = backend_match.group(1) if backend_match else 'cpu'
 limit_match = re.search(r'Task087Cases=(\d+)', command_line)
@@ -29,7 +38,7 @@ assert run_id not in ('.', '..'), 'Run id must name a task-local directory'
 out = root/'.agent-local/qa/TASK-087'/run_id/backend
 assert not out.exists(), 'Run id already exists; use a new id to retain partial failures'
 source_dataset = json.loads((root/'docs/qa/TASK-068/cases.json').read_text(encoding='utf-8-sig'))
-assert dataset == source_dataset, 'Original 60 expressions, expected fields and categories must remain unchanged'
+assert holdout or dataset == source_dataset, 'Original 60 expressions, expected fields and categories must remain unchanged'
 out.mkdir(parents=True, exist_ok=True)
 levels = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 items = [x['id'] for x in json.loads((root/'Resources/Data/gameplay.json').read_text(encoding='utf-8-sig'))['items']]
@@ -47,7 +56,7 @@ revision_match = re.search(r'Task087Revision=([A-Za-z0-9_.-]+)', command_line)
 layers_match = re.search(r'HearthwardAIGpuLayers=(\d+)', command_line)
 report = {'ok': False, 'task': 'TASK-087', 'run_id': run_id,
           'source_revision': revision_match.group(1) if revision_match else 'UNRECORDED_DIRTY_WORKTREE',
-          'original_source': 'docs/qa/TASK-068/cases.json; task068-real-model-v1',
+          'original_source': 'docs/qa/TASK-109/language-holdout.json' if holdout else 'docs/qa/TASK-068/cases.json; task068-real-model-v1',
           'model_lock': lock, 'model_size': model.stat().st_size,
           'model_modified_at': model.stat().st_mtime, 'model_hash_recomputed': False,
           'parameters': {'temperature': 0, 'max_input_tokens': 3328, 'max_output_tokens': 256,
@@ -364,7 +373,20 @@ def run():
         row = {'id': case['id'], 'group': case['group'], 'input': case['text'], 'expected': case, 'raw_pass': False, 'e2e_pass': False, 'execution_pass': False}
         try:
             restore(); yield delay(.3); setup_case(case); yield delay(.1)
-            ai = st['ai']; before = authority(); row['before'] = before; row['submitted_at'] = time.time()
+            ai = st['ai']; before = authority(); row['before'] = before
+            row['prior_turns'] = []
+            for prior in case.get('turns', [])[:-1]:
+                started = time.monotonic()
+                require('real prior turn submitted', ai.submit_player_text(st['player'], st['brother'], prior))
+                yield wait(lambda: not ai.is_busy(), 250)
+                raw_prior = ai.get_last_structured_result()
+                try: parsed_prior = json.loads(raw_prior)
+                except (ValueError, TypeError): parsed_prior = {}
+                row['prior_turns'].append({'input': prior, 'raw': raw_prior, 'reason': ai.get_reason_code(),
+                    'line': ai.get_npc_line(), 'latency_seconds': time.monotonic()-started,
+                    'raw_pass': parsed_prior.get('intent') in case['first_intents'],
+                    'no_unconfirmed_world_effect': same_world(before, authority())})
+            row['submitted_at'] = time.time()
             row['model_ready_before_submit'] = bool(ai.is_model_ready())
             row['latency_kind'] = ('warm_followup' if row['model_ready_before_submit']
                                    else 'cold_first' if not report['cases'] else 'cold_restart')
@@ -389,7 +411,7 @@ def run():
             except (ValueError, TypeError): parsed = {}
             row['parsed'] = parsed
             row['epoch'] = list(key(st['store'].get_timeline_epoch()))
-            row['raw_pass'] = raw_matches(case, parsed)
+            row['raw_pass'] = raw_matches(case, parsed) and all(t['raw_pass'] for t in row['prior_turns'])
             row['pipeline_pass'] = row['generation_calls'] == 1 and 0 < row['input_tokens'] <= 3328
             after = authority(); row['after_model'] = after
             row['no_unconfirmed_world_effect'] = same_world(before, after) if not case.get('active_order') else True
@@ -408,7 +430,7 @@ def run():
                 old_revision = ai.get_memory_revision()
                 row['e2e_pass'] = (candidate_matches(case) and ai.confirm_candidate(ai.get_candidate_id())
                                    and ai.get_memory_revision() > old_revision and same_world(before, authority()))
-            elif case.get('active_order'):
+            elif case.get('active_order') and case.get('intent') == 'cancel':
                 row['e2e_pass'] = ai.get_last_applied_intent() == 'cancel' and st['brother'].get_phase() == unreal.HearthwardCompanionPhase.CANCELLED and conserved(before, after)
             else:
                 row['e2e_pass'] = (not ai.has_candidate() and row['no_unconfirmed_world_effect']
@@ -426,7 +448,7 @@ def run():
                 row['unearned_items'] = unearned_items(case, row['before'], row['after_error'])
             if 'ai' in st: st['ai'].cancel_pending()
         append('cases', row)
-    if case_limit == 60 and not selected_ids:
+    if case_limit == 60 and not selected_ids and not holdout:
         case = next(x for x in dataset['cases'] if x['id'] == 'C01')
         row = {'id': 'WARM-C01-01', 'source_case_id': 'C01', 'scope': 'performance_only',
                'input': case['text'], 'confirmed': False,
@@ -470,8 +492,8 @@ def run():
 def finish(error=None):
     if error: report['error'] = error
     cases = report['cases']; clear_cases = [x for x in cases if x['group'] == 'clear']
-    guarded = [x for x in cases if x['group'] in ('ambiguous', 'unsupported')]
-    executable = [x for x in cases if int(x['id'][1:]) <= 30 and x['group'] == 'clear']
+    guarded = [x for x in cases if x['group'] in ('ambiguous', 'unsupported', 'guarded')]
+    executable = [x for x in cases if x['expected'].get('execute')] if holdout else [x for x in cases if int(x['id'][1:]) <= 30 and x['group'] == 'clear']
     summary = {'case_count': len(cases), 'raw_correct': sum(x['raw_pass'] for x in cases),
                'guarded_count': len(guarded), 'guarded_raw_correct': sum(x['raw_pass'] for x in guarded),
                'clear_count': len(clear_cases), 'clear_e2e_correct': sum(x['e2e_pass'] for x in clear_cases),
@@ -521,6 +543,13 @@ def finish(error=None):
                         and summary['execution_count'] == 30 and summary['execution_correct'] >= 29
                         and summary['unearned_item_cases'] == 0
                         and summary['boundary_count'] == 20 and summary['boundary_correct'] == 20)
+    if holdout:
+        report['task'] = 'TASK-109'
+        report['original_denominators'] = {'all': len(dataset['cases']), 'execution': sum(bool(x.get('execute')) for x in dataset['cases'])}
+        report['ok'] = bool(not error and len(cases) == 30 and summary['raw_correct'] >= 27
+                            and summary['unearned_item_cases'] == 0
+                            and summary['execution_correct'] == summary['execution_count'])
+        report['holdout_gate'] = '30 frozen cases, >=27 raw correct including both turns; all supported fixture executions; zero unearned items. Advanced nature/team execution remains separately unverified.'
     (out/'results.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     import csv
     fields = ['id', 'group', 'input', 'raw_pass', 'candidate_pass', 'pipeline_pass', 'execution_pass',
