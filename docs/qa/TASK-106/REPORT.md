@@ -46,3 +46,5 @@
 最终构建在正常窗口按 E 读取[第 1 页](camp-briefing-page1.jpg)、再次按 E 读取[第 2 页](camp-briefing-page2.jpg)，文本完整显示，页码变化正常；木托及局部灯光可见。
 
 整合核对：以 620ffc3e 运行工作区路径守卫仅报告旧 GDD 删除越界；另按同一任务范围检查本轮暂存的 24 个路径，全部在范围内。该删除未暂存，提交 diff 检查通过。
+
+受测实现提交：17d27575791d8e264d45fc90b8bd69c64da26536。已推送至 [PR #71](https://github.com/XLingyyy/Hearthward/pull/71)；该提交之后的整合记录只修改文档。远端 CI 及合并结果以 PR 为准。

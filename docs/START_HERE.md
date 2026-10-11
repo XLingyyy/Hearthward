@@ -1,6 +1,6 @@
 # 最短阅读路径
 
-2026-10-11：M0 已经 PR #70 合入 main；按用户要求继续 M1，当前任务为 TASK-106，分支 `codex/TASK-106-m1-content`，基线 `1db8955c9f05996d02af7b36e62f3b2c508f9664`。从 [TASK-106 交接](handoffs/TASK-106.md)及[验证报告](qa/TASK-106/REPORT.md)接手。用户已授权本轮提交、推送并通过 PR 整合；正式发布版仍为 v0.3.0。下方记录为历史快照。
+2026-10-11：M0 已经 PR #70 合入 main；按用户要求继续 M1，当前任务为 TASK-106，分支 `codex/TASK-106-m1-content`，基线 `1db8955c9f05996d02af7b36e62f3b2c508f9664`。从 [TASK-106 交接](handoffs/TASK-106.md)及[验证报告](qa/TASK-106/REPORT.md)接手。本轮实现已提交并推送，通过 [PR #71](https://github.com/XLingyyy/Hearthward/pull/71) 整合，合并状态以该 PR 为准；正式发布版仍为 v0.3.0。下方记录为历史快照。
 
 2026-10-09 交互提示已改为物体上方随镜头移动；领取遗物及已完成/不可用目标隐藏提示，重复设施保留有效操作。Task090 4/4、相关采集/资源 3/3 与正式地图 PIE 领取前后检查通过。候选11 `0.2.0-preview.20261009.3` Shipping 构建成功，源码 `a72fdffe2d3f4f27652c9d05abfe50c91d832ede`，目录 `F:/HearthwardDemo/iteration-084-103-20261009-11/Windows`。本包正常键鼠验证待用户完成。整批尚未完成，原有模型/性能/完整路线/真人与二机缺口保留。
 
