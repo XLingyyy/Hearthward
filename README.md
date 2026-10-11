@@ -1,6 +1,6 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险。当前游戏版本为 **0.3.0**；最新实现已通过[PR #68](https://github.com/XLingyyy/Hearthward/pull/68)合入main，发行构建提交为 `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16`。
+UE 5.8.2 单人第三人称生存冒险。当前游戏版本为 **0.3.0**；M0 工程优化已通过[PR #70](https://github.com/XLingyyy/Hearthward/pull/70)合入 main，发行构建提交为 `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16`。
 
 [下载 v0.3.0](https://github.com/XLingyyy/Hearthward/releases/tag/v0.3.0) · [发行与验证记录](docs/releases/v0.3.0/REPORT.md) · [项目状态](docs/PROJECT_STATE.md) · [开发入口](docs/START_HERE.md)
 
@@ -36,7 +36,17 @@ v0.3.0 Shipping Build/Cook/Stage/Archive通过；已实际验证CPU新游戏、�
 
 本地候选入口：`E:/HearthwardQA/TASK-105/m0-candidate-20261011/Windows/启动M0候选.cmd`。版本字符串仍为 0.3.0，用 BUILD-INFO 区分本地工作树候选；没有替换正式发布包。本轮源码按用户授权通过 [PR #70](https://github.com/XLingyyy/Hearthward/pull/70) 提交并整合；合并状态以该 PR 为准。
 
-[验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1–M3 保留提案。
+[验证报告](docs/qa/TASK-105/REPORT.md) · [交接](docs/handoffs/TASK-105.md) · [工程计划](docs/planning/TASK-105/ENGINEERING_PLAN.md) · [后续内容规划](docs/planning/TASK-105/CONTENT_ROADMAP.md)。M1 已在独立分支开发，M2–M3 保留提案。
+
+## TASK-106 M1 分支内容（未发行）
+
+`codex/TASK-106-m1-content` 增加旧渡口、倾倒运输车、风口路标、废弃炭棚、崖下药圃和林间猎迹；新增「渡口留下的东西」「没有带走的工具」两条支线，保留原 8 主线、15 旧支线、10 名救援人物和驻军分母。重做 side_06／08／09 的现场指引、完成反馈及营地陈列。
+
+到现场按 E 查看线索或领取；运输车的木材、绳索、熟食分别受实际行装容量约束，取完不会刷新。两件剧情物以现有任务事实保护，带回营地陈列处按 E 交付，再从 J 登记完成。风口只揭示一个地点；猎迹指向当前附近真实动物，不直接发放肉。药圃走原有草药采集规则。
+
+营地「出发与分工」路牌按 E 翻页，提供准备、外出、救援与返程、回营核对四种场景指引，复用手动任务卡和 X／Z 跟随等待。真实入库、救援到营、工具交付和合法用餐分别触发有限陈列；火边停留只使用空闲族人。新档与旧档均使用既有 Facts 和资源记录，不新增存档字段。
+
+编译、定向测试与实机检查范围见 [TASK-106 报告](docs/qa/TASK-106/REPORT.md)。整片区域连续路线、弟弟／救援人物通行、昼夜近景与真人体验退出标准仍需验收；本分支不等于 v0.4 已发行。
 
 ## 本地开发
 

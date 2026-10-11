@@ -1,5 +1,6 @@
 #include "HearthwardStorageSubsystem.h"
 #include "HearthwardInventoryComponent.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "Engine/World.h"
 
 bool UHearthwardStorageSubsystem::DoesSupportWorldType(EWorldType::Type WorldType) const
@@ -19,6 +20,7 @@ FHearthwardTransferResult UHearthwardStorageSubsystem::Transfer(UHearthwardInven
     const auto Reply = State.Transfer(Personal->State, Personal->GetContainerId(), ToCamp, ItemId, Count, OperationId, TimelineEpoch);
     if (Reply.MovedCount > 0)
     {
+        if(ToCamp)GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("m1:materials_stored"));
         // Both states and the replay journal are committed before callbacks can re-enter.
         Personal->OnInventoryChanged.Broadcast();
         OnTransferred.Broadcast(OperationId, ToCamp, ItemId, Reply.MovedCount);
@@ -79,6 +81,7 @@ FHearthwardTransferResult UHearthwardStorageSubsystem::TransferInstance(UHearthw
     State.Completed.Add(Operation,{PersonalId,ToCamp,Item,1,Reply.Result,Instance});
     if(Reply.Result==EHearthwardInventoryResult::Success)
     {
+        if(ToCamp)GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("m1:materials_stored"));
         Reply.MovedCount=1;Personal->OnInventoryChanged.Broadcast();OnTransferred.Broadcast(Operation,ToCamp,Item,1);
     }
     return Reply;

@@ -269,6 +269,7 @@ void UHearthwardCampaignSubsystem::RefreshActors()
     for(const auto& V:HearthwardCampaign::Rows(TEXT("locations")))
     {
         const auto R=V->AsObject();const FName Id(*Text(R,TEXT("id")));
+        if(R->HasField(TEXT("m1_action")))continue;
         if(FVector::Dist2D(Position(Id),PlayerPosition)>60000)continue;
         FVector Floor;if(!State.Positions.Contains(Id)){if(!Ground(Position(Id),Floor))continue;State.Positions.Add(Id,Floor+FVector(0,0,80));}
         if(Id==TEXT("camp") || Id==TEXT("hometown") || Id==TEXT("slice_rescue") || Id==TEXT("route_mine"))continue;
@@ -351,6 +352,12 @@ void UHearthwardCampaignSubsystem::RefreshActors()
             Status=!Region->Enabled?TEXT("暂离 · 岗位已暂停"):!HasWorkplace?TEXT("等待合法岗位")
                 :Region->Batch.Active && Region->Batch.Work<Region->Batch.Required?TEXT("工作中")
                 :Region->Status.IsEmpty()?TEXT("等待开工"):Region->Status;
+        }
+        if(!Region && CampId==TEXT("camp") && Worker<2 && State.Facts.Contains(TEXT("public_meal")))
+        {
+            Workplace=Position(TEXT("camp"))+FVector(-300,180,0);
+            Seat=Workplace+FVector(0,Worker==0?-140:140,0);
+            HasWorkplace=true;Status=TEXT("火边歇息");
         }
         if(FVector::Dist2D(PlayerPosition,Seat)>40000)
         {
@@ -552,7 +559,7 @@ void UHearthwardCampaignSubsystem::Tick(float Delta)
             if(Now>=FlagCompleteAt){State.Flags.Add(PendingFlag);Cancel();Feedback=TEXT("此区已控制");}
         }
     }
-    if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();
+    if((RefreshIn-=Delta)>0)return;RefreshIn=.4f;Sync();RefreshActors();RefreshM1();
     auto* Camp=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>();
     State.ResolveUntriggered();
     if(auto* Combat=Player()->FindComponentByClass<UHearthwardCombatComponent>())for(const auto& Alarm:Combat->State.Alarms)
