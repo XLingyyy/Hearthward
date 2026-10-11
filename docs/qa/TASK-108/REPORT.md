@@ -1,6 +1,6 @@
 # TASK-108 · M3 实现与验证
 
-日期 2026-10-11；分支 `codex/TASK-108-m3-homecoming`；基线 main@695240e6f00a84337ac0d694a3f2bc3d91fbe5a5。证据绑定本轮未提交工作树，本轮已获提交、推送及合并授权；没有发布新版本。使用本机 UE 5.8.2、RTX 4060 Laptop 8 GB、16 GB 内存；引擎构建/测试/生命周期均通过 UEClient。
+日期 2026-10-11；分支 `codex/TASK-108-m3-homecoming`；基线 main@695240e6f00a84337ac0d694a3f2bc3d91fbe5a5。证据绑定实现提交 749a272a52221ec711563a892748d26671c876ce 的相同代码/数据工作树，本轮已获提交、推送及合并授权；没有发布新版本。使用本机 UE 5.8.2、RTX 4060 Laptop 8 GB、16 GB 内存；引擎构建/测试/生命周期均通过 UEClient。
 
 ## 实现范围
 
@@ -48,3 +48,5 @@
 2026-10-11 用户授权提交、推送并合并。基于 origin/main 的 --task 范围检查无法执行：基线尚无新增 TASK-108 任务快照；未修改或跳过脚本。已按本轮授权任务单逐项核对暂存路径，全部位于 allowed_paths，旧 GDD 的无关本地删除未暂存。仓库元数据与 GitHub repo-policy 独立执行。只读诊断文本清除了行尾空格，未改变状态数据。
 
 提交前工具自测 85/85 通过（python -m unittest discover -s scripts/tests -q），普通仓库检查 109 任务、0 错误。
+
+源码提交已推送，通过 [PR #73](https://github.com/XLingyyy/Hearthward/pull/73) 整合；后续提交只同步 PR 链接与交接状态。合并状态以该 PR 为准。
