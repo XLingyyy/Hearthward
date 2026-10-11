@@ -1,6 +1,6 @@
 # TASK-109 本轮实现与证据
 
-基线 `main@2d5c3bbdadf48e37866e40bb826b875a6f1d2235`，工作分支 `codex/TASK-109-roadmap-completion`。本单已获用户提交、推送及合并授权，整合结果以本分支PR为准；未发布新版本；正式发行仍为 v0.3.0。用户原有旧GDD删除保留。
+基线 `main@2d5c3bbdadf48e37866e40bb826b875a6f1d2235`，工作分支 `codex/TASK-109-roadmap-completion`。本单已获用户提交、推送及合并授权，当前成果已提交并推送，整合状态见 [PR #74](https://github.com/XLingyyy/Hearthward/pull/74)；未发布新版本；正式发行仍为 v0.3.0。用户原有旧GDD删除保留。
 
 ## 已补实现
 

@@ -1,6 +1,6 @@
 # 最短阅读路径
 
-2026-10-11：当前任务 TASK-109，分支 codex/TASK-109-roadmap-completion，基线 main@2d5c3bbdadf48e37866e40bb826b875a6f1d2235（M3 / PR #73）。M0–M3 已整合；本轮补工程优化、营地动作和固定情境文字。真人录音经用户确认列为待补素材。当前已获用户提交、推送及合并授权，整合结果以本分支PR为准，正式发行仍为 v0.3.0；完整状态见 [TASK-109 交接](handoffs/TASK-109.md)和[补全清单](planning/TASK-109/COMPLETION.md)。以下为历史快照。
+2026-10-11：当前任务 TASK-109，分支 codex/TASK-109-roadmap-completion，基线 main@2d5c3bbdadf48e37866e40bb826b875a6f1d2235（M3 / PR #73）。M0–M3 已整合；本轮补工程优化、营地动作和固定情境文字。真人录音经用户确认列为待补素材。当前已获用户提交、推送及合并授权，当前成果已提交并推送，整合状态见 [PR #74](https://github.com/XLingyyy/Hearthward/pull/74)，正式发行仍为 v0.3.0；完整状态见 [TASK-109 交接](handoffs/TASK-109.md)和[补全清单](planning/TASK-109/COMPLETION.md)。以下为历史快照。
 
 2026-10-11：当前开发任务 TASK-107 / M2，分支 codex/TASK-107-m2-content，基线 main@8784d4f1bdeea03189a090ca494d302d7a923b8b（M1 / PR #71）。六兴趣点、两新支线、三旧支线与 E05–08 已接入；工程定向检查及局部实机操作结果见 [TASK-107 报告](qa/TASK-107/REPORT.md)和[交接](handoffs/TASK-107.md)。本轮已获用户提交、推送及合并授权，整合状态以 [PR #72](https://github.com/XLingyyy/Hearthward/pull/72) 为准；完整路线和体验验收尚未完成，任务保持 Active。正式发布仍为 v0.3.0。以下是历史快照。
 

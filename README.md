@@ -1,6 +1,6 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险。当前发行版本为 **0.3.0**；M0–M3 源码已通过 PR #70–73 合入 main。当前工作分支 `codex/TASK-109-roadmap-completion` 正在补全原规划的工程、语言与视听要求，已获用户提交、推送与合并授权；正式发行版本保持不变。发行构建提交仍为 `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16`。
+UE 5.8.2 单人第三人称生存冒险。当前发行版本为 **0.3.0**；M0–M3 源码已通过 PR #70–73 合入 main。当前工作分支 `codex/TASK-109-roadmap-completion` 正在补全原规划的工程、语言与视听要求，已提交并推送，用户授权通过 [PR #74](https://github.com/XLingyyy/Hearthward/pull/74) 整合；正式发行版本保持不变。发行构建提交仍为 `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16`。
 
 [下载 v0.3.0](https://github.com/XLingyyy/Hearthward/releases/tag/v0.3.0) · [发行与验证记录](docs/releases/v0.3.0/REPORT.md) · [项目状态](docs/PROJECT_STATE.md) · [开发入口](docs/START_HERE.md)
 
