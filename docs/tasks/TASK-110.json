@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "id": "TASK-110",
+  "title": "统一高清物品图标与制作界面图示",
+  "status": "Active",
+  "updated_at": "2026-10-11",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-110-item-art",
+  "source_refs": [
+    "main@34908e89c095de50b9283441ef88198deea20819",
+    "2026-10-11 用户要求：所有物品图片统一重制、放大清晰、合成界面图文展示、与实物一致"
+  ],
+  "dependencies": [
+    "TASK-109"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Tests/",
+    "Resources/UI/",
+    "Resources/Data/gameplay.json",
+    "art_source/TASK-110/",
+    "scripts/ui/",
+    "scripts/tests/",
+    "README.md",
+    "docs/tasks/TASK-110.json",
+    "docs/tasks/TASK-110.md",
+    "docs/handoffs/TASK-110.md",
+    "docs/planning/TASK-110/",
+    "docs/qa/TASK-110/",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "全部物品图标有清晰统一的独立资源与实物对应记录。",
+    "背包、仓储、快捷栏及制作、维修、营地生产等物品展示使用统一图标。",
+    "制作材料与产出同时显示图片、名称和数量；实际UI验证。"
+  ],
+  "non_goals": [
+    "不改变物品数值、配方规则、实物模型和存档格式。",
+    "不提交、推送、合并或发布。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_asset_locks",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user",
+    "push": "granted_by_user",
+    "merge": "granted_by_user",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "保留用户原有旧GDD本地删除。",
+    "真人录音与TASK-109剩余模型/性能验收不属于本任务。",
+    "实现与定向验证完成，保持 Active 待 Owner 外观验收；详见 docs/qa/TASK-110/REPORT.md。",
+    "2026-10-11 用户明确授权提交、推送并合并 main，随后执行 TASK-111。"
+  ]
+}

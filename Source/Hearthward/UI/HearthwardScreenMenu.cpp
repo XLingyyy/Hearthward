@@ -139,7 +139,7 @@ void UHearthwardScreenWidget::ComposeInventoryScreen()
         }
         Inv(TEXT("text"),TEXT("类型  ")+HearthwardData::Text(Selected,TEXT("category")),{624,238},{252,38},17,TEXT("inventory.detail.category"),TEXT("inventory.detail")).Color=Color(TEXT("muted"));
         auto& Count=Inv(TEXT("text"),FString::Printf(TEXT("持有 %d · 可用 %d"),Bag->GetItemCount(SelectedItem),Bag->Available(SelectedItem)),{888,238},{254,38},17,TEXT("inventory.detail.quantity"),TEXT("inventory.detail")); Count.Align=TEXT("right");
-        Inv(TEXT("image"),TEXT(""),{754,282},{260,182},18,TEXT("inventory.detail.art"),TEXT("inventory.detail"),TEXT(""),SelectedItem==TEXT("axe")?TEXT("axeLarge"):HearthwardData::Text(Selected,TEXT("icon")));
+        Inv(TEXT("image"),TEXT(""),{754,264},{260,218},18,TEXT("inventory.detail.art"),TEXT("inventory.detail"),TEXT(""),HearthwardData::Text(Selected,TEXT("icon")));
         Inv(TEXT("text"),TEXT("物品说明"),{624,468},{518,42},21,TEXT("inventory.detail.descriptionHeading"),TEXT("inventory.detail")).Color=Color(TEXT("gold"));
         Rule(624,513,518,TEXT("inventory.detail.descriptionRule"),TEXT("inventory.detail"));
         const FString Description=(DetailInstance?TEXT("实例 ")+DetailInstance->Id.ToString(EGuidFormats::Digits).Left(8)

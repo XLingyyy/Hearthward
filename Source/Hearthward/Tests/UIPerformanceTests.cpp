@@ -1,4 +1,5 @@
 #include "../UI/HearthwardScreenWidget.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
@@ -12,6 +13,7 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Rendering/SlateRenderer.h"
 #include "Fonts/FontMeasure.h"
+#include "Components/BoxComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
 #include "Engine/GameViewportClient.h"
@@ -120,6 +122,84 @@ bool FJournal109ObjectiveTest::RunTest(const FString&)
         TestEqual(TEXT("current stage has one actionable step"),Label(TEXT("journal.detail.objective")),FString(TEXT("靠近家中的遗物包，按交互键取回遗物。")));
         TestEqual(TEXT("full opening objectives remain in details"),Label(TEXT("journal.detail.description")),HearthwardData::Text(HearthwardData::Find(TEXT("quests"),TEXT("main_01")),TEXT("objective")));
         TestTrue(TEXT("capture opening objective at actual text scale"),F.Screen->CaptureUI(FString::Printf(TEXT("TASK109-journal-main-%d"),Scale),1920,1080));
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FItemArt110Test,
+    "Hearthward.UI.Task110.ItemArt",EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FItemArt110Test::RunTest(const FString&)
+{
+    FUIPerformanceFixture109 F;
+    F.Player->SetActorLocation(FVector(0,0,90));
+    auto* Bag=F.Player->FindComponentByClass<UHearthwardInventoryComponent>();
+    FHearthwardInventorySnapshot Empty;Empty.BackpackRank=3;
+    TestTrue(TEXT("isolated QA inventory"),Bag->RestoreInventory(Empty));
+    for(const auto& Value:HearthwardData::Rows(TEXT("items")))
+        TestEqual(TEXT("QA item fits inventory"),Bag->TryAdd(FName(*HearthwardData::Text(Value->AsObject(),TEXT("id"))),1),EHearthwardInventoryResult::Success);
+    const auto Asset=[&](const FString& Id)
+    {
+        const auto Snapshot=F.Snapshot();
+        for(const auto& Value:Snapshot->GetArrayField(TEXT("elements")))
+        {
+            const auto Row=Value->AsObject();
+            if(Row->GetStringField(TEXT("id"))==Id)return Row->GetStringField(TEXT("asset"));
+        }
+        return FString();
+    };
+    const auto ScrollTo=[&](const FString& Id)
+    {
+        const auto Snapshot=F.Snapshot();
+        for(const auto& Value:Snapshot->GetArrayField(TEXT("elements")))
+        {
+            const auto Row=Value->AsObject();if(Row->GetStringField(TEXT("id"))!=Id)continue;
+            const float Delta=(200-Row->GetNumberField(TEXT("y")))/90;
+            F.Screen->NativeOnMouseWheel(F.Screen->GetCachedGeometry(),FPointerEvent(0,FVector2D(500,500),FVector2D(500,500),TSet<FKey>(),FKey(),Delta,FModifierKeysState()));
+            return;
+        }
+        AddError(TEXT("Scroll target missing: ")+Id);
+    };
+    F.Screen->OpenPage(TEXT("inventory"));
+    for(const auto& Value:HearthwardData::Rows(TEXT("items")))
+    {
+        const FString Id=HearthwardData::Text(Value->AsObject(),TEXT("id"));
+        F.Screen->ExecuteAction(TEXT("item:")+Id);
+        TestEqual(TEXT("inventory detail resolves this item's own art key"),Asset(TEXT("inventory.detail.art")),TEXT("item.")+Id);
+    }
+    auto& Camp=F.World->GetSubsystem<UHearthwardCampSubsystem>()->State;
+    Camp.AddCamp(TEXT("camp"),FVector::ZeroVector);Camp.Tier=4;
+    auto* Floor=F.World->SpawnActor<AActor>();
+    auto* FloorBox=NewObject<UBoxComponent>(Floor);Floor->AddInstanceComponent(FloorBox);Floor->SetRootComponent(FloorBox);
+    FloorBox->SetBoxExtent(FVector(1000,1000,10));FloorBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    FloorBox->SetCollisionResponseToAllChannels(ECR_Block);FloorBox->RegisterComponent();Floor->SetActorLocation(FVector(0,0,-10));
+    TestTrue(TEXT("nearby real workbench"),F.Player->FindComponentByClass<UHearthwardBuildingComponent>()->AddGift(TEXT("workbench"),FVector(200,0,0)));
+    FHearthwardCampFacility Facility;Facility.Id=FGuid::NewGuid();Facility.Kind=TEXT("forge");Facility.Level=3;Facility.Camp=TEXT("camp");Camp.Facilities.Add(Facility);
+    Bag->WearInstance(Bag->FirstInstance(TEXT("axe")),20);
+    for(int32 Scale:{100,150})
+    {
+        F.Instance->GetSubsystem<UHearthwardPlayerSettings>()->Comfort.TextScale=Scale;
+        for(const TCHAR* Id:{TEXT("herb"),TEXT("axe"),TEXT("fish_carp"),TEXT("seed_grain")})
+        {
+            F.Screen->OpenPage(TEXT("inventory"));F.Screen->ExecuteAction(FString(TEXT("item:"))+Id);
+            TestTrue(TEXT("render inventory detail"),F.Screen->CaptureUI(FString::Printf(TEXT("TASK110-inventory-%s-%d"),Id,Scale),1920,1080));
+        }
+        F.Screen->OpenPage(TEXT("crafting"));
+        TestEqual(TEXT("crafting entry succeeds"),F.Screen->GetPage(),FName(TEXT("crafting")));
+        TestTrue(TEXT("select three-material recipe"),F.Screen->ExecuteAction(TEXT("recipe:firepot")));
+        for(const TCHAR* Id:{TEXT("wood"),TEXT("stone"),TEXT("rope")})
+            TestEqual(TEXT("recipe ingredient carries matching item image"),Asset(FString(TEXT("crafting.ingredients."))+Id+TEXT(".icon")),FString(TEXT("item."))+Id);
+        TestEqual(TEXT("recipe output carries matching image"),Asset(TEXT("crafting.outputs.firepot.icon")),FString(TEXT("item.firepot")));
+        if(Scale>100)ScrollTo(TEXT("crafting.ingredients.wood.icon"));
+        TestTrue(TEXT("render crafting materials and output"),F.Screen->CaptureUI(FString::Printf(TEXT("TASK110-crafting-%d"),Scale),1920,1080));
+        F.Screen->OpenPage(TEXT("equipment"));F.Screen->ExecuteAction(TEXT("gear.select:")+Bag->FirstInstance(TEXT("axe")).ToString());
+        TestEqual(TEXT("equipment uses same axe art"),Asset(TEXT("equipment.detail.art")),FString(TEXT("item.axe")));
+        TestTrue(TEXT("render repair material table"),F.Screen->CaptureUI(FString::Printf(TEXT("TASK110-equipment-%d"),Scale),1920,1080));
+        F.Screen->OpenPage(TEXT("building"));
+        TestTrue(TEXT("render construction material rows"),F.Screen->CaptureUI(FString::Printf(TEXT("TASK110-building-%d"),Scale),1920,1080));
+        F.Screen->OpenPage(TEXT("camp"));F.Screen->ExecuteAction(TEXT("camp.tab:facilities"));F.Screen->ExecuteAction(TEXT("camp.facility:")+Facility.Id.ToString());
+        TestEqual(TEXT("camp processing retains output icon at each text scale"),Asset(TEXT("camp.recipe.outputs.shortblade_2.icon")),FString(TEXT("item.shortblade_2")));
+        if(Scale>100)ScrollTo(TEXT("camp.recipe.outputs.shortblade_2.icon"));
+        TestTrue(TEXT("render camp processing"),F.Screen->CaptureUI(FString::Printf(TEXT("TASK110-camp-%d"),Scale),1920,1080));
     }
     return true;
 }

@@ -181,8 +181,17 @@ void UHearthwardScreenWidget::ComposeCamp()
             {
                 auto Selected=Recipes.FindByPredicate([&](const auto& R){return Text(R,TEXT("id"))==CampRecipe.ToString();});
                 const auto Recipe=Selected?*Selected:Recipes[0];CampRecipe=FName(*Text(Recipe,TEXT("id")));
-                Label(TEXT("配方：")+CampCost(HearthwardCamp::Counts(Recipe,TEXT("outputs"))),570,530,850);
-                Label(TEXT("每批投入：")+CampCost(HearthwardCamp::Counts(Recipe,TEXT("inputs"))),570,575,850);
+                auto RecipeItems=[&](const TCHAR* Field,const TCHAR* Heading,double Y)
+                {
+                    Label(Heading,570,Y,110);
+                    int32 Index=0;const auto Counts=HearthwardCamp::Counts(Recipe,Field);
+                    const float Width=740.f/FMath::Max(1,Counts.Num());
+                    for(const auto& Count:Counts)
+                        ItemLine(Count.Key,Text(Find(TEXT("items"),Count.Key.ToString()),TEXT("name"))+FString::Printf(TEXT(" × %d"),Count.Value),
+                            {680+Index++*Width,Y},Width,TEXT("camp.recipe.")+FString(Field)+TEXT(".")+Count.Key.ToString(),TEXT("camp.facilities"),17);
+                };
+                RecipeItems(TEXT("outputs"),TEXT("每批产出"),530);
+                RecipeItems(TEXT("inputs"),TEXT("每批投入"),575);
                 Button(TEXT("切换配方"),TEXT("camp.recipeNext"),570,625,240);Button(TEXT("即时加工1批"),TEXT("camp.craft"),840,625,320);
                 Button(TEXT("设为本营地后台生产"),TEXT("camp.configure"),570,685,590);
             }

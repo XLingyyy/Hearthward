@@ -101,7 +101,7 @@ void UHearthwardScreenWidget::ComposeEquipment()
         const int32 Available=Bag?Bag->Available(ManagedItem):GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->Available(ManagedItem);
         Gear(TEXT("text"),FString::Printf(TEXT("持有 %d · 可用 %d"),TotalCount,Available),
             {888,238},{254,38},17,TEXT("equipment.detail.state"),TEXT("equipment.detail")).Align=TEXT("right");
-        Gear(TEXT("image"),TEXT(""),{754,282},{260,182},18,TEXT("equipment.detail.art"),TEXT("equipment.detail"),TEXT(""),ManagedItem==TEXT("axe")?TEXT("axeLarge"):Text(Row,TEXT("icon")));
+        Gear(TEXT("image"),TEXT(""),{754,264},{260,218},18,TEXT("equipment.detail.art"),TEXT("equipment.detail"),TEXT(""),Text(Row,TEXT("icon")));
         Gear(TEXT("text"),TEXT("物品说明"),{624,468},{518,42},21,TEXT("equipment.detail.description.heading"),TEXT("equipment.detail")).Color=Color(TEXT("gold"));
         Rule(624,513,518,TEXT("equipment.detail.description.rule"),TEXT("equipment.detail"));
         const FString Description=(Selected?TEXT("实例 ")+Selected->Id.ToString(EGuidFormats::Digits).Left(8)
@@ -170,18 +170,29 @@ void UHearthwardScreenWidget::ComposeEquipment()
                 const FString Label=Fraction==1?HearthwardInput::Label(GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Bindings,TEXT("repair.commit"))+TEXT(" 全部修复"):TEXT("修复 ")+Percent+TEXT("%");
                 Gear(TEXT("menuAction"),Label,{1202.f+Index++*139,510},{128,44},16,TEXT("equipment.repair.")+Percent,TEXT("equipment.actions"),EquipmentActionToken(TEXT("gear.repair:")+Percent)).Align=TEXT("center");
             }
-            FString Quotes;
+            TMap<FName,int32> FullCost;double FullRestored;
+            const bool HasQuote=HearthwardWorkshop::RepairQuote(Bag,Selected->Id,1.,FullCost,FullRestored);
+            const float ColumnWidth=240.f/FMath::Max(1,FullCost.Num());
+            int32 Material=0;
+            for(const auto& M:FullCost)
+                ItemLine(M.Key,Text(Find(TEXT("items"),M.Key.ToString()),TEXT("name")),{1368+Material++*ColumnWidth,559},ColumnWidth,
+                    TEXT("equipment.repair.material.")+M.Key.ToString(),TEXT("equipment.actions"),12,22);
+            int32 QuoteRow=0;
             for(double Fraction:{.25,.5,1.})
             {
                 TMap<FName,int32> Cost;double Restored;
                 if(HearthwardWorkshop::RepairQuote(Bag,Selected->Id,Fraction,Cost,Restored))
                 {
-                    Quotes+=FString::Printf(TEXT("%.0f%% 恢复%.2f："),Fraction*100,Restored);
-                    for(const auto& M:Cost)Quotes+=Text(Find(TEXT("items"),M.Key.ToString()),TEXT("name"))+FString::Printf(TEXT("×%d "),M.Value);
-                    Quotes+=TEXT("\n");
+                    const float Y=588+QuoteRow++*25;
+                    Gear(TEXT("text"),FString::Printf(TEXT("%.0f%% +%.1f"),Fraction*100,Restored),{1202,Y},{164,25},12,
+                        TEXT("equipment.repair.quote.")+FString::FromInt(QuoteRow),TEXT("equipment.actions"));
+                    Material=0;
+                    for(const auto& M:FullCost)
+                        Gear(TEXT("text"),FString::Printf(TEXT("×%d"),Cost.FindRef(M.Key)),{1368+Material++*ColumnWidth,Y},{ColumnWidth,25},13,
+                            TEXT("equipment.repair.count.")+FString::FromInt(QuoteRow)+TEXT(".")+M.Key.ToString(),TEXT("equipment.actions"));
                 }
             }
-            Gear(TEXT("text"),Quotes.IsEmpty()?TEXT("当前装备无需修复或暂无维修配方"):Quotes,{1202,564},{406,104},14,TEXT("equipment.repair.quote"),TEXT("equipment.actions")).Color=Color(TEXT("muted"));
+            if(!HasQuote)Gear(TEXT("text"),TEXT("当前装备无需修复或暂无维修配方"),{1202,564},{406,104},14,TEXT("equipment.repair.quote"),TEXT("equipment.actions")).Color=Color(TEXT("muted"));
             Gear(TEXT("menuAction"),TEXT("将选中装备放到地面"),{1202,682},{406,42},18,TEXT("equipment.drop"),TEXT("equipment.actions"),Selected->UniqueClaim.IsNone()?EquipmentActionToken(TEXT("gear.drop")):TEXT("ask:")+EquipmentActionToken(TEXT("gear.dropConfirmed"))).Align=TEXT("center");
         }
     }
@@ -193,9 +204,13 @@ void UHearthwardScreenWidget::ComposeEquipment()
         if(NextRank)
         {
             Cost=FString::Printf(TEXT("下一阶 %.0f 容量 · 营地 %.0f 阶\n"),Number(NextRank,TEXT("capacity")),Number(NextRank,TEXT("minimum_camp_tier")));
-            for(const auto& M:NextRank->GetObjectField(TEXT("incremental_cost"))->Values)Cost+=Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name"))+FString::Printf(TEXT("×%.0f  "),M.Value->AsNumber());
+            int32 Material=0;const auto& Materials=NextRank->GetObjectField(TEXT("incremental_cost"))->Values;
+            const float Width=406.f/FMath::Max(1,Materials.Num());
+            for(const auto& M:Materials)
+                ItemLine(FName(*M.Key),Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name"))+FString::Printf(TEXT("×%.0f"),M.Value->AsNumber()),
+                    {1202+Material++*Width,761},Width,TEXT("equipment.upgrade.material.")+FString(*M.Key),TEXT("equipment.actions"),12,24);
         }
-        Gear(TEXT("text"),Cost,{1202,734},{406,50},14,TEXT("equipment.upgrade.cost"),TEXT("equipment.actions")).Color=Color(TEXT("muted"));
+        Gear(TEXT("text"),Cost,{1202,730},{406,28},14,TEXT("equipment.upgrade.cost"),TEXT("equipment.actions")).Color=Color(TEXT("muted"));
         Gear(TEXT("menuAction"),TEXT("找后勤员升级此背包"),{1202,792},{406,36},16,TEXT("equipment.upgrade"),TEXT("equipment.actions"),EquipmentActionToken(TEXT("gear.upgrade"))).Align=TEXT("center");
     }
     Rule(40,854,1592,TEXT("equipment.footer.rule"),TEXT("equipment.footer"));

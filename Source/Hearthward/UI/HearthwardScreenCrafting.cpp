@@ -21,8 +21,10 @@ void UHearthwardScreenWidget::ComposeCrafting()
     for(int32 I=Scroll;I<FMath::Min(Recipes.Num(),Scroll+4);++I)
     {
         const auto R=Recipes[I]; const FString Id=Text(R,TEXT("id"));
-        Element(TEXT("button"),Text(R,TEXT("name")),FVector2D(318,340+(I-Scroll)*67),FVector2D(370,58),22,TEXT("recipe:")+Id,TEXT(""),SelectedRecipe==FName(*Id));
+        Element(TEXT("button"),TEXT(""),FVector2D(318,340+(I-Scroll)*67),FVector2D(370,58),22,TEXT("recipe:")+Id,TEXT(""),SelectedRecipe==FName(*Id));
         Elements.Last().Component=TEXT("crafting.recipes"); Elements.Last().LayoutId=TEXT("crafting.recipe.")+Id;
+        const FString Output(*R->GetObjectField(TEXT("outputs"))->Values.CreateConstIterator().Key());
+        ItemLine(FName(*Output),Text(R,TEXT("name")),{326,350.+(I-Scroll)*67},354,TEXT("crafting.recipe.label.")+Id,TEXT("crafting.recipes"),20);
     }
     auto Filter=[&](const TCHAR* Id,FString Label,FVector2D Position,FVector2D Size,const FString& Action,bool Selected=false)
     {
@@ -40,35 +42,36 @@ void UHearthwardScreenWidget::ComposeCrafting()
     const auto R=Find(TEXT("craftingRecipes"),SelectedRecipe.ToString()); if(!R) return;
     auto Identify=[&](const TCHAR* Id,const TCHAR* Component=TEXT("crafting.details")) { Elements.Last().Component=Component; Elements.Last().LayoutId=Id; };
     Element(TEXT("text"),Text(R,TEXT("name")),FVector2D(905,210),FVector2D(450,55),32); Identify(TEXT("crafting.name"));
-    Element(TEXT("image"),TEXT(""),FVector2D(792,200),FVector2D(95,95),18,TEXT(""),Text(R,TEXT("icon"))); Identify(TEXT("crafting.icon"));
-    Element(TEXT("text"),Text(R,TEXT("description")),FVector2D(792,315),FVector2D(580,60),19); Identify(TEXT("crafting.description"));
+    Element(TEXT("image"),TEXT(""),FVector2D(792,200),FVector2D(95,95),18,TEXT(""),Text(Find(TEXT("items"),FString(*R->GetObjectField(TEXT("outputs"))->Values.CreateConstIterator().Key())),TEXT("icon"))); Identify(TEXT("crafting.icon"));
+    Element(TEXT("text"),Text(R,TEXT("description")),FVector2D(792,304),FVector2D(580,44),19); Identify(TEXT("crafting.description"));
     const auto* Bag=Inventory();
     const auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     const bool UseStorage=!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(GetOwningPlayerPawn()->GetActorLocation()).IsNone();
-    FString Ingredients=TEXT("所需材料   可用 / 本次消耗\n");
-    FString Products=TEXT("本次获得\n"); double Delta=0;
+    Element(TEXT("text"),TEXT("所需材料   可用 / 本次消耗"),{792,351},{580,28},18);Identify(TEXT("crafting.ingredients"));
+    int32 MaterialIndex=0;double Delta=0;
     for(const auto& Need:HearthwardCraftingDiscovery::Materials(R,CraftingBatches,Bag,Storage,UseStorage))
     {
         const auto Item=Find(TEXT("items"),Need.Item.ToString());
-        Ingredients+=Text(Item,TEXT("name"))+(UseStorage
-            ?FString::Printf(TEXT("   背包可用 %d + 仓储可用 %d / 消耗 %d · 缺 %d\n"),Need.InBag,Need.InStorage,Need.Needed,Need.Missing)
-            :FString::Printf(TEXT("   背包可用 %d / 消耗 %d · 缺 %d（仓储参考 %d）\n"),Need.InBag,Need.Needed,Need.Missing,Need.InStorage));
+        const FString Label=Text(Item,TEXT("name"))+(UseStorage
+            ?FString::Printf(TEXT("   背包可用 %d + 仓储可用 %d / 消耗 %d · 缺 %d"),Need.InBag,Need.InStorage,Need.Needed,Need.Missing)
+            :FString::Printf(TEXT("   背包可用 %d / 消耗 %d · 缺 %d（仓储参考 %d）"),Need.InBag,Need.Needed,Need.Missing,Need.InStorage));
+        ItemLine(Need.Item,Label,{792,383.+MaterialIndex++*37},580,TEXT("crafting.ingredients.")+Need.Item.ToString(),TEXT("crafting.details"),17);
         Delta-=Number(Item,TEXT("weight"))*FMath::Min(Need.InBag,Need.Needed);
     }
+    Element(TEXT("text"),TEXT("本次获得"),{792,500},{580,28},18);Identify(TEXT("crafting.outputs"));
+    int32 OutputIndex=0;
     for(const auto& O:R->GetObjectField(TEXT("outputs"))->Values)
     {
         const auto Item=Find(TEXT("items"),FString(*O.Key)); const int32 Made=int32(O.Value->AsNumber())*CraftingBatches;
-        Products+=Text(Item,TEXT("name"))+FString::Printf(TEXT(" × %d   （持有 %d）\n"),Made,Inventory()->GetItemCount(FName(*O.Key)));
+        ItemLine(FName(*O.Key),Text(Item,TEXT("name"))+FString::Printf(TEXT(" × %d   （持有 %d）"),Made,Inventory()->GetItemCount(FName(*O.Key))),{792,529.+OutputIndex++*37},580,TEXT("crafting.outputs.")+FString(*O.Key),TEXT("crafting.details"));
         Delta+=Number(Item,TEXT("weight"))*Made;
     }
-    Element(TEXT("text"),Ingredients,FVector2D(792,370),FVector2D(580,105),18); Identify(TEXT("crafting.ingredients"));
-    Element(TEXT("text"),Products,FVector2D(792,478),FVector2D(580,65),18); Identify(TEXT("crafting.outputs"));
     const FString Reason=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardBuildingComponent>()->CraftingStatus(Workbench,SelectedRecipe,CraftingBatches,CraftingEpoch);
     const FString Weight=Reason.IsEmpty()
         ?FString::Printf(TEXT("负重 %.2f → %.2f / %.0f"),Inventory()->GetWeight(),Inventory()->GetWeight()+Delta/100,Inventory()->GetCapacity())
         :FString::Printf(TEXT("当前负重 %.2f / %.0f"),Inventory()->GetWeight(),Inventory()->GetCapacity());
-    Element(TEXT("text"),Weight,FVector2D(792,547),FVector2D(580,30),18); Identify(TEXT("crafting.weight"));
-    Element(TEXT("text"),CraftingTrackerText(false),{792,582},{580,80},16);Identify(TEXT("crafting.tracker"));
+    Element(TEXT("text"),Weight,FVector2D(792,573),FVector2D(580,30),18); Identify(TEXT("crafting.weight"));
+    Element(TEXT("text"),CraftingTrackerText(false),{792,608},{580,56},16);Identify(TEXT("crafting.tracker"));
     Element(TEXT("button"),TEXT("−"),FVector2D(800,675),FVector2D(65,50),26,TEXT("craftLess")); Identify(TEXT("crafting.less"),TEXT("crafting.actions"));
     Element(TEXT("text"),FString::Printf(TEXT("%d 批"),CraftingBatches),FVector2D(895,685),FVector2D(140,35),22); Identify(TEXT("crafting.quantity"),TEXT("crafting.actions"));
     Element(TEXT("button"),TEXT("+"),FVector2D(1040,675),FVector2D(65,50),26,TEXT("craftMore")); Identify(TEXT("crafting.more"),TEXT("crafting.actions"));

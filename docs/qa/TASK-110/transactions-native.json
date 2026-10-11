@@ -1,0 +1,233 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "LAPTOP-R8NPOP05",
+			"instance": "B31C67F64135D5DD9CDD0FB2D45A2652",
+			"instanceName": "LAPTOP-R8NPOP05-26544",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+			"model": "Default",
+			"gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+			"rAMInGB": 16,
+			"renderMode": "D3D12_SM6",
+			"rHI": "D3D12 (SM6)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.11-14.15.06",
+	"succeeded": 0,
+	"succeededWithWarnings": 2,
+	"failed": 1,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 10.752042770385742,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "WarehouseMaterialsPresentation",
+			"fullTestPath": "Hearthward.Crafting057.WarehouseMaterialsPresentation",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"B31C67F64135D5DD9CDD0FB2D45A2652"
+			],
+			"duration": 3.103022575378418,
+			"dateTime": "2026.10.11-14.14.55",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_0' does not have a valid PlayerInput object. Failed to load user settings.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-14.14.56"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Material recovery before release: first=stone camp=2 held=0 phase=EHearthwardCompanionPhase::WaitingAtCamp",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-14.14.58"
+				}
+			],
+			"warnings": 1,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "RepairEntryKeepsSelectedInstance",
+			"fullTestPath": "Hearthward.Equipment055.RepairEntryKeepsSelectedInstance",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"B31C67F64135D5DD9CDD0FB2D45A2652"
+			],
+			"duration": 2.3338797092437744,
+			"dateTime": "2026.10.11-14.14.59",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_1' does not have a valid PlayerInput object. Failed to load user settings.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-14.14.59"
+				}
+			],
+			"warnings": 1,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "ItemArt",
+			"fullTestPath": "Hearthward.UI.Task110.ItemArt",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"B31C67F64135D5DD9CDD0FB2D45A2652"
+			],
+			"duration": 5.3151402473449707,
+			"dateTime": "2026.10.11-14.15.01",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogEnhancedInput: UEnhancedInputLocalPlayerSubsystem for Local Player 'LocalPlayer_2' does not have a valid PlayerInput object. Failed to load user settings.",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-14.15.01"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogHttp: HTTP request timed out after 3.00 seconds URL=https://www.google.com/generate_204",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.11-14.15.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'recipe ingredient carries matching item image' to be \"item.wood\", but it was \"\".",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\UIPerformanceTests.cpp",
+					"lineNumber": 169,
+					"timestamp": "2026.10.11-14.15.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'recipe ingredient carries matching item image' to be \"item.stone\", but it was \"\".",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\UIPerformanceTests.cpp",
+					"lineNumber": 169,
+					"timestamp": "2026.10.11-14.15.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'recipe ingredient carries matching item image' to be \"item.rope\", but it was \"\".",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\UIPerformanceTests.cpp",
+					"lineNumber": 169,
+					"timestamp": "2026.10.11-14.15.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'recipe output carries matching image' to be \"item.firepot\", but it was \"\".",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\UIPerformanceTests.cpp",
+					"lineNumber": 170,
+					"timestamp": "2026.10.11-14.15.04"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'recipe ingredient carries matching item image' to be \"item.wood\", but it was \"\".",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\UIPerformanceTests.cpp",
+					"lineNumber": 169,
+					"timestamp": "2026.10.11-14.15.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'recipe ingredient carries matching item image' to be \"item.stone\", but it was \"\".",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\UIPerformanceTests.cpp",
+					"lineNumber": 169,
+					"timestamp": "2026.10.11-14.15.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'recipe ingredient carries matching item image' to be \"item.rope\", but it was \"\".",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\UIPerformanceTests.cpp",
+					"lineNumber": 169,
+					"timestamp": "2026.10.11-14.15.06"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'recipe output carries matching image' to be \"item.firepot\", but it was \"\".",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\UIPerformanceTests.cpp",
+					"lineNumber": 170,
+					"timestamp": "2026.10.11-14.15.06"
+				}
+			],
+			"warnings": 2,
+			"errors": 8,
+			"artifacts": []
+		}
+	]
+}

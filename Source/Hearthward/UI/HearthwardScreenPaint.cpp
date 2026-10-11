@@ -308,7 +308,12 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             Frame(E.Position,E.Size,Color(Focus?TEXT("gold"):TEXT("bronze"))*(Focus?.9f:.6f),L+3);
             Frame(E.Position+FVector2D(2,2),E.Size-FVector2D(4,4),FLinearColor(.18f,.17f,.15f,1),L+3);
             if(const auto* Art=Brush(E.Asset))
-                FSlateDrawElement::MakeBox(Out,L+3,Geometry(E.Position+FVector2D(10,6),E.Size-FVector2D(20,22)),Art,ESlateDrawEffect::None,FLinearColor(Focus?1.f:.85f,Focus?1.f:.85f,Focus?1.f:.85f,InventoryDragging && E.LayoutId==InventoryDragSource?.3f:1.f));
+            {
+                const FVector2D Available=E.Size-FVector2D(16,20);
+                const float Side=FMath::Min(Available.X,Available.Y);
+                const FVector2D Size=E.Asset.StartsWith(TEXT("item."))?FVector2D(Side,Side):Available;
+                FSlateDrawElement::MakeBox(Out,L+3,Geometry(E.Position+FVector2D(8,5)+(Available-Size)*.5,Size),Art,ESlateDrawEffect::None,FLinearColor(Focus?1.f:.85f,Focus?1.f:.85f,Focus?1.f:.85f,InventoryDragging && E.LayoutId==InventoryDragSource?.3f:1.f));
+            }
             if(E.Value>0)
                 if(const auto* Mark=Brush(TEXT("equippedMark")))
                     FSlateDrawElement::MakeBox(Out,L+3,Geometry(E.Position+FVector2D(5,E.Size.Y-18),{13,13}),Mark,ESlateDrawEffect::None,Color(TEXT("gold")));
@@ -410,7 +415,12 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
                         FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position+FVector2D(X[Column],Y[Row]),FVector2D(X[Column+1]-X[Column],Y[Row+1]-Y[Row])),&Slice,ESlateDrawEffect::None,FLinearColor::White);
                     }
                 }
-                else FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position,E.Size),B,ESlateDrawEffect::None,FLinearColor::White);
+                else
+                {
+                    const float Side=FMath::Min(E.Size.X,E.Size.Y);
+                    const FVector2D Size=E.Asset.StartsWith(TEXT("item."))?FVector2D(Side,Side):E.Size;
+                    FSlateDrawElement::MakeBox(Out,L,Geometry(E.Position+(E.Size-Size)*.5,Size),B,ESlateDrawEffect::None,FLinearColor::White);
+                }
             }
         if(E.Type==TEXT("panel") || (E.Type==TEXT("notice") && Page!=TEXT("hud")))
         {

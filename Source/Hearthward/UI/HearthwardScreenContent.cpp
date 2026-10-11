@@ -676,7 +676,8 @@ void UHearthwardScreenWidget::ComposeBuilding()
     for(const auto& M:R->GetObjectField(TEXT("materials"))->Values)
     {
         const float Y=370+MaterialIndex++*50;
-        Add(FString(TEXT("building.material.name."))+FString(*M.Key),TEXT("text"),Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name")),{788,Y},{440,44},20);
+        Add(TEXT("building.material.icon.")+FString(*M.Key),TEXT("image"),TEXT(""),{788,Y},{36,36}).Asset=Text(Find(TEXT("items"),FString(*M.Key)),TEXT("icon"));
+        Add(FString(TEXT("building.material.name."))+FString(*M.Key),TEXT("text"),Text(Find(TEXT("items"),FString(*M.Key)),TEXT("name")),{834,Y},{394,44},20);
         const int32 Available=Inventory()->Available(FName(*M.Key))+GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->Available(FName(*M.Key));
         Add(FString(TEXT("building.material.count."))+FString(*M.Key),TEXT("text"),FString::Printf(TEXT("%d / %.0f"),Available,M.Value->AsNumber()),{1250,Y},{346,44},20).Align=TEXT("right");
     }

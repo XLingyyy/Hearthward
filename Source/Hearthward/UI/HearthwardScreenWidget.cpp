@@ -134,6 +134,10 @@ void UHearthwardScreenWidget::LoadTheme()
         {
             Texture=FImageUtils::ImportFileAsTexture2D(Root/File);
             checkf(Texture,TEXT("Missing UI art %s"),*File);
+            if(File.StartsWith(TEXT("Items/")))
+            {
+                Texture->Filter=TF_Bilinear;Texture->AddressX=TA_Clamp;Texture->AddressY=TA_Clamp;Texture->UpdateResource();
+            }
             Textures.Add(Texture); Loaded.Add(File,Texture);
         }
         if(FString(Entry.Key).EndsWith(TEXT("Highlight")))
@@ -964,6 +968,16 @@ void UHearthwardScreenWidget::ApplyReadableLayout()
             do {const int32 Count=FMath::Clamp(Measure->FindLastWholeCharacterIndexBeforeOffset(FStringView(Line),Font,1230)+1,1,FMath::Max(1,Line.Len()));Line=Line.Mid(Count);++Lines;} while(!Line.IsEmpty());
         }
         E.Position={190,Y};E.Size={1292,FMath::Max(68.f,Lines*E.Font*1.6f+22)};Y+=E.Size.Y+14;
+        const auto* ItemIcon=Original.FindByPredicate([&](const auto& Icon)
+        {return Icon.Type==TEXT("image") && Icon.Asset.StartsWith(TEXT("item."))
+            && (Icon.LayoutId==Source.LayoutId+TEXT(".icon")
+                || (Source.Action.StartsWith(TEXT("recipe:")) && Icon.Position.X>=Source.Position.X && Icon.Position.Y>=Source.Position.Y
+                    && Icon.Position.X<Source.Position.X+Source.Size.X && Icon.Position.Y<Source.Position.Y+Source.Size.Y));});
+        if(ItemIcon)
+        {
+            auto Icon=*ItemIcon;Icon.Position=E.Position+FVector2D(20,(E.Size.Y-44)*.5);Icon.Size={44,44};
+            Rows.Add(Icon);E.Position.X+=60;E.Size.X-=60;
+        }
         Rows.Add(E);
     }
     const float Bottom=Page==TEXT("dialogue") || Page==TEXT("memory")?770:835;
