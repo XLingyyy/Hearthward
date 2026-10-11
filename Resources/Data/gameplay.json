@@ -2420,6 +2420,72 @@
         20000
       ],
       "radius": 1800
+    },
+    {
+      "id": "poi_well_01",
+      "name": "旧井院",
+      "kind": "landmark",
+      "position": [
+        90700,
+        58000,
+        20000
+      ],
+      "radius": 1400
+    },
+    {
+      "id": "poi_cellar_01",
+      "name": "封存粮窖",
+      "kind": "landmark",
+      "position": [
+        98500,
+        58500,
+        20000
+      ],
+      "radius": 1400
+    },
+    {
+      "id": "poi_backpath_01",
+      "name": "屋后小径",
+      "kind": "landmark",
+      "position": [
+        88200,
+        60400,
+        20000
+      ],
+      "radius": 1400
+    },
+    {
+      "id": "poi_signal_01",
+      "name": "旧号台",
+      "kind": "landmark",
+      "position": [
+        122500,
+        54500,
+        20000
+      ],
+      "radius": 1400
+    },
+    {
+      "id": "poi_tents_01",
+      "name": "残留营帐",
+      "kind": "landmark",
+      "position": [
+        125200,
+        59300,
+        20000
+      ],
+      "radius": 1400
+    },
+    {
+      "id": "poi_home_steps_01",
+      "name": "归乡石阶",
+      "kind": "landmark",
+      "position": [
+        106800,
+        44000,
+        20000
+      ],
+      "radius": 1400
     }
   ],
   "quests": [
@@ -2908,7 +2974,7 @@
     {
       "id": "side_11",
       "name": "下一季的种子",
-      "description": "在营地播种谷物。",
+      "description": "从既有采集、掉落或制作途径取得种子，在营地种下一株谷物。",
       "event": "campaign",
       "target": "side_11",
       "required": 2,
@@ -2917,10 +2983,10 @@
       "kind": "side",
       "category": "side",
       "location": "camp",
-      "objective": "在营地播种谷物。\n等待成熟，亲手收获。",
+      "objective": "从既有采集、掉落或制作途径取得种子，在营地种下一株谷物。\n照料并实际收获谷物；入手现成粮食不能替代这次收获。",
       "reward": "600经验 · 谷物种子×2 · 野菜种子×2",
       "companion": "可用 X 让弟弟跟随，用 Z 让他等待。危险时先确认他的状态。",
-      "failure": "进度会随存档保留。遇到危险可先撤退，准备后再回来。"
+      "failure": "可补种，未成熟等待；不得以持有粮食冒充收获"
     },
     {
       "id": "side_12",
@@ -2942,7 +3008,7 @@
     {
       "id": "side_13",
       "name": "没有送出的信",
-      "description": "从住区旧匣中取回家信。",
+      "description": "从住区旧物匣取回家信；可经井院或屋后小径选择接近方向。",
       "event": "campaign",
       "target": "side_13",
       "required": 2,
@@ -2951,15 +3017,15 @@
       "kind": "side",
       "category": "side",
       "location": "loot_dwellings",
-      "objective": "从住区旧匣中取回家信。\n带给营地里等信的族人。",
+      "objective": "从住区旧物匣取回家信；可经井院或屋后小径选择接近方向。\n回营找到等信的族人，亲手交还，再到日志登记。",
       "reward": "600经验 · 大餐×2",
       "companion": "可用 X 让弟弟跟随，用 Z 让他等待。危险时先确认他的状态。",
-      "failure": "进度会随存档保留。遇到危险可先撤退，准备后再回来。"
+      "failure": "收件者为不可死亡初始族人，任务物不占普通材料槽"
     },
     {
       "id": "side_14",
       "name": "岗哨上的记录",
-      "description": "取回议场留下的巡哨记录。",
+      "description": "接近议场旧物匣取回巡哨记录；营帐只能提供眼前局部观察。",
       "event": "campaign",
       "target": "side_14",
       "required": 2,
@@ -2968,10 +3034,10 @@
       "kind": "side",
       "category": "side",
       "location": "loot_assembly",
-      "objective": "取回议场留下的巡哨记录。\n回营地记录台抄录见闻。",
+      "objective": "接近议场旧物匣取回巡哨记录；营帐只能提供眼前局部观察。\n回营在记录台抄录；记录保留当时见闻，不提供实时敌人位置。",
       "reward": "600经验 · 箭矢×16",
       "companion": "可用 X 让弟弟跟随，用 Z 让他等待。危险时先确认他的状态。",
-      "failure": "进度会随存档保留。遇到危险可先撤退，准备后再回来。"
+      "failure": "敌人位置是当时记录，不能解锁实时全知；不触发新增援"
     },
     {
       "id": "side_15",
@@ -3020,6 +3086,40 @@
       "category": "side",
       "location": "poi_workshop_01",
       "objective": "观察地点，选择接近路线，取回受保护任务物。\n回到隐蔽营地交还物件，查看陈列与人物回应。",
+      "reward": "600经验 · 营地陈列与回应",
+      "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
+      "failure": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。"
+    },
+    {
+      "id": "side_exp_well_01",
+      "name": "井边的记号",
+      "description": "辨认井边记号，取回北侧小箱里的旧碗。",
+      "event": "campaign",
+      "target": "side_exp_well_01",
+      "required": 2,
+      "xp": 600,
+      "requires": "",
+      "kind": "side",
+      "category": "side",
+      "location": "poi_well_01",
+      "objective": "辨认井边记号，取回北侧小箱里的旧碗。\n回到隐蔽营地交还旧碗，听听族人的回应。",
+      "reward": "600经验 · 营地陈列与回应",
+      "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
+      "failure": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。"
+    },
+    {
+      "id": "side_exp_signal_01",
+      "name": "旧号台的回声",
+      "description": "观察号台和附近守军，取回台后的旧旗。",
+      "event": "campaign",
+      "target": "side_exp_signal_01",
+      "required": 2,
+      "xp": 600,
+      "requires": "",
+      "kind": "side",
+      "category": "side",
+      "location": "poi_signal_01",
+      "objective": "观察号台和附近守军，取回台后的旧旗。\n沿掩体退回隐蔽营地，把旧旗交给等候的人。",
       "reward": "600经验 · 营地陈列与回应",
       "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
       "failure": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。"
@@ -9649,7 +9749,7 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "弟弟：地形没变，守在那里的人变了。",
+          "弟弟：营地安顿好了。沿渡口和山脊看清故乡入口，先给自己留条退路。",
           "弟弟：入口记下了，怎么进去由你定。"
         ],
         "saved_fields": [
@@ -9689,7 +9789,7 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "弟弟：先把能守住的地方拿回来。",
+          "弟弟：水岸、作坊、住区和议场的路不同，先看清一处，再决定下一步。",
           "弟弟：两处旗帜都换了，剩下的路能走得更稳。"
         ],
         "saved_fields": [
@@ -9729,7 +9829,7 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "弟弟：还不能漏下守军，先看清敌和旗帜两项。",
+          "弟弟：四面旗帜都要确认，剩下的威胁也不能漏掉。",
           "弟弟：这一次，火可以留在这里了。"
         ],
         "saved_fields": [
@@ -9769,7 +9869,7 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "弟弟：两边用的是同一份家当，别再往返搬了。",
+          "弟弟：回来以后，把仓储和工作区用起来。今晚终于可以留在这里。",
           "弟弟：有两处落脚的地方，日子就能接着过。"
         ],
         "saved_fields": [
@@ -10199,8 +10299,8 @@
         "location": "camp",
         "trigger": "营地种植职责NPC提示",
         "steps": [
-          "通过048渠道获得种子",
-          "在任一营地实际播种一株grain并成功收获"
+          "从既有采集、掉落或制作途径取得种子，在营地种下一株谷物。",
+          "照料并实际收获谷物；入手现成粮食不能替代这次收获。"
         ],
         "success": "harvest:side_11真实收获事件",
         "failure_or_branch": "可补种，未成熟等待；不得以持有粮食冒充收获",
@@ -10218,8 +10318,8 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "这件事还没有做完。",
-          "已经办妥，东西都登记过了。"
+          "种植者：留一块能照料到的地，种下去，回来时记得看看。",
+          "种植者：这一季的谷物收好了。种子留着，下次还会用到。"
         ],
         "saved_fields": [
           "quest_id",
@@ -10278,8 +10378,8 @@
         "location": "loot_dwellings",
         "trigger": "发现住区的家信",
         "steps": [
-          "取回quest_token:family_letter",
-          "在营地向初始族人civilian_initial_01交付"
+          "从住区旧物匣取回家信；可经井院或屋后小径选择接近方向。",
+          "回营找到等信的族人，亲手交还，再到日志登记。"
         ],
         "success": "delivered:family_letter事实",
         "failure_or_branch": "收件者为不可死亡初始族人，任务物不占普通材料槽",
@@ -10296,8 +10396,8 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "这件事还没有做完。",
-          "已经办妥，东西都登记过了。"
+          "族人：井院附近那只旧匣里，也许还留着家人的信。",
+          "族人：字还认得。我把信收在旧物桌上，等回去再仔细看。"
         ],
         "saved_fields": [
           "quest_id",
@@ -10317,8 +10417,8 @@
         "location": "loot_assembly",
         "trigger": "抵达议场外围即可获得线索",
         "steps": [
-          "取回quest_token:watch_record",
-          "在营地记录台抄录路口和巡哨见闻"
+          "接近议场旧物匣取回巡哨记录；营帐只能提供眼前局部观察。",
+          "回营在记录台抄录；记录保留当时见闻，不提供实时敌人位置。"
         ],
         "success": "copied:watch_record事实",
         "failure_or_branch": "敌人位置是当时记录，不能解锁实时全知；不触发新增援",
@@ -10335,8 +10435,8 @@
         },
         "rescued_people": [],
         "dialogue": [
-          "这件事还没有做完。",
-          "已经办妥，东西都登记过了。"
+          "记录者：先认清号台与退路，能取回记录就回来。",
+          "记录者：路口和旧哨位已抄好。下次经过，仍要重新观察。"
         ],
         "saved_fields": [
           "quest_id",
@@ -10420,8 +10520,8 @@
           "timeline_epoch"
         ],
         "completion_policy": "persistent taken/delivered facts and existing reward transaction",
-        "m1_taken": "m1:river_taken",
-        "m1_delivered": "m1:river_delivered"
+        "exploration_taken": "m1:river_taken",
+        "exploration_delivered": "m1:river_delivered"
       },
       {
         "id": "side_exp_workshop_01",
@@ -10456,8 +10556,80 @@
           "timeline_epoch"
         ],
         "completion_policy": "persistent taken/delivered facts and existing reward transaction",
-        "m1_taken": "m1:tools_taken",
-        "m1_delivered": "m1:tools_delivered"
+        "exploration_taken": "m1:tools_taken",
+        "exploration_delivered": "m1:tools_delivered"
+      },
+      {
+        "id": "side_exp_well_01",
+        "name": "井边的记号",
+        "category": "side",
+        "requires": [],
+        "location": "poi_well_01",
+        "trigger": "实际发现地点后记录",
+        "steps": [
+          "辨认井边记号，取回北侧小箱里的旧碗。",
+          "回到隐蔽营地交还旧碗，听听族人的回应。"
+        ],
+        "success": "m2:well_delivered",
+        "failure_or_branch": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。",
+        "safe_phase": "占领前后均可完成。",
+        "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
+        "reward": {
+          "id": "reward:side_exp_well_01",
+          "xp": 600,
+          "items": {},
+          "knowledge": [],
+          "destination": "shared_storage"
+        },
+        "rescued_people": [],
+        "dialogue": [
+          "在现场观察，再从可退回的方向接近。",
+          "旧物已经带回营地，留给归乡的人。"
+        ],
+        "saved_fields": [
+          "facts",
+          "reward_claimed",
+          "timeline_epoch"
+        ],
+        "completion_policy": "persistent taken/delivered facts and existing reward transaction",
+        "exploration_taken": "m2:well_taken",
+        "exploration_delivered": "m2:well_delivered"
+      },
+      {
+        "id": "side_exp_signal_01",
+        "name": "旧号台的回声",
+        "category": "side",
+        "requires": [],
+        "location": "poi_signal_01",
+        "trigger": "实际发现地点后记录",
+        "steps": [
+          "观察号台和附近守军，取回台后的旧旗。",
+          "沿掩体退回隐蔽营地，把旧旗交给等候的人。"
+        ],
+        "success": "m2:signal_delivered",
+        "failure_or_branch": "可随时离开；取得与交付分开保存，物件不会丢失，奖励仅一次。",
+        "safe_phase": "占领前后均可完成。",
+        "companion": "同行或分工均可完成；X 跟随、Z 等待，任务卡分配安全采集与搬运。",
+        "reward": {
+          "id": "reward:side_exp_signal_01",
+          "xp": 600,
+          "items": {},
+          "knowledge": [],
+          "destination": "shared_storage"
+        },
+        "rescued_people": [],
+        "dialogue": [
+          "在现场观察，再从可退回的方向接近。",
+          "旧物已经带回营地，留给归乡的人。"
+        ],
+        "saved_fields": [
+          "facts",
+          "reward_claimed",
+          "timeline_epoch"
+        ],
+        "completion_policy": "persistent taken/delivered facts and existing reward transaction",
+        "exploration_taken": "m2:signal_taken",
+        "exploration_delivered": "m2:signal_delivered"
       }
     ],
     "locations": [
@@ -10730,8 +10902,8 @@
           -1100
         ],
         "kind": "m1_content",
-        "m1_action": "observe",
-        "m1_text": "旧水线低于路面。南侧浅滩直接，北侧高岸较长且有遮挡。旧箱留在东岸；弟弟可以同行，也可以先回营搬运。"
+        "exploration_action": "observe",
+        "exploration_text": "旧水线低于路面。南侧浅滩直接，北侧高岸较长且有遮挡。旧箱留在东岸；弟弟可以同行，也可以先回营搬运。"
       },
       {
         "id": "poi_river_relic",
@@ -10741,8 +10913,8 @@
           -1110
         ],
         "kind": "m1_content",
-        "m1_action": "token",
-        "m1_text": "一块刻着家纹的木牌。已妥善收好，回营交给守火的族人。",
+        "exploration_action": "token",
+        "exploration_text": "一块刻着家纹的木牌。已妥善收好，回营交给守火的族人。",
         "fact": "m1:river_taken",
         "quest": "side_exp_river_01"
       },
@@ -10754,8 +10926,8 @@
           -1110
         ],
         "kind": "m1_content",
-        "m1_action": "observe",
-        "m1_text": "车旁三个扎好的货包仍可带走；散落车板只是残骸。按背包余量选择，带不走的留在原地。"
+        "exploration_action": "observe",
+        "exploration_text": "车旁三个扎好的货包仍可带走；散落车板只是残骸。按背包余量选择，带不走的留在原地。"
       },
       {
         "id": "poi_cart_wood",
@@ -10765,8 +10937,8 @@
           -1110
         ],
         "kind": "m1_content",
-        "m1_action": "bundle",
-        "m1_text": "木材已放进行装。",
+        "exploration_action": "bundle",
+        "exploration_text": "木材已放进行装。",
         "item": "wood",
         "count": 4,
         "fact": "m1:cart_wood"
@@ -10779,8 +10951,8 @@
           -1114
         ],
         "kind": "m1_content",
-        "m1_action": "bundle",
-        "m1_text": "绳索已放进行装。",
+        "exploration_action": "bundle",
+        "exploration_text": "绳索已放进行装。",
         "item": "rope",
         "count": 2,
         "fact": "m1:cart_rope"
@@ -10793,8 +10965,8 @@
           -1110
         ],
         "kind": "m1_content",
-        "m1_action": "bundle",
-        "m1_text": "熟食已放进行装。",
+        "exploration_action": "bundle",
+        "exploration_text": "熟食已放进行装。",
         "item": "cooked_food",
         "count": 2,
         "fact": "m1:cart_food"
@@ -10807,8 +10979,8 @@
           -600
         ],
         "kind": "m1_content",
-        "m1_action": "survey",
-        "m1_text": "东侧作坊下方有一座塌顶炭棚。沿台地下路绕行可避开开阔地；只记下眼前地点，守军位置仍需现场观察。",
+        "exploration_action": "survey",
+        "exploration_text": "东侧作坊下方有一座塌顶炭棚。沿台地下路绕行可避开开阔地；只记下眼前地点，守军位置仍需现场观察。",
         "reveal": "poi_workshop_01"
       },
       {
@@ -10819,8 +10991,8 @@
           290
         ],
         "kind": "m1_content",
-        "m1_action": "observe",
-        "m1_text": "正门通向开阔作坊，侧面围栏已断开。工具箱在棚后；可让弟弟等待，确认退路后再进去。"
+        "exploration_action": "observe",
+        "exploration_text": "正门通向开阔作坊，侧面围栏已断开。工具箱在棚后；可让弟弟等待，确认退路后再进去。"
       },
       {
         "id": "poi_workshop_tools",
@@ -10830,8 +11002,8 @@
           298
         ],
         "kind": "m1_content",
-        "m1_action": "token",
-        "m1_text": "旧锉与木柄仍能用。已经收好，回营放到工作区。",
+        "exploration_action": "token",
+        "exploration_text": "旧锉与木柄仍能用。已经收好，回营放到工作区。",
         "fact": "m1:tools_taken",
         "quest": "side_exp_workshop_01"
       },
@@ -10843,8 +11015,8 @@
           -792
         ],
         "kind": "m1_content",
-        "m1_action": "herb",
-        "m1_text": "石沿背阴处的药草叶缘有细齿。旁边植株可按原有采集规则取得；先留出负重，再把六份草药存入营地交付。"
+        "exploration_action": "herb",
+        "exploration_text": "石沿背阴处的药草叶缘有细齿。旁边植株可按原有采集规则取得；先留出负重，再把六份草药存入营地交付。"
       },
       {
         "id": "poi_tracks_01",
@@ -10854,8 +11026,8 @@
           -748
         ],
         "kind": "m1_content",
-        "m1_action": "tracks",
-        "m1_text": "低枝上还有新鲜啃痕。"
+        "exploration_action": "tracks",
+        "exploration_text": "低枝上还有新鲜啃痕。"
       },
       {
         "id": "m1_camp_relic",
@@ -10865,8 +11037,8 @@
           -763
         ],
         "kind": "m1_content",
-        "m1_action": "deliver",
-        "m1_text": "守火的族人：这是旧渡口的记号。放在火边吧，回来的人会认得。木牌已陈列，按 J 登记支线完成。",
+        "exploration_action": "deliver",
+        "exploration_text": "守火的族人：这是旧渡口的记号。放在火边吧，回来的人会认得。木牌已陈列，按 J 登记支线完成。",
         "requires_fact": "m1:river_taken",
         "fact": "m1:river_delivered"
       },
@@ -10878,8 +11050,8 @@
           -760
         ],
         "kind": "m1_content",
-        "m1_action": "deliver",
-        "m1_text": "营地工匠：这把锉还能修木柄。我把它们收在工作台旁，出门前来看看。工具已归位，按 J 登记支线完成。",
+        "exploration_action": "deliver",
+        "exploration_text": "营地工匠：这把锉还能修木柄。我把它们收在工作台旁，出门前来看看。工具已归位，按 J 登记支线完成。",
         "requires_fact": "m1:tools_taken",
         "fact": "m1:tools_delivered"
       },
@@ -10891,15 +11063,227 @@
           -764
         ],
         "kind": "m1_content",
-        "m1_action": "briefing",
-        "m1_text": "再按 E 查看路线与分工。",
-        "m1_pages": [
+        "exploration_action": "briefing",
+        "exploration_text": "再按 E 查看路线与分工。",
+        "exploration_pages": [
           "东侧石沿有药草，东边林缘可找猎迹。沿谷口岔路去南浅滩西岸，车痕通向渡口。",
           "出发前：打开伙伴任务卡，选择物资来源、数量与营地目的地，再确认委托。",
           "外出时：弟弟可继续安全采集。任务受阻时，已取得和已入库的数量会保留。",
           "救援与返程：X 让弟弟跟随，Z 原地等待。先清理危险，再继续同行或护送。",
           "回营后：打开伙伴任务卡核对工作回执，恢复剩余目标或取消。也可选择兄弟同行探索。"
         ]
+      },
+      {
+        "id": "poi_well_01",
+        "name": "旧井院 · 读井边记号",
+        "xy": [
+          907,
+          580
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "observe",
+        "exploration_text": "井沿刻着三道短线，指向北边的小箱。正面院口开阔，西侧石沿可以绕入；取到东西后仍从院口退出。",
+        "fact": "m2:well_observed"
+      },
+      {
+        "id": "poi_well_keepsake",
+        "name": "旧井院 · 取回旧碗",
+        "xy": [
+          907,
+          586
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "token",
+        "exploration_text": "碗底也刻着三道线。已收好这件旧物，回隐蔽营地交给记得井院的族人。",
+        "requires_fact": "m2:well_observed",
+        "fact": "m2:well_taken",
+        "quest": "side_exp_well_01"
+      },
+      {
+        "id": "poi_cellar_01",
+        "name": "封存粮窖 · 检查窖口",
+        "xy": [
+          985,
+          585
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "observe",
+        "exploration_text": "窖门已经塌住，门外抢出的两包熟食还能带走。每包两份；装不下就留在原处，不会随休息补满。"
+      },
+      {
+        "id": "poi_cellar_food_1",
+        "name": "粮窖 · 取两份熟食",
+        "xy": [
+          982,
+          587
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "bundle",
+        "exploration_text": "两份熟食已放入行装。剩余货包仍留在窖口。",
+        "item": "cooked_food",
+        "count": 2,
+        "fact": "m2:cellar_food_1"
+      },
+      {
+        "id": "poi_cellar_food_2",
+        "name": "粮窖 · 取两份熟食",
+        "xy": [
+          988,
+          587
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "bundle",
+        "exploration_text": "两份熟食已放入行装。剩余货包仍留在窖口。",
+        "item": "cooked_food",
+        "count": 2,
+        "fact": "m2:cellar_food_2"
+      },
+      {
+        "id": "poi_backpath_01",
+        "name": "屋后小径 · 辨认院墙",
+        "xy": [
+          882,
+          604
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "local_survey",
+        "exploration_text": "沿低石沿向东南走，可以接近旧井院西口。无需翻墙；遇到巡逻就沿原路退回屋后。",
+        "reveal": "poi_well_01"
+      },
+      {
+        "id": "poi_signal_01",
+        "name": "旧号台 · 观察旗杆",
+        "xy": [
+          1225,
+          545
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "observe",
+        "exploration_text": "旧旗挂在北侧石基旁。正面柱间视线开阔，西侧矮墙能分段接近；先看清弓手，再决定取旗或后退。",
+        "fact": "m2:signal_observed"
+      },
+      {
+        "id": "poi_signal_banner",
+        "name": "旧号台 · 取回旧旗",
+        "xy": [
+          1225,
+          552
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "token",
+        "exploration_text": "旧旗已经收好。旗杆不会再召来守军；回营交给记录者，留作归乡的记号。",
+        "requires_fact": "m2:signal_observed",
+        "fact": "m2:signal_taken",
+        "quest": "side_exp_signal_01"
+      },
+      {
+        "id": "poi_tents_01",
+        "name": "残留营帐 · 观察附近巡逻",
+        "xy": [
+          1252,
+          593
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "patrol",
+        "exploration_text": "",
+        "zone": "assembly"
+      },
+      {
+        "id": "poi_home_steps_01",
+        "name": "归乡石阶 · 看故乡灯火",
+        "xy": [
+          1068,
+          440
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "home_steps",
+        "exploration_text": "石阶通向故乡边缘。尚未夺回时，沿原来的来路撤回；不要把这里当成安全营地。"
+      },
+      {
+        "id": "m2_camp_well",
+        "name": "营地 · 交还井院旧碗",
+        "xy": [
+          -964,
+          -771
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "deliver",
+        "exploration_text": "族人：这三道线是我刻的，过去用它辨认家里的碗。放在这里，等回家再带上。按 J 登记完成。",
+        "requires_fact": "m2:well_taken",
+        "fact": "m2:well_delivered"
+      },
+      {
+        "id": "m2_camp_signal",
+        "name": "营地 · 保存旧旗",
+        "xy": [
+          -992,
+          -772
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "deliver",
+        "exploration_text": "记录者：等四区都安定下来，就把旗带回石阶旁。现在先收好，别为了一面旗留在险处。按 J 登记完成。",
+        "requires_fact": "m2:signal_taken",
+        "fact": "m2:signal_delivered"
+      },
+      {
+        "id": "m2_event_work",
+        "name": "营地 · 查看停工说明",
+        "xy": [
+          -975,
+          -777
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "camp_event",
+        "exploration_text": "",
+        "event": "work"
+      },
+      {
+        "id": "m2_event_owner",
+        "name": "营地 · 旧物的主人",
+        "xy": [
+          -963,
+          -775
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "camp_event",
+        "exploration_text": "",
+        "event": "owner"
+      },
+      {
+        "id": "m2_event_departure",
+        "name": "营地 · 出发前的安静",
+        "xy": [
+          -987,
+          -782
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "camp_event",
+        "exploration_text": "",
+        "event": "departure"
+      },
+      {
+        "id": "m2_route_river_gate",
+        "name": "河门 · 水岸与正路",
+        "xy": [
+          968,
+          350
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "observe",
+        "exploration_text": "东边正路视野开阔；西侧系船柱可分段停靠。守军仍在原处巡逻，退路沿水岸向南。",
+        "route_zone": "river_gate"
+      },
+      {
+        "id": "m2_route_workshops",
+        "name": "工坊 · 两侧通道",
+        "xy": [
+          1162,
+          305
+        ],
+        "kind": "exploration_content",
+        "exploration_action": "observe",
+        "exploration_text": "木料把正面通道分成两段。侧边可绕过料堆；先看清守军位置，取物后从南边退出。",
+        "route_zone": "workshops"
       }
     ],
     "travel_stations": [

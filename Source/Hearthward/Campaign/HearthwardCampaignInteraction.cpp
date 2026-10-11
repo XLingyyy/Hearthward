@@ -13,7 +13,7 @@
 using namespace HearthwardData;
 bool UHearthwardCampaignSubsystem::InteractionComplete(FName Id) const
 {
-    if(M1Complete(Id))return true;
+    if(ExplorationComplete(Id))return true;
     if(Id==TEXT("prologue_relic") || Id==TEXT("camp_relic"))return State.Facts.Contains(TEXT("relic"));
     if(Id.ToString().StartsWith(TEXT("loc_")))return State.Flags.Contains(FName(*Id.ToString().RightChop(4)));
     if(Id==TEXT("route_ford") || Id==TEXT("camp") || Id==TEXT("hometown"))return Gameplay()->Activated.Contains(Id);
@@ -98,7 +98,7 @@ bool UHearthwardCampaignSubsystem::Use(FName Id)
     auto* G=Gameplay();auto* Store=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
     const FGuid Epoch=Store->GetTimelineEpoch();
     const auto Location=HearthwardCampaign::Find(TEXT("locations"),Id);
-    if(Location && Location->HasField(TEXT("m1_action")))return UseM1(Id);
+    if(Location && Location->HasField(TEXT("exploration_action")))return UseExploration(Id);
     if(auto* P=State.People.FindByPredicate([&](const auto& V){return V.Id==Id;}))
     {
         if(P->Stage==TEXT("arrived"))return false;
@@ -142,11 +142,11 @@ bool UHearthwardCampaignSubsystem::Use(FName Id)
     if(Id==TEXT("route_ridge")){Record(TEXT("ridge_survey"));Feedback=TEXT("已记下山路与故乡方向。");return true;}
     if(Id==TEXT("loot_river_gate")){Record(TEXT("old_carving"));Feedback=TEXT("取回旧门楣雕饰，可放到营地纪念处。");return true;}
     if(Id==TEXT("loot_workshops")){Record(TEXT("workshop_cache"));Feedback=TEXT("旧料已登记；在锻造设施查看目录后领取。");return true;}
-    if(Id==TEXT("loot_dwellings")){Record(TEXT("family_letter"));Record(TEXT("hunter_record"));Feedback=TEXT("匣里有一封家信和猎弓图纸记录。带回营地核对。");return true;}
-    if(Id==TEXT("loot_assembly")){Record(TEXT("watch_record"));Feedback=TEXT("取回巡哨记录。回营地记录台抄录。");return true;}
+    if(Id==TEXT("loot_dwellings")){Record(TEXT("family_letter"));Record(TEXT("hunter_record"));Feedback=TEXT("井院附近的旧匣里留着家信和猎弓图纸。信交给营地等信的族人，图纸另找猎人核对。");return true;}
+    if(Id==TEXT("loot_assembly")){Record(TEXT("watch_record"));Feedback=TEXT("记录写着旧号台附近的路口和哨位，只代表当时情况。沿原路退回，交给营地记录台。");return true;}
     if(Id==TEXT("camp_memorial") && State.Facts.Contains(TEXT("old_carving"))){Record(TEXT("placed_carving"));Feedback=TEXT("旧物安放好了。这里也会成为家。");return true;}
-    if(Id==TEXT("civilian_initial_01") && State.Facts.Contains(TEXT("family_letter"))){Record(TEXT("delivered_letter"));Feedback=TEXT("这是留给我的。谢谢你把它带回来。");return true;}
-    if(Id==TEXT("camp_records") && State.Facts.Contains(TEXT("watch_record"))){Record(TEXT("copied_record"));Feedback=TEXT("巡哨见闻已抄录，只代表当时情况。");return true;}
+    if(Id==TEXT("civilian_initial_01") && State.Facts.Contains(TEXT("family_letter"))){Record(TEXT("delivered_letter"));Feedback=TEXT("族人：这封信是留给我的。放在营地旧物桌上吧，等回家后再带上。按 J 登记完成。");return true;}
+    if(Id==TEXT("camp_records") && State.Facts.Contains(TEXT("watch_record"))){Record(TEXT("copied_record"));Feedback=TEXT("记录者：哨位与退路已经抄好，放在记录桌上；下次仍需重新观察。按 J 登记完成。");return true;}
     if(Id==TEXT("camp_hunter") && State.Facts.Contains(TEXT("hunter_record")))
     {G->KnownRecipes.Add(TEXT("craft_bow_rare"));Record(TEXT("hunter_confirmed"));Feedback=TEXT("猎弓结构核对完毕，制作知识已登记。");return true;}
     Feedback=TEXT("已查看此处。按 J 查看任务记录。");return true;
