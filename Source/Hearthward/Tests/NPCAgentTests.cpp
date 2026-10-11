@@ -229,6 +229,15 @@ bool FNPCAgentOriginalCollectionVerbTest::RunTest(const FString&)
     TestTrue(TEXT("An explicit collection request using help remains valid"),HearthwardAgent::Validate(G).IsEmpty());
     G.Original=TEXT("给我采两份木材送入仓库");
     TestTrue(TEXT("An explicit collection request for the speaker remains valid"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("麻烦再去砍两份木材带回仓库");
+    TestTrue(TEXT("Explicit fresh wood chopping is collection"),HearthwardAgent::Validate(G).IsEmpty());
+    G.Original=TEXT("请砍伐两份木材送回仓库");
+    TestTrue(TEXT("Wood felling synonym retains collection source"),HearthwardAgent::Validate(G).IsEmpty());
+    for(const FString Original:{TEXT("请不要砍两份木材"),TEXT("别砍伐两份木材"),TEXT("请把你已经砍两份木材的成果入库"),TEXT("请把你砍好的两份木材入库")})
+    {
+        G.Original=Original;
+        TestFalse(TEXT("Negative or already acquired wood cannot authorize fresh chopping"),HearthwardAgent::Validate(G).IsEmpty());
+    }
     G.Original=TEXT("请勿采两份木材");
     TestFalse(TEXT("A negative collection request cannot authorize fresh collection"),HearthwardAgent::Validate(G).IsEmpty());
     G.Original=TEXT("请把你采集好的二份木材送入仓库");

@@ -1,0 +1,46 @@
+name: Unreal validation
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Build and cook Shipping after native regressions
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: hearthward-unreal-runner
+  cancel-in-progress: false
+jobs:
+  engine:
+    # Manual runs only. A prepared runner is required; fork PRs never execute on it.
+    runs-on: [self-hosted, Windows, X64, hearthward-ue582]
+    timeout-minutes: 90
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: true
+      - name: Build and run isolated UE regressions
+        shell: pwsh
+        env:
+          PACKAGE_SHIPPING: ${{ inputs.package }}
+        run: |
+          $gateOutput = Join-Path $env:RUNNER_TEMP "hearthward-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $gateArgs = @('-X', 'utf8', 'scripts/qa/run_engine_gate.py', '--output', $gateOutput)
+          if ($env:PACKAGE_SHIPPING -eq 'true') { $gateArgs += '--package' }
+          & $env:HEARTHWARD_PYTHON @gateArgs
+          exit $LASTEXITCODE
+      - name: Retain gate diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: unreal-gate-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/hearthward-${{ github.run_id }}-${{ github.run_attempt }}/*.json
+            ${{ runner.temp }}/hearthward-${{ github.run_id }}-${{ github.run_attempt }}/*.log
+            ${{ runner.temp }}/hearthward-${{ github.run_id }}-${{ github.run_attempt }}/native/**/*.json

@@ -127,7 +127,11 @@ bool UHearthwardCampSubsystem::Sleep(FGuid BedId,FGuid Epoch)
     auto* Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>();
     FHearthwardTimeAdvanceRequest R;R.Facility=BedId;R.Epoch=Epoch;R.OperationId=FGuid::NewGuid();
     R.Campaign=GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->GetCampaignId();R.StartW=Clock->GetSnapshot().ElapsedCalendarMinutes;
-    const auto Result=Clock->RequestTimeAdvance(R);Feedback=Result.Reason;return Result.Accepted;
+    const auto Result=Clock->RequestTimeAdvance(R);Feedback=Result.Reason;
+    if(Result.Accepted && Result.Completed)
+        if(const auto* Player=CampPlayer(GetWorld());Player && State.CampAt(Player->GetActorLocation())==TEXT("hometown"))
+            GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Record(TEXT("story:home_rested"));
+    return Result.Accepted;
 }
 bool UHearthwardCampSubsystem::WaitAtCampfire(FGuid Id,int32 Minutes,FGuid Epoch)
 {

@@ -50,7 +50,7 @@ namespace HearthwardAgent
     const FHearthwardAgentCapability* FindCapability(FName Id);
     bool IsCapabilityItem(FName Capability, FName Item);
     FString CompanionOrderPrompt();
-    FString Describe();
+    FString Describe(const FString& Query=FString());
     FString Schema();
     bool Parse(const FString& Json,FHearthwardAgentGoal& Out);
     FString Validate(const FHearthwardAgentGoal& Goal);

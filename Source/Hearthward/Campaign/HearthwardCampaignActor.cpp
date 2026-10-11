@@ -70,7 +70,7 @@ void AHearthwardCampaignActor::Initialize(FName Id,bool Hostile)
     if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))Nav->RegisterNavigationInvoker(this,3500,4500);
     if(!GetController())SpawnDefaultController();
 }
-void AHearthwardCampaignActor::PresentLabor(FName Region,const FString& Status,bool Working)
+void AHearthwardCampaignActor::PresentLabor(FName Region,const FString& Status,bool Working,FName LifePose)
 {
     LaborRegion=Region;LaborStatus=Status;
     if(!LaborText)
@@ -82,13 +82,16 @@ void AHearthwardCampaignActor::PresentLabor(FName Region,const FString& Status,b
     LaborText->SetText(FText::FromString(Status));
     const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
     LaborLabel->SetVisibility(Player && FVector::Dist2D(Player->GetActorLocation(),GetActorLocation())<=1200);
-    if(!LaborPresented || LaborWorking!=Working)
+    if(Working)LifePose=NAME_None;
+    if(!LaborPresented || LaborWorking!=Working || CampLifePose!=LifePose)
     {
         const TCHAR* Clip=Working?TEXT("/Game/Characters/Brother/Animation/A_Brother_Dig.A_Brother_Dig")
             :TEXT("/Game/Characters/Brother/Animation/A_Brother_Idle.A_Brother_Idle");
+        if(LifePose==TEXT("seated"))Clip=TEXT("/Game/Hearthward/Assets/TASK-109/CampLife/A_Brother_SeatedIdle.A_Brother_SeatedIdle");
+        if(LifePose==TEXT("seated_talk"))Clip=TEXT("/Game/Hearthward/Assets/TASK-109/CampLife/A_Brother_SeatedTalk.A_Brother_SeatedTalk");
         GetMesh()->PlayAnimation(LoadObject<UAnimSequence>(nullptr,Clip),true);
     }
-    LaborPresented=true;LaborWorking=Working;
+    LaborPresented=true;LaborWorking=Working;CampLifePose=LifePose;
 }
 bool AHearthwardCampaignActor::WalkTo(FVector Goal,float Acceptance)
 {

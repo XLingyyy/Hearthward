@@ -6,7 +6,7 @@
 #include "Engine/StaticMesh.h"
 #include "Materials/MaterialInterface.h"
 
-namespace
+namespace HearthwardCampHouseAssets
 {
 constexpr TCHAR CampFloorAsset[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/wood_floor_panel/SM_wood_floor_panel.SM_wood_floor_panel");
 constexpr TCHAR Stairs[] = TEXT("/Game/Hearthward/Assets/TASK-028/house/wood_stairs/SM_wood_stairs.SM_wood_stairs");
@@ -63,6 +63,7 @@ void AHearthwardTask028CampHouse::AddBlockingBox(const TCHAR* Name,FVector Posit
 
 void AHearthwardTask028CampHouse::BeginPlay()
 {
+    using namespace HearthwardCampHouseAssets;
     Super::BeginPlay();
     // 2 x 2 floor modules form a 5.44 m square; the door faces the existing camp.
     int32 Index=0;

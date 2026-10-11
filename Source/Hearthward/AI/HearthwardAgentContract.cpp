@@ -294,10 +294,25 @@ FString HearthwardAgent::CompanionOrderPrompt()
         +TEXT("；quantity=1,mode=directive,source=player。模型不选择敌人、坐标、路径、攻击时机或伤害。");
 }
 
-FString HearthwardAgent::Describe()
+FString HearthwardAgent::Describe(const FString& Query)
 {
     const auto& Catalog=Capabilities();TArray<FName> Items;
     for(const auto& C:Catalog)for(FName Id:C.Items)Items.AddUnique(Id);
+    const FString Normalized=Normalize(Query);
+    TArray<FName> Mentioned;
+    if(!Normalized.IsEmpty())for(FName Id:Items)
+    {
+        const FString Label=Normalize(ItemText(Id));
+        if(Id!=TEXT("none") && (Normalized.Contains(Id.ToString(),ESearchCase::IgnoreCase)
+            || (!Label.IsEmpty() && Normalized.Contains(Label))))Mentioned.Add(Id);
+    }
+    // Keep every capability and its permissions. A command with no material noun must not
+    // expand to every recipe/animal/item and crowd its actual world context out of the prompt.
+    if(!Normalized.IsEmpty())
+    {
+        const auto* Orders=Catalog.FindByPredicate([](const auto& C){return C.Id==TEXT("companion_order");});
+        Items.RemoveAll([&](FName Id){return Id!=TEXT("none") && !Mentioned.Contains(Id) && !Orders->Items.Contains(Id);});
+    }
     TArray<TArray<FName>> GroupIntents,GroupItems;
     for(FName Id:Items)
     {
@@ -311,7 +326,7 @@ FString HearthwardAgent::Describe()
     for(const auto& C:Catalog)
         Out+=C.Id.ToString()+TEXT("|")+C.Description+FString::Printf(TEXT("|%d|"),C.MaxQuantity)
             +C.QuantityMode+TEXT("|")+FString::Join(C.Sources,TEXT("/"))+TEXT("\n");
-    Out+=TEXT("item允许关系（左侧意图允许右侧全部物品；中文/别名[id]，同名仅id）：\n");
+    Out+=TEXT("item允许关系（本次相关物品词表，非持有或可执行事实；中文/别名[id]，同名仅id）：\n");
     const auto Aliases=PolicyData()->GetObjectField(TEXT("aliases"));
     for(int32 Group=0;Group<GroupIntents.Num();++Group)
     {
@@ -416,7 +431,8 @@ FString HearthwardAgent::Validate(const FHearthwardAgentGoal& G)
         if(Excluded.FindNext())return TEXT("UNRESOLVED_COLLECTION_LOCATION");
         if(G.Intent==TEXT("collect"))
         {
-            FRegexMatcher Acquisition(FRegexPattern(TEXT("(?:^|[，,。；;：:\\n])\\s*(?:(?:请|帮我|帮忙|给我|去|从|到|麻烦)(?:(?!不|别|勿|禁止|无需|(?:之前|已经|曾经|已)\\s*(?:新采(?:集)?|采集|收集|采))[^，,。；;\\n])*?)?(?:新采(?:集)?|采集|收集|采)(?=\\s*(?:[0-9零一二两三四五六七八九十百千万些点]|")+ItemText(G.Item)+TEXT("|")+G.Item.ToString()+TEXT("))")),Text);
+            const FString Verb=G.Item==TEXT("wood")?TEXT("(?:新采(?:集)?|采集|收集|采|砍伐|砍)"):TEXT("(?:新采(?:集)?|采集|收集|采)");
+            FRegexMatcher Acquisition(FRegexPattern(TEXT("(?:^|[，,。；;：:\\n])\\s*(?:(?:请|帮我|帮忙|给我|去|从|到|麻烦)(?:(?!不|别|勿|禁止|无需|(?:之前|已经|曾经|已)\\s*")+Verb+TEXT(")[^，,。；;\\n])*?)?")+Verb+TEXT("(?=\\s*(?:[0-9零一二两三四五六七八九十百千万些点]|")+ItemText(G.Item)+TEXT("|")+G.Item.ToString()+TEXT("))")),Text);
             if(!Acquisition.FindNext())return TEXT("UNRESOLVED_COLLECTION_SOURCE");
         }
     }

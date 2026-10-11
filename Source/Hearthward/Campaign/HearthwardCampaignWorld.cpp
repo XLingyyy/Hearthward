@@ -322,6 +322,7 @@ void UHearthwardCampaignSubsystem::RefreshActors()
         FVector Workplace=Site?Site->Position:Position(State.Phase==TEXT("prologue")?TEXT("prologue_exit"):CampId);
         FVector Seat=Workplace+FVector(((Worker+1)%5-2)*240,((Worker+1)/5)*260+800,0);
         bool HasWorkplace=false;
+        FName LifePose;
         FString Job,Status=TEXT("等待分配");
         if(Region)
         {
@@ -356,8 +357,8 @@ void UHearthwardCampaignSubsystem::RefreshActors()
         if(!Region && CampId==TEXT("camp") && Worker<2 && State.Facts.Contains(TEXT("public_meal")))
         {
             Workplace=Position(TEXT("camp"))+FVector(-300,180,0);
-            Seat=Workplace+FVector(0,Worker==0?-140:140,0);
-            HasWorkplace=true;Status=TEXT("火边歇息");
+            Seat=Workplace+FVector(Worker==0?-120:120,0,0);
+            HasWorkplace=true;Status=TEXT("火边歇息");LifePose=Worker==0?TEXT("seated"):TEXT("seated_talk");
         }
         if(!Region && CampId==TEXT("camp") && Worker==2 && (State.Facts.Contains(TEXT("m1:river_delivered")) || State.Facts.Contains(TEXT("m2:well_delivered"))))
         {
@@ -387,7 +388,7 @@ void UHearthwardCampaignSubsystem::RefreshActors()
         {A->SetActorHiddenInGame(true);A->SetActorEnableCollision(false);continue;}
         A->SetActorRotation(Facing);A->SetActorHiddenInGame(false);
         const FString Label=FString::Printf(TEXT("族人%d · "),Worker+1)+(Job.IsEmpty()?FString():Job+TEXT(" · "))+Status;
-        A->PresentLabor(Region?Region->Id:NAME_None,Label,Region && Region->Enabled && HasWorkplace && Region->Batch.Active && Region->Batch.Work<Region->Batch.Required);
+        A->PresentLabor(Region?Region->Id:NAME_None,Label,Region && Region->Enabled && HasWorkplace && Region->Batch.Active && Region->Batch.Work<Region->Batch.Required,LifePose);
     }
     // Protected non-combat residents never enter the hostile or rescued registries.
     for(int32 I=21;I<=24;++I)
@@ -396,7 +397,8 @@ void UHearthwardCampaignSubsystem::RefreshActors()
         const FName Id(*FString::Printf(TEXT("%s%02d"),ProtectedEnemy?TEXT("protected_"):TEXT("civilian_initial_"),ProtectedEnemy?I-20:I));
         if(I==23 && M2HomeReady() && State.Facts.Contains(TEXT("m3:table_ready")))
         {
-            const FVector Destination=Position(TEXT("m3_home_table"))+FVector(350,230,0);
+            const bool AtMeal=State.Facts.Contains(TEXT("m3:home_meal"));
+            const FVector Destination=Position(TEXT("m3_home_table"))+(AtMeal?FVector(155,200,0):FVector(350,230,0));
             FVector Floor;
             if(FVector::Dist2D(PlayerPosition,Destination)<40000 && Ground(Destination,Floor))
             {
@@ -404,7 +406,7 @@ void UHearthwardCampaignSubsystem::RefreshActors()
                 if(Resident)
                 {
                     Resident->TeleportTo(Floor+FVector(0,0,80),FRotator(0,180,0));
-                    Resident->PresentLabor(NAME_None,State.Facts.Contains(TEXT("m3:home_meal"))?TEXT("归乡族人 · 今晚不用再赶路"):TEXT("归乡族人 · 餐桌旁等候"),false);
+                    Resident->PresentLabor(NAME_None,AtMeal?TEXT("归乡族人 · 今晚不用再赶路"):TEXT("归乡族人 · 餐桌旁等候"),false,AtMeal?FName(TEXT("seated_talk")):NAME_None);
                 }
             }
             continue;

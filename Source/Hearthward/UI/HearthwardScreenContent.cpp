@@ -295,13 +295,15 @@ void UHearthwardScreenWidget::ComposeJournal()
             Add(TEXT("journal.detail.objectiveHeading"),TEXT("text"),TEXT("当前目标"),{788,294},{390,42},18);
             Add(TEXT("journal.detail.progress"),TEXT("text"),FString::Printf(TEXT("进度 %d / %.0f"),G->QuestProgress(Selection),Number(R,TEXT("required"))),{1330,298},{266,36},16).Align=TEXT("right");
             Add(TEXT("journal.detail.objectiveRule"),TEXT("line"),TEXT(""),{788,338},{808,1}).Color=Color(TEXT("bronze"))*.55f;
-            const FString Objective=Preparation.Visible?Preparation.NextStep+TEXT("\n")+Text(R,TEXT("objective")):Text(R,TEXT("objective"));
+            const FString FullObjective=Text(R,TEXT("objective"));
+            const FString Objective=Preparation.Visible?Preparation.NextStep:FullObjective;
+            const FString Description=Objective!=FullObjective?FullObjective:Text(R,TEXT("description"));
             Add(TEXT("journal.detail.objective"),TEXT("text"),Objective,{788,359},{808,144},19).Color=Color(TEXT("gold"));
             Add(TEXT("journal.detail.descriptionHeading"),TEXT("text"),TEXT("任务详情"),{788,516},{390,42},18);
             Add(TEXT("journal.detail.reward"),TEXT("text"),FString::Printf(TEXT("经验值 +%.0f"),Number(R,TEXT("xp"))),{1315,520},{281,36},16).Align=TEXT("right");
             Add(TEXT("journal.detail.descriptionRule"),TEXT("line"),TEXT(""),{788,560},{808,1}).Color=Color(TEXT("bronze"))*.55f;
-            Add(TEXT("journal.detail.description"),TEXT("text"),Text(R,TEXT("description")),{788,580},{808,130},18);
-            Add(TEXT("journal.detail.companion"),TEXT("text"),Text(R,TEXT("companion")),{788,716},{808,72},15).Color=Color(TEXT("muted"));
+            Add(TEXT("journal.detail.description"),TEXT("text"),Description,{788,580},{808,140},18);
+            Add(TEXT("journal.detail.companion"),TEXT("text"),Text(R,TEXT("companion")),{788,726},{808,72},15).Color=Color(TEXT("muted"));
             Add(TEXT("journal.detail.claim"),TEXT("menuAction"),G->Claimed.Contains(Selection)?TEXT("已完成"):(Selection==TEXT("side_06") || Selection==TEXT("side_09"))?TEXT("交付 6 份并领奖"):TEXT("领取奖励"),{788,800},{280,42},17,TEXT("claim")).Enabled=!G->Claimed.Contains(Selection);
             Add(TEXT("journal.detail.track"),TEXT("menuAction"),G->TrackedQuest==Selection?TEXT("取消追踪"):TEXT("追踪任务"),{1100,800},{244,42},17,TEXT("track"));
             Add(TEXT("journal.detail.map"),TEXT("menuAction"),TEXT("地图定位"),{1383,800},{213,42},17,TEXT("questMap")).Align=TEXT("right");
