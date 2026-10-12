@@ -203,4 +203,34 @@ bool FItemArt110Test::RunTest(const FString&)
     }
     return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FNavigation111InputTest,
+    "Hearthward.UI.Task111.PauseAndMovement",EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FNavigation111InputTest::RunTest(const FString&)
+{
+    FUIPerformanceFixture109 F;
+    F.Screen->OpenPage(TEXT("pause"));
+    const FGeometry Geometry=FGeometry::MakeRoot(FVector2D(1672,941),FSlateLayoutTransform());
+    F.Screen->NativeOnMouseMove(Geometry,FPointerEvent(0,FVector2D(10,10),FVector2D(20,20),TSet<FKey>(),FKey(),0,FModifierKeysState()));
+    for(int32 I=0;I<3;++I)
+    {
+        F.Screen->Refresh();
+        TestFalse(TEXT("blank pointer area never highlights Resume after refresh"),F.Screen->IsActionHighlighted(TEXT("page:hud")));
+    }
+    F.Screen->NativeOnKeyDown(Geometry,FKeyEvent(EKeys::Home,FModifierKeysState(),0,false,0,0));
+    F.Screen->NativeOnKeyDown(Geometry,FKeyEvent(EKeys::Down,FModifierKeysState(),0,false,0,0));
+    bool KeyboardHighlight=false;
+    const auto Snapshot=F.Snapshot();
+    for(const auto& V:Snapshot->GetArrayField(TEXT("elements")))
+        KeyboardHighlight|=F.Screen->IsActionHighlighted(V->AsObject()->GetStringField(TEXT("action")));
+    TestTrue(TEXT("keyboard navigation still highlights a valid action"),KeyboardHighlight);
+    auto* Combat=F.Player->FindComponentByClass<UHearthwardCombatComponent>();
+    Combat->Action=TEXT("attack");Combat->Duration=1;Combat->Elapsed=.2;
+    TestFalse(TEXT("ordinary melee allows locomotion during windup"),Combat->MovementLocked());
+    Combat->Elapsed=.8;
+    TestFalse(TEXT("ordinary melee allows locomotion during recovery"),Combat->MovementLocked());
+    Combat->Action=TEXT("execution");
+    TestTrue(TEXT("execution still locks movement"),Combat->MovementLocked());
+    Combat->Action=NAME_None;
+    return true;
+}
 #endif

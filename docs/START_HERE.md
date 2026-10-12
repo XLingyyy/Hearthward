@@ -1,5 +1,7 @@
 # 最短阅读路径
 
+2026-10-11：TASK-110 已通过 [PR #75](https://github.com/XLingyyy/Hearthward/pull/75) 合入 main（`7f56a2f5`）。当前任务为 TASK-111，分支 `codex/TASK-111-navigation-combat`；从 [TASK-111 交接](handoffs/TASK-111.md) 查看实现和验证状态。打开 `G:/GameFactory/Hearthward/Hearthward.uproject` 运行当前工作区。TASK-111 已提交推送，整合见 [PR #76](https://github.com/XLingyyy/Hearthward/pull/76)；合并状态以 PR 为准。以下为历史记录。
+
 2026-10-11：当前任务 TASK-110，分支 `codex/TASK-110-item-art`，基线 main@34908e89c095de50b9283441ef88198deea20819。77 件物品高清图与制作相关图示已接入，Editor 和定向渲染／回归通过，已获用户提交推送及合并授权，未发行；Active 待外观验收。详见 [TASK-110 报告](qa/TASK-110/REPORT.md)与[交接](handoffs/TASK-110.md)。运行工程 G:/GameFactory/Hearthward/Hearthward.uproject。以下为历史快照。
 
 2026-10-11：当前任务 TASK-109，分支 codex/TASK-109-roadmap-completion，基线 main@2d5c3bbdadf48e37866e40bb826b875a6f1d2235（M3 / PR #73）。M0–M3 已整合；本轮补工程优化、营地动作和固定情境文字。真人录音经用户确认列为待补素材。当前已获用户提交、推送及合并授权，当前成果已提交并推送，整合状态见 [PR #74](https://github.com/XLingyyy/Hearthward/pull/74)，正式发行仍为 v0.3.0；完整状态见 [TASK-109 交接](handoffs/TASK-109.md)和[补全清单](planning/TASK-109/COMPLETION.md)。以下为历史快照。

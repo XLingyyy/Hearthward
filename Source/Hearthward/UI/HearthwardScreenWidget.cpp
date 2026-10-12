@@ -238,6 +238,7 @@ void UHearthwardScreenWidget::OpenPage(FName Name)
         WorldMap=false;
         ResetMapView();
     }
+    if(Name==TEXT("map") && PreviousPage!=Name)CaptureMapTerrain();
     if(Name==TEXT("dialogue") && PreviousPage!=Name)DialogueView=TEXT("home");
     Page=Name; TextScroll=0; Scroll=0; Hover=KeyboardFocus=INDEX_NONE; ConfirmAction.Reset();GiveUpEpoch.Invalidate(); Message.Reset(); LayoutSelection.Reset(); LayoutDragging=false;
     if(Name==TEXT("journal") && Category.IsEmpty()) Category=TEXT("main");
@@ -589,8 +590,6 @@ bool UHearthwardScreenWidget::IsHighlighted(int32 Index) const
     if(!Elements.IsValidIndex(Index)) return false;
     const auto& E=Elements[Index];
     if(!E.Enabled || E.Hidden) return false;
-    if(Page==TEXT("pause") && ConfirmAction.IsEmpty() && E.Type==TEXT("menuAction"))
-        return Index==(Elements.IsValidIndex(Hover)?Hover:KeyboardFocus);
     if(E.Type==TEXT("titleOption") || E.Type==TEXT("menuRow")) return E.Selected;
     if(Page==TEXT("journal") && E.LayoutId.StartsWith(TEXT("journal.header.tab."))) return E.Selected;
     // Refresh keeps a safe logical default for Enter. Only keyboard input makes it visible.

@@ -69,3 +69,4 @@ bool UHearthwardScreenWidget::CaptureMapVisibilityPair(const FString& Name,int32
 #include "HearthwardScreenTravelTest.inl"
 
 #include "HearthwardScreenStorageTest.inl"
+#include "HearthwardScreenNavigationTest.inl"

@@ -82,6 +82,8 @@ public:
 private:
     UPROPERTY() TObjectPtr<class AHearthwardHUD> OwnerHUD;
     UPROPERTY() TArray<TObjectPtr<class UTexture2D>> Textures;
+    UPROPERTY(Transient) TObjectPtr<class UTextureRenderTarget2D> MapTerrain;
+    void CaptureMapTerrain();
     UPROPERTY() TObjectPtr<class UEditableTextBox> Draft;
     UFUNCTION() void DraftCommitted(const FText& Text,ETextCommit::Type Method);
     UFUNCTION() void CraftingSearchChanged(const FText& Text);
