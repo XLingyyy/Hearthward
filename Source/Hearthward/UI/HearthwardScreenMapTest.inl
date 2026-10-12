@@ -78,7 +78,7 @@ bool VerifyLocalMap(float)
     auto CheckAnchor=[&](FString Name,FString Id,FVector At)
     {
         const auto E=Find(Id);Run.Check(Name+TEXT("_marker_present"),E.IsValid());if(!E)return;
-        const FVector2D Anchor(E->GetNumberField(TEXT("x"))+E->GetNumberField(TEXT("width"))*.5,E->GetNumberField(TEXT("y"))+E->GetNumberField(TEXT("height"))*.9);
+        const FVector2D Anchor(E->GetNumberField(TEXT("anchorX")),E->GetNumberField(TEXT("anchorY")));
         Run.Check(Name+TEXT("_actual_actor_xy"),FVector2D::Distance(Anchor,Project(At))<.02);
         Run.Check(Name+TEXT("_visibility"),E->GetBoolField(TEXT("visible")));
     };
@@ -266,8 +266,8 @@ bool VerifyLocalMap(float)
         for(const float Yaw:{0.f,90.f,180.f,270.f,45.f})
         {
             Pawn->SetActorRotation(FRotator(0,Yaw,0));if(Brother)Brother->SetActorRotation(FRotator(0,Yaw-90,0));UI->Refresh();
-            Run.Check(FString::Printf(TEXT("player_heading_%.0f"),Yaw),FMath::Abs(FMath::FindDeltaAngleDegrees(Find(TEXT("map.player"))->GetNumberField(TEXT("value")),Yaw-90))<.02);
-            if(Brother)Run.Check(FString::Printf(TEXT("brother_heading_%.0f"),Yaw-90),FMath::Abs(FMath::FindDeltaAngleDegrees(Find(TEXT("map.brother"))->GetNumberField(TEXT("value")),Yaw-180))<.02);
+            Run.Check(FString::Printf(TEXT("player_heading_%.0f"),Yaw),FMath::Abs(FMath::FindDeltaAngleDegrees(Find(TEXT("map.player"))->GetNumberField(TEXT("value")),Yaw+90))<.02);
+            if(Brother)Run.Check(FString::Printf(TEXT("brother_heading_%.0f"),Yaw-90),FMath::Abs(FMath::FindDeltaAngleDegrees(Find(TEXT("map.brother"))->GetNumberField(TEXT("value")),Yaw))<.02);
             ExportSize(*FString::Printf(TEXT("heading-%.0f"),Yaw),1600,1000);
         }
         Pawn->SetActorRotation(PlayerRotation);if(Brother)Brother->SetActorRotation(BrotherRotation);UI->Refresh();

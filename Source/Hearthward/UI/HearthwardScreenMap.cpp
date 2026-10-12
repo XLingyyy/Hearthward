@@ -4,7 +4,44 @@
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "HearthwardQuestGuidance.h"
 #include "EngineUtils.h"
+#include "Engine/SceneCapture2D.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "../Save/HearthwardSaveSubsystem.h"
 using namespace HearthwardData;
+
+void UHearthwardScreenWidget::CaptureMapTerrain()
+{
+    if(!GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled())return;
+    const auto Config=Theme->GetObjectField(TEXT("localMap"));
+    const auto& Origin=Config->GetArrayField(TEXT("terrainOriginCm"));
+    const float Span=Number(Config,TEXT("terrainSpanCm"),403200);
+    if(!MapTerrain)
+    {
+        MapTerrain=NewObject<UTextureRenderTarget2D>(this);
+        MapTerrain->RenderTargetFormat=RTF_RGBA8;
+        MapTerrain->InitAutoFormat(4096,4096);
+        MapTerrain->UpdateResourceImmediate(true);
+    }
+    auto* Actor=GetWorld()->SpawnActor<ASceneCapture2D>();
+    Actor->SetActorLocationAndRotation({Origin[0]->AsNumber()+Span*.5,Origin[1]->AsNumber()+Span*.5,300000},FRotator(-90,-90,0));
+    auto* Capture=Actor->GetCaptureComponent2D();
+    Capture->bCaptureEveryFrame=false;Capture->bCaptureOnMovement=false;
+    Capture->ProjectionType=ECameraProjectionMode::Orthographic;
+    Capture->OrthoWidth=Span;Capture->bAutoCalculateOrthoPlanes=false;
+    Capture->MaxViewDistanceOverride=600000;
+    Capture->TextureTarget=MapTerrain;Capture->CaptureSource=SCS_FinalColorLDR;
+    // Unlit scene colors keep the survey legible at night and retain the real geometry.
+    Capture->ShowFlags.SetLighting(false);Capture->ShowFlags.SetFog(false);
+    Capture->ShowFlags.SetAtmosphere(false);Capture->ShowFlags.SetVolumetricFog(false);
+    Capture->ShowFlags.SetPostProcessing(false);Capture->ShowFlags.SetMotionBlur(false);
+    Capture->ShowFlags.SetDistanceCulledPrimitives(true);
+    Capture->CaptureScene();
+    Actor->Destroy();
+    auto& Art=Brushes.FindChecked(TEXT("mapLocalTerrain"));
+    Art.SetResourceObject(MapTerrain);Art.ImageSize=FVector2D(4096,4096);
+    Art.SetUVRegion(FBox2f(FVector2f(0,0),FVector2f(1,1)));
+}
 
 FVector UHearthwardScreenWidget::MapOrigin() const
 { return FVector(MapCenter.X,MapCenter.Y,0); }
@@ -120,14 +157,6 @@ void UHearthwardScreenWidget::ComposeMap()
         auto& Label=Elements.Last();Label.LayoutId=TEXT("map.region.")+Text(Region,TEXT("id"));Label.Component=TEXT("map.canvas");Label.MapClipped=true;
         Label.Font=Font*FMath::Min(MapZoom,1.25f);Label.Tracking=0;Label.Align=TEXT("center");Label.FontRole=TEXT("display");
     }
-    for(const FString Id:{FString(TEXT("brother")),FString(TEXT("player"))})
-    {
-        Element(TEXT("mapFlame"),TEXT(""),{0,0},{15,44});
-        auto& Marker=Elements.Last();Marker.LayoutId=TEXT("map.")+Id;Marker.Component=TEXT("map.canvas");Marker.MapClipped=true;
-        Marker.Asset=Id==TEXT("player")?TEXT("mapFlameRed"):TEXT("mapFlameBlue");
-        Marker.Color=Id==TEXT("player")?FLinearColor(1.f,.035f,.018f,1):FLinearColor(.02f,.35f,1.f,1);
-    }
-    UpdateMapMarkers(false);
     ComposeWorldMap();
     const auto Guidance=HearthwardQuestGuidance::Resolve(GetOwningPlayer());
     if(!Guidance.Visible)
@@ -140,7 +169,16 @@ void UHearthwardScreenWidget::ComposeMap()
         Element(TEXT("text"),TEXT("途经 · ")+Guidance.RouteLabel,At+FVector2D(28,32),{440,54},18);
         auto& Label=Elements.Last();Label.LayoutId=TEXT("map.route.label");Label.Component=TEXT("map.canvas");Label.MapClipped=true;Label.Color=FLinearColor(.3f,.88f,.92f,1);
     }
+    for(const FString Id:{FString(TEXT("brother")),FString(TEXT("player"))})
+    {
+        Element(TEXT("mapFlame"),Id==TEXT("player")?TEXT("你"):TEXT("弟弟"),{0,0},{36,36});
+        auto& Marker=Elements.Last();Marker.LayoutId=TEXT("map.")+Id;Marker.Component=TEXT("map.canvas");Marker.MapClipped=true;
+        Marker.Color=Id==TEXT("player")?FLinearColor(1.f,.82f,.36f,1):FLinearColor(.12f,.85f,1.f,1);
+    }
+    UpdateMapMarkers(false);
     const auto View=MapViewRect();
+    Element(TEXT("text"),TEXT("↑ 北    金色箭头：你    蓝色箭头：弟弟"),{View.Left+32,View.Top+24},{580,42},22);
+    Elements.Last().LayoutId=TEXT("map.legend");
     Element(TEXT("menuAction"),WorldMap?TEXT("收起地点 ‹"):TEXT("地点与传送 ›"),{View.Right-316,View.Top+24},{292,54},22,WorldMap?TEXT("map.local"):TEXT("map.world"));
     Elements.Last().LayoutId=TEXT("map.locations.toggle");Elements.Last().Align=TEXT("right");
 }
@@ -158,10 +196,14 @@ void UHearthwardScreenWidget::UpdateMapMarkers(bool ApplyComponent)
         Changed|=Marker.Hidden!=Hidden;Marker.Hidden=Hidden;
         if(!Marker.Hidden)
         {
-            const FVector2D Position=MapPoint(Actor->GetActorLocation())-FVector2D(Marker.Size.X*.5,Marker.Size.Y*.9);
+            Marker.WorldAnchor=Actor->GetActorLocation();
+            FVector2D Position=MapPoint(Marker.WorldAnchor)-Marker.Size*.5;
+            // Separate close companions at overview zoom while retaining the true position dot.
+            if(Marker.LayoutId==TEXT("map.brother") && FVector2D::Distance(MapPoint(Marker.WorldAnchor),MapPoint(GetOwningPlayerPawn()->GetActorLocation()))<44)
+                Position+=FVector2D(-60,28);
             const FVector2D NewPosition=ApplyComponent?ComponentPoint(TEXT("map.canvas"),Position):Position;
             Changed|=!Marker.Position.Equals(NewPosition,.001);Marker.Position=NewPosition;
-            const float Heading=FMath::UnwindDegrees(Actor->GetActorRotation().Yaw-90.f);
+            const float Heading=FMath::UnwindDegrees(Actor->GetActorRotation().Yaw+90.f);
             Changed|=!FMath::IsNearlyEqual(Marker.Value,Heading,.001f);Marker.Value=Heading;
         }
     }

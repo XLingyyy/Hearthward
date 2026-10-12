@@ -362,6 +362,8 @@ void UHearthwardScreenWidget::ComposeMemory()
 }
 void UHearthwardScreenWidget::ComposeHUD()
 {
+    Element(TEXT("compass"),TEXT(""),{593,40},{486,64});
+    Elements.Last().LayoutId=TEXT("hud.compass");
     auto* G=Gameplay();
     const auto* N=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
     const auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();

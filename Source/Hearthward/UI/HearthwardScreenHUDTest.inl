@@ -36,6 +36,11 @@ FString UHearthwardScreenWidget::DescribeHUDPreview() const
         Row->SetNumberField(TEXT("x"),E.Position.X); Row->SetNumberField(TEXT("y"),E.Position.Y);
         Row->SetNumberField(TEXT("width"),E.Size.X); Row->SetNumberField(TEXT("height"),E.Size.Y);
         Row->SetNumberField(TEXT("brightness"),E.Color.GetLuminance());
+        if(E.Type==TEXT("mapFlame"))
+        {
+            const FVector2D Anchor=ComponentPoint(TEXT("map.canvas"),MapPoint(E.WorldAnchor));
+            Row->SetNumberField(TEXT("anchorX"),Anchor.X);Row->SetNumberField(TEXT("anchorY"),Anchor.Y);
+        }
         Row->SetNumberField(TEXT("red"),E.Color.R); Row->SetNumberField(TEXT("green"),E.Color.G); Row->SetNumberField(TEXT("blue"),E.Color.B);
         Rows.Add(MakeShared<FJsonValueObject>(Row));
     }
@@ -53,6 +58,7 @@ FString UHearthwardScreenWidget::DescribeHUDPreview() const
         Map->SetArrayField(TEXT("designViewSize"),Values({MapViewDesignSize.X,MapViewDesignSize.Y}));
         Map->SetNumberField(TEXT("scaleDesignUnitsPerCm"),MapScale()*MapZoom);Map->SetNumberField(TEXT("zoom"),MapZoom);
         Map->SetBoolField(TEXT("dragging"),MapDragging);Root->SetObjectField(TEXT("mapView"),Map);
+        Map->SetBoolField(TEXT("sceneCapture"),MapTerrain!=nullptr);
     }
     FString Json; FJsonSerializer::Serialize(Root,TJsonWriterFactory<>::Create(&Json)); return Json;
 }

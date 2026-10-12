@@ -81,7 +81,9 @@ bool UHearthwardCombatComponent::Start(FName Name,double Seconds)
     Action=Name; Duration=Seconds; Elapsed=0; StartedAt=Now(); ActionEpoch=Epoch(); ActionId=FGuid::NewGuid();
     StartPosition=GetOwner()->GetActorLocation(); ActionWeapon=G()->Equipment.FindRef(TEXT("weapon"));
     ActionInstance=Bag()->EquippedInstance(Name==TEXT("draw") || Name==TEXT("crossbow") || Name==TEXT("reload")?FName(TEXT("ranged")):FName(TEXT("weapon"))); ActionPower=G()->AttackPower(); ChargedWear=false;
-    HitIds.Reset(); StoneAxeBlocked=false; Guard.Release(); G()->SetSprinting(false); return true;
+    HitIds.Reset(); StoneAxeBlocked=false; Guard.Release();
+    if(MovementLocked())G()->SetSprinting(false);
+    return true;
 }
 bool UHearthwardCombatComponent::Attack(bool Heavy)
 {
@@ -299,6 +301,15 @@ void UHearthwardCombatComponent::Sweep(double From,double To)
         UE::Anim::FStackAttributeContainer Attributes;
         FAnimationPoseData Data(Pose,Curve,Attributes);
         Animation->Clips[6]->GetAnimationPose(Data,FAnimExtractContext(HearthwardCombat::StoneAxeClipTime(Time,Animation->Clips[6]->GetPlayLength(),Move),false));
+        // The attack starts at spine_01; root and pelvis follow the locomotion pose.
+        auto* Mesh=Character->GetMesh();
+        const auto LocalPose=Mesh->GetBoneSpaceTransformsView();
+        for(FName BoneName:{FName(TEXT("root")),FName(TEXT("pelvis"))})
+        {
+            const int32 Bone=Mesh->GetBoneIndex(BoneName);
+            const auto Compact=Bones->MakeCompactPoseIndex(FMeshPoseBoneIndex(Bone));
+            if(Compact.GetInt()!=INDEX_NONE)Pose[Compact]=LocalPose[Bone];
+        }
         FCSPose<FCompactPose> ComponentPose; ComponentPose.InitPose(MoveTemp(Pose));
         FTransform MeshWorld;
         MeshWorld.Blend(PreviousAttackMeshWorld,CurrentMeshWorld,float((Time-From)/(To-From)));
@@ -380,7 +391,7 @@ void UHearthwardCombatComponent::Finish()
     Cancel();
 }
 bool UHearthwardCombatComponent::MovementLocked() const
-{ return Busy() && Action!=TEXT("draw"); }
+{ return Busy() && Action!=TEXT("attack") && Action!=TEXT("draw") && Action!=TEXT("recoil") && Action!=TEXT("crossbow") && Action!=TEXT("reload"); }
 float UHearthwardCombatComponent::MovementMultiplier() const { return Body.IsValid()?(CarryingOnBack?.7f:.5f):1; }
 bool UHearthwardCombatComponent::CanSave() const { return !Busy() && !Body.IsValid() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy() && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Busy(); }
 FString UHearthwardCombatComponent::Describe() const

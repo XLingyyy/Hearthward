@@ -112,6 +112,39 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             Out.PushClip(FSlateClippingZone(FSlateRect(A.X,A.Y,B.X,B.Y)));
         }
         const int32 L=Layer+I*4+1;
+        if(E.Type==TEXT("compass"))
+        {
+            const float Heading=FRotator::ClampAxis(GetOwningPlayer()->GetControlRotation().Yaw+90);
+            const float Half=E.Size.X*.5f,PixelsPerDegree=E.Size.X/180.f;
+            auto Fade=[&](float X){return FMath::Clamp((Half-FMath::Abs(X))/(Half*.30f),0.f,1.f);};
+            for(int32 Segment=0;Segment<60;++Segment)
+            {
+                const float X=E.Size.X*Segment/60.f;
+                Box(E.Position+FVector2D(X,37),{E.Size.X/60.f+1,1},FLinearColor(.88f,.82f,.65f,.8f*Fade(X-Half)),L);
+            }
+            const TCHAR* Directions[]={TEXT("北"),TEXT("东"),TEXT("南"),TEXT("西")};
+            for(int32 Degree=0;Degree<360;Degree+=15)
+            {
+                const float X=FMath::FindDeltaAngleDegrees(Heading,float(Degree))*PixelsPerDegree;
+                if(FMath::Abs(X)>=Half)continue;
+                const bool Cardinal=Degree%90==0;
+                const FLinearColor Ink(1.f,.91f,.72f,Fade(X));
+                Box(E.Position+FVector2D(Half+X,37),{1,Cardinal?11.:5.},Ink,L+1);
+                if(Degree%30==0)
+                {
+                    const FString Label=Cardinal?Directions[Degree/90]:*FString::FromInt(Degree);
+                    const FSlateFontInfo Font(Typeface,Cardinal?15:10);
+                    const float Width=FSlateApplication::Get().GetRenderer()->GetFontMeasureService()->Measure(Label,Font).X;
+                    const FVector2D P=E.Position+FVector2D(Half+X-Width*.5,Cardinal?9:16);
+                    FSlateDrawElement::MakeText(Out,L+1,Geometry(P+FVector2D(1,1),{80,30}),Label,Font,ESlateDrawEffect::None,FLinearColor(0,0,0,Ink.A));
+                    FSlateDrawElement::MakeText(Out,L+2,Geometry(P,{80,30}),Label,Font,ESlateDrawEffect::None,Ink);
+                }
+            }
+            const TArray<FVector2D> Pointer={{Half-5,52},{Half,46},{Half+5,52}};
+            FSlateDrawElement::MakeLines(Out,L+3,Geometry(E.Position,E.Size),Pointer,ESlateDrawEffect::None,FLinearColor(1,.85f,.4f,1),true,2);
+            if(TextClip)Out.PopClip();
+            continue;
+        }
         if(E.LayoutId==TEXT("background") && (Page==TEXT("title") || Page==TEXT("settings")))
         {
             if(const FSlateBrush* Background=Brush(E.Asset))
@@ -159,39 +192,27 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
         }
         else if(E.Type==TEXT("mapFlame"))
         {
-            if(const auto* Art=Brush(E.Asset))
+            const FVector2D Anchor=ComponentPoint(TEXT("map.canvas"),MapPoint(E.WorldAnchor));
+            if(FVector2D::Distance(Anchor,E.Position+E.Size*.5)>2)
             {
-                const auto Transform=Geometry(E.Position,E.Size).GetAccumulatedRenderTransform();
-                const auto Handle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(*Art);
-                const FBox2f UV=Art->GetUVRegion();
-                const FVector2f UVStart(UV.Min),UVSpan=FVector2f(UV.Max)-UVStart;
-                const float Pulse=1.f+FMath::Sin(FPlatformTime::Seconds()*5.5+E.Color.B*2)*.012f;
-                const float Angle=FMath::DegreesToRadians(E.Value);
-                const float Cos=FMath::Cos(Angle),Sin=FMath::Sin(Angle);
-                const auto Rotate=[&](FVector2f Delta)
-                {
-                    return FVector2f(E.Size.X*.5f+Delta.X*Cos-Delta.Y*Sin,
-                        E.Size.Y*.9f+Delta.X*Sin+Delta.Y*Cos);
-                };
-                // A small, wider shoulder under the flame makes its heading readable.
-                // The triangle tip remains at the real actor anchor and rotates with it.
-                const float TipHalfWidth=5.5f,TipLength=8.f*Pulse;
-                TArray<FSlateVertex> TipVertices;
-                for(const FVector2f Delta:{FVector2f(-TipHalfWidth,-TipLength),FVector2f(TipHalfWidth,-TipLength),FVector2f(0,0)})
-                    TipVertices.Add(FSlateVertex::Make(Transform,Rotate(Delta),FVector2f(.5f,.5f),E.Color.ToFColorSRGB()));
-                const TArray<SlateIndex> TipIndices={0,1,2};
-                const auto TipHandle=FSlateApplication::Get().GetRenderer()->GetResourceHandle(*White);
-                FSlateDrawElement::MakeCustomVerts(Out,L,TipHandle,TipVertices,TipIndices,nullptr,0,0);
-                TArray<FSlateVertex> Vertices;TArray<SlateIndex> Indices={0,1,2,0,2,3};
-                // Rotate the existing flame around its root, preserving the real actor XY.
-                // Its downward sharp point maps to +X at yaw zero in this projection.
-                for(const FVector2f Corner:{FVector2f(0,0),FVector2f(1,0),FVector2f(1,1),FVector2f(0,1)})
-                {
-                    const FVector2f Delta((Corner.X-.5f)*E.Size.X,(Corner.Y-.9f)*E.Size.Y*Pulse);
-                    Vertices.Add(FSlateVertex::Make(Transform,Rotate(Delta),UVStart+Corner*UVSpan,FColor::White));
-                }
-                FSlateDrawElement::MakeCustomVerts(Out,L+1,Handle,Vertices,Indices,nullptr,0,0);
+                const TArray<FVector2D> Lead={Anchor,E.Position+E.Size*.5};
+                FSlateDrawElement::MakeLines(Out,L,Geometry(FVector2D::ZeroVector,DesignSize),Lead,ESlateDrawEffect::None,E.Color,true,1.5f);
+                Box(Anchor-FVector2D(2,2),{4,4},E.Color,L+1);
             }
+            const float Angle=FMath::DegreesToRadians(E.Value);
+            TArray<FVector2D> Points;
+            for(const FVector2D P:{FVector2D(0,-17),FVector2D(12,13),FVector2D(0,7),FVector2D(-12,13),FVector2D(0,-17)})
+                Points.Add(E.Size*.5+FVector2D(P.X*FMath::Cos(Angle)-P.Y*FMath::Sin(Angle),P.X*FMath::Sin(Angle)+P.Y*FMath::Cos(Angle)));
+            const auto PG=Geometry(E.Position,E.Size);
+            TArray<FSlateVertex> Vertices;
+            for(int32 N=0;N<4;++N)Vertices.Add(FSlateVertex::Make(PG.GetAccumulatedRenderTransform(),FVector2f(Points[N]),FVector2f(.5f,.5f),E.Color.ToFColorSRGB()));
+            const TArray<SlateIndex> Indices={0,1,2,0,2,3};
+            FSlateDrawElement::MakeCustomVerts(Out,L,FSlateApplication::Get().GetRenderer()->GetResourceHandle(*White),Vertices,Indices,nullptr,0,0);
+            FSlateDrawElement::MakeLines(Out,L+1,PG,Points,ESlateDrawEffect::None,FLinearColor(.015f,.018f,.02f,1),true,3);
+            const FVector2D Label=E.Position+FVector2D(E.Size.X+5,E.LayoutId==TEXT("map.player")?-12:22);
+            const FSlateFontInfo Font(Typeface,16);
+            Box(Label-FVector2D(5,2),{E.Text.Len()*22.+10,29},FLinearColor(.012f,.018f,.022f,.9f),L+1);
+            FSlateDrawElement::MakeText(Out,L+2,Geometry(Label,{100,30}),E.Text,Font,ESlateDrawEffect::None,E.Color);
         }
 #if !UE_BUILD_SHIPPING
         else if(E.Type==TEXT("mapProbe"))Box(E.Position,E.Size,FLinearColor(1,0,1,1),L);

@@ -40,6 +40,8 @@ struct FHeroAnimProxy : FAnimInstanceProxy
     FHeroBlend Layers[8];
     FAnimNode_SequencePlayer_Standalone RangedPlayer;
     FAnimNode_LayeredBoneBlend RangedLayer;
+    FAnimNode_LayeredBoneBlend MeleeLayer;
+    FAnimNode_SequencePlayer_Standalone ExecutionPlayer;
     FAnimNode_ConvertLocalToComponentSpace RangedToComponent;
     FAnimNode_ModifyBone AimRotation;
     FAnimNode_ConvertComponentToLocalSpace RangedToLocal;
@@ -80,10 +82,18 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         RangedLayer.LayerSetup[0].BranchFilters.Add(UpperBody);
         RangedLayer.bMeshSpaceRotationBlend=true;
         RangedLayer.BlendWeights[0]=0;
+        MeleeLayer.BasePose.SetLinkNode(&RangedLayer);
+        MeleeLayer.AddPose();
+        MeleeLayer.BlendPoses[0].SetLinkNode(&Players[6]);
+        MeleeLayer.LayerSetup[0].BranchFilters.Add(UpperBody);
+        MeleeLayer.bMeshSpaceRotationBlend=false;
+        MeleeLayer.BlendWeights[0]=0;
+        ExecutionPlayer.SetSequence(Hero->Clips[6]);
+        ExecutionPlayer.SetLoopAnimation(false);
         for (int32 Index = 0; Index < 8; ++Index)
         {
-            Layers[Index].A.SetLinkNode(Index==0?static_cast<FAnimNode_Base*>(&Locomotion):Index==3?static_cast<FAnimNode_Base*>(&RangedLayer):&Layers[Index-1]);
-            Layers[Index].B.SetLinkNode(&Players[Index + 3]);
+            Layers[Index].A.SetLinkNode(Index==0?static_cast<FAnimNode_Base*>(&Locomotion):Index==3?static_cast<FAnimNode_Base*>(&MeleeLayer):&Layers[Index-1]);
+            Layers[Index].B.SetLinkNode(Index==3?&ExecutionPlayer:&Players[Index + 3]);
             Layers[Index].bAlphaBoolEnabled = false;
         }
         AxeFingers.Source.SetLinkNode(&Layers[7]);
@@ -121,7 +131,11 @@ struct FHeroAnimProxy : FAnimInstanceProxy
         Players[2].SetAccumulatedTime(RunTime);
         LocomotionPhase = FMath::Fmod(LocomotionPhase + CycleRate * DeltaSeconds, 1.f);
         for (int32 Index = 0; Index < 8; ++Index)
-            Layers[Index].bAlphaBoolEnabled = Hero->ActionState == Index + 1;
+            Layers[Index].bAlphaBoolEnabled = Hero->ActionState == Index + 1 && (Index!=3 || Hero->IsExecution);
+        MeleeLayer.BlendWeights[0]=FMath::FInterpConstantTo(MeleeLayer.BlendWeights[0],
+            Hero->ActionState==4 && !Hero->IsExecution?1.f:0.f,DeltaSeconds,10.f);
+        ExecutionPlayer.SetPlayRate(Hero->CombatRate);
+        if(SeenAttack!=Hero->AttackRevision)ExecutionPlayer.SetAccumulatedTime(0.f);
         for(int32 Index=8;Index<11;++Index)
         {
             Players[Index].SetPlayRate(0);
@@ -271,7 +285,7 @@ void UHearthwardHeroAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     if(IsStoneAxe || IsSpear)
     {
         auto& Proxy=GetProxyOnGameThread<FHeroAnimProxy>();
-        for(int32 Index=0;Index<5;++Index) Proxy.Layers[Index].bAlphaBoolEnabled=ActionState==Index+1;
+        for(int32 Index=0;Index<5;++Index) Proxy.Layers[Index].bAlphaBoolEnabled=ActionState==Index+1 && (Index!=3 || IsExecution);
     }
 }
 

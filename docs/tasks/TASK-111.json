@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "id": "TASK-111",
+  "title": "暂停焦点修复、实景地图与罗盘、移动攻击分层动画",
+  "status": "Active",
+  "updated_at": "2026-10-12",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-111-navigation-combat",
+  "source_refs": [
+    "main@7f56a2f5b42358b9d14c3ac04ab1cc19c29ca987",
+    "2026-10-11 用户授权 TASK-111：暂停空白区域闪烁、地图实物一致及玩家/弟弟朝向辨识、顶部滚动罗盘、移动时上半身攻击"
+  ],
+  "dependencies": [
+    "TASK-110"
+  ],
+  "blocked_by": [],
+  "contracts": [],
+  "allowed_paths": [
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Animation/",
+    "Source/Hearthward/Combat/",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/Tests/",
+    "Resources/UI/",
+    "scripts/ui/",
+    "scripts/qa/",
+    "scripts/tests/",
+    "art_source/TASK-111/",
+    "README.md",
+    "docs/tasks/TASK-111.json",
+    "docs/tasks/TASK-111.md",
+    "docs/handoffs/TASK-111.md",
+    "docs/planning/TASK-111/",
+    "docs/qa/TASK-111/",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "鼠标移出暂停选项后不自动高亮继续，键盘导航保留。",
+    "地图匹配当前场景地形/建筑布局，玩家与弟弟标记及朝向清晰。",
+    "游戏顶部罗盘以镜头方向左右滚动，东南西北刻度和左右渐隐。",
+    "普通近战可边走/跑边攻击，腿部保持移动动画，上半身播放攻击；处决/救援等动作保持必要限制。"
+  ],
+  "non_goals": [
+    "不更改伤害、耐久、体力和存档格式。",
+    "本轮不重新打包或发布。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-003",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_asset_locks",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user",
+    "push": "granted_by_user",
+    "merge": "granted_by_user",
+    "github_release": "not_granted",
+    "paid_services": "not_granted"
+  },
+  "notes": [
+    "TASK-110 已由用户授权提交推送，并通过PR #75合并main。",
+    "保留用户原有旧GDD删除。",
+    "实现完成；Editor、定向原生回归及真实场景渲染/移动攻击验证通过，报告见 docs/qa/TASK-111/REPORT.md。",
+    "2026-10-12 用户明确授权 TASK-111 提交、推送并合并 main；完整手感验收与发行不在本轮范围。"
+  ]
+}
