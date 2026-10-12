@@ -1,6 +1,6 @@
 # 最短阅读路径
 
-2026-10-11：TASK-110 已通过 [PR #75](https://github.com/XLingyyy/Hearthward/pull/75) 合入 main（`7f56a2f5`）。当前任务为 TASK-111，分支 `codex/TASK-111-navigation-combat`；从 [TASK-111 交接](handoffs/TASK-111.md) 查看实现和验证状态。打开 `G:/GameFactory/Hearthward/Hearthward.uproject` 运行当前工作区。以下为历史记录。
+2026-10-11：TASK-110 已通过 [PR #75](https://github.com/XLingyyy/Hearthward/pull/75) 合入 main（`7f56a2f5`）。当前任务为 TASK-111，分支 `codex/TASK-111-navigation-combat`；从 [TASK-111 交接](handoffs/TASK-111.md) 查看实现和验证状态。打开 `G:/GameFactory/Hearthward/Hearthward.uproject` 运行当前工作区。TASK-111 已提交推送，整合见 [PR #76](https://github.com/XLingyyy/Hearthward/pull/76)；合并状态以 PR 为准。以下为历史记录。
 
 2026-10-11：当前任务 TASK-110，分支 `codex/TASK-110-item-art`，基线 main@34908e89c095de50b9283441ef88198deea20819。77 件物品高清图与制作相关图示已接入，Editor 和定向渲染／回归通过，已获用户提交推送及合并授权，未发行；Active 待外观验收。详见 [TASK-110 报告](qa/TASK-110/REPORT.md)与[交接](handoffs/TASK-110.md)。运行工程 G:/GameFactory/Hearthward/Hearthward.uproject。以下为历史快照。
 

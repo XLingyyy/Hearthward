@@ -1,6 +1,6 @@
 # TASK-111 验证记录
 
-基线：main `7f56a2f5`（TASK-110 / PR #75）。工程：`G:/GameFactory/Hearthward/Hearthward.uproject`。工作分支：`codex/TASK-111-navigation-combat`，未提交、未发布。
+基线：main `7f56a2f5`（TASK-110 / PR #75）。工程：`G:/GameFactory/Hearthward/Hearthward.uproject`。工作分支：`codex/TASK-111-navigation-combat`，实现提交 b8239989，整合见 [PR #76](https://github.com/XLingyyy/Hearthward/pull/76)；未发布。
 
 ## 实现
 
