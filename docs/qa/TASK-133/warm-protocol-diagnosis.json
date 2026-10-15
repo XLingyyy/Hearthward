@@ -1,0 +1,1133 @@
+{
+  "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-warm60-01",
+  "scope": "Stopped diagnostic, not formal warm acceptance. No production changes.",
+  "stop": {
+    "reason": "QA protocol concatenated independent requests into an un-dismissed working goal. Preserve samples as repeated-pending diagnostic; stop through normal UI quit and rerun with explicit existing clearClarification action between independent requests.",
+    "completed_samples_before_stop": 26,
+    "request": {
+      "objectPath": "/Engine/Transient.GameEngine_0:GameInstance_0.HearthwardScreenWidget_1",
+      "functionName": "ExecuteAction",
+      "parameters": {
+        "Action": "quit"
+      },
+      "generateTransaction": false
+    },
+    "time": 1792046239.942965
+  },
+  "recorded_samples": 27,
+  "samples": [
+    {
+      "index": 1,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 39.904698700000154,
+      "submission_to_http_response_seconds": 39.43805019930005,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 40.08074869999837,
+      "result": "PASS"
+    },
+    {
+      "index": 2,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 10.127459199997247,
+      "submission_to_http_response_seconds": 9.61425269767642,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去当前安全采集点采 1 份木材并送入营地仓库，请确认后再出发。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2592,
+      "output_tokens": 62,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 10.33362429999761,
+      "result": "FAIL"
+    },
+    {
+      "index": 3,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 10.204120299997157,
+      "submission_to_http_response_seconds": 9.865302201360464,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 10.371816999999282,
+      "result": "FAIL"
+    },
+    {
+      "index": 4,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 9.021463699999003,
+      "submission_to_http_response_seconds": 8.610117800533772,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 9.180883400000312,
+      "result": "FAIL"
+    },
+    {
+      "index": 5,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.915199899998697,
+      "submission_to_http_response_seconds": 7.621009599417448,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.107055099997524,
+      "result": "FAIL"
+    },
+    {
+      "index": 6,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.031680199997936,
+      "submission_to_http_response_seconds": 7.8132589012384415,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.23602480000045,
+      "result": "FAIL"
+    },
+    {
+      "index": 7,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.068491199999698,
+      "submission_to_http_response_seconds": 7.715940199792385,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.248720499999763,
+      "result": "FAIL"
+    },
+    {
+      "index": 8,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.936213699998916,
+      "submission_to_http_response_seconds": 7.80558430030942,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.143107500000042,
+      "result": "FAIL"
+    },
+    {
+      "index": 9,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.880249599998933,
+      "submission_to_http_response_seconds": 7.615336801856756,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.05529249999745,
+      "result": "FAIL"
+    },
+    {
+      "index": 10,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.967344000000594,
+      "submission_to_http_response_seconds": 7.693441096693277,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.149221700001362,
+      "result": "FAIL"
+    },
+    {
+      "index": 11,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.9830793000000995,
+      "submission_to_http_response_seconds": 7.592638596892357,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.177501699999993,
+      "result": "FAIL"
+    },
+    {
+      "index": 12,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.864629799998511,
+      "submission_to_http_response_seconds": 7.757464900612831,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.060193500001333,
+      "result": "FAIL"
+    },
+    {
+      "index": 13,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.984314699999231,
+      "submission_to_http_response_seconds": 7.542907800525427,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.147319299998344,
+      "result": "FAIL"
+    },
+    {
+      "index": 14,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.305205699998623,
+      "submission_to_http_response_seconds": 7.533983301371336,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.50299079999968,
+      "result": "FAIL"
+    },
+    {
+      "index": 15,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.914063100000931,
+      "submission_to_http_response_seconds": 7.6635903008282185,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.12486180000269,
+      "result": "FAIL"
+    },
+    {
+      "index": 16,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.021094700001413,
+      "submission_to_http_response_seconds": 7.6750977002084255,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.205857199998718,
+      "result": "FAIL"
+    },
+    {
+      "index": 17,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.031905499999993,
+      "submission_to_http_response_seconds": 7.533932600170374,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.216445800000656,
+      "result": "FAIL"
+    },
+    {
+      "index": 18,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.29693639999823,
+      "submission_to_http_response_seconds": 7.920688297599554,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.466261400000803,
+      "result": "FAIL"
+    },
+    {
+      "index": 19,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.403048100000888,
+      "submission_to_http_response_seconds": 7.913635298609734,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.572800400001142,
+      "result": "FAIL"
+    },
+    {
+      "index": 20,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.92655250000098,
+      "submission_to_http_response_seconds": 7.699389401823282,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.097108500001923,
+      "result": "FAIL"
+    },
+    {
+      "index": 21,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.040762200002064,
+      "submission_to_http_response_seconds": 7.539771597832441,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.208790399999998,
+      "result": "FAIL"
+    },
+    {
+      "index": 22,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.944053999999596,
+      "submission_to_http_response_seconds": 7.5876481011509895,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.144081200000073,
+      "result": "FAIL"
+    },
+    {
+      "index": 23,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.982594599998265,
+      "submission_to_http_response_seconds": 7.670951701700687,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.178327300000092,
+      "result": "FAIL"
+    },
+    {
+      "index": 24,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 8.290576999999757,
+      "submission_to_http_response_seconds": 7.476675599813461,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.516598199999862,
+      "result": "FAIL"
+    },
+    {
+      "index": 25,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.962359100001777,
+      "submission_to_http_response_seconds": 7.612559203058481,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.14497029999984,
+      "result": "FAIL"
+    },
+    {
+      "index": 26,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true,
+      "terminal_observed_seconds": 7.885046300001704,
+      "submission_to_http_response_seconds": 7.731541499495506,
+      "reason": "UNRESOLVED_CONSTRAINT",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，确认要采集 1 份木材送入营地仓库吗？当前采集点安全，执行后我会将新增的木材入库。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": false,
+      "generation_calls": 1,
+      "input_tokens": 2638,
+      "output_tokens": 65,
+      "dialogue_reply": "还有未解决的限制，不能确认执行。请明确地点或结束本次澄清后重新安排。",
+      "dialogue_getter_observed_seconds": 8.095882000001438,
+      "result": "FAIL"
+    },
+    {
+      "index": 27,
+      "ready_before": true,
+      "server_pid": 5932,
+      "accepted": true
+    }
+  ],
+  "raw_boundary": "This run records raw model JSON. Later samples returned collect/wood/1/S1 with unresolved=[], while UE declined confirmation. Candidate getter may be stale and has_candidate=false is authoritative.",
+  "source_path": [
+    "StageCandidate appends Memory.WorkingGoal.Original plus current Input",
+    "OriginalQuantityMatches rejects a second target quantity, including the same numeric amount",
+    "WorkingGoal persists until explicit end/confirmation; CancelPending alone does not clear it"
+  ],
+  "source_files": [
+    "Source/Hearthward/AI/HearthwardAgentInteraction.cpp:189",
+    "Source/Hearthward/AI/HearthwardAgentContract.cpp:149",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp:181"
+  ],
+  "protocol_fix": "Use the existing clearClarification UI action between independent requests, before the timed submit. Keep existing player constraints, memory records, model and safety rules unchanged. Record clock around each request; no time injection.",
+  "formal_p95": "NOT_EVALUATED; protocol-contaminated diagnostic retained",
+  "termination": "Intentional normal UI quit to replace flawed sampling protocol; resulting connection reset is not a game crash.",
+  "process_exit_verified": true
+}

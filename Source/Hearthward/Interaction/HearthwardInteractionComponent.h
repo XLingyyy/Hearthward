@@ -29,6 +29,7 @@ public:
     bool InteractNearest();
     UFUNCTION(BlueprintPure, Category="Hearthward|Interaction")
     UHearthwardInteractionTargetComponent* GetNearestTarget() const;
+    UHearthwardInteractionTargetComponent* GetPriorityTarget() const;
     UFUNCTION(BlueprintPure, Category="Hearthward|Interaction")
     FString GetCompletionFeedback() const { return Status == EHearthwardInteractionStatus::Ready ? CompletionFeedback : FString(); }
     UFUNCTION(BlueprintPure, Category="Hearthward|Interaction")

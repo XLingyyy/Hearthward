@@ -43,6 +43,13 @@ public:
     TArray<FString> RecentKnowledge() const;
     // Consumers hold world mutations during loading, restore and clock settlement.
     bool IsRestoring() const;
+    const FHearthwardPersistentInteractionState& InteractionState() const { return Interactions; }
+    bool BindInteractionTarget(FName Id, EHearthwardPersistentKind Kind, AActor* Target);
+    FHearthwardInteractionTicket BeginInteraction(FName Id);
+    void CancelInteraction() { InteractionTicket={}; }
+    bool CommitInteraction(const FHearthwardInteractionTicket& Ticket,
+        const FHearthwardPersistentInteractionState& Candidate,
+        const TMap<FName,int32>& Consumed={}, const TMap<FName,int32>& Produced={});
 protected:
     virtual bool DoesSupportWorldType(EWorldType::Type Type) const override;
 private:
@@ -57,6 +64,9 @@ private:
     FHearthwardSaveCompatibility Compatibility;
     UPROPERTY() TObjectPtr<UHearthwardSaveGame> Pool;
     UPROPERTY() FHearthwardWorldSave InitialWorld;
+    UPROPERTY() FHearthwardPersistentInteractionState Interactions;
+    TMap<FName,TWeakObjectPtr<AActor>> InteractionTargets;
+    FHearthwardInteractionTicket InteractionTicket;
     FGuid CampaignId;
     TArray<FString> Knowledge;
     int64 KnowledgeRevision = 0;

@@ -40,6 +40,7 @@ AHearthwardNatureActor::AHearthwardNatureActor()
 void AHearthwardNatureActor::Configure(FGuid Entity,FName Type,FName Def)
 {
     Id=Entity;Kind=Type;Definition=Def;
+    SetActorTickEnabled(Kind==TEXT("animal"));
     Interaction->MaxDistance=Kind==TEXT("fish")?1500:Kind==TEXT("resource")?240:300;
     UStaticMesh* Mesh=nullptr;FVector Scale(.5);
     if(Kind==TEXT("animal"))

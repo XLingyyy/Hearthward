@@ -21,6 +21,12 @@ public:
     UFUNCTION(BlueprintPure) FName GetCue() const {return CurrentCue;}
     UFUNCTION(BlueprintPure) FString GetVoiceStatus() const {return VoiceStatus;}
     bool FootContactSucceeded(const FHearthwardFootContactReceipt& Receipt);
+    bool InteractionSucceeded(FName Event,FGuid Operation,const FVector& Position) {return PlaySoundEvent(Event,Operation,&Position);}
+    FName ImpactKind;
+    FVector ImpactPosition=FVector::ZeroVector;
+    float ImpactRemaining=0;
+    TOptional<FVector> DamageDirection;
+    float DirectionRemaining=0;
 private:
     friend struct FAudioFeedbackLifecycleAccess;
     friend struct FSurfaceFootstepAccess;
@@ -45,6 +51,10 @@ private:
     void RemoveFireSource(int32 Index);
     class UAudioComponent* CreateAmbientSource(FName Event,const FVector& Position,float Radius);
     void ApplyAmbientMix();
+    void UpdateSituationalAudio(float Delta);
+    UPROPERTY() TObjectPtr<class UAudioComponent> RainSource;
+    float SituationalGain=1,PriorityRemaining=0,ContextCheck=0,RainWeight=0;
+    bool IndoorAudio=false;
     bool PrepareEnvironmentWave();
     void CacheEnvironmentActor(class AActor* Actor);
     void EnvironmentActorSpawned(class AActor* Actor);

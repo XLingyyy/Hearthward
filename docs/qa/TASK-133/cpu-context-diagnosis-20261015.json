@@ -1,0 +1,1217 @@
+{
+  "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-context20-02",
+  "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-context20-02\\source-identity.json",
+  "status": "STABLE_CAPTURE_COMPLETE",
+  "process_exit_verified": true,
+  "sample_count": 20,
+  "semantic_passes": 20,
+  "changed_contexts": [],
+  "model_pids": [
+    15132
+  ],
+  "samples": [
+    {
+      "index": 1,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 487.1852288208902,
+        "ElapsedCalendarMinutes": 967.1852288208902,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 727.1852288208902,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 41.41918390000137,
+      "submission_to_http_response_seconds": 40.87552309781313,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 41.65540870000041,
+      "clock_after": {
+        "ActivePlaySeconds": 528.857340618968,
+        "ElapsedCalendarMinutes": 1008.857340618968,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 768.857340618968,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 2,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 528.954612519592,
+        "ElapsedCalendarMinutes": 1008.954612519592,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 768.954612519592,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 14.818572399999539,
+      "submission_to_http_response_seconds": 14.765425197780132,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.056654700001673,
+      "clock_after": {
+        "ActivePlaySeconds": 544.0255656205118,
+        "ElapsedCalendarMinutes": 1024.0255656205118,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 784.0255656205118,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 3,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 544.1272149197757,
+        "ElapsedCalendarMinutes": 1024.1272149197757,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 784.1272149197757,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 14.920731000001979,
+      "submission_to_http_response_seconds": 14.679906398057938,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.105453500000294,
+      "clock_after": {
+        "ActivePlaySeconds": 559.273369718343,
+        "ElapsedCalendarMinutes": 1039.273369718343,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 799.273369718343,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 4,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 559.3429925180972,
+        "ElapsedCalendarMinutes": 1039.3429925180972,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 799.3429925180972,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.33500560000175,
+      "submission_to_http_response_seconds": 14.963523101061583,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.531853200001933,
+      "clock_after": {
+        "ActivePlaySeconds": 574.8887477181852,
+        "ElapsedCalendarMinutes": 1054.8887477181852,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 814.8887477181852,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 5,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 574.9663312211633,
+        "ElapsedCalendarMinutes": 1054.9663312211633,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 814.9663312211633,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 14.95679310000196,
+      "submission_to_http_response_seconds": 14.891018498688936,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.19711610000013,
+      "clock_after": {
+        "ActivePlaySeconds": 590.1908017210662,
+        "ElapsedCalendarMinutes": 1070.1908017210662,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 830.1908017210662,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 6,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 590.2464475184679,
+        "ElapsedCalendarMinutes": 1070.246447518468,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 830.2464475184679,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.986831399997754,
+      "submission_to_http_response_seconds": 15.42275819927454,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 16.17454859999998,
+      "clock_after": {
+        "ActivePlaySeconds": 606.4347645193338,
+        "ElapsedCalendarMinutes": 1086.4347645193338,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 846.4347645193338,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 7,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 606.5091580189764,
+        "ElapsedCalendarMinutes": 1086.5091580189764,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 846.5091580189764,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 14.898709699999017,
+      "submission_to_http_response_seconds": 14.811743598431349,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.174241599997913,
+      "clock_after": {
+        "ActivePlaySeconds": 621.7105984203517,
+        "ElapsedCalendarMinutes": 1101.7105984203517,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 861.7105984203517,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 8,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 621.7975014187396,
+        "ElapsedCalendarMinutes": 1101.7975014187396,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 861.7975014187396,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.809182700002566,
+      "submission_to_http_response_seconds": 15.450956400483847,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.984415200000512,
+      "clock_after": {
+        "ActivePlaySeconds": 637.7966701202095,
+        "ElapsedCalendarMinutes": 1117.7966701202095,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 877.7966701202095,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 9,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 637.8602430187166,
+        "ElapsedCalendarMinutes": 1117.8602430187166,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 877.8602430187166,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.454208399998606,
+      "submission_to_http_response_seconds": 15.000831801444292,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.630736799997976,
+      "clock_after": {
+        "ActivePlaySeconds": 653.5047373212874,
+        "ElapsedCalendarMinutes": 1133.5047373212874,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 893.5047373212874,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 10,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 653.5825690217316,
+        "ElapsedCalendarMinutes": 1133.5825690217316,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 893.5825690217316,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 14.748199900001055,
+      "submission_to_http_response_seconds": 14.647855401039124,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.010507099999813,
+      "clock_after": {
+        "ActivePlaySeconds": 668.6234130188823,
+        "ElapsedCalendarMinutes": 1148.6234130188823,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 908.6234130188823,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 11,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 668.6793673187494,
+        "ElapsedCalendarMinutes": 1148.6793673187494,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 908.6793673187494,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.454796199999691,
+      "submission_to_http_response_seconds": 14.943590898066759,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.673530199997913,
+      "clock_after": {
+        "ActivePlaySeconds": 684.3946251198649,
+        "ElapsedCalendarMinutes": 1164.394625119865,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 924.3946251198649,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 12,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 684.4850629195571,
+        "ElapsedCalendarMinutes": 1164.485062919557,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 924.4850629195571,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 14.757484599998861,
+      "submission_to_http_response_seconds": 14.686681002378464,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 14.981747000001633,
+      "clock_after": {
+        "ActivePlaySeconds": 699.4820265211165,
+        "ElapsedCalendarMinutes": 1179.4820265211165,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 939.4820265211165,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 13,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 699.5482301190495,
+        "ElapsedCalendarMinutes": 1179.5482301190495,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 939.5482301190495,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.40013810000164,
+      "submission_to_http_response_seconds": 15.031596198678017,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.572315199999139,
+      "clock_after": {
+        "ActivePlaySeconds": 715.1345897205174,
+        "ElapsedCalendarMinutes": 1195.1345897205174,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 955.1345897205174,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 14,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 715.2118369191885,
+        "ElapsedCalendarMinutes": 1195.2118369191885,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 955.2118369191885,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.281959299998562,
+      "submission_to_http_response_seconds": 15.04792270064354,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 15.532773299997643,
+      "clock_after": {
+        "ActivePlaySeconds": 730.7740230187774,
+        "ElapsedCalendarMinutes": 1210.7740230187774,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 970.7740230187774,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 15,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 730.8619320206344,
+        "ElapsedCalendarMinutes": 1210.8619320206344,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 970.8619320206344,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 16.04491280000002,
+      "submission_to_http_response_seconds": 15.590724997222424,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 16.24999419999949,
+      "clock_after": {
+        "ActivePlaySeconds": 747.1405580192804,
+        "ElapsedCalendarMinutes": 1227.1405580192804,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 987.1405580192804,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 16,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 747.2569091208279,
+        "ElapsedCalendarMinutes": 1227.256909120828,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 987.2569091208279,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.917788599999767,
+      "submission_to_http_response_seconds": 15.345468699932098,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 16.101867299999867,
+      "clock_after": {
+        "ActivePlaySeconds": 763.375736515969,
+        "ElapsedCalendarMinutes": 1243.375736515969,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1003.375736515969,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 17,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 763.4773341156542,
+        "ElapsedCalendarMinutes": 1243.4773341156542,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1003.4773341156542,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 16.46285270000226,
+      "submission_to_http_response_seconds": 16.14213040098548,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 16.654941400000098,
+      "clock_after": {
+        "ActivePlaySeconds": 780.1463520154357,
+        "ElapsedCalendarMinutes": 1260.1463520154357,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1020.1463520154357,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 18,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 780.2329238168895,
+        "ElapsedCalendarMinutes": 1260.2329238168895,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1020.2329238168895,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.893905400000222,
+      "submission_to_http_response_seconds": 15.430373199284077,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 16.15122920000067,
+      "clock_after": {
+        "ActivePlaySeconds": 796.3972390145063,
+        "ElapsedCalendarMinutes": 1276.3972390145063,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1036.3972390145063,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 19,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 796.469954315573,
+        "ElapsedCalendarMinutes": 1276.469954315573,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1036.469954315573,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.816841200001363,
+      "submission_to_http_response_seconds": 15.54078009724617,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 16.002417499999865,
+      "clock_after": {
+        "ActivePlaySeconds": 812.4860134162009,
+        "ElapsedCalendarMinutes": 1292.4860134162009,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1052.4860134162009,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 20,
+      "ready_before": true,
+      "server_pid": 15132,
+      "end_previous_goal": true,
+      "clock_before": {
+        "ActivePlaySeconds": 812.5870918147266,
+        "ElapsedCalendarMinutes": 1292.5870918147266,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1052.5870918147266,
+        "DisplayDay": 2,
+        "Daylight": 1
+      },
+      "accepted": true,
+      "terminal_observed_seconds": 15.949097400000028,
+      "submission_to_http_response_seconds": 15.456920098513365,
+      "reason": "",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。\"}",
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 当前无木材或路途受阻，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 86,
+        "CapabilityVersion": 2
+      },
+      "has_candidate": true,
+      "generation_calls": 1,
+      "input_tokens": 2575,
+      "output_tokens": 76,
+      "filtered_context": "{\"source\":\"UE_authoritative_captured_snapshot\",\"projection_tier\":\"full_relevant\",\"input_source\":\"free_text\",\"speaker\":\"player\",\"listener\":\"brother\",\"pronouns\":\"原话我=player，你=brother\",\"containers\":{\"bag\":\"弟弟背包\",\"player_bag\":\"玩家背包\",\"camp\":\"当前营地共享仓库\"},\"npc_observation\":{\"paused\":false,\"combat_state_available\":true,\"combat_active\":false,\"camp_available\":true,\"collection_source_available\":true,\"collection_source_trusted_safe\":true,\"navigation_rebuilding\":false,\"at_camp\":true,\"camp_distance_cm\":60.573234558105469,\"collection_source_distance_cm\":3395.61865234375,\"execution_phase\":\"EHearthwardCompanionPhase::Completed\",\"execution_action\":\"None\"},\"own_bag\":{\"axe\":1,\"bow\":1,\"hood\":1,\"armor\":1,\"boots\":1,\"shield\":1,\"leggings\":1},\"known_targets\":{\"available\":true,\"counts\":{\"nature_collect:wood\":0},\"rule\":\"intent:item最小量候选数；非执行授权；false或缺key为unknown\"},\"companion_state\":{\"semantics\":\"仅记录当前状态\",\"available\":true,\"requested_order\":\"wait\",\"tactical_intent\":\"hold\",\"reason\":\"EXPLICIT_HOLD\",\"player_in_combat\":false,\"routine_enabled\":false,\"routine_activity\":\"None\"},\"coordination_profile\":{\"stable\":false,\"samples\":1,\"preferred_directive\":\"None\",\"confidence\":1,\"semantics\":\"derived_recent_behavior_not_explicit_player_preference\"},\"camp_stock_beliefs\":[],\"belief_rule\":\"player_report未核实；离营后firsthand/receipt也可能过期；未知数量保持unknown，不从世界真值偷看。\",\"recent_episodes\":[{\"command\":\"cmd1\",\"item\":\"wood\",\"coverage\":\"complete\",\"acquired\":1,\"delivered\":1,\"completed\":true,\"cancelled\":false,\"last_at_game_seconds\":486.63673141971231,\"reasons\":[],\"evidence\":[\"ev1\",\"ev2\",\"ev3\"]}],\"episode_rule\":\"complete才可把聚合数称为全过程总量；truncated/unknown只能说明保留记录可确认的部分。\",\"player_records\":[],\"active_agreements\":[],\"collection_prohibited_items\":[],\"confirmed_rules\":[],\"current_goal\":\"暂无待补充任务\",\"unresolved_original_constraints\":[],\"known_workbench\":false,\"source_refs\":\"S1=当前已知采集点；仓库材料取用仍需明确授权\",\"capabilities_version\":\"npc-v2\"}",
+      "dialogue_reply": "请核对下面的任务卡，确认后我再开始。",
+      "dialogue_getter_observed_seconds": 16.121278500002518,
+      "clock_after": {
+        "ActivePlaySeconds": 828.7226421162486,
+        "ElapsedCalendarMinutes": 1308.7226421162486,
+        "ElapsedDays": 0,
+        "MinuteOfDay": 1068.7226421162486,
+        "DisplayDay": 2,
+        "Daylight": 0.9576278310558043
+      },
+      "result": "PASS"
+    }
+  ],
+  "scope": "20-request diagnosis only, not formal p95. One initial warm request exceeded 30s; subsequent contexts stayed equal. The prior 60-run intermediate prefix loss was not reproduced; exact changed field remains unconfirmed. No production context/model/threshold changes made.",
+  "prior_failed_attempt": ".agent-local/qa/TASK-133/performance/camp-day-cpu-context20-01/results.json",
+  "prior_failure": "The session-specific RemoteControl list omitted existing read-only GetLastFilteredContext. Its exact entry was added for the new isolated session; broad remote execution remains disabled."
+}

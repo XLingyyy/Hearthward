@@ -1,4 +1,6 @@
 #include "HearthwardBrotherAnimInstance.h"
+#include "../Interaction/HearthwardInteractionAlignment.h"
+#include "../Combat/HearthwardEnemyRolePolicy.h"
 #include "Animation/AnimInstanceProxy.h"
 #include "../Equipment/HearthwardAxeHandPose.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -37,6 +39,8 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
     FAnimNode_SequencePlayer_Standalone LifePlayers[3];
     FBrotherActionBlend LifeLayers[3];
     FHearthwardAxeFingerPoseNode AxeFingers;
+    FAnimNode_SequencePlayer_Standalone ContactPlayer;
+    FBrotherActionBlend ContactLayer;
     uint32 SeenAttack = 0;
     float LocomotionPhase = 0;
 
@@ -69,16 +73,21 @@ struct FBrotherAnimProxy : FAnimInstanceProxy
             LifeLayers[I].A.SetLinkNode(I==0?&Attack:&LifeLayers[I-1]);LifeLayers[I].B.SetLinkNode(&LifePlayers[I]);
         }
         AxeFingers.Source.SetLinkNode(&LifeLayers[2]);
+        ContactPlayer.SetSequence(Brother->Clips[0]);ContactPlayer.SetPlayRate(0);ContactPlayer.SetLoopAnimation(false);
+        ContactLayer.A.SetLinkNode(&AxeFingers);ContactLayer.B.SetLinkNode(&ContactPlayer);ContactLayer.bAlphaBoolEnabled=false;
         FVector Palm;
         HearthwardAxeHandPose::Profile(Instance->GetSkelMeshComponent()->GetSkeletalMeshAsset(), Palm, AxeFingers.Rotations);
         FAnimInstanceProxy::Initialize(Instance);
     }
-    virtual FAnimNode_Base* GetCustomRootNode() override { return &AxeFingers; }
+    virtual FAnimNode_Base* GetCustomRootNode() override { return &ContactLayer; }
     virtual void PreUpdate(UAnimInstance* Instance, float DeltaSeconds) override
     {
         FAnimInstanceProxy::PreUpdate(Instance, DeltaSeconds);
         AxeFingers.Enabled = HearthwardAxeHandPose::ShouldApply(Instance->GetOwningActor());
         const auto* Brother = CastChecked<UHearthwardBrotherAnimInstance>(Instance);
+        const auto* Contact=Instance->GetOwningActor()->FindComponentByClass<UHearthwardInteractionAlignment>();
+        ContactLayer.bAlphaBoolEnabled=Contact && Contact->Active();
+        if(ContactLayer.bAlphaBoolEnabled){ContactPlayer.SetSequence(Contact->Sequence());ContactPlayer.SetStartPosition(Contact->PoseTime());ContactPlayer.SetAccumulatedTime(Contact->PoseTime());}
         CarryLayer.BlendWeights[0]=Brother->WeaponCarryWeight;
         for(int32 I=0;I<3;++I)
         {
@@ -149,6 +158,7 @@ UHearthwardBrotherAnimInstance::UHearthwardBrotherAnimInstance()
 
 void UHearthwardBrotherAnimInstance::PlayAttack()
 {
+    bTimedEnemyAttack=false;
     bCompanionAttack=false;
     if(auto* Brother=Cast<AHearthwardCompanionFixture>(TryGetPawnOwner()))
     {
@@ -160,6 +170,13 @@ void UHearthwardBrotherAnimInstance::PlayAttack()
     AttackDuration=bCompanionAttack && Clips[4]!=SpearAttackClip?.7f:Clips[4]->GetPlayLength();
     AttackRemaining=AttackDuration;AttackPoseTime=0;
     ++AttackRevision;
+}
+
+void UHearthwardBrotherAnimInstance::PlayTimedAttack(float Windup,float Active,float Recovery)
+{
+    PlayAttack();bTimedEnemyAttack=true;bCompanionAttack=true;
+    EnemyAttackTiming=FVector(Windup,Active,Recovery);
+    AttackDuration=Windup+Active+Recovery;AttackRemaining=AttackDuration;
 }
 
 void UHearthwardBrotherAnimInstance::CancelAttack()
@@ -176,7 +193,12 @@ void UHearthwardBrotherAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     GroundSpeed = TryGetPawnOwner()->GetVelocity().Size2D();
     AttackRemaining = FMath::Max(0.f, AttackRemaining - DeltaSeconds);
     const float AttackElapsed=AttackDuration-AttackRemaining;
-    if(bCompanionAttack)
+    if(bTimedEnemyAttack)
+    {
+        const HearthwardEnemyRole::FAttack Timing{float(EnemyAttackTiming.X),float(EnemyAttackTiming.Y),float(EnemyAttackTiming.Z)};
+        AttackPoseTime=Clips[4]->GetPlayLength()*Timing.ClipPhase(AttackElapsed);
+    }
+    else if(bCompanionAttack)
     {
         // The existing chop reaches contact at 80% of its clip. Match the approved 0.25 s hit.
         const float Phase=AttackElapsed<=.15f?AttackElapsed/.15f*.6f

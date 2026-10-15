@@ -1,0 +1,169 @@
+{
+  "source": ".agent-local\\qa\\TASK-133\\performance\\rain-stealth-cpu-03\\profile\\Saved\\Profiling\\CSV\\Task102-7453b97f-0e5d-4634-aa08-d9753b0e0dbc.csv",
+  "numeric_frames": 7651,
+  "scope": "Every numeric frame enumerated, per-counter available sample counts explicit; overlapping counters not additive. Includes instrumentation; no isolated causal claim.",
+  "frame_threads": {
+    "FrameTime": {
+      "samples": 7651,
+      "mean_ms": 15.232840373807345,
+      "p99_ms": 23.366
+    },
+    "RenderThreadTime": {
+      "samples": 7651,
+      "mean_ms": 15.026468213305451,
+      "p99_ms": 23.2126
+    },
+    "GameThreadTime": {
+      "samples": 7651,
+      "mean_ms": 11.958666148215919,
+      "p99_ms": 17.8689
+    },
+    "GPUTime": {
+      "samples": 7651,
+      "mean_ms": 14.508600352895046,
+      "p99_ms": 22.3077
+    },
+    "RenderThreadTime_CriticalPath": {
+      "samples": 7651,
+      "mean_ms": 15.027753953731539,
+      "p99_ms": 23.2126
+    },
+    "GameThreadTime_CriticalPath": {
+      "samples": 7651,
+      "mean_ms": 11.96003816494576,
+      "p99_ms": 17.87
+    }
+  },
+  "largest_gpu": [
+    [
+      "GPU/NaniteVisBuffer",
+      {
+        "samples": 7651,
+        "mean_ms": 5.005898797542804,
+        "p99_ms": 5.6356
+      }
+    ],
+    [
+      "GPU/ShadowDepths",
+      {
+        "samples": 7651,
+        "mean_ms": 1.7228888249901975,
+        "p99_ms": 10.029
+      }
+    ],
+    [
+      "GPU/RenderDeferredLighting",
+      {
+        "samples": 7651,
+        "mean_ms": 1.1756569860149,
+        "p99_ms": 1.3814
+      }
+    ],
+    [
+      "GPU/VolumetricCloud",
+      {
+        "samples": 7651,
+        "mean_ms": 0.903727277480068,
+        "p99_ms": 1.192
+      }
+    ],
+    [
+      "GPU/NaniteBasePass",
+      {
+        "samples": 7651,
+        "mean_ms": 0.8356221670369887,
+        "p99_ms": 0.9658
+      }
+    ],
+    [
+      "GPU/ShadowProjection",
+      {
+        "samples": 7651,
+        "mean_ms": 0.8172634296170436,
+        "p99_ms": 0.9328
+      }
+    ],
+    [
+      "GPU/Unaccounted",
+      {
+        "samples": 7651,
+        "mean_ms": 0.5529619657561103,
+        "p99_ms": 0.8122
+      }
+    ],
+    [
+      "GPU/Basepass",
+      {
+        "samples": 7651,
+        "mean_ms": 0.4584054633381257,
+        "p99_ms": 0.5446
+      }
+    ]
+  ],
+  "largest_game": [
+    [
+      "Exclusive/GameThread/TickActors",
+      {
+        "samples": 7651,
+        "mean_ms": 4.2658644360214355,
+        "p99_ms": 6.7166
+      }
+    ],
+    [
+      "Exclusive/GameThread/EventWait",
+      {
+        "samples": 7651,
+        "mean_ms": 3.272649353025748,
+        "p99_ms": 12.5458
+      }
+    ],
+    [
+      "Exclusive/GameThread/Animation",
+      {
+        "samples": 7651,
+        "mean_ms": 1.5762110835184944,
+        "p99_ms": 2.8998
+      }
+    ],
+    [
+      "Exclusive/GameThread/Tickables",
+      {
+        "samples": 7651,
+        "mean_ms": 1.4978948242059862,
+        "p99_ms": 2.9557
+      }
+    ],
+    [
+      "Exclusive/GameThread/UI",
+      {
+        "samples": 7651,
+        "mean_ms": 1.1510019735982224,
+        "p99_ms": 3.3539
+      }
+    ],
+    [
+      "Exclusive/GameThread/CharacterMovement",
+      {
+        "samples": 7651,
+        "mean_ms": 0.43207061821984055,
+        "p99_ms": 1.081
+      }
+    ],
+    [
+      "Exclusive/GameThread/DeferredTickTime",
+      {
+        "samples": 7651,
+        "mean_ms": 0.37877644752319956,
+        "p99_ms": 1.8395
+      }
+    ],
+    [
+      "Exclusive/GameThread/EndOfFrameUpdates",
+      {
+        "samples": 7651,
+        "mean_ms": 0.3281815579662789,
+        "p99_ms": 0.7469
+      }
+    ]
+  ]
+}

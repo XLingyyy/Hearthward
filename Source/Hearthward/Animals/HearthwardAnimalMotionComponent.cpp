@@ -7,6 +7,7 @@
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
+#include "../Gameplay/HearthwardActorQuery.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
@@ -17,6 +18,7 @@
 #include "Misc/Paths.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
+#include "UObject/UObjectIterator.h"
 
 namespace
 {
@@ -36,6 +38,7 @@ TSharedPtr<FJsonObject> AnimalCatalog()
 UHearthwardAnimalMotionComponent::UHearthwardAnimalMotionComponent()
 {
     PrimaryComponentTick.bCanEverTick=true;
+    PrimaryComponentTick.bStartWithTickEnabled=false;
 }
 bool UHearthwardAnimalMotionComponent::Configure(FName InSpecies,float Scale)
 {
@@ -114,7 +117,7 @@ bool UHearthwardAnimalMotionComponent::Configure(FName InSpecies,float Scale)
         }
     }
     Enter(EPhase::Idle,Idle,Random.FRandRange(1.5f,4.f));Mesh->SetAnimInstanceClass(UHearthwardAnimalAnimInstance::StaticClass());
-    AlignMesh();AddTickPrerequisiteActor(GetOwner());return true;
+    AlignMesh();AddTickPrerequisiteActor(GetOwner());SetComponentTickEnabled(true);return true;
 }
 void UHearthwardAnimalMotionComponent::SetHabitat(const FBox& InRegion,bool IsDemo)
 {
@@ -230,11 +233,13 @@ void UHearthwardAnimalMotionComponent::Move(float Delta,float Speed)
     const FVector P=GetOwner()->GetActorLocation();const FVector To=Goal-P;
     if(To.Size2D()<15 || Speed<1)return;
     FVector Desired=To.GetSafeNormal2D();
-    for(TActorIterator<AActor> It(GetWorld());It;++It)
+    for(TObjectIterator<UHearthwardAnimalMotionComponent> It;It;++It)
     {
-        if(*It==GetOwner())continue;
-        const auto* Other=It->FindComponentByClass<UHearthwardAnimalMotionComponent>();if(!Other || !Other->Ready() || Other->Aquatic!=Aquatic)continue;
-        const FVector D=P-It->GetActorLocation();const float Range=BodyRadius+Other->BodyRadius+25;
+        const auto* Other=*It;const auto* Owner=Other->GetOwner();
+        if(Owner==GetOwner() || Other->GetWorld()!=GetWorld() || !Other->Ready() || Other->Aquatic!=Aquatic
+            || !IsValid(Owner) || Owner->IsActorBeingDestroyed() || !HearthwardActorQuery::IsActiveLevel(Owner->GetLevel())
+            || Owner->FindComponentByClass<UHearthwardAnimalMotionComponent>()!=Other)continue;
+        const FVector D=P-Other->GetOwner()->GetActorLocation();const float Range=BodyRadius+Other->BodyRadius+25;
         if(D.Size2D()<Range && D.Size2D()>1)Desired+=D.GetSafeNormal2D()*(1-D.Size2D()/Range)*2;
     }
     Desired=Desired.GetSafeNormal2D();

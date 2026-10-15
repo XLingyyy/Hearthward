@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "id": "TASK-129",
+  "title": "真实动物踪迹与可验证的观察狩猎",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-116",
+    "TASK-121",
+    "TASK-122",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-ENV.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-129.json",
+    "docs/tasks/TASK-129.md",
+    "docs/handoffs/TASK-129.md",
+    "docs/qa/TASK-129/",
+    "docs/planning/TASK-129/",
+    "README.md",
+    "Source/Hearthward/Nature/HearthwardAnimalTraces.h",
+    "Source/Hearthward/Nature/HearthwardAnimalTraces.cpp",
+    "Source/Hearthward/Tests/Round2AnimalTracesTests.cpp",
+    "art_source/TASK-129/",
+    "Source/Hearthward/Nature/HearthwardNatureSubsystem.cpp",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/UI/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.h",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignExploration.cpp",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "Resources/Data/round2_people.json",
+    "Source/Hearthward/Tests/Round2PersonalStoryTests.cpp",
+    "Source/Hearthward/Tests/M1ContentTests.cpp",
+    "Source/Hearthward/UI/HearthwardScreenRound2SceneTest.inl",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T129-C01 [NATIVE] 动物移动、静止和离开观察区后检查踪迹。 → 踪迹来自实际活动，不为方便任务凭空生成动物或肉。",
+    "T129-C02 [PLAY] 关闭精确地图目标，沿连续线索寻找目标。 → 可以推断大致方向和新鲜度，但不会获得全图实时定位。",
+    "T129-C03 [NATIVE] 目标死亡、野外刷新及旧迹保留时查询。 → 旧迹不绑定新生命代次，不制造可重复狩猎奖励。",
+    "T129-C04 [SAVE] 同节点多次载入与新进程继续。 → 线索按契约恢复/重建，不能靠重载刷掉落或瞬间更新信息。",
+    "T129-C05 [PERF] 长期路线与多动物在区域内活动。 → 样本数、内存和地面标记有明确上限，过期清理有效。",
+    "T129-C06 [PLAY] 追踪结束后进行既有狩猎和垂钓。 → 原资源获取/动物行为不回退；报告至少一条完整自然追踪路线。"
+  ],
+  "non_goals": [
+    "不做完整食物链、繁殖迁徙、气味模拟或新增垂钓小游戏。",
+    "不把线索奖励直接兑换成肉和经验。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G3；优先级 P2；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

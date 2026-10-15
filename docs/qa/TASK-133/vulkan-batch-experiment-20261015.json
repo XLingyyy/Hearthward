@@ -1,0 +1,132 @@
+{
+  "scope": "Isolated diagnostic, not frozen baseline replacement",
+  "changed_parameter": {
+    "LLAMA_ARG_UBATCH": 128
+  },
+  "baseline_physical_batch": 512,
+  "unchanged": [
+    "model",
+    "quality",
+    "resolution",
+    "context4096",
+    "generation_threads4",
+    "prompt_threads4",
+    "gpu_layers16",
+    "production source"
+  ],
+  "activation": "Process-local environment inherited by UE and llama-server; parameter acknowledgement must be checked in local-ai.log",
+  "baseline_runs": [
+    "camp-vulkan-warmframes60-01",
+    "camp-management-vulkan-02"
+  ],
+  "result": "CAPTURE_COMPLETE_MODEL_FAILED",
+  "terminal": {
+    "last_input": "采集1份木材送入营地仓库",
+    "raw": "",
+    "submission_to_response_seconds": 0,
+    "input_tokens": 2519,
+    "output_tokens": 0,
+    "reason": "MODEL_UNAVAILABLE",
+    "applied_intent": "",
+    "has_candidate": false,
+    "candidate": {
+      "Intent": "None",
+      "Item": "None",
+      "Quantity": 0,
+      "QuantityMode": "",
+      "SourceRef": "",
+      "Limits": [],
+      "Unresolved": [],
+      "Line": "",
+      "Original": "",
+      "Station": {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 0
+      },
+      "EquipmentId": {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 0
+      },
+      "RuleRevision": 0,
+      "CapabilityVersion": 2
+    },
+    "context_tier": "full_relevant",
+    "server_process_id": 0
+  },
+  "frame_report": {
+    "numeric_frames": 10172,
+    "seconds": 135.7931709,
+    "p99_ms": 16.8954,
+    "one_percent_low_fps": 51.30547804844324,
+    "over_50ms": 1,
+    "over_50ms_fraction": 9.830908375933936e-05,
+    "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames",
+    "dropped_frames": 0,
+    "frame_exclusions": [],
+    "distribution": "Every numeric frame in this complete stable-capture CSV; no fixed boot trimming",
+    "diagnostic_frame_target_pass": false,
+    "csv_metadata": {
+      "hasheaderrowatend": "1",
+      "eventtimestamps": "1",
+      "platform": "Windows",
+      "config": "Development",
+      "buildversion": "++UE5+Release-5.8-CL-56702186",
+      "engineversion": "5.8.2-56702186+++UE5+Release-5.8",
+      "enginereleaseversion": "5.8.2",
+      "os": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+      "pgoenabled": "0",
+      "pgoprofilingenabled": "0",
+      "ltoenabled": "0",
+      "asan": "0",
+      "mergedmodules": "0",
+      "compacttset": "0",
+      "loginid": "a82aa7934b238d42e0d65a84d8c108c4",
+      "llm": "0",
+      "zenstreaming": "0",
+      "systemresolution.resx": "1920",
+      "systemresolution.resy": "1080",
+      "extradevelopmentmemorymb": "0",
+      "verbatimrhiname": "D3D12",
+      "rhiname": "D3D12",
+      "rhifeaturelevel": "SM6",
+      "shaderplatform": "PCD3D_SM6",
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "gpudriver": "577.00",
+      "deviceprofile": "WindowsEditor",
+      "largeworldcoordinates": "1",
+      "raytracing": "0",
+      "streamingpoolsizemb": "2048",
+      "csvid": "EE45690E41E95069A6A51083EA38D03A",
+      "targetframerate": "165",
+      "starttimestamp": "1792059131",
+      "namedevents": "0",
+      "hasgtstalls": "0",
+      "vsyncenabled": "0",
+      "csvbench_timingstat_ns": "49.850000",
+      "csvbench_customstat_ns": "23.755000",
+      "csvbench_duration_ms": "2.944500",
+      "endtimestamp": "1792059267",
+      "captureduration": "135.793681",
+      "csvmaxfilebytesreached": "0"
+    },
+    "actual_system_resolution": [
+      "1920",
+      "1080"
+    ],
+    "actual_resolution_matches": true,
+    "actual_rhi_matches": true
+  },
+  "effective_value_evidence": {
+    "help_with_same_process_environment": [
+      "-ub,   --ubatch-size N                  physical maximum batch size (default: 512)"
+    ],
+    "live_props_read": "timed out after3seconds; no claimed live readback"
+  },
+  "restoration": "Trial wrapper process exited; caller LLAMA_ARG_UBATCH absent. No global/user environment or production defaults changed.",
+  "effective_parameter_status": "NOT_VERIFIED: process-local override requested128; live props timed out and --help shows static default512 even under override. Do not infer batch128 was definitely applied or that batch size has no effect."
+}

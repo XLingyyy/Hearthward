@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "id": "TASK-115",
+  "title": "战斗结果反馈与镜头舒适性",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s05",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-113",
+    "TASK-114"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-COMBAT.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-115.json",
+    "docs/tasks/TASK-115.md",
+    "docs/handoffs/TASK-115.md",
+    "docs/qa/TASK-115/",
+    "docs/planning/TASK-115/",
+    "README.md",
+    "Source/Hearthward/Experience/HearthwardCombatFeedback.h",
+    "Source/Hearthward/Experience/HearthwardCombatFeedback.cpp",
+    "Source/Hearthward/Tests/Round2CombatFeedbackTests.cpp",
+    "art_source/TASK-115/",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Source/Hearthward/UI/",
+    "Resources/Data/experience.json",
+    "Source/Hearthward/Environment/",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignSubsystem.h",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Survival/HearthwardSurvivalComponent.h",
+    "Source/Hearthward/Survival/HearthwardSurvivalComponent.cpp",
+    "Source/Hearthward/Experience/HearthwardPlayerSettings.h",
+    "Source/Hearthward/Experience/HearthwardPlayerSettings.cpp",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenSettings.cpp",
+    "Source/Hearthward/Tests/CombatAudioFeedbackTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T115-C01 [NATIVE] 重复提交同一事件并切换读档时间线。 → 反馈只播一次，旧事件失效；表现代码不能提交伤害/奖励。",
+    "T115-C02 [PIE] 依次命中敌人、格挡、碰墙、挥空。 → 各类反馈可区分；挥空不生成血迹或命中音。",
+    "T115-C03 [NATIVE] 启用表现停顿同时进行计时动作与模型请求。 → 不改变世界/动作规则时钟，不延长救援或跨档执行。",
+    "T115-C04 [PLAY] 关闭镜头震动、强闪及相关特效。 → 仍能理解方向和战斗结果，设置在重启后保持。",
+    "T115-C05 [PERF] 三人近战、投射物与墙碰撞同时触发。 → 事件、粒子、声音实例均有明确上限，超限降级无功能损失。",
+    "T115-C06 [PIE] 边跑边轻重击、锁定切换和被打断。 → 腿部移动连续，无摄像机瞬移和残留强度。"
+  ],
+  "non_goals": [
+    "不添加处决镜头、强制慢镜和不可跳过演出。",
+    "不以画面震动替代命中判定修复。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G1；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

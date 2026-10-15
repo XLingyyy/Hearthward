@@ -1,4 +1,5 @@
 #include "HearthwardSaveSubsystem.h"
+#include "../Environment/HearthwardShortcutActor.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Camp/HearthwardCampSubsystem.h"
@@ -64,6 +65,40 @@ FHearthwardTimedActionState TimerState(const FHearthwardSavedTimer& Saved, doubl
 
 bool UHearthwardSaveSubsystem::DoesSupportWorldType(EWorldType::Type Type) const
 { return Type == EWorldType::Game || Type == EWorldType::PIE; }
+bool UHearthwardSaveSubsystem::BindInteractionTarget(FName Id, EHearthwardPersistentKind Kind, AActor* Target)
+{
+    if(!HearthwardPersistence::Find(Id,Kind) || !IsValid(Target) || Target->GetWorld()!=GetWorld() || Target->IsActorBeingDestroyed())return false;
+    const auto* Existing=InteractionTargets.Find(Id);
+    if(Existing && Existing->IsValid() && Existing->Get()!=Target && !Existing->Get()->IsActorBeingDestroyed())return false;
+    InteractionTargets.Add(Id,Target);
+    return true;
+}
+FHearthwardInteractionTicket UHearthwardSaveSubsystem::BeginInteraction(FName Id)
+{
+    const auto* Target=InteractionTargets.Find(Id);
+    if(IsRestoring() || InteractionTicket.Operation.IsValid() || !Target || !Target->IsValid() || Target->Get()->IsActorBeingDestroyed())return {};
+    InteractionTicket={FGuid::NewGuid(),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(),Id,Interactions.Revision,*Target};
+    return InteractionTicket;
+}
+bool UHearthwardSaveSubsystem::CommitInteraction(const FHearthwardInteractionTicket& Ticket,
+    const FHearthwardPersistentInteractionState& Candidate,const TMap<FName,int32>& Consumed,const TMap<FName,int32>& Produced)
+{
+    auto* Storage=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    const auto* Target=InteractionTargets.Find(Ticket.Id);
+    if(IsRestoring() || !Ticket.Operation.IsValid() || Ticket.Operation!=InteractionTicket.Operation
+        || Ticket.Id!=InteractionTicket.Id || Ticket.Epoch!=Storage->GetTimelineEpoch()
+        || Ticket.Revision!=Interactions.Revision || Candidate.Revision!=Interactions.Revision
+        || !Target || !Target->IsValid() || Target->Get()->IsActorBeingDestroyed()
+        || !InteractionTicket.Target.IsValid() || Target->Get()!=InteractionTicket.Target.Get())return false;
+    FString Error;
+    if(!Candidate.Validate(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot().ElapsedCalendarMinutes,Error))return false;
+    // Storage validates the complete adjustment first. Nothing below can fail or invoke callbacks.
+    if(!Storage->Adjust(Consumed,Produced))return false;
+    Interactions=Candidate;
+    ++Interactions.Revision;
+    CancelInteraction();
+    return true;
+}
 bool UHearthwardSaveSubsystem::IsTickable() const { return !IsTemplate() && bEnabled && CampaignId.IsValid() && !bRestoring; }
 TStatId UHearthwardSaveSubsystem::GetStatId() const { RETURN_QUICK_DECLARE_CYCLE_STAT(UHearthwardSaveSubsystem, STATGROUP_Tickables); }
 
@@ -183,6 +218,7 @@ bool UHearthwardSaveSubsystem::IsRestoring() const
 }
 bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
 {
+    S.Interactions=Interactions;
     if(GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->Busy()){Status=TEXT("世界时间正在结算或恢复");return false;}
     auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
     if(Campaign->Busy()){Status=TEXT("剧情动作或传送尚未完成");return false;}
@@ -202,6 +238,8 @@ bool UHearthwardSaveSubsystem::Capture(FHearthwardWorldSave& S)
     { Status=TEXT("战斗或倒地期间无法保存"); return false; }
     if (auto* Interaction = Player->FindComponentByClass<UHearthwardInteractionComponent>(); Interaction && Interaction->bActive)
     { Status = TEXT("当前交互目标尚未接入存档，请结束交互后保存"); return false; }
+    for(TActorIterator<AHearthwardShortcutActor> It(GetWorld());It;++It)
+        if(It->Active()){Status=TEXT("机关操作或协作尚未结束，请完成或取消后保存");return false;}
     // Reject additional inventory-bearing actors instead of silently losing their state.
     for (TActorIterator<AActor> It(GetWorld()); It; ++It)
         if (It->FindComponentByClass<UHearthwardInventoryComponent>() && *It != Player
@@ -321,7 +359,7 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
         Upgraded.SurvivalVersion=S.SurvivalVersion; Upgraded.CalendarMinutes=S.CalendarMinutes; Upgraded.PlayerSurvival=S.PlayerSurvival;
         Upgraded.ActiveSeconds=S.ActiveSeconds; Upgraded.PlayerTimer=S.PlayerTimer;
         Upgraded.Knowledge=S.Knowledge; Upgraded.KnowledgeRevision=S.KnowledgeRevision; Upgraded.NPCMemory=S.NPCMemory;
-        Upgraded.CampEconomy=S.CampEconomy;Upgraded.Nature=S.Nature;Upgraded.Campaign=S.Campaign;
+        Upgraded.CampEconomy=S.CampEconomy;Upgraded.Nature=S.Nature;Upgraded.Campaign=S.Campaign;Upgraded.Interactions=S.Interactions;
         Upgraded.ClockVersion=S.ClockVersion;Upgraded.InitialDay=S.InitialDay;Upgraded.InitialMinute=S.InitialMinute;
         Upgraded.HarvestedResources=S.HarvestedResources;
         Upgraded.AutoMinutes=S.AutoMinutes; Upgraded.Safety=S.Safety; Upgraded.Gameplay=S.Gameplay;
@@ -341,11 +379,15 @@ bool UHearthwardSaveSubsystem::Restore(const FHearthwardWorldSave& S,bool bNewPr
     FHearthwardCampState CampCheck;
     if(!S.CampEconomy.IsEmpty() && (!FHearthwardCampState::Parse(S.CampEconomy,CampCheck) || FMath::Abs(CampCheck.Calendar-S.CalendarMinutes)>1.e-4 || !CampCheck.ValidateBuildings(S.Gameplay))) {Status=TEXT("营地快照无效");return false;}
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();
+    if(!S.Interactions.Validate(S.CalendarMinutes,Status))return false;
     FHearthwardCampaignState CampaignCheck;if(!FHearthwardCampaignState::Parse(S.Campaign,CampaignCheck)){Status=TEXT("战役快照无效");return false;}
     FHearthwardNatureState NatureCheck;
     if(!FHearthwardNatureState::Parse(S.Nature,NatureCheck) || (!S.Nature.IsEmpty() && FMath::Abs(NatureCheck.Calendar-S.CalendarMinutes)>1.e-4)){Status=TEXT("自然生态快照无效");return false;}
     GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Cancel();
     Storage->AdvanceTimeline();
+    CancelInteraction();
+    InteractionTargets.Reset();
+    Interactions=S.Interactions;
     GetWorld()->GetSubsystem<UHearthwardHarvestSubsystem>()->Restore(S.HarvestedResources);
     if(auto* B=Player->FindComponentByClass<UHearthwardBuildingComponent>()) B->CancelPlacement();
     GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->ResetForSnapshot();

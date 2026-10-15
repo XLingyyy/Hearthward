@@ -1,4 +1,6 @@
 #include "HearthwardCampaignSubsystem.h"
+#include "../Interaction/HearthwardInteractionAlignment.h"
+#include "../Nature/HearthwardAnimalTraces.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
@@ -56,6 +58,13 @@ bool UHearthwardCampaignSubsystem::UseExploration(FName Id)
         G->Discovered.Add(FName(*Text(R,TEXT("reveal"))));
         Record(TEXT("ridge_survey"));
     }
+    if(Action==TEXT("deliver") || Action==TEXT("bundle") || Action==TEXT("token"))
+        if(auto* Contact=Player()->FindComponentByClass<UHearthwardInteractionAlignment>();Contact && FVector::Dist2D(Player()->GetActorLocation(),Position(Id))<=120)
+        {
+            const FVector Direction=(Position(Id)-Player()->GetActorLocation()).GetSafeNormal2D();
+            FVector Point=Position(Id)-Direction*65;Point.Z=Player()->GetActorLocation().Z;
+            Contact->Begin(Action==TEXT("deliver")?FName(TEXT("Handoff")):FName(TEXT("Pickup")),.8333f,Player(),Point,Direction.Rotation());
+        }
     Feedback=Text(R,TEXT("exploration_text"));
     if(Action==TEXT("local_survey"))G->Discovered.Add(FName(*Text(R,TEXT("reveal"))));
     if(Action==TEXT("camp_event"))Feedback=UseM2Event(FName(*Text(R,TEXT("event"))));
@@ -68,21 +77,7 @@ bool UHearthwardCampaignSubsystem::UseExploration(FName Id)
     }
     if(Action==TEXT("tracks"))
     {
-        const auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
-        const FHearthwardAnimal* NearestAnimal=nullptr;double Distance=12000;
-        for(const auto& A:Nature->State.Animals)if(!A.Domestic && A.Health>0)
-        {
-            const double D=FVector::Dist2D(A.Position,Position(Id));
-            if(D<Distance){Distance=D;NearestAnimal=&A;}
-        }
-        if(NearestAnimal)
-        {
-            const FVector Delta=NearestAnimal->Position-Position(Id);
-            const FString Direction=FMath::Abs(Delta.X)>FMath::Abs(Delta.Y)?(Delta.X>0?TEXT("东"):TEXT("西")):(Delta.Y>0?TEXT("北"):TEXT("南"));
-            Feedback+=FString::Printf(TEXT(" %s方约 %.0f 米有%s活动；这是此刻的观察。可沿痕迹寻找，也可绕行。"),*Direction,Distance/100,
-                *Text(HearthwardNature::Definition(TEXT("wildlife"),NearestAnimal->Definition),TEXT("name")));
-        }
-        else Feedback+=TEXT(" 附近暂时没有活跃动物；旧痕迹不会产生猎物，稍后再来或继续赶路。");
+        Feedback=AHearthwardAnimalTraces::DescribeAt(GetWorld(),Position(Id));
     }
     if(Action==TEXT("briefing"))
     {
@@ -257,9 +252,6 @@ void UHearthwardCampaignSubsystem::RefreshExploration()
         }
         if(Id==TEXT("poi_cellar_01"))
         {
-            Stone(FVector(-360,350,0),FVector(70,500,200));
-            Stone(FVector(360,350,0),FVector(70,500,200));
-            Stone(FVector(0,600,0),FVector(700,90,240));
             for(int32 I=0;I<6;++I)Prop(Cube,FVector(-260+I*105,540,20),FVector(100,30,175),FRotator(0,0,12));
             Prop(Cairn,FVector(470,480,0),FVector(190,130,160));
         }

@@ -4,6 +4,7 @@
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "HearthwardScreenWidget.h"
+#include "../Environment/HearthwardWeatherActor.h"
 #include "HearthwardPresentationReadModels.h"
 #include "HearthwardPreparationView.h"
 #include "../Experience/HearthwardTraversalComponent.h"
@@ -490,7 +491,7 @@ void UHearthwardScreenWidget::ComposeHUD()
     if(G->HasWaypoint) HUD(TEXT("text"),FString::Printf(TEXT("◇  %.0f 米"),FVector::Dist2D(GetOwningPlayerPawn()->GetActorLocation(),G->Waypoint)/100),{1370,267},{230,45},18,TEXT("hud.waypoint"),TEXT("hud.minimap"));
     const auto Clock=GetWorld()->GetSubsystem<UHearthwardWorldClockSubsystem>()->GetSnapshot();
     const int32 Time=Clock.MinuteOfDay,Hour=(Time/60)%24;
-    HUD(TEXT("text"),FString::Printf(TEXT("第 %lld 天  %02d:%02d  %s"),Clock.DisplayDay,Hour,Time%60,Hour<6 || Hour>=18?TEXT("夜"):TEXT("晴")),{1260,31},{364,50},18,TEXT("hud.clock"),TEXT("hud.feedback")).Align=TEXT("right");
+    HUD(TEXT("text"),FString::Printf(TEXT("第 %lld 天  %02d:%02d  %s"),Clock.DisplayDay,Hour,Time%60,AHearthwardWeatherActor::Rain(GetWorld())>0?TEXT("轻雨 · 野外侦测略减"):Hour<6 || Hour>=18?TEXT("夜"):TEXT("晴")),{1170,31},{454,50},18,TEXT("hud.clock"),TEXT("hud.feedback")).Align=TEXT("right");
 
     // Action results expire after two seconds; active progress remains tied to its real state.
     float FeedbackY=388; TSet<FString> Seen;
@@ -575,7 +576,10 @@ void UHearthwardScreenWidget::ComposeHUD()
         const FName CampaignTarget=Campaign->InteractionTarget();
         auto AboveActor=[](const AActor* Actor)
         {FVector Center,Extent;Actor->GetActorBounds(false,Center,Extent);return Center+FVector(0,0,Extent.Z+24);};
-        if(NearbyBench.IsValid())
+        const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>();
+        const auto* PriorityTarget=Interaction?Interaction->GetPriorityTarget():nullptr;
+        if(PriorityTarget){Prompt=PriorityTarget->GetInteractionPrompt(GetOwningPlayerPawn());Anchor=PriorityTarget->GetComponentLocation()+FVector(0,0,30);}
+        else if(NearbyBench.IsValid())
         {Prompt=TEXT("E 使用工作台 · 制作 / 维修");Anchor=AboveActor(Workshop->ResolveWorkbench(NearbyBench));}
         else if(!CampaignTarget.IsNone())
         {
@@ -589,7 +593,7 @@ void UHearthwardScreenWidget::ComposeHUD()
             if(G->Enabled && !Station.IsNone() && !G->Activated.Contains(Station)
                 && (!Campaign->Active() || (Campaign->State.Phase!=TEXT("prologue") && (Station!=TEXT("hometown") || Campaign->State.Victory))))
                 {Prompt=TEXT("E 激活路标");Anchor=G->LocationPosition(Station)+FVector(0,0,120);}
-            else if(const auto* Interaction=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardInteractionComponent>())
+            else if(Interaction)
                 if(const auto* Target=Interaction->GetNearestTarget())
                 {Prompt=Target->GetInteractionPrompt(GetOwningPlayerPawn());Anchor=Target->GetComponentLocation()+FVector(0,0,80);}
         }

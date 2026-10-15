@@ -1,0 +1,60 @@
+{
+  "source": ".agent-local\\qa\\TASK-133\\cooperation-ownership-20261015",
+  "results": {
+    "devices": [
+      {
+        "deviceName": "LAPTOP-R8NPOP05",
+        "instance": "0BCAF8BE4F1DF05EA61CDD815C4448FC",
+        "instanceName": "LAPTOP-R8NPOP05-15952",
+        "platform": "WindowsEditor",
+        "oSVersion": "Windows 11 (24H2) [10.0.26100.4351] ",
+        "model": "Default",
+        "gPU": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "cPUModel": "13th Gen Intel(R) Core(TM) i7-13650HX",
+        "rAMInGB": 16,
+        "renderMode": "SM6",
+        "rHI": "",
+        "appInstanceLog": ""
+      }
+    ],
+    "reportCreatedOn": "2026.10.15-05.57.01",
+    "succeeded": 0,
+    "succeededWithWarnings": 1,
+    "failed": 0,
+    "notRun": 0,
+    "inProcess": 0,
+    "totalDuration": 0.04083289951086044,
+    "comparisonExported": false,
+    "comparisonExportDirectory": "",
+    "tests": [
+      {
+        "testDisplayName": "SideCancellationCommitAndReload",
+        "fullTestPath": "Hearthward.Round2.Devices.SideCancellationCommitAndReload",
+        "tags": [],
+        "state": "Success",
+        "deviceInstance": [
+          "0BCAF8BE4F1DF05EA61CDD815C4448FC"
+        ],
+        "duration": 0.04083289951086044,
+        "dateTime": "2026.10.15-05.57.01",
+        "entries": [
+          {
+            "event": {
+              "type": "Warning",
+              "message": "LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_1.Untitled:PersistentLevel.Actor_0",
+              "context": "log",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.15-05.57.01"
+          }
+        ],
+        "warnings": 1,
+        "errors": 0,
+        "artifacts": []
+      }
+    ]
+  },
+  "scope": "Native two-device fixture: existing owner rejects second device; cancel releases; second takes ownership; stale first cancel/tick cannot release second; timeline switch releases without persistent commit. Positions are fixture supplied. Real late navigation/model callbacks and all authored-map damage stages remain untested."
+}

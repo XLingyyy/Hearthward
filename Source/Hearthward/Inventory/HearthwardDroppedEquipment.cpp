@@ -1,5 +1,6 @@
 #include "HearthwardDroppedEquipment.h"
 #include "HearthwardInventoryComponent.h"
+#include "../Interaction/HearthwardInteractionAlignment.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
 #include "Components/StaticMeshComponent.h"
@@ -17,6 +18,12 @@ bool AHearthwardDroppedEquipment::PickUp(AActor* Player)
     auto* Bag=Player?Player->FindComponentByClass<UHearthwardInventoryComponent>():nullptr;
     if(IsActorBeingDestroyed() || !G || !Bag || !G->CanChangeSkills() || FVector::Dist(Player->GetActorLocation(),GetActorLocation())>300)return false;
     if(Bag->InsertInstance(Item,false)!=EHearthwardInventoryResult::Success)return false;
+    if(auto* Contact=Player->FindComponentByClass<UHearthwardInteractionAlignment>();Contact && FVector::Dist2D(Player->GetActorLocation(),GetActorLocation())<=120)
+    {
+        const FVector Direction=(GetActorLocation()-Player->GetActorLocation()).GetSafeNormal2D();
+        FVector Point=GetActorLocation()-Direction*65;Point.Z=Player->GetActorLocation().Z;
+        Contact->Begin(TEXT("Pickup"),.8333f,Player,Point,Direction.Rotation());
+    }
     Destroy();Bag->OnInventoryChanged.Broadcast();return true;
 }
 FString UHearthwardEquipmentPickup::GetInteractionPrompt(AActor* Player) const

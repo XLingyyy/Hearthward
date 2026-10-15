@@ -187,6 +187,8 @@ bool UHearthwardScreenWidget::ExecuteSettingsAction(const FString& Action)
     else if(Key==TEXT("shake")) SettingsComfort.Shake=FMath::Clamp(SettingsComfort.Shake+Step*10,0,100);
     else if(Key==TEXT("blur")) SettingsComfort.MotionBlur=!SettingsComfort.MotionBlur;
     else if(Key==TEXT("hunger")) SettingsComfort.HungerVisual=FMath::Clamp(SettingsComfort.HungerVisual+Step*10,0,100);
+    else if(Key==TEXT("rain")) SettingsComfort.RainVisual=FMath::Clamp(SettingsComfort.RainVisual+Step*10,0,100);
+    else if(Key==TEXT("hitvisual")) SettingsComfort.HitVisual=FMath::Clamp(SettingsComfort.HitVisual+Step*10,0,100);
     else if(Key==TEXT("fov")) SettingsComfort.FOV=FMath::Clamp(SettingsComfort.FOV+Step*5,70,110);
     else return false;
     if(Key==TEXT("shadow") || Key==TEXT("texture") || Key==TEXT("distance") || Key==TEXT("effects")) SettingsQuality=-1;
@@ -262,6 +264,8 @@ void UHearthwardScreenWidget::ComposeSettings()
         Add(TEXT("shake"),TEXT("镜头震动"),FString::Printf(TEXT("%d%%"),SettingsComfort.Shake),TEXT("0%关闭；菜单与固定镜头不震动。"),true);
         Add(TEXT("blur"),TEXT("运动模糊"),SettingsComfort.MotionBlur?TEXT("开启"):TEXT("关闭"),TEXT("默认关闭。"),true);
         Add(TEXT("hunger"),TEXT("饥饿视觉强度"),FString::Printf(TEXT("%d%%"),SettingsComfort.HungerVisual),TEXT("0%仅移除视觉限制，实际饥饿惩罚仍有效。"),true);
+        Add(TEXT("rain"),TEXT("降雨视觉强度"),FString::Printf(TEXT("%d%%"),SettingsComfort.RainVisual),TEXT("0%关闭雨丝；天气感知规则不受影响。"),true);
+        Add(TEXT("hitvisual"),TEXT("命中视觉强度"),FString::Printf(TEXT("%d%%"),SettingsComfort.HitVisual),TEXT("0%关闭命中标记与受击方向；伤害规则不变。"),true);
         Add(TEXT("fov"),TEXT("水平视野角"),FString::Printf(TEXT("%d°"),SettingsComfort.FOV),TEXT("70—110°；严重饥饿最多减少10°且不低于70°。"),true);
     }
     else

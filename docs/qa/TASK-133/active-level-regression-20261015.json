@@ -1,0 +1,152 @@
+{
+  "red": {
+    "source": ".agent-local\\qa\\TASK-133\\active-level-red-02-20261015",
+    "tests": [
+      {
+        "name": "Hearthward.Round2.Performance.TargetEnumerationPreservesWorldIdentityAndOrder",
+        "state": "Fail",
+        "warnings": 0,
+        "errors": 2,
+        "messages": [
+          "Expected 'Component query also excludes hidden levels' to be true.",
+          "Expected 'Component query also excludes levels being removed' to be true."
+        ]
+      }
+    ]
+  },
+  "green": {
+    "source": ".agent-local\\qa\\TASK-133\\active-level-green-20261015",
+    "tests": [
+      {
+        "name": "Hearthward.Animals.FrameBoundaryAndEscape",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Campaign056.BaitInvestigationUsesRecordedEightSeconds",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0,
+        "messages": [
+          "LogCrowdFollowing: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance"
+        ]
+      },
+      {
+        "name": "Hearthward.Campaign056.LastKnownSearchUsesRecordedPosition",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0,
+        "messages": [
+          "LogCrowdFollowing: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance"
+        ]
+      },
+      {
+        "name": "Hearthward.Combat.ExecutionActionsAndSnapshot",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Combat.GuardDetectionAndParts",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Nature060.CapturedLeadAndSingleDeathReward",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Nature060.DemoKeepsAutonomousMotion",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Nature060.OccludedThreatDoesNotFlee",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Nature060.RetaliatesAgainstDamageSource",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Nature060.WolfAttacksWithMotion",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Round2.Enemies.ConfirmedTargetSurvivesLampAndRain",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0,
+        "messages": [
+          "LogCrowdFollowing: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance"
+        ]
+      },
+      {
+        "name": "Hearthward.Round2.Enemies.EliteTimingIdentityAndCancellation",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Round2.Enemies.FixedNoiseSelectsTwoNearestWithoutInventoryCost",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0,
+        "messages": [
+          "LogCrowdFollowing: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance"
+        ]
+      },
+      {
+        "name": "Hearthward.Round2.Enemies.NoiseArrivalEpochAndConfirmedThreat",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Round2.Enemies.NoiseUsesSourcePathAndVisualPriority",
+        "state": "Success",
+        "warnings": 1,
+        "errors": 0,
+        "messages": [
+          "LogCrowdFollowing: Unable to find RecastNavMesh instance while trying to create UCrowdManager instance"
+        ]
+      },
+      {
+        "name": "Hearthward.Round2.Performance.StaticResourcesDoNotTickAnimalMotion",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      },
+      {
+        "name": "Hearthward.Round2.Performance.TargetEnumerationPreservesWorldIdentityAndOrder",
+        "state": "Success",
+        "warnings": 0,
+        "errors": 0,
+        "messages": []
+      }
+    ]
+  },
+  "scope": "Component queries preserve original actor iterator active-level visibility and first-component semantics. Hidden/removing level failures reproduced before fix; associated/disassociated levels remain queryable. No change to ranges, frequency, quality or persistent state."
+}

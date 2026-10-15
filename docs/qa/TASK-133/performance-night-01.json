@@ -1,0 +1,114 @@
+[
+  {
+    "backend": "cpu",
+    "scene": "camp_night",
+    "raw_run": ".agent-local\\qa\\TASK-133\\performance\\camp-night-cpu-01",
+    "frames": {
+      "numeric_frames": 9340,
+      "seconds": 118.5257367,
+      "p99_ms": 18.9522,
+      "one_percent_low_fps": 45.876003771895434,
+      "over_50ms": 1,
+      "over_50ms_fraction": 0.00010706638115631691
+    },
+    "model_response_seconds": 117.48441250249743,
+    "semantic_candidate": "PASS",
+    "whole_request_in_capture": true,
+    "performance_status": "FAIL",
+    "configuration": {
+      "backend": "cpu",
+      "hardware": {
+        "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "driver": "577.00"
+      },
+      "engine": "5.8.2-56702186+++UE5+Release-5.8",
+      "resolution": [
+        "1920",
+        "1080"
+      ],
+      "quality": {
+        "sg.ViewDistanceQuality": "3",
+        "sg.AntiAliasingQuality": "3",
+        "sg.ShadowQuality": "3",
+        "sg.GlobalIlluminationQuality": "3",
+        "sg.ReflectionQuality": "3",
+        "sg.PostProcessQuality": "3",
+        "sg.TextureQuality": "3",
+        "sg.EffectsQuality": "3",
+        "sg.FoliageQuality": "3",
+        "sg.ShadingQuality": "3",
+        "sg.LandscapeQuality": "3",
+        "r.ScreenPercentage": "100",
+        "r.DynamicRes.OperationMode": "0",
+        "t.MaxFPS": "0",
+        "r.VSync": "0",
+        "r.AntiAliasingMethod": "2",
+        "r.Shadow.Virtual.Enable": "1",
+        "r.Nanite": "1"
+      },
+      "model": {
+        "name": "Qwen3.5-4B-Q4_K_M",
+        "gpu_layers": 0
+      },
+      "build": ".agent-local/qa/TASK-133/scene-build/build_result.json",
+      "source_identity": ".agent-local/qa/TASK-133/perf-identity-01.json"
+    }
+  },
+  {
+    "backend": "vulkan",
+    "scene": "camp_night",
+    "raw_run": ".agent-local\\qa\\TASK-133\\performance\\camp-night-vulkan-01",
+    "frames": {
+      "numeric_frames": 4931,
+      "seconds": 62.6647621,
+      "p99_ms": 22.3854,
+      "one_percent_low_fps": 30.659935079777462,
+      "over_50ms": 4,
+      "over_50ms_fraction": 0.0008111944838775097
+    },
+    "model_response_seconds": 24.7806777022779,
+    "semantic_candidate": "PASS",
+    "whole_request_in_capture": true,
+    "performance_status": "FAIL",
+    "configuration": {
+      "backend": "vulkan",
+      "hardware": {
+        "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "driver": "577.00"
+      },
+      "engine": "5.8.2-56702186+++UE5+Release-5.8",
+      "resolution": [
+        "1920",
+        "1080"
+      ],
+      "quality": {
+        "sg.ViewDistanceQuality": "3",
+        "sg.AntiAliasingQuality": "3",
+        "sg.ShadowQuality": "3",
+        "sg.GlobalIlluminationQuality": "3",
+        "sg.ReflectionQuality": "3",
+        "sg.PostProcessQuality": "3",
+        "sg.TextureQuality": "3",
+        "sg.EffectsQuality": "3",
+        "sg.FoliageQuality": "3",
+        "sg.ShadingQuality": "3",
+        "sg.LandscapeQuality": "3",
+        "r.ScreenPercentage": "100",
+        "r.DynamicRes.OperationMode": "0",
+        "t.MaxFPS": "0",
+        "r.VSync": "0",
+        "r.AntiAliasingMethod": "2",
+        "r.Shadow.Virtual.Enable": "1",
+        "r.Nanite": "1"
+      },
+      "model": {
+        "name": "Qwen3.5-4B-Q4_K_M",
+        "gpu_layers": 16
+      },
+      "build": ".agent-local/qa/TASK-133/scene-build/build_result.json",
+      "source_identity": ".agent-local/qa/TASK-133/perf-identity-01.json"
+    }
+  }
+]

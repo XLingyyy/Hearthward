@@ -40,6 +40,7 @@ protected:
     virtual bool DoesSupportWorldType(EWorldType::Type Type) const override;
 private:
     friend class AHearthwardNatureActor;
+    friend class AHearthwardAnimalTraces;
     bool Settling=false,LineHeld=false;
     TWeakObjectPtr<class APawn> ActionActor;
     FGuid PendingId,ActionEpoch,FishingId,FishingRod;

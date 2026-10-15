@@ -1,4 +1,10 @@
 #include "HearthwardInteractionComponent.h"
+#include "HearthwardInteractionAlignment.h"
+#include "../Environment/HearthwardNoiseInteraction.h"
+#include "../Environment/HearthwardLampInteraction.h"
+#include "../Environment/HearthwardShortcutActor.h"
+#include "../Campaign/HearthwardPersonalStory.h"
+#include "../Nature/HearthwardAnimalTraces.h"
 #include "../Nature/HearthwardNatureActor.h"
 #include "../Inventory/HearthwardDroppedEquipment.h"
 #include "HearthwardHarvestSubsystem.h"
@@ -41,7 +47,7 @@ void UHearthwardInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlay
 EHearthwardInteractionStatus UHearthwardInteractionComponent::ValidateTarget(UHearthwardInteractionTargetComponent* Target) const
 {
     if (!IsValid(Target) || !IsValid(Target->GetOwner()) || Target->GetOwner()->IsActorBeingDestroyed()
-        || Target->GetWorld() != GetWorld() || Target->GetOwner() == GetOwner()) return EHearthwardInteractionStatus::InvalidTarget;
+        || Target->GetOwner()->IsHidden() || Target->GetWorld() != GetWorld() || Target->GetOwner() == GetOwner()) return EHearthwardInteractionStatus::InvalidTarget;
     if (!FMath::IsFinite(Target->MaxDistance) || Target->MaxDistance <= 0.0f) return EHearthwardInteractionStatus::Unconfigured;
     return FVector::DistSquared(GetOwner()->GetActorLocation(), Target->GetComponentLocation()) <= FMath::Square(double(Target->MaxDistance))
         ? EHearthwardInteractionStatus::Ready : EHearthwardInteractionStatus::OutOfRange;
@@ -57,6 +63,13 @@ bool UHearthwardInteractionComponent::BeginInteraction(UHearthwardInteractionTar
     if (!Action || !Action->StartAction()) { SetStatus(EHearthwardInteractionStatus::Busy); return false; }
     PendingTarget = Target;
     bActive = true;
+    if(auto* Harvest=Cast<UHearthwardHarvestTargetComponent>(Target);Harvest && Harvest->Item==TEXT("herb"))
+        if(auto* Contact=GetOwner()->FindComponentByClass<UHearthwardInteractionAlignment>())
+        {
+            const FVector Direction=(Target->GetComponentLocation()-GetOwner()->GetActorLocation()).GetSafeNormal2D();
+            FVector Point=Target->GetComponentLocation()-Direction*65;Point.Z=GetOwner()->GetActorLocation().Z;
+            Contact->Begin(TEXT("Gather"),FHearthwardTimedActionState::DurationSeconds,Target->GetOwner(),Point,Direction.Rotation());
+        }
     SetStatus(EHearthwardInteractionStatus::Running);
     SetComponentTickEnabled(true);
     return true;
@@ -65,7 +78,7 @@ bool UHearthwardInteractionComponent::BeginInteraction(UHearthwardInteractionTar
 bool UHearthwardInteractionComponent::InteractNearest()
 {
     auto* Target=GetNearestTarget();
-    if(Cast<UHearthwardEquipmentPickup>(Target) || Cast<UHearthwardNatureInteraction>(Target)){CompletionFeedback=Target->CompleteInteraction(GetOwner());return true;}
+    if(Cast<UHearthwardEquipmentPickup>(Target) || Cast<UHearthwardNatureInteraction>(Target) || Cast<UHearthwardNoiseInteraction>(Target) || Cast<UHearthwardDeviceInteraction>(Target) || Cast<UHearthwardPersonalInteraction>(Target) || Cast<UHearthwardTrailInteraction>(Target)){CompletionFeedback=Target->CompleteInteraction(GetOwner());SetStatus(EHearthwardInteractionStatus::Ready);return true;}
     return BeginInteraction(Target);
 }
 
@@ -89,6 +102,12 @@ UHearthwardInteractionTargetComponent* UHearthwardInteractionComponent::GetNeare
     }
     return Nearest;
 }
+UHearthwardInteractionTargetComponent* UHearthwardInteractionComponent::GetPriorityTarget() const
+{
+    auto* Target=GetNearestTarget();
+    return Cast<UHearthwardNoiseInteraction>(Target) || Cast<UHearthwardLampInteraction>(Target) || Cast<UHearthwardDeviceInteraction>(Target)
+        || Cast<UHearthwardPersonalInteraction>(Target) || Cast<UHearthwardTrailInteraction>(Target)?Target:nullptr;
+}
 
 void UHearthwardInteractionComponent::Cancel(EHearthwardInteractionStatus Reason)
 {
@@ -102,6 +121,7 @@ void UHearthwardInteractionComponent::Cancel(EHearthwardInteractionStatus Reason
 void UHearthwardInteractionComponent::TimerInterrupted()
 {
     if (!bActive) return;
+    if(auto* Contact=GetOwner()->FindComponentByClass<UHearthwardInteractionAlignment>())Contact->Cancel();
     bActive = false;
     PendingTarget.Reset();
     SetComponentTickEnabled(false);

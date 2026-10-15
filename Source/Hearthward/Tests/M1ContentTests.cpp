@@ -131,8 +131,8 @@ bool FM1Knowledge::RunTest(const FString&)
     for(int32 I=0;I<4;++I)F.Use(TEXT("m1_camp_board"));
     TestEqual(TEXT("Briefing wraps without losing first page"),F.Campaign->Feedback,First);
     const int32 Meat=F.Bag->GetItemCount(TEXT("meat"));
-    TestTrue(TEXT("Tracks with no live animal report absence"),F.Use(TEXT("poi_tracks_01")));
-    TestTrue(TEXT("Explicit no-animal reply"),F.Campaign->Feedback.Contains(TEXT("暂时没有")));
+    TestTrue(TEXT("Tracks without recorded history report absence"),F.Use(TEXT("poi_tracks_01")));
+    TestTrue(TEXT("Explicit no-trace reply does not claim omniscient animal positions"),F.Campaign->Feedback.Contains(TEXT("没有可辨认的新旧踪迹")));
     TestEqual(TEXT("Tracks do not grant meat"),F.Bag->GetItemCount(TEXT("meat")),Meat);
     return true;
 }

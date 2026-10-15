@@ -34,6 +34,7 @@ public:
     FVector RangedArrowTip() const;
 
 private:
+    friend class UHearthwardInteractionAlignment;
     UFUNCTION()
     void UpdateCarrySpeed();
     UFUNCTION()

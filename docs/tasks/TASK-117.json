@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "id": "TASK-117",
+  "title": "局部灯具互动与明暗潜行一致性",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s05",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-116",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-ENV.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-117.json",
+    "docs/tasks/TASK-117.md",
+    "docs/handoffs/TASK-117.md",
+    "docs/qa/TASK-117/",
+    "docs/planning/TASK-117/",
+    "README.md",
+    "Source/Hearthward/Environment/HearthwardLightInteraction.h",
+    "Source/Hearthward/Environment/HearthwardLightInteraction.cpp",
+    "Source/Hearthward/Tests/Round2LightStealthTests.cpp",
+    "art_source/TASK-117/",
+    "Source/Hearthward/Combat/",
+    "Source/Hearthward/Gameplay/HearthwardWorldPresentation.cpp",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Environment/",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Resources/Data/experience.json",
+    "Source/Hearthward/Tests/CampaignAIBehaviorTests.cpp",
+    "Source/Hearthward/UI/HearthwardScreenRound2SceneTest.inl",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T117-C01 [PIE] 同一位置灯亮/灯灭各执行一次潜入。 → 画面与冻结的暴露因子同向变化，差异可复算。",
+    "T117-C02 [NATIVE] 已进入战斗后熄灭灯具。 → 不会抹除已确认目标或直接解除警报。",
+    "T117-C03 [PIE] 正午、室内门口、区域边缘和手持光源下测试。 → 不出现白天无条件隐身或边缘每帧闪烁状态。",
+    "T117-C04 [SAVE] 切换两灯状态并重启/跨区返回。 → 状态逐实例恢复，灯光/音频/检测一致且无重复组件。",
+    "T117-C05 [PLAY] 同一目标走亮处正面与熄灯侧路。 → 侧路提供信息和风险上的真实差异，不自动完成占领。",
+    "T117-C06 [PERF] 记录限定院落内的感知采样与灯数。 → 不逐敌逐帧扫描全部灯光；超预算策略有对照结果。"
+  ],
+  "non_goals": [
+    "不做全局照度模拟、火灾蔓延或敌人重建设施。",
+    "不让减弱可见性绕过现有警报和永久清敌规则。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G2；优先级 P1；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

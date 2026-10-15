@@ -1,0 +1,6083 @@
+[
+  {
+    "run": "camp-management-vulkan-02",
+    "backend": "vulkan",
+    "status": "FAIL",
+    "source": ".agent-local/qa/TASK-133/performance/camp-management-vulkan-02",
+    "frames": {
+      "numeric_frames": 10186,
+      "seconds": 134.37893770000002,
+      "p99_ms": 16.3143,
+      "one_percent_low_fps": 33.47507542000779,
+      "over_50ms": 4,
+      "over_50ms_fraction": 0.00039269585705870805,
+      "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames",
+      "dropped_frames": 0,
+      "frame_exclusions": [],
+      "distribution": "Every numeric frame in this complete stable-capture CSV; no fixed boot trimming",
+      "diagnostic_frame_target_pass": false,
+      "csv_metadata": {
+        "hasheaderrowatend": "1",
+        "eventtimestamps": "1",
+        "platform": "Windows",
+        "config": "Development",
+        "buildversion": "++UE5+Release-5.8-CL-56702186",
+        "engineversion": "5.8.2-56702186+++UE5+Release-5.8",
+        "enginereleaseversion": "5.8.2",
+        "os": "Windows 11 (24H2) [10.0.26100.4351] ",
+        "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+        "pgoenabled": "0",
+        "pgoprofilingenabled": "0",
+        "ltoenabled": "0",
+        "asan": "0",
+        "mergedmodules": "0",
+        "compacttset": "0",
+        "loginid": "a82aa7934b238d42e0d65a84d8c108c4",
+        "llm": "0",
+        "zenstreaming": "0",
+        "systemresolution.resx": "1920",
+        "systemresolution.resy": "1080",
+        "extradevelopmentmemorymb": "0",
+        "verbatimrhiname": "D3D12",
+        "rhiname": "D3D12",
+        "rhifeaturelevel": "SM6",
+        "shaderplatform": "PCD3D_SM6",
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "gpudriver": "577.00",
+        "deviceprofile": "WindowsEditor",
+        "largeworldcoordinates": "1",
+        "raytracing": "0",
+        "streamingpoolsizemb": "2048",
+        "csvid": "A239FF3C4584E5DF025EE2B69529B2CD",
+        "targetframerate": "165",
+        "starttimestamp": "1792056222",
+        "namedevents": "0",
+        "hasgtstalls": "0",
+        "vsyncenabled": "0",
+        "csvbench_timingstat_ns": "41.775000",
+        "csvbench_customstat_ns": "21.445000",
+        "csvbench_duration_ms": "2.528900",
+        "endtimestamp": "1792056357",
+        "captureduration": "134.380328",
+        "csvmaxfilebytesreached": "0"
+      },
+      "actual_system_resolution": [
+        "1920",
+        "1080"
+      ],
+      "actual_resolution_matches": true,
+      "actual_rhi_matches": true
+    },
+    "terminal": {
+      "last_input": "采集1份木材送入营地仓库",
+      "raw": "",
+      "submission_to_response_seconds": 0,
+      "input_tokens": 2519,
+      "output_tokens": 0,
+      "reason": "MODEL_UNAVAILABLE",
+      "applied_intent": "",
+      "has_candidate": false,
+      "candidate": {
+        "Intent": "None",
+        "Item": "None",
+        "Quantity": 0,
+        "QuantityMode": "",
+        "SourceRef": "",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "",
+        "Original": "",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 0,
+        "CapabilityVersion": 2
+      },
+      "context_tier": "full_relevant",
+      "server_process_id": 0
+    },
+    "production": {
+      "scope": "Existing MenuPause=false option; real camp facilities and assigned production, public API submission while panel remains open.",
+      "before": {
+        "version": 1,
+        "tier": 1,
+        "rationHalfPoints": 174,
+        "rationDrainMinutes": 28.030198007822037,
+        "donatedPoints": 0,
+        "calendar": 808.030198007822,
+        "hometown": false,
+        "rescued": [],
+        "camps": [
+          {
+            "id": "camp",
+            "position": {
+              "x": -98000,
+              "y": -75000,
+              "z": 16200
+            }
+          }
+        ],
+        "facilities": [
+          {
+            "id": "B720F27449E50E7D7DC1709B7FF4837B",
+            "kind": "campfire",
+            "camp": "camp",
+            "level": 1,
+            "paid": {
+              "wood": 4,
+              "stone": 4
+            },
+            "paused": false
+          }
+        ],
+        "regions": [
+          {
+            "id": "camp_forage",
+            "camp": "camp",
+            "job": "forage",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 0,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_wood",
+            "camp": "camp",
+            "job": "wood",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 1,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_stone",
+            "camp": "camp",
+            "job": "stone",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 2,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_ore",
+            "camp": "camp",
+            "job": "ore",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 3,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          }
+        ],
+        "sources": [
+          {
+            "id": "camp_048_tree0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95300,
+              "y": -75000,
+              "z": 16126.537537193866
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100359.57991327623,
+              "y": -72838.43051629995,
+              "z": 16075.612493095074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97676.52651203012,
+              "y": -78685.83299982251,
+              "z": 16103.082131685358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95444.55448674771,
+              "y": -71666.87860575125,
+              "z": 16124.96523804074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100166.37001982138,
+              "y": -75383.19830012559,
+              "z": 16078.641213994762
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95721.8623685825,
+              "y": -76449.16835885948,
+              "z": 16123.052265072776
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree6",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -98830.72951611746,
+              "y": -71909.71061694034,
+              "z": 16090.591525520711
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree7",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99705.36127173067,
+              "y": -78283.55644581925,
+              "z": 16082.684337693649
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree8",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -94054.8479075704,
+              "y": -73559.24500084214,
+              "z": 16139.732290464604
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree9",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100033.55848794091,
+              "y": -74160.57169685348,
+              "z": 16080.693405230753
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree10",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96855.62143134775,
+              "y": -77445.48516487208,
+              "z": 16111.594758782847
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree11",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97042.28391798036,
+              "y": -71946.67723516806,
+              "z": 16109.350680933852
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101201.28659040814,
+              "y": -76855.19922543997,
+              "z": 16068.676156733247
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -93897.96444404536,
+              "y": -75901.83385259364,
+              "z": 16140.621614404517
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99265.27895578356,
+              "y": -73200.25858411514,
+              "z": 16087.446927214467
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98346.98808931795,
+              "y": -77677.61073830225,
+              "z": 16096.85263599603
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop4",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -95553.1156345028,
+              "y": -72937.77864866902,
+              "z": 16124.96523804074
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop5",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101696.83980275896,
+              "y": -74847.10960547805,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein0",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -86658.77604048562,
+              "y": -86286.125956241,
+              "z": 13942.124379196759
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein1",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -98923.74171509052,
+              "y": -55021.34385791172,
+              "z": 15083.840668937544
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein2",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -113377.10414228436,
+              "y": -93426.73786098183,
+              "z": 14541.035855283266
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein3",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -70250.03843122355,
+              "y": -71266.4182168552,
+              "z": 17164.53490026159
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein0",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -136206.40178597346,
+              "y": -107253.23026564569,
+              "z": 25860.56199297957
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein1",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -83953.5222835314,
+              "y": -137439.54246918176,
+              "z": 18067.798048158904
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch0",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -96906.19155081968,
+              "y": -73091.18280694516,
+              "z": 16110.825630385874
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch1",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -100572.27521141236,
+              "y": -75820.60967381179,
+              "z": 16074.96814679179
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch2",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -95095.07638918236,
+              "y": -76342.16944359281,
+              "z": 16129.728297295258
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch3",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -99428.40483346782,
+              "y": -71586.84022762986,
+              "z": 16087.008018412818
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch0",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -99421.52499546083,
+              "y": -78952.12179560297,
+              "z": 16087.143168034989
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch1",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96052.57641901402,
+              "y": -73976.50530230012,
+              "z": 16118.73025864042
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch2",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -100610.8142710159,
+              "y": -74311.77849331796,
+              "z": 16074.806935722223
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch3",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96269.33840580958,
+              "y": -77691.61855514378,
+              "z": 16117.647876878294
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch0",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -97373.2813548781,
+              "y": -71353.46414526655,
+              "z": 16106.62617965858
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch1",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -101320.6368306321,
+              "y": -77571.64753398471,
+              "z": 16066.78919911286
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95807.51293499219,
+              "y": -75181.66031425013,
+              "z": 16121.756731133413
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99833.4982992863,
+              "y": -73018.01009424511,
+              "z": 16081.211947814143
+            },
+            "capacity": 16,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97984.41597750342,
+              "y": -78199.96205262544,
+              "z": 16100.235059659128
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95514.00158892981,
+              "y": -72259.59639830982,
+              "z": 16124.96523804074
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -102182.08072611984,
+              "y": -75387.55747988782,
+              "z": 16059.204146639198
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96247.58114454866,
+              "y": -76330.04817772088,
+              "z": 16117.989665242803
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98483.23126435008,
+              "y": -72343.59499602289,
+              "z": 16095.54042329212
+            },
+            "capacity": 8,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99704.36341041389,
+              "y": -77708.34734944436,
+              "z": 16082.700013259768
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -94431.57306593443,
+              "y": -74022.0791360057,
+              "z": 16136.992991005254
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101736.66352477488,
+              "y": -73082.35933954846,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens0",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -95740.55228332766,
+              "y": -81094.66127160683,
+              "z": 16122.75866215479
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens1",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -93852.42547696175,
+              "y": -64811.88802692844,
+              "z": 15823.237256804272
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain0",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -103873.79248752192,
+              "y": -77783.62386351517,
+              "z": 16040.501544975965
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain1",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -87488.29467194158,
+              "y": -78240.9953866163,
+              "z": 15005.542888538497
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb0",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -101286.48346994269,
+              "y": -69392.05684748913,
+              "z": 16067.326962362371
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb1",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -100309.59723277937,
+              "y": -85754.80174723541,
+              "z": 15516.706860657292
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1453593599|HierarchicalInstancedStaticMesh|SM_Tree|6|88191,56110,21926",
+            "camp": "None",
+            "item": "wood",
+            "position": {
+              "x": 88190.5,
+              "y": 56109.6,
+              "z": 21926.381392577972
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_0",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86700,
+              "y": -79100,
+              "z": 14490.61779964904
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_1",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86500,
+              "y": -79100,
+              "z": 14407.765506980999
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_2",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86300,
+              "y": -79100,
+              "z": 14334.33871213855
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|52|-100600,-72100,16082",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100600,
+              "y": -72100,
+              "z": 16082.296358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|53|-99700,-71900,16088",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99700,
+              "y": -71900,
+              "z": 16088.037314
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          }
+        ]
+      },
+      "capture_before": {
+        "version": 1,
+        "tier": 1,
+        "rationHalfPoints": 174,
+        "rationDrainMinutes": 28.103795010596514,
+        "donatedPoints": 0,
+        "calendar": 808.1037950105965,
+        "hometown": false,
+        "rescued": [],
+        "camps": [
+          {
+            "id": "camp",
+            "position": {
+              "x": -98000,
+              "y": -75000,
+              "z": 16200
+            }
+          }
+        ],
+        "facilities": [
+          {
+            "id": "B720F27449E50E7D7DC1709B7FF4837B",
+            "kind": "campfire",
+            "camp": "camp",
+            "level": 1,
+            "paid": {
+              "wood": 4,
+              "stone": 4
+            },
+            "paused": false
+          }
+        ],
+        "regions": [
+          {
+            "id": "camp_forage",
+            "camp": "camp",
+            "job": "forage",
+            "facility": "00000000000000000000000000000000",
+            "workers": [
+              0
+            ],
+            "player": false,
+            "brother": false,
+            "enabled": true,
+            "safe": true,
+            "toRations": false,
+            "priority": 0,
+            "batch": {
+              "active": true,
+              "work": 0.0122298002243042,
+              "required": 360,
+              "inputs": {
+                "wild_food": 1
+              },
+              "outputs": {
+                "wild_food": 1
+              },
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_wood",
+            "camp": "camp",
+            "job": "wood",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 1,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_stone",
+            "camp": "camp",
+            "job": "stone",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 2,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_ore",
+            "camp": "camp",
+            "job": "ore",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 3,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          }
+        ],
+        "sources": [
+          {
+            "id": "camp_048_tree0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95300,
+              "y": -75000,
+              "z": 16126.537537193866
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100359.57991327623,
+              "y": -72838.43051629995,
+              "z": 16075.612493095074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97676.52651203012,
+              "y": -78685.83299982251,
+              "z": 16103.082131685358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95444.55448674771,
+              "y": -71666.87860575125,
+              "z": 16124.96523804074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100166.37001982138,
+              "y": -75383.19830012559,
+              "z": 16078.641213994762
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95721.8623685825,
+              "y": -76449.16835885948,
+              "z": 16123.052265072776
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree6",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -98830.72951611746,
+              "y": -71909.71061694034,
+              "z": 16090.591525520711
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree7",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99705.36127173067,
+              "y": -78283.55644581925,
+              "z": 16082.684337693649
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree8",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -94054.8479075704,
+              "y": -73559.24500084214,
+              "z": 16139.732290464604
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree9",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100033.55848794091,
+              "y": -74160.57169685348,
+              "z": 16080.693405230753
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree10",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96855.62143134775,
+              "y": -77445.48516487208,
+              "z": 16111.594758782847
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree11",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97042.28391798036,
+              "y": -71946.67723516806,
+              "z": 16109.350680933852
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101201.28659040814,
+              "y": -76855.19922543997,
+              "z": 16068.676156733247
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -93897.96444404536,
+              "y": -75901.83385259364,
+              "z": 16140.621614404517
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99265.27895578356,
+              "y": -73200.25858411514,
+              "z": 16087.446927214467
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98346.98808931795,
+              "y": -77677.61073830225,
+              "z": 16096.85263599603
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop4",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -95553.1156345028,
+              "y": -72937.77864866902,
+              "z": 16124.96523804074
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop5",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101696.83980275896,
+              "y": -74847.10960547805,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein0",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -86658.77604048562,
+              "y": -86286.125956241,
+              "z": 13942.124379196759
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein1",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -98923.74171509052,
+              "y": -55021.34385791172,
+              "z": 15083.840668937544
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein2",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -113377.10414228436,
+              "y": -93426.73786098183,
+              "z": 14541.035855283266
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein3",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -70250.03843122355,
+              "y": -71266.4182168552,
+              "z": 17164.53490026159
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein0",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -136206.40178597346,
+              "y": -107253.23026564569,
+              "z": 25860.56199297957
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein1",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -83953.5222835314,
+              "y": -137439.54246918176,
+              "z": 18067.798048158904
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch0",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -96906.19155081968,
+              "y": -73091.18280694516,
+              "z": 16110.825630385874
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch1",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -100572.27521141236,
+              "y": -75820.60967381179,
+              "z": 16074.96814679179
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch2",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -95095.07638918236,
+              "y": -76342.16944359281,
+              "z": 16129.728297295258
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch3",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -99428.40483346782,
+              "y": -71586.84022762986,
+              "z": 16087.008018412818
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch0",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -99421.52499546083,
+              "y": -78952.12179560297,
+              "z": 16087.143168034989
+            },
+            "capacity": 16,
+            "remaining": 15,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch1",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96052.57641901402,
+              "y": -73976.50530230012,
+              "z": 16118.73025864042
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch2",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -100610.8142710159,
+              "y": -74311.77849331796,
+              "z": 16074.806935722223
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch3",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96269.33840580958,
+              "y": -77691.61855514378,
+              "z": 16117.647876878294
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch0",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -97373.2813548781,
+              "y": -71353.46414526655,
+              "z": 16106.62617965858
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch1",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -101320.6368306321,
+              "y": -77571.64753398471,
+              "z": 16066.78919911286
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95807.51293499219,
+              "y": -75181.66031425013,
+              "z": 16121.756731133413
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99833.4982992863,
+              "y": -73018.01009424511,
+              "z": 16081.211947814143
+            },
+            "capacity": 16,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97984.41597750342,
+              "y": -78199.96205262544,
+              "z": 16100.235059659128
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95514.00158892981,
+              "y": -72259.59639830982,
+              "z": 16124.96523804074
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -102182.08072611984,
+              "y": -75387.55747988782,
+              "z": 16059.204146639198
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96247.58114454866,
+              "y": -76330.04817772088,
+              "z": 16117.989665242803
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98483.23126435008,
+              "y": -72343.59499602289,
+              "z": 16095.54042329212
+            },
+            "capacity": 8,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99704.36341041389,
+              "y": -77708.34734944436,
+              "z": 16082.700013259768
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -94431.57306593443,
+              "y": -74022.0791360057,
+              "z": 16136.992991005254
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101736.66352477488,
+              "y": -73082.35933954846,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens0",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -95740.55228332766,
+              "y": -81094.66127160683,
+              "z": 16122.75866215479
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens1",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -93852.42547696175,
+              "y": -64811.88802692844,
+              "z": 15823.237256804272
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain0",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -103873.79248752192,
+              "y": -77783.62386351517,
+              "z": 16040.501544975965
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain1",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -87488.29467194158,
+              "y": -78240.9953866163,
+              "z": 15005.542888538497
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb0",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -101286.48346994269,
+              "y": -69392.05684748913,
+              "z": 16067.326962362371
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb1",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -100309.59723277937,
+              "y": -85754.80174723541,
+              "z": 15516.706860657292
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1453593599|HierarchicalInstancedStaticMesh|SM_Tree|6|88191,56110,21926",
+            "camp": "None",
+            "item": "wood",
+            "position": {
+              "x": 88190.5,
+              "y": 56109.6,
+              "z": 21926.381392577972
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_0",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86700,
+              "y": -79100,
+              "z": 14490.61779964904
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_1",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86500,
+              "y": -79100,
+              "z": 14407.765506980999
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_2",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86300,
+              "y": -79100,
+              "z": 14334.33871213855
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|52|-100600,-72100,16082",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100600,
+              "y": -72100,
+              "z": 16082.296358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|53|-99700,-71900,16088",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99700,
+              "y": -71900,
+              "z": 16088.037314
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          }
+        ]
+      },
+      "capture_after": {
+        "version": 1,
+        "tier": 1,
+        "rationHalfPoints": 169,
+        "rationDrainMinutes": 24.30330840870738,
+        "donatedPoints": 0,
+        "calendar": 954.3033084087074,
+        "hometown": false,
+        "rescued": [],
+        "camps": [
+          {
+            "id": "camp",
+            "position": {
+              "x": -98000,
+              "y": -75000,
+              "z": 16200
+            }
+          }
+        ],
+        "facilities": [
+          {
+            "id": "B720F27449E50E7D7DC1709B7FF4837B",
+            "kind": "campfire",
+            "camp": "camp",
+            "level": 1,
+            "paid": {
+              "wood": 4,
+              "stone": 4
+            },
+            "paused": false
+          }
+        ],
+        "regions": [
+          {
+            "id": "camp_forage",
+            "camp": "camp",
+            "job": "forage",
+            "facility": "00000000000000000000000000000000",
+            "workers": [
+              0
+            ],
+            "player": false,
+            "brother": false,
+            "enabled": true,
+            "safe": true,
+            "toRations": false,
+            "priority": 0,
+            "batch": {
+              "active": true,
+              "work": 146.21174319833517,
+              "required": 360,
+              "inputs": {
+                "wild_food": 1
+              },
+              "outputs": {
+                "wild_food": 1
+              },
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_wood",
+            "camp": "camp",
+            "job": "wood",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 1,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_stone",
+            "camp": "camp",
+            "job": "stone",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 2,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_ore",
+            "camp": "camp",
+            "job": "ore",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 3,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          }
+        ],
+        "sources": [
+          {
+            "id": "camp_048_tree0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95300,
+              "y": -75000,
+              "z": 16126.537537193866
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100359.57991327623,
+              "y": -72838.43051629995,
+              "z": 16075.612493095074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97676.52651203012,
+              "y": -78685.83299982251,
+              "z": 16103.082131685358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95444.55448674771,
+              "y": -71666.87860575125,
+              "z": 16124.96523804074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100166.37001982138,
+              "y": -75383.19830012559,
+              "z": 16078.641213994762
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95721.8623685825,
+              "y": -76449.16835885948,
+              "z": 16123.052265072776
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree6",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -98830.72951611746,
+              "y": -71909.71061694034,
+              "z": 16090.591525520711
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree7",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99705.36127173067,
+              "y": -78283.55644581925,
+              "z": 16082.684337693649
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree8",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -94054.8479075704,
+              "y": -73559.24500084214,
+              "z": 16139.732290464604
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree9",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100033.55848794091,
+              "y": -74160.57169685348,
+              "z": 16080.693405230753
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree10",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96855.62143134775,
+              "y": -77445.48516487208,
+              "z": 16111.594758782847
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree11",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97042.28391798036,
+              "y": -71946.67723516806,
+              "z": 16109.350680933852
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101201.28659040814,
+              "y": -76855.19922543997,
+              "z": 16068.676156733247
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -93897.96444404536,
+              "y": -75901.83385259364,
+              "z": 16140.621614404517
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99265.27895578356,
+              "y": -73200.25858411514,
+              "z": 16087.446927214467
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98346.98808931795,
+              "y": -77677.61073830225,
+              "z": 16096.85263599603
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop4",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -95553.1156345028,
+              "y": -72937.77864866902,
+              "z": 16124.96523804074
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop5",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101696.83980275896,
+              "y": -74847.10960547805,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein0",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -86658.77604048562,
+              "y": -86286.125956241,
+              "z": 13942.124379196759
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein1",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -98923.74171509052,
+              "y": -55021.34385791172,
+              "z": 15083.840668937544
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein2",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -113377.10414228436,
+              "y": -93426.73786098183,
+              "z": 14541.035855283266
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein3",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -70250.03843122355,
+              "y": -71266.4182168552,
+              "z": 17164.53490026159
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein0",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -136206.40178597346,
+              "y": -107253.23026564569,
+              "z": 25860.56199297957
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein1",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -83953.5222835314,
+              "y": -137439.54246918176,
+              "z": 18067.798048158904
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch0",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -96906.19155081968,
+              "y": -73091.18280694516,
+              "z": 16110.825630385874
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch1",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -100572.27521141236,
+              "y": -75820.60967381179,
+              "z": 16074.96814679179
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch2",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -95095.07638918236,
+              "y": -76342.16944359281,
+              "z": 16129.728297295258
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch3",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -99428.40483346782,
+              "y": -71586.84022762986,
+              "z": 16087.008018412818
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch0",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -99421.52499546083,
+              "y": -78952.12179560297,
+              "z": 16087.143168034989
+            },
+            "capacity": 16,
+            "remaining": 15,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch1",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96052.57641901402,
+              "y": -73976.50530230012,
+              "z": 16118.73025864042
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch2",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -100610.8142710159,
+              "y": -74311.77849331796,
+              "z": 16074.806935722223
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch3",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96269.33840580958,
+              "y": -77691.61855514378,
+              "z": 16117.647876878294
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch0",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -97373.2813548781,
+              "y": -71353.46414526655,
+              "z": 16106.62617965858
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch1",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -101320.6368306321,
+              "y": -77571.64753398471,
+              "z": 16066.78919911286
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95807.51293499219,
+              "y": -75181.66031425013,
+              "z": 16121.756731133413
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99833.4982992863,
+              "y": -73018.01009424511,
+              "z": 16081.211947814143
+            },
+            "capacity": 16,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97984.41597750342,
+              "y": -78199.96205262544,
+              "z": 16100.235059659128
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95514.00158892981,
+              "y": -72259.59639830982,
+              "z": 16124.96523804074
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -102182.08072611984,
+              "y": -75387.55747988782,
+              "z": 16059.204146639198
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96247.58114454866,
+              "y": -76330.04817772088,
+              "z": 16117.989665242803
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98483.23126435008,
+              "y": -72343.59499602289,
+              "z": 16095.54042329212
+            },
+            "capacity": 8,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99704.36341041389,
+              "y": -77708.34734944436,
+              "z": 16082.700013259768
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -94431.57306593443,
+              "y": -74022.0791360057,
+              "z": 16136.992991005254
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101736.66352477488,
+              "y": -73082.35933954846,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens0",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -95740.55228332766,
+              "y": -81094.66127160683,
+              "z": 16122.75866215479
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens1",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -93852.42547696175,
+              "y": -64811.88802692844,
+              "z": 15823.237256804272
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain0",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -103873.79248752192,
+              "y": -77783.62386351517,
+              "z": 16040.501544975965
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain1",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -87488.29467194158,
+              "y": -78240.9953866163,
+              "z": 15005.542888538497
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb0",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -101286.48346994269,
+              "y": -69392.05684748913,
+              "z": 16067.326962362371
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb1",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -100309.59723277937,
+              "y": -85754.80174723541,
+              "z": 15516.706860657292
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1453593599|HierarchicalInstancedStaticMesh|SM_Tree|6|88191,56110,21926",
+            "camp": "None",
+            "item": "wood",
+            "position": {
+              "x": 88190.5,
+              "y": 56109.6,
+              "z": 21926.381392577972
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_0",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86700,
+              "y": -79100,
+              "z": 14490.61779964904
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_1",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86500,
+              "y": -79100,
+              "z": 14407.765506980999
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_2",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86300,
+              "y": -79100,
+              "z": 14334.33871213855
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|52|-100600,-72100,16082",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100600,
+              "y": -72100,
+              "z": 16082.296358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|53|-99700,-71900,16088",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99700,
+              "y": -71900,
+              "z": 16088.037314
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          }
+        ]
+      },
+      "actual_production_progressed": true
+    },
+    "execution": null,
+    "limitations": "Public production API actions, no OS-input credit. No frame trimming. Existing MenuPause=false; original cancellation rules unchanged."
+  },
+  {
+    "run": "camp-management-cpu-01",
+    "backend": "cpu",
+    "status": "FAIL",
+    "source": ".agent-local/qa/TASK-133/performance/camp-management-cpu-01",
+    "frames": {
+      "numeric_frames": 9303,
+      "seconds": 125.9132136,
+      "p99_ms": 18.7862,
+      "one_percent_low_fps": 45.640594452547695,
+      "over_50ms": 1,
+      "over_50ms_fraction": 0.00010749220681500591,
+      "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames",
+      "dropped_frames": 0,
+      "frame_exclusions": [],
+      "distribution": "Every numeric frame in this complete stable-capture CSV; no fixed boot trimming",
+      "diagnostic_frame_target_pass": false,
+      "csv_metadata": {
+        "hasheaderrowatend": "1",
+        "eventtimestamps": "1",
+        "platform": "Windows",
+        "config": "Development",
+        "buildversion": "++UE5+Release-5.8-CL-56702186",
+        "engineversion": "5.8.2-56702186+++UE5+Release-5.8",
+        "enginereleaseversion": "5.8.2",
+        "os": "Windows 11 (24H2) [10.0.26100.4351] ",
+        "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+        "pgoenabled": "0",
+        "pgoprofilingenabled": "0",
+        "ltoenabled": "0",
+        "asan": "0",
+        "mergedmodules": "0",
+        "compacttset": "0",
+        "loginid": "a82aa7934b238d42e0d65a84d8c108c4",
+        "llm": "0",
+        "zenstreaming": "0",
+        "systemresolution.resx": "1920",
+        "systemresolution.resy": "1080",
+        "extradevelopmentmemorymb": "0",
+        "verbatimrhiname": "D3D12",
+        "rhiname": "D3D12",
+        "rhifeaturelevel": "SM6",
+        "shaderplatform": "PCD3D_SM6",
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "gpudriver": "577.00",
+        "deviceprofile": "WindowsEditor",
+        "largeworldcoordinates": "1",
+        "raytracing": "0",
+        "streamingpoolsizemb": "2048",
+        "csvid": "18636027468CED13F3464BB567278AFF",
+        "targetframerate": "165",
+        "starttimestamp": "1792056427",
+        "namedevents": "0",
+        "hasgtstalls": "0",
+        "vsyncenabled": "0",
+        "csvbench_timingstat_ns": "56.615000",
+        "csvbench_customstat_ns": "29.045000",
+        "csvbench_duration_ms": "3.426900",
+        "endtimestamp": "1792056553",
+        "captureduration": "125.910487",
+        "csvmaxfilebytesreached": "0"
+      },
+      "actual_system_resolution": [
+        "1920",
+        "1080"
+      ],
+      "actual_resolution_matches": true,
+      "actual_rhi_matches": true
+    },
+    "terminal": {
+      "last_input": "采集1份木材送入营地仓库",
+      "raw": "{\"intent\":\"collect\",\"item\":\"wood\",\"quantity\":1,\"mode\":\"additional_acquired\",\"source\":\"S1\",\"limits\":[],\"unresolved\":[],\"npc_line\":\"哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 无木材或路途危险，我会安全返营等待。\"}",
+      "submission_to_response_seconds": 124.68341110274196,
+      "input_tokens": 2519,
+      "output_tokens": 75,
+      "reason": "",
+      "applied_intent": "proposal",
+      "has_candidate": true,
+      "candidate": {
+        "Intent": "collect",
+        "Item": "wood",
+        "Quantity": 1,
+        "QuantityMode": "additional_acquired",
+        "SourceRef": "S1",
+        "Limits": [],
+        "Unresolved": [],
+        "Line": "哥，这张卡是去 S1 采集 1 份木材并送入营地仓库，请确认；若 S1 无木材或路途危险，我会安全返营等待。",
+        "Original": "采集1份木材送入营地仓库",
+        "Station": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "EquipmentId": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "RuleRevision": 1,
+        "CapabilityVersion": 2
+      },
+      "context_tier": "full_relevant",
+      "server_process_id": 5372
+    },
+    "production": {
+      "scope": "Existing MenuPause=false option; real camp facilities and assigned production, public API submission while panel remains open.",
+      "before": {
+        "version": 1,
+        "tier": 1,
+        "rationHalfPoints": 174,
+        "rationDrainMinutes": 27.73891471326351,
+        "donatedPoints": 0,
+        "calendar": 807.7389147132635,
+        "hometown": false,
+        "rescued": [],
+        "camps": [
+          {
+            "id": "camp",
+            "position": {
+              "x": -98000,
+              "y": -75000,
+              "z": 16200
+            }
+          }
+        ],
+        "facilities": [
+          {
+            "id": "B720F27449E50E7D7DC1709B7FF4837B",
+            "kind": "campfire",
+            "camp": "camp",
+            "level": 1,
+            "paid": {
+              "wood": 4,
+              "stone": 4
+            },
+            "paused": false
+          }
+        ],
+        "regions": [
+          {
+            "id": "camp_forage",
+            "camp": "camp",
+            "job": "forage",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 0,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_wood",
+            "camp": "camp",
+            "job": "wood",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 1,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_stone",
+            "camp": "camp",
+            "job": "stone",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 2,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_ore",
+            "camp": "camp",
+            "job": "ore",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 3,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          }
+        ],
+        "sources": [
+          {
+            "id": "camp_048_tree0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95300,
+              "y": -75000,
+              "z": 16126.537537193866
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100359.57991327623,
+              "y": -72838.43051629995,
+              "z": 16075.612493095074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97676.52651203012,
+              "y": -78685.83299982251,
+              "z": 16103.082131685358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95444.55448674771,
+              "y": -71666.87860575125,
+              "z": 16124.96523804074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100166.37001982138,
+              "y": -75383.19830012559,
+              "z": 16078.641213994762
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95721.8623685825,
+              "y": -76449.16835885948,
+              "z": 16123.052265072776
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree6",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -98830.72951611746,
+              "y": -71909.71061694034,
+              "z": 16090.591525520711
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree7",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99705.36127173067,
+              "y": -78283.55644581925,
+              "z": 16082.684337693649
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree8",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -94054.8479075704,
+              "y": -73559.24500084214,
+              "z": 16139.732290464604
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree9",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100033.55848794091,
+              "y": -74160.57169685348,
+              "z": 16080.693405230753
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree10",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96855.62143134775,
+              "y": -77445.48516487208,
+              "z": 16111.594758782847
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree11",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97042.28391798036,
+              "y": -71946.67723516806,
+              "z": 16109.350680933852
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101201.28659040814,
+              "y": -76855.19922543997,
+              "z": 16068.676156733247
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -93897.96444404536,
+              "y": -75901.83385259364,
+              "z": 16140.621614404517
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99265.27895578356,
+              "y": -73200.25858411514,
+              "z": 16087.446927214467
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98346.98808931795,
+              "y": -77677.61073830225,
+              "z": 16096.85263599603
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop4",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -95553.1156345028,
+              "y": -72937.77864866902,
+              "z": 16124.96523804074
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop5",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101696.83980275896,
+              "y": -74847.10960547805,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein0",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -86658.77604048562,
+              "y": -86286.125956241,
+              "z": 13942.124379196759
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein1",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -98923.74171509052,
+              "y": -55021.34385791172,
+              "z": 15083.840668937544
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein2",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -113377.10414228436,
+              "y": -93426.73786098183,
+              "z": 14541.035855283266
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein3",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -70250.03843122355,
+              "y": -71266.4182168552,
+              "z": 17164.53490026159
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein0",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -136206.40178597346,
+              "y": -107253.23026564569,
+              "z": 25860.56199297957
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein1",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -83953.5222835314,
+              "y": -137439.54246918176,
+              "z": 18067.798048158904
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch0",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -96906.19155081968,
+              "y": -73091.18280694516,
+              "z": 16110.825630385874
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch1",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -100572.27521141236,
+              "y": -75820.60967381179,
+              "z": 16074.96814679179
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch2",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -95095.07638918236,
+              "y": -76342.16944359281,
+              "z": 16129.728297295258
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch3",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -99428.40483346782,
+              "y": -71586.84022762986,
+              "z": 16087.008018412818
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch0",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -99421.52499546083,
+              "y": -78952.12179560297,
+              "z": 16087.143168034989
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch1",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96052.57641901402,
+              "y": -73976.50530230012,
+              "z": 16118.73025864042
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch2",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -100610.8142710159,
+              "y": -74311.77849331796,
+              "z": 16074.806935722223
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch3",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96269.33840580958,
+              "y": -77691.61855514378,
+              "z": 16117.647876878294
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch0",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -97373.2813548781,
+              "y": -71353.46414526655,
+              "z": 16106.62617965858
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch1",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -101320.6368306321,
+              "y": -77571.64753398471,
+              "z": 16066.78919911286
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95807.51293499219,
+              "y": -75181.66031425013,
+              "z": 16121.756731133413
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99833.4982992863,
+              "y": -73018.01009424511,
+              "z": 16081.211947814143
+            },
+            "capacity": 16,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97984.41597750342,
+              "y": -78199.96205262544,
+              "z": 16100.235059659128
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95514.00158892981,
+              "y": -72259.59639830982,
+              "z": 16124.96523804074
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -102182.08072611984,
+              "y": -75387.55747988782,
+              "z": 16059.204146639198
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96247.58114454866,
+              "y": -76330.04817772088,
+              "z": 16117.989665242803
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98483.23126435008,
+              "y": -72343.59499602289,
+              "z": 16095.54042329212
+            },
+            "capacity": 8,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99704.36341041389,
+              "y": -77708.34734944436,
+              "z": 16082.700013259768
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -94431.57306593443,
+              "y": -74022.0791360057,
+              "z": 16136.992991005254
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101736.66352477488,
+              "y": -73082.35933954846,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens0",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -95740.55228332766,
+              "y": -81094.66127160683,
+              "z": 16122.75866215479
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens1",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -93852.42547696175,
+              "y": -64811.88802692844,
+              "z": 15823.237256804272
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain0",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -103873.79248752192,
+              "y": -77783.62386351517,
+              "z": 16040.501544975965
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain1",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -87488.29467194158,
+              "y": -78240.9953866163,
+              "z": 15005.542888538497
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb0",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -101286.48346994269,
+              "y": -69392.05684748913,
+              "z": 16067.326962362371
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb1",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -100309.59723277937,
+              "y": -85754.80174723541,
+              "z": 15516.706860657292
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1453593599|HierarchicalInstancedStaticMesh|SM_Tree|6|88191,56110,21926",
+            "camp": "None",
+            "item": "wood",
+            "position": {
+              "x": 88190.5,
+              "y": 56109.6,
+              "z": 21926.381392577972
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_0",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86700,
+              "y": -79100,
+              "z": 14490.61779964904
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_1",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86500,
+              "y": -79100,
+              "z": 14407.765506980999
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_2",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86300,
+              "y": -79100,
+              "z": 14334.33871213855
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|52|-100600,-72100,16082",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100600,
+              "y": -72100,
+              "z": 16082.296358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|53|-99700,-71900,16088",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99700,
+              "y": -71900,
+              "z": 16088.037314
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          }
+        ]
+      },
+      "capture_before": {
+        "version": 1,
+        "tier": 1,
+        "rationHalfPoints": 174,
+        "rationDrainMinutes": 27.81371881440282,
+        "donatedPoints": 0,
+        "calendar": 807.8137188144028,
+        "hometown": false,
+        "rescued": [],
+        "camps": [
+          {
+            "id": "camp",
+            "position": {
+              "x": -98000,
+              "y": -75000,
+              "z": 16200
+            }
+          }
+        ],
+        "facilities": [
+          {
+            "id": "B720F27449E50E7D7DC1709B7FF4837B",
+            "kind": "campfire",
+            "camp": "camp",
+            "level": 1,
+            "paid": {
+              "wood": 4,
+              "stone": 4
+            },
+            "paused": false
+          }
+        ],
+        "regions": [
+          {
+            "id": "camp_forage",
+            "camp": "camp",
+            "job": "forage",
+            "facility": "00000000000000000000000000000000",
+            "workers": [
+              0
+            ],
+            "player": false,
+            "brother": false,
+            "enabled": true,
+            "safe": true,
+            "toRations": false,
+            "priority": 0,
+            "batch": {
+              "active": true,
+              "work": 0.010555103421211243,
+              "required": 360,
+              "inputs": {
+                "wild_food": 1
+              },
+              "outputs": {
+                "wild_food": 1
+              },
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_wood",
+            "camp": "camp",
+            "job": "wood",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 1,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_stone",
+            "camp": "camp",
+            "job": "stone",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 2,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_ore",
+            "camp": "camp",
+            "job": "ore",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 3,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          }
+        ],
+        "sources": [
+          {
+            "id": "camp_048_tree0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95300,
+              "y": -75000,
+              "z": 16126.537537193866
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100359.57991327623,
+              "y": -72838.43051629995,
+              "z": 16075.612493095074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97676.52651203012,
+              "y": -78685.83299982251,
+              "z": 16103.082131685358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95444.55448674771,
+              "y": -71666.87860575125,
+              "z": 16124.96523804074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100166.37001982138,
+              "y": -75383.19830012559,
+              "z": 16078.641213994762
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95721.8623685825,
+              "y": -76449.16835885948,
+              "z": 16123.052265072776
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree6",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -98830.72951611746,
+              "y": -71909.71061694034,
+              "z": 16090.591525520711
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree7",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99705.36127173067,
+              "y": -78283.55644581925,
+              "z": 16082.684337693649
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree8",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -94054.8479075704,
+              "y": -73559.24500084214,
+              "z": 16139.732290464604
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree9",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100033.55848794091,
+              "y": -74160.57169685348,
+              "z": 16080.693405230753
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree10",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96855.62143134775,
+              "y": -77445.48516487208,
+              "z": 16111.594758782847
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree11",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97042.28391798036,
+              "y": -71946.67723516806,
+              "z": 16109.350680933852
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101201.28659040814,
+              "y": -76855.19922543997,
+              "z": 16068.676156733247
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -93897.96444404536,
+              "y": -75901.83385259364,
+              "z": 16140.621614404517
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99265.27895578356,
+              "y": -73200.25858411514,
+              "z": 16087.446927214467
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98346.98808931795,
+              "y": -77677.61073830225,
+              "z": 16096.85263599603
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop4",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -95553.1156345028,
+              "y": -72937.77864866902,
+              "z": 16124.96523804074
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop5",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101696.83980275896,
+              "y": -74847.10960547805,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein0",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -86658.77604048562,
+              "y": -86286.125956241,
+              "z": 13942.124379196759
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein1",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -98923.74171509052,
+              "y": -55021.34385791172,
+              "z": 15083.840668937544
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein2",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -113377.10414228436,
+              "y": -93426.73786098183,
+              "z": 14541.035855283266
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein3",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -70250.03843122355,
+              "y": -71266.4182168552,
+              "z": 17164.53490026159
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein0",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -136206.40178597346,
+              "y": -107253.23026564569,
+              "z": 25860.56199297957
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein1",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -83953.5222835314,
+              "y": -137439.54246918176,
+              "z": 18067.798048158904
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch0",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -96906.19155081968,
+              "y": -73091.18280694516,
+              "z": 16110.825630385874
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch1",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -100572.27521141236,
+              "y": -75820.60967381179,
+              "z": 16074.96814679179
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch2",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -95095.07638918236,
+              "y": -76342.16944359281,
+              "z": 16129.728297295258
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch3",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -99428.40483346782,
+              "y": -71586.84022762986,
+              "z": 16087.008018412818
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch0",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -99421.52499546083,
+              "y": -78952.12179560297,
+              "z": 16087.143168034989
+            },
+            "capacity": 16,
+            "remaining": 15,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch1",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96052.57641901402,
+              "y": -73976.50530230012,
+              "z": 16118.73025864042
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch2",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -100610.8142710159,
+              "y": -74311.77849331796,
+              "z": 16074.806935722223
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch3",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96269.33840580958,
+              "y": -77691.61855514378,
+              "z": 16117.647876878294
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch0",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -97373.2813548781,
+              "y": -71353.46414526655,
+              "z": 16106.62617965858
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch1",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -101320.6368306321,
+              "y": -77571.64753398471,
+              "z": 16066.78919911286
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95807.51293499219,
+              "y": -75181.66031425013,
+              "z": 16121.756731133413
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99833.4982992863,
+              "y": -73018.01009424511,
+              "z": 16081.211947814143
+            },
+            "capacity": 16,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97984.41597750342,
+              "y": -78199.96205262544,
+              "z": 16100.235059659128
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95514.00158892981,
+              "y": -72259.59639830982,
+              "z": 16124.96523804074
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -102182.08072611984,
+              "y": -75387.55747988782,
+              "z": 16059.204146639198
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96247.58114454866,
+              "y": -76330.04817772088,
+              "z": 16117.989665242803
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98483.23126435008,
+              "y": -72343.59499602289,
+              "z": 16095.54042329212
+            },
+            "capacity": 8,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99704.36341041389,
+              "y": -77708.34734944436,
+              "z": 16082.700013259768
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -94431.57306593443,
+              "y": -74022.0791360057,
+              "z": 16136.992991005254
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101736.66352477488,
+              "y": -73082.35933954846,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens0",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -95740.55228332766,
+              "y": -81094.66127160683,
+              "z": 16122.75866215479
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens1",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -93852.42547696175,
+              "y": -64811.88802692844,
+              "z": 15823.237256804272
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain0",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -103873.79248752192,
+              "y": -77783.62386351517,
+              "z": 16040.501544975965
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain1",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -87488.29467194158,
+              "y": -78240.9953866163,
+              "z": 15005.542888538497
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb0",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -101286.48346994269,
+              "y": -69392.05684748913,
+              "z": 16067.326962362371
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb1",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -100309.59723277937,
+              "y": -85754.80174723541,
+              "z": 15516.706860657292
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1453593599|HierarchicalInstancedStaticMesh|SM_Tree|6|88191,56110,21926",
+            "camp": "None",
+            "item": "wood",
+            "position": {
+              "x": 88190.5,
+              "y": 56109.6,
+              "z": 21926.381392577972
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_0",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86700,
+              "y": -79100,
+              "z": 14490.61779964904
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_1",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86500,
+              "y": -79100,
+              "z": 14407.765506980999
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_2",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86300,
+              "y": -79100,
+              "z": 14334.33871213855
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|52|-100600,-72100,16082",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100600,
+              "y": -72100,
+              "z": 16082.296358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|53|-99700,-71900,16088",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99700,
+              "y": -71900,
+              "z": 16088.037314
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          }
+        ]
+      },
+      "capture_after": {
+        "version": 1,
+        "tier": 1,
+        "rationHalfPoints": 169,
+        "rationDrainMinutes": 17.470261622220278,
+        "donatedPoints": 0,
+        "calendar": 947.4702616222203,
+        "hometown": false,
+        "rescued": [],
+        "camps": [
+          {
+            "id": "camp",
+            "position": {
+              "x": -98000,
+              "y": -75000,
+              "z": 16200
+            }
+          }
+        ],
+        "facilities": [
+          {
+            "id": "B720F27449E50E7D7DC1709B7FF4837B",
+            "kind": "campfire",
+            "camp": "camp",
+            "level": 1,
+            "paid": {
+              "wood": 4,
+              "stone": 4
+            },
+            "paused": false
+          }
+        ],
+        "regions": [
+          {
+            "id": "camp_forage",
+            "camp": "camp",
+            "job": "forage",
+            "facility": "00000000000000000000000000000000",
+            "workers": [
+              0
+            ],
+            "player": false,
+            "brother": false,
+            "enabled": true,
+            "safe": true,
+            "toRations": false,
+            "priority": 0,
+            "batch": {
+              "active": true,
+              "work": 139.66709791123867,
+              "required": 360,
+              "inputs": {
+                "wild_food": 1
+              },
+              "outputs": {
+                "wild_food": 1
+              },
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_wood",
+            "camp": "camp",
+            "job": "wood",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 1,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_stone",
+            "camp": "camp",
+            "job": "stone",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 2,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          },
+          {
+            "id": "camp_ore",
+            "camp": "camp",
+            "job": "ore",
+            "facility": "00000000000000000000000000000000",
+            "workers": [],
+            "player": false,
+            "brother": false,
+            "enabled": false,
+            "safe": true,
+            "toRations": false,
+            "priority": 3,
+            "batch": {
+              "active": false,
+              "work": 0,
+              "required": 0,
+              "inputs": {},
+              "outputs": {},
+              "toRations": false
+            },
+            "completed": 0,
+            "batchStopAt": 0
+          }
+        ],
+        "sources": [
+          {
+            "id": "camp_048_tree0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95300,
+              "y": -75000,
+              "z": 16126.537537193866
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100359.57991327623,
+              "y": -72838.43051629995,
+              "z": 16075.612493095074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97676.52651203012,
+              "y": -78685.83299982251,
+              "z": 16103.082131685358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95444.55448674771,
+              "y": -71666.87860575125,
+              "z": 16124.96523804074
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100166.37001982138,
+              "y": -75383.19830012559,
+              "z": 16078.641213994762
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95721.8623685825,
+              "y": -76449.16835885948,
+              "z": 16123.052265072776
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree6",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -98830.72951611746,
+              "y": -71909.71061694034,
+              "z": 16090.591525520711
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree7",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99705.36127173067,
+              "y": -78283.55644581925,
+              "z": 16082.684337693649
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree8",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -94054.8479075704,
+              "y": -73559.24500084214,
+              "z": 16139.732290464604
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree9",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100033.55848794091,
+              "y": -74160.57169685348,
+              "z": 16080.693405230753
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree10",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96855.62143134775,
+              "y": -77445.48516487208,
+              "z": 16111.594758782847
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_tree11",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97042.28391798036,
+              "y": -71946.67723516806,
+              "z": 16109.350680933852
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101201.28659040814,
+              "y": -76855.19922543997,
+              "z": 16068.676156733247
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -93897.96444404536,
+              "y": -75901.83385259364,
+              "z": 16140.621614404517
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99265.27895578356,
+              "y": -73200.25858411514,
+              "z": 16087.446927214467
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98346.98808931795,
+              "y": -77677.61073830225,
+              "z": 16096.85263599603
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop4",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -95553.1156345028,
+              "y": -72937.77864866902,
+              "z": 16124.96523804074
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_stone_outcrop5",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101696.83980275896,
+              "y": -74847.10960547805,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein0",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -86658.77604048562,
+              "y": -86286.125956241,
+              "z": 13942.124379196759
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein1",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -98923.74171509052,
+              "y": -55021.34385791172,
+              "z": 15083.840668937544
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein2",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -113377.10414228436,
+              "y": -93426.73786098183,
+              "z": 14541.035855283266
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_ore_vein3",
+            "camp": "None",
+            "item": "ore",
+            "position": {
+              "x": -70250.03843122355,
+              "y": -71266.4182168552,
+              "z": 17164.53490026159
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein0",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -136206.40178597346,
+              "y": -107253.23026564569,
+              "z": 25860.56199297957
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_rich_ore_vein1",
+            "camp": "None",
+            "item": "refined_ore",
+            "position": {
+              "x": -83953.5222835314,
+              "y": -137439.54246918176,
+              "z": 18067.798048158904
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 5760,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch0",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -96906.19155081968,
+              "y": -73091.18280694516,
+              "z": 16110.825630385874
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch1",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -100572.27521141236,
+              "y": -75820.60967381179,
+              "z": 16074.96814679179
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch2",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -95095.07638918236,
+              "y": -76342.16944359281,
+              "z": 16129.728297295258
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_herb_patch3",
+            "camp": "camp",
+            "item": "herb",
+            "position": {
+              "x": -99428.40483346782,
+              "y": -71586.84022762986,
+              "z": 16087.008018412818
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch0",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -99421.52499546083,
+              "y": -78952.12179560297,
+              "z": 16087.143168034989
+            },
+            "capacity": 16,
+            "remaining": 15,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch1",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96052.57641901402,
+              "y": -73976.50530230012,
+              "z": 16118.73025864042
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch2",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -100610.8142710159,
+              "y": -74311.77849331796,
+              "z": 16074.806935722223
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_food_patch3",
+            "camp": "camp",
+            "item": "wild_food",
+            "position": {
+              "x": -96269.33840580958,
+              "y": -77691.61855514378,
+              "z": 16117.647876878294
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch0",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -97373.2813548781,
+              "y": -71353.46414526655,
+              "z": 16106.62617965858
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_flower_patch1",
+            "camp": "camp",
+            "item": "flower",
+            "position": {
+              "x": -101320.6368306321,
+              "y": -77571.64753398471,
+              "z": 16066.78919911286
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches0",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95807.51293499219,
+              "y": -75181.66031425013,
+              "z": 16121.756731133413
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches1",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99833.4982992863,
+              "y": -73018.01009424511,
+              "z": 16081.211947814143
+            },
+            "capacity": 16,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches2",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -97984.41597750342,
+              "y": -78199.96205262544,
+              "z": 16100.235059659128
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches3",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -95514.00158892981,
+              "y": -72259.59639830982,
+              "z": 16124.96523804074
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches4",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -102182.08072611984,
+              "y": -75387.55747988782,
+              "z": 16059.204146639198
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_fallen_branches5",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -96247.58114454866,
+              "y": -76330.04817772088,
+              "z": 16117.989665242803
+            },
+            "capacity": 16,
+            "remaining": 16,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones0",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -98483.23126435008,
+              "y": -72343.59499602289,
+              "z": 16095.54042329212
+            },
+            "capacity": 8,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones1",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -99704.36341041389,
+              "y": -77708.34734944436,
+              "z": 16082.700013259768
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones2",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -94431.57306593443,
+              "y": -74022.0791360057,
+              "z": 16136.992991005254
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_loose_stones3",
+            "camp": "camp",
+            "item": "stone",
+            "position": {
+              "x": -101736.66352477488,
+              "y": -73082.35933954846,
+              "z": 16062.485599298085
+            },
+            "capacity": 8,
+            "remaining": 8,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens0",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -95740.55228332766,
+              "y": -81094.66127160683,
+              "z": 16122.75866215479
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_greens1",
+            "camp": "None",
+            "item": "seed_greens",
+            "position": {
+              "x": -93852.42547696175,
+              "y": -64811.88802692844,
+              "z": 15823.237256804272
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain0",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -103873.79248752192,
+              "y": -77783.62386351517,
+              "z": 16040.501544975965
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_grain1",
+            "camp": "None",
+            "item": "seed_grain",
+            "position": {
+              "x": -87488.29467194158,
+              "y": -78240.9953866163,
+              "z": 15005.542888538497
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb0",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -101286.48346994269,
+              "y": -69392.05684748913,
+              "z": 16067.326962362371
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "camp_048_wild_seed_herb1",
+            "camp": "None",
+            "item": "seed_herb",
+            "position": {
+              "x": -100309.59723277937,
+              "y": -85754.80174723541,
+              "z": 15516.706860657292
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1453593599|HierarchicalInstancedStaticMesh|SM_Tree|6|88191,56110,21926",
+            "camp": "None",
+            "item": "wood",
+            "position": {
+              "x": 88190.5,
+              "y": 56109.6,
+              "z": 21926.381392577972
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_0",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86700,
+              "y": -79100,
+              "z": 14490.61779964904
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_1",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86500,
+              "y": -79100,
+              "z": 14407.765506980999
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "m1_herb_patch_2",
+            "camp": "None",
+            "item": "herb",
+            "position": {
+              "x": -86300,
+              "y": -79100,
+              "z": 14334.33871213855
+            },
+            "capacity": 4,
+            "remaining": 4,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|52|-100600,-72100,16082",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -100600,
+              "y": -72100,
+              "z": 16082.296358
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          },
+          {
+            "id": "Actor_UAID_BCFCE74B8AD0240403_1452824536|HierarchicalInstancedStaticMesh|SM_CampFirA_CampUV|53|-99700,-71900,16088",
+            "camp": "camp",
+            "item": "wood",
+            "position": {
+              "x": -99700,
+              "y": -71900,
+              "z": 16088.037314
+            },
+            "capacity": 12,
+            "remaining": 12,
+            "refreshMinutes": 2880,
+            "due": -1,
+            "blocked": false
+          }
+        ]
+      },
+      "actual_production_progressed": true
+    },
+    "execution": {
+      "scope": "Normal UI confirmation and actual companion delivery after the frame sample; no state injection.",
+      "camp_wood_before": 0,
+      "accepted": true,
+      "observed_phases": [
+        "Returning",
+        "Going to Source",
+        "Gathering",
+        "Returning",
+        "Completed"
+      ],
+      "phase": "Completed",
+      "delivered": 1,
+      "source_wood_after": 15,
+      "camp_wood_after": 1,
+      "action": "None",
+      "passed": true
+    },
+    "limitations": "Public production API actions, no OS-input credit. No frame trimming. Existing MenuPause=false; original cancellation rules unchanged."
+  }
+]

@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "id": "TASK-125",
+  "title": "现有族人短线三：归乡之后还要守什么",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-122",
+    "TASK-126",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-125.json",
+    "docs/tasks/TASK-125.md",
+    "docs/handoffs/TASK-125.md",
+    "docs/qa/TASK-125/",
+    "docs/planning/TASK-125/",
+    "README.md",
+    "Source/Hearthward/Narrative/HearthwardWatcherStory.h",
+    "Source/Hearthward/Narrative/HearthwardWatcherStory.cpp",
+    "Source/Hearthward/Tests/Round2WatcherStoryTests.cpp",
+    "art_source/TASK-125/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Camp/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.h",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignExploration.cpp",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/UI/",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "Resources/Data/round2_people.json",
+    "Source/Hearthward/Tests/Round2PersonalStoryTests.cpp",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T125-C01 [NATIVE] 在序章、占领期和夺回后分别触发。 → 只有合法阶段开放对应步骤，不提前宣布胜利。",
+    "T125-C02 [PLAY] 从旧号台/旧记录自然接入人物线。 → 原内容有后续含义，不重复领取同一记录作新奖励。",
+    "T125-C03 [NATIVE] 完成故事并推进多日。 → 不生成新驻军、长期袭击或恢复已阵亡故乡敌人。",
+    "T125-C04 [PIE] 两种选择分别查看陈列和空闲角色行为。 → 世界表现明确不同，但岗位、床位和全局加成不被复制。",
+    "T125-C05 [SAVE] 故事结尾后保存重启并继续其他任务。 → 第二营地和未完任务可正常使用，结尾不锁死开放世界。",
+    "T125-C06 [PLAY] 完整试玩并记录结尾理解。 → 玩家知道守望者现在关心什么；不以不可跳过长演出强行收尾。"
+  ],
+  "non_goals": [
+    "不追加最终投降、反攻敌方腹地或营地定期防守战。",
+    "不把第二营地结尾变成禁止继续游戏的终点。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G2；优先级 P1；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

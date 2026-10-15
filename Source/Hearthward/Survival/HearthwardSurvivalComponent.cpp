@@ -179,7 +179,7 @@ void UHearthwardSurvivalComponent::CancelAction(bool Damaged)
     }
     SetStatus(Damaged?(Item.IsNone()?TEXT("受到伤害"):TEXT("受伤中断，损失半份药量")):TEXT("动作已取消"));
 }
-bool UHearthwardSurvivalComponent::ReceiveDamage(float Amount,FGuid Event,FGuid Timeline,bool Fatal)
+bool UHearthwardSurvivalComponent::ReceiveDamage(float Amount,FGuid Event,FGuid Timeline,bool Fatal,TOptional<FVector> SourcePosition)
 {
     if(!Enabled() || Settling || Timeline!=Epoch() || !Event.IsValid() || DamageEvents.Contains(Event)
         || Amount<=0 || !FMath::IsFinite(Amount) || State.Life==EHearthwardLife::Dead) return false;
@@ -199,6 +199,7 @@ bool UHearthwardSurvivalComponent::ReceiveDamage(float Amount,FGuid Event,FGuid 
     FHearthwardCombatFeedbackReceipt Receipt;
     Receipt.SuccessId=FGuid::NewGuid(); Receipt.OperationId=Event; Receipt.Epoch=Timeline;
     Receipt.Kind=TEXT("damage"); Receipt.TargetPosition=GetOwner()->GetActorLocation();
+    Receipt.SourcePosition=SourcePosition;
     OnDamageSucceeded.Broadcast(Receipt);
     return true;
 }

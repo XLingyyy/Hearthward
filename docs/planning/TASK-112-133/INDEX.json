@@ -1,0 +1,352 @@
+{
+  "schema_version": 1,
+  "kind": "planning_package",
+  "date": "2026-10-13",
+  "repository": "XLingyyy/Hearthward",
+  "base_sha": "dbf6acd4df31ed1f7154464ac9b635e52e173806",
+  "task_range": [
+    112,
+    133
+  ],
+  "task_count": 22,
+  "case_count": 132,
+  "remote_written": false,
+  "game_tests_executed": true,
+  "tasks": [
+    {
+      "id": "TASK-112",
+      "title": "本轮基线、设计契约与共享写入边界",
+      "stage": "G0",
+      "priority": "P0",
+      "dependencies": [],
+      "md": "docs/tasks/TASK-112.md",
+      "json": "docs/tasks/TASK-112.json",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-113",
+      "title": "三类现有武器的决策差异与移动攻击平衡",
+      "stage": "G1",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112"
+      ],
+      "md": "docs/tasks/TASK-113.md",
+      "json": "docs/tasks/TASK-113.json",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-114",
+      "title": "三类敌人职责与一名行为精英",
+      "stage": "G1",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112",
+        "TASK-113"
+      ],
+      "md": "docs/tasks/TASK-114.md",
+      "json": "docs/tasks/TASK-114.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-115",
+      "title": "战斗结果反馈与镜头舒适性",
+      "stage": "G1",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112",
+        "TASK-113",
+        "TASK-114"
+      ],
+      "md": "docs/tasks/TASK-115.md",
+      "json": "docs/tasks/TASK-115.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-116",
+      "title": "声音诱导与有限调查行为",
+      "stage": "G1",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-116.md",
+      "json": "docs/tasks/TASK-116.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-117",
+      "title": "局部灯具互动与明暗潜行一致性",
+      "stage": "G2",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-112",
+        "TASK-116",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-117.md",
+      "json": "docs/tasks/TASK-117.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-118",
+      "title": "门栓、短梯与障碍捷径",
+      "stage": "G1",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112",
+        "TASK-126",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-118.md",
+      "json": "docs/tasks/TASK-118.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-119",
+      "title": "安全协作状态机与双人维持装置",
+      "stage": "G1",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112",
+        "TASK-126",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-119.md",
+      "json": "docs/tasks/TASK-119.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-120",
+      "title": "双人移障协作与安全中断",
+      "stage": "G2",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-112",
+        "TASK-119",
+        "TASK-126",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-120.md",
+      "json": "docs/tasks/TASK-120.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-121",
+      "title": "作坊夺路：首个完整体验样板",
+      "stage": "G1",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-113",
+        "TASK-114",
+        "TASK-115",
+        "TASK-116",
+        "TASK-118",
+        "TASK-119",
+        "TASK-126",
+        "TASK-127",
+        "TASK-131",
+        "TASK-132"
+      ],
+      "md": "docs/tasks/TASK-121.md",
+      "json": "docs/tasks/TASK-121.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-122",
+      "title": "粮窖潜入：观察、明暗与双路径关卡",
+      "stage": "G2",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-112",
+        "TASK-117",
+        "TASK-118",
+        "TASK-120",
+        "TASK-121",
+        "TASK-126",
+        "TASK-127",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-122.md",
+      "json": "docs/tasks/TASK-122.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-123",
+      "title": "现有族人短线一：把工具放回哪里",
+      "stage": "G2",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-112",
+        "TASK-121",
+        "TASK-126",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-123.md",
+      "json": "docs/tasks/TASK-123.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-124",
+      "title": "现有族人短线二：留下能再生长的地方",
+      "stage": "G2",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-112",
+        "TASK-122",
+        "TASK-126",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-124.md",
+      "json": "docs/tasks/TASK-124.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-125",
+      "title": "现有族人短线三：归乡之后还要守什么",
+      "stage": "G2",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-112",
+        "TASK-122",
+        "TASK-126",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-125.md",
+      "json": "docs/tasks/TASK-125.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-126",
+      "title": "高频交互动作的进入、接触与退出",
+      "stage": "G1",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112"
+      ],
+      "md": "docs/tasks/TASK-126.md",
+      "json": "docs/tasks/TASK-126.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-127",
+      "title": "室内外、战斗与回营的情境混音",
+      "stage": "G1",
+      "priority": "P1",
+      "dependencies": [
+        "TASK-112"
+      ],
+      "md": "docs/tasks/TASK-127.md",
+      "json": "docs/tasks/TASK-127.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-128",
+      "title": "一种轻雨天气及公平感知变化",
+      "stage": "G3",
+      "priority": "P2",
+      "dependencies": [
+        "TASK-112",
+        "TASK-117",
+        "TASK-121",
+        "TASK-122",
+        "TASK-127",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-128.md",
+      "json": "docs/tasks/TASK-128.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-129",
+      "title": "真实动物踪迹与可验证的观察狩猎",
+      "stage": "G3",
+      "priority": "P2",
+      "dependencies": [
+        "TASK-112",
+        "TASK-116",
+        "TASK-121",
+        "TASK-122",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-129.md",
+      "json": "docs/tasks/TASK-129.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-130",
+      "title": "有限陈列与营地个性化",
+      "stage": "G3",
+      "priority": "P2",
+      "dependencies": [
+        "TASK-112",
+        "TASK-123",
+        "TASK-124",
+        "TASK-125",
+        "TASK-126",
+        "TASK-131"
+      ],
+      "md": "docs/tasks/TASK-130.md",
+      "json": "docs/tasks/TASK-130.json",
+      "status": "Backlog"
+    },
+    {
+      "id": "TASK-131",
+      "title": "新增状态、事务与旧档迁移",
+      "stage": "G0",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112"
+      ],
+      "md": "docs/tasks/TASK-131.md",
+      "json": "docs/tasks/TASK-131.json",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-132",
+      "title": "固定版本测量与回归工具基础",
+      "stage": "G0",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112"
+      ],
+      "md": "docs/tasks/TASK-132.md",
+      "json": "docs/tasks/TASK-132.json",
+      "status": "Active"
+    },
+    {
+      "id": "TASK-133",
+      "title": "整轮连续体验、旧档、视听与候选验收",
+      "stage": "G4",
+      "priority": "P0",
+      "dependencies": [
+        "TASK-112",
+        "TASK-113",
+        "TASK-114",
+        "TASK-115",
+        "TASK-116",
+        "TASK-117",
+        "TASK-118",
+        "TASK-119",
+        "TASK-120",
+        "TASK-121",
+        "TASK-122",
+        "TASK-123",
+        "TASK-124",
+        "TASK-125",
+        "TASK-126",
+        "TASK-127",
+        "TASK-128",
+        "TASK-129",
+        "TASK-130",
+        "TASK-131",
+        "TASK-132"
+      ],
+      "md": "docs/tasks/TASK-133.md",
+      "json": "docs/tasks/TASK-133.json",
+      "status": "Backlog"
+    }
+  ],
+  "implementation_status": "TASK-112 Review、六项基础用例PASS；TASK-131 Active实施持久状态；其他任务按依赖推进"
+}

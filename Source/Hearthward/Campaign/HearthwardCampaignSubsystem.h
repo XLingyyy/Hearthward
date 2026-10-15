@@ -52,6 +52,7 @@ private:
     void FinishTravel();
     void Sync();
     void RefreshActors();
+    void RefreshRound2();
     void ResetActors();
     bool ZoneOccupied(FName Zone) const;
     FName Nearest() const;

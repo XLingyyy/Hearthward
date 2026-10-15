@@ -9,6 +9,14 @@
 #include "../Camp/HearthwardCampSubsystem.h"
 #include "../Building/HearthwardBuildingComponent.h"
 #include "../Save/HearthwardSaveSubsystem.h"
+#include "../Environment/HearthwardWeatherActor.h"
+#include "../Environment/HearthwardLampInteraction.h"
+#include "../Nature/HearthwardNatureSubsystem.h"
+#include "../Nature/HearthwardAnimalTraces.h"
+#include "../Campaign/HearthwardPersonalStory.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Campaign/HearthwardCampaignActor.h"
+#include "../Time/HearthwardWorldClockSubsystem.h"
 #include "Audio.h"
 #include "AudioThread.h"
 #include "Components/AudioComponent.h"
@@ -21,6 +29,7 @@
 #include "Engine/StaticMeshActor.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -55,6 +64,7 @@ struct FEnvironmentAudioWorld
     ACharacter* Player=nullptr;
     AHearthwardCompanionFixture* Brother=nullptr;
     AStaticMeshActor* Water=nullptr;
+    AActor* GroundFloor=nullptr;
     UStaticMesh* Mesh=nullptr;
     UHearthwardPresentationComponent* Presentation=nullptr;
     UHearthwardGameplayComponent* Gameplay=nullptr;
@@ -78,7 +88,7 @@ struct FEnvironmentAudioWorld
         if(!Mesh || Vertices.Num()!=98 || Triangles.Num()!=96){Failure=TEXT("Actual source mesh/98-vertex96-triangle metadata is missing");return;}
         Instance=NewObject<UGameInstance>(GEngine);Instance->InitializeStandalone();World=Instance->GetWorld();
         const FVector Origin(12340,-54321,200);
-        auto* Floor=World->SpawnActor<AActor>();auto* Box=NewObject<UBoxComponent>(Floor);
+        auto* Floor=World->SpawnActor<AActor>();GroundFloor=Floor;auto* Box=NewObject<UBoxComponent>(Floor);
         Floor->AddInstanceComponent(Box);Floor->SetRootComponent(Box);Box->SetBoxExtent(FVector(100000,100000,10));
         Box->SetCollisionObjectType(ECC_WorldStatic);Box->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
         Box->SetCollisionResponseToAllChannels(ECR_Block);Box->RegisterComponent();Floor->SetActorLocation(Origin-FVector(0,0,10));
@@ -333,6 +343,429 @@ bool FEnvironmentLoad099Test::RunTest(const FString&)
     if(!TestTrue(TEXT("Actual fatal damage establishes the dead-listener boundary"),F.Survival->ReceiveDamage(1,FGuid::NewGuid(),F.World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch(),true)))return false;
     F.Observe();TestEqual(TEXT("Dead listener cannot retain an environment loop"),F.Sources().Num(),0);
     return Started;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2RainLifecycleTest,"Hearthward.Round2.Audio.RainPauseRestoreAndBoundedSource",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FRound2RainLifecycleTest::RunTest(const FString&)
+{
+    FEnvironmentAudioWorld F;if(!TestTrue(*F.Failure,F.Ready))return false;
+    auto* Save=PrepareAmbientSave(*this,F);if(!Save)return false;
+    auto* Weather=F.World->SpawnActor<AHearthwardWeatherActor>();Weather->Tick(.01f);
+    const auto* State=Save->InteractionState().Weather.FindByPredicate([](const auto& V){return V.Id==TEXT("world_light_rain");});
+    if(!TestNotNull(TEXT("Actual weather actor publishes registered seed"),State))return false;
+    const int32 Seed=State->Seed;
+    auto* Clock=F.World->GetSubsystem<UHearthwardWorldClockSubsystem>();
+    // Explicit nonshipping clock fixture reaches rain; this is not natural-route or sleep evidence.
+    const double Target=210-double(uint32(Seed)%40);
+    Clock->AdvanceCalendar(Target-Clock->GetSnapshot().ElapsedCalendarMinutes);Weather->Tick(.01f);
+    if(!TestEqual(TEXT("Fixture reaches full real weather rain"),AHearthwardWeatherActor::Rain(F.World),1.0))return false;
+    const FName Event(TEXT("environment.rain"));
+    for(int32 I=0;I<110;++I)F.Observe();
+    if(!TestEqual(TEXT("Rain starts exactly one actual audio component"),F.Sources(Event).Num(),1))return false;
+    auto* Pauser=F.World->SpawnActor<APlayerState>();F.World->GetWorldSettings()->SetPauserPlayerState(Pauser);F.Observe();
+    TestEqual(TEXT("Pause removes active rain source"),F.Sources(Event).Num(),0);
+    F.World->GetWorldSettings()->SetPauserPlayerState(nullptr);for(int32 I=0;I<110;++I)F.Observe();
+    TestEqual(TEXT("Resume rebuilds one rain source"),F.Sources(Event).Num(),1);
+    FGuid SavedId;if(!SaveAmbientPoint(*this,Save,SavedId))return false;
+    for(int32 Pass=0;Pass<2;++Pass)
+    {
+        auto Sources=F.Sources(Event);UAudioComponent* Previous=Sources.IsEmpty()?nullptr:Sources[0];
+        if(!TestTrue(TEXT("Actual rain snapshot loads"),Save->LoadPoint(SavedId)))return false;
+        TestEqual(TEXT("Load removes old rain before next observation"),F.Sources(Event).Num(),0);
+        TestTrue(TEXT("Previous rain component is unregistered"),!IsValid(Previous) || !Previous->IsRegistered());
+        TestEqual(TEXT("Repeated load preserves rain strength"),AHearthwardWeatherActor::Rain(F.World),1.0);
+        const auto* Restored=Save->InteractionState().Weather.FindByPredicate([](const auto& V){return V.Id==TEXT("world_light_rain");});
+        TestTrue(TEXT("Repeated load keeps original seed"),Restored && Restored->Seed==Seed);
+        for(int32 I=0;I<110;++I)F.Observe();
+        TestEqual(TEXT("Post-load frames retain only one rain source"),F.Sources(Event).Num(),1);
+    }
+    F.EnableBuildings();
+    if(!TestTrue(TEXT("Sleep fixture builds a real bed on its grounded camp"),F.Building->AddGift(TEXT("bed"),F.Player->GetActorLocation()+FVector(-250,0,0))))return false;
+    const auto* Bed=F.World->GetSubsystem<UHearthwardCampSubsystem>()->State.Facilities.FindByPredicate([](const auto& V){return V.Kind==TEXT("bed");});
+    if(!TestNotNull(TEXT("Bed has an authoritative facility identity"),Bed))return false;
+    const auto BeforeSleep=Clock->GetSnapshot();FHearthwardTimeAdvanceRequest Request;
+    Request.Facility=Bed->Id;Request.Campaign=Save->GetCampaignId();Request.Epoch=F.World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    Request.OperationId=FGuid::NewGuid();Request.StartW=BeforeSleep.ElapsedCalendarMinutes;
+    const auto Receipt=Clock->RequestTimeAdvance(Request);
+    if(!TestTrue(*(TEXT("Actual 480-minute sleep settles: ")+Receipt.Reason),Receipt.Accepted && Receipt.Completed && Receipt.CommittedMinutes==480))return false;
+    TestEqual(TEXT("Sleep advances calendar only"),Clock->GetSnapshot().ActivePlaySeconds,BeforeSleep.ActivePlaySeconds);
+    TestEqual(TEXT("Sleep commits two full weather periods"),Clock->GetSnapshot().ElapsedCalendarMinutes,BeforeSleep.ElapsedCalendarMinutes+480);
+    TestEqual(TEXT("Sleep preserves deterministic rain phase"),AHearthwardWeatherActor::Rain(F.World),1.0);
+    Clock->RequestTimeAdvance(Request);
+    TestEqual(TEXT("Repeated sleep receipt does not advance weather again"),Clock->GetSnapshot().ElapsedCalendarMinutes,BeforeSleep.ElapsedCalendarMinutes+480);
+    F.Presentation->EndPlay(EEndPlayReason::Destroyed);
+    TestEqual(TEXT("EndPlay removes rain source"),F.Sources(Event).Num(),0);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2StoryLoadTest,"Hearthward.Round2.Personal.ActualLoadBranchesAndKnowledgeRollback",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FRound2StoryLoadTest::RunTest(const FString&)
+{
+    // Reuse grounded save participants; site observation and victory are explicit fixture preconditions.
+    FEnvironmentAudioWorld F;if(!TestTrue(*F.Failure,F.Ready))return false;
+    TArray<UHearthwardPersonalInteraction*> Displays;
+    for(const FName Camp:{FName(TEXT("camp")),FName(TEXT("hometown"))})for(int32 Slot=1;Slot<=3;++Slot)
+    {
+        auto* DisplayOwner=F.World->SpawnActor<AActor>();auto* Display=NewObject<UHearthwardPersonalInteraction>(DisplayOwner);
+        DisplayOwner->AddInstanceComponent(Display);DisplayOwner->SetRootComponent(Display);Display->RegisterComponent();
+        DisplayOwner->SetActorLocation(F.Player->GetActorLocation());Display->DisplayCamp=Camp;Display->DisplaySlot=FName(*FString::FromInt(Slot));
+        Display->Identity=FName(*FString::Printf(TEXT("display_%s_%d"),*Camp.ToString(),Slot));
+        auto* Mesh=NewObject<UStaticMeshComponent>(DisplayOwner);DisplayOwner->AddInstanceComponent(Mesh);Mesh->SetupAttachment(Display);
+        Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);Mesh->RegisterComponent();Display->DisplayMesh=Mesh;Displays.Add(Display);
+    }
+    auto CheckDisplays=[&](UHearthwardSaveSubsystem* Save)
+    {
+        for(auto* Display:Displays)
+        {
+            Display->TickComponent(.25f,LEVELTICK_All,nullptr);
+            const auto* Expected=Save->InteractionState().Displays.FindByPredicate([&](const auto& V){return V.Id==Display->Identity;});
+            const bool Visible=Expected && !Expected->Fact.IsNone();
+            TestEqual(TEXT("Display component follows only the loaded node"),Display->DisplayMesh->IsVisible(),Visible);
+            if(Visible)
+            {
+                FString ExpectedMesh;
+                for(const auto& Row:HearthwardPersonalStory::Rows())if(Row->AsObject()->GetStringField(TEXT("fact"))==Expected->Fact.ToString())
+                    ExpectedMesh=TEXT("SM_Round2_")+Row->AsObject()->GetStringField(TEXT("mesh"));
+                TestEqual(TEXT("Restored memento uses its exact authored mesh asset"),GetNameSafe(Display->DisplayMesh->GetStaticMesh()),ExpectedMesh);
+            }
+        }
+    };
+    if(FParse::Param(FCommandLine::Get(),TEXT("HearthwardRound2StoryRead")))
+    {
+        auto* ReadSave=F.World->GetSubsystem<UHearthwardSaveSubsystem>();
+        if(!TestTrue(TEXT("Independent reader opens existing isolated save pool"),ReadSave->EnablePrototype() && ReadSave->LoadPointIndex()))return false;
+        const auto Points=ReadSave->GetPoints();int32 Nodes=0,Meetings=0,Visits=0;TSet<FString> Endings;
+        for(const auto& Point:Points)
+        {
+            if(Point.World.Interactions.People.IsEmpty())continue;
+            ++Nodes;
+            if(!TestTrue(TEXT("Independent reader restores original disk node"),ReadSave->LoadPoint(Point.SaveId)))return false;
+            CheckDisplays(ReadSave);
+            TestEqual(TEXT("Independent reader restores only that node's conversation memory"),ReadSave->GetKnowledge(),FString::Join(Point.World.Knowledge,TEXT("\n")));
+            const auto Actual=F.Player->FindComponentByClass<UHearthwardInventoryComponent>()->Snapshot();
+            TestTrue(TEXT("Independent reader preserves complete inventory snapshot"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Actual,&Point.World.PlayerItems,0));
+            for(const auto& Expected:Point.World.Interactions.People)
+            {
+                const auto Person=HearthwardPersonalStory::State(F.World,Expected.Id);
+                TestTrue(TEXT("Independent reader restores exact person, stage and branch"),Person.Step==Expected.Step && Person.Choice==Expected.Choice);
+                if(Person.Step==TEXT("met"))++Meetings;
+                if(Person.Step==TEXT("visited"))++Visits;
+                if(Person.Step==TEXT("remembered"))Endings.Add(Person.Id.ToString()+TEXT(":")+Person.Choice.ToString());
+            }
+        }
+        TestEqual(TEXT("Reader consumes all original 18 story nodes"),Nodes,18);
+        TestEqual(TEXT("Reader restores six meeting nodes"),Meetings,6);
+        TestEqual(TEXT("Reader restores six site nodes"),Visits,6);
+        TestEqual(TEXT("Reader restores all three people and both endings"),Endings.Num(),6);
+        return true;
+    }
+    auto* Save=PrepareAmbientSave(*this,F);if(!Save)return false;
+    F.World->GetSubsystem<UHearthwardCampaignSubsystem>()->State.Initialize(true,true);
+    auto* Economy=F.World->GetSubsystem<UHearthwardCampSubsystem>();
+    Economy->State.Hometown=true;Economy->State.AddCamp(TEXT("hometown"),F.Player->GetActorLocation()+FVector(5000,0,-92));
+    F.Gameplay->Discovered.Add(TEXT("poi_herb_01"));
+    auto* Director=F.World->SpawnActor<AHearthwardPersonalStoryDirector>();
+    auto* Owner=F.World->SpawnActor<AActor>();auto* Talk=NewObject<UHearthwardPersonalInteraction>(Owner);
+    Owner->AddInstanceComponent(Talk);Owner->SetRootComponent(Talk);Talk->RegisterComponent();Owner->SetActorLocation(F.Player->GetActorLocation());
+    auto* Storage=F.World->GetSubsystem<UHearthwardStorageSubsystem>();
+    FGuid Empty;if(!SaveAmbientPoint(*this,Save,Empty))return false;
+    const auto Baseline=F.Player->FindComponentByClass<UHearthwardInventoryComponent>()->Snapshot();
+    const FString EmptyKnowledge=Save->GetKnowledge();
+    for(const FName Person:{FName(TEXT("civilian_initial_02")),FName(TEXT("civilian_initial_03")),FName(TEXT("civilian_initial_04"))})
+    for(const FName Choice:{FName(TEXT("camp")),FName(TEXT("hometown"))})
+    {
+        if(!TestTrue(TEXT("Each branch starts from real pre-story save"),Save->LoadPoint(Empty)))return false;
+        Talk->Identity=Person;
+        TestTrue(TEXT("Loading pre-story node clears the future person's choice"),HearthwardPersonalStory::State(F.World,Person).Choice.IsNone());
+        TestEqual(TEXT("Loading pre-story node clears future conversation memory"),Save->GetKnowledge(),EmptyKnowledge);
+        Talk->Choose(F.Player,TEXT("begin"),Storage->GetTimelineEpoch());
+        TestEqual(TEXT("Actual interaction records meeting"),HearthwardPersonalStory::State(F.World,Person).Step,FName(TEXT("met")));
+        FGuid Met;if(!SaveAmbientPoint(*this,Save,Met))return false;
+        const FString MetKnowledge=Save->GetKnowledge();
+        if(!TestTrue(TEXT("Fixture supplies completed site inspection"),Director->SetStep(Person,TEXT("visited"))))return false;
+        FGuid Visited;if(!SaveAmbientPoint(*this,Save,Visited))return false;
+        Talk->Choose(F.Player,Choice,Storage->GetTimelineEpoch());
+        TestEqual(TEXT("Actual interaction commits requested ending"),HearthwardPersonalStory::State(F.World,Person).Choice,Choice);
+        const int32 Slot=Person==TEXT("civilian_initial_02")?1:Person==TEXT("civilian_initial_03")?2:3;
+        const FName Fact(*HearthwardPersonalStory::Row(Person)->GetStringField(TEXT("fact")));
+        auto* Display=Displays[(Choice==TEXT("camp")?0:3)+Slot-1];
+        Display->Preview(F.Player,Fact,Storage->GetTimelineEpoch());Display->ConfirmDisplay(F.Player,Storage->GetTimelineEpoch());
+        CheckDisplays(Save);
+        TestTrue(TEXT("Completed ending places its owned memento"),Save->InteractionState().Displays.ContainsByPredicate([&](const auto& V){return V.Id==Display->Identity && V.Fact==Fact;}));
+        FGuid Ending;if(!SaveAmbientPoint(*this,Save,Ending))return false;
+        const FString EndingKnowledge=Save->GetKnowledge();
+        if(!TestTrue(TEXT("Actual load restores meeting node"),Save->LoadPoint(Met)))return false;
+        CheckDisplays(Save);
+        TestEqual(TEXT("Meeting node has no later site completion"),HearthwardPersonalStory::State(F.World,Person).Step,FName(TEXT("met")));
+        TestEqual(TEXT("Meeting node has no future dialogue memory"),Save->GetKnowledge(),MetKnowledge);
+        if(!TestTrue(TEXT("Actual load restores visited node"),Save->LoadPoint(Visited)))return false;
+        CheckDisplays(Save);
+        const auto AtSite=HearthwardPersonalStory::State(F.World,Person);
+        TestTrue(TEXT("Visited node retains inspection but no branch"),AtSite.Step==TEXT("visited") && AtSite.Choice.IsNone());
+        if(!TestTrue(TEXT("Actual load restores ending node"),Save->LoadPoint(Ending)))return false;
+        CheckDisplays(Save);
+        const auto End=HearthwardPersonalStory::State(F.World,Person);
+        TestTrue(TEXT("Ending node retains exact person and branch"),End.Step==TEXT("remembered") && End.Choice==Choice);
+        TestEqual(TEXT("Ending restores only its own dialogue memory"),Save->GetKnowledge(),EndingKnowledge);
+        const auto After=F.Player->FindComponentByClass<UHearthwardInventoryComponent>()->Snapshot();
+        TestTrue(TEXT("Branch/load sequence preserves exact inventory"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Baseline,&After,0));
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2InteractionEquipmentSaveTest,"Hearthward.Round2.Contact.LampInteractionPreservesEquippedInstancesOnLoad",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FRound2InteractionEquipmentSaveTest::RunTest(const FString&)
+{
+    FEnvironmentAudioWorld F;if(!TestTrue(*F.Failure,F.Ready))return false;
+    auto* Save=PrepareAmbientSave(*this,F);if(!Save)return false;
+    auto* Owner=F.World->SpawnActor<AActor>();auto* Lamp=NewObject<UHearthwardLampInteraction>(Owner);
+    Owner->AddInstanceComponent(Lamp);Owner->SetRootComponent(Lamp);Lamp->RegisterComponent();
+    Lamp->Identity=TEXT("workshops_lamp_entry");Owner->SetActorLocation(F.Player->GetActorLocation()+FVector(100,0,0));
+    auto* Bag=F.Player->FindComponentByClass<UHearthwardInventoryComponent>();
+    for(const FName Item:{FName(TEXT("shortblade")),FName(TEXT("axe")),FName(TEXT("spear"))})
+    {
+        if(!TestTrue(TEXT("Fixture creates an actual equipment instance"),Bag->TryAdd(Item,1)==EHearthwardInventoryResult::Success))return false;
+        const FGuid Id=Bag->FirstInstance(Item);
+        if(!TestTrue(TEXT("Equip and wear the exact instance before interaction"),Bag->EquipInstance(Id) && Bag->WearInstance(Id,3)))return false;
+        const auto Before=Bag->Snapshot();const auto Movement=F.Player->GetCharacterMovement()->MovementMode;
+        const bool WasLit=Lamp->IsLit();Lamp->CompleteInteraction(F.Player);
+        TestTrue(TEXT("Actual lamp interaction commits"),Lamp->IsLit()!=WasLit);
+        const auto AfterInteraction=Bag->Snapshot();
+        TestTrue(TEXT("Interaction neither duplicates nor changes equipped inventory"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Before,&AfterInteraction,0));
+        FGuid Saved;if(!SaveAmbientPoint(*this,Save,Saved))return false;
+        if(!TestTrue(TEXT("Mutate future durability to exercise restoration"),Bag->WearInstance(Id,4)))return false;
+        if(!TestTrue(TEXT("Actual load restores post-interaction checkpoint"),Save->LoadPoint(Saved)))return false;
+        const auto AfterLoad=Bag->Snapshot();
+        TestTrue(TEXT("Load preserves GUID, worn durability, definition and equipped slot"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Before,&AfterLoad,0));
+        TestTrue(TEXT("Restored exact instance remains equipped"),Bag->IsEquipped(Id));
+        TestEqual(TEXT("Interaction/load preserves grounded movement mode"),F.Player->GetCharacterMovement()->MovementMode,Movement);
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2CellarSaveTest,"Hearthward.Round2.Cellar.ActualFullBagAndRepeatedLoadConservation",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FRound2CellarSaveTest::RunTest(const FString&)
+{
+    FEnvironmentAudioWorld F;if(!TestTrue(*F.Failure,F.Ready))return false;
+    auto* Save=PrepareAmbientSave(*this,F);if(!Save)return false;
+    auto* Campaign=F.World->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Initialize(true);
+    auto* Bag=F.Player->FindComponentByClass<UHearthwardInventoryComponent>();
+    auto* Storage=F.World->GetSubsystem<UHearthwardStorageSubsystem>();
+    const FVector Origin=F.Player->GetActorLocation();
+    Campaign->State.Positions.Add(TEXT("poi_cellar_food_1"),Origin+FVector(300,0,0));
+    Campaign->State.Positions.Add(TEXT("poi_cellar_food_2"),Origin+FVector(1300,0,0));
+    auto Use=[&](FName Id)
+    {
+        F.Player->SetActorLocation(Campaign->Position(Id));
+        return Campaign->InteractionTarget()==Id && Campaign->Interact();
+    };
+    const auto Initial=Bag->Snapshot();
+    const int32 Fill=int32(Bag->GetCapacity()*100)/FHearthwardInventoryState::FindItem(TEXT("wood"))->WeightHundredths;
+    if(!TestTrue(TEXT("Fixture fills actual inventory capacity"),Bag->TryAdd(TEXT("wood"),Fill)==EHearthwardInventoryResult::Success))return false;
+    FGuid Full;if(!SaveAmbientPoint(*this,Save,Full))return false;
+    TestTrue(TEXT("Full bag receives the ordinary refusal feedback"),Use(TEXT("poi_cellar_food_1")));
+    TestFalse(TEXT("Capacity refusal does not consume bundle fact"),Campaign->State.Facts.Contains(TEXT("m2:cellar_food_1")));
+    TestEqual(TEXT("Capacity refusal produces no partial food"),Bag->GetItemCount(TEXT("cooked_food")),Initial.Stacks.FindRef(TEXT("cooked_food")));
+    TestTrue(TEXT("Remove fixture capacity filler"),Bag->TryRemove(TEXT("wood"),Fill)==EHearthwardInventoryResult::Success);
+    TestTrue(TEXT("Original first bundle can be retried"),Use(TEXT("poi_cellar_food_1")));
+    TestTrue(TEXT("Original second bundle can be collected"),Use(TEXT("poi_cellar_food_2")));
+    TestEqual(TEXT("Original finite reward is four food"),Bag->GetItemCount(TEXT("cooked_food")),Initial.Stacks.FindRef(TEXT("cooked_food"))+4);
+    TestEqual(TEXT("No automatic storage duplication"),Storage->GetItemCount(TEXT("cooked_food")),0);
+    F.Player->SetActorLocation(Origin);FGuid Collected;if(!SaveAmbientPoint(*this,Save,Collected))return false;
+    const auto Expected=Bag->Snapshot();const int32 Experience=F.Gameplay->Experience;
+    for(int32 I=0;I<3;++I)
+    {
+        if(!TestTrue(TEXT("Repeated actual load of collected cellar state"),Save->LoadPoint(Collected)))return false;
+        TestFalse(TEXT("First original bundle remains consumed"),Use(TEXT("poi_cellar_food_1")));
+        TestFalse(TEXT("Second original bundle remains consumed"),Use(TEXT("poi_cellar_food_2")));
+        const auto After=Bag->Snapshot();TestTrue(TEXT("Repeated delivery cannot duplicate or lose inventory"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Expected,&After,0));
+        TestEqual(TEXT("Repeated delivery creates no experience"),F.Gameplay->Experience,Experience);
+    }
+    if(!TestTrue(TEXT("Load earlier full-inventory node"),Save->LoadPoint(Full)))return false;
+    TestFalse(TEXT("Earlier timeline has no future cargo fact"),Campaign->State.Facts.Contains(TEXT("m2:cellar_food_1")));
+    TestEqual(TEXT("Earlier timeline has no future cargo"),Bag->GetItemCount(TEXT("cooked_food")),Initial.Stacks.FindRef(TEXT("cooked_food")));
+    TestTrue(TEXT("Full inventory still refuses after rollback"),Use(TEXT("poi_cellar_food_1")));
+    TestFalse(TEXT("Rollback refusal still preserves the bundle"),Campaign->State.Facts.Contains(TEXT("m2:cellar_food_1")));
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2DisplayTierSaveTest,"Hearthward.Round2.Personal.AuthoredDisplaysTierRebuildAndActualLoad",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FRound2DisplayTierSaveTest::RunTest(const FString&)
+{
+    FEnvironmentAudioWorld F;if(!TestTrue(*F.Failure,F.Ready))return false;
+    auto* Save=PrepareAmbientSave(*this,F);if(!Save)return false;
+    F.GroundFloor->Tags.Add(TEXT("Hearthward.NatureGround"));
+    auto* Campaign=F.World->GetSubsystem<UHearthwardCampaignSubsystem>();
+    auto* Economy=F.World->GetSubsystem<UHearthwardCampSubsystem>();
+    auto* Storage=F.World->GetSubsystem<UHearthwardStorageSubsystem>();
+    Campaign->State.Initialize(true,true);
+    const FVector Origin=F.Player->GetActorLocation()-FVector(0,0,92);
+    // Stage valid camp tiers and victory on fixture terrain; production scenery and disk restore are under test.
+    Campaign->State.Positions.Add(TEXT("camp"),Origin);Campaign->State.Positions.Add(TEXT("hometown"),Origin+FVector(6000,0,0));
+    if(auto* Existing=Economy->State.Camps.FindByPredicate([](const auto& C){return C.Id==TEXT("camp");}))Existing->Position=Origin;
+    else Economy->State.AddCamp(TEXT("camp"),Origin);
+    Economy->State.Hometown=true;Economy->State.AddCamp(TEXT("hometown"),Origin+FVector(6000,0,0));
+    Campaign->Record(TEXT("m3:lamp_repaired"));Campaign->Tick(1.f);
+    auto FindDisplay=[&](FName Id)->UHearthwardPersonalInteraction*
+    {
+        for(TActorIterator<AActor> It(F.World);It;++It)if(It->ActorHasTag(Id))return It->FindComponentByClass<UHearthwardPersonalInteraction>();
+        return nullptr;
+    };
+    auto* Director=AHearthwardPersonalStoryDirector::Find(F.World);
+    if(!TestNotNull(TEXT("Production campaign creates the story director"),Director))return false;
+    const FName People[]={TEXT("civilian_initial_02"),TEXT("civilian_initial_03"),TEXT("civilian_initial_04")};
+    const FName Facts[]={TEXT("craftsman_tools"),TEXT("herbalist_record"),TEXT("watcher_memento")};
+    for(int32 I=0;I<3;++I)
+    {
+        const FName Camp=I==1?FName(TEXT("hometown")):FName(TEXT("camp"));
+        if(!TestTrue(TEXT("Fixture story ownership commits through director"),Director->SetStep(People[I],TEXT("remembered"),Camp)))return false;
+        const FName Id(*FString::Printf(TEXT("display_%s_%d"),*Camp.ToString(),I+1));
+        auto* Display=FindDisplay(Id);if(!TestNotNull(TEXT("Original campaign creates the chosen display slot"),Display))return false;
+        F.Player->SetActorLocation(Display->GetComponentLocation()+FVector(100,0,12));
+        Display->Preview(F.Player,Facts[I],Storage->GetTimelineEpoch());Display->CancelPreview();
+        TestTrue(TEXT("Cancelled preview does not persist a display"),!Save->InteractionState().Displays.ContainsByPredicate([&](const auto& D){return D.Id==Id;}));
+        Display->Preview(F.Player,Facts[I],Storage->GetTimelineEpoch());Display->ConfirmDisplay(F.Player,Storage->GetTimelineEpoch());
+    }
+    const auto Expected=Save->InteractionState().Displays;
+    if(!TestEqual(TEXT("Three owned facts occupy exactly three slots"),Expected.Num(),3))return false;
+    auto CheckScenery=[&](int32 Tier)
+    {
+        Campaign->Tick(1.f);int32 Slots=0,Visible=0,TierTwo=0,TierThree=0;
+        for(const FName Camp:{FName(TEXT("camp")),FName(TEXT("hometown"))})for(int32 Slot=1;Slot<=3;++Slot)
+        {
+            const FName Id(*FString::Printf(TEXT("display_%s_%d"),*Camp.ToString(),Slot));
+            auto* Display=FindDisplay(Id);if(!TestNotNull(TEXT("All six authored slots exist after rebuild"),Display))continue;
+            ++Slots;Display->TickComponent(.25f,LEVELTICK_All,nullptr);
+            const auto* Fact=Expected.FindByPredicate([&](const auto& D){return D.Id==Id;});
+            TestEqual(TEXT("Display visibility stays bound to its exact camp and slot"),Display->DisplayMesh->IsVisible(),Fact!=nullptr);
+            Visible+=Display->DisplayMesh->IsVisible();
+            TInlineComponentArray<UStaticMeshComponent*> Parts(Display->GetOwner());
+            for(const auto* Part:Parts)TestTrue(TEXT("Display stand and memento cannot block walking"),Part->GetCollisionEnabled()==ECollisionEnabled::NoCollision);
+        }
+        for(TActorIterator<AActor> It(F.World);It;++It)if(It->ActorHasTag(TEXT("CampLife:camp")) || It->ActorHasTag(TEXT("CampLife:hometown")))
+        {
+            TInlineComponentArray<UStaticMeshComponent*> Parts(*It);
+            for(const auto* Part:Parts)if(Part->IsVisible()){TierTwo+=Part->ComponentHasTag(TEXT("CampTier2"));TierThree+=Part->ComponentHasTag(TEXT("CampTier3"));}
+        }
+        TestEqual(TEXT("Six original slots remain unique"),Slots,6);TestEqual(TEXT("Exactly three mementos stay visible"),Visible,3);
+        TestEqual(TEXT("Both camp storage appearances follow the loaded tier"),TierTwo,Tier>=4?2:0);
+        TestEqual(TEXT("Both camp lamp appearances follow the loaded tier"),TierThree,Tier>=7?8:0);
+        TestEqual(TEXT("Rebuild does not change display state count"),Save->InteractionState().Displays.Num(),Expected.Num());
+        for(const auto& E:Expected)TestTrue(TEXT("Rebuild preserves each exact ownership mapping"),Save->InteractionState().Displays.ContainsByPredicate([&](const auto& D){return D.Id==E.Id && D.Camp==E.Camp && D.Slot==E.Slot && D.Fact==E.Fact;}));
+    };
+    TArray<FGuid> Nodes;
+    for(int32 Tier:{1,4,7})
+    {
+        Economy->State.Tier=Tier;F.Gameplay->CampTier=Tier;F.Player->SetActorLocation(Origin+FVector(0,0,92));CheckScenery(Tier);
+        if(!TestTrue(TEXT("Staged economy remains valid before disk save"),Economy->State.Validate()))return false;
+        FGuid Node;if(!SaveAmbientPoint(*this,Save,Node))return false;Nodes.Add(Node);
+        F.Player->SetActorLocation(Origin+FVector(60000,0,92));Campaign->Tick(1.f);
+        F.Player->SetActorLocation(Origin+FVector(6000,0,92));CheckScenery(Tier);
+    }
+    for(int32 I=0;I<Nodes.Num();++I)
+    {
+        if(!TestTrue(TEXT("Actual LoadPoint recreates the saved tier and display world"),Save->LoadPoint(Nodes[I])))return false;
+        TestEqual(TEXT("Economy tier restored"),Economy->State.Tier,1+I*3);CheckScenery(1+I*3);
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2TrailLootSaveTest,"Hearthward.Round2.Traces.ActualDeathLootLoadConservation",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FRound2TrailLootSaveTest::RunTest(const FString&)
+{
+    FEnvironmentAudioWorld F;if(!TestTrue(*F.Failure,F.Ready))return false;
+    F.GroundFloor->Tags.Add(TEXT("Hearthward.NatureGround"));
+    if(FParse::Param(FCommandLine::Get(),TEXT("HearthwardRound2TrailRead")))
+    {
+        auto* Reader=F.World->GetSubsystem<UHearthwardSaveSubsystem>();
+        if(!TestTrue(TEXT("Independent reader opens original pool"),Reader->EnablePrototype() && Reader->LoadPointIndex()))return false;
+        const auto Points=Reader->GetPoints();int32 DeadNodes=0,CollectedNodes=0;
+        auto* Nature=F.World->GetSubsystem<UHearthwardNatureSubsystem>();
+        auto* Bag=F.Player->FindComponentByClass<UHearthwardInventoryComponent>();
+        for(const auto& Point:Points)
+        {
+            if(!TestTrue(TEXT("Independent process loads original node"),Reader->LoadPoint(Point.SaveId)))return false;
+            const auto* Deer=Nature->State.Animals.FindByPredicate([](const auto& A){return A.Definition==TEXT("deer") && A.Health<=0 && A.Rewarded;});
+            if(!Deer)continue;
+            const FGuid Id=Deer->Id;const auto Loot=Deer->Loot;const bool Collected=Loot.IsEmpty();
+            Collected?++CollectedNodes:++DeadNodes;
+            const auto Inventory=Bag->Snapshot();const FString NatureBefore=Nature->State.Snapshot();
+            const int32 Traces=Reader->InteractionState().Trails.Num();
+            TestTrue(TEXT("Dead individual retains previously observed traces"),Traces>0);
+            Nature->DamageAnimal(FName(*Id.ToString()),0,F.Player);
+            if(!TestTrue(TEXT("Reader executes normal timed pickup"),Nature->Act(TEXT("loot"),Id,NAME_None,F.World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())))return false;
+            F.World->GetSubsystem<UHearthwardWorldClockSubsystem>()->Tick(5.1f);
+            F.Player->FindComponentByClass<UHearthwardTimedActionComponent>()->TickComponent(5.1f,LEVELTICK_All,nullptr);
+            for(const FName Item:{FName(TEXT("meat")),FName(TEXT("hide"))})
+                TestEqual(TEXT("Independent pickup yields only still-pending quantities"),Bag->GetItemCount(Item),Inventory.Stacks.FindRef(Item)+Loot.FindRef(Item));
+            if(!TestTrue(TEXT("Reader repeats the same disk node"),Reader->LoadPoint(Point.SaveId)))return false;
+            const auto Again=Bag->Snapshot();TestTrue(TEXT("Repeated independent load restores exact inventory"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Inventory,&Again,0));
+            TestEqual(TEXT("Repeated independent load preserves identity, generation and reward state"),Nature->State.Snapshot(),NatureBefore);
+            TestEqual(TEXT("Independent load adds no trace samples"),Reader->InteractionState().Trails.Num(),Traces);
+        }
+        TestEqual(TEXT("Reader finds one original pending-loot node"),DeadNodes,1);
+        TestEqual(TEXT("Reader finds one original collected node"),CollectedNodes,1);
+        return true;
+    }
+    auto* Save=PrepareAmbientSave(*this,F);if(!Save)return false;
+    F.World->GetSubsystem<UHearthwardCampSubsystem>()->EnsureCamp(F.Player->GetActorLocation()-FVector(0,0,92));
+    auto* Nature=F.World->GetSubsystem<UHearthwardNatureSubsystem>();Nature->EnsureWorld();
+    auto* Clock=F.World->GetSubsystem<UHearthwardWorldClockSubsystem>();
+    auto* Storage=F.World->GetSubsystem<UHearthwardStorageSubsystem>();
+    auto* Bag=F.Player->FindComponentByClass<UHearthwardInventoryComponent>();
+    auto* Timer=F.Player->FindComponentByClass<UHearthwardTimedActionComponent>();
+    const auto* Deer=Nature->State.Animals.FindByPredicate([](const auto& A){return A.Definition==TEXT("deer") && A.Health>0;});
+    if(!TestNotNull(TEXT("Production population creates a living deer on fixture ground"),Deer))return false;
+    const FGuid Id=Deer->Id;const FVector At=Deer->Position;
+    auto Animal=[&](){return Nature->State.Animals.FindByPredicate([&](const auto& A){return A.Id==Id;});};
+    // Fixture approach only; death, timed pickup, rewards and disk saves use production paths.
+    F.Player->SetActorLocation(At+FVector(100,0,92));
+    auto Next=Save->InteractionState();
+    if(!TestTrue(TEXT("Living production animal supplies a real trace"),AHearthwardAnimalTraces::Sample(Nature->State,Clock->GetSnapshot().ElapsedCalendarMinutes,At,Next)))return false;
+    auto* TraceActor=F.World->SpawnActor<AHearthwardAnimalTraces>();
+    if(!TestTrue(TEXT("Trace target binds"),Save->BindInteractionTarget(Next.Trails[0].Id,EHearthwardPersistentKind::Trail,TraceActor)))return false;
+    if(!TestTrue(TEXT("Trace transaction commits"),Save->CommitInteraction(Save->BeginInteraction(Next.Trails[0].Id),Next)))return false;
+    if(!TestTrue(TEXT("Actual death commits the ordinary hunt reward"),Nature->DamageAnimal(FName(*Id.ToString()),0,F.Player)))return false;
+    F.Gameplay->TickComponent(4.f,LEVELTICK_All,nullptr);
+    const auto Loot=Animal()->Loot;
+    if(!TestTrue(TEXT("Death has real pending loot"),!Loot.IsEmpty()))return false;
+    FGuid Dead;if(!SaveAmbientPoint(*this,Save,Dead))return false;
+    const auto Before=Bag->Snapshot();
+    auto LootOnce=[&]()
+    {
+        if(!TestTrue(TEXT("Actual five-second loot action starts"),Nature->Act(TEXT("loot"),Id,NAME_None,Storage->GetTimelineEpoch())))return false;
+        Clock->Tick(5.1f);Timer->TickComponent(5.1f,LEVELTICK_All,nullptr);
+        return TestFalse(TEXT("Timed loot action finishes"),Nature->Busy());
+    };
+    if(!LootOnce())return false;
+    TestTrue(TEXT("Pickup consumes the corpse reward"),Animal()->Loot.IsEmpty());
+    for(const auto& Item:Loot)TestEqual(TEXT("Pickup adds precisely the corpse quantity"),Bag->GetItemCount(Item.Key),Before.Stacks.FindRef(Item.Key)+Item.Value);
+    const auto After=Bag->Snapshot();FGuid Collected;if(!SaveAmbientPoint(*this,Save,Collected))return false;
+    const FString CollectedNature=Nature->State.Snapshot();
+    const auto Trails=Save->InteractionState().Trails;
+    for(int32 Repeat=0;Repeat<2;++Repeat)
+    {
+        if(!TestTrue(TEXT("Collected node loads repeatedly"),Save->LoadPoint(Collected)))return false;
+        const auto Loaded=Bag->Snapshot();TestTrue(TEXT("Collected inventory restores exactly"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&After,&Loaded,0));
+        TestEqual(TEXT("Dead identity, reward and refresh deadline restore exactly"),Nature->State.Snapshot(),CollectedNature);
+        TestEqual(TEXT("Trail count does not grow on load"),Save->InteractionState().Trails.Num(),Trails.Num());
+        Nature->DamageAnimal(FName(*Id.ToString()),0,F.Player);
+        TestTrue(TEXT("Repeated damage cannot recreate consumed loot"),Animal()->Loot.IsEmpty());
+        if(!LootOnce())return false;
+        const auto Retried=Bag->Snapshot();TestTrue(TEXT("Repeated pickup cannot duplicate inventory"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&After,&Retried,0));
+    }
+    if(!TestTrue(TEXT("Pre-pickup node restores original corpse"),Save->LoadPoint(Dead)))return false;
+    const auto RolledBack=Bag->Snapshot();TestTrue(TEXT("Rollback removes future loot from inventory"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Before,&RolledBack,0));
+    TestTrue(TEXT("Rollback restores exactly the original pending loot"),Animal()->Loot.OrderIndependentCompareEqual(Loot));
+    if(!LootOnce())return false;
+    const auto Recollected=Bag->Snapshot();TestTrue(TEXT("Replaying the old timeline yields only its original amount"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&After,&Recollected,0));
+    return true;
 }
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FEnvironmentPCM099Test,"Hearthward.Iteration.Task099.Environment.ContinuousPCM",
@@ -634,6 +1067,40 @@ bool FEnvironmentFireLoad099Test::RunTest(const FString&)
         return true;
     };
     ADD_LATENT_AUTOMATION_COMMAND(FEnvironmentFireReady099Command(*this,MoveTemp(RunFixture)));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCampaignCompanionAssistTest,"Hearthward.Round2.Enemies.CampaignCompanionAssistance",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FCampaignCompanionAssistTest::RunTest(const FString&)
+{
+    FEnvironmentAudioWorld F;if(!TestTrue(*F.Failure,F.Ready))return false;
+    auto* Campaign=F.World->GetSubsystem<UHearthwardCampaignSubsystem>();
+    Campaign->State.Initialize(true);
+    for(auto& Enemy:Campaign->State.Enemies)
+    {
+        Enemy.Home=F.Player->GetActorLocation()+FVector(1000000,0,0);
+        Enemy.Combat.Position=Enemy.Home;Enemy.Located=true;
+        if(Enemy.Id==TEXT("field_slice_01"))Enemy.Home=Enemy.Combat.Position=F.Player->GetActorLocation()+FVector(1000,0,0);
+    }
+    for(auto& Enemy:F.Gameplay->Opponents)Enemy.Value=0;
+    Campaign->Tick(.01f);
+    auto* Guard=Campaign->Actor(TEXT("field_slice_01"));
+    if(!TestNotNull(TEXT("Real campaign registry creates the field guard"),Guard))return false;
+    if(!TestTrue(TEXT("Existing explicit assist command accepted"),F.Gameplay->OrderCompanion(TEXT("attack"))))return false;
+    auto Observe=[&](){F.Gameplay->TickComponent(.01f,LEVELTICK_All,nullptr);};
+    Observe();TestTrue(TEXT("Unengaged campaign guard is not revealed by assistance"),F.Gameplay->GetCompanionCombatTarget().IsNone());
+    Guard->Target->Memory.Seen.Add(TEXT("player"));
+    Observe();TestEqual(TEXT("Engaged campaign guard reaches the actual companion policy"),F.Gameplay->GetCompanionCombatTarget(),FName(TEXT("field_slice_01")));
+    Guard->Target->Memory.HitRemaining=1;
+    Observe();TestTrue(TEXT("Temporarily unable campaign guard is not selected"),F.Gameplay->GetCompanionCombatTarget().IsNone());
+    Guard->Target->Memory.HitRemaining=0;
+    F.Gameplay->Health=0;
+    Observe();TestTrue(TEXT("Player down clears the campaign assistance target"),F.Gameplay->GetCompanionCombatTarget().IsNone());
+    F.Gameplay->Health=100;
+    Guard->SetActorLocation(F.Player->GetActorLocation()+FVector(6000,0,0));
+    Observe();TestTrue(TEXT("Existing player-relative leash still excludes distant campaign guards"),F.Gameplay->GetCompanionCombatTarget().IsNone());
+    Guard->SetActorLocation(F.Player->GetActorLocation()+FVector(1000,0,0));Guard->Target->Health=0;
+    Observe();TestTrue(TEXT("Dead campaign guard cannot remain an assistance target"),F.Gameplay->GetCompanionCombatTarget().IsNone());
     return true;
 }
 #endif

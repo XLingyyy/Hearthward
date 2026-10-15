@@ -1,0 +1,113 @@
+{
+  "status": "COMPLETE_OPTIMIZATION_NOT_ADOPTED",
+  "run": ".agent-local\\qa\\TASK-133\\performance\\camp-cpu-prefix-warmframes60-01",
+  "semantic_pass": 60,
+  "terminal_p95": 31.91802249999455,
+  "getter_p95": 32.21684079999977,
+  "baseline_terminal_p95": 34.51209050000034,
+  "frame_report": {
+    "numeric_frames": 65832,
+    "seconds": 956.6773214,
+    "p99_ms": 20.6904,
+    "one_percent_low_fps": 38.42303659348691,
+    "over_50ms": 32,
+    "over_50ms_fraction": 0.00048608579414266616,
+    "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames",
+    "dropped_frames": 0,
+    "frame_exclusions": [],
+    "scope": "All frames from before the first warm request through the final observed terminal response, including UI queries and inter-request goal clearing. No execution or viewport first-paint credit.",
+    "diagnostic_frame_target_pass": false,
+    "csv_metadata": {
+      "hasheaderrowatend": "1",
+      "eventtimestamps": "1",
+      "platform": "Windows",
+      "config": "Development",
+      "buildversion": "++UE5+Release-5.8-CL-56702186",
+      "engineversion": "5.8.2-56702186+++UE5+Release-5.8",
+      "enginereleaseversion": "5.8.2",
+      "os": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+      "pgoenabled": "0",
+      "pgoprofilingenabled": "0",
+      "ltoenabled": "0",
+      "asan": "0",
+      "mergedmodules": "0",
+      "compacttset": "0",
+      "loginid": "a82aa7934b238d42e0d65a84d8c108c4",
+      "llm": "0",
+      "zenstreaming": "0",
+      "systemresolution.resx": "1920",
+      "systemresolution.resy": "1080",
+      "extradevelopmentmemorymb": "0",
+      "verbatimrhiname": "D3D12",
+      "rhiname": "D3D12",
+      "rhifeaturelevel": "SM6",
+      "shaderplatform": "PCD3D_SM6",
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "gpudriver": "577.00",
+      "deviceprofile": "WindowsEditor",
+      "largeworldcoordinates": "1",
+      "raytracing": "0",
+      "streamingpoolsizemb": "2048",
+      "csvid": "44CB732F4C19B6B1ABCDA1941EE8422A",
+      "targetframerate": "165",
+      "starttimestamp": "1792059876",
+      "namedevents": "0",
+      "hasgtstalls": "0",
+      "vsyncenabled": "0",
+      "csvbench_timingstat_ns": "60.235000",
+      "csvbench_customstat_ns": "28.607500",
+      "csvbench_duration_ms": "3.554000",
+      "endtimestamp": "1792060833",
+      "captureduration": "956.675864",
+      "csvmaxfilebytesreached": "0"
+    }
+  },
+  "navigation_transitions": [
+    {
+      "index": 20,
+      "navigation_rebuilding": true,
+      "terminal_seconds": 33.4967026000013,
+      "prompt_ms": 21242.12,
+      "prompt_tokens": 516
+    },
+    {
+      "index": 21,
+      "navigation_rebuilding": false,
+      "terminal_seconds": 35.83612700000231,
+      "prompt_ms": 21334.38,
+      "prompt_tokens": 516
+    },
+    {
+      "index": 33,
+      "navigation_rebuilding": true,
+      "terminal_seconds": 31.91802249999455,
+      "prompt_ms": 20962.58,
+      "prompt_tokens": 516
+    },
+    {
+      "index": 34,
+      "navigation_rebuilding": false,
+      "terminal_seconds": 34.930542800000694,
+      "prompt_ms": 20910.41,
+      "prompt_tokens": 516
+    }
+  ],
+  "clock_start": {
+    "ActivePlaySeconds": 464.2732102163136,
+    "ElapsedCalendarMinutes": 944.2732102163136,
+    "ElapsedDays": 0,
+    "MinuteOfDay": 704.2732102163136,
+    "DisplayDay": 2,
+    "Daylight": 1
+  },
+  "clock_end": {
+    "ActivePlaySeconds": 1420.833013419062,
+    "ElapsedCalendarMinutes": 1900.833013419062,
+    "ElapsedDays": 1,
+    "MinuteOfDay": 220.8330134190619,
+    "DisplayDay": 3,
+    "Daylight": 0
+  },
+  "conclusion": "Both runs fail latency and frames. Navigation flips still re-prefill516 tokens; timing differences do not establish causal improvement. Revert experimental production ordering and its dedicated regression; preserve original patches and15 semantic snapshots as experiment evidence. No viewport first-paint or pure-day warm-window credit."
+}

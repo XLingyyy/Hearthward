@@ -1,0 +1,166 @@
+{
+  "run": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-02",
+  "status": "REAL_COMBAT_FAILED_PLAYER_DOWN_MODEL_CANCELLED",
+  "production_issue": "Accepted assist order never receives campaign guard targets: Gameplay.TickCompanion builds threats only from prototype OpponentActors and engaged Nature animals. Real field guards remained absent.",
+  "initial_player_health": 108.475,
+  "first_combat_seconds": 3.6359287000013865,
+  "player_down_seconds": 18.74512010000035,
+  "first_player_damage_seconds": 6.223605099999986,
+  "brother_targets": [
+    "None"
+  ],
+  "accepted_attacks": 9,
+  "enemy_health_first": [
+    100,
+    100,
+    100
+  ],
+  "enemy_health_last": [
+    100,
+    100,
+    100
+  ],
+  "frame_report": {
+    "numeric_frames": 3988,
+    "seconds": 61.518831899999995,
+    "p99_ms": 23.7122,
+    "one_percent_low_fps": 38.62487903727786,
+    "over_50ms": 1,
+    "over_50ms_fraction": 0.00025075225677031093,
+    "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames",
+    "dropped_frames": 0,
+    "frame_exclusions": [],
+    "distribution": "Every numeric frame in this complete stable-capture CSV; no fixed boot trimming",
+    "diagnostic_frame_target_pass": false,
+    "csv_metadata": {
+      "hasheaderrowatend": "1",
+      "eventtimestamps": "1",
+      "platform": "Windows",
+      "config": "Development",
+      "buildversion": "++UE5+Release-5.8-CL-56702186",
+      "engineversion": "5.8.2-56702186+++UE5+Release-5.8",
+      "enginereleaseversion": "5.8.2",
+      "os": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+      "pgoenabled": "0",
+      "pgoprofilingenabled": "0",
+      "ltoenabled": "0",
+      "asan": "0",
+      "mergedmodules": "0",
+      "compacttset": "0",
+      "loginid": "a82aa7934b238d42e0d65a84d8c108c4",
+      "llm": "0",
+      "zenstreaming": "0",
+      "systemresolution.resx": "1920",
+      "systemresolution.resy": "1080",
+      "extradevelopmentmemorymb": "0",
+      "verbatimrhiname": "D3D12",
+      "rhiname": "D3D12",
+      "rhifeaturelevel": "SM6",
+      "shaderplatform": "PCD3D_SM6",
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "gpudriver": "577.00",
+      "deviceprofile": "WindowsEditor",
+      "largeworldcoordinates": "1",
+      "raytracing": "0",
+      "streamingpoolsizemb": "2048",
+      "csvid": "BFB23E974820EB986F6E64BAA510DA9D",
+      "targetframerate": "165",
+      "starttimestamp": "1792062038",
+      "namedevents": "0",
+      "hasgtstalls": "0",
+      "vsyncenabled": "0",
+      "csvbench_timingstat_ns": "49.907500",
+      "csvbench_customstat_ns": "30.697500",
+      "csvbench_duration_ms": "3.224600",
+      "endtimestamp": "1792062100",
+      "captureduration": "61.520631",
+      "csvmaxfilebytesreached": "0"
+    },
+    "actual_system_resolution": [
+      "1920",
+      "1080"
+    ],
+    "actual_resolution_matches": true,
+    "actual_rhi_matches": true
+  },
+  "model_terminal": {
+    "last_input": "采集1份木材送入营地仓库",
+    "raw": "",
+    "submission_to_response_seconds": 0,
+    "input_tokens": 2534,
+    "output_tokens": 0,
+    "reason": "deterministic_fallback",
+    "applied_intent": "",
+    "has_candidate": false,
+    "candidate": {
+      "Intent": "None",
+      "Item": "None",
+      "Quantity": 0,
+      "QuantityMode": "",
+      "SourceRef": "",
+      "Limits": [],
+      "Unresolved": [],
+      "Line": "",
+      "Original": "",
+      "Station": {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 0
+      },
+      "EquipmentId": {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 0
+      },
+      "RuleRevision": 0,
+      "CapabilityVersion": 2
+    },
+    "context_tier": "full_relevant",
+    "server_process_id": 13208
+  },
+  "limits": "Player down and post-combat frames retained; not continuous combined combat. No successful inference or human-input credit. Observed attack distance67.6cm and no enemy damage. Too-close navigation endpoint/facing is an unverified control hypothesis; next run uses180cm stand-off and records actual facing, with no transform writes.",
+  "fix": {
+    "source": "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "scope": "Add live, actionable campaign targets whose existing perception confirms player/brother combat to the existing policy; policy retains player-relative leash and down-state behavior. Existing prototype/nature collection unchanged.",
+    "native": ".agent-local/qa/TASK-133/campaign-assistance-02-20261015/native/index.json",
+    "passed": 2,
+    "failed": 0,
+    "warnings": 0,
+    "actual_followup": ".agent-local/qa/TASK-133/performance/combined-combat-cpu-03"
+  },
+  "actual_followup_result": {
+    "source": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-03",
+    "status": "FAILED",
+    "failure": "RuntimeError('Scene page changed during sample')",
+    "time_origin": "First encounter poll; not exact CSV start",
+    "observed_player_down_seconds": 17.719122599999537,
+    "brother_targets": [
+      "None",
+      "field_slice_01"
+    ],
+    "brother_reasons": [
+      "ASSIST_ACTIVE_COMBAT",
+      "COMPANION_UNAVAILABLE",
+      "LOW_HEALTH_OVERWHELMED",
+      "NO_THREAT_IN_LEASH",
+      "PROTECT_LOW_HEALTH"
+    ],
+    "first_enemy_health": [
+      100,
+      100,
+      100
+    ],
+    "final_enemy_health": [
+      40,
+      100,
+      100
+    ],
+    "first_player_health": 108.475,
+    "final_player_health": 0,
+    "sample_count": 30,
+    "scope": "Real follow-up establishes actual campaign target selection and enemy damage after the production fix. Player fell, eventual HUD page changed, model cancelled. Not a completed or continuously active combat performance pass; retain whole raw CSV."
+  }
+}

@@ -11,6 +11,7 @@ struct FHearthwardCombatFeedbackReceipt
     FGuid Epoch;
     FName Kind;
     FVector TargetPosition=FVector::ZeroVector;
+    TOptional<FVector> SourcePosition;
 };
 DECLARE_MULTICAST_DELEGATE_OneParam(FHearthwardCombatSuccessDelegate,const FHearthwardCombatFeedbackReceipt&);
 
@@ -45,7 +46,7 @@ public:
     FString RescueBlockReason(const UHearthwardSurvivalComponent* Target) const;
     void CancelAction(bool Damaged=false);
     UFUNCTION(BlueprintCallable) void CancelCurrentAction() { CancelAction(); }
-    bool ReceiveDamage(float Amount,FGuid Event,FGuid Epoch,bool Fatal=false);
+    bool ReceiveDamage(float Amount,FGuid Event,FGuid Epoch,bool Fatal=false,TOptional<FVector> SourcePosition={});
     FHearthwardCombatSuccessDelegate OnDamageSucceeded;
     UFUNCTION(BlueprintCallable) void GiveUp();
     void FatalEnvironment();

@@ -908,10 +908,25 @@ bool FSaveActualLoadPointEpochTest::RunTest(const FString&)
         PlayerBag->TryAdd(TEXT("wood"),2)==EHearthwardInventoryResult::Success && Store->Adjust({},{{FName(TEXT("wood")),4}})
         && PlayerBag->GetItemCount(TEXT("wood"))==5 && Store->GetItemCount(TEXT("wood"))==4))return false;
     if(!TestTrue(TEXT("Future inventory preparation keeps the old ticket current"),Brother->IsProposalCurrent(Hero,OldTicket)))return false;
+    const FName InteractionId(TEXT("PROTOTYPE_ONLY_Round2_LoadPoint"));
+    FHearthwardPersistentDefinition Definition;Definition.Kind=EHearthwardPersistentKind::Lamp;
+    TestTrue(TEXT("Register isolated LoadPoint interaction"),HearthwardPersistence::Register(InteractionId,Definition));
+    ON_SCOPE_EXIT{HearthwardPersistence::UnregisterFixture(InteractionId);};
+    TestTrue(TEXT("Bind actual interaction target"),Save->BindInteractionTarget(InteractionId,EHearthwardPersistentKind::Lamp,Camp));
+    const auto OldInteraction=Save->BeginInteraction(InteractionId);
+    TestTrue(TEXT("Interaction is pending before actual LoadPoint"),OldInteraction.Operation.IsValid());
+    auto FutureInteraction=Save->InteractionState();FutureInteraction.Lamps.AddDefaulted_GetRef().Id=InteractionId;
+    FutureInteraction.Lamps[0].Lit=true;
     const bool Loaded=Save->LoadPoint(Point.SaveId);
     if(!TestTrue(FString(TEXT("Public LoadPoint reads disk and restores the real world: "))+Save->GetStatus(),Loaded))return false;
     TestTrue(TEXT("Actual LoadPoint creates a different epoch"),Store->GetTimelineEpoch()!=OldEpoch);
     TestFalse(TEXT("Actual LoadPoint invalidates the old pending ticket"),Brother->IsProposalCurrent(Hero,OldTicket));
+    TestFalse(TEXT("Late interaction callback after real load cannot grant wood"),Save->CommitInteraction(OldInteraction,FutureInteraction,{},{{TEXT("wood"),1}}));
+    TestTrue(TEXT("Real load restores empty interaction state"),Save->InteractionState().IsEmpty());
+    TestFalse(TEXT("Real load requires target rebinding"),Save->BeginInteraction(InteractionId).Operation.IsValid());
+    TestTrue(TEXT("Target can rebind on restored timeline"),Save->BindInteractionTarget(InteractionId,EHearthwardPersistentKind::Lamp,Camp));
+    TestTrue(TEXT("Old session no longer blocks new interactions"),Save->BeginInteraction(InteractionId).Operation.IsValid());
+    Save->CancelInteraction();
     TestEqual(TEXT("Actual LoadPoint removes future player wood"),PlayerBag->GetItemCount(TEXT("wood")),3);
     TestEqual(TEXT("Actual LoadPoint removes future shared wood"),Store->GetItemCount(TEXT("wood")),0);
     TestTrue(TEXT("Actual LoadPoint preserves the saved active command ID"),Brother->GetCommandId()==Point.World.CommandId);
@@ -1269,7 +1284,7 @@ bool FSaveCompatibilityTest::RunTest(const FString& Parameters)
     auto WriteRaw=[&]()
     {
         TArray<uint8> Payload,Bytes;UGameplayStatics::SaveGameToMemory(Pool,Payload);
-        const uint32 H[]={0x48575339,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
+        const uint32 H[]={HearthwardSave::CurrentMagic,uint32(Payload.Num()),FCrc::MemCrc32(Payload.GetData(),Payload.Num())};
         Bytes.Append(reinterpret_cast<const uint8*>(H),12);Bytes.Append(Payload);return FFileHelper::SaveArrayToFile(Bytes,*Source);
     };
     TestTrue(TEXT("Create conflicting file"),WriteRaw());

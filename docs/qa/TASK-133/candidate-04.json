@@ -1,0 +1,102 @@
+{
+  "candidate": "candidate-04-20261015",
+  "status": "EXPERIMENTAL_NOT_ACCEPTED",
+  "configuration": "Win64 Shipping",
+  "package": "PASS",
+  "package_evidence": "E:\\GameFactoryArtifacts\\Hearthward\\TASK-133\\candidate-04-20261015\\package-result.json",
+  "build_identity": "E:\\GameFactoryArtifacts\\Hearthward\\TASK-133\\candidate-04-20261015\\build-info.json",
+  "archive": "E:\\GameFactoryArtifacts\\Hearthward\\TASK-133\\candidate-04-20261015\\archive\\Windows",
+  "archive_size_gib": 4.6647195452824235,
+  "includes": [
+    "2026-10-15 display ownership save validation",
+    "Current-world target component enumeration optimization",
+    "TASK-112–133 current production implementation",
+    "Active-level visibility/collection and first-component semantics preserved in target and animal queries",
+    "Cellar entry lamp moved outside solid stair tread; 27 scene checks and 20 independent restart checks passed"
+  ],
+  "runtime": {
+    "scope": "Shipping process launch and responsiveness only. No normal input, menu rendering, Continue or gameplay acceptance claimed.",
+    "executable": "E:\\GameFactoryArtifacts\\Hearthward\\TASK-133\\candidate-04-20261015\\archive\\Windows\\Hearthward\\Binaries\\Win64\\Hearthward-Win64-Shipping.exe",
+    "observations": [
+      {
+        "Id": 27532,
+        "Responding": true,
+        "MainWindowTitle": "Hearthward  "
+      },
+      {
+        "Id": 27532,
+        "Responding": true,
+        "MainWindowTitle": "Hearthward  "
+      },
+      {
+        "Id": 27532,
+        "Responding": true,
+        "MainWindowTitle": "Hearthward  "
+      },
+      {
+        "Id": 27532,
+        "Responding": true,
+        "MainWindowTitle": "Hearthward  "
+      },
+      {
+        "Id": 27532,
+        "Responding": true,
+        "MainWindowTitle": "Hearthward  "
+      },
+      {
+        "Id": 27532,
+        "Responding": true,
+        "MainWindowTitle": "Hearthward  "
+      }
+    ],
+    "launch": {
+      "ok": true,
+      "operation": "runtime.launch_packaged",
+      "artifacts": [],
+      "diagnostics": [],
+      "warnings": [],
+      "errors": [],
+      "payload": {
+        "command": [
+          "E:\\GameFactoryArtifacts\\Hearthward\\TASK-133\\candidate-04-20261015\\archive\\Windows\\Hearthward\\Binaries\\Win64\\Hearthward-Win64-Shipping.exe",
+          "-windowed",
+          "-ResX=1280",
+          "-ResY=720",
+          "-unattended",
+          "-HearthwardAIBackend=vulkan",
+          "-HearthwardAIGpuLayers=16",
+          "-UserDir=G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-133\\candidate-runtime-04\\profile"
+        ],
+        "cwd": "E:\\GameFactoryArtifacts\\Hearthward\\TASK-133\\candidate-04-20261015\\archive\\Windows\\Hearthward\\Binaries\\Win64",
+        "dry_run": false,
+        "process_id": 27532
+      }
+    },
+    "process_smoke": "PASS",
+    "stop": {
+      "ok": true,
+      "operation": "runtime.stop_editor",
+      "artifacts": [],
+      "diagnostics": [],
+      "warnings": [],
+      "errors": [],
+      "payload": {
+        "process_id": 27532
+      }
+    }
+  },
+  "previous_candidate_evidence": "docs/qa/TASK-133/candidate-03.json",
+  "limitations": [
+    "Frozen frame thresholds not met",
+    "Four scene/backend slots have complete request frame samples; management attempt cancels request by existing UI policy; other joint slots incomplete",
+    "Latest candidate normal keyboard, Continue, audiovisual and full route verification not performed",
+    "Prior candidate Continue evidence is not transferred to this build",
+    "External players, owner/reviewer and second physical machine still pending",
+    "59 human-recorded voice lines remain missing",
+    "Prior version CPU/Vulkan each have 60 semantic-pass warm requests. CPU terminal p95 fails; first paint unmeasured. Those timings do not certify this candidate version."
+  ],
+  "current_workspace_binding": {
+    "status": "DIVERGED_CAMPAIGN_ASSIST_FIX",
+    "reason": "New confirmed production defect fix after actual combined-combat run: campaign threats missing from brother assistance. candidate-05 required after verification."
+  }
+}

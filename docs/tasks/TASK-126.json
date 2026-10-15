@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "id": "TASK-126",
+  "title": "高频交互动作的进入、接触与退出",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "docs/planning/TASK-112-133/SOURCES.md#e02",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-COOP.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-126.json",
+    "docs/tasks/TASK-126.md",
+    "docs/handoffs/TASK-126.md",
+    "docs/qa/TASK-126/",
+    "docs/planning/TASK-126/",
+    "README.md",
+    "Source/Hearthward/Interaction/HearthwardInteractionAlignment.h",
+    "Source/Hearthward/Interaction/HearthwardInteractionAlignment.cpp",
+    "Source/Hearthward/Tests/Round2InteractionContactTests.cpp",
+    "art_source/TASK-126/",
+    "Source/Hearthward/Animation/",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Environment/",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Resources/Data/experience.json",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_Operate.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_Pickup.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_Handoff.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_MoveBeam.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_SitDown.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_SeatedIdle.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_StandUp.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_Gather.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_Operate.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_Pickup.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_Handoff.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_MoveBeam.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_SitDown.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_SeatedIdle.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_StandUp.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_Gather.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Hero_Eat.uasset",
+    "Content/Hearthward/Assets/TASK-126/A_Brother_Eat.uasset",
+    "Source/Hearthward/HearthwardCharacter.h",
+    "Source/Hearthward/Inventory/HearthwardDroppedEquipment.cpp",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp",
+    "scripts/tests/test_axe_handle_grip.py"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T126-C01 [PIE] 对四种首件录制进入、接触、完成、退出。 → 身体朝向/手部/工具与目标匹配，无物件凭空双份出现。",
+    "T126-C02 [PIE] 复核开门、采集、食用、施救已有路径。 → 仅改善表现，不更改资源、救援计时、材料或道具消费。",
+    "T126-C03 [NATIVE] 移动、受击、倒地、取消、读档各打断一次。 → 角色控制和附着物恢复，无残留 Busy、隐形工具或重复完成。",
+    "T126-C04 [PIE] 低/高目标、坡面、门侧遮挡与站位占用。 → 不穿墙吸附、不飘浮；超出支持范围明确拒绝。",
+    "T126-C05 [SAVE] 携带不同装备实例执行交互后存读档。 → 原装备 GUID/耐久/模式不变，动作道具不是库存副本。",
+    "T126-C06 [PLAY] 正常游戏镜头下由 Owner 检查八类动作。 → 签收绑定实际包和帧段；骨骼采样不能替代完整观感。"
+  ],
+  "non_goals": [
+    "不做全角色动作重制、全局骨架替换或强制过场。",
+    "不以穿墙位移解决导航失败。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G1；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。",
+    "2026-10-14 登记16个接触动作包；沿用原角色骨架，通过Blender MCP重定向CC0 UAL动作及UE原生MCP导入。"
+  ]
+}

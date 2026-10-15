@@ -1,4 +1,6 @@
 #include "HearthwardCharacter.h"
+#include "Environment/HearthwardShortcutActor.h"
+#include "Interaction/HearthwardInteractionAlignment.h"
 #include "Equipment/HearthwardAxeGrip.h"
 #include "Experience/HearthwardPlayerSettings.h"
 #include "Experience/HearthwardPresentationComponent.h"
@@ -53,6 +55,7 @@ AHearthwardCharacter::AHearthwardCharacter(const FObjectInitializer& Initializer
 {
     PrimaryActorTick.bCanEverTick=true;
     CreateDefaultSubobject<UHearthwardTraversalComponent>(TEXT("Traversal"));
+    CreateDefaultSubobject<UHearthwardInteractionAlignment>(TEXT("ContactAlignment"));
     CreateDefaultSubobject<UHearthwardPresentationComponent>(TEXT("Presentation"));
     CreateDefaultSubobject<UHearthwardCombatComponent>(TEXT("Combat"));
     CreateDefaultSubobject<UHearthwardSurvivalComponent>(TEXT("Survival"));
@@ -201,12 +204,13 @@ void AHearthwardCharacter::RefreshHeldTool()
     const auto* Equipped=Inventory->FindInstance(Inventory->EquippedInstance(TEXT("weapon")));
     const auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
     const auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
+    const bool Contact=FindComponentByClass<UHearthwardInteractionAlignment>()->Active();
     const bool HoldingAxe=Equipped && Equipped->Definition==TEXT("axe") && Equipped->Durability>0
-        && !Combat->RangedSelected() && Survival->Alive() && Survival->RescueElapsed()<0;
+        && !Combat->RangedSelected() && Survival->Alive() && Survival->RescueElapsed()<0 && !Contact;
     HeldAxe->SetVisibility(HoldingAxe);
     const auto* Selected=Inventory->FindInstance(Inventory->EquippedInstance(Combat->RangedSelected()?TEXT("ranged"):TEXT("weapon")));
     const bool Visible=Selected && Selected->Definition!=TEXT("axe") && Selected->Durability>0
-        && Survival->Alive() && Survival->RescueElapsed()<0;
+        && Survival->Alive() && Survival->RescueElapsed()<0 && !Contact;
     bUseControllerRotationYaw=Visible && Combat->RangedSelected() && Combat->Aiming;
     GetCharacterMovement()->bOrientRotationToMovement=!bUseControllerRotationYaw;
     HeldWeapon->SetVisibility(Visible);
@@ -419,7 +423,7 @@ void AHearthwardCharacter::Move(const FInputActionValue& Value)
     if(Gameplay->Enabled && Gameplay->Health<=0) return;
     if(auto* T=FindComponentByClass<UHearthwardTraversalComponent>();T->IsVaulting()) {T->CancelVault();return;}
     auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
-    const FVector2D Axis = Value.Get<FVector2D>();
+    const FVector2D Axis = Combat->AttackMovementInput(Value.Get<FVector2D>());
     if(!Axis.IsNearlyZero() && Combat->Executing()) Combat->Cancel();
     if(Combat->MovementLocked()) return;
     if (!Axis.IsNearlyZero()) { TimedAction->InterruptAction(); FindComponentByClass<UHearthwardSurvivalComponent>()->CancelAction(); }
@@ -495,6 +499,8 @@ void AHearthwardCharacter::Interact(bool AllowVault)
 {
     auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
     if(!Survival->Alive()) return;
+    for(TActorIterator<AHearthwardShortcutActor> It(GetWorld());It;++It)
+        if(It->ClimbingBy(this)){It->Cancel();Gameplay->SetFeedback(TEXT("已取消机关交互"));return;}
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It)
         if(Survival->BeginRescue(It->FindComponentByClass<UHearthwardSurvivalComponent>())) return;
     auto* Combat=FindComponentByClass<UHearthwardCombatComponent>();
@@ -509,6 +515,7 @@ void AHearthwardCharacter::Interact(bool AllowVault)
     {if(!Arrows[0]->Recover(this)) {Gameplay->SetFeedback(TEXT("背包容量不足，无法回收箭"));Gameplay->OnChanged.Broadcast();}return;}
     Survival->CancelAction();
     if(FindComponentByClass<UHearthwardBuildingComponent>()->IsPlacing()) return;
+    if(Interaction->GetPriorityTarget()){Interaction->InteractNearest();return;}
     if(FindComponentByClass<UHearthwardBuildingComponent>()->NearbyWorkbench().IsValid())
     {
         if(auto* PC=Cast<APlayerController>(GetController()))

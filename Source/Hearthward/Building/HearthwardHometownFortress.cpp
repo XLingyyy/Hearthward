@@ -286,6 +286,7 @@ void AHearthwardHometownFortress::BeginPlay()
     // Houses form two staggered rows east of the escape route and campaign markers.
     for(int32 Row=0;Row<2;++Row)for(int32 Column=0;Column<3;++Column)
     {
+        if(Row==1 && Column==2 && GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->State.Phase!=TEXT("prologue"))continue;
         const float X=3300+Column*1650+Row*180;
         const float Y=3350+Row*1850;
         const float W=1000,D=1150,H=650+((Row+Column)%2)*180;

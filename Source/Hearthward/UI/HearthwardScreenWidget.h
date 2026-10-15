@@ -38,6 +38,7 @@ class HEARTHWARD_API UHearthwardScreenWidget : public UUserWidget
     GENERATED_BODY()
 public:
     UFUNCTION(BlueprintCallable) void OpenPage(FName Name);
+    void OpenPersonal(class UHearthwardPersonalInteraction* Target);
     UFUNCTION(BlueprintCallable) void OpenNature(FGuid Target);
     UFUNCTION(BlueprintCallable) bool ExecuteAction(const FString& Action);
     UFUNCTION(BlueprintPure) FName GetPage() const { return Page; }
@@ -148,6 +149,10 @@ private:
     bool MapVisible(FVector World) const;
     void UpdateMapMarkers(bool ApplyComponent=true);
     void ComposeJournal();
+    void ComposePersonal();
+    bool ExecutePersonalAction(const FString& Action);
+    TWeakObjectPtr<class UHearthwardPersonalInteraction> PersonalTarget;
+    FGuid PersonalEpoch;
     int32 JournalPageSize() const;
     TArray<TSharedPtr<FJsonObject>> JournalEntries() const;
     bool JournalEntryKnown(const TSharedPtr<FJsonObject>& Entry) const;

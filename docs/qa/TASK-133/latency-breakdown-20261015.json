@@ -1,0 +1,44 @@
+{
+  "run": "camp-day-vulkan-09",
+  "submission_to_http_response_seconds": 101.3241524,
+  "runtime_start_to_ready_seconds": 12.78,
+  "generation_to_http_response_seconds": 88.432,
+  "model_prompt_eval_seconds": 48.22273,
+  "model_generation_seconds": 40.16559,
+  "model_total_seconds": 88.38832,
+  "measurement_scope": "Submission clock starts before StartServer; endpoint is successful HTTP response parsing, before ApplyProposal and widget paint. Runtime ready includes startup/model loading but does not isolate disk load. Request is cold, not warm.",
+  "unknown": [
+    "Queue duration",
+    "Context projection/token-count duration separately",
+    "UI first paint",
+    "Warm request p95"
+  ],
+  "thresholds": {
+    "vulkan_cold_ready_seconds": 60,
+    "cpu_cold_ready_seconds": 90,
+    "vulkan_warm_full_reply_p95_seconds": 10,
+    "cpu_warm_full_reply_p95_seconds": 30,
+    "waiting_first_feedback_seconds": 0.2
+  },
+  "assessment": {
+    "this_vulkan_cold_ready": "PASS for this observed startup only",
+    "warm_full_reply_p95": "NOT_RUN",
+    "waiting_first_feedback": "NOT_RUN",
+    "ttft": "NOT_RUN; non-streaming"
+  },
+  "sources": [
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp",
+    ".agent-local/qa/TASK-133/performance/camp-day-vulkan-09/runtime.log",
+    ".agent-local/qa/TASK-133/performance/camp-day-vulkan-09/local-ai.log",
+    "docs/tasks/TASK-102.md"
+  ],
+  "warm_run11_sample1": {
+    "submission_to_http_response_seconds": 59.720485396683216,
+    "terminal_observed_seconds": 59.8824506000019,
+    "prompt_eval_seconds": 16.61821,
+    "generation_seconds": 42.99889,
+    "model_total_seconds": 59.6171,
+    "scope": "Observed model stages only. Remaining HTTP/context/queue bookkeeping not separately isolated; no causal hardware attribution."
+  },
+  "warm_protocol_followup": "docs/qa/TASK-133/warm-protocol-diagnosis.json"
+}

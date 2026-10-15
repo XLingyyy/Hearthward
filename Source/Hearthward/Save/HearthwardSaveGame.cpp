@@ -23,7 +23,7 @@ bool FHearthwardWorldSave::Serialize(FArchive& Ar)
 {
     // An absent version must stay absent when loading historical tagged properties.
     // nullptr defaults writes the clock metadata even when it equals today's defaults.
-    if(Ar.IsLoading()){ClockVersion=0;InitialDay=0;InitialMinute=-1;CommandRevision=0;}
+    if(Ar.IsLoading()){ClockVersion=0;InitialDay=0;InitialMinute=-1;CommandRevision=0;Interactions.Version=0;}
     StaticStruct()->SerializeTaggedProperties(Ar,reinterpret_cast<uint8*>(this),StaticStruct(),nullptr);
     return true;
 }
@@ -67,14 +67,14 @@ bool ValidSurvival(const FHearthwardSurvivalState& State,const TMap<FName,int32>
 }
 bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Error)
 {
-    constexpr uint32 LegacyMagic = 0x48575331, PreviousMagic = 0x48575332, Schema5Magic = 0x48575335, Schema6Magic = 0x48575336, Schema7Magic = 0x48575337, Schema8Magic=0x48575338, Magic = 0x48575339;
+    constexpr uint32 LegacyMagic = 0x48575331, PreviousMagic = 0x48575332, Schema5Magic = 0x48575335, Schema6Magic = 0x48575336, Schema7Magic = 0x48575337, Schema8Magic=0x48575338, Schema9Magic=0x48575339, Magic = HearthwardSave::CurrentMagic;
     uint32 Header[3] = {};
     if (Bytes.Num() < sizeof(Header) || Bytes.Num() > 64 * 1024 * 1024) { Error = TEXT("存档大小无效"); return false; }
     FMemory::Memcpy(Header, Bytes.GetData(), sizeof(Header));
     const int32 Length = Bytes.Num() - sizeof(Header);
     if (Header[1] != uint32(Length) || Header[2] != FCrc::MemCrc32(Bytes.GetData() + sizeof(Header), Length))
     { Error = TEXT("存档完整性校验失败"); return false; }
-    if(Header[0]!=Magic && Header[0]!=Schema8Magic && Header[0]!=Schema7Magic && Header[0]!=Schema6Magic && Header[0]!=Schema5Magic && Header[0]!=LegacyMagic && Header[0]!=PreviousMagic)
+    if(Header[0]!=Magic && Header[0]!=Schema9Magic && Header[0]!=Schema8Magic && Header[0]!=Schema7Magic && Header[0]!=Schema6Magic && Header[0]!=Schema5Magic && Header[0]!=LegacyMagic && Header[0]!=PreviousMagic)
     {Error=TEXT("此存档格式不受当前版本支持。请同步更新；不要删除进度，原档已保留。");return false;}
     TArray<uint8> Payload;
     Payload.Append(Bytes.GetData() + sizeof(Header), Length);
@@ -89,9 +89,16 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
             || (Header[0]==Schema5Magic && Out->Schema==5)
             || (Header[0]==Schema6Magic && Out->Schema==6)
             || (Header[0]==Schema7Magic && Out->Schema==7)
-            || (Header[0]==Schema8Magic && Out->Schema==8)))
+            || (Header[0]==Schema8Magic && Out->Schema==8)
+            || (Header[0]==Schema9Magic && Out->Schema==9)))
     {Error=TEXT("存档封装与数据版本不一致，原档已保留；请同步更新或恢复备份");Out=nullptr;return false;}
 
+    if(Out && Header[0]==Schema9Magic)
+    {
+        if(Out->Points.ContainsByPredicate([](const auto& P){return P.World.Interactions.Version!=0 || !P.World.Interactions.IsEmpty();}))
+        {Error=TEXT("旧版封装含新版交互字段，原档已保留");Out=nullptr;return false;}
+        Out->Schema=9;
+    }
     if(Out && Header[0]!=Magic && Out->Schema==HearthwardSave::CurrentSchema
         && Out->Points.ContainsByPredicate([](const auto& P){return P.World.ClockVersion!=0 || P.World.InitialDay!=0 || P.World.InitialMinute!=-1;}))
     {Error=TEXT("存档封装与时间格式不一致，原档已保留；请同步更新或恢复备份");Out=nullptr;return false;}
@@ -244,6 +251,11 @@ bool Decode(const TArray<uint8>& Bytes, UHearthwardSaveGame*& Out, FString& Erro
         }
         Out->Schema=9;
     }
+    if(Out && Header[0]!=Magic && Out->Schema==9)
+    {
+        for(auto& P:Out->Points)P.World.Interactions={};
+        Out->Schema=HearthwardSave::CurrentSchema;
+    }
     if (!Out || !HearthwardSave::Validate(*Out)) { Error = Out?HearthwardSave::Diagnose(*Out):TEXT("存档无法解析，请恢复备份；原档已保留。"); Out = nullptr; return false; }
     return true;
 }
@@ -280,6 +292,8 @@ bool HearthwardSave::Validate(const UHearthwardSaveGame& Pool)
     for (const auto& P : Pool.Points)
     {
         const auto& S = P.World;
+        FString InteractionError;
+        if(!S.Interactions.Validate(S.CalendarMinutes,InteractionError))return false;
         FHearthwardCampaignState Campaign;
         if(!FHearthwardCampaignState::Parse(S.Campaign,Campaign))return false;
         FHearthwardNatureState Nature;
@@ -394,7 +408,7 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
     Pool->WriterVersion=HearthwardVersion::Current;
     TArray<uint8> Payload, Bytes;
     if (!UGameplayStatics::SaveGameToMemory(Pool, Payload)) { Error = TEXT("快照序列化失败"); return false; }
-    const uint32 Header[] = {0x48575339, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
+    const uint32 Header[] = {CurrentMagic, uint32(Payload.Num()), FCrc::MemCrc32(Payload.GetData(), Payload.Num())};
     Bytes.Append(reinterpret_cast<const uint8*>(Header), sizeof(Header));
     Bytes.Append(Payload);
     IFileManager::Get().MakeDirectory(*FPaths::GetPath(Path), true);
@@ -414,10 +428,10 @@ bool HearthwardSave::Write(const FString& Path, UHearthwardSaveGame* Pool, FStri
         }
         // One content-addressed backup on upgrade, not one new file per autosave.
         FString VersionBackup;
-        if((Previous!=0x48575339 || !OriginalPool || OriginalPool->WriterVersion!=HearthwardVersion::Current)
+        if((Previous!=CurrentMagic || !OriginalPool || OriginalPool->WriterVersion!=HearthwardVersion::Current)
             && !HearthwardSave::Backup(Path,VersionBackup,Error))return false;
-        const FString Backup=Path+(Previous==0x48575338?TEXT(".pre-schema9"):((Previous==0x48575336 || Previous==0x48575337)?TEXT(".pre-schema8"):TEXT(".pre-schema6")));
-        if(Previous!=0x48575339 && !IFileManager::Get().FileExists(*Backup) && !FFileHelper::SaveArrayToFile(Original,*Backup))
+        const FString Backup=Path+(Previous==0x48575339?TEXT(".pre-schema10"):(Previous==0x48575338?TEXT(".pre-schema9"):((Previous==0x48575336 || Previous==0x48575337)?TEXT(".pre-schema8"):TEXT(".pre-schema6"))));
+        if(Previous!=CurrentMagic && !IFileManager::Get().FileExists(*Backup) && !FFileHelper::SaveArrayToFile(Original,*Backup))
         {Error=TEXT("无法保留旧存档备份，原档未替换");return false;}
     }
 #if PLATFORM_WINDOWS

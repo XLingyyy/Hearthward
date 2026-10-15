@@ -1,4 +1,5 @@
 #include "HearthwardHeroAnimInstance.h"
+#include "../Interaction/HearthwardInteractionAlignment.h"
 #include "Animation/AnimInstanceProxy.h"
 #include "../Equipment/HearthwardAxeHandPose.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -46,6 +47,8 @@ struct FHeroAnimProxy : FAnimInstanceProxy
     FAnimNode_ModifyBone AimRotation;
     FAnimNode_ConvertComponentToLocalSpace RangedToLocal;
     FHearthwardAxeFingerPoseNode AxeFingers;
+    FAnimNode_SequencePlayer_Standalone ContactPlayer;
+    FHeroBlend ContactLayer;
     uint32 SeenAttack = 0;
     float LocomotionPhase = 0;
 
@@ -97,18 +100,23 @@ struct FHeroAnimProxy : FAnimInstanceProxy
             Layers[Index].bAlphaBoolEnabled = false;
         }
         AxeFingers.Source.SetLinkNode(&Layers[7]);
+        ContactPlayer.SetSequence(Hero->Clips[0]);ContactPlayer.SetPlayRate(0);ContactPlayer.SetLoopAnimation(false);
+        ContactLayer.A.SetLinkNode(&AxeFingers);ContactLayer.B.SetLinkNode(&ContactPlayer);ContactLayer.bAlphaBoolEnabled=false;
         FVector Palm;
         HearthwardAxeHandPose::Profile(Instance->GetSkelMeshComponent()->GetSkeletalMeshAsset(), Palm, AxeFingers.Rotations);
         FAnimInstanceProxy::Initialize(Instance);
     }
 
-    virtual FAnimNode_Base* GetCustomRootNode() override { return &AxeFingers; }
+    virtual FAnimNode_Base* GetCustomRootNode() override { return &ContactLayer; }
 
     virtual void PreUpdate(UAnimInstance* Instance, float DeltaSeconds) override
     {
         FAnimInstanceProxy::PreUpdate(Instance, DeltaSeconds);
         AxeFingers.Enabled = HearthwardAxeHandPose::ShouldApply(Instance->GetOwningActor());
         const auto* Hero = CastChecked<UHearthwardHeroAnimInstance>(Instance);
+        const auto* Contact=Instance->GetOwningActor()->FindComponentByClass<UHearthwardInteractionAlignment>();
+        ContactLayer.bAlphaBoolEnabled=Contact && Contact->Active();
+        if(ContactLayer.bAlphaBoolEnabled){ContactPlayer.SetSequence(Contact->Sequence());ContactPlayer.SetStartPosition(Contact->PoseTime());ContactPlayer.SetAccumulatedTime(Contact->PoseTime());}
         RangedLayer.BlendWeights[0]=Hero->RangedWeight;
         AimRotation.Rotation=Hero->RangedAimRotation;
         RangedPlayer.SetSequence(Hero->Clips[Hero->RangedClip]);

@@ -1,4 +1,5 @@
 #include "HearthwardCampaignSubsystem.h"
+#include "HearthwardPersonalStory.h"
 #include "HearthwardCampaignActor.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardWorldPresentation.h"
@@ -198,6 +199,7 @@ bool UHearthwardCampaignSubsystem::ZoneOccupied(FName Zone) const
 }
 void UHearthwardCampaignSubsystem::RefreshActors()
 {
+    RefreshRound2();
     const FVector PlayerPosition=Player()->GetActorLocation();
     const auto& Labor=GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State;
     const FVector HomeOrigin=HearthwardCampaign::XY(HearthwardCampaign::Find(TEXT("locations"),TEXT("prologue_relic")),TEXT("xy"));
@@ -231,12 +233,25 @@ void UHearthwardCampaignSubsystem::RefreshActors()
     };
     for(auto& E:State.Enemies)
     {
+        auto ClearNewLanding=[&](FVector& At)
+        {
+            if(E.Id==TEXT("home_workshops_16") && E.Combat.Health>0)if(const auto* Landing=State.Positions.Find(TEXT("round2_archer_landing")))
+            {
+                const FVector Local=At-*Landing;
+                if(FMath::Abs(Local.X)<280 && FMath::Abs(Local.Y)<230 && Local.Z<80)
+                {At.Z=Landing->Z+82;E.Home.Z=Landing->Z+82;}
+            }
+        };
         const bool Phase=(State.Phase==TEXT("prologue"))==(E.Group==TEXT("prologue"));
         const float D=FVector::Dist2D(PlayerPosition,E.Combat.Position);
         if(auto* A=Actor(E.Id))
-        {if(!Phase || D>75000){E.Combat=A->Target->Snapshot();A->Destroy();Actors.Remove(E.Id);}continue;}
+        {
+            FVector At=A->GetActorLocation();ClearNewLanding(At);if(At!=A->GetActorLocation())A->SetActorLocation(At);
+            if(!Phase || D>75000){E.Combat=A->Target->Snapshot();A->Destroy();Actors.Remove(E.Id);}continue;
+        }
         if(!Phase || D>65000)continue;
         if(!E.Located){FVector P;if(!Ground(E.Home,P))continue;E.Home=P+FVector(0,0,80);E.Combat.Position=E.Home;E.Located=true;}
+        ClearNewLanding(E.Combat.Position);
         Spawn(E.Id,E.Combat.Position,true);
     }
     if(State.Phase!=TEXT("prologue"))for(auto& P:State.People)
@@ -321,7 +336,7 @@ void UHearthwardCampaignSubsystem::RefreshActors()
         }
         FVector Workplace=Site?Site->Position:Position(State.Phase==TEXT("prologue")?TEXT("prologue_exit"):CampId);
         FVector Seat=Workplace+FVector(((Worker+1)%5-2)*240,((Worker+1)/5)*260+800,0);
-        bool HasWorkplace=false;
+        bool HasWorkplace=false,PersonalVisit=false;
         FName LifePose;
         FString Job,Status=TEXT("等待分配");
         if(Region)
@@ -370,6 +385,17 @@ void UHearthwardCampaignSubsystem::RefreshActors()
             Workplace=Position(TEXT("m2_event_departure"));Seat=Workplace+FVector(230,0,0);
             HasWorkplace=true;Status=TEXT("出发前等候");
         }
+        if(!Region)
+        {
+            const auto Person=HearthwardPersonalStory::Row(Id);
+            if(Person)for(const auto& Display:GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->InteractionState().Displays)
+                if(Display.Camp==CampId && Display.Fact==FName(*Text(Person,TEXT("fact"))))
+                    if(const auto* Stand=Scenery.FindByPredicate([&](const auto& Entry){return Entry.IsValid() && Entry->ActorHasTag(Display.Id);}))
+                    {
+                        Workplace=Stand->Get()->GetActorLocation();Seat=Workplace-FVector(65,0,0);
+                        HasWorkplace=PersonalVisit=true;Status=TEXT("整理留下的纪念");LifePose=TEXT("memento");break;
+                    }
+        }
         if(FVector::Dist2D(PlayerPosition,Seat)>40000)
         {
             if(A){A->Destroy();Actors.Remove(Id);}continue;
@@ -384,7 +410,14 @@ void UHearthwardCampaignSubsystem::RefreshActors()
         if(!A)continue;
         A->SetActorEnableCollision(true);
         const FRotator Facing=HasWorkplace?FRotator(0,(Workplace-Seat).Rotation().Yaw,0):A->GetActorRotation();
-        if(!A->GetActorLocation().Equals(At,1) && !A->TeleportTo(At,Facing))
+        if(PersonalVisit && FVector::Dist2D(A->GetActorLocation(),At)>45)
+        {
+            A->SetActorHiddenInGame(false);
+            const bool Moving=A->WalkTo(At,30);
+            A->PresentLabor(NAME_None,Moving?TEXT("走向纪念台"):TEXT("纪念台通路受阻"),false,Moving?FName(TEXT("walking")):NAME_None);
+            continue;
+        }
+        if(!PersonalVisit && !A->GetActorLocation().Equals(At,1) && !A->TeleportTo(At,Facing))
         {A->SetActorHiddenInGame(true);A->SetActorEnableCollision(false);continue;}
         A->SetActorRotation(Facing);A->SetActorHiddenInGame(false);
         const FString Label=FString::Printf(TEXT("族人%d · "),Worker+1)+(Job.IsEmpty()?FString():Job+TEXT(" · "))+Status;

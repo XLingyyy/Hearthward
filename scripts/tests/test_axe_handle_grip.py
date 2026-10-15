@@ -70,7 +70,10 @@ class AxeHandleGripTests(unittest.TestCase):
                 self.assertAlmostEqual(sum(v*v for v in actual), 1.0, places=9)
         for role in ("Hero", "Brother"):
             graph = (ROOT / f"Source/Hearthward/Animation/Hearthward{role}AnimInstance.cpp").read_text(encoding="utf-8")
-            self.assertIn("return &AxeFingers;", graph)
+            self.assertIn("return &ContactLayer;", graph)
+            self.assertIn("ContactLayer.A.SetLinkNode(&AxeFingers)", graph)
+            self.assertIn("ContactLayer.B.SetLinkNode(&ContactPlayer)", graph)
+            self.assertIn("ContactLayer.bAlphaBoolEnabled=Contact && Contact->Active()", graph)
             self.assertIn("AxeFingers.Enabled = HearthwardAxeHandPose::ShouldApply", graph)
 
     def test_offline_full_rig_clearance_and_wrap_evidence(self):

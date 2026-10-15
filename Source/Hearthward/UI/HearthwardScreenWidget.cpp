@@ -1,4 +1,5 @@
 #include "HearthwardScreenWidget.h"
+#include "../Campaign/HearthwardPersonalStory.h"
 #include "../HearthwardCharacter.h"
 #include "../Experience/HearthwardPresentationComponent.h"
 #include "GameFramework/GameUserSettings.h"
@@ -175,6 +176,7 @@ FLinearColor UHearthwardScreenWidget::Color(const FString& Name) const
 }
 void UHearthwardScreenWidget::OpenPage(FName Name)
 {
+    if(Name!=TEXT("personal") && PersonalTarget.IsValid()){PersonalTarget->CancelPreview();PersonalTarget.Reset();PersonalEpoch.Invalidate();}
     if(UHearthwardSurvivalComponent::HasFailed(GetWorld()) && Name!=TEXT("save") && Name!=TEXT("title")) Name=TEXT("save");
     if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsNaturalWorldEnabled() && !Gameplay()->Enabled
         && Name!=TEXT("hud") && Name!=TEXT("title") && Name!=TEXT("pause")
@@ -385,6 +387,7 @@ void UHearthwardScreenWidget::Refresh()
     if(Page==TEXT("skills")) ComposeSkills();
     if(Page==TEXT("map")) ComposeMap();
     if(Page==TEXT("journal")) ComposeJournal();
+    if(Page==TEXT("personal"))ComposePersonal();
     if(Page==TEXT("dialogue")) ComposeDialogue();
     if(Page==TEXT("memory")) ComposeMemory();
     if(Page==TEXT("hud")) ComposeHUD();

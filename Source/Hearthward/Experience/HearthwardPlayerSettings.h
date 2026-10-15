@@ -6,7 +6,7 @@
 struct FHearthwardComfortSettings
 {
     int32 Music=100,Voice=100,Effects=100,Environment=100;
-    int32 TextScale=100,SubtitleSize=32,SubtitleBackground=70,Shake=50,HungerVisual=100,FOV=90;
+    int32 TextScale=100,SubtitleSize=32,SubtitleBackground=70,Shake=50,HungerVisual=100,FOV=90,RainVisual=100,HitVisual=100;
     bool Subtitles=true,SubtitleSpeaker=true,MotionBlur=false,SprintToggle=false,GuardToggle=false,AimToggle=false;
 };
 UCLASS()

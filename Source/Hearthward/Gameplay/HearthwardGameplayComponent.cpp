@@ -1,5 +1,6 @@
 #include "HearthwardGameplayComponent.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
+#include "../Campaign/HearthwardCampaignActor.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Nature/HearthwardNatureActor.h"
 #include "HearthwardProgression.h"
@@ -64,7 +65,12 @@ UHearthwardInventoryComponent* UHearthwardGameplayComponent::Inventory() const
 void UHearthwardGameplayComponent::BeginPlay()
 {
     Super::BeginPlay();
-    if (Inventory()) Inventory()->OnInventoryChanged.AddDynamic(this, &UHearthwardGameplayComponent::InventoryChanged);
+    if (Inventory())
+    {
+        Inventory()->OnInventoryChanged.AddDynamic(this, &UHearthwardGameplayComponent::InventoryChanged);
+        // Map travel can restore the inventory from the HUD before this component begins play.
+        InventoryChanged();
+    }
 }
 void UHearthwardGameplayComponent::EnableAdventure()
 {
@@ -588,7 +594,7 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
 
     AHearthwardCompanionFixture* Companion=nullptr;
     for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It){Companion=*It;break;}
-    if(!Companion)return;
+    if(!Companion || Companion->CooperationOwner.IsValid())return;
     auto* Survival=Companion->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(!Survival->Alive() || Survival->Busy() || Health<=0) {Companion->CancelMeleeAttack();return;}
 
@@ -614,6 +620,15 @@ void UHearthwardGameplayComponent::TickCompanion(float Delta)
         Context.Threats.Add(Threat);
     }
 
+    // Campaign guards use their own registry; only confirmed combat enters assistance.
+    auto* Campaign=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
+    for(const auto& Enemy:Campaign->State.Enemies)
+        if(auto* Actor=Campaign->Actor(Enemy.Id);Actor && Actor->Target->CanAct()
+            && (Actor->Target->Memory.Seen.Contains(TEXT("player")) || Actor->Target->Memory.Seen.Contains(TEXT("brother"))))
+        {
+            FHearthwardCompanionBehaviorThreat Threat;Threat.Id=Enemy.Id;Threat.Actor=Actor;
+            Threat.RemainingHealth=Actor->Target->Health;Context.Threats.Add(Threat);
+        }
     // Only an animal already engaged near the player enters the existing escort combat policy.
     auto* Nature=GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>();
     if(InCombat())for(const auto& Animal:Nature->State.Animals)

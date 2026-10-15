@@ -1,8 +1,12 @@
 #include "HearthwardCombatComponent.h"
+#include "ProfilingDebugging/CsvProfiler.h"
+#include "../Environment/HearthwardLampInteraction.h"
+#include "../Environment/HearthwardWeatherActor.h"
 #include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Nature/HearthwardNatureSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Gameplay/HearthwardGameData.h"
+#include "../Gameplay/HearthwardActorQuery.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
@@ -15,6 +19,7 @@
 #include "AIController.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Materials/MaterialInterface.h"
 #include "../HearthwardCharacter.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimationPoseData.h"
@@ -31,6 +36,7 @@
 #include "JsonObjectConverter.h"
 #include "Serialization/JsonSerializer.h"
 #include "EngineUtils.h"
+#include "UObject/UObjectIterator.h"
 #include "HearthwardProjectile.h"
 #include "HearthwardCombatRegion.h"
 
@@ -56,9 +62,14 @@ bool UHearthwardCombatComponent::Available() const
 }
 TArray<UHearthwardCombatTargetComponent*> UHearthwardCombatComponent::Targets() const
 {
+#if !UE_BUILD_SHIPPING
+    CSV_SCOPED_TIMING_STAT_GLOBAL(HearthwardCombatTargetQuery);
+#endif
     TArray<UHearthwardCombatTargetComponent*> Out;
-    for(TActorIterator<AActor> It(GetWorld());It;++It)
-        if(auto* T=It->FindComponentByClass<UHearthwardCombatTargetComponent>();T && !T->Id.IsNone()) Out.Add(T);
+    for(TObjectIterator<UHearthwardCombatTargetComponent> It;It;++It)
+        if(auto* Owner=It->GetOwner();IsValid(*It) && IsValid(Owner) && !Owner->IsActorBeingDestroyed()
+            && Owner->GetWorld()==GetWorld() && HearthwardActorQuery::IsActiveLevel(Owner->GetLevel()) && !It->Id.IsNone()
+            && Owner->FindComponentByClass<UHearthwardCombatTargetComponent>()==*It)Out.Add(*It);
     Out.Sort([](const auto& A,const auto& B){ return A.Id.LexicalLess(B.Id); }); return Out;
 }
 bool UHearthwardCombatComponent::Visible(const AActor* From,const AActor* To) const
@@ -193,6 +204,7 @@ bool UHearthwardCombatComponent::Damage(float Raw,FName Part,FVector Source,bool
             FHearthwardCombatFeedbackReceipt Receipt;
             Receipt.SuccessId=FGuid::NewGuid(); Receipt.OperationId=Event; Receipt.Epoch=Epoch();
             Receipt.Kind=TEXT("block"); Receipt.TargetPosition=GetOwner()->GetActorLocation();
+            Receipt.SourcePosition=Source;
             OnCombatSucceeded.Broadcast(Receipt);
             return true;
         }
@@ -202,7 +214,7 @@ bool UHearthwardCombatComponent::Damage(float Raw,FName Part,FVector Source,bool
     const float Armor=G()->EquippedDurability(Slot)>0?Number(R,TEXT("defense"))/100+G()->Effect(TEXT("local_armor_bonus")):0;
     const float Actual=HearthwardCombat::ArmorDamage(Raw*(Projectile && Part==TEXT("head")?3:1),Armor,G()->Effect(TEXT("defense")));
     auto* S=GetOwner()->FindComponentByClass<UHearthwardSurvivalComponent>();
-    if(!S->ReceiveDamage(Actual,Event,Epoch()))return false;
+    if(!S->ReceiveDamage(Actual,Event,Epoch(),false,Source))return false;
     Cancel(); DropBody(); Guard.Release();
     if(Armor>0) G()->WearEquipment(Slot,1,true);
     if(S->Alive()) { Action=TEXT("hit"); Duration=.25; StartedAt=Now(); Elapsed=0; ActionEpoch=Epoch(); }
@@ -223,7 +235,7 @@ bool UHearthwardCombatComponent::DamageActor(AActor* Target,float Raw,FName Part
     const float Actual=HearthwardCombat::ArmorDamage(Raw*(Projectile && Part==TEXT("head")?3:1),Armor);
     if(!Event.IsValid())Event=FGuid::NewGuid();
     const FGuid Timeline=Target->GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
-    if(!Survival->ReceiveDamage(Actual,Event,Timeline))return false;
+    if(!Survival->ReceiveDamage(Actual,Event,Timeline,false,Source))return false;
     if(Armor>0)Inventory->WearInstance(ArmorId,1);
     return true;
 }
@@ -256,7 +268,7 @@ void UHearthwardCombatComponent::Sweep(double From,double To)
     if(B<=A) return;
     auto* Character=Cast<AHearthwardCharacter>(GetOwner());
     const bool StoneAxe=Character && ActionWeapon==TEXT("axe");
-    if(StoneAxe && StoneAxeBlocked) return;
+    if(StoneAxeBlocked) return;
     UStaticMeshComponent* Axe=nullptr;
     UHearthwardHeroAnimInstance* Animation=nullptr;
     UStaticMeshSocket* BladeBase=nullptr;
@@ -360,7 +372,16 @@ void UHearthwardCombatComponent::Sweep(double From,double To)
         if(Contact)
         {
             auto* T=Hit.GetActor()?Hit.GetActor()->FindComponentByClass<UHearthwardCombatTargetComponent>():nullptr;
-            if(StoneAxe && !T) { StoneAxeBlocked=true; return; }
+            if(!T)
+            {
+                StoneAxeBlocked=true;
+                bool Wood=false;
+                if(auto* Surface=Cast<UPrimitiveComponent>(Hit.GetComponent()))for(int32 Slot=0;Slot<Surface->GetNumMaterials();++Slot)
+                    if(const auto* Material=Surface->GetMaterial(Slot))Wood|=Material->GetName().Contains(TEXT("Wood")) || Material->GetName().Contains(TEXT("Timber"));
+                FHearthwardCombatFeedbackReceipt Receipt;Receipt.SuccessId=FGuid::NewGuid();Receipt.OperationId=ActionId;Receipt.Epoch=ActionEpoch;
+                Receipt.Kind=Wood?TEXT("wallwood"):TEXT("wallstone");Receipt.TargetPosition=Hit.ImpactPoint;OnCombatSucceeded.Broadcast(Receipt);
+                return;
+            }
             if(T && !HitIds.Contains(T->Id))
             {
                 HitIds.Add(T->Id); const FName Part=T->HitPart(Hit);
@@ -393,6 +414,16 @@ void UHearthwardCombatComponent::Finish()
 bool UHearthwardCombatComponent::MovementLocked() const
 { return Busy() && Action!=TEXT("attack") && Action!=TEXT("draw") && Action!=TEXT("recoil") && Action!=TEXT("crossbow") && Action!=TEXT("reload"); }
 float UHearthwardCombatComponent::MovementMultiplier() const { return Body.IsValid()?(CarryingOnBack?.7f:.5f):1; }
+FVector2D UHearthwardCombatComponent::AttackMovementInput(FVector2D Input) const
+{
+    if(Action!=TEXT("attack") || Input.Y>=0)return Input;
+    const float Scale=HearthwardCombat::BackwardAttackScale(ActionWeapon,Elapsed,Move);
+    if(Scale==1)return Input;
+    // Normalize before scaling so diagonal retreat retains its original sideways component.
+    if(Input.SizeSquared()>1)Input.Normalize();
+    Input.Y*=Scale;
+    return Input;
+}
 bool UHearthwardCombatComponent::CanSave() const { return !Busy() && !Body.IsValid() && !Committing && !GetWorld()->GetSubsystem<UHearthwardNatureSubsystem>()->Busy() && !GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Busy(); }
 FString UHearthwardCombatComponent::Describe() const
 {
@@ -480,6 +511,9 @@ bool UHearthwardCombatComponent::ToggleLock()
 }
 void UHearthwardCombatComponent::Perception(double Delta)
 {
+#if !UE_BUILD_SHIPPING
+    CSV_SCOPED_TIMING_STAT_GLOBAL(HearthwardPerception);
+#endif
     const auto All=Targets().FilterByPredicate([](const auto* T){return !T->NaturalTarget;});
     TArray<AHearthwardCombatRegion*> Regions;
     for(TActorIterator<AHearthwardCombatRegion> It(GetWorld());It;++It) Regions.Add(*It);
@@ -498,11 +532,16 @@ void UHearthwardCombatComponent::Perception(double Delta)
         for(const auto& Brother:Brothers)
         {
             const auto* S=Brother.Value->FindComponentByClass<UHearthwardSurvivalComponent>(); if(!S || !S->Alive()) continue;
+#if !UE_BUILD_SHIPPING
+            CSV_CUSTOM_STAT_GLOBAL(HearthwardPerceptionSamples,1,ECsvCustomStatOp::Accumulate);
+#endif
             const FVector Offset=Brother.Value->GetActorLocation()-Observer->GetOwner()->GetActorLocation();
             double Light=Observer->Exposure>=0?FMath::Clamp(Observer->Exposure,0.f,1.f):Daylight;
             for(auto* R:Regions) if(R->Lighting>=0 && R->Contains(Brother.Value->GetActorLocation())) { Light=FMath::Clamp(R->Lighting,0.f,1.f); break; }
-            const bool Seeing=Offset.Size()<=(12+13*Light)*100 && HearthwardCombat::InFront(Observer->GetOwner()->GetActorForwardVector(),Offset) && Visible(Observer->GetOwner(),Brother.Value);
             auto& P=Observer->Memory.Detection.FindOrAdd(Brother.Key);
+            Light=UHearthwardLampInteraction::Illumination(GetWorld(),Brother.Value->GetActorLocation(),Light,Brother.Value);
+            const double Range=P>=1?2500:(12+13*Light)*100*AHearthwardWeatherActor::VisibilityFactor(GetWorld(),Brother.Value->GetActorLocation(),Brother.Value);
+            const bool Seeing=Offset.Size()<=Range && HearthwardCombat::InFront(Observer->GetOwner()->GetActorForwardVector(),Offset) && Visible(Observer->GetOwner(),Brother.Value);
             P=HearthwardCombat::Detection(P,Delta*(Seeing && Brother.Key==TEXT("player")?1-G()->Effect(TEXT("detection_growth_reduction")):1),Offset.Size()/100,Seeing);
             if(Seeing) Observer->Memory.LastKnown.Add(Brother.Key,Brother.Value->GetActorLocation());
             if(Seeing && P>=1) { Observer->Memory.Seen.Add(Brother.Key); Engaged=true; }

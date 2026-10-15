@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "TASK-113",
+  "title": "三类现有武器的决策差异与移动攻击平衡",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s05",
+    "docs/planning/TASK-112-133/SOURCES.md#s06",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-COMBAT.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-113.json",
+    "docs/tasks/TASK-113.md",
+    "docs/handoffs/TASK-113.md",
+    "docs/qa/TASK-113/",
+    "docs/planning/TASK-113/",
+    "README.md",
+    "Source/Hearthward/Combat/HearthwardCombatRules.h",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/Tests/Round2WeaponChoicesTests.cpp",
+    "Source/Hearthward/Animation/",
+    "Source/Hearthward/HearthwardCharacter.cpp",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.h"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T113-C01 [NATIVE] 测试轻重击各阶段、单动作多碰撞和中断。 → 仅有效段造成一次规定结算；中断不重复扣耐久或补发伤害。",
+    "T113-C02 [PIE] 三类武器分别静止、行走、冲刺、转向攻击。 → 扫掠与可见武器同步；不回退 TASK-111 的普通攻击移动能力。",
+    "T113-C03 [PLAY] 在开阔地、狭道和混合敌群各用三类武器完成遭遇。 → 每类至少一项明确优势和一项代价，报告包含换武器的实际理由。",
+    "T113-C04 [PLAY] 持续后退轻击、连按重击、举盾拖延分别尝试。 → 没有在全部样板遭遇中低风险、低成本稳定通吃的策略；失败样本保留。",
+    "T113-C05 [NATIVE] 测试断裂装备、换装、倒地、处决与读档。 → 旧耐久/伤害身份和处决限制仍正确，不新增非预期持久字段。",
+    "T113-C06 [PLAY] 关闭震动/提示特效并重复样板战斗。 → 仍可判断有效段与失误原因，核心反馈不依赖强烈屏闪。"
+  ],
+  "non_goals": [
+    "不增加装备等级、技能点或武器数量。",
+    "不修改暗杀/击晕等效清敌、救援与死亡规则。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G1；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "D112-02已批准；增加现有Combat头文件声明以接入Character输入，保持单一入口。131生产窗口暂关闭，113独占Combat/Character，132仅Python工具。",
+    "当前实施与实际验证以docs/qa/TASK-113/REPORT.md及CASE_MATRIX为准；未代填体验签收。"
+  ]
+}

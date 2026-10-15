@@ -101,6 +101,7 @@ bool UHearthwardScreenWidget::ExecuteAction(const FString& InAction)
     if(!ConfirmAction.IsEmpty() && Action!=TEXT("confirm") && Action!=TEXT("cancel")
         && !(ConfirmAction==TEXT("compat.resolve") && (Action==TEXT("compat.next") || Action==TEXT("compat.prev") || Action==TEXT("compat.folder") || Action==TEXT("update.open")))
         && !(ConfirmAction==TEXT("resetAgreements") && (Action==TEXT("resetPrev") || Action==TEXT("resetNext")))) return false;
+    if(Action.StartsWith(TEXT("personal.")))return ExecutePersonalAction(Action);
     if(Action==TEXT("resetPrev") || Action==TEXT("resetNext"))
     { ResetScroll=FMath::Clamp(ResetScroll+(Action==TEXT("resetNext")?2:-2),0,FMath::Max(0,ResetItems.Num()-2));Refresh();return true; }
     if(ConfirmAction==TEXT("settings.display") && (Action==TEXT("confirm") || Action==TEXT("cancel")))

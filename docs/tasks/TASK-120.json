@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "id": "TASK-120",
+  "title": "双人移障协作与安全中断",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s08",
+    "docs/planning/TASK-112-133/SOURCES.md#e02",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-119",
+    "TASK-126",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-COOP.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-120.json",
+    "docs/tasks/TASK-120.md",
+    "docs/handoffs/TASK-120.md",
+    "docs/qa/TASK-120/",
+    "docs/planning/TASK-120/",
+    "README.md",
+    "Source/Hearthward/Cooperation/HearthwardLiftObstacle.h",
+    "Source/Hearthward/Cooperation/HearthwardLiftObstacle.cpp",
+    "Source/Hearthward/Tests/Round2CooperationLiftTests.cpp",
+    "art_source/TASK-120/",
+    "Source/Hearthward/Cooperation/",
+    "Source/Hearthward/Animation/",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/Environment/",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Resources/Data/experience.json",
+    "Source/Hearthward/UI/HearthwardScreenRound2SceneTest.inl"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T120-C01 [PIE] 双方按正式路径接近、站位、抬起并放下。 → 手与梁体接触可信，无穿体强吸附，路障实际移除。",
+    "T120-C02 [NATIVE] 双击发起、重复通知、完成帧取消并重入。 → 只提交一次环境状态，导航连接不叠加。",
+    "T120-C03 [PIE] 阻挡任一站位或承托区域。 → 给出明确受阻原因，不穿越障碍把角色拉到目标点。",
+    "T120-C04 [PIE] 在接近、抬起、移动、提交前后分别取消/受击。 → 停在安全状态；角色控制恢复，无悬浮梁体或不可撤销困境。",
+    "T120-C05 [SAVE] 在允许节点保存并独立进程继续。 → 未完成可重试，已完成保持；不复播搬运动作。",
+    "T120-C06 [PLAY] 沿预设绕路完成同一目标。 → 合作减少风险或路程，但不造成唯一主线软锁。"
+  ],
+  "non_goals": [
+    "不做所有物体可双人搬运、物理沙盒或新压伤规则。",
+    "不重复建设 TASK-119 的通用会话。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G2；优先级 P1；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

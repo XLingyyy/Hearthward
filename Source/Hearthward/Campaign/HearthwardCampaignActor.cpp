@@ -1,4 +1,5 @@
 #include "HearthwardCampaignActor.h"
+#include "HearthwardPersonalStory.h"
 #include "HearthwardCampaignSubsystem.h"
 #include "../Combat/HearthwardCombatTargetComponent.h"
 #include "../Combat/HearthwardCombatComponent.h"
@@ -28,6 +29,7 @@ AHearthwardCampaignActor::AHearthwardCampaignActor()
     PrimaryActorTick.bCanEverTick=true;PrimaryActorTick.TickInterval=.1f;
     GetCapsuleComponent()->InitCapsuleSize(30,80);
     GetCharacterMovement()->MaxWalkSpeed=240;GetCharacterMovement()->bOrientRotationToMovement=true;
+    GetCharacterMovement()->bUseRVOAvoidance=true;GetCharacterMovement()->AvoidanceConsiderationRadius=300;
     bUseControllerRotationYaw=false;AIControllerClass=AAIController::StaticClass();AutoPossessAI=EAutoPossessAI::PlacedInWorldOrSpawned;
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Target=CreateDefaultSubobject<UHearthwardCombatTargetComponent>(TEXT("CampaignTarget"));
@@ -35,11 +37,15 @@ AHearthwardCampaignActor::AHearthwardCampaignActor()
     LaborLabel=CreateDefaultSubobject<UWidgetComponent>(TEXT("LaborLabel"));
     LaborLabel->SetupAttachment(GetRootComponent());LaborLabel->SetRelativeLocation(FVector(0,0,120));
     LaborLabel->SetWidgetSpace(EWidgetSpace::Screen);LaborLabel->SetDrawAtDesiredSize(true);
-    LaborLabel->SetVisibility(false);
+    LaborLabel->SetVisibility(false);LaborLabel->PrimaryComponentTick.bStartWithTickEnabled=false;
 }
 void AHearthwardCampaignActor::Initialize(FName Id,bool Hostile)
 {
     Identity=Id;Enemy=Hostile;Target->Id=Id;
+    if(!Hostile && HearthwardPersonalStory::Row(Id) && !FindComponentByClass<UHearthwardPersonalInteraction>())
+    {
+        auto* Story=NewObject<UHearthwardPersonalInteraction>(this);AddInstanceComponent(Story);Story->SetupAttachment(GetRootComponent());Story->Identity=Id;Story->RegisterComponent();
+    }
     auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();
     auto* E=C->Enemy(Id);
     Target->Protected=!Hostile;
@@ -81,7 +87,8 @@ void AHearthwardCampaignActor::PresentLabor(FName Region,const FString& Status,b
     }
     LaborText->SetText(FText::FromString(Status));
     const auto* Player=UGameplayStatics::GetPlayerPawn(GetWorld(),0);
-    LaborLabel->SetVisibility(Player && FVector::Dist2D(Player->GetActorLocation(),GetActorLocation())<=1200);
+    const bool ShowLabel=Player && FVector::Dist2D(Player->GetActorLocation(),GetActorLocation())<=280;
+    LaborLabel->SetVisibility(ShowLabel);LaborLabel->SetComponentTickEnabled(ShowLabel);
     if(Working)LifePose=NAME_None;
     if(!LaborPresented || LaborWorking!=Working || CampLifePose!=LifePose)
     {
@@ -89,7 +96,17 @@ void AHearthwardCampaignActor::PresentLabor(FName Region,const FString& Status,b
             :TEXT("/Game/Characters/Brother/Animation/A_Brother_Idle.A_Brother_Idle");
         if(LifePose==TEXT("seated"))Clip=TEXT("/Game/Hearthward/Assets/TASK-109/CampLife/A_Brother_SeatedIdle.A_Brother_SeatedIdle");
         if(LifePose==TEXT("seated_talk"))Clip=TEXT("/Game/Hearthward/Assets/TASK-109/CampLife/A_Brother_SeatedTalk.A_Brother_SeatedTalk");
-        GetMesh()->PlayAnimation(LoadObject<UAnimSequence>(nullptr,Clip),true);
+        if(LifePose==TEXT("memento"))Clip=TEXT("/Game/Hearthward/Assets/TASK-126/A_Brother_Operate");
+        if(LifePose==TEXT("walking"))Clip=TEXT("/Game/Characters/Brother/Animation/A_Brother_Walk.A_Brother_Walk");
+        const bool WasSeated=CampLifePose==TEXT("seated") || CampLifePose==TEXT("seated_talk");
+        const bool Seated=LifePose==TEXT("seated") || LifePose==TEXT("seated_talk");
+        LifeTransitionNext=LoadObject<UAnimSequence>(nullptr,Clip);
+        if(WasSeated!=Seated)
+        {
+            auto* Transition=LoadObject<UAnimSequence>(nullptr,Seated?TEXT("/Game/Hearthward/Assets/TASK-126/A_Brother_SitDown"):TEXT("/Game/Hearthward/Assets/TASK-126/A_Brother_StandUp"));
+            GetMesh()->PlayAnimation(Transition,false);LifeTransitionRemaining=Transition->GetPlayLength();
+        }
+        else {GetMesh()->PlayAnimation(LifeTransitionNext,true);LifeTransitionRemaining=0;}
     }
     LaborPresented=true;LaborWorking=Working;CampLifePose=LifePose;
 }
@@ -101,10 +118,15 @@ bool AHearthwardCampaignActor::WalkTo(FVector Goal,float Acceptance)
 void AHearthwardCampaignActor::Tick(float Delta)
 {
     Super::Tick(Delta);
+    if(LifeTransitionRemaining>0 && (LifeTransitionRemaining-=Delta)<=0 && LifeTransitionNext)GetMesh()->PlayAnimation(LifeTransitionNext,true);
     if(!Enemy || !Target->CanAct() || GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->IsTraveling())
-    {CancelBowShot();return;}
+    {CancelBowShot();CancelMelee();NoiseEpoch.Invalidate();return;}
+    AttackIn-=Delta;
     UpdateBowShot(Delta);
-    AttackIn-=Delta;if((DecisionIn-=Delta)>0)return;DecisionIn=.4f;
+    const bool WasMelee=MeleeTarget.IsValid();
+    UpdateMelee(Delta);
+    if(WasMelee)return;
+    if((DecisionIn-=Delta)>0)return;DecisionIn=.4f;
     auto* C=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>();auto* E=C->Enemy(Identity);if(!E)return;
     if(auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
     {
@@ -122,12 +144,14 @@ void AHearthwardCampaignActor::Tick(float Delta)
     if(Player && Target->Memory.Seen.Contains(TEXT("player")))Threat=const_cast<APawn*>(Player);
     if(!Threat && Target->Memory.Seen.Contains(TEXT("brother")))
         for(TActorIterator<ACharacter> It(GetWorld());It;++It)if(*It!=Player && It->FindComponentByClass<UHearthwardSurvivalComponent>()){Threat=*It;break;}
+    if(Threat)if(const auto* S=Threat->FindComponentByClass<UHearthwardSurvivalComponent>();S && !S->Alive())Threat=nullptr;
     if(Threat && FVector::Dist2D(Threat->GetActorLocation(),E->Home)<30000)
     {
+        NoiseEpoch.Invalidate();
         const float Range=E->Kind==TEXT("archer")?1800:180;
         const float Distance=FVector::Distance(GetActorLocation(),Threat->GetActorLocation());
         if(Distance>Range)WalkTo(Threat->GetActorLocation(),Range*.8f);
-        else if(AttackIn<=0)
+        else if(AttackIn<=0 && (E->Kind==TEXT("archer") || HasAttackSpace(Threat)))
         {
             FCollisionQueryParams Query(SCENE_QUERY_STAT(CampaignAttack),false,this);Query.AddIgnoredActor(Threat);
             if(!GetWorld()->LineTraceTestByChannel(GetActorLocation()+FVector(0,0,40),Threat->GetActorLocation(),ECC_Visibility,Query))
@@ -143,14 +167,37 @@ void AHearthwardCampaignActor::Tick(float Delta)
                     BowTarget=Threat;BowRemaining=.6f;BowPower=Power;
                     BowEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
                 }
-                else if(auto* Combat=Threat->FindComponentByClass<UHearthwardCombatComponent>())Combat->Damage(Power,TEXT("body"),GetActorLocation(),Target->Heavy,false,FGuid::NewGuid());
-                else if(auto* S=Threat->FindComponentByClass<UHearthwardSurvivalComponent>())S->ReceiveDamage(Power,FGuid::NewGuid(),GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch());
-                if(auto* A=Cast<UHearthwardBrotherAnimInstance>(GetMesh()->GetAnimInstance()))A->PlayAttack();
+                else
+                {
+                    if(auto* AI=Cast<AAIController>(GetController()))AI->StopMovement();
+                    GetCharacterMovement()->StopMovementImmediately();
+                    MeleeTarget=Threat;MeleeTiming=HearthwardEnemyRole::Attack(Identity,E->Kind);
+                    MeleeElapsed=0;MeleePower=Power;MeleeCommitted=false;MeleeEvent=FGuid::NewGuid();
+                    MeleeEpoch=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+                    MeleeFacing=(Threat->GetActorLocation()-GetActorLocation()).GetSafeNormal2D();
+                    SetActorRotation(MeleeFacing.Rotation());
+                }
+                if(auto* A=Cast<UHearthwardBrotherAnimInstance>(GetMesh()->GetAnimInstance()))
+                {
+                    if(E->Kind==TEXT("archer"))A->PlayAttack();
+                    else A->PlayTimedAttack(MeleeTiming.Windup,MeleeTiming.Active,MeleeTiming.Recovery);
+                }
                 AttackIn=2.5f;
             }
+            else if(E->Kind==TEXT("archer"))
+            {
+                const FVector Side=FVector::CrossProduct((Threat->GetActorLocation()-GetActorLocation()).GetSafeNormal2D(),FVector::UpVector);
+                WalkTo(GetActorLocation()+Side*250,50);
+            }
+        }
+        else if(E->Kind!=TEXT("archer") && !HasAttackSpace(Threat))
+        {
+            const FVector Away=(GetActorLocation()-Threat->GetActorLocation()).GetSafeNormal2D();
+            WalkTo(Threat->GetActorLocation()+Away*260+FVector::CrossProduct(Away,FVector::UpVector)*120,50);
         }
         return;
     }
+    if(UpdateNoiseInvestigation(.4f))return;
     const auto& Memory=Target->Memory;
     if(Memory.InvestigationRemaining>0 && FVector::Dist2D(Memory.Investigation,E->Home)<30000)
     {
@@ -185,6 +232,8 @@ void AHearthwardCampaignActor::Tick(float Delta)
             Pause=0;E->PatrolPoint=(E->PatrolPoint+1)%4;Goal=Points[E->PatrolPoint];
         }
     }
+    if(Identity==TEXT("home_workshops_16"))if(const auto* Landing=C->State.Positions.Find(TEXT("round2_archer_landing")))
+    {WalkTo(*Landing+FVector(0,0,80));return;}
     FVector Floor;if(C->Ground(Goal,Floor))WalkTo(Floor+FVector(0,0,80));
 }
 
@@ -200,6 +249,7 @@ void AHearthwardCampaignActor::UpdateBowShot(float Delta)
     if(BowRemaining<=0)return;
     if(!BowTarget.IsValid() || BowEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
     {CancelBowShot();return;}
+    if(const auto* S=BowTarget->FindComponentByClass<UHearthwardSurvivalComponent>();S && !S->Alive()){CancelBowShot();return;}
     BowRemaining=FMath::Max(0.f,BowRemaining-Delta);
     if(BowRemaining>UE_KINDA_SMALL_NUMBER)return;
     BowRemaining=0;
@@ -213,4 +263,73 @@ void AHearthwardCampaignActor::UpdateBowShot(float Delta)
     auto* Arrow=GetWorld()->SpawnActor<AHearthwardProjectile>(Start,(Destination-Start).Rotation());
     Arrow->EnemyShooter=this;Arrow->Power=BowPower;Arrow->Event=FGuid::NewGuid();Arrow->Epoch=BowEpoch;
     Arrow->Velocity=(Destination-Start).GetSafeNormal()*3000;Arrow->RemainingRange=3000;Arrow->Lifetime=3;
+}
+
+bool AHearthwardCampaignActor::HasAttackSpace(AActor* Threat) const
+{
+    int32 Active=0;
+    for(TActorIterator<AHearthwardCampaignActor> It(GetWorld());It;++It)
+        if(*It!=this && It->Target->CanAct() && It->MeleeTarget.Get()==Threat && ++Active>=2)return false;
+    return true;
+}
+bool AHearthwardCampaignActor::CanInvestigateNoise() const
+{
+    if(!Enemy || !Target->CanAct() || !Target->Memory.Seen.IsEmpty() || MeleeTarget.IsValid() || BowRemaining>0 || NoiseEpoch.IsValid())return false;
+    for(const auto& Detection:Target->Memory.Detection)if(Detection.Value>=1)return false;
+    return true;
+}
+bool AHearthwardCampaignActor::BeginNoiseInvestigation(FVector Source,FGuid Epoch)
+{
+    if(!CanInvestigateNoise() || Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())return false;
+    const auto* E=GetWorld()->GetSubsystem<UHearthwardCampaignSubsystem>()->Enemy(Identity);
+    if(!E || FVector::Dist2D(Source,E->Home)>=30000 || !WalkTo(Source,100))return false;
+    NoisePoint=Source;NoiseEpoch=Epoch;NoiseTravelRemaining=30;NoiseInspectRemaining=6;
+    return true;
+}
+bool AHearthwardCampaignActor::UpdateNoiseInvestigation(float Delta)
+{
+    if(!NoiseEpoch.IsValid())return false;
+    if(NoiseEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())
+    {NoiseEpoch.Invalidate();return false;}
+    if(FVector::Dist2D(GetActorLocation(),NoisePoint)<=150)
+    {
+        if(auto* AI=Cast<AAIController>(GetController()))AI->StopMovement();
+        Target->Awareness=TEXT("查看声源");NoiseInspectRemaining-=Delta;
+        if(NoiseInspectRemaining>0)return true;
+    }
+    else
+    {
+        Target->Awareness=TEXT("调查声源");NoiseTravelRemaining-=Delta;
+        if(NoiseTravelRemaining>0 && WalkTo(NoisePoint,100))return true;
+    }
+    NoiseEpoch.Invalidate();return false;
+}
+void AHearthwardCampaignActor::CancelMelee()
+{
+    if(!MeleeTarget.IsValid())return;
+    MeleeTarget.Reset();MeleeCommitted=false;
+    if(auto* A=Cast<UHearthwardBrotherAnimInstance>(GetMesh()->GetAnimInstance()))A->CancelAttack();
+}
+void AHearthwardCampaignActor::UpdateMelee(float Delta)
+{
+    if(!MeleeTarget.IsValid())return;
+    auto* Victim=MeleeTarget.Get();
+    const auto* Survival=Victim->FindComponentByClass<UHearthwardSurvivalComponent>();
+    if(MeleeEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch() || (Survival && !Survival->Alive()))
+    {CancelMelee();return;}
+    const float Previous=MeleeElapsed;MeleeElapsed+=Delta;
+    // Crossing the contact boundary once also handles a long frame without applying two hits.
+    if(!MeleeCommitted && Previous<MeleeTiming.Windup+MeleeTiming.Active*.5f && MeleeElapsed>=MeleeTiming.Windup+MeleeTiming.Active*.5f)
+    {
+        MeleeCommitted=true;
+        const FVector Offset=Victim->GetActorLocation()-GetActorLocation();
+        FCollisionQueryParams Query(SCENE_QUERY_STAT(CampaignMeleeContact),false,this);Query.AddIgnoredActor(Victim);
+        if(Offset.Size()<=210 && FVector::DotProduct(Offset.GetSafeNormal2D(),MeleeFacing)>.5f
+            && !GetWorld()->LineTraceTestByChannel(GetActorLocation()+FVector(0,0,40),Victim->GetActorLocation(),ECC_Visibility,Query))
+        {
+            if(auto* Combat=Victim->FindComponentByClass<UHearthwardCombatComponent>())Combat->Damage(MeleePower,TEXT("body"),GetActorLocation(),Target->Heavy,false,MeleeEvent);
+            else if(auto* S=Victim->FindComponentByClass<UHearthwardSurvivalComponent>())S->ReceiveDamage(MeleePower,MeleeEvent,MeleeEpoch);
+        }
+    }
+    if(MeleeElapsed>=MeleeTiming.Duration())CancelMelee();
 }

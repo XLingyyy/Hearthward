@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "id": "TASK-118",
+  "title": "门栓、短梯与障碍捷径",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s08",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-126",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-118.json",
+    "docs/tasks/TASK-118.md",
+    "docs/handoffs/TASK-118.md",
+    "docs/qa/TASK-118/",
+    "docs/planning/TASK-118/",
+    "README.md",
+    "Source/Hearthward/Environment/HearthwardShortcutActor.h",
+    "Source/Hearthward/Environment/HearthwardShortcutActor.cpp",
+    "Source/Hearthward/Tests/Round2ShortcutTests.cpp",
+    "art_source/TASK-118/",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Environment/",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Resources/Data/experience.json",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_Winch.uasset",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_Ladder.uasset",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_Beam.uasset",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_Latch.uasset",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_NoisePlate.uasset",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_Lamp.uasset",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_ToolsMemento.uasset",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_HerbRecord.uasset",
+    "Content/Hearthward/Assets/TASK-118/SM_Round2_WatchMemento.uasset",
+    "Content/Hearthward/Assets/TASK-118/M_OldTimber.uasset",
+    "Content/Hearthward/Assets/TASK-118/M_ForgedIron.uasset",
+    "Content/Hearthward/Assets/TASK-118/M_Hemp.uasset",
+    "Content/Hearthward/Assets/TASK-118/M_AgedBronze.uasset",
+    "Content/Hearthward/Assets/TASK-118/M_LinenRecord.uasset"
+  ],
+  "forbidden_paths": [
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T118-C01 [NATIVE] 从错误一侧、过远处与动作中断时开门。 → 拒绝非法入口；只有合法完成才改变状态和成本。",
+    "T118-C02 [PIE] 分别开门、放梯、移障碍后走通来回。 → 碰撞和导航同步，玩家不穿模；无必须传送才能退出的位置。",
+    "T118-C03 [PIE] 弟弟跟随及救援人物分别往返。 → 不留断链、头部碰撞或导航无限重试。",
+    "T118-C04 [SAVE] 新开通后保存重启、流送卸载再返回。 → 捷径保持，与原奖励去重；旧档不存在状态时采用安全默认。",
+    "T118-C05 [NATIVE] 开通捷径但保留区域敌人与旗帜。 → 不会增加清敌、自动插旗或提前触发胜利。",
+    "T118-C06 [PLAY] 记录同目标首次去程与开通后返程。 → 返程出现实际可用的更短或更安全路线，而非仅地图标记改变。"
+  ],
+  "non_goals": [
+    "不做全地图破坏、自由搭桥或传送替代行走。",
+    "不改四区胜利条件或既有时间推进。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G1；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。",
+    "2026-10-14 用户全包实施授权下登记14个精确新资产包；其余Content保持禁写；通过原生UE MCP导入。"
+  ]
+}

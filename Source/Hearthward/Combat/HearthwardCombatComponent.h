@@ -66,6 +66,7 @@ public:
     void SelectRanged(bool Value) { State.RangedSelected=Value; }
     bool Guarding() const { return Guard.Held; }
     float MovementMultiplier() const;
+    FVector2D AttackMovementInput(FVector2D Input) const;
     bool CanSave() const;
     void InterruptTravel() { Cancel(); DropBody(); Guard.Release(); Aiming=false; }
     bool Damage(float Raw,FName Part,FVector Source,bool Heavy=false,bool Projectile=false,FGuid Event=FGuid());

@@ -7,6 +7,7 @@
 #include "../AI/HearthwardNPCMemory.h"
 #include "../Survival/HearthwardSurvivalState.h"
 #include "../Inventory/HearthwardDroppedEquipment.h"
+#include "../Interaction/HearthwardPersistentInteractionState.h"
 #include "HearthwardSaveGame.generated.h"
 
 USTRUCT(BlueprintType)
@@ -98,6 +99,7 @@ struct FHearthwardWorldSave
     UPROPERTY() FString Nature;
     UPROPERTY() FString Campaign;
     UPROPERTY() TMap<FString,int32> HarvestedResources;
+    UPROPERTY() FHearthwardPersistentInteractionState Interactions;
 };
 
 template<> struct TStructOpsTypeTraits<FHearthwardWorldSave> : TStructOpsTypeTraitsBase2<FHearthwardWorldSave>
@@ -124,14 +126,15 @@ class HEARTHWARD_API UHearthwardSaveGame : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Schema = 9;
+    UPROPERTY() int32 Schema = 10;
     UPROPERTY() FString WriterVersion;
     UPROPERTY() TArray<FHearthwardSavePoint> Points;
 };
 
 namespace HearthwardSave
 {
-    constexpr int32 CurrentSchema = 9;
+    constexpr int32 CurrentSchema = 10;
+    constexpr uint32 CurrentMagic = 0x4857533A;
     constexpr int32 NPCStateVersion = 3;
     constexpr int32 MaxPoints = 50;
     // INDEX_NONE means no capacity. An index equal to Num means append.

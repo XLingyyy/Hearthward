@@ -1,0 +1,153 @@
+{
+  "status": "COMPLETE_BASELINE_FAIL",
+  "run": ".agent-local/qa/TASK-133/performance/camp-cpu-warmframes60-01",
+  "source_identity": ".agent-local/qa/TASK-133/performance/camp-cpu-warmframes60-01/source-identity.json",
+  "samples": 60,
+  "semantic_failures": 0,
+  "terminal_p95": 34.51209050000034,
+  "getter_p95": 34.79396580000321,
+  "first_paint": "NOT_RUN",
+  "warm_frame_report": {
+    "numeric_frames": 65522,
+    "seconds": 945.8844606,
+    "p99_ms": 20.332,
+    "one_percent_low_fps": 39.214915945881046,
+    "over_50ms": 29,
+    "over_50ms_fraction": 0.00044259943225176277,
+    "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames",
+    "dropped_frames": 0,
+    "frame_exclusions": [],
+    "scope": "All frames from before the first warm request through the final observed terminal response, including UI queries and inter-request goal clearing. No execution or viewport first-paint credit.",
+    "diagnostic_frame_target_pass": false,
+    "csv_metadata": {
+      "hasheaderrowatend": "1",
+      "eventtimestamps": "1",
+      "platform": "Windows",
+      "config": "Development",
+      "buildversion": "++UE5+Release-5.8-CL-56702186",
+      "engineversion": "5.8.2-56702186+++UE5+Release-5.8",
+      "enginereleaseversion": "5.8.2",
+      "os": "Windows 11 (24H2) [10.0.26100.4351] ",
+      "cpu": "GenuineIntel|13th Gen Intel(R) Core(TM) i7-13650HX",
+      "pgoenabled": "0",
+      "pgoprofilingenabled": "0",
+      "ltoenabled": "0",
+      "asan": "0",
+      "mergedmodules": "0",
+      "compacttset": "0",
+      "loginid": "a82aa7934b238d42e0d65a84d8c108c4",
+      "llm": "0",
+      "zenstreaming": "0",
+      "systemresolution.resx": "1920",
+      "systemresolution.resy": "1080",
+      "extradevelopmentmemorymb": "0",
+      "verbatimrhiname": "D3D12",
+      "rhiname": "D3D12",
+      "rhifeaturelevel": "SM6",
+      "shaderplatform": "PCD3D_SM6",
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "gpudriver": "577.00",
+      "deviceprofile": "WindowsEditor",
+      "largeworldcoordinates": "1",
+      "raytracing": "0",
+      "streamingpoolsizemb": "2048",
+      "csvid": "A5AD714D49A445AAED40A29B841D227B",
+      "targetframerate": "165",
+      "starttimestamp": "1792058086",
+      "namedevents": "0",
+      "hasgtstalls": "0",
+      "vsyncenabled": "0",
+      "csvbench_timingstat_ns": "59.752500",
+      "csvbench_customstat_ns": "29.565000",
+      "csvbench_duration_ms": "3.572900",
+      "endtimestamp": "1792059031",
+      "captureduration": "945.884894",
+      "csvmaxfilebytesreached": "0"
+    }
+  },
+  "clock_start": {
+    "ActivePlaySeconds": 469.2143119201064,
+    "ElapsedCalendarMinutes": 949.2143119201064,
+    "ElapsedDays": 0,
+    "MinuteOfDay": 709.2143119201064,
+    "DisplayDay": 2,
+    "Daylight": 1
+  },
+  "clock_end": {
+    "ActivePlaySeconds": 1414.9590507261455,
+    "ElapsedCalendarMinutes": 1894.9590507261455,
+    "ElapsedDays": 1,
+    "MinuteOfDay": 214.9590507261455,
+    "DisplayDay": 3,
+    "Daylight": 0
+  },
+  "clock_scope": "Natural clock crosses day and night; complete sequence is not a pure camp_day slot. No time freezing or frame exclusions.",
+  "transitions": [
+    {
+      "from": 4,
+      "to": 5,
+      "changes": [
+        {
+          "field": ".npc_observation.navigation_rebuilding",
+          "before": false,
+          "after": true
+        }
+      ],
+      "terminal_seconds": 35.24076519999653,
+      "model_timing": {
+        "prompt_ms": 21531.25,
+        "prompt_tokens": 516
+      }
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "changes": [
+        {
+          "field": ".npc_observation.navigation_rebuilding",
+          "before": true,
+          "after": false
+        }
+      ],
+      "terminal_seconds": 35.823856299997715,
+      "model_timing": {
+        "prompt_ms": 21166.74,
+        "prompt_tokens": 516
+      }
+    },
+    {
+      "from": 41,
+      "to": 42,
+      "changes": [
+        {
+          "field": ".npc_observation.navigation_rebuilding",
+          "before": false,
+          "after": true
+        }
+      ],
+      "terminal_seconds": 35.44529799999873,
+      "model_timing": {
+        "prompt_ms": 21114.4,
+        "prompt_tokens": 516
+      }
+    },
+    {
+      "from": 42,
+      "to": 43,
+      "changes": [
+        {
+          "field": ".npc_observation.navigation_rebuilding",
+          "before": true,
+          "after": false
+        }
+      ],
+      "terminal_seconds": 34.51209050000034,
+      "model_timing": {
+        "prompt_ms": 21097.08,
+        "prompt_tokens": 516
+      }
+    }
+  ],
+  "model_timing_count": 61,
+  "observed_cause": "Only navigation_rebuilding toggles in observed context transitions; each corresponds to larger prompt reprocessing and a >30-second terminal latency. This identifies the repeated warm prefill trigger, not the cause of Vulkan cold timeout."
+}

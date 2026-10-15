@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "id": "TASK-122",
+  "title": "粮窖潜入：观察、明暗与双路径关卡",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-117",
+    "TASK-118",
+    "TASK-120",
+    "TASK-121",
+    "TASK-126",
+    "TASK-127",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-COMBAT.md",
+    "docs/planning/TASK-112-133/contracts/C-ENV.md",
+    "docs/planning/TASK-112-133/contracts/C-COOP.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-122.json",
+    "docs/tasks/TASK-122.md",
+    "docs/handoffs/TASK-122.md",
+    "docs/qa/TASK-122/",
+    "docs/planning/TASK-122/",
+    "README.md",
+    "Source/Hearthward/Tests/Round2CellarSliceTests.cpp",
+    "art_source/TASK-122/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Interaction/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Environment/",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignSubsystem.h",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/Survival/HearthwardSurvivalComponent.h",
+    "Source/Hearthward/Survival/HearthwardSurvivalComponent.cpp",
+    "Source/Hearthward/Experience/HearthwardPlayerSettings.h",
+    "Source/Hearthward/Experience/HearthwardPlayerSettings.cpp",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenSettings.cpp",
+    "Resources/Data/experience.json",
+    "Source/Hearthward/Building/HearthwardHometownFortress.cpp",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T122-C01 [PLAY] 分别用不主动战斗的侧路和正面战斗取得目标。 → 目标可合法完成，两路线决策不同；潜入不伪造清敌/占领。",
+    "T122-C02 [PIE] 熄灯、诱导与视觉确认交替发生。 → 感知和画面一致；已确认敌情不会被灯灭清空。",
+    "T122-C03 [SAVE] 加载已取完原粮窖物资的旧档进入新版。 → 原物资不再发，新目标只按自己的 ID 与条件开放。",
+    "T122-C04 [PLAY] 从内室移障后用新出口返程。 → 双方可汇合，任一时点中止不软锁，不需传送脱困。",
+    "T122-C05 [NATIVE] 背包满、重复交付、取消、连续读档后交互。 → 容量与唯一奖励保持，没有负数或重复物品。",
+    "T122-C06 [PLAY] 与作坊背靠背试玩并比较。 → 试玩者能描述两段的玩法差异；不以不同贴图作为差异证据。"
+  ],
+  "non_goals": [
+    "不做程序生成地牢、永久敌营复活或无限粮食。",
+    "不新增高空悬吊/任意物理谜题。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G2；优先级 P1；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

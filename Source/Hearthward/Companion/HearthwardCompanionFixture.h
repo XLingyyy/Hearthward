@@ -69,6 +69,7 @@ public:
     void DiscardProposal(const FHearthwardCommandTicket& Ticket) { Command.DiscardPending(Ticket); }
 
     bool EquipmentBusy() const { return bSettling || Command.IsCurrent(Command.GetActive().Epoch); }
+    TWeakObjectPtr<AActor> CooperationOwner;
     bool Escorting(FName Person) const
     { return Command.Goal.Intent==TEXT("escort") && Command.Goal.Item==Person
         && (Phase==EHearthwardCompanionPhase::GoingToSource || Phase==EHearthwardCompanionPhase::GoingToPlayer); }

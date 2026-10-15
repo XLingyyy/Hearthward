@@ -1,0 +1,97 @@
+{
+  "status": "TIMEOUT_PATH_CONFIRMED_ROOT_CAUSE_UNRESOLVED",
+  "observed": [
+    {
+      "run": "camp-management-vulkan-02",
+      "engine_events": [
+        "[2026.10.15-09.23.42:709][213]LogTemp: Display: Local AI runtime started pid=30912 backend=vulkan",
+        "[2026.10.15-09.23.56:206][207]LogTemp: Display: Local AI runtime ready pid=30912",
+        "[2026.10.15-09.23.56:315][215]LogTemp: Display: Local AI context accepted: tier=full_relevant tokens=2519 dropped=unrelated_current_task",
+        "[2026.10.15-09.23.56:315][215]LogTemp: Display: Local AI generation request #1 tier=full_relevant input_tokens=2519",
+        "[2026.10.15-09.25.56:328][345]LogTemp: Warning: Local AI HTTP failed: success=0 code=0 elapsed=133.64s",
+        "[2026.10.15-09.25.56:345][345]LogTemp: Warning: Local AI failure [MODEL_UNAVAILABLE]: 本地推理失败或超时，未执行动作"
+      ],
+      "model_tail": [
+        "0.13.089.304 I srv  llama_server: model loaded",
+        "0.13.089.331 I srv  llama_server: listening on http://127.0.0.1:65327",
+        "0.13.385.406 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1",
+        "0.13.399.321 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0",
+        "1.02.568.696 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   1882, progress = 0.75, t =  49.17 s / 38.28 tokens per second",
+        "1.13.187.255 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   2003, progress = 0.80, t =  59.79 s / 33.50 tokens per second",
+        "1.26.602.873 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   2500, progress = 0.99, t =  73.20 s / 34.15 tokens per second",
+        "1.33.858.030 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   2515, progress = 1.00, t =  80.46 s / 31.26 tokens per second"
+      ],
+      "last_resource": {
+        "at_monotonic": 35152.4289006,
+        "time": 1792056354.7562158,
+        "ue_pid": 8792,
+        "model_pids": [
+          30912
+        ],
+        "scope": "CIM process RAM/pagefile + OS free/virtual RAM + whole GPU telemetry; no per-process VRAM attribution",
+        "memory": {
+          "exit_code": 0,
+          "output": "{\"Memory\":{\"FreePhysicalMemory\":1513648,\"TotalVisibleMemorySize\":16387188,\"TotalVirtualMemorySize\":32774376,\"FreeVirtualMemory\":3570036},\"Processes\":[{\"ProcessId\":8792,\"WorkingSetSize\":5076279296,\"PageFileUsage\":9035692},{\"ProcessId\":30912,\"WorkingSetSize\":2818998272,\"PageFileUsage\":2736032}]}",
+          "error": ""
+        },
+        "gpu": {
+          "exit_code": 0,
+          "output": "2026/10/15 17:25:55.628, 86, 70.92 W, 6720 MiB, 97 %",
+          "error": ""
+        }
+      }
+    },
+    {
+      "run": "camp-vulkan-warmframes60-01",
+      "engine_events": [
+        "[2026.10.15-09.48.44:323][177]LogTemp: Display: Local AI runtime started pid=496 backend=vulkan",
+        "[2026.10.15-09.48.57:076][186]LogTemp: Display: Local AI runtime ready pid=496",
+        "[2026.10.15-09.48.57:148][190]LogTemp: Display: Local AI context accepted: tier=full_relevant tokens=2519 dropped=unrelated_current_task",
+        "[2026.10.15-09.48.57:148][190]LogTemp: Display: Local AI generation request #1 tier=full_relevant input_tokens=2519",
+        "[2026.10.15-09.50.57:162][397]LogTemp: Warning: Local AI HTTP failed: success=0 code=0 elapsed=132.88s",
+        "[2026.10.15-09.50.57:180][397]LogTemp: Warning: Local AI failure [MODEL_UNAVAILABLE]: 本地推理失败或超时，未执行动作"
+      ],
+      "model_tail": [
+        "0.12.220.128 I srv  llama_server: model loaded",
+        "0.12.220.321 I srv  llama_server: listening on http://127.0.0.1:64364",
+        "0.12.526.905 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1",
+        "0.12.538.944 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0",
+        "0.56.624.890 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   1882, progress = 0.75, t =  44.09 s / 42.69 tokens per second",
+        "1.05.481.349 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   2003, progress = 0.80, t =  52.94 s / 37.83 tokens per second",
+        "1.17.487.398 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   2500, progress = 0.99, t =  64.95 s / 38.49 tokens per second",
+        "1.24.573.176 I slot print_timing: id  0 | task 0 | prompt processing, n_tokens =   2515, progress = 1.00, t =  72.03 s / 34.91 tokens per second"
+      ],
+      "last_resource": {
+        "at_monotonic": 36658.1388335,
+        "time": 1792057860.4661486,
+        "ue_pid": 33492,
+        "model_pids": [
+          496
+        ],
+        "scope": "CIM process RAM/pagefile + OS free/virtual RAM + whole GPU telemetry; no per-process VRAM attribution",
+        "memory": {
+          "exit_code": 0,
+          "output": "{\"Memory\":{\"FreePhysicalMemory\":4611564,\"TotalVisibleMemorySize\":16387188,\"TotalVirtualMemorySize\":32774376,\"FreeVirtualMemory\":6071396},\"Processes\":[{\"ProcessId\":33492,\"WorkingSetSize\":4478525440,\"PageFileUsage\":9064988}]}",
+          "error": ""
+        },
+        "gpu": {
+          "exit_code": 0,
+          "output": "2026/10/15 17:51:01.292, 87, 73.97 W, 5048 MiB, 97 %",
+          "error": ""
+        }
+      }
+    }
+  ],
+  "confirmed": "Runtime logs show model ready and one request, then success=0 HTTP code=0 at the configured 120-second request timeout. Callback calls StopServer, which invokes Runtime.Stop -> TerminateProc. Subsequent PID=0 and not-warm are expected cleanup consequences; logs do not establish an independent model crash. Submission elapsed includes model-load time. No action committed.",
+  "source": [
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp:551",
+    "Source/Hearthward/AI/HearthwardLocalAISubsystem.cpp:560",
+    "Source/Hearthward/AI/HearthwardLocalAIRuntime.cpp:109"
+  ],
+  "unproven": [
+    "Whether GPU/CPU contention, microbatch size, thermal throttling or memory pressure caused the slow inference. Whole-GPU telemetry alone cannot attribute per-process VRAM or prove throttling."
+  ],
+  "possible_experiment": "After current frozen CPU capture, isolated LLAMA_ARG_UBATCH=128 Vulkan diagnostic with identical model/quality/context/threads/GPU layers. Keep baseline and trial identities distinct; no baseline credit unless separately evaluated.",
+  "official_reference": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+  "local_help": "Local CPU llama-server --help confirms physical batch default512 and LLAMA_ARG_UBATCH; no model loaded for this read-only check."
+}

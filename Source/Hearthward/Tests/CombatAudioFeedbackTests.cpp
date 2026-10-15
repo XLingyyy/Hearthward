@@ -1,6 +1,9 @@
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Companion/HearthwardCompanionFixture.h"
 #include "../Experience/HearthwardPresentationComponent.h"
+#include "../Experience/HearthwardFootContactNotify.h"
+#include "../Campaign/HearthwardCampaignActor.h"
+#include "../Campaign/HearthwardCampaignSubsystem.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
 #include "../Inventory/HearthwardStorageSubsystem.h"
@@ -301,5 +304,34 @@ bool FCombatActualEmptySwing099Test::RunTest(const FString&)
     if(Swings.Num()==Committed+1)TestTrue(TEXT("Fresh swing belongs to the new timeline"),Swings.Last().Epoch==F.Storage->GetTimelineEpoch());
     TestEqual(TEXT("Empty world never disguises its swing as a hit or block"),OtherReceipts,0);
     F.Combat->OnCombatSucceeded.Remove(Handle);return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2PresentationBoundaryTest,"Hearthward.Round2.Audio.PresentationDoesNotDispatchNoiseOrChangeClock",
+    EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FRound2PresentationBoundaryTest::RunTest(const FString&)
+{
+    FPublicAttackWorld F;
+    auto* Campaign=F.World->GetSubsystem<UHearthwardCampaignSubsystem>();Campaign->State.Initialize();
+    auto* Record=Campaign->Enemy(TEXT("field_slice_01"));
+    if(!TestNotNull(TEXT("Uses an existing campaign soldier"),Record))return false;
+    Record->Home=FVector(400,0,90);Record->Combat.Position=Record->Home;Record->Located=true;
+    auto* Enemy=F.World->SpawnActor<AHearthwardCampaignActor>(Record->Home,FRotator::ZeroRotator);Enemy->Initialize(Record->Id,true);
+    if(!TestTrue(TEXT("Soldier is eligible for a real fixed-source investigation"),Enemy->CanInvestigateNoise()))return false;
+    const float Health=Enemy->Target->Health;const auto Bag=F.Bag->Snapshot();
+    FHearthwardFootContactReceipt Foot;Foot.SuccessId=FGuid::NewGuid();Foot.Epoch=F.Storage->GetTimelineEpoch();
+    Foot.Frame=GFrameCounter;Foot.Source=F.Player;Foot.FootBone=TEXT("foot_l");Foot.Position=FVector::ZeroVector;
+    TestTrue(TEXT("Ordinary foot receipt reaches the real sound consumer"),F.Presentation->FootContactSucceeded(Foot));
+    TestTrue(TEXT("Noise cue audio alone is accepted by the presentation consumer"),
+        F.Presentation->InteractionSucceeded(TEXT("interaction.noise"),FGuid::NewGuid(),F.Player->GetActorLocation()));
+    TestTrue(TEXT("Footstep and cue playback do not start an investigation or detection"),
+        Enemy->CanInvestigateNoise() && Enemy->Target->Memory.Seen.IsEmpty() && Enemy->Target->Memory.Detection.IsEmpty());
+    TestEqual(TEXT("Presentation audio does not damage a nearby enemy"),Enemy->Target->Health,Health);
+    const auto After=F.Bag->Snapshot();
+    TestTrue(TEXT("Presentation does not create or consume inventory"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Bag,&After,0));
+    F.Combat->HitTarget(Enemy->Target,1,TEXT("body"),false,FGuid::NewGuid());
+    TestEqual(TEXT("Only actual combat settles one point of damage"),Enemy->Target->Health,Health-1);
+    TestTrue(TEXT("Real hit activates the presentation impact"),F.Presentation->ImpactRemaining>0);
+    TestEqual(TEXT("Impact does not change world time dilation"),F.World->GetWorldSettings()->GetEffectiveTimeDilation(),1.f);
+    TestEqual(TEXT("Impact does not change player time dilation"),F.Player->CustomTimeDilation,1.f);
+    return true;
 }
 #endif

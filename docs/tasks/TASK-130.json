@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "id": "TASK-130",
+  "title": "有限陈列与营地个性化",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-123",
+    "TASK-124",
+    "TASK-125",
+    "TASK-126",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-130.json",
+    "docs/tasks/TASK-130.md",
+    "docs/handoffs/TASK-130.md",
+    "docs/qa/TASK-130/",
+    "docs/planning/TASK-130/",
+    "README.md",
+    "Source/Hearthward/Camp/HearthwardDecorationState.h",
+    "Source/Hearthward/Camp/HearthwardDecorationComponent.h",
+    "Source/Hearthward/Camp/HearthwardDecorationComponent.cpp",
+    "Source/Hearthward/Tests/Round2CampDecorationTests.cpp",
+    "art_source/TASK-130/",
+    "Source/Hearthward/Camp/",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/UI/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.h",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignExploration.cpp",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "Resources/Data/round2_people.json",
+    "Source/Hearthward/Tests/Round2PersonalStoryTests.cpp",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T130-C01 [PIE] 在可用槽位预览、旋转允许方向、取消和确认。 → 取消无成本，确认后只出现一个实例，非法位置明确拒绝。",
+    "T130-C02 [NATIVE] 在两营地连续放置同一纪念物。 → 一次只允许一个正式展示位置，移动不复制库存或事实。",
+    "T130-C03 [PIE] 检查全部槽位附近床、岗位与救援角色路径。 → 六个槽位均不阻断关键行为，禁止越界任意摆放。",
+    "T130-C04 [SAVE] 升级营地、解锁故乡、跨区和存读档。 → 装饰与三档外观共存，不重置选择或串到另一营地。",
+    "T130-C05 [NATIVE] 缺失物件、占用槽位、未知 ID 的档副本。 → 按冻结策略保留原档并提示，禁止静默吞掉唯一物件。",
+    "T130-C06 [PLAY] 试玩者选择纪念物与位置并再次回营。 → 能认出自己的布置；不需要额外刷装饰币或维护状态条。"
+  ],
+  "non_goals": [
+    "不移动床位/岗位、不创建装饰商城、稀有度抽取或数值加成。",
+    "不做两营地物资运输和无限展示复制。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G3；优先级 P2；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

@@ -81,15 +81,19 @@ bool FSavePartialMaterialRevision071Test::RunTest(const FString&)
     };
     const auto ReadHistoricalRevisionArchive=[&](const FHearthwardSavePoint& Point,UHearthwardSaveGame*& Out)
     {
-        auto* Pool=NewObject<UHearthwardSaveGame>();Pool->Points={Point};
+        auto* Pool=NewObject<UHearthwardSaveGame>();Pool->Schema=9;Pool->Points={Point};
         auto* Property=FindFProperty<FInt64Property>(FHearthwardWorldSave::StaticStruct(),GET_MEMBER_NAME_CHECKED(FHearthwardWorldSave,CommandRevision));
+        auto* Interactions=FindFProperty<FStructProperty>(FHearthwardWorldSave::StaticStruct(),GET_MEMBER_NAME_CHECKED(FHearthwardWorldSave,Interactions));
         if(!TestNotNull(TEXT("Historical archive fixture locates the actual tagged revision field"),Property))return false;
+        if(!TestNotNull(TEXT("Historical schema9 has no Round2 interaction field"),Interactions))return false;
         TArray<uint8> Payload,Bytes;
         bool Written=false;
         {
             const bool WasTransient=Property->HasAnyPropertyFlags(CPF_Transient);
+            const bool InteractionsWereTransient=Interactions->HasAnyPropertyFlags(CPF_Transient);
             Property->SetPropertyFlags(CPF_Transient);
-            ON_SCOPE_EXIT { if(!WasTransient)Property->ClearPropertyFlags(CPF_Transient); };
+            Interactions->SetPropertyFlags(CPF_Transient);
+            ON_SCOPE_EXIT { if(!WasTransient)Property->ClearPropertyFlags(CPF_Transient); if(!InteractionsWereTransient)Interactions->ClearPropertyFlags(CPF_Transient); };
             Written=UGameplayStatics::SaveGameToMemory(Pool,Payload);
         }
         if(!TestTrue(TEXT("Standard SaveGame writer creates an archive with the revision tag absent"),Written))return false;

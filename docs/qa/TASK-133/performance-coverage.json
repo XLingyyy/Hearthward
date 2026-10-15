@@ -1,0 +1,462 @@
+{
+  "scope": "Coverage index only; each run keeps its own identity and complete original frames. No pooling or best-result selection.",
+  "measured_slots": 10,
+  "unrun_slots": 0,
+  "slots": [
+    {
+      "scene": "camp_day",
+      "backend": "cpu",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "camp-day-cpu-01",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-01",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-01\\source-identity.json",
+          "error": null
+        },
+        {
+          "run": "camp-day-cpu-context20-01",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-context20-01",
+          "frame_status": "NOT_MEASURED",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-context20-01\\source-identity.json",
+          "error": "<HTTPError 400: ''>",
+          "scope": "20-request CPU prompt-context diagnostic, not a formal 60-sample latency slot. Cold frames only; no full warm-frame credit."
+        },
+        {
+          "run": "camp-day-cpu-warm60-01",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-warm60-01",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-warm60-01\\source-identity.json",
+          "error": null,
+          "scope": "Cold frames only; warm sequence and clock transitions recorded separately where present."
+        },
+        {
+          "run": "camp-day-cpu-context20-02",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-context20-02",
+          "error": null,
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-cpu-context20-02\\source-identity.json",
+          "scope": "20-request CPU prompt-context diagnostic, not a formal 60-sample latency slot. Cold frames only; no full warm-frame credit."
+        },
+        {
+          "run": "camp-cpu-warmframes60-01",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local/qa/TASK-133/performance/camp-cpu-warmframes60-01",
+          "identity": ".agent-local/qa/TASK-133/performance/camp-cpu-warmframes60-01/source-identity.json",
+          "frame_status": "FAIL",
+          "scope": "Cold capture starts in daytime. Separate complete 60-request warm window crosses day/night naturally; do not classify the whole warm window as pure camp_day. All60 semantic PASS; terminal p95 34.512s FAIL, whole warm frames FAIL."
+        },
+        {
+          "run": "camp-cpu-prefix-warmframes60-01",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "frame_status": "FAIL",
+          "source": ".agent-local/qa/TASK-133/performance/camp-cpu-prefix-warmframes60-01",
+          "identity": ".agent-local/qa/TASK-133/performance/camp-cpu-prefix-warmframes60-01/source-identity.json",
+          "scope": "Withdrawn ordering experiment.60/60 semantics, terminal p95 31.918s FAIL, full warm frames FAIL. Natural day/night; not pure camp_day. No cache-prefill improvement established."
+        },
+        {
+          "run": "camp-cpu-ubatch128-warm60-01",
+          "result": "OPERATOR_STOP_EFFECTIVE_PARAMETER_UNVERIFIED",
+          "source": ".agent-local/qa/TASK-133/performance/camp-cpu-ubatch128-warm60-01",
+          "scope": "5 completed warm samples; no formal p95, full warm-window or optimization credit; original production default unchanged."
+        }
+      ]
+    },
+    {
+      "scene": "camp_day",
+      "backend": "vulkan",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "camp-day-vulkan-01",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-01",
+          "frame_status": "NOT_MEASURED",
+          "identity": "See per-run original identity binding",
+          "error": "TimeoutError('timed out')"
+        },
+        {
+          "run": "camp-day-vulkan-02",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-02",
+          "frame_status": "NOT_MEASURED",
+          "identity": "See per-run original identity binding",
+          "error": "RuntimeError('Checkpoint has no completed campfire; cannot prepare daylight by a normal wait action')"
+        },
+        {
+          "run": "camp-day-vulkan-03",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-03",
+          "frame_status": "NOT_MEASURED",
+          "identity": "See per-run original identity binding",
+          "error": "RuntimeError('Normal campfire placement is unavailable; see actual building feedback')"
+        },
+        {
+          "run": "camp-day-vulkan-04",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-04",
+          "frame_status": "NOT_MEASURED",
+          "identity": "See per-run original identity binding",
+          "error": "<HTTPError 400: ''>"
+        },
+        {
+          "run": "camp-day-vulkan-05",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-05",
+          "frame_status": "NOT_MEASURED",
+          "identity": "See per-run original identity binding",
+          "error": "RuntimeError('Timed harvest produced no usable material')"
+        },
+        {
+          "run": "camp-day-vulkan-06",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-06",
+          "frame_status": "NOT_MEASURED",
+          "identity": "See per-run original identity binding",
+          "error": "RuntimeError('Normal campfire placement is unavailable; see actual building feedback')"
+        },
+        {
+          "run": "camp-day-vulkan-07",
+          "result": "CAPTURE_COMPLETE_MODEL_FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-07",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-07\\source-identity.json",
+          "error": null
+        },
+        {
+          "run": "camp-day-vulkan-08",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-08",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-08\\source-identity.json",
+          "error": null
+        },
+        {
+          "run": "camp-day-vulkan-09",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-09",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-09\\source-identity.json",
+          "error": "RuntimeError('Candidate ID was not a reflected GUID string')"
+        },
+        {
+          "run": "camp-day-vulkan-10",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-10",
+          "frame_status": "NOT_MEASURED",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-10\\source-identity.json",
+          "error": "URLError(TimeoutError('timed out'))"
+        },
+        {
+          "run": "camp-day-vulkan-11",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-11",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-11\\source-identity.json",
+          "error": null
+        },
+        {
+          "run": "camp-day-vulkan-active-level-01",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-active-level-01",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-active-level-01\\source-identity.json",
+          "error": null,
+          "scope": "Cold frames only; warm sequence and clock transitions recorded separately where present."
+        },
+        {
+          "run": "camp-day-vulkan-warm60-01",
+          "result": "FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-warm60-01",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-warm60-01\\source-identity.json",
+          "error": "ConnectionResetError(10054, '远程主机强迫关闭了一个现有的连接。', None, 10054, None)",
+          "scope": "Cold frames only; warm sequence and clock transitions recorded separately where present."
+        },
+        {
+          "run": "camp-day-vulkan-warm60-02",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-warm60-02",
+          "frame_status": "FAIL",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-day-vulkan-warm60-02\\source-identity.json",
+          "error": null,
+          "scope": "Cold frames only; warm sequence and clock transitions recorded separately where present."
+        },
+        {
+          "run": "camp-vulkan-warmframes60-01",
+          "source": ".agent-local/qa/TASK-133/performance/camp-vulkan-warmframes60-01",
+          "result": "CAPTURE_COMPLETE_MODEL_FAILED",
+          "scope": "Attempted full warm-frame window; initial cold request timed out and model shut down. Zero submitted warm samples; no warm performance credit.",
+          "identity": ".agent-local/qa/TASK-133/performance/camp-vulkan-warmframes60-01/source-identity.json"
+        }
+      ]
+    },
+    {
+      "scene": "camp_night",
+      "backend": "cpu",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "camp-night-cpu-01",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-night-cpu-01",
+          "frame_status": "FAIL",
+          "identity": "See per-run original identity binding",
+          "error": null
+        },
+        {
+          "run": "camp-night-cpu-02",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-night-cpu-02",
+          "frame_status": "FAIL",
+          "identity": "See per-run original identity binding",
+          "error": null
+        },
+        {
+          "run": "camp-night-cpu-03",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-night-cpu-03",
+          "frame_status": "FAIL",
+          "identity": "See per-run original identity binding",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scene": "camp_night",
+      "backend": "vulkan",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "camp-night-vulkan-01",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-night-vulkan-01",
+          "frame_status": "FAIL",
+          "identity": "See per-run original identity binding",
+          "error": null
+        },
+        {
+          "run": "camp-night-vulkan-02",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-night-vulkan-02",
+          "frame_status": "FAIL",
+          "identity": "See per-run original identity binding",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scene": "combined_combat",
+      "backend": "cpu",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "combined-combat-cpu-01",
+          "source": ".agent-local/qa/TASK-133/performance/combined-combat-cpu-01",
+          "result": "FAILED",
+          "error": "RuntimeError('Actual navigation did not reach its projected segment within20s; no teleport fallback')",
+          "request_count": 0,
+          "process_exit_verified": true,
+          "sample_count": 0,
+          "player_down_observed": false,
+          "scope": "Failed attempted scene; no continuous combat or valid rain-stealth joint-slot credit. Whole raw CSV and context cancellation retained."
+        },
+        {
+          "run": "combined-combat-cpu-02",
+          "source": ".agent-local/qa/TASK-133/performance/combined-combat-cpu-02",
+          "result": "FAILED",
+          "error": "RuntimeError('Same engine log did not verify the whole generation-to-HTTP interval inside capture')",
+          "request_count": 1,
+          "process_exit_verified": true,
+          "sample_count": 34,
+          "player_down_observed": true,
+          "scope": "Failed attempted scene; no continuous combat or valid rain-stealth joint-slot credit. Whole raw CSV and context cancellation retained."
+        },
+        {
+          "run": "combined-combat-cpu-03",
+          "source": ".agent-local/qa/TASK-133/performance/combined-combat-cpu-03",
+          "result": "FAILED",
+          "error": "RuntimeError('Scene page changed during sample')",
+          "request_count": 1,
+          "process_exit_verified": true,
+          "sample_count": 30,
+          "player_down_observed": true,
+          "scope": "Failed attempted scene; no continuous combat or valid rain-stealth joint-slot credit. Whole raw CSV and context cancellation retained."
+        },
+        {
+          "run": "combined-combat-cpu-04",
+          "source": ".agent-local/qa/TASK-133/performance/combined-combat-cpu-04",
+          "result": "FAILED",
+          "error": "RuntimeError('Same engine log did not verify the whole generation-to-HTTP interval inside capture')",
+          "request_count": 1,
+          "process_exit_verified": true,
+          "sample_count": 36,
+          "player_down_observed": true,
+          "scope": "Failed attempted scene; no continuous combat or valid rain-stealth joint-slot credit. Whole raw CSV and context cancellation retained."
+        }
+      ],
+      "coverage": "ATTEMPTED_NO_VALID_SCENE_WINDOW"
+    },
+    {
+      "scene": "combined_combat",
+      "backend": "vulkan",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "combined-combat-vulkan-01",
+          "source": ".agent-local/qa/TASK-133/performance/combined-combat-vulkan-01",
+          "result": "FAILED",
+          "error": "RuntimeError('Communication became invalid inside the joint sample')",
+          "request_count": 1,
+          "process_exit_verified": true,
+          "sample_count": 15,
+          "player_down_observed": false,
+          "scope": "Failed attempted scene; no continuous combat or valid rain-stealth joint-slot credit. Whole raw CSV and context cancellation retained."
+        }
+      ],
+      "coverage": "ATTEMPTED_NO_VALID_SCENE_WINDOW"
+    },
+    {
+      "scene": "cooperation_streaming",
+      "backend": "cpu",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "route-streaming-cpu-03",
+          "backend": "cpu",
+          "status": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\route-streaming-cpu-03",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\route-streaming-cpu-03\\source-identity.json",
+          "goal_reached": true,
+          "new_loaded_levels": 17,
+          "level_snapshots": 13,
+          "earned_checkpoint": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-133\\performance\\route-streaming-cpu-03\\earned-route.hws",
+          "semantic_proposal": true,
+          "terminal_reason": "",
+          "scope": "Partial cooperation_streaming: real authored route, brother following, WorldPartition level transitions and inference overlap. No cooperative-device execution, normal keyboard or first-paint credit.",
+          "frame_status": "FAIL"
+        }
+      ],
+      "coverage": "PARTIAL_FOLLOW_AND_STREAMING_ONLY",
+      "missing": "Cooperative-device activity during a full joint capture remains unmeasured."
+    },
+    {
+      "scene": "cooperation_streaming",
+      "backend": "vulkan",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "route-streaming-vulkan-01",
+          "backend": "vulkan",
+          "status": "CAPTURE_COMPLETE_MODEL_FAILED",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\route-streaming-vulkan-01",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\route-streaming-vulkan-01\\source-identity.json",
+          "goal_reached": true,
+          "new_loaded_levels": 17,
+          "level_snapshots": 14,
+          "earned_checkpoint": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-133\\performance\\route-streaming-vulkan-01\\earned-route.hws",
+          "semantic_proposal": false,
+          "terminal_reason": "MODEL_UNAVAILABLE",
+          "scope": "Partial cooperation_streaming: real authored route, brother following, WorldPartition level transitions and inference overlap. No cooperative-device execution, normal keyboard or first-paint credit.",
+          "frame_status": "FAIL"
+        }
+      ],
+      "coverage": "PARTIAL_FOLLOW_AND_STREAMING_ONLY",
+      "missing": "Cooperative-device activity during a full joint capture remains unmeasured."
+    },
+    {
+      "scene": "camp_management",
+      "backend": "cpu",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "camp-management-cpu-01",
+          "result": "STABLE_CAPTURE_COMPLETE",
+          "source": ".agent-local/qa/TASK-133/performance/camp-management-cpu-01",
+          "frame_status": "FAIL",
+          "identity": ".agent-local/qa/TASK-133/performance/camp-management-cpu-01/source-identity.json",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scene": "camp_management",
+      "backend": "vulkan",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "camp-management-vulkan-01",
+          "source": ".agent-local\\qa\\TASK-133\\performance\\camp-management-vulkan-01",
+          "result": "FAILED",
+          "frame_status": "FAIL",
+          "joint_status": "CANCELLED_BY_NORMAL_PAGE_CHANGE",
+          "identity": ".agent-local\\qa\\TASK-133\\performance\\camp-management-vulkan-01\\source-identity.json"
+        },
+        {
+          "run": "camp-management-vulkan-02",
+          "result": "CAPTURE_COMPLETE_MODEL_FAILED",
+          "source": ".agent-local/qa/TASK-133/performance/camp-management-vulkan-02",
+          "frame_status": "FAIL",
+          "identity": ".agent-local/qa/TASK-133/performance/camp-management-vulkan-02/source-identity.json",
+          "error": null
+        }
+      ]
+    },
+    {
+      "scene": "rain_stealth",
+      "backend": "cpu",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "rain-stealth-cpu-01",
+          "result": "FAILED",
+          "source": ".agent-local/qa/TASK-133/performance/rain-stealth-cpu-01",
+          "error": "AttributeError(\"'list' object has no attribute 'get'\")",
+          "scope": "See performance-rain-stealth-20261015.json for exact local route, refusal and operator-stop boundaries."
+        },
+        {
+          "run": "rain-stealth-cpu-02",
+          "result": "FAILED",
+          "source": ".agent-local/qa/TASK-133/performance/rain-stealth-cpu-02",
+          "error": "ConnectionResetError(10054, '远程主机强迫关闭了一个现有的连接。', None, 10054, None)",
+          "scope": "See performance-rain-stealth-20261015.json for exact local route, refusal and operator-stop boundaries."
+        },
+        {
+          "run": "rain-stealth-cpu-03",
+          "result": "CAPTURE_COMPLETE_MODEL_FAILED",
+          "source": ".agent-local/qa/TASK-133/performance/rain-stealth-cpu-03",
+          "error": null,
+          "scope": "See performance-rain-stealth-20261015.json for exact local route, refusal and operator-stop boundaries."
+        }
+      ],
+      "coverage": "PARTIAL_LOCAL_APPROACH_RETREAT",
+      "missing": "Full stealth challenge, tactical payoff and graphics-quality comparison."
+    },
+    {
+      "scene": "rain_stealth",
+      "backend": "vulkan",
+      "status": "FAIL",
+      "runs": [
+        {
+          "run": "rain-stealth-vulkan-01",
+          "result": "CAPTURE_COMPLETE_MODEL_FAILED",
+          "source": ".agent-local/qa/TASK-133/performance/rain-stealth-vulkan-01",
+          "error": null,
+          "scope": "See performance-rain-stealth-20261015.json for exact local route, refusal and operator-stop boundaries."
+        }
+      ],
+      "coverage": "PARTIAL_LOCAL_APPROACH_RETREAT",
+      "missing": "Full stealth challenge, tactical payoff and graphics-quality comparison."
+    }
+  ],
+  "final_acceptance": "NOT_RUN",
+  "incomplete_joint_slots": 1,
+  "partial_scene_slots": 4,
+  "attempted_without_valid_scene_window_slots": 2,
+  "complete_scene_slots": 6,
+  "count_definition": "12 slots:6 complete camp/day/night/management captures,4 partial route/streaming/rain-local captures,2 failed continuous-combat attempts. Full frames for10 slots all fail thresholds. No full12scene acceptance."
+}

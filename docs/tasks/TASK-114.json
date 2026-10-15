@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "id": "TASK-114",
+  "title": "三类敌人职责与一名行为精英",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s05",
+    "docs/planning/TASK-112-133/SOURCES.md#s06",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-113"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-COMBAT.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-114.json",
+    "docs/tasks/TASK-114.md",
+    "docs/handoffs/TASK-114.md",
+    "docs/qa/TASK-114/",
+    "docs/planning/TASK-114/",
+    "README.md",
+    "Source/Hearthward/Tests/Round2EnemyRolesTests.cpp",
+    "Source/Hearthward/Combat/HearthwardEnemyRolePolicy.h",
+    "Source/Hearthward/Combat/HearthwardEnemyRolePolicy.cpp",
+    "art_source/TASK-114/",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.h",
+    "Source/Hearthward/Animation/HearthwardBrotherAnimInstance.h",
+    "Source/Hearthward/Animation/HearthwardBrotherAnimInstance.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T114-C01 [NATIVE] 读取精英替换前后驻军与增援集合。 → 基础仍 80，精英原 ID/奖励/阵亡事实不变，增援保持既有条件。",
+    "T114-C02 [PLAY] 观察无字幕情况下三类敌人的准备与攻击。 → 玩家能从动作/位置辨别主要威胁；射手不隔墙精确射击。",
+    "T114-C03 [PIE] 3 名敌人同时接近窄门与倒地玩家。 → 无长期互卡、身体重叠穿越或对已失败玩家继续结算。",
+    "T114-C04 [PLAY] 分别贪刀、防守等待、利用新招后空隙应对。 → 新招有可重复利用的反制，而非不可躲避伤害或仅血量更高。",
+    "T114-C05 [SAVE] 精英阵亡后保存、重启、离开返回。 → 不复活、不重发掉落、不扣回清敌进度。",
+    "T114-C06 [PIE] 利用遮挡/高差引出追击边界，再接近。 → 不能全图透视追踪；回位遵循已冻结规则，不凭复位无条件补血。"
+  ],
+  "non_goals": [
+    "不加大型 Boss、多阶段剧情或长期敌军调度。",
+    "不改故乡永久清除和野外既有刷新周期。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G1；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

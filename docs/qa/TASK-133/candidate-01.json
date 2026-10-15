@@ -1,0 +1,38 @@
+{
+  "candidate": "round2-local-20261014",
+  "status": "EXPERIMENTAL_NOT_ACCEPTED",
+  "configuration": "Win64 Shipping",
+  "package": "PASS",
+  "package_evidence": ".agent-local/qa/TASK-133/candidate-01/package-result.json",
+  "archive": "G:\\GameFactory\\Hearthward\\.agent-local\\qa\\TASK-133\\candidate-01\\archive\\Windows",
+  "archive_size_gib": 4.66,
+  "new_assets_cooked": 27,
+  "new_rain_audio_staged": true,
+  "model": "Qwen3.5-4B-Q4_K_M.gguf",
+  "bundled_backends": [
+    "cpu",
+    "vulkan"
+  ],
+  "runtime": {
+    "launch": "PASS",
+    "continue_from_normal_camp_checkpoint": "PASS",
+    "observed": [
+      "Day 2 night camp",
+      "hero and brother equipped axes",
+      "brother following",
+      "craftsman interaction prompt"
+    ],
+    "person_conversation_after_E": "UNVERIFIED: FrameArrived timed out; rebind and retry failed",
+    "process_responding_after_capture_failure": true,
+    "shutdown": "UEClient stopped owned process 356",
+    "evidence": ".agent-local/qa/TASK-133/candidate-runtime-01"
+  },
+  "limitations": [
+    "Performance thresholds failed",
+    "8 remaining scene/backend slots not run",
+    "Full normal route not completed",
+    "Owner audiovisual acceptance pending",
+    "External players and second physical machine not tested",
+    "Candidate-01 predates the 2026-10-15 display ownership validation fix and target enumeration optimization"
+  ]
+}

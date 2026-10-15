@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "id": "TASK-127",
+  "title": "室内外、战斗与回营的情境混音",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-127.json",
+    "docs/tasks/TASK-127.md",
+    "docs/handoffs/TASK-127.md",
+    "docs/qa/TASK-127/",
+    "docs/planning/TASK-127/",
+    "README.md",
+    "Source/Hearthward/Experience/HearthwardSituationalAudio.h",
+    "Source/Hearthward/Experience/HearthwardSituationalAudio.cpp",
+    "Source/Hearthward/Tests/Round2SituationalAudioTests.cpp",
+    "Resources/Audio/TASK-127/",
+    "art_source/TASK-127/",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Resources/Data/experience.json",
+    "Source/Hearthward/UI/",
+    "Source/Hearthward/Environment/",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.h",
+    "Source/Hearthward/Companion/HearthwardCompanionFixture.cpp",
+    "Source/Hearthward/Gameplay/HearthwardGameplayComponent.cpp",
+    "Source/Hearthward/Save/HearthwardSaveSubsystem.cpp",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/Tests/CombatAudioFeedbackTests.cpp",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T127-C01 [AUDIO] 同设备连续走室外、室内、战斗、营地并录音。 → 状态过渡自然且能辨别，不忽高忽低或突然切断。",
+    "T127-C02 [AUDIO] 火声/风声/脚步叠加时播放危险和交互提示。 → 实际设备听音不被遮蔽；不得只用 RMS 数值认定通过。",
+    "T127-C03 [PIE] 暂停、设置音量、读档、跨区往返。 → 循环启停和增益恢复正确，无重复音源或残留回声。",
+    "T127-C04 [NATIVE] 触发普通脚步、表现反馈与真实诱导声源。 → 仅冻结的噪声事件影响敌人，混音代码不提交感知/伤害。",
+    "T127-C05 [AUDIO] 分别关闭音乐/震动相关效果并低音量游玩。 → 重要反馈仍可由声音或视觉替代渠道识别。",
+    "T127-C06 [PERF] 密集战斗、协作、雨声同时测试并统计。 → 并发/虚拟化/衰减预算有证据；无持续增长，来源台账完整。"
+  ],
+  "non_goals": [
+    "不做动态 TTS、完整声学模拟或新剧情配乐大包。",
+    "不重新平衡全部已有音频事件。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G1；优先级 P1；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

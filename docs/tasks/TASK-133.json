@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "id": "TASK-133",
+  "title": "整轮连续体验、旧档、视听与候选验收",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "docs/planning/TASK-112-133/SOURCES.md#s08",
+    "docs/planning/TASK-112-133/SOURCES.md#s09",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-113",
+    "TASK-114",
+    "TASK-115",
+    "TASK-116",
+    "TASK-117",
+    "TASK-118",
+    "TASK-119",
+    "TASK-120",
+    "TASK-121",
+    "TASK-122",
+    "TASK-123",
+    "TASK-124",
+    "TASK-125",
+    "TASK-126",
+    "TASK-127",
+    "TASK-128",
+    "TASK-129",
+    "TASK-130",
+    "TASK-131",
+    "TASK-132"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-COMBAT.md",
+    "docs/planning/TASK-112-133/contracts/C-ENV.md",
+    "docs/planning/TASK-112-133/contracts/C-COOP.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-133.json",
+    "docs/tasks/TASK-133.md",
+    "docs/handoffs/TASK-133.md",
+    "docs/qa/TASK-133/",
+    "docs/planning/TASK-133/",
+    "README.md",
+    "docs/releases/round2-candidate/",
+    "scripts/qa/round2/",
+    "docs/PROJECT_STATE.md",
+    "docs/START_HERE.md",
+    "Source/Hearthward/UI/HearthwardScreenCapture.cpp",
+    "Source/Hearthward/UI/HearthwardScreenRound2SceneTest.inl",
+    "Config/DefaultGame.ini",
+    "scripts/qa/round2/scenes.py"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/",
+    "Config/DefaultEngine.ini",
+    "Config/DefaultInput.ini"
+  ],
+  "acceptance": [
+    "T133-C01 [PLAY] 不传送/改状态完成本轮全部主交付链。 → 无阻断；两关卡有不同玩法，人物与回营结果实际可见。",
+    "T133-C02 [SAVE] 选关键前后节点保存并退出，再在新进程继续。 → 实体、库存、奖励、合作和原进度一致，不靠同进程假恢复。",
+    "T133-C03 [NATIVE] 核对新任务与旧任务、80驻军、10救援上限及两营地。 → 无多发、复活、劳动力复制或旧任务回退。",
+    "T133-C04 [PLAY] 5名真实试玩者及第二实体设备按统一表执行。 → 原始反馈和失败保留；自动化/Agent夹具不计真人或二机。",
+    "T133-C05 [AUDIO] Owner 复核动作/昼夜/声音，复算六场双后端数据。 → 技术与主观结论分开，缺样本或超预算不得标完成。",
+    "T133-C06 [DOC] 核对来源、许可、包内容、已知问题、提交与授权。 → 只陈述真实结果；既有语言等未闭合项不被新内容测试冲销，发行另待明确授权。"
+  ],
+  "non_goals": [
+    "不通过篡改测试门槛、删失败记录或小改版本号完成验收。",
+    "不自动合并 main、清理旧包或发布正式版本。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G4；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。",
+    "已进入当前分支集成：正常路线营地检查点、本轮原生回归和当前候选性能采样；人工签收仍待最终汇总。"
+  ]
+}

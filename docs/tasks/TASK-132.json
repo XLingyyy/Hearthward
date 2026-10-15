@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "id": "TASK-132",
+  "title": "固定版本测量与回归工具基础",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "docs/planning/TASK-112-133/SOURCES.md#s09",
+    "docs/planning/TASK-112-133/SOURCES.md#e04",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-132.json",
+    "docs/tasks/TASK-132.md",
+    "docs/handoffs/TASK-132.md",
+    "docs/qa/TASK-132/",
+    "docs/planning/TASK-132/",
+    "README.md",
+    "scripts/qa/round2/",
+    "scripts/tests/test_round2_metrics.py",
+    "Source/Hearthward/Tests/Round2PerformanceTests.cpp",
+    "scripts/qa/",
+    ".github/workflows/",
+    "Source/Hearthward/Experience/",
+    "Source/Hearthward/Combat/",
+    "Source/Hearthward/UI/",
+    "docs/qa/TASK-102/run_standalone_joint.py",
+    "Source/Hearthward/Animals/HearthwardAnimalMotionComponent.cpp",
+    "Source/Hearthward/Nature/HearthwardNatureActor.cpp",
+    "Source/Hearthward/Environment/HearthwardNoiseInteraction.cpp",
+    "Source/Hearthward/Interaction/HearthwardInteractionAlignment.cpp",
+    "Source/Hearthward/Nature/HearthwardAnimalTraces.cpp",
+    "Source/Hearthward/Gameplay/HearthwardActorQuery.h",
+    "Source/Hearthward/AI/HearthwardNPCContextProjection.cpp",
+    "Source/Hearthward/Tests/LocalAIContextProjectionTests.cpp",
+    "Source/Hearthward/Tests/Fixtures/TASK-132-projection-before.json"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T132-C01 [DOC] 在同一候选中导出构建、硬件和配置元数据。 → 每份测量可绑定具体 SHA/环境；不拼不同版本最佳结果。",
+    "T132-C02 [PERF] 验证六场双后端清单，实际执行现有基线营地与战斗两场双后端。 → 已有4组有原始结果；未来8组明确未运行/待接入，不用晴天冒充雨天。",
+    "T132-C03 [PERF] 复算完整帧 p99、最慢1%均帧时间倒数与长帧比例。 → 与既有口径一致；原目标 p99≤16.67ms、1%Low≥60、>50ms≤0.1%不暗改。",
+    "T132-C04 [PERF] 标记冷暖、推理区间及首次可见反馈。 → 不拿无推理窗宣称联合通过；样本不足不补造 p95。",
+    "T132-C05 [NATIVE] 经既有 UEClient 跑本轮筛选器及受影响旧回归。 → 确有发现并执行的用例列表；不把零用例/工具测试冒充玩法通过。",
+    "T132-C06 [DOC] 用一个真实基线运行与一个故意缺失场景验证工具输出。 → 成功/失败/未运行可区分；完整12组最终通过只在 TASK-133 判定。"
+  ],
+  "non_goals": [
+    "不擅自安装新依赖、修改仓库保护或虚构远端 runner。",
+    "不在缺少真实UE环境时宣称编译/提帧成功。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G0；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "Owner六项首批规则已确认；131编译期间串行编写132自有Python工具，不修改编译中的C++文件。",
+    "当前实施与实际验证以docs/qa/TASK-132/REPORT.md及CASE_MATRIX为准；未代填体验签收。"
+  ]
+}

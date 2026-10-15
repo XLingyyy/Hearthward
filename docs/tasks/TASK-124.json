@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "id": "TASK-124",
+  "title": "现有族人短线二：留下能再生长的地方",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-122",
+    "TASK-126",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-124.json",
+    "docs/tasks/TASK-124.md",
+    "docs/handoffs/TASK-124.md",
+    "docs/qa/TASK-124/",
+    "docs/planning/TASK-124/",
+    "README.md",
+    "Source/Hearthward/Narrative/HearthwardHerbalistStory.h",
+    "Source/Hearthward/Narrative/HearthwardHerbalistStory.cpp",
+    "Source/Hearthward/Tests/Round2HerbalistStoryTests.cpp",
+    "art_source/TASK-124/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Camp/",
+    "Source/Hearthward/Nature/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.h",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignExploration.cpp",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/UI/",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "Resources/Data/round2_people.json",
+    "Source/Hearthward/Tests/Round2PersonalStoryTests.cpp",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T124-C01 [NATIVE] 未发现药圃时询问，再在自然发现后交谈。 → 只在获得合法线索后开放对应指引，不全图透视。",
+    "T124-C02 [PLAY] 完成现场检查和返程路线确认。 → 任务要求实际发生的观察/抵达，不以库存曾有草药替代。",
+    "T124-C03 [NATIVE] 完成前后核对药圃采集、刷新与库存。 → 无免费物资、额外产量或永久枯竭副作用。",
+    "T124-C04 [PIE] 交付后检查人物工作/空闲和陈列位置。 → 表现对应已选结果，角色不离岗穿模去表演。",
+    "T124-C05 [SAVE] 分别在认识、现场、选择后保存重启。 → 任务、认知和陈列一致；回退不保留后续对白。",
+    "T124-C06 [PLAY] 与工匠人物线对照试玩。 → 能辨认此人的不同关切，不只是更换任务物品名称。"
+  ],
+  "non_goals": [
+    "不做植物病害、药效新系统、强制资源预留或好感门槛。",
+    "不扩大救援人数。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G2；优先级 P1；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

@@ -1,4 +1,8 @@
 #include "HearthwardPresentationComponent.h"
+#include "ProfilingDebugging/CsvProfiler.h"
+#include "HearthwardSituationalAudio.h"
+#include "../Environment/HearthwardWeatherActor.h"
+#include "../Camp/HearthwardCampSubsystem.h"
 #include "HearthwardPlayerSettings.h"
 #include "HearthwardFootContactNotify.h"
 #include "HearthwardFootstepSurface.h"
@@ -98,6 +102,7 @@ void UHearthwardPresentationComponent::EndPlay(const EEndPlayReason::Type Reason
 void UHearthwardPresentationComponent::Restored()
 {
     StoryCooldown=20.f;
+    ImpactRemaining=0;DirectionRemaining=0;ImpactKind=NAME_None;DamageDirection.Reset();
     StopFixedCue();StopEffects();StopEnvironment();StopAmbient();ObservedTransfers.Reset();ObservedCombatEvents.Reset();ObservedFootContacts.Reset();PlayedEvents.Reset();ObservedBrother.Reset();
     for(auto& Pair:SoundCues)Pair.Value.LastVariant=INDEX_NONE;
     PreviousInitiative=GetWorld()->GetSubsystem<UHearthwardLocalAISubsystem>()->GetInitiativeKind();
@@ -408,12 +413,33 @@ void UHearthwardPresentationComponent::StopAmbient()
     for(int32 I=FireSources.Num()-1;I>=0;--I)RemoveFireSource(I);
     if(IsValid(WindSource)){WindSource->Stop();WindSource->DestroyComponent();}
     WindSource=nullptr;WindAnchor.Reset();WindWeight=0;
+    if(IsValid(RainSource)){RainSource->Stop();RainSource->DestroyComponent();}RainSource=nullptr;RainWeight=0;
 }
 void UHearthwardPresentationComponent::ApplyAmbientMix()
 {
-    const float Category=GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Volume(TEXT("environment"));
+    const float Category=GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Volume(TEXT("environment"))*SituationalGain;
     for(UAudioComponent* Source:FireSources)if(IsValid(Source))Source->SetVolumeMultiplier(Category*FireProfile.Gain);
     if(IsValid(WindSource))WindSource->SetVolumeMultiplier(Category*WindProfile.Gain*WindWeight);
+    if(IsValid(EnvironmentSource))EnvironmentSource->SetVolumeMultiplier(Category);
+    if(IsValid(RainSource))RainSource->SetVolumeMultiplier(Category*.35f*RainWeight);
+}
+void UHearthwardPresentationComponent::UpdateSituationalAudio(float Delta)
+{
+    if(GetWorld()->IsPaused())return;
+    auto* G=GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>();
+    const FVector Point=CastChecked<ACharacter>(GetOwner())->GetPawnViewLocation();
+    if((ContextCheck-=Delta)<=0){ContextCheck=.2f;IndoorAudio=AHearthwardWeatherActor::Sheltered(GetWorld(),Point,GetOwner());}
+    PriorityRemaining=FMath::Max(0.f,PriorityRemaining-Delta);
+    const bool Camp=!GetWorld()->GetSubsystem<UHearthwardCampSubsystem>()->State.CampAt(GetOwner()->GetActorLocation()).IsNone();
+    const auto Context=HearthwardSituationalAudio::Context(G && G->InCombat(),IndoorAudio,Camp);
+    SituationalGain=FMath::FInterpConstantTo(SituationalGain,HearthwardSituationalAudio::EnvironmentGain(Context,!CurrentCue.IsNone(),PriorityRemaining>0),Delta,1.5f);
+    RainWeight=FMath::FInterpConstantTo(RainWeight,float(AHearthwardWeatherActor::Rain(GetWorld()))*(IndoorAudio?.16f:1.f),Delta,1.f);
+    if(RainWeight>.001f && GetWorld()->AllowAudioPlayback() && !GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring())
+    {
+        if(!RainSource){RainSource=CreateAmbientSource(TEXT("environment.rain"),Point,0);if(RainSource)RainSource->Play();}
+        if(RainSource)RainSource->SetWorldLocation(Point);
+    }
+    else if(RainSource){RainSource->Stop();RainSource->DestroyComponent();RainSource=nullptr;}
 }
 void UHearthwardPresentationComponent::UpdateAmbient()
 {
@@ -534,11 +560,15 @@ void UHearthwardPresentationComponent::CombatSucceeded(const FHearthwardCombatFe
     if(Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch())Restored();
     if(Receipt.Epoch!=Epoch || !Receipt.SuccessId.IsValid() || !Receipt.OperationId.IsValid()
         || ObservedCombatEvents.Contains(Receipt.SuccessId)
-        || (Receipt.Kind!=TEXT("hit") && Receipt.Kind!=TEXT("block") && Receipt.Kind!=TEXT("damage") && Receipt.Kind!=TEXT("swing")))return;
+        || (Receipt.Kind!=TEXT("hit") && Receipt.Kind!=TEXT("block") && Receipt.Kind!=TEXT("damage") && Receipt.Kind!=TEXT("swing") && Receipt.Kind!=TEXT("wallwood") && Receipt.Kind!=TEXT("wallstone")))return;
     ObservedCombatEvents.Add(Receipt.SuccessId,Receipt.TargetPosition);
     if(GetWorld()->GetSubsystem<UHearthwardSaveSubsystem>()->IsRestoring()
         || FVector::DistSquared(GetOwner()->GetActorLocation(),Receipt.TargetPosition)>FMath::Square(3000.f))return;
     PlaySoundEvent(FName(*(TEXT("combat.")+Receipt.Kind.ToString())),Receipt.SuccessId,&Receipt.TargetPosition);
+    if(Receipt.Kind==TEXT("hit") || Receipt.Kind==TEXT("block") || Receipt.Kind==TEXT("wallwood") || Receipt.Kind==TEXT("wallstone"))
+    {ImpactKind=Receipt.Kind;ImpactPosition=Receipt.TargetPosition;ImpactRemaining=.16f;if(Receipt.Kind==TEXT("hit"))ShakeRemaining=.08f;}
+    if(Receipt.Kind==TEXT("damage") && Receipt.SourcePosition.IsSet() && FVector::DistSquared(Receipt.TargetPosition,GetOwner()->GetActorLocation())<100)
+    {DamageDirection=Receipt.SourcePosition.GetValue()-Receipt.TargetPosition;DirectionRemaining=.6f;}
 }
 bool UHearthwardPresentationComponent::FootContactSucceeded(const FHearthwardFootContactReceipt& Receipt)
 {
@@ -597,7 +627,12 @@ bool UHearthwardPresentationComponent::PlaySoundEvent(FName Event,FGuid Operatio
     Effect->ComponentTags.Add(FName(*(FString(TEXT("Hearthward.Audio."))+Cue->Channel.ToString())));Effect->RegisterComponent();
     if(Position)Effect->SetWorldLocation(*Position);
     Effect->SetSound(Sound);Effect->SetVolumeMultiplier(GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Volume(Cue->Channel));
-    Effects.Add(Effect);EffectRemaining.Add(Sound->Duration);if(Remember)PlayedEvents.Add(Operation);Cue->LastVariant=Variant;Effect->Play();return true;
+    Effects.Add(Effect);EffectRemaining.Add(Sound->Duration);if(Remember)PlayedEvents.Add(Operation);Cue->LastVariant=Variant;Effect->Play();
+#if !UE_BUILD_SHIPPING
+    CSV_CUSTOM_STAT_GLOBAL(HearthwardSoundEvents,1,ECsvCustomStatOp::Accumulate);
+#endif
+    if(Event.ToString().StartsWith(TEXT("combat.")) || Event.ToString().StartsWith(TEXT("interaction.")))PriorityRemaining=.6f;
+    return true;
 }
 void UHearthwardPresentationComponent::StopFixedCue()
 {if(Voice) Voice->Stop();CurrentCue=NAME_None;Remaining=0;}
@@ -640,6 +675,9 @@ void UHearthwardPresentationComponent::TickComponent(float Delta,ELevelTick Type
 {
     Super::TickComponent(Delta,Type,Tick);
     if(!HasBegunPlay())return;
+#if !UE_BUILD_SHIPPING
+    CSV_CUSTOM_STAT_GLOBAL(HearthwardEffectSources,Effects.Num(),ECsvCustomStatOp::Accumulate);
+#endif
     if(ObservedFootFrame!=GFrameCounter){ObservedFootContacts.Reset();ObservedFootFrame=GFrameCounter;}
     if(Epoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()) Restored();
     AHearthwardCompanionFixture* Brother=nullptr;for(TActorIterator<AHearthwardCompanionFixture> It(GetWorld());It;++It) {Brother=*It;break;}
@@ -649,9 +687,11 @@ void UHearthwardPresentationComponent::TickComponent(float Delta,ELevelTick Type
     ObserveNPCSuccess(Brother);
     if(PendingLanding.IsValid())
     {const FGuid Landing=PendingLanding;PendingLanding.Invalidate();PlaySoundEvent(TEXT("movement.landed"),Landing,&PendingLandingPosition,false);}
+    UpdateSituationalAudio(Delta);
     UpdateEnvironment();
     UpdateAmbient();
     if(GetWorld()->IsPaused()) return;
+    ImpactRemaining=FMath::Max(0.f,ImpactRemaining-Delta);DirectionRemaining=FMath::Max(0.f,DirectionRemaining-Delta);
     auto* Settings=GetWorld()->GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>();
     const auto* G=GetOwner()->FindComponentByClass<UHearthwardGameplayComponent>();
     // Procedural waves pad an exhausted queue with silence instead of ending naturally.

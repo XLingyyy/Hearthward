@@ -1,6 +1,6 @@
 # Hearthward（归火）
 
-UE 5.8.2 单人第三人称生存冒险。当前发行版本为 **0.3.0**；M0–M3、TASK-109 及 TASK-110 已通过 PR #70–75 合入 main。TASK-110 合并提交为 `7f56a2f5`。当前工作分支为 `codex/TASK-111-navigation-combat`，修复暂停焦点，增加实景地图、方向罗盘与移动攻击分层动画。当前工作区未发布，发行构建提交仍为 `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16`。
+UE 5.8.2 单人第三人称生存冒险。当前发行版本为 **0.3.0**；M0–M3及TASK-109—111已合入main，开发基线为 `dbf6acd4`（PR #76）。当前分支 `codex/TASK-112-round2-foundation` Owner已批准六项首批规则，已接入 TASK-112—133 的体验增强实现，正在构建和验证整合候选；完整验收仍在进行。发行构建仍为 `5f389a82ad6bd3f58b3a26a450a198ed91fe2f16`。
 
 [下载 v0.3.0](https://github.com/XLingyyy/Hearthward/releases/tag/v0.3.0) · [发行与验证记录](docs/releases/v0.3.0/REPORT.md) · [项目状态](docs/PROJECT_STATE.md) · [开发入口](docs/START_HERE.md)
 
@@ -26,9 +26,13 @@ UE 5.8.2 单人第三人称生存冒险。当前发行版本为 **0.3.0**；M0�
 
 Editor 编译、77 项图标绑定与相关页面原生渲染、制作／维修定向回归、88 项工具测试通过。运行 `G:/GameFactory/Hearthward/Hearthward.uproject` 查看当前工作区；旧 v0.3.0 包没有更新。服装等尚无独立可见模型的物品按既有材质和用途设计。详见 [TASK-110 报告及截图](docs/qa/TASK-110/REPORT.md)。
 
+## 本轮体验增强
+
+2026-10-15：TASK-112—133体验增强实现已接入，当前分支 `codex/TASK-112-round2-foundation`，基线 `dbf6acd4`。最新candidate-05 Shipping构建、Cook、归档及60秒独立进程响应检查通过，包含实景复现后修复的战役守卫援战目标遗漏。132项用例为30 PASS、45 PARTIAL、1 FAIL、56 NOT_RUN。性能12槽均已尝试，6槽完整营地场景、4槽局部同行/流送或雨天接近撤退、2槽持续战斗失败；10个完整原始帧窗口均未达冻结门槛。夹具、进程响应与局部场景不替代新包正常键鼠、Continue、完整路线和人工体验验收。全部任务保持Active；本轮按Owner授权整理为独立分支提交，远端同步状态以Git记录为准；未合并main或发行。详见 [本轮报告](docs/qa/TASK-133/REPORT.md)。
+
 ## 操作与验证范围
 
-TASK-111 当前工作区已接入暂停焦点修复、实景俯视地图、清晰的角色方向标记、顶部罗盘，以及行走／冲刺时的上半身攻击。Editor 与定向原生／实际渲染检查通过，成果通过 [PR #76](https://github.com/XLingyyy/Hearthward/pull/76) 整合，合并状态以 PR 为准；未发行。详见 [TASK-111 验证记录](docs/qa/TASK-111/REPORT.md)。
+TASK-111 已合入main的内容包括暂停焦点修复、实景俯视地图、清晰的角色方向标记、顶部罗盘，以及行走／冲刺时的上半身攻击。Editor 与定向原生／实际渲染检查通过，成果通过 [PR #76](https://github.com/XLingyyy/Hearthward/pull/76) 整合，已合入当前基线；未单独发行。详见 [TASK-111 验证记录](docs/qa/TASK-111/REPORT.md)。
 
 WASD移动，鼠标视角，Shift冲刺，空格跳跃，E交互；X弟弟跟随、Z等待；Tab背包、T交流、R仓储、B建造、K技能、J任务、M地图、F6存档管理、Esc返回/暂停。完整操作见随包README-DEMO.txt。
 
@@ -87,3 +91,5 @@ main 已整合的 TASK-109 包含 UI 刷新与预生成高亮、语言目录投�
 本机设置来自被忽略的 `.agent-local/environment.json`，可用 `HEARTHWARD_FACTORY_ROOT`、`HEARTHWARD_UE_ROOT`、`HEARTHWARD_PYTHON`覆盖。引擎生命周期统一使用GameFactory UEClient。
 
 [仓库结构](docs/REPOSITORY_LAYOUT.md) · [构建与测试](docs/qa/BUILD_AND_TEST.md) · [工作流](WORKFLOW.md) · [测试端说明](TestClient/README.md) · [084—103执行记录](docs/planning/TASK-084-103/EXECUTION_STATUS.md)
+
+2026-10-15补充：陈列坏档归属校验已修复，正式ID四阶段七类状态跨进程读回通过。详见 `docs/qa/TASK-131/production-persistence-20261015.json`；candidate-03已包含该修复及保留活动关卡过滤的目标查询优化；新包操作验收单列。

@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "id": "TASK-123",
+  "title": "现有族人短线一：把工具放回哪里",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-121",
+    "TASK-126",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-123.json",
+    "docs/tasks/TASK-123.md",
+    "docs/handoffs/TASK-123.md",
+    "docs/qa/TASK-123/",
+    "docs/planning/TASK-123/",
+    "README.md",
+    "Source/Hearthward/Narrative/HearthwardArtisanStory.h",
+    "Source/Hearthward/Narrative/HearthwardArtisanStory.cpp",
+    "Source/Hearthward/Tests/Round2ArtisanStoryTests.cpp",
+    "art_source/TASK-123/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Camp/",
+    "Source/Hearthward/AI/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.h",
+    "Source/Hearthward/Campaign/HearthwardPersonalStory.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignExploration.cpp",
+    "Source/Hearthward/Interaction/",
+    "Source/Hearthward/UI/",
+    "Resources/UI/interface.json",
+    "Resources/UI/layout.json",
+    "Resources/Data/round2_people.json",
+    "Source/Hearthward/Tests/Round2PersonalStoryTests.cpp",
+    "Source/Hearthward/Tests/EnvironmentAudioLifecycleTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T123-C01 [NATIVE] 检查角色 ID、原营救和人口集合。 → 人物唯一且不增加人口；未获救/不可接触时不泄漏新台词。",
+    "T123-C02 [PLAY] 正常认识人物、到现场检查并选择结果。 → 至少一次场景行动，不是全程菜单交材料；选择理由清楚。",
+    "T123-C03 [NATIVE] 选营地、选故乡各在独立档完成。 → 每档只出现一个对应陈列实例，不复制物件或奖励。",
+    "T123-C04 [PIE] 在人物工作中、空闲时和夜间观察。 → 工作优先；结果能在行为/陈列/对白中被看见。",
+    "T123-C05 [SAVE] 两个分支分别保存重启、加载选择前节点。 → 对应选择正确恢复，旧分支表现清除，无跨档记忆。",
+    "T123-C06 [PLAY] 不展示任务说明询问试玩者角色动机。 → 记录能否说清人物的具体想法；不能仅以完成任务计通过。"
+  ],
+  "non_goals": [
+    "不增加好感数值、人物死亡、专属生产增益或强制录音。",
+    "不重置上一轮工具支线或重复发奖励。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G2；优先级 P1；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

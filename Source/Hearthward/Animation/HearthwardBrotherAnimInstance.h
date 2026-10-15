@@ -14,6 +14,7 @@ public:
     virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override;
     virtual void DestroyAnimInstanceProxy(FAnimInstanceProxy* Proxy) override;
     void PlayAttack();
+    void PlayTimedAttack(float Windup,float Active,float Recovery);
     void CancelAttack();
 
     UPROPERTY(BlueprintReadOnly, Transient, Category="Animation") float GroundSpeed = 0;
@@ -33,4 +34,6 @@ private:
     float AttackRemaining = 0;
     float AttackDuration = 0;
     float DownElapsed = 0;
+    bool bTimedEnemyAttack=false;
+    FVector EnemyAttackTiming=FVector::ZeroVector;
 };

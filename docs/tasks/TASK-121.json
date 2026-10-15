@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "id": "TASK-121",
+  "title": "作坊夺路：首个完整体验样板",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s01",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s07",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-113",
+    "TASK-114",
+    "TASK-115",
+    "TASK-116",
+    "TASK-118",
+    "TASK-119",
+    "TASK-126",
+    "TASK-127",
+    "TASK-131",
+    "TASK-132"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-COMBAT.md",
+    "docs/planning/TASK-112-133/contracts/C-ENV.md",
+    "docs/planning/TASK-112-133/contracts/C-COOP.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-121.json",
+    "docs/tasks/TASK-121.md",
+    "docs/handoffs/TASK-121.md",
+    "docs/qa/TASK-121/",
+    "docs/planning/TASK-121/",
+    "README.md",
+    "Source/Hearthward/Tests/Round2WorkshopSliceTests.cpp",
+    "art_source/TASK-121/",
+    "Source/Hearthward/Campaign/",
+    "Source/Hearthward/Interaction/",
+    "Resources/Data/gameplay.json",
+    "Source/Hearthward/Environment/",
+    "Source/Hearthward/Campaign/HearthwardCampaignRound2.cpp",
+    "Source/Hearthward/Campaign/HearthwardCampaignSubsystem.h",
+    "Source/Hearthward/Campaign/HearthwardCampaignWorld.cpp",
+    "Source/Hearthward/Combat/HearthwardCombatComponent.cpp",
+    "Source/Hearthward/Survival/HearthwardSurvivalComponent.h",
+    "Source/Hearthward/Survival/HearthwardSurvivalComponent.cpp",
+    "Source/Hearthward/Experience/HearthwardPlayerSettings.h",
+    "Source/Hearthward/Experience/HearthwardPlayerSettings.cpp",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.h",
+    "Source/Hearthward/Experience/HearthwardPresentationComponent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenPaint.cpp",
+    "Source/Hearthward/UI/HearthwardScreenContent.cpp",
+    "Source/Hearthward/UI/HearthwardScreenSettings.cpp",
+    "Resources/Data/experience.json"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T121-C01 [PLAY] 新档或自然到达检查点，分别走正面与侧路完成目标。 → 两种做法都可完成且非仅路径外观不同；记录耗时、消耗和战斗顺序。",
+    "T121-C02 [PLAY] 用三类武器分别尝试高处射手/近战组合。 → 场景能体现距离与目标选择，精英有可读破绽。",
+    "T121-C03 [PLAY] 清场后完成装置合作并往返新通路。 → 弟弟与救援人物能通过；取消和无弟弟情况都有合法退路。",
+    "T121-C04 [SAVE] 取得目标、开捷径、返营，保存退出再继续。 → 状态、库存、敌人和任务反馈一致，奖励不重复。",
+    "T121-C05 [PLAY] 让至少 3 名未看设计的试玩者先玩首件。 → 逐人记录迷路/误解/操作失败；首件无通关阻断，主观结论不由脚本代填。",
+    "T121-C06 [PERF] 按 TASK-132 同版方法采样首件并提交录像/原数据。 → 流程、成本和反馈可审查；G1 未签收不批量铺设其余高成本内容。"
+  ],
+  "non_goals": [
+    "不扩地图面积、不新增大量兵力、不替代主线胜利条件。",
+    "不在首件未过关前生产天气或大量同构关卡。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011",
+    "T-025"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G1；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。"
+  ]
+}

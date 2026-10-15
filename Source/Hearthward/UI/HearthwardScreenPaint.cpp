@@ -41,7 +41,7 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
     }
     else if(Page==TEXT("title") || Page==TEXT("settings") || Page==TEXT("save") || Page==TEXT("inventory") || Page==TEXT("equipment") || Page==TEXT("skills") || Page==TEXT("journal"))
         FSlateDrawElement::MakeBox(Out,Layer,G.ToPaintGeometry(G.GetLocalSize(),FSlateLayoutTransform()),White,ESlateDrawEffect::None,FLinearColor::Black);
-    else if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue") && Page!=TEXT("map"))
+    else if(Page!=TEXT("hud") && Page!=TEXT("inventory") && Page!=TEXT("dialogue") && Page!=TEXT("map") && Page!=TEXT("personal"))
         Box(FVector2D::ZeroVector,DesignSize,FLinearColor::Black,Layer);
     if(Page==TEXT("dialogue"))
     {
@@ -56,6 +56,30 @@ int32 UHearthwardScreenWidget::NativePaint(const FPaintArgs& Args,const FGeometr
             if(const auto* Bounds=LayoutBounds.Find(Id);Bounds && !Bounds->Hidden)
                 Box(Bounds->Position,Bounds->Size,Color(TEXT("panel")),Layer);
     const auto& Comfort=GetGameInstance()->GetSubsystem<UHearthwardPlayerSettings>()->Comfort;
+    if(Page==TEXT("hud") && Comfort.HitVisual>0)
+    {
+        const auto* Feedback=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardPresentationComponent>();
+        auto Line=[&](const TArray<FVector2D>& Points,FLinearColor Color,float Width)
+        {FSlateDrawElement::MakeLines(Out,Layer+1,G.ToPaintGeometry(),Points,ESlateDrawEffect::None,Color,true,Width);};
+        if(Feedback && Feedback->ImpactRemaining>0)
+        {
+            FVector2D At;
+            if(GetOwningPlayer()->ProjectWorldLocationToScreen(Feedback->ImpactPosition,At,true))
+            {
+                At/=G.Scale;
+                const FLinearColor Tint=Feedback->ImpactKind==TEXT("hit")?FLinearColor(.7,.18,.08):Feedback->ImpactKind==TEXT("block")?FLinearColor(.9,.7,.3):FLinearColor(.65,.65,.6);
+                FLinearColor C=Tint;C.A=FMath::Min(1.f,Feedback->ImpactRemaining/.08f)*Comfort.HitVisual/100.f;
+                for(const FVector2D D:{FVector2D(1,1),FVector2D(1,-1),FVector2D(-1,1),FVector2D(-1,-1)})Line({At+D*7,At+D*14},C,2);
+            }
+        }
+        if(Feedback && Feedback->DirectionRemaining>0 && Feedback->DamageDirection.IsSet())
+        {
+            const FVector Local=GetOwningPlayer()->GetControlRotation().UnrotateVector(Feedback->DamageDirection.GetValue()).GetSafeNormal2D();
+            const FVector2D D(Local.Y,-Local.X),Center=G.GetLocalSize()*.5,At=Center+D*FMath::Min(Center.X,Center.Y)*.7;
+            const FVector2D Side(-D.Y,D.X);
+            Line({At-D*15+Side*14,At,At-D*15-Side*14},FLinearColor(.8,.15,.08,Comfort.HitVisual/100.f*FMath::Min(1.f,Feedback->DirectionRemaining/.2f)),4);
+        }
+    }
     const auto* Survival=GetOwningPlayerPawn()->FindComponentByClass<UHearthwardSurvivalComponent>();
     if(Page==TEXT("hud") && Survival->State.Severe() && Comfort.HungerVisual>0)
     {

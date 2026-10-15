@@ -23,6 +23,14 @@ inline double StoneAxeClipTime(double Elapsed,double ClipLength,const FMove& M)
     if(T<=M.Windup+M.Active) return ClipLength*(.6+.2*(T-M.Windup)/M.Active);
     return ClipLength*(.8+.2*(T-M.Windup-M.Active)/M.Recovery);
 }
+inline float BackwardAttackScale(FName Weapon,double Elapsed,const FMove& M)
+{
+    if(Elapsed<M.Windup || Elapsed>=M.Duration())return 1;
+    if(Weapon==TEXT("shortblade"))return .85f;
+    if(Weapon==TEXT("axe"))return .55f;
+    if(Weapon==TEXT("spear"))return .70f;
+    return 1;
+}
 inline double Detection(double Value,double Seconds,double DistanceMeters,bool Visible)
 {
     return FMath::Clamp(Value+Seconds*(Visible?.2*FMath::Clamp(10/FMath::Max(1.,DistanceMeters),.4,2.):- .1),0.,1.);

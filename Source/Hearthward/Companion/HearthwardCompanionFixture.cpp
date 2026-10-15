@@ -1,4 +1,5 @@
 #include "HearthwardCompanionFixture.h"
+#include "../Interaction/HearthwardInteractionAlignment.h"
 #include "../Equipment/HearthwardAxeGrip.h"
 #include "../Inventory/HearthwardHarvestTools.h"
 #include "Components/StaticMeshComponent.h"
@@ -82,6 +83,7 @@ AHearthwardCompanionFixture::AHearthwardCompanionFixture(const FObjectInitialize
 {
     CreateDefaultSubobject<UHearthwardSurvivalComponent>(TEXT("Survival"));
     CreateDefaultSubobject<UHearthwardTraversalComponent>(TEXT("Traversal"));
+    CreateDefaultSubobject<UHearthwardInteractionAlignment>(TEXT("ContactAlignment"));
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = false;
     auto* Capsule = GetCapsuleComponent();
@@ -156,7 +158,7 @@ void AHearthwardCompanionFixture::RefreshHeldWeapon()
     const auto* Equipped=Bag->FindInstance(Bag->EquippedInstance(TEXT("weapon")));
     const auto* Survival=FindComponentByClass<UHearthwardSurvivalComponent>();
     const bool Visible=Equipped && Equipped->Durability>0 && (!Survival->Enabled() || Survival->Alive())
-        && Survival->RescueElapsed()<0 && Action->GetStatus()!=EHearthwardTimedActionStatus::Running;
+        && Survival->RescueElapsed()<0 && Action->GetStatus()!=EHearthwardTimedActionStatus::Running && !FindComponentByClass<UHearthwardInteractionAlignment>()->Active();
     HeldWeapon->SetVisibility(Visible);if(!Visible || DisplayedWeapon==Equipped->Definition)return;
     const bool Axe=Equipped->Definition==TEXT("axe");
     const auto Row=HearthwardData::Find(TEXT("items"),Equipped->Definition.ToString());
@@ -915,6 +917,7 @@ void AHearthwardCompanionFixture::Tick(float DeltaSeconds)
     if(MeleeHitAt>0 && (MeleeEpoch!=GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch()
         || (bMeleeHunting && (!Execution.Current() || Execution.Current()->Type!=EHearthwardAgentActionType::Hunt))))CancelMeleeAttack();
     if(FindComponentByClass<UHearthwardSurvivalComponent>()->AutomaticBehavior(DeltaSeconds)) return;
+    if(CooperationOwner.IsValid())return;
     if (Phase == P::Idle || Phase == P::Cancelled || Phase == P::Completed || Phase == P::WaitingAtCamp || Phase==P::HoldingSafely) return;
 
     auto* Storage = GetWorld()->GetSubsystem<UHearthwardStorageSubsystem>();

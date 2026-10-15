@@ -1,0 +1,354 @@
+[
+  {
+    "run": "native-03",
+    "succeeded": 14,
+    "warnings": 1,
+    "failed": 2,
+    "tests": [
+      {
+        "name": "Hearthward.Round2.Persistence.RealTask111Migration",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Round2.Persistence.RejectedFilesPreserveOriginal",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Round2.Persistence.SevenKindsAndBounds",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Round2.Persistence.TransactionsAndEpoch",
+        "state": "Success",
+        "events": [
+          {
+            "event": {
+              "type": "Warning",
+              "message": "LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_1.Untitled:PersistentLevel.Actor_0",
+              "context": "log",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.13-15.17.59"
+          }
+        ]
+      },
+      {
+        "name": "Hearthward.Save.ActualLoadPointInvalidatesOldCommandTicket",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.ActualLoadPointPreservesPartialMaterialSettlementRevision",
+        "state": "Fail",
+        "events": [
+          {
+            "event": {
+              "type": "Info",
+              "message": "LogStreaming: FlushAsyncLoading(400): 1 QueuedPackages, 0 AsyncPackages",
+              "context": "log",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.13-15.17.59"
+          },
+          {
+            "event": {
+              "type": "Info",
+              "message": "Live recovery positive control: actual revision=3 first=stone result=EHearthwardCompanionPhase::Completed reason=",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.13-15.17.59"
+          },
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Standard HWS9 reader accepts the genuine absent-tag archive fixture' to be true.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\SavePartialSettlementTests.cpp",
+            "lineNumber": 100,
+            "timestamp": "2026.10.13-15.17.59"
+          },
+          {
+            "event": {
+              "type": "Info",
+              "message": "旧版封装含新版交互字段，原档已保留",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.13-15.17.59"
+          }
+        ]
+      },
+      {
+        "name": "Hearthward.Save.Clock9OriginAndLegacyBoundary",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.CompatibilityPreviewAndConsent",
+        "state": "Fail",
+        "events": [
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Safe repair is available' to be true.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\SaveTests.cpp",
+            "lineNumber": 1280,
+            "timestamp": "2026.10.13-15.18.00"
+          },
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Explicit confirmation saves compatible copy' to be true.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\SaveTests.cpp",
+            "lineNumber": 1286,
+            "timestamp": "2026.10.13-15.18.00"
+          },
+          {
+            "event": {
+              "type": "Warning",
+              "message": "LogStreaming: Failed to read file 'G:/GameFactory/Hearthward/.agent-local/qa/TASK-131/native-03/profile/Saved/CompatibilityTests/3B9BAC374FF8CB317D0D56905D1CEF13/new.hws' error.",
+              "context": "log",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.13-15.18.00"
+          },
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Repaired copy loads' to be true.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\SaveTests.cpp",
+            "lineNumber": 1287,
+            "timestamp": "2026.10.13-15.18.00"
+          },
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Verified backup created' to be 1, but it was 0.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\SaveTests.cpp",
+            "lineNumber": 1298,
+            "timestamp": "2026.10.13-15.18.00"
+          },
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Affected domain identified' to be true.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\SaveTests.cpp",
+            "lineNumber": 1309,
+            "timestamp": "2026.10.13-15.18.00"
+          },
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Skill recipe and building repair is validated' to be true.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\SaveTests.cpp",
+            "lineNumber": 1322,
+            "timestamp": "2026.10.13-15.18.00"
+          }
+        ]
+      },
+      {
+        "name": "Hearthward.Save.FileIntegrityAndSnapshot",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.Growth049FloatCaps",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.LegacyCampMigration",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.NaturalLegacyFile",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.NPCMemoryCompatibility",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.PoolProtectionAndSafety",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.ReleaseVersionOrdering",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.Schema2To3RealFileMigration",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.Schema5Equipment047Backup",
+        "state": "Success",
+        "events": []
+      }
+    ]
+  },
+  {
+    "run": "native-04",
+    "succeeded": 3,
+    "warnings": 0,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Hearthward.Round2.Persistence.ReadIndependentFixture",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Save.ActualLoadPointPreservesPartialMaterialSettlementRevision",
+        "state": "Success",
+        "events": [
+          {
+            "event": {
+              "type": "Info",
+              "message": "Live recovery positive control: actual revision=3 first=stone result=EHearthwardCompanionPhase::Completed reason=",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.13-15.20.04"
+          },
+          {
+            "event": {
+              "type": "Info",
+              "message": "LoadPoint recovery: actual revision=3 first=stone result=EHearthwardCompanionPhase::Completed reason=",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "",
+            "lineNumber": -1,
+            "timestamp": "2026.10.13-15.20.04"
+          }
+        ]
+      },
+      {
+        "name": "Hearthward.Save.CompatibilityPreviewAndConsent",
+        "state": "Success",
+        "events": []
+      }
+    ]
+  },
+  {
+    "run": "native-05",
+    "succeeded": 0,
+    "warnings": 0,
+    "failed": 1,
+    "tests": [
+      {
+        "name": "Hearthward.Round2.Persistence.EquipmentBeforeBeginPlay",
+        "state": "Fail",
+        "events": [
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'BeginPlay projects existing equipped instance' to be axe, but it was None.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\Round2PersistenceTests.cpp",
+            "lineNumber": 35,
+            "timestamp": "2026.10.13-15.39.04"
+          },
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Attack power becomes available without re-equipping' to be true.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\Round2PersistenceTests.cpp",
+            "lineNumber": 36,
+            "timestamp": "2026.10.13-15.39.04"
+          },
+          {
+            "event": {
+              "type": "Error",
+              "message": "Expected 'Projection preserves exact instance durability' to be 73.000000, but it was 0.000000 and outside tolerance 0.000100.",
+              "context": "",
+              "artifact": "00000000000000000000000000000000"
+            },
+            "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\Round2PersistenceTests.cpp",
+            "lineNumber": 37,
+            "timestamp": "2026.10.13-15.39.04"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "run": "native-06",
+    "succeeded": 2,
+    "warnings": 0,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Hearthward.Round2.Combat.RetreatPhasesAndCancellation",
+        "state": "Success",
+        "events": []
+      },
+      {
+        "name": "Hearthward.Round2.Persistence.EquipmentBeforeBeginPlay",
+        "state": "Success",
+        "events": []
+      }
+    ]
+  },
+  {
+    "run": "native-07",
+    "succeeded": 1,
+    "warnings": 0,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Hearthward.Save.ActualLoadPointInvalidatesOldCommandTicket",
+        "state": "Success",
+        "events": []
+      }
+    ]
+  }
+]

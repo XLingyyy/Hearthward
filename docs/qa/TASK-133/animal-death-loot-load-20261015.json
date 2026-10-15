@@ -1,0 +1,11 @@
+{
+  "status": "PASS_FOR_C129_SAVE_CONSERVATION",
+  "writer": ".agent-local/qa/TASK-133/animal-death-loot-load-03-20261015",
+  "reader": ".agent-local/qa/TASK-133/animal-loot-independent-20261015",
+  "real_map_traces": "docs/qa/TASK-133/trail-restart-20261015.json",
+  "failed_preparations": [
+    ".agent-local/qa/TASK-133/animal-death-loot-load-20261015",
+    ".agent-local/qa/TASK-133/animal-death-loot-load-02-20261015"
+  ],
+  "scope": "Production ecology creates deer on explicitly tagged fixture ground; fixture relocates player to it. Production DamageAnimal, hunt reward, five-second Act loot, SavePoint and LoadPoint used. Repeated collected-node loads cannot recreate loot; pending-node rollback removes future inventory then yields original amount. Separate UE process reads both original copied nodes, retries loot, repeats disk loads and verifies exact inventory and full nature identity/generation/reward/deadline state. Actual-map trail positions/times are covered separately. No natural tracking route, combat-input or visual playtest credit."
+}

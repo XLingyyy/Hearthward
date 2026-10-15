@@ -3,6 +3,11 @@
 #include "../Combat/HearthwardCombatComponent.h"
 #include "../Gameplay/HearthwardGameplayComponent.h"
 #include "../Inventory/HearthwardInventoryComponent.h"
+#include "../Inventory/HearthwardStorageSubsystem.h"
+#include "../Environment/HearthwardNoiseInteraction.h"
+#include "../Environment/HearthwardLampInteraction.h"
+#include "../Environment/HearthwardWeatherActor.h"
+#include "../Save/HearthwardSaveSubsystem.h"
 #include "../Survival/HearthwardSurvivalComponent.h"
 #include "../Time/HearthwardWorldClockSubsystem.h"
 #include "AIController.h"
@@ -277,6 +282,95 @@ bool FCampaignProtectedResident066Test::RunTest(const FString&)
             if(Carried)Fixture.Combat->Cancel();
         }
     }
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2NoiseNavigationTest,"Hearthward.Round2.Enemies.NoiseUsesSourcePathAndVisualPriority",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FRound2NoiseNavigationTest::RunTest(const FString&)
+{
+    FScopedCampaignAIWorld Fixture;if(!Fixture.Ready(*this))return false;
+    auto* Wall=Fixture.World->SpawnActor<AActor>();auto* Box=NewObject<UBoxComponent>(Wall);
+    Wall->AddInstanceComponent(Box);Wall->SetRootComponent(Box);Box->SetBoxExtent(FVector(50,400,250));
+    Box->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);Box->SetCollisionResponseToAllChannels(ECR_Block);
+    Box->SetCanEverAffectNavigation(false);Box->RegisterComponent();Wall->SetActorLocation(Fixture.Origin+FVector(500,0,0));
+    Fixture.Enemy->SetActorRotation(FRotator::ZeroRotator);Fixture.Player->SetActorLocation(Fixture.Origin+FVector(1000,0,0));
+    Fixture.Perception(.4f);auto& Memory=Fixture.Enemy->Target->Memory;
+    TestTrue(TEXT("Opaque wall hides the actual player from perception"),Memory.LastKnown.IsEmpty() && Memory.Seen.IsEmpty());
+    const FVector Source=Fixture.Origin+FVector(0,1000,0);
+    const auto Epoch=Fixture.World->GetSubsystem<UHearthwardStorageSubsystem>()->GetTimelineEpoch();
+    if(!TestTrue(TEXT("Actual navigation accepts the separate noise source"),Fixture.Enemy->BeginNoiseInvestigation(Source,Epoch)))return false;
+    Fixture.ExpectDestination(*this,TEXT("Noise path ends at source rather than hidden player"),Source);
+    TestFalse(TEXT("An active investigation refuses repeated distraction"),Fixture.Enemy->BeginNoiseInvestigation(Fixture.Player->GetActorLocation(),Epoch));
+    Fixture.Player->SetActorLocation(Fixture.Origin+FVector(1000,500,0));Fixture.Perception(.4f);Fixture.Enemy->Tick(.4f);
+    Fixture.ExpectDestination(*this,TEXT("Hidden movement does not redirect source investigation"),Source);
+    TestTrue(TEXT("Source investigation does not publish player knowledge"),Memory.LastKnown.IsEmpty() && Memory.Seen.IsEmpty());
+    Wall->Destroy();Fixture.Player->SetActorLocation(Fixture.Origin+FVector(1000,0,0));Fixture.Perception(5.1f);Fixture.Enemy->Tick(.4f);
+    TestTrue(TEXT("Uncovered player is confirmed through actual perception"),Memory.Seen.Contains(TEXT("player")));
+    Fixture.ExpectDestination(*this,TEXT("Confirmed combat supersedes the source path"),Fixture.Player->GetActorLocation());
+    TestFalse(TEXT("Further sound cannot interrupt confirmed combat"),Fixture.Enemy->BeginNoiseInvestigation(Source,Epoch));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2NoiseSelectionTest,"Hearthward.Round2.Enemies.FixedNoiseSelectsTwoNearestWithoutInventoryCost",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FRound2NoiseSelectionTest::RunTest(const FString&)
+{
+    FScopedCampaignAIWorld Fixture;if(!Fixture.Ready(*this))return false;
+    const FVector Source=Fixture.Origin+FVector(0,1000,0);
+    auto* Campaign=Fixture.World->GetSubsystem<UHearthwardCampaignSubsystem>();
+    TArray<AHearthwardCampaignActor*> Listeners{Fixture.Enemy};
+    FActorSpawnParameters Params;Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    const FName Ids[]={TEXT("field_slice_02"),TEXT("field_slice_03"),TEXT("home_workshops_18")};
+    const double Distances[]={1200.,2000.,3500.};
+    for(int32 Index=0;Index<3;++Index)
+    {
+        const FName Id=Ids[Index];const double Distance=Distances[Index];auto* Record=Campaign->Enemy(Id);
+        if(!TestNotNull(TEXT("Listener reuses an existing soldier record"),Record))return false;
+        Record->Home=Source+FVector(Distance,0,0);Record->Combat.Position=Record->Home;Record->Located=true;
+        auto* Actor=Fixture.World->SpawnActor<AHearthwardCampaignActor>(Record->Home,FRotator::ZeroRotator,Params);Actor->Initialize(Id,true);Listeners.Add(Actor);
+    }
+    for(auto* Listener:Listeners)if(!TestTrue(TEXT("Initial listener is eligible before the source event"),Listener->CanInvestigateNoise()))return false;
+    auto* Prop=Fixture.World->SpawnActor<AActor>();auto* Noise=NewObject<UHearthwardNoiseInteraction>(Prop);Prop->AddInstanceComponent(Noise);Prop->SetRootComponent(Noise);Noise->RegisterComponent();Prop->SetActorLocation(Source);
+    Fixture.Player->SetActorLocation(Source+FVector(100,0,0));
+    auto* Bag=Fixture.Player->FindComponentByClass<UHearthwardInventoryComponent>();Bag->TryAdd(TEXT("wood"),3);const auto Before=Bag->Snapshot();
+    Noise->CompleteInteraction(Fixture.Player);
+    TestFalse(TEXT("Nearest soldier accepts investigation"),Listeners[0]->CanInvestigateNoise());
+    TestFalse(TEXT("Second nearest soldier accepts investigation"),Listeners[1]->CanInvestigateNoise());
+    TestTrue(TEXT("Third nearby soldier remains free"),Listeners[2]->CanInvestigateNoise());
+    TestTrue(TEXT("Soldier outside thirty metres remains free"),Listeners[3]->CanInvestigateNoise());
+    Fixture.ExpectDestination(*this,TEXT("Actual fixed source produces the source navigation goal"),Source);
+    Noise->CompleteInteraction(Fixture.Player);
+    TestTrue(TEXT("Cooldown prevents recruiting a third listener"),Listeners[2]->CanInvestigateNoise());
+    TestTrue(TEXT("Fixed source cooldown is ten seconds"),Noise->RemainingCooldown()>9.9f);
+    const auto After=Bag->Snapshot();
+    TestTrue(TEXT("Approved fixed source never consumes or creates inventory"),FHearthwardInventorySnapshot::StaticStruct()->CompareScriptStruct(&Before,&After,0));
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRound2ConfirmedEnvironmentTest,"Hearthward.Round2.Enemies.ConfirmedTargetSurvivesLampAndRain",
+    EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FRound2ConfirmedEnvironmentTest::RunTest(const FString&)
+{
+    FScopedCampaignAIWorld Fixture;if(!Fixture.Ready(*this))return false;
+    Fixture.Enemy->SetActorRotation(FRotator::ZeroRotator);Fixture.Enemy->Target->Exposure=0;
+    Fixture.Player->SetActorLocation(Fixture.Origin+FVector(2400,0,0));
+    auto* Prop=Fixture.World->SpawnActor<AActor>();auto* Lamp=NewObject<UHearthwardLampInteraction>(Prop);
+    Prop->AddInstanceComponent(Lamp);Prop->SetRootComponent(Lamp);Lamp->Identity=TEXT("workshops_lamp_entry");Lamp->RegisterComponent();
+    Prop->SetActorLocation(Fixture.Player->GetActorLocation()+FVector(0,0,20));Prop->DispatchBeginPlay();
+    Fixture.Perception(13.f);auto& Memory=Fixture.Enemy->Target->Memory;
+    if(!TestTrue(TEXT("Local lit lamp allows actual confirmation at twenty-four metres"),Memory.Seen.Contains(TEXT("player"))))return false;
+    Lamp->CompleteInteraction(Fixture.Player);TestFalse(TEXT("Actual lamp interaction switches the lamp off"),Lamp->IsLit());
+    Fixture.Perception(.4f);TestTrue(TEXT("Extinguishing light cannot erase a confirmed target"),Memory.Seen.Contains(TEXT("player")));
+    auto* Clock=Fixture.World->GetSubsystem<UHearthwardWorldClockSubsystem>();Clock->AdvanceCalendar(210);
+    auto* Save=Fixture.World->GetSubsystem<UHearthwardSaveSubsystem>();
+    TestTrue(TEXT("Weather fixture binds its production identity"),Save->BindInteractionTarget(TEXT("world_light_rain"),EHearthwardPersistentKind::Weather,Prop));
+    const auto Ticket=Save->BeginInteraction(TEXT("world_light_rain"));auto Next=Save->InteractionState();
+    auto& Weather=Next.Weather.AddDefaulted_GetRef();Weather.Id=TEXT("world_light_rain");Weather.Seed=40;Weather.Phase=EHearthwardWeatherPhase::Rain;
+    TestTrue(TEXT("Weather fixture commits a valid persistent state"),Save->CommitInteraction(Ticket,Next));
+    TestEqual(TEXT("Calendar produces actual full light rain"),AHearthwardWeatherActor::Rain(Fixture.World),1.);
+    Fixture.Enemy->Target->Exposure=1;Fixture.Perception(.4f);
+    TestTrue(TEXT("Rain cannot erase confirmed enemy knowledge"),Memory.Seen.Contains(TEXT("player")));
+    TestTrue(TEXT("Exposed unconfirmed visibility is reduced by ten percent"),FMath::IsNearlyEqual(AHearthwardWeatherActor::VisibilityFactor(Fixture.World,Fixture.Player->GetActorLocation(),Fixture.Player),.9));
+    Memory.Detection.FindOrAdd(TEXT("player"))=0;Memory.Seen.Reset();Fixture.Perception(.4f);
+    TestEqual(TEXT("Unconfirmed target beyond rainy sight range remains undiscovered"),Memory.Detection.FindRef(TEXT("player")),0.f);
     return true;
 }
 #endif

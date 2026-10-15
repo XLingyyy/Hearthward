@@ -37,6 +37,7 @@ void UHearthwardPlayerSettings::Initialize(FSubsystemCollectionBase& Collection)
     Int(TEXT("TextScale"),Comfort.TextScale,100,150);Int(TEXT("SubtitleSize"),Comfort.SubtitleSize,32,48);
     Int(TEXT("SubtitleBackground"),Comfort.SubtitleBackground,0,100);Int(TEXT("Shake"),Comfort.Shake,0,100);
     Int(TEXT("HungerVisual"),Comfort.HungerVisual,0,100);Int(TEXT("FOV"),Comfort.FOV,70,110);
+    Int(TEXT("RainVisual"),Comfort.RainVisual,0,100);Int(TEXT("HitVisual"),Comfort.HitVisual,0,100);
     Bool(TEXT("Subtitles"),Comfort.Subtitles);Bool(TEXT("SubtitleSpeaker"),Comfort.SubtitleSpeaker);Bool(TEXT("MotionBlur"),Comfort.MotionBlur);
     Bool(TEXT("SprintToggle"),Comfort.SprintToggle);Bool(TEXT("GuardToggle"),Comfort.GuardToggle);Bool(TEXT("AimToggle"),Comfort.AimToggle);
 }
@@ -49,6 +50,7 @@ void UHearthwardPlayerSettings::Persist()
     Int(TEXT("Music"),Comfort.Music);Int(TEXT("Voice"),Comfort.Voice);Int(TEXT("Effects"),Comfort.Effects);Int(TEXT("Environment"),Comfort.Environment);
     Int(TEXT("TextScale"),Comfort.TextScale);Int(TEXT("SubtitleSize"),Comfort.SubtitleSize);Int(TEXT("SubtitleBackground"),Comfort.SubtitleBackground);
     Int(TEXT("Shake"),Comfort.Shake);Int(TEXT("HungerVisual"),Comfort.HungerVisual);Int(TEXT("FOV"),Comfort.FOV);
+    Int(TEXT("RainVisual"),Comfort.RainVisual);Int(TEXT("HitVisual"),Comfort.HitVisual);
     Bool(TEXT("Subtitles"),Comfort.Subtitles);Bool(TEXT("SubtitleSpeaker"),Comfort.SubtitleSpeaker);Bool(TEXT("MotionBlur"),Comfort.MotionBlur);
     Bool(TEXT("SprintToggle"),Comfort.SprintToggle);Bool(TEXT("GuardToggle"),Comfort.GuardToggle);Bool(TEXT("AimToggle"),Comfort.AimToggle);
     GConfig->Flush(false,GGameUserSettingsIni);

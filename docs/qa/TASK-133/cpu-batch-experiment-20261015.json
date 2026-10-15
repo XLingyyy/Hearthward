@@ -1,0 +1,20 @@
+{
+  "status": "STOPPED_EARLY_EFFECTIVE_PARAMETER_UNVERIFIED",
+  "source": ".agent-local\\qa\\TASK-133\\performance\\camp-cpu-ubatch128-warm60-01",
+  "requested_ubatch": 128,
+  "production_changed": false,
+  "completed_samples": 5,
+  "submitted_samples": 6,
+  "p95": "NOT_EVALUATED_INSUFFICIENT_SAMPLES",
+  "source_basis": [
+    "https://raw.githubusercontent.com/ggml-org/llama.cpp/b10964/common/arg.cpp",
+    "https://raw.githubusercontent.com/ggml-org/llama.cpp/b10964/tools/server/server-context.cpp"
+  ],
+  "stop": {
+    "reason": "Stop bounded diagnostic early: requested128 is recorded, but effective child parameter could not be read back. No formal60 sample or optimization credit; no further tuning trial planned.",
+    "parameter_probe": "psutil unavailable in factory and bundled runtime; no dependency installed or production change.",
+    "source_hypothesis": "b10964 server-context.cpp checkpoints4+n_ubatch and4; common/arg.cpp binds LLAMA_ARG_UBATCH. Source supports hypothesis but does not prove this runtime effective parameter."
+  },
+  "process_exit_verified": true,
+  "further_trials": "None planned; preserve default configuration and proceed to candidate."
+}

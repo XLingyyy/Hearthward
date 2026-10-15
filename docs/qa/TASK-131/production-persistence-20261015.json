@@ -1,0 +1,257 @@
+{
+  "date": "2026-10-15",
+  "scope": "Native synthetic persistence fixtures with production IDs; not an earned gameplay route",
+  "fix": "Reject a displayed memento unless its owner has remembered it and chosen that display camp. No serialized schema change.",
+  "matrix": [
+    "met",
+    "visited",
+    "remembered/camp",
+    "remembered/hometown"
+  ],
+  "comparison": "All reflected fields of all seven interaction domains, written and read by separate UE processes",
+  "runs": {
+    "display-owner-red": {
+      "evidence": ".agent-local\\qa\\TASK-131\\display-owner-red-20261015",
+      "passed": 0,
+      "warnings": 0,
+      "failed": 1,
+      "tests": [
+        {
+          "testDisplayName": "DisplayRequiresCompletedOwnerChoice",
+          "fullTestPath": "Hearthward.Round2.Persistence.DisplayRequiresCompletedOwnerChoice",
+          "tags": [],
+          "state": "Fail",
+          "deviceInstance": [
+            "C0A121A244DF74C7425528A90FB74B6C"
+          ],
+          "duration": 0.1322373002767563,
+          "dateTime": "2026.10.15-05.03.36",
+          "entries": [
+            {
+              "event": {
+                "type": "Error",
+                "message": "Expected 'Missing owner record cannot grant a display on load' to be false.",
+                "context": "",
+                "artifact": "00000000000000000000000000000000"
+              },
+              "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\Round2PersistenceTests.cpp",
+              "lineNumber": 27,
+              "timestamp": "2026.10.15-05.03.36"
+            },
+            {
+              "event": {
+                "type": "Error",
+                "message": "Expected 'Meeting alone cannot grant the memento' to be false.",
+                "context": "",
+                "artifact": "00000000000000000000000000000000"
+              },
+              "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\Round2PersistenceTests.cpp",
+              "lineNumber": 29,
+              "timestamp": "2026.10.15-05.03.36"
+            },
+            {
+              "event": {
+                "type": "Error",
+                "message": "Expected 'Display camp must match the actual owner choice' to be false.",
+                "context": "",
+                "artifact": "00000000000000000000000000000000"
+              },
+              "filename": "G:\\GameFactory\\Hearthward\\Source\\Hearthward\\Tests\\Round2PersistenceTests.cpp",
+              "lineNumber": 31,
+              "timestamp": "2026.10.15-05.03.36"
+            }
+          ],
+          "warnings": 0,
+          "errors": 3,
+          "artifacts": []
+        }
+      ]
+    },
+    "display-owner-green": {
+      "evidence": ".agent-local\\qa\\TASK-131\\display-owner-green-20261015",
+      "passed": 7,
+      "warnings": 1,
+      "failed": 0,
+      "tests": [
+        {
+          "testDisplayName": "DisplayRequiresCompletedOwnerChoice",
+          "fullTestPath": "Hearthward.Round2.Persistence.DisplayRequiresCompletedOwnerChoice",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "010C61634D064847FB47618D02D9ECC6"
+          ],
+          "duration": 0.016300000250339508,
+          "dateTime": "2026.10.15-05.08.01",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        },
+        {
+          "testDisplayName": "EquipmentBeforeBeginPlay",
+          "fullTestPath": "Hearthward.Round2.Persistence.EquipmentBeforeBeginPlay",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "010C61634D064847FB47618D02D9ECC6"
+          ],
+          "duration": 0.06167389824986458,
+          "dateTime": "2026.10.15-05.08.01",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        },
+        {
+          "testDisplayName": "ReadIndependentFixture",
+          "fullTestPath": "Hearthward.Round2.Persistence.ReadIndependentFixture",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "010C61634D064847FB47618D02D9ECC6"
+          ],
+          "duration": 0.020680300891399384,
+          "dateTime": "2026.10.15-05.08.01",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        },
+        {
+          "testDisplayName": "RealTask111Migration",
+          "fullTestPath": "Hearthward.Round2.Persistence.RealTask111Migration",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "010C61634D064847FB47618D02D9ECC6"
+          ],
+          "duration": 0.05504380166530609,
+          "dateTime": "2026.10.15-05.08.01",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        },
+        {
+          "testDisplayName": "RejectedFilesPreserveOriginal",
+          "fullTestPath": "Hearthward.Round2.Persistence.RejectedFilesPreserveOriginal",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "010C61634D064847FB47618D02D9ECC6"
+          ],
+          "duration": 0.02989090234041214,
+          "dateTime": "2026.10.15-05.08.02",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        },
+        {
+          "testDisplayName": "SevenKindsAndBounds",
+          "fullTestPath": "Hearthward.Round2.Persistence.SevenKindsAndBounds",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "010C61634D064847FB47618D02D9ECC6"
+          ],
+          "duration": 0.01659880205988884,
+          "dateTime": "2026.10.15-05.08.02",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        },
+        {
+          "testDisplayName": "TransactionsAndEpoch",
+          "fullTestPath": "Hearthward.Round2.Persistence.TransactionsAndEpoch",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "010C61634D064847FB47618D02D9ECC6"
+          ],
+          "duration": 0.028386499732732773,
+          "dateTime": "2026.10.15-05.08.02",
+          "entries": [
+            {
+              "event": {
+                "type": "Warning",
+                "message": "LogSpawn: UWorld::DestroyActor: World has no context! World: Untitled, Actor: /Temp/Untitled_2.Untitled:PersistentLevel.Actor_0",
+                "context": "log",
+                "artifact": "00000000000000000000000000000000"
+              },
+              "filename": "",
+              "lineNumber": -1,
+              "timestamp": "2026.10.15-05.08.02"
+            }
+          ],
+          "warnings": 1,
+          "errors": 0,
+          "artifacts": []
+        },
+        {
+          "testDisplayName": "ChoicesVictoryUniqueDisplayAndStaleUI",
+          "fullTestPath": "Hearthward.Round2.Personal.ChoicesVictoryUniqueDisplayAndStaleUI",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "010C61634D064847FB47618D02D9ECC6"
+          ],
+          "duration": 0.023443199694156647,
+          "dateTime": "2026.10.15-05.08.02",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        }
+      ]
+    },
+    "production-write": {
+      "evidence": ".agent-local\\qa\\TASK-131\\production-write-20261015",
+      "passed": 1,
+      "warnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "testDisplayName": "Write",
+          "fullTestPath": "Hearthward.Round2.ProductionMatrix.Write",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "5EE73EE84E05A86A0B88338EFDC482B8"
+          ],
+          "duration": 0.10822220146656036,
+          "dateTime": "2026.10.15-05.11.15",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        }
+      ]
+    },
+    "production-read": {
+      "evidence": ".agent-local\\qa\\TASK-131\\production-read-20261015",
+      "passed": 1,
+      "warnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "testDisplayName": "Read",
+          "fullTestPath": "Hearthward.Round2.ProductionMatrix.Read",
+          "tags": [],
+          "state": "Success",
+          "deviceInstance": [
+            "18967AAC421A39FB74E0819521381A3C"
+          ],
+          "duration": 0.02924399822950363,
+          "dateTime": "2026.10.15-05.13.46",
+          "entries": [],
+          "warnings": 0,
+          "errors": 0,
+          "artifacts": []
+        }
+      ]
+    }
+  }
+}

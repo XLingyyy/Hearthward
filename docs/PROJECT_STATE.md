@@ -1,6 +1,6 @@
 # Hearthward 项目状态
 
-2026-10-11：TASK-110 已通过 [PR #75](https://github.com/XLingyyy/Hearthward/pull/75) 合入 main（`7f56a2f5`）。当前 TASK-111 在 `codex/TASK-111-navigation-combat` 开发，范围为暂停焦点、实景地图与罗盘、移动攻击分层动画。状态见 [TASK-111 交接](handoffs/TASK-111.md)。运行工程 `G:/GameFactory/Hearthward/Hearthward.uproject`；v0.3.0 独立包未更新。TASK-111 已提交推送，整合见 [PR #76](https://github.com/XLingyyy/Hearthward/pull/76)；合并状态以 PR 为准。以下为历史记录。
+2026-10-15：TASK-112—133体验增强实现已接入，当前分支 `codex/TASK-112-round2-foundation`，基线 `dbf6acd4`。最新candidate-05 Shipping构建、Cook、归档及60秒独立进程响应检查通过，包含实景复现后修复的战役守卫援战目标遗漏。132项用例为30 PASS、45 PARTIAL、1 FAIL、56 NOT_RUN。性能12槽均已尝试，6槽完整营地场景、4槽局部同行/流送或雨天接近撤退、2槽持续战斗失败；10个完整原始帧窗口均未达冻结门槛。夹具、进程响应与局部场景不替代新包正常键鼠、Continue、完整路线和人工体验验收。全部任务保持Active；本轮按Owner授权整理为独立分支提交，远端同步状态以Git记录为准；未合并main或发行。详见 [本轮报告](qa/TASK-133/REPORT.md)。
 
 2026-10-11：当前任务 TASK-110，分支 `codex/TASK-110-item-art`，基线 main@34908e89c095de50b9283441ef88198deea20819。77 件物品高清图与制作相关图示已接入，Editor 和定向渲染／回归通过，已获用户提交推送及合并授权，未发行；Active 待外观验收。详见 [TASK-110 报告](qa/TASK-110/REPORT.md)与[交接](handoffs/TASK-110.md)。运行工程 G:/GameFactory/Hearthward/Hearthward.uproject。以下为历史快照。
 

@@ -1,0 +1,207 @@
+{
+  "status": "NO_VALID_CONTINUOUS_COMBAT_WINDOW",
+  "runs": [
+    {
+      "run": "combined-combat-cpu-01",
+      "result": "FAILED",
+      "error": "RuntimeError('Actual navigation did not reach its projected segment within20s; no teleport fallback')",
+      "identity": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-01\\source-identity.json",
+      "model_requests": 0,
+      "frame_windows": [],
+      "observed_down": false,
+      "brother_targets": [],
+      "model_terminal": null,
+      "scope": "Repeated attempts retain different preflight/control versions; no best-run pooling or identical paired benchmark claim."
+    },
+    {
+      "run": "combined-combat-cpu-02",
+      "result": "FAILED",
+      "error": "RuntimeError('Same engine log did not verify the whole generation-to-HTTP interval inside capture')",
+      "identity": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-02\\source-identity.json",
+      "model_requests": 1,
+      "frame_windows": [
+        {
+          "csv": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-02\\profile\\Saved\\Profiling\\CSV\\Task102-3f00f93d-259e-4e13-b6dd-3e7c3a1d0d3d.csv",
+          "frames": {
+            "numeric_frames": 3988,
+            "seconds": 61.518831899999995,
+            "p99_ms": 23.7122,
+            "one_percent_low_fps": 38.62487903727786,
+            "over_50ms": 1,
+            "over_50ms_fraction": 0.00025075225677031093,
+            "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames"
+          },
+          "scope": "All numeric frames retained including post-down/idle. Not continuous combat credit."
+        }
+      ],
+      "observed_down": true,
+      "brother_targets": [
+        "None"
+      ],
+      "model_terminal": {
+        "last_input": "采集1份木材送入营地仓库",
+        "raw": "",
+        "submission_to_response_seconds": 0,
+        "input_tokens": 2534,
+        "output_tokens": 0,
+        "reason": "deterministic_fallback",
+        "applied_intent": "",
+        "has_candidate": false,
+        "candidate": {
+          "Intent": "None",
+          "Item": "None",
+          "Quantity": 0,
+          "QuantityMode": "",
+          "SourceRef": "",
+          "Limits": [],
+          "Unresolved": [],
+          "Line": "",
+          "Original": "",
+          "Station": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "EquipmentId": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "RuleRevision": 0,
+          "CapabilityVersion": 2
+        },
+        "context_tier": "full_relevant",
+        "server_process_id": 13208
+      },
+      "scope": "Repeated attempts retain different preflight/control versions; no best-run pooling or identical paired benchmark claim."
+    },
+    {
+      "run": "combined-combat-cpu-03",
+      "result": "FAILED",
+      "error": "RuntimeError('Scene page changed during sample')",
+      "identity": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-03\\source-identity.json",
+      "model_requests": 1,
+      "frame_windows": [
+        {
+          "csv": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-03\\profile\\Saved\\Profiling\\CSV\\Task102-7c783f0d-f97b-4451-9067-ace96e30e8b8.csv",
+          "frames": {
+            "numeric_frames": 3605,
+            "seconds": 56.2020438,
+            "p99_ms": 23.5187,
+            "one_percent_low_fps": 36.37766564923725,
+            "over_50ms": 1,
+            "over_50ms_fraction": 0.00027739251040221914,
+            "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames"
+          },
+          "scope": "All numeric frames retained including post-down/idle. Not continuous combat credit."
+        }
+      ],
+      "observed_down": true,
+      "brother_targets": [
+        "None",
+        "field_slice_01"
+      ],
+      "model_terminal": null,
+      "scope": "Repeated attempts retain different preflight/control versions; no best-run pooling or identical paired benchmark claim."
+    },
+    {
+      "run": "combined-combat-cpu-04",
+      "result": "FAILED",
+      "error": "RuntimeError('Same engine log did not verify the whole generation-to-HTTP interval inside capture')",
+      "identity": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-04\\source-identity.json",
+      "model_requests": 1,
+      "frame_windows": [
+        {
+          "csv": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-cpu-04\\profile\\Saved\\Profiling\\CSV\\Task102-371280bb-3bb1-45f1-866e-57ee4d4ece32.csv",
+          "frames": {
+            "numeric_frames": 4803,
+            "seconds": 61.967616199999995,
+            "p99_ms": 20.3285,
+            "one_percent_low_fps": 38.3824177820624,
+            "over_50ms": 3,
+            "over_50ms_fraction": 0.0006246096189881324,
+            "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames"
+          },
+          "scope": "All numeric frames retained including post-down/idle. Not continuous combat credit."
+        }
+      ],
+      "observed_down": true,
+      "brother_targets": [
+        "None",
+        "field_slice_01"
+      ],
+      "model_terminal": {
+        "last_input": "采集1份木材送入营地仓库",
+        "raw": "",
+        "submission_to_response_seconds": 0,
+        "input_tokens": 2532,
+        "output_tokens": 0,
+        "reason": "deterministic_fallback",
+        "applied_intent": "",
+        "has_candidate": false,
+        "candidate": {
+          "Intent": "None",
+          "Item": "None",
+          "Quantity": 0,
+          "QuantityMode": "",
+          "SourceRef": "",
+          "Limits": [],
+          "Unresolved": [],
+          "Line": "",
+          "Original": "",
+          "Station": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "EquipmentId": {
+            "A": 0,
+            "B": 0,
+            "C": 0,
+            "D": 0
+          },
+          "RuleRevision": 0,
+          "CapabilityVersion": 2
+        },
+        "context_tier": "full_relevant",
+        "server_process_id": 2020
+      },
+      "scope": "Repeated attempts retain different preflight/control versions; no best-run pooling or identical paired benchmark claim."
+    },
+    {
+      "run": "combined-combat-vulkan-01",
+      "result": "FAILED",
+      "error": "RuntimeError('Communication became invalid inside the joint sample')",
+      "identity": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-vulkan-01\\source-identity.json",
+      "model_requests": 1,
+      "frame_windows": [
+        {
+          "csv": ".agent-local\\qa\\TASK-133\\performance\\combined-combat-vulkan-01\\profile\\Saved\\Profiling\\CSV\\Task102-c61a3ae3-636f-4453-8c54-ada62589777c.csv",
+          "frames": {
+            "numeric_frames": 1869,
+            "seconds": 29.7884623,
+            "p99_ms": 24.3987,
+            "one_percent_low_fps": 12.616875196744399,
+            "over_50ms": 2,
+            "over_50ms_fraction": 0.001070090957731407,
+            "statistics_definition": "TASK-072: p99 index floor((n-1)*0.99); 1% Low slowest max(1,n//100) frames"
+          },
+          "scope": "All numeric frames retained including post-down/idle. Not continuous combat credit."
+        }
+      ],
+      "observed_down": false,
+      "brother_targets": [
+        "None",
+        "field_slice_01",
+        "field_slice_02"
+      ],
+      "model_terminal": null,
+      "scope": "Repeated attempts retain different preflight/control versions; no best-run pooling or identical paired benchmark claim."
+    }
+  ],
+  "stop_reason": "Player down/context cancellation persists after fixing confirmed assistance issue and bounded navigation/guard controls. No health/damage/AI-rule change to manufacture a benchmark pass.",
+  "damage_attribution": "Guard damage observed on CPU03; attacker attribution unproven."
+}

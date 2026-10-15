@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "id": "TASK-116",
+  "title": "声音诱导与有限调查行为",
+  "status": "Active",
+  "updated_at": "2026-10-15",
+  "owner": "XLingyyy",
+  "reviewer": null,
+  "issue_url": null,
+  "branch": "codex/TASK-112-round2-foundation",
+  "source_refs": [
+    "XLingyyy/Hearthward main@dbf6acd4df31ed1f7154464ac9b635e52e173806",
+    "2026-10-13 用户请求：将本轮体验增强建议写成task任务单并交付；本次只编写任务包。",
+    "docs/planning/TASK-112-133/SOURCES.md#s02",
+    "docs/planning/TASK-112-133/SOURCES.md#s05",
+    "docs/planning/TASK-112-133/SOURCES.md#e01",
+    "2026-10-14 Owner要求112—133全部实施且中途不停滞；人工试玩、外观签收、独立审查和二机验收统一留到最终汇总，不作为本次实现阶段停工条件，不代填通过。",
+    "2026-10-15 Owner授权将TASK-112—133最新开发成果提交并推送GitHub任务分支；不包含合并main或正式发行。"
+  ],
+  "dependencies": [
+    "TASK-112",
+    "TASK-131"
+  ],
+  "blocked_by": [],
+  "contracts": [
+    "docs/planning/TASK-112-133/contracts/C-DELIVERY.md",
+    "docs/planning/TASK-112-133/contracts/C-STATE.md",
+    "docs/planning/TASK-112-133/contracts/C-ENV.md"
+  ],
+  "allowed_paths": [
+    "docs/tasks/TASK-116.json",
+    "docs/tasks/TASK-116.md",
+    "docs/handoffs/TASK-116.md",
+    "docs/qa/TASK-116/",
+    "docs/planning/TASK-116/",
+    "README.md",
+    "Source/Hearthward/Environment/HearthwardNoiseInteraction.h",
+    "Source/Hearthward/Environment/HearthwardNoiseInteraction.cpp",
+    "Source/Hearthward/Tests/Round2NoiseTests.cpp",
+    "art_source/TASK-116/",
+    "Source/Hearthward/Combat/",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.cpp",
+    "Source/Hearthward/Interaction/",
+    "Resources/Data/gameplay.json",
+    "Resources/Data/experience.json",
+    "Source/Hearthward/Campaign/HearthwardCampaignActor.h",
+    "Source/Hearthward/Tests/CampaignAIBehaviorTests.cpp"
+  ],
+  "forbidden_paths": [
+    "Content/",
+    "Runtime/",
+    "config/",
+    "Saved/",
+    "Plugins/",
+    "docs/design/archive/"
+  ],
+  "acceptance": [
+    "T116-C01 [NATIVE] 玩家躲在遮挡后在另一处产生声音。 → 敌人检查声源位置，不直接转向未知玩家位置。",
+    "T116-C02 [PIE] 在正式巡逻路径触发近处与远处声源。 → 可听范围内产生调查和可用空当；范围外不响应。",
+    "T116-C03 [NATIVE] 短时间重复声源并同时出现视觉敌情。 → 重复调查受限，已确认战斗优先，不循环刷无限打断。",
+    "T116-C04 [SAVE] 调查中保存/载入并回放旧声源事件。 → 暂态按契约安全重建，旧事件不重播、不改永久阵亡。",
+    "T116-C05 [NATIVE] 取消投掷、缺料、连续输入并读档。 → 按既有事务只消耗一次，无负数/复制道具；无成功投掷不扣料。",
+    "T116-C06 [PLAY] 两条路线使用/不使用诱导完成目标。 → 诱导有收益但不能无条件控制所有敌人；事件数和日志受限。"
+  ],
+  "non_goals": [
+    "不做敌方长期学习、阵营记忆或全地图声学传播。",
+    "不增加新的自动清敌/任务完成手段。",
+    "本包不授予实施、提交、推送、合并或正式发行权限；任务需按当前用户授权激活。"
+  ],
+  "prototype_only": false,
+  "prototype_approval": null,
+  "required_tests": [
+    "T-002",
+    "T-024",
+    "T-003",
+    "T-011"
+  ],
+  "permissions": {
+    "network": "repository_reads_and_authorized_branch_push",
+    "install_dependencies": "not_granted",
+    "commit": "granted_by_user_2026-10-15_round2",
+    "push": "granted_by_user_2026-10-15_round2_task_branch",
+    "merge": "not_granted_current_request",
+    "github_release": "not_granted_current_request",
+    "paid_services": "not_granted",
+    "implementation": "granted_by_user_2026-10-14_full_package"
+  },
+  "notes": [
+    "阶段 G1；优先级 P0；详细门禁见总索引。",
+    "allowed_paths为拟实施范围，不是当前写入授权。Content需准确包登记/LFS锁后逐项调整范围；其他共享文件串行整合。",
+    "dependencies表示实现前置；Backlog阶段的待冻结设计不伪造为依赖已通过。",
+    "全部用例NOT_RUN；Owner体验、独立审查、UE运行和二机均未代填。",
+    "2026-10-15：复用既有真实导航夹具，在同一测试文件追加固定声源位置与视觉优先验证；共享文件当前仅由主会话串行修改。"
+  ]
+}
